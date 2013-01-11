@@ -63,7 +63,7 @@ namespace SILUBS.PhraseTranslationHelper
 				// dispose managed and unmanaged objects
 				Close();
 				if (m_waitHandle != null)
-					m_waitHandle.Dispose();
+					m_waitHandle.Close();
 				if (m_splashScreen != null)
 					m_splashScreen.Dispose();
 			}
