@@ -1,0 +1,13 @@
+SCC = This is a source code control file
+
+[PhraseTranslationHelper.sln]
+SCC_Aux_Path = "P4SCC#src.sil.org:1934##bogle##Bogle_FwRefactor"
+SCC_Project_Name = Perforce Project
+
+[PhraseTranslationHelper.csproj]
+SCC_Aux_Path = "P4SCC#src.sil.org:1934##bogle##Bogle_PTCollab"
+SCC_Project_Name = Perforce Project
+
+[PhraseTranslationHelperTests.csproj]
+SCC_Aux_Path = "P4SCC#src.sil.org:1934##bogle##Bogle_PTCollab"
+SCC_Project_Name = Perforce Project

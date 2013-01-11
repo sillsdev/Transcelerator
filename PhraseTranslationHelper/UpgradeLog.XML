@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="PhraseTranslationHelper">
+</Property><Property Name="Solution File" Value="C:\Projects\fwr\Lib\src\PhraseTranslationHelper\PhraseTranslationHelper.sln">
+</Property><Property Name="Date" Value="Sunday, October 28, 2012">
+</Property><Property Name="Time" Value="0:12 AM">
+</Property></Properties><Event ErrorLevel="0" Project="PhraseTranslationHelper" Source="PhraseTranslationHelper.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="PhraseTranslationHelper" Source="PhraseTranslationHelper.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="PhraseTranslationHelperTests" Source="PhraseTranslationHelperTests\PhraseTranslationHelperTests.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="PhraseTranslationHelperTests" Source="PhraseTranslationHelperTests\PhraseTranslationHelperTests.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="SilUtils" Source="..\SilUtils\SilUtils.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="SilUtils" Source="..\SilUtils\SilUtils.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="SharedScrUtils" Source="..\SharedScrUtils\SharedScrUtils.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="SharedScrUtils" Source="..\SharedScrUtils\SharedScrUtils.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="2" Project="SharedScrUtilsTests" Source="..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj" Description="Unable to save converted project file.">
+</Event><Event ErrorLevel="3" Project="SharedScrUtilsTests" Source="..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj" Description="Not Converted">
+</Event><Event ErrorLevel="0" Project="SharedScrControls" Source="..\SharedScrControls\SharedScrControls.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="SharedScrControls" Source="..\SharedScrControls\SharedScrControls.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="SharedScrControlsTests" Source="..\SharedScrControls\SharedScrControlsTests\SharedScrControlsTests.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="SharedScrControlsTests" Source="..\SharedScrControls\SharedScrControlsTests\SharedScrControlsTests.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="2" Project="SilUtilsTests" Source="..\SilUtils\SilUtilsTests\SilUtilsTests.csproj" Description="Unable to save converted project file.">
+</Event><Event ErrorLevel="3" Project="SilUtilsTests" Source="..\SilUtils\SilUtilsTests\SilUtilsTests.csproj" Description="Not Converted">
+</Event><Event ErrorLevel="0" Project="TeDll" Source="..\..\..\Src\TeDll\TeDll.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="TeDll" Source="..\..\..\Src\TeDll\TeDll.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="TeKeyTerms" Source="..\..\..\Src\TE\TeKeyTerms\TeKeyTerms.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="TeKeyTerms" Source="..\..\..\Src\TE\TeKeyTerms\TeKeyTerms.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="TeDialogs" Source="..\..\..\Src\TE\TeDialogs\TeDialogs.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="TeDialogs" Source="..\..\..\Src\TE\TeDialogs\TeDialogs.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="PhraseTranslationHelper.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="PhraseTranslationHelper.sln" Description="Converted">
+</Event></UpgradeLog>

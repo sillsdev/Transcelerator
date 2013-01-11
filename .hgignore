@@ -1,0 +1,6 @@
+syntax: glob
+PhraseTranslationHelper/_*
+PhraseTranslationHelper/bin/*
+*.suo
+*.user
+obj/*
