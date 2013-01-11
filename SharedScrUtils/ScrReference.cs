@@ -144,7 +144,7 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:ScrReference"/> class.
+		/// Initializes a new instance of the ScrReference class.
 		/// </summary>
 		/// <param name="strReference">The reference as a string.</param>
 		/// <param name="versification">The versification scheme.</param>

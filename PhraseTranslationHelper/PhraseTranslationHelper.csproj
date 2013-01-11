@@ -69,6 +69,10 @@
       <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\ParatextPluginFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition, Version=2010.2.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\System.ComponentModel.Composition.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -90,12 +94,16 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ComprehensionCheckingSettings.cs" />
     <Compile Include="HelpAboutDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HelpAboutDlg.Designer.cs">
       <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
@@ -106,6 +114,7 @@
     <Compile Include="TxlInfo.Designer.cs">
       <DependentUpon>TxlInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxlPlugin.cs" />
     <Compile Include="TxlSplashScreen.cs" />
     <Compile Include="QuestionKey.cs" />
     <Compile Include="NewQuestionDlg.cs">
@@ -182,7 +191,6 @@
       <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Word.cs" />
-    <Compile Include="IKeyTerm.cs" />
     <Compile Include="Part.cs" />
     <Compile Include="PhraseTranslationHelper.cs" />
     <None Include="Properties\AssemblyInfo.cs" />
@@ -265,7 +273,19 @@
     <None Include="Properties\wait22trans.gif" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <Content Include="keyTermRules.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Properties\Transcelerator.png" />
+    <Content Include="QTTallBooks.sfm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -297,6 +317,14 @@
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="keyTermRules.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QTTallBooks - AlternateFormOverrides.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

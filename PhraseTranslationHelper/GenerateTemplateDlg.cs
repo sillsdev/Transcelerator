@@ -30,9 +30,9 @@ namespace SILUBS.PhraseTranslationHelper
 		#region RangeOption enum
 		public enum RangeOption
 		{
-			WholeBook,
-			SingleSection,
-			RangeOfSections,
+			WholeBook = 0,
+			SingleSection = 1,
+			RangeOfSections = 2,
 		}
 		#endregion
 
@@ -51,8 +51,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal GenerateTemplateDlg(string projectName, string defaultLcfFolder,
-			GenerateTemplateSettings settings, IEnumerable<int> canonicalBookIds,
-			IEnumerable<KeyValuePair<string, string>> sections)
+            IEnumerable<int> canonicalBookIds, IEnumerable<KeyValuePair<string, string>> sections)
 		{
 			InitializeComponent();
 			m_chkEnglishQuestions.Tag = btnChooseEnglishQuestionColor;
@@ -68,52 +67,47 @@ namespace SILUBS.PhraseTranslationHelper
 			LoadBooks(canonicalBookIds);
 			LoadSectionCombos(sections);
 
-			if (settings == null)
-				m_lblFolder.Text = defaultLcfFolder;
-			else
+			switch ((RangeOption)Properties.Settings.Default.GenerateTemplateRange)
 			{
-				switch (settings.Range)
-				{
-					case RangeOption.WholeBook:
-						m_rdoWholeBook.Checked = true;
-						TrySelectItem(m_cboBooks, settings.Book);
-						break;
-					case RangeOption.SingleSection:
-						m_rdoSingleSection.Checked = true;
-						TrySelectItem(m_cboSection, settings.Section);
-						break;
-					case RangeOption.RangeOfSections:
-						m_rdoSectionRange.Checked = true;
-						TrySelectItem(m_cboStartSection, settings.Section);
-						TrySelectItem(m_cboEndSection, settings.EndSection);
-						break;
-				}
+				case RangeOption.WholeBook:
+					m_rdoWholeBook.Checked = true;
+					TrySelectItem(m_cboBooks, Properties.Settings.Default.GenerateTemplateBook);
+					break;
+				case RangeOption.SingleSection:
+					m_rdoSingleSection.Checked = true;
+					TrySelectItem(m_cboSection, Properties.Settings.Default.GenerateTemplateSection);
+					break;
+				case RangeOption.RangeOfSections:
+					m_rdoSectionRange.Checked = true;
+					TrySelectItem(m_cboStartSection, Properties.Settings.Default.GenerateTemplateSection);
+					TrySelectItem(m_cboEndSection, Properties.Settings.Default.GenerateTemplateEndSection);
+					break;
+			}
 
-				m_chkPassageBeforeOverview.Checked = settings.PassageBeforeOverview;
-				m_chkEnglishQuestions.Checked = settings.EnglishQuestions;
-				m_chkEnglishAnswers.Checked = settings.EnglishAnswers;
-				m_chkIncludeComments.Checked = settings.IncludeComments;
-				m_rdoUseOriginal.Checked = settings.UseOriginalQuestionIfNotTranslated;
+			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
+			m_chkEnglishQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
+			m_chkEnglishAnswers.Checked = Properties.Settings.Default.GenerateTemplateEnglishAnswers;
+			m_chkIncludeComments.Checked = Properties.Settings.Default.GenerateTemplateIncludeComments;
+			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
 
-				m_lblFolder.Text = settings.Folder;
+			m_lblFolder.Text = Properties.Settings.Default.GenerateTemplateFolder;
 
-				m_numBlankLines.Value = settings.BlankLines;
-				if (!settings.QuestionGroupHeadingsColor.IsEmpty)
-					m_lblQuestionGroupHeadingsColor.ForeColor = settings.QuestionGroupHeadingsColor;
-				if (!settings.EnglishQuestionTextColor.IsEmpty)
-					m_lblEnglishQuestionColor.ForeColor = settings.EnglishQuestionTextColor;
-				if (!settings.EnglishAnswerTextColor.IsEmpty)
-					m_lblEnglishAnswerTextColor.ForeColor = settings.EnglishAnswerTextColor;
-				if (!settings.CommentTextColor.IsEmpty)
-					m_lblCommentTextColor.ForeColor = settings.CommentTextColor;
-				m_chkNumberQuestions.Checked = settings.NumberQuestions;
+			m_numBlankLines.Value = Properties.Settings.Default.GenerateTemplateBlankLines;
+			if (!Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor.IsEmpty)
+				m_lblQuestionGroupHeadingsColor.ForeColor = Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor;
+			if (!Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor.IsEmpty)
+				m_lblEnglishQuestionColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
+			if (!Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor.IsEmpty)
+				m_lblEnglishAnswerTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor;
+			if (!Properties.Settings.Default.GenerateTemplateCommentTextColor.IsEmpty)
+				m_lblCommentTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateCommentTextColor;
+			m_chkNumberQuestions.Checked = Properties.Settings.Default.GenerateTemplateNumberQuestions;
 
-				m_rdoUseExternalCss.Checked = settings.UseExternalCss;
-				if (m_rdoUseExternalCss.Checked)
-				{
-					m_txtCssFile.Text = settings.CssFile;
-					m_chkAbsoluteCssPath.Checked = settings.AbsoluteCssPath;
-				}
+			m_rdoUseExternalCss.Checked = Properties.Settings.Default.GenerateTemplateUseExternalCss;
+			if (m_rdoUseExternalCss.Checked)
+			{
+				m_txtCssFile.Text = Properties.Settings.Default.GenerateTemplateCssFile;
+				m_chkAbsoluteCssPath.Checked = Properties.Settings.Default.GenerateTemplateAbsoluteCssPath;
 			}
 		}
 
@@ -202,53 +196,6 @@ namespace SILUBS.PhraseTranslationHelper
 			get
 			{
 				return m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
-			}
-		}
-
-		internal GenerateTemplateSettings Settings
-		{
-			get
-			{
-				GenerateTemplateSettings settings = new GenerateTemplateSettings();
-				if (m_rdoWholeBook.Checked)
-				{
-					settings.Range = RangeOption.WholeBook;
-					settings.Book = m_cboBooks.SelectedItem.ToString();
-				}
-				else if (m_rdoSingleSection.Checked)
-				{
-					settings.Range = RangeOption.SingleSection;
-					settings.Section = m_cboSection.SelectedItem.ToString();					
-				}
-				else
-				{
-					settings.Range = RangeOption.RangeOfSections;
-					settings.Section = m_cboStartSection.SelectedItem.ToString();					
-					settings.EndSection = m_cboEndSection.SelectedItem.ToString();					
-				}
-
-				settings.PassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
-				settings.EnglishQuestions = m_chkEnglishQuestions.Checked;
-				settings.EnglishAnswers = m_chkEnglishAnswers.Checked;
-				settings.IncludeComments = m_chkIncludeComments.Checked;
-				settings.UseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
-
-				settings.Folder = m_lblFolder.Text;
-
-				settings.BlankLines = (int)m_numBlankLines.Value;
-				settings.QuestionGroupHeadingsColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-				settings.EnglishQuestionTextColor = m_lblEnglishQuestionColor.ForeColor;
-				settings.EnglishAnswerTextColor = m_lblEnglishAnswerTextColor.ForeColor;
-				settings.CommentTextColor = m_lblCommentTextColor.ForeColor;
-				settings.NumberQuestions = m_chkNumberQuestions.Checked;
-
-				settings.UseExternalCss = m_rdoUseExternalCss.Checked;
-				if (settings.UseExternalCss)
-				{
-					settings.CssFile = m_txtCssFile.Text;
-					settings.AbsoluteCssPath = m_chkAbsoluteCssPath.Checked;
-				}
-				return settings;
 			}
 		}
 		#endregion
@@ -404,6 +351,48 @@ namespace SILUBS.PhraseTranslationHelper
 			if (m_rdoSectionRange.Checked && UpdateSectionRangeStartRef() && UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
 		}
+
+        private void btnOk_Click(object sender, EventArgs e)
+        {
+            if (m_rdoWholeBook.Checked)
+            {
+                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.WholeBook;
+                Properties.Settings.Default.GenerateTemplateBook = m_cboBooks.SelectedItem.ToString();
+            }
+            else if (m_rdoSingleSection.Checked)
+            {
+                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.SingleSection;
+                Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
+            }
+            else
+            {
+                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.RangeOfSections;
+                Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
+                Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
+            }
+
+            Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
+            Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkEnglishQuestions.Checked;
+            Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkEnglishAnswers.Checked;
+            Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeComments.Checked;
+            Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
+
+            Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
+
+            Properties.Settings.Default.GenerateTemplateBlankLines = (int)m_numBlankLines.Value;
+            Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = m_lblQuestionGroupHeadingsColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = m_lblEnglishQuestionColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = m_lblEnglishAnswerTextColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateCommentTextColor = m_lblCommentTextColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateNumberQuestions = m_chkNumberQuestions.Checked;
+
+            Properties.Settings.Default.GenerateTemplateUseExternalCss = m_rdoUseExternalCss.Checked;
+            if (Properties.Settings.Default.GenerateTemplateUseExternalCss)
+            {
+                Properties.Settings.Default.GenerateTemplateCssFile = m_txtCssFile.Text;
+                Properties.Settings.Default.GenerateTemplateAbsoluteCssPath = m_chkAbsoluteCssPath.Checked;
+            }
+        }
 		#endregion
 
 		#region Private helper methods
