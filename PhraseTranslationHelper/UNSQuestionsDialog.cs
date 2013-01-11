@@ -17,8 +17,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
@@ -99,16 +101,6 @@ namespace SILUBS.PhraseTranslationHelper
 				if (!value && RefreshNeeded)
 					dataGridUns.Refresh();
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the settings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public ComprehensionCheckingSettings Settings
-		{
-			get { return new ComprehensionCheckingSettings(this); }
 		}
 
 		internal PhraseTranslationHelper.KeyTermFilterType CheckedKeyTermFilterType
@@ -213,8 +205,6 @@ namespace SILUBS.PhraseTranslationHelper
 			set { mnuViewAnswers.Checked = value; }
 		}
 
-		internal GenerateTemplateSettings GenTemplateSettings { get; private set; }
-
 		protected TranslatablePhrase CurrentPhrase
 		{
 			get
@@ -269,7 +259,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string sDefaultLcfFolder,
-			ComprehensionCheckingSettings settings, string appName, ScrReference startRef,
+			string appName, ScrReference startRef,
 			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate,
 			Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
 		{
@@ -290,8 +280,11 @@ namespace SILUBS.PhraseTranslationHelper
 
 			InitializeComponent();
 
+            string questionsFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "QTTallBooks.sfm");
+
 			TxlSplashScreen splashScreen = new TxlSplashScreen();
-			splashScreen.Show(Screen.FromPoint(settings.Location));
+			splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
 			splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
 			ClearBiblicalTermsPane();
@@ -307,19 +300,18 @@ namespace SILUBS.PhraseTranslationHelper
 			lblFilterIndicator.Tag = lblFilterIndicator.Text;
 			lblRemainingWork.Tag = lblRemainingWork.Text;
 
-			Location = settings.Location;
-			WindowState = settings.DefaultWindowState;
-			if (MinimumSize.Height <= settings.DialogSize.Height &&
-				MinimumSize.Width <= settings.DialogSize.Width)
+            Location = Properties.Settings.Default.WindowLocation;
+			WindowState = Properties.Settings.Default.DefaultWindowState;
+			if (MinimumSize.Height <= Properties.Settings.Default.WindowSize.Height &&
+				MinimumSize.Width <= Properties.Settings.Default.WindowSize.Width)
 			{
-				Size = settings.DialogSize;
+				Size = Properties.Settings.Default.WindowSize;
 			}
-			MatchWholeWords = !settings.MatchPartialWords;
-			ShowToolbar = settings.ShowToolbar;
-			GenTemplateSettings = settings.GenTemplateSettings;
-			ReceiveScrRefs = settings.ReceiveScrRefs;
-			ShowAnswersAndComments = settings.ShowAnswersAndComments;
-			MaximumHeightOfKeyTermsPane = settings.MaximumHeightOfKeyTermsPane;
+			MatchWholeWords = !Properties.Settings.Default.MatchPartialWords;
+			ShowToolbar = Properties.Settings.Default.ShowToolbar;
+			ReceiveScrRefs = Properties.Settings.Default.ReceiveScrRefs;
+			ShowAnswersAndComments = Properties.Settings.Default.ShowAnswersAndComments;
+			MaximumHeightOfKeyTermsPane = Properties.Settings.Default.MaximumHeightOfKeyTermsPane;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -331,12 +323,12 @@ namespace SILUBS.PhraseTranslationHelper
 				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-			m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(settings.QuestionsFile), "xml"));
-			string alternativesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty,
-				Path.ChangeExtension(Path.GetFileNameWithoutExtension(settings.QuestionsFile) + " - AlternateFormOverrides", "xml"));
-			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(settings.QuestionsFile) ?? string.Empty, "keyTermRules.xml");
+            m_questionsFilename = Path.Combine(s_unsDataFolder, Path.ChangeExtension(Path.GetFileName(questionsFilePath), "xml"));
+			string alternativesFilename = Path.Combine(Path.GetDirectoryName(questionsFilePath) ?? string.Empty,
+				Path.ChangeExtension(Path.GetFileNameWithoutExtension(questionsFilePath) + " - AlternateFormOverrides", "xml"));
+			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(questionsFilePath) ?? string.Empty, "keyTermRules.xml");
 			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
-			FileInfo finfoSfmQuestions = new FileInfo(settings.QuestionsFile);
+			FileInfo finfoSfmQuestions = new FileInfo(questionsFilePath);
 			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 			
 			if (!finfoXmlQuestions.Exists ||
@@ -344,10 +336,10 @@ namespace SILUBS.PhraseTranslationHelper
 				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
 			{
 				if (!finfoSfmQuestions.Exists)
-					MessageBox.Show(Properties.Resources.kstidFileNotFound + settings.QuestionsFile, Text);
+					MessageBox.Show(Properties.Resources.kstidFileNotFound + questionsFilePath, Text);
 				if (!finfoAlternatives.Exists)
 					alternativesFilename = null;
-				QuestionSfmFileAccessor.Generate(settings.QuestionsFile, alternativesFilename, m_questionsFilename);
+				QuestionSfmFileAccessor.Generate(questionsFilePath, alternativesFilename, m_questionsFilename);
 			}
 
 			m_translationsFile = Path.Combine(s_unsDataFolder, string.Format("Translations of Checking Questions - {0}.xml", projectName));
@@ -359,8 +351,8 @@ namespace SILUBS.PhraseTranslationHelper
 			LoadTranslations(splashScreen);
 
 			// Now apply settings that have filtering or other side-effects
-			CheckedKeyTermFilterType = settings.KeyTermFilterType;
-			SendScrRefs = settings.SendScrRefs;
+			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
+			SendScrRefs = Properties.Settings.Default.SendScrRefs;
 
 			splashScreen.Close();
 		}
@@ -786,12 +778,10 @@ namespace SILUBS.PhraseTranslationHelper
 		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
 		{
 			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName, m_defaultLcfFolder,
-				GenTemplateSettings, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
+				AvailableBookIds, m_sectionHeadText.AsEnumerable()))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					GenTemplateSettings = dlg.Settings;
-
 					Func<int, int, bool> InRange;
 					if (dlg.m_rdoWholeBook.Checked)
 					{

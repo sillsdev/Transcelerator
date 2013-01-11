@@ -70,9 +70,9 @@ namespace SILUBS.PhraseTranslationHelper
 		#region KeyTermFilterType enumeration
 		public enum KeyTermFilterType
 		{
-			All,
-			WithRenderings,
-			WithoutRenderings,
+			All = 0,
+			WithRenderings = 1,
+			WithoutRenderings = 2,
 		}
 		#endregion
 
