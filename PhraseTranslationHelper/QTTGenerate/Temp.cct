@@ -1,0 +1,10 @@
+﻿begin > use(main)
+
+group(main)
+
+nl '\bttq ' > dup use(FixSlashWithSpace)
+
+group(FixSlashWithSpace)
+'// ' > dup
+'/ ' > '/'
+nl > dup use(main)
