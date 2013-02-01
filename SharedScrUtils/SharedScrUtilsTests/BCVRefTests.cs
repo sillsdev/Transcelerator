@@ -12,9 +12,9 @@
 // Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
-using System.IO;
 using NUnit.Framework;
-using System.Reflection;
+using Paratext.PluginFramework;
+using Rhino.Mocks;
 
 namespace SILUBS.SharedScrUtils
 {
@@ -27,34 +27,6 @@ namespace SILUBS.SharedScrUtils
 	[TestFixture]
 	public class BCVRefTests
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the VersificationTable class for tests.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static void InitializeVersificationTable()
-		{
-			string vrsPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.English)), Properties.Resource.eng);
-			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.Septuagint)), Properties.Resource.lxx);
-			File.WriteAllBytes(Path.Combine(vrsPath,
-				VersificationTable.GetFileNameForVersification(ScrVers.Original)), Properties.Resource.org);
-			VersificationTable.Initialize(vrsPath);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set up to initialize VersificationTable
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			InitializeVersificationTable();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setup test
@@ -95,6 +67,23 @@ namespace SILUBS.SharedScrUtils
 			Assert.AreEqual(0, bcvRef.Chapter);
 			Assert.AreEqual(0, bcvRef.Verse);
 		}
+
+        /// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test IsValidInVersification
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+        [Test]
+        public void IsValidInVersification()
+        {
+            var versification = MockRepository.GenerateMock<IScrVers>();
+            versification.Stub(v => v.LastChapter(65)).Return(1);
+            versification.Stub(v => v.LastVerse(65, 1)).Return(20);
+            Assert.IsTrue((new BCVRef(65, 1, 1)).IsValidInVersification(versification));
+            Assert.IsTrue((new BCVRef(65, 1, 20)).IsValidInVersification(versification));
+            Assert.IsFalse((new BCVRef(65, 99, 1)).IsValidInVersification(versification));
+            Assert.IsFalse((new BCVRef(65, 1, 21)).IsValidInVersification(versification));
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -679,17 +668,6 @@ namespace SILUBS.SharedScrUtils
 	[TestFixture]
 	public class BCVRef_ParseChapterVerseNumberTests
 	{
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Set up to initialize VersificationTable
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			BCVRefTests.InitializeVersificationTable();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the VerseToScrRef method when dealing with large verse numbers

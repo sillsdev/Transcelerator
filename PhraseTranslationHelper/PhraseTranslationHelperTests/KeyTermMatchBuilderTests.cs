@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Paratext.PluginFramework;
 using Rhino.Mocks;
 using SIL.Utils;
 
@@ -538,22 +539,37 @@ namespace SILUBS.PhraseTranslationHelper
 			VerifyKeyTermMatch(bldr, 0, "hosts");
 			VerifyKeyTermMatch(bldr, 1, "lord", "of", "hosts");
 			VerifyKeyTermMatch(bldr, 2, "god", "of", "hosts");
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
-		/// real evil data: optional comma-separated parts.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void RealData14()
-		{
-			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("(one's own) burial-place"));
-			Assert.AreEqual(2, bldr.Matches.Count());
-			VerifyKeyTermMatch(bldr, 0, "burial-place");
-			VerifyKeyTermMatch(bldr, 1, "one's", "own", "burial-place");
-		}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+        /// real evil data: optional comma-separated parts.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RealData14()
+        {
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("(one's own) burial-place"));
+            Assert.AreEqual(2, bldr.Matches.Count());
+            VerifyKeyTermMatch(bldr, 0, "burial-place");
+            VerifyKeyTermMatch(bldr, 1, "one's", "own", "burial-place");
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+        /// real evil data: parentheses.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RealData15()
+        {
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("bridal chamber (marriage bed)"));
+            Assert.AreEqual(2, bldr.Matches.Count());
+            VerifyKeyTermMatch(bldr, 0, "bridal", "chamber");
+            VerifyKeyTermMatch(bldr, 1, "bridal", "chamber", "marriage", "bed");
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

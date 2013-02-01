@@ -26,12 +26,6 @@ namespace SILUBS.PhraseTranslationHelper
 	[TestFixture]
 	public class QuestionProviderTests
 	{
-		[TestFixtureSetUp]
-		public void SetupFixture()
-		{
-			BCVRefTests.InitializeVersificationTable();
-		}
-
 		#region Private helper methods
 		private Section CreateSection(string sRef, string heading, int startRef, int endRef, int cOverviewQuestions, int cDetailQuestions)
 		{

@@ -65,6 +65,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ParatextPluginFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\ParatextPluginFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -74,27 +78,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BCVRef.cs" />
-    <Compile Include="CharacterCategorizer.cs" />
-    <Compile Include="IChecksDataSource.cs" />
-    <Compile Include="IMultilingScrBooks.cs" />
-    <Compile Include="IScriptureCheck.cs" />
-    <Compile Include="IScrProjMetaDataProvider.cs" />
-    <Compile Include="ITextToken.cs" />
-    <Compile Include="IVerseReference.cs" />
+    <Compile Include="BookLabel.cs" />
     <None Include="AssemblyInfo.cs" />
     <Compile Include="GeneratedAssemblyInfo.cs" />
-    <Compile Include="MatchedPairs.cs" />
     <Compile Include="MultilingScrBooks.cs" />
-    <Compile Include="PunctuationPatterns.cs" />
-    <Compile Include="QuotationMarks.cs" />
-    <Compile Include="RecordErrorEventArgs.cs" />
-    <Compile Include="ScrReference.cs" />
-    <Compile Include="ScrVers.cs" />
-    <Compile Include="StandardCheckIds.cs" />
-    <Compile Include="StyleMarkupInfo.cs" />
-    <Compile Include="TextFileDataSource.cs" />
-    <Compile Include="TextTokenSubstring.cs" />
-    <Compile Include="Versification.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

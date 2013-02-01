@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Paratext.PluginFramework;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
@@ -50,8 +51,9 @@ namespace SILUBS.PhraseTranslationHelper
 		private static readonly string s_unsDataFolder;
 		private readonly string m_defaultLcfFolder;
 		private readonly string m_appName;
-		private ScrReference m_startRef;
-		private ScrReference m_endRef;
+	    private readonly IScrVers m_versification;
+	    private BCVRef m_startRef;
+        private BCVRef m_endRef;
 		private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
 		private readonly string m_questionsFilename;
@@ -60,7 +62,7 @@ namespace SILUBS.PhraseTranslationHelper
 		private readonly List<Substitution> m_phraseSubstitutions;
 		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
 		private bool m_fProcessingSyncMessage;
-		private ScrReference m_queuedReference;
+		private BCVRef m_queuedReference;
 		private int m_lastRowEntered = -1;
 		private TranslatablePhrase m_currentPhrase = null;
 		private int m_iCurrentColumn = -1;
@@ -259,22 +261,24 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string sDefaultLcfFolder,
-			string appName, ScrReference startRef,
-			ScrReference endRef, Action<bool> selectKeyboard, Action helpDelegate,
-			Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
+            string appName, IScrVers versification, BCVRef startRef, BCVRef endRef,
+            Action<bool> selectKeyboard, Action helpDelegate, Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
 		{
-			if (startRef != ScrReference.Empty && endRef != ScrReference.Empty && startRef > endRef)
+            if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
 			m_keyTerms = keyTerms;
 			m_vernFont = vernFont;
 			m_vernIcuLocale = VernIcuLocale;
+            if (string.IsNullOrEmpty(m_vernIcuLocale))
+                mnuGenerateTemplate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
 			m_helpDelegate = helpDelegate;
 			m_lookupTermDelegate = lookupTermDelegate;
 			m_defaultLcfFolder = sDefaultLcfFolder;
 			m_appName = appName;
-			TermRenderingCtrl.s_AppName = appName;
+		    m_versification = versification;
+		    TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
 			m_endRef = endRef;
 
@@ -399,8 +403,7 @@ namespace SILUBS.PhraseTranslationHelper
 			if (msg.Msg == SantaFeFocusMessageHandler.FocusMsg)
 			{
 				// Always assume the English versification scheme for passing references.
-				var scrRef = new ScrReference(
-					SantaFeFocusMessageHandler.ReceiveFocusMessage(msg), ScrVers.English);
+				var scrRef = new BCVRef(SantaFeFocusMessageHandler.ReceiveFocusMessage(msg));
 
 				if (!btnReceiveScrReferences.Checked || m_fIgnoreNextRecvdSantaFeSyncMessage ||
 					m_fProcessingSyncMessage)
@@ -617,7 +620,7 @@ namespace SILUBS.PhraseTranslationHelper
 				RememberCurrentSelection();
 				clearCurrentSelection = true;
 			}
-			Func<int, int, string, bool> refFilter = (m_startRef == ScrReference.Empty) ? null :
+            Func<int, int, string, bool> refFilter = (m_startRef == BCVRef.Empty) ? null :
 				new Func<int, int, string, bool>((start, end, sref) => m_endRef >= start && m_startRef <= end);
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
@@ -1271,8 +1274,8 @@ namespace SILUBS.PhraseTranslationHelper
 		private void mnuReferenceRange_Click(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(
-				new ScrReference(m_startRef), new ScrReference(m_endRef), m_availableBookIds))
+			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(m_versification,
+                new BCVRef(m_startRef), new BCVRef(m_endRef), m_availableBookIds))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -1702,9 +1705,9 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <summary>
 		/// Processes the received sync message.
 		/// </summary>
-		/// <param name="reference">The reference in English versification scheme.</param>
+		/// <param name="reference">The reference (in English versification scheme).</param>
 		/// ------------------------------------------------------------------------------------
-		private void ProcessReceivedMessage(ScrReference reference)
+		private void ProcessReceivedMessage(BCVRef reference)
 		{
 			// While we process the given reference we might get additional synch events, the
 			// most recent of which we store in m_queuedReference. If we're done
@@ -1737,7 +1740,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// <param name="iRow">The index of the row</param>
 		/// <param name="reference">The reference.</param>
 		/// ------------------------------------------------------------------------------------
-		internal bool QuestionCoversRef(int iRow, ScrReference reference)
+		internal bool QuestionCoversRef(int iRow, BCVRef reference)
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
 			BCVRef bcvStartRef, bcvEndRef;
@@ -1750,7 +1753,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Goes to the first row in the data grid corresponding to the given reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void GoToReference(ScrReference reference)
+		private void GoToReference(BCVRef reference)
 		{
 			for (int iRow = 0; iRow < dataGridUns.Rows.Count; iRow++)
 			{

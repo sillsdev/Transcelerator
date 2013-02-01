@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
 using NUnit.Framework;
+using Paratext.PluginFramework;
 using Rhino.Mocks;
 using System;
 

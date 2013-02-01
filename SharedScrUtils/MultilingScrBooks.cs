@@ -16,13 +16,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Paratext.PluginFramework;
 
 namespace SILUBS.SharedScrUtils
 {
 	/// <summary>
 	/// Summary description for MultilingScrBooks.
 	/// </summary>
-	public class MultilingScrBooks : IMultilingScrBooks
+	public class MultilingScrBooks
 	{
 		#region class WsNames
 		/// ------------------------------------------------------------------------------------
@@ -46,8 +47,8 @@ namespace SILUBS.SharedScrUtils
 			/// --------------------------------------------------------------------------------
 			public WsNames()
 			{
-				Name = new string[ScrReference.LastBook];
-				Abbrev = new string[ScrReference.LastBook];
+				Name = new string[LastBook];
+				Abbrev = new string[LastBook];
 			}
 
 			/// --------------------------------------------------------------------------------
@@ -90,7 +91,7 @@ namespace SILUBS.SharedScrUtils
 			{
 				// ENHANCE: Make more effecient; abbrevs first, hash map, NT first, etc?)
 				int iBestMatch = -1;
-				for (int iBook = startIndex; iBook < ScrReference.LastBook; iBook++)
+				for (int iBook = startIndex; iBook < LastBook; iBook++)
 				{
 					if (Abbrev[iBook].StartsWith(searchString, StringComparison.CurrentCultureIgnoreCase) ||
 						Name[iBook].StartsWith(searchString, StringComparison.CurrentCultureIgnoreCase))
@@ -110,7 +111,10 @@ namespace SILUBS.SharedScrUtils
 		}
 		#endregion
 
-		#region Data members
+        #region Data members
+        /// <summary>The maximum number of Scripture books that may be returned to the caller.</summary>
+        public const int LastBook = 66;
+
 		/// <summary>// Indicates whether to process deutero-canonical book names.</summary>
 		protected bool m_fProcessDeuteroCanonical = false;
 		/// <summary>Array containing the primary and secondary encodings.</summary>
@@ -125,10 +129,6 @@ namespace SILUBS.SharedScrUtils
 		protected const string kWsEnglish = "en";
 		/// <summary>writing system locale for Spanish</summary>
 		protected const string kWsSpanish = "es";
-		/// <summary>currrent versification scheme</summary>
-		protected IScrProjMetaDataProvider m_versificationProvider;
-		/// <summary>The default versification system to use (ignored if m_versificationProvider is set)</summary>
-		protected ScrVers m_defaultVersification;
 		#endregion
 
 		#region Constructors
@@ -137,25 +137,9 @@ namespace SILUBS.SharedScrUtils
 		/// Initializes a new instance of the <see cref="MultilingScrBooks"/> class when a
 		/// single, fixed versification system is required.
 		/// </summary>
-		/// <param name="defaultVersification">The default versification system to use.</param>
 		/// ------------------------------------------------------------------------------------
-		public MultilingScrBooks(ScrVers defaultVersification) : this(null)
+		public MultilingScrBooks()
 		{
-			m_defaultVersification = defaultVersification;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MultilingScrBooks"/> class when there
-		/// is an object that can dynamically provide the versification to use on the fly.
-		/// </summary>
-		/// <param name="versificationProvider">The Scripture project meta-data provider used
-		/// to get the current versification system.</param>
-		/// ------------------------------------------------------------------------------------
-		public MultilingScrBooks(IScrProjMetaDataProvider versificationProvider)
-		{
-			m_versificationProvider = versificationProvider;
-
 			// If values exist already, depend on collecting garbage.
 			m_NameSets = new Dictionary<string, WsNames>(3);
 			m_NameSets[kWsSilCodes] = SILNameSet;
@@ -302,19 +286,7 @@ namespace SILUBS.SharedScrUtils
 			set {m_fProcessDeuteroCanonical = false;}	// nScrBooksLim = 66;
 			// This impletation does not support deutero-canonical book names.
 		}
-		
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// ScriptureBooksLim property
-		/// The maximum number of Scripture books that may be returned to the caller.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Description("Maximum number of Scripture books.")]
-		public int ScriptureBooksLim
-		{
-			get {return ScrReference.LastBook;}
-		}
-		
+				
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// ReferenceFormat property
@@ -400,19 +372,6 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether or not the reference string is a valid canonical scripture
-		/// reference.
-		/// </summary>
-		/// <param name="reference">Scripture reference</param>
-		/// <returns>True if the reference is valid. Otherwise false... imagine that.</returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool IsReferenceValid(string reference)
-		{
-			return (ParseRefString(reference).Valid);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Get the book name for a given book number.
 		/// </summary>
 		/// <param name="nBook">one-based index of the book (Genesis = 1).</param>
@@ -490,8 +449,8 @@ namespace SILUBS.SharedScrUtils
 			{
 				WsNames wsNames = BookNamesAndAbbrevsInRequestedWritingSystems.First();
 
-				BookLabel[] rgblBookNames = new BookLabel[ScriptureBooksLim];
-				for (int i = 0; i < ScriptureBooksLim; i++)
+				BookLabel[] rgblBookNames = new BookLabel[LastBook];
+				for (int i = 0; i < LastBook; i++)
 					rgblBookNames[i] = new BookLabel(wsNames.Name[i], (i + 1));
 
 				return rgblBookNames;
@@ -505,7 +464,7 @@ namespace SILUBS.SharedScrUtils
 		/// <param name="sTextToBeParsed">Reference string the user types in.</param>
 		/// <returns>The generated scReference object.</returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual ScrReference ParseRefString(string sTextToBeParsed)
+		public virtual BCVRef ParseRefString(string sTextToBeParsed)
 		{
 			return ParseRefString(sTextToBeParsed, 0);
 		}
@@ -519,7 +478,7 @@ namespace SILUBS.SharedScrUtils
 		/// parsing reference.</param>
 		/// <returns>The generated scReference object.</returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual ScrReference ParseRefString(string sTextToBeParsed, int startingBook)
+		public virtual BCVRef ParseRefString(string sTextToBeParsed, int startingBook)
 		{
 			Regex regex = new Regex(@"(?<book>\w?.*[a-zA-Z])\s?((?<chapter>\d+)(\D+(?<verse>\d+))?)?");
 			Match match = regex.Match(sTextToBeParsed.TrimStart());
@@ -555,10 +514,9 @@ namespace SILUBS.SharedScrUtils
 					chapter = 1;
 					verse = 1;
 				}
-				return new ScrReference(nBookNumber, chapter, verse,
-					m_versificationProvider !=null ? m_versificationProvider.Versification : m_defaultVersification);
+				return new BCVRef(nBookNumber, chapter, verse);
 			}
-			return new ScrReference();
+            return new BCVRef();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -569,7 +527,7 @@ namespace SILUBS.SharedScrUtils
 		/// <param name="scRef">The given scReference object.</param>
 		/// <returns>The generated text string reference.</returns>
 		/// ------------------------------------------------------------------------------------
-		public virtual string GetRefString(ScrReference scRef)
+		public virtual string GetRefString(BCVRef scRef)
 		{
 			return scRef.AsString;
 			// GetAbbrev, replace 1st 3 with new abbrev

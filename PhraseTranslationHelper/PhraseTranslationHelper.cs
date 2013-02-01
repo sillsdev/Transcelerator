@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Paratext.PluginFramework;
 using SIL.Utils;
 using System;
 

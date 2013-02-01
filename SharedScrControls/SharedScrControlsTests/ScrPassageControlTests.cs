@@ -15,7 +15,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
+using Rhino.Mocks;
 
 namespace SILUBS.SharedScrControls
 {
@@ -29,15 +31,6 @@ namespace SILUBS.SharedScrControls
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DummyScrPassageControl"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public DummyScrPassageControl(ScrReference initialRef) : base(initialRef, null, ScrVers.English)
-		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Create a new <see cref="ScrPassageDropDown"/> object
 		/// </summary>
 		/// <param name="owner">The owner</param>
@@ -47,28 +40,8 @@ namespace SILUBS.SharedScrControls
 		/// ------------------------------------------------------------------------------------
 		protected override ScrPassageDropDown CreateScrPassageDropDown(ScrPassageControl owner)
 		{
-			return new DummyScrPassageDropDown(owner, ScrVers.English);
+            return new DummyScrPassageDropDown(owner, m_versification);
 		}
-
-// Method is never used and produces a warning when compiled on Mono.
-#if false
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the component.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void InitializeComponent()
-		{
-			this.SuspendLayout();
-
-			// DummyScrPassageControl
-			// 
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {	  this.btnScrPsgDropDown,
-																		  this.txtScrRef});
-			this.Name = "DummyScrPassageControl";
-			this.ResumeLayout(false);
-		}
-#endif
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -140,10 +113,10 @@ namespace SILUBS.SharedScrControls
 			/// </summary>
 			/// <param name="owner">The owner.</param>
 			/// <param name="versification">The current versification to use when creating
-			/// instances of ScrReference</param>
+			/// instances of BCVRef</param>
 			/// --------------------------------------------------------------------------------
-			public DummyScrPassageDropDown(ScrPassageControl owner,
-				ScrVers versification) : base(owner, false, versification)
+			public DummyScrPassageDropDown(ScrPassageControl owner, IScrVers versification) :
+                base(owner, false, versification)
 			{
 			}
 
@@ -236,19 +209,9 @@ namespace SILUBS.SharedScrControls
 		private Form m_ctrlOwner;
 		private DummyScrPassageControl m_scp;
 		private DummyScrPassageControl m_filteredScp;
+	    private IScrVers m_versification;
 
 		#region Setup methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialization called once.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			ScrReferenceTests.InitializeScrReferenceForTests();
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// 
@@ -256,12 +219,30 @@ namespace SILUBS.SharedScrControls
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
 		public void TestSetup()
-		{		
-			m_ctrlOwner = new Form();
+		{
+		    m_versification = MockRepository.GenerateMock<IScrVers>();
+            m_versification.Stub(v => v.LastChapter(1)).Return(50);
+            m_versification.Stub(v => v.LastVerse(1, 1)).Return(31);
+            m_versification.Stub(v => v.LastVerse(1, 2)).Return(25);
+            m_versification.Stub(v => v.LastChapter(5)).Return(34);
+            m_versification.Stub(v => v.LastVerse(5, 1)).Return(46);
+            m_versification.Stub(v => v.LastVerse(5, 17)).Return(20);
+            m_versification.Stub(v => v.LastChapter(6)).Return(24);
+            m_versification.Stub(v => v.LastVerse(6, 1)).Return(18);
+            m_versification.Stub(v => v.LastChapter(7)).Return(21);
+            m_versification.Stub(v => v.LastVerse(7, 21)).Return(25);
+            m_versification.Stub(v => v.LastChapter(57)).Return(1);
+            m_versification.Stub(v => v.LastVerse(57, 1)).Return(25);
+            m_versification.Stub(v => v.LastChapter(59)).Return(5);
+            m_versification.Stub(v => v.LastVerse(59, 1)).Return(27);
+            m_versification.Stub(v => v.LastChapter(66)).Return(22);
+            m_versification.Stub(v => v.LastVerse(66, 1)).Return(20);
+            m_ctrlOwner = new Form();
 
-			m_scp = new DummyScrPassageControl(new ScrReference(01001001, ScrVers.English));
-			m_filteredScp = new DummyScrPassageControl(new ScrReference(01001001, ScrVers.English));
-			m_filteredScp.Initialize(m_filteredScp.ScReference, new [] {57, 59, 65});
+			m_scp = new DummyScrPassageControl();
+		    m_scp.Initialize(new BCVRef(01001001), m_versification);
+			m_filteredScp = new DummyScrPassageControl();
+            m_filteredScp.Initialize(new BCVRef(01001001), m_versification, new[] { 57, 59, 65 });
 
 			m_ctrlOwner.Controls.Add(m_scp);
 			m_ctrlOwner.Controls.Add(m_filteredScp);
@@ -308,11 +289,11 @@ namespace SILUBS.SharedScrControls
 			Assert.IsTrue(m_scp.Valid);
 			
 			// set to James 3:5
-			m_scp.ScReference = new ScrReference(59, 3, 5, ScrVers.English);
+			m_scp.ScReference = new BCVRef(59, 3, 5);
 			Assert.AreEqual("JAS 3:5", m_scp.ReferenceTextBox.Text);
 
 			// Set to Exodus 8:20
-			m_scp.ScReference = new ScrReference(2, 8, 20, ScrVers.English);
+			m_scp.ScReference = new BCVRef(2, 8, 20);
 			Assert.AreEqual("EXO 8:20", m_scp.ReferenceTextBox.Text);
 		}
 
@@ -482,7 +463,7 @@ namespace SILUBS.SharedScrControls
 		[Test]
 		public void FilteredListHasBooksInCanonicalOrder()
 		{
-			m_filteredScp.Initialize(new ScrReference(3, 3, 3, ScrVers.English), new [] {4, 5, 3, 2});
+			m_filteredScp.Initialize(new BCVRef(3, 3, 3), m_versification, new [] {4, 5, 3, 2});
 			Assert.AreEqual(4, m_filteredScp.BookLabels.Length);
 			Assert.AreEqual(2, m_filteredScp.BookLabels[0].BookNum);
 			Assert.AreEqual(3, m_filteredScp.BookLabels[1].BookNum);
@@ -498,7 +479,7 @@ namespace SILUBS.SharedScrControls
 		[Test]
 		public void FilteredListPreventsDuplicateBooks()
 		{
-			m_filteredScp.Initialize(new ScrReference(3, 3, 3, ScrVers.English), new[] { 4, 3, 3, 4 });
+            m_filteredScp.Initialize(new BCVRef(3, 3, 3), m_versification, new[] { 4, 3, 3, 4 });
 			Assert.AreEqual(2, m_filteredScp.BookLabels.Length);
 			Assert.AreEqual(3, m_filteredScp.BookLabels[0].BookNum);
 			Assert.AreEqual(4, m_filteredScp.BookLabels[1].BookNum);

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Paratext.PluginFramework;
 using SIL.Utils;
 
 namespace SILUBS.PhraseTranslationHelper

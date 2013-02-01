@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.SharedScrControls
@@ -94,11 +95,11 @@ namespace SILUBS.SharedScrControls
 		private Point m_saveMousePos = Point.Empty;
 		private ListTypes m_nowShowing;
 		private System.ComponentModel.IContainer components;
-		private ScrReference m_scRef;
+		private BCVRef m_scRef;
 		private bool m_fBooksOnly;
 		private ToolTip tipBook;
 		private bool m_canceled = true; // Make this the default, so that simply closing control will cancel changes
-		private ScrVers m_versification;
+		private IScrVers m_versification;
 		#endregion
 
 		#region Contructor and initialization
@@ -108,10 +109,9 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="owner"></param>
 		/// <param name="fBooksOnly">If true, show only books without chapter and verse</param>
-		/// <param name="versification">The current versification to use when creating
-		/// instances of ScrReference</param>
+		/// <param name="versification">The current versification to use</param>
 		/// -----------------------------------------------------------------------------------
-		public ScrPassageDropDown(Control owner, bool fBooksOnly, ScrVers versification)
+		public ScrPassageDropDown(Control owner, bool fBooksOnly, IScrVers versification)
 		{
 			SnapToDefaultButton = false;
 			CVButtonPreferredWidth = 30;
@@ -308,9 +308,9 @@ namespace SILUBS.SharedScrControls
 		/// Gets the drop-down's ScReference object.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrReference CurrentScRef
+		public BCVRef CurrentScRef
 		{
-			get { return new ScrReference(m_scRef); }
+			get { return new BCVRef(m_scRef); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -394,7 +394,7 @@ namespace SILUBS.SharedScrControls
 					{
 						bool fCancel = (m_nowShowing == ListTypes.Books);
 						if (fCancel)
-							m_scRef = ScrReference.Empty;
+							m_scRef = BCVRef.Empty;
 						Close(fCancel);
 					}
 					else
@@ -414,7 +414,7 @@ namespace SILUBS.SharedScrControls
 					break;
 
 				case Keys.Escape:
-					m_scRef = ScrReference.Empty;
+					m_scRef = BCVRef.Empty;
 					Close();
 					break;
 
@@ -813,7 +813,7 @@ namespace SILUBS.SharedScrControls
 			// reparse the reference object to track with the user's selection.
 			if (m_scRef.Book != button.BCVValue)
 			{
-				m_scRef = new ScrReference(button.BCVValue, 1, 1, m_versification);
+				m_scRef = new BCVRef(button.BCVValue, 1, 1);
 				ScrPassageControl.Reference = m_scRef.AsString;
 			}
 
@@ -852,7 +852,7 @@ namespace SILUBS.SharedScrControls
 			{
 				// Get the number of chapters based on the versification scheme.
 				List<int> chapterList = new List<int>();
-				for (int i = 1; i <= m_scRef.LastChapter; i++)
+				for (int i = 1; i <= m_versification.LastChapter(m_scRef.Book); i++)
 					chapterList.Add(i);
 				return chapterList;
 			}
@@ -875,7 +875,7 @@ namespace SILUBS.SharedScrControls
 			}
 
 			List<int> verseList = new List<int>();
-			for (int i = 1; i <= m_scRef.LastVerse; i++)
+			for (int i = 1; i <= m_versification.LastVerse(m_scRef.Book, m_scRef.Chapter); i++)
 				verseList.Add(i);
 			
 			if (ChapterSelected != null)

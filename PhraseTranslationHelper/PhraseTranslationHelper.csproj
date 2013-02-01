@@ -337,7 +337,10 @@
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
 del $(TargetName).plug
-ren $(TargetFileName) $(TargetName).plug
-copy /Y $(TargetName).plug C:\Projects\Paratext\Paratext\bin\Debug\plugins\</PostBuildEvent>
+copy $(TargetFileName) $(TargetName).plug
+if not exist  C:\Projects\Paratext\Paratext\bin\Debug\plugins md  C:\Projects\Paratext\Paratext\bin\Debug\plugins
+if not exist  C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl md  C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
+copy /Y $(TargetName).plug C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
+copy /Y $(TargetDir)\*.dll C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl</PostBuildEvent>
   </PropertyGroup>
 </Project>

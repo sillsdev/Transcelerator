@@ -458,4 +458,8 @@
   <KeyTermRule id="group of servants" rule="Exclude"/>
   <KeyTermRule id="to have a vision" rule="Exclude"/>
   <KeyTermRule id="to be straight, tomake straight (one's way)" rule="Exclude"/>
+  <KeyTermRule id="terms for people in authority • manager, steward" rule="Exclude">
+  <Alternate name="manager"/>
+  <Alternate name="steward"/>
+  </KeyTermRule>
 </KeyTermRules>

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Paratext.PluginFramework;
 
 namespace SILUBS.PhraseTranslationHelper
 {
@@ -103,7 +104,7 @@ namespace SILUBS.PhraseTranslationHelper
 			// Initially, we add one empty list
 			m_list.Add(new KeyTermMatch(new Word[0], keyTerm, m_fMatchForRefOnly));
 			bool firstWordOfPhrase = true;
-			foreach (Word metaWord in phrase.Split(new[]{' '}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
+			foreach (Word metaWord in phrase.Split(new[]{' ', '\u00a0'}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
 			{
 				List<Word> allWords = AllWords(metaWord, firstWordOfPhrase);
 				if (allWords.Count > 0)
