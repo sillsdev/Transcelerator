@@ -81,7 +81,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="GenerateTemplateQuestionGroupHeadingsColor" Type="System.Drawing.Color" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Blue</Value>
     </Setting>
     <Setting Name="GenerateTemplateEnglishQuestionTextColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Gray</Value>

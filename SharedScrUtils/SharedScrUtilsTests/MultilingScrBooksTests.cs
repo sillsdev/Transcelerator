@@ -27,24 +27,13 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialization called once.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[TestFixtureSetUp]
-		public void FixtureSetup()
-		{
-			ScrReferenceTests.InitializeScrReferenceForTests();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Setups this instance.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[SetUp]
 		public void TestSetup()
 		{
-			m_mlscrBook = new MultilingScrBooks(ScrVers.English);
+			m_mlscrBook = new MultilingScrBooks();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -89,8 +78,6 @@ namespace SILUBS.SharedScrUtils
 		{
 			Assert.AreEqual("Genesis".ToLower(), m_mlscrBook.GetBookName(1).ToLower(),
 				"Genesis not found");
-			Assert.IsTrue(m_mlscrBook.IsReferenceValid("GEN 1:4"),
-				"GEN 1:4 said to be an invalid Reference");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -116,10 +103,10 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_FullNameEnglish()
 		{
-			ScrReference judeRef = m_mlscrBook.ParseRefString("Jude 99:1");
+			BCVRef judeRef = m_mlscrBook.ParseRefString("Jude 99:1");
 			Assert.AreEqual(65099001, judeRef.BBCCCVVV);
-			Assert.IsFalse(judeRef.Valid);
-			ScrReference judgesRef = m_mlscrBook.ParseRefString("Judges 3:6");
+            Assert.IsTrue(judeRef.Valid);
+			BCVRef judgesRef = m_mlscrBook.ParseRefString("Judges 3:6");
 			Assert.AreEqual(7003006, judgesRef.BBCCCVVV);
 			Assert.IsTrue(judgesRef.Valid);
 		}
@@ -132,7 +119,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_AbbrEnglish()
 		{
-			ScrReference timRef = m_mlscrBook.ParseRefString("2Tim 1:5");
+			BCVRef timRef = m_mlscrBook.ParseRefString("2Tim 1:5");
 			Assert.AreEqual(55001005, timRef.BBCCCVVV);
 			Assert.IsTrue(timRef.Valid);
 		}
@@ -145,7 +132,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_FullNameSpanish()
 		{
-			ScrReference timRef = m_mlscrBook.ParseRefString("2 Timoteo 1:5");
+			BCVRef timRef = m_mlscrBook.ParseRefString("2 Timoteo 1:5");
 			Assert.AreEqual(55001005, timRef.BBCCCVVV);
 			Assert.IsTrue(timRef.Valid);
 		}
@@ -158,7 +145,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_AbbrSpanish()
 		{
-			ScrReference timRef = m_mlscrBook.ParseRefString("2 Tim 1:5");
+			BCVRef timRef = m_mlscrBook.ParseRefString("2 Tim 1:5");
 			Assert.AreEqual(55001005, timRef.BBCCCVVV);
 			Assert.IsTrue(timRef.Valid);
 		}
@@ -171,7 +158,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_SILName()
 		{
-			ScrReference timRef = m_mlscrBook.ParseRefString("2TI 1:5");
+			BCVRef timRef = m_mlscrBook.ParseRefString("2TI 1:5");
 			Assert.AreEqual(55001005, timRef.BBCCCVVV);
 			Assert.IsTrue(timRef.Valid);
 		}
@@ -184,7 +171,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefString_AbbrSIL()
 		{
-			ScrReference timRef = m_mlscrBook.ParseRefString("4T 1:5");
+			BCVRef timRef = m_mlscrBook.ParseRefString("4T 1:5");
 			Assert.AreEqual(55001005, timRef.BBCCCVVV);
 			Assert.IsTrue(timRef.Valid);
 		}
@@ -205,7 +192,7 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test parsing invalid reference strings. We expect to get an invalid ScrReference,
+		/// Test parsing invalid reference strings. We expect to get an invalid BCVRef,
 		/// but not an exception.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -235,7 +222,7 @@ namespace SILUBS.SharedScrUtils
 		[Test]
 		public void ParseRefStringWithVerseBridge()
 		{
-			ScrReference scrRef = m_mlscrBook.ParseRefString("LUK 23:50-51");
+			BCVRef scrRef = m_mlscrBook.ParseRefString("LUK 23:50-51");
 
 			Assert.IsTrue(scrRef.Valid);
 			Assert.AreEqual(42023050, scrRef.BBCCCVVV);

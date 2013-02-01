@@ -334,6 +334,7 @@ namespace SILUBS.PhraseTranslationHelper.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Blue")]
         public global::System.Drawing.Color GenerateTemplateQuestionGroupHeadingsColor {
             get {
                 return ((global::System.Drawing.Color)(this["GenerateTemplateQuestionGroupHeadingsColor"]));

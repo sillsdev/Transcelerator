@@ -11,6 +11,7 @@
 // File: ITermRenderingInfo.cs
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using Paratext.PluginFramework;
 
 namespace SILUBS.PhraseTranslationHelper
 {

@@ -15,6 +15,7 @@ using System;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.PhraseTranslationHelper
@@ -72,20 +73,10 @@ namespace SILUBS.PhraseTranslationHelper
 	/// ----------------------------------------------------------------------------------------
 	public class SimpleQuestionKey : QuestionKey
 	{
-		private static readonly int s_startRef;
-		private static readonly int s_endRef;
+	    private const int s_startRef = 01001001;
+	    private const int s_endRef = 66022021;
 
-		#region Constructors
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes the <see cref="SimpleQuestionKey"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		static SimpleQuestionKey()
-		{
-			s_startRef = ScrReference.StartOfBible(ScrVers.English).BBCCCVVV;
-			s_endRef = ScrReference.EndOfBible(ScrVers.English).BBCCCVVV;
-		}
+	    #region Constructors
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -117,5 +108,5 @@ namespace SILUBS.PhraseTranslationHelper
 			set { throw new NotImplementedException(); }
 		}
 		#endregion
-	}
+    }
 }

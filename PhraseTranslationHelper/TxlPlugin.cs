@@ -10,6 +10,8 @@
 // 
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using Paratext.PluginFramework;
@@ -20,44 +22,50 @@ namespace SILUBS.PhraseTranslationHelper
     [Export(typeof(ParatextMenuPlugin))]
     [ExportMetadata("InsertAfterMenuName", "Tools|Text Converter")]
     [ExportMetadata("MenuText", "Transcelerator")]
+    [ExportMetadata("RequiresActiveProject", true)]
     public class TxlPlugin : ParatextMenuPlugin
     {
         [Import("Project Name")]
-        public string ProjectName { get; set; }
+        public Func<string> ProjectName { get; set; }
 
         [Import("Calling Application Name")]
-        public string ApplicationName { get; set; }
+        public Func<string> ApplicationName { get; set; }
 
         [Import("Key Terms")]
-        public IKeyTerm[] KeyTerms { get; set; }
+        public Func<IEnumerable<IKeyTerm>> KeyTerms { get; set; }
 
         [Import("Vernacular Font")]
-        public Font VernFont { get; set; }
+        public Func<Font> VernFont { get; set; }
 
-        [Import("Vernacular ICU Locale")]
-        public string VernIcuLocale { get; set; }
+        [Import("Get Vernacular ICU Locale")]
+        public Func<string, string> VernIcuLocale { get; set; }
 
         [Import("Vernacular Right-to-Left")]
-        public bool VernRtoL { get; set; }
+        public Func<bool> VernRtoL { get; set; }
 
         [Import("LCF Folder")]
-        public string DefaultLcfFolder { get; set; }
+        public Func<string> DefaultLcfFolder { get; set; }
 
         [Import("Current Reference")]
-        public int CurrentRef { get; set; }
+        public Func<IScrVers, int> CurrentRef { get; set; }
+
+        [Import("Get Versification")]
+        public Func<string, IScrVers> GetVersification { get; set; }
 
         public void HandleMenuClick()
         {
-            ScrReference startRef = new ScrReference(CurrentRef, ScrVers.Original);
+            IScrVers englishVersification = GetVersification("English");
+            int currRef = CurrentRef(englishVersification);
+            BCVRef startRef = new BCVRef(currRef);
             startRef.Chapter = 1;
             startRef.Verse = 1;
-            ScrReference endRef = new ScrReference(CurrentRef, ScrVers.Original);
-            endRef.Chapter = endRef.LastChapter;
-            endRef.Verse = endRef.LastVerse;
+            BCVRef endRef = new BCVRef(currRef);
+            endRef.Chapter = englishVersification.LastChapter(endRef.Book);
+            endRef.Verse = englishVersification.LastVerse(endRef.Book, endRef.Chapter);
 
-            var unsDlg = new UNSQuestionsDialog(ProjectName, KeyTerms, VernFont,
-                VernIcuLocale, VernRtoL, DefaultLcfFolder, ApplicationName,
-                startRef, endRef, null, null, null);
+            var unsDlg = new UNSQuestionsDialog(ProjectName(), KeyTerms(), VernFont(),
+                VernIcuLocale("generate templates"), VernRtoL(), DefaultLcfFolder(), ApplicationName(),
+                englishVersification, startRef, endRef, b => { }, null, null);
 
             unsDlg.Show();
         }

@@ -25,12 +25,6 @@ namespace SILUBS.PhraseTranslationHelper
 	[TestFixture]
 	public class QuestionSfmFileAccessorTests
 	{
-		[TestFixtureSetUp]
-		public void SetupFixture()
-		{
-			BCVRefTests.InitializeVersificationTable();
-		}
-
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests basic parsing of overview and detail questions, answers, and comments.

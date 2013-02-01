@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Paratext.PluginFramework;
 
 namespace SILUBS.SharedScrUtils
 {
@@ -156,7 +157,7 @@ namespace SILUBS.SharedScrUtils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:BCVRef"/> class based on a string
+		/// Initializes a new instance of the BCVRef class based on a string
 		/// that can be parsed.
 		/// </summary>
 		/// <param name="strReference">The reference as a string.</param>
@@ -166,6 +167,16 @@ namespace SILUBS.SharedScrUtils
 			Parse(strReference);
 		}
 		#endregion
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets an instance representing an "empty" reference.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public static BCVRef Empty
+        {
+            get { return new BCVRef(); }
+        }
 
 		#region Operators
 		/// ------------------------------------------------------------------------------------
@@ -425,9 +436,20 @@ namespace SILUBS.SharedScrUtils
 					return false;
 				return (m_chapter >= 1 && (m_verse > 0 || (m_verse == 0 && m_chapter == 1)));
 			}
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Determines if the reference is valid for the given versification.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public virtual bool IsValidInVersification(IScrVers versification)
+        {
+            return Valid && (versification.LastChapter(Book) >= Chapter &&
+                versification.LastVerse(Book, Chapter) >= Verse);
+        }
+
+	    /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine if the book is valid.
 		/// </summary>

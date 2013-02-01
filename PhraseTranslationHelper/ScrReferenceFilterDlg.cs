@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
 using System.Windows.Forms;
+using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.PhraseTranslationHelper
@@ -25,8 +26,8 @@ namespace SILUBS.PhraseTranslationHelper
 	public partial class ScrReferenceFilterDlg : Form
 	{
 		#region Data members
-		private readonly ScrReference m_firstAvailableRef;
-		private readonly ScrReference m_lastAvailableRef;
+		private readonly BCVRef m_firstAvailableRef;
+        private readonly BCVRef m_lastAvailableRef;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -35,15 +36,16 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Initializes a new instance of the <see cref="T:ScrReferenceFilterDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal ScrReferenceFilterDlg(ScrReference initialFromRef, ScrReference initialToRef,
+        internal ScrReferenceFilterDlg(IScrVers versification, BCVRef initialFromRef, BCVRef initialToRef,
 			int[] canonicalBookIds)
 		{
 			InitializeComponent();
-			scrPsgFrom.Initialize(initialFromRef, canonicalBookIds);
-			scrPsgTo.Initialize(initialToRef, canonicalBookIds);
-			m_firstAvailableRef = new ScrReference(canonicalBookIds[0], 1, 1, initialFromRef.Versification);
-			m_lastAvailableRef = new ScrReference(canonicalBookIds.Last(), 1, 1, initialToRef.Versification);
-			m_lastAvailableRef = m_lastAvailableRef.LastReferenceForBook;
+			scrPsgFrom.Initialize(new BCVRef(initialFromRef), versification, canonicalBookIds);
+            scrPsgTo.Initialize(new BCVRef(initialToRef), versification, canonicalBookIds);
+            m_firstAvailableRef = new BCVRef(canonicalBookIds[0], 1, 1);
+			m_lastAvailableRef = new BCVRef(canonicalBookIds.Last(), 1, 1);
+            m_lastAvailableRef.Chapter = versification.LastChapter(m_lastAvailableRef.Book);
+            m_lastAvailableRef.Verse = versification.LastVerse(m_lastAvailableRef.Book, m_lastAvailableRef.Chapter);
 			if (initialFromRef == m_firstAvailableRef && initialToRef == m_lastAvailableRef)
 				btnClearFilter.Enabled = false;
 		}
@@ -55,7 +57,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the From reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrReference FromRef
+		public BCVRef FromRef
 		{
 			get { return scrPsgFrom.ScReference; }
 		}
@@ -65,7 +67,7 @@ namespace SILUBS.PhraseTranslationHelper
 		/// Gets the To reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrReference ToRef
+		public BCVRef ToRef
 		{
 			get { return scrPsgTo.ScReference; }
 		}
@@ -78,9 +80,9 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="newReference">The new reference.</param>
 		/// ------------------------------------------------------------------------------------
-		private void scrPsgFrom_PassageChanged(ScrReference newReference)
+		private void scrPsgFrom_PassageChanged(BCVRef newReference)
 		{
-			if (newReference != ScrReference.Empty && newReference > scrPsgTo.ScReference)
+			if (newReference != BCVRef.Empty && newReference > scrPsgTo.ScReference)
 				scrPsgTo.ScReference = scrPsgFrom.ScReference;
 		}
 
@@ -90,9 +92,9 @@ namespace SILUBS.PhraseTranslationHelper
 		/// </summary>
 		/// <param name="newReference">The new reference.</param>
 		/// ------------------------------------------------------------------------------------
-		private void scrPsgTo_PassageChanged(ScrReference newReference)
+		private void scrPsgTo_PassageChanged(BCVRef newReference)
 		{
-			if (newReference != ScrReference.Empty && newReference < scrPsgFrom.ScReference)
+			if (newReference != BCVRef.Empty && newReference < scrPsgFrom.ScReference)
 				scrPsgFrom.ScReference = scrPsgTo.ScReference;
 		}
 
@@ -103,8 +105,8 @@ namespace SILUBS.PhraseTranslationHelper
 		/// ------------------------------------------------------------------------------------
 		private void btnClearFilter_Click(object sender, System.EventArgs e)
 		{
-			scrPsgFrom.ScReference = m_firstAvailableRef;
-			scrPsgTo.ScReference = m_lastAvailableRef;
+            scrPsgFrom.ScReference = new BCVRef(m_firstAvailableRef);
+            scrPsgTo.ScReference = new BCVRef(m_lastAvailableRef);
 		}
 		#endregion
 	}

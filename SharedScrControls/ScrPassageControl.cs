@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2003' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2003' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -22,40 +22,41 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Resources;
 using System.Windows.Forms.VisualStyles;
+using Paratext.PluginFramework;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.SharedScrControls
 {
 	/// <summary>
-	/// Summary description for ScrPassageControl.
+	/// ScrPassageControl.
 	/// </summary>
 	public class ScrPassageControl : UserControl, IMessageFilter
 	{
-		private const int kButtonWidthOnToolstrip = 11;
-
 		#region Data members
+        private const int kButtonWidthOnToolstrip = 11;
+        /// <summary>The string that separates chapter numbers from verse numbers.</summary>
+        public const string ChapterVerseSepr = ":";
+
 		private IContainer components;
 
 		private bool m_mouseDown = false;
 		private bool m_buttonHot = false;
 		private bool m_textBoxHot = false;
 
-		VersificationTable m_versTable;
-
 		/// <summary>The object that provides all the information about book names and abbreviations</summary>
 		protected MultilingScrBooks m_mulScrBooks;
+        /// <summary>The versification system to use</summary>
+        protected IScrVers m_versification;
 
 		/// <summary></summary>
 		protected Form m_dropdownForm;
 
 		private BookLabel[] m_bookLabels;
 		private List<int> m_availableBookIds; //array of available book nums
-		private ScrReference m_scRef;
+        private BCVRef m_scRef;
 		private int[] m_rgnEncodings;
 		private bool m_fParentIsToolstrip = false;
-		/// <summary>Scripture project meta-data provider</summary>
-		protected IScrProjMetaDataProvider m_scrProj;
 
 		/// <summary></summary>
 		protected TextBox txtScrRef;
@@ -68,33 +69,17 @@ namespace SILUBS.SharedScrControls
 		/// <summary></summary>
 		public event PassageChangedHandler PassageChanged;
 		/// <summary></summary>
-		public delegate void PassageChangedHandler(ScrReference newReference);
+		public delegate void PassageChangedHandler(BCVRef newReference);
 		#endregion
 
 		#region Construction, Destruction, and initialization
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Default constructor
+		/// Constructor
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public ScrPassageControl() : this(new ScrReference(1, 1, 1, ScrVers.English), null, ScrVers.English)
+		public ScrPassageControl()
 		{
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Non-default constructor
-		/// </summary>
-		/// <param name="reference">Initial reference</param>
-		/// <param name="scrProj">Object that can provide meta-dat information about a Scripture
-		/// project.</param>
-		/// <param name="versification">The versification to use if scrProj is not set.</param>
-		/// ------------------------------------------------------------------------------------
-		public ScrPassageControl(ScrReference reference, IScrProjMetaDataProvider scrProj,
-			ScrVers versification)
-		{
-			m_scrProj = scrProj;
-
 			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.DoubleBuffer |
 				ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
 
@@ -104,9 +89,7 @@ namespace SILUBS.SharedScrControls
 			if (DesignMode)
 				return;
 
-			CreateMultilingScrBooks(scrProj, versification);
-			Initialize(reference);
-			
+            m_mulScrBooks = new MultilingScrBooks();	
 			m_dropdownForm = null;
 			
 #if __MonoCS__ // Setting MinumumSize allows mono's buggy ToolStrip layout of ToolStripControlHost's to work.
@@ -114,41 +97,31 @@ namespace SILUBS.SharedScrControls
 #endif
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Creates the object that can provide multi-lingual names and abbreviations for
-		/// Scripture books.
-		/// </summary>
-		/// <param name="scrProj">The Scripture project meta-data provided (can be null).</param>
-		/// <param name="versification">The default versification to use for references if
-		/// scrProj is not set.</param>
-		/// ------------------------------------------------------------------------------------
-		protected virtual void CreateMultilingScrBooks(IScrProjMetaDataProvider scrProj, ScrVers versification)
-		{
-			m_mulScrBooks = scrProj != null ? new MultilingScrBooks(scrProj) : new MultilingScrBooks(versification);
-		}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Initialization following the default constructor.
+        /// </summary>
+        /// <param name="reference">Initial reference</param>
+        /// <param name="versification">The versification to use if scrProj is not set.</param>
+        /// ------------------------------------------------------------------------------------
+        public void Initialize(BCVRef reference, IScrVers versification)
+        {
+			Initialize(reference, versification, null);
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialization, either from constructor or elsewhere following the default constructor.
+		/// Initialization following the default constructor, with constrained set of books to
+		/// display.
 		/// </summary>
 		/// <param name="reference">Initial reference</param>
+        /// <param name="versification">The versification to use if scrProj is not set.</param>
+        /// <param name="availableBooks">Array of canonical book IDs to include</param>
 		/// ------------------------------------------------------------------------------------
-		public void Initialize(ScrReference reference)
+        public void Initialize(BCVRef reference, IScrVers versification, int[] availableBooks)
 		{
-			Initialize(reference, null);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initialization, either from constructor or elsewhere following the default constructor.
-		/// </summary>
-		/// <param name="reference">Initial reference</param>
-		/// <param name="availableBooks">Array of canonical book IDs to include</param>
-		/// ------------------------------------------------------------------------------------
-		public void Initialize(ScrReference reference, int[] availableBooks)
-		{
-			m_availableBookIds = null;
+		    m_versification = versification;
+            m_availableBookIds = null;
 
 			if (availableBooks != null)
 			{
@@ -162,14 +135,11 @@ namespace SILUBS.SharedScrControls
 			if (reference != null && !reference.IsEmpty)
 				ScReference = reference;
 			else if (m_bookLabels != null && m_bookLabels.Length > 0)
-				ScReference = new ScrReference(m_bookLabels[0].BookNum, 1, 1, Versification);
+				ScReference = new BCVRef(m_bookLabels[0].BookNum, 1, 1);
 			else
-				ScReference = new ScrReference(0, 0, 0, Versification);
+				ScReference = BCVRef.Empty;
 
 			Reference = m_mulScrBooks.GetRefString(ScReference);
-
-			// Use a default versification scheme if one is not available.
-			m_versTable = VersificationTable.Get(Versification);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -196,7 +166,6 @@ namespace SILUBS.SharedScrControls
 					m_dropdownForm.Dispose();
 			}
 			m_mulScrBooks = null;
-			m_versTable = null;
 			m_rgnEncodings = null;
 			m_availableBookIds = null;
 			m_bookLabels = null;
@@ -293,21 +262,6 @@ namespace SILUBS.SharedScrControls
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the versification.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		protected ScrVers Versification
-		{
-			get
-			{
-				return (m_scrProj != null) ? m_scrProj.Versification :
-					(m_scRef != null && m_scRef.Versification != ScrVers.Unknown ?
-					m_scRef.Versification : ScrVers.English);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets or sets the contents of the text portion of the control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -339,7 +293,7 @@ namespace SILUBS.SharedScrControls
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public IMultilingScrBooks MulScrBooks
+		public MultilingScrBooks MulScrBooks
 		{
 			get {return m_mulScrBooks;}
 		}
@@ -351,12 +305,12 @@ namespace SILUBS.SharedScrControls
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ScrReference ScReference
+		public BCVRef ScReference
 		{
-			get {return (m_scRef == null) ? null : new ScrReference(m_scRef);}
+            get { return (m_scRef == null) ? null : new BCVRef(m_scRef); }
 			set
 			{
-				m_scRef = new ScrReference(value);
+                m_scRef = new BCVRef(value);
 				if (m_scRef.Valid)
 					Reference = m_scRef.AsString;
 			}
@@ -391,18 +345,6 @@ namespace SILUBS.SharedScrControls
 			{
 				return m_mulScrBooks.ParseRefString(Reference).Valid;
 			}
-		}
-		
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the string that separates chapter numbers from verse numbers.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public string ChapterVerseSepr
-		{
-			get { return m_scrProj != null ? m_scrProj.ChapterVerseSepr : ":"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -576,7 +518,7 @@ namespace SILUBS.SharedScrControls
 			Reference = Reference.Trim();
 
 			// Get the first reference that matches.
-			ScrReference newScRef = ParseRefString(Reference);
+			BCVRef newScRef = ParseRefString(Reference);
 
 			// make sure that the book is valid
 			if (newScRef.Book == 0)
@@ -589,16 +531,16 @@ namespace SILUBS.SharedScrControls
 			}
 
 			// Use the versification scheme to make sure the chapter number is valid.
-			int lastChapter = m_versTable.LastChapter(newScRef.Book);
+			int lastChapter = m_versification.LastChapter(newScRef.Book);
 			if (newScRef.Chapter > lastChapter)
 			{
 				newScRef.Chapter = lastChapter;
 				newScRef.Verse = 1;
-				newScRef.Verse = m_versTable.LastVerse(newScRef.Book, lastChapter);
+				newScRef.Verse = m_versification.LastVerse(newScRef.Book, lastChapter);
 			}
 			else
 			{
-				int lastVerse = m_versTable.LastVerse(newScRef.Book, newScRef.Chapter);
+				int lastVerse = m_versification.LastVerse(newScRef.Book, newScRef.Chapter);
 				// Make sure the verse number is valid
 				if (newScRef.Verse > lastVerse)
 					newScRef.Verse = lastVerse;
@@ -619,23 +561,23 @@ namespace SILUBS.SharedScrControls
 
 				// HACK (EberhardB): This is a little bit of a hack. The passage hasn't actually 
 				// changed, but this is the easiest way to put the focus back to where it belongs. 
-				InvokePassageChanged(ScrReference.Empty);
+				InvokePassageChanged(BCVRef.Empty);
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Parses the user typed in string. Creates and returns a ScrReference object.
+		/// Parses the user typed in string. Creates and returns a BCVRef object.
 		/// </summary>
 		/// <param name="sTextToBeParsed">Reference string the user types in.</param>
 		/// <returns>The generated scReference object.</returns>
 		/// ------------------------------------------------------------------------------------
-		public ScrReference ParseRefString(string sTextToBeParsed)
+		public BCVRef ParseRefString(string sTextToBeParsed)
 		{
 			if (m_availableBookIds == null)
 				return m_mulScrBooks.ParseRefString(sTextToBeParsed);
 
-			var scrRef = new ScrReference();
+            var scrRef = new BCVRef();
 
 			if (m_availableBookIds.Count == 0)
 				return scrRef;
@@ -661,21 +603,21 @@ namespace SILUBS.SharedScrControls
 			if (!m_availableBookIds.Contains(scrRef.Book))
 			{
 				// set it to the first book in the project.
-				return new ScrReference(m_availableBookIds[0], 1, 1, Versification);
+				return new BCVRef(m_availableBookIds[0], 1, 1);
 			}
 			return scrRef;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether the specified ScrReference is in the list of available books.
+		/// Determines whether the specified BCVRef is in the list of available books.
 		/// </summary>
-		/// <param name="scrRef">The given ScrReference</param>
+		/// <param name="scrRef">The given BCVRef</param>
 		/// <returns><c>true</c> if the book reference is in the list of available books; 
 		/// otherwise, <c>false</c>.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public bool IsReferenceValid(ScrReference scrRef)
+		public bool IsReferenceValid(BCVRef scrRef)
 		{
 			return BookLabels != null && BookLabels.Any(bookLabel => bookLabel.BookNum == scrRef.Book);
 		}
@@ -686,10 +628,10 @@ namespace SILUBS.SharedScrControls
 		/// </summary>
 		/// <param name="reference">The reference.</param>
 		/// ------------------------------------------------------------------------------------
-		protected virtual void InvokePassageChanged(ScrReference reference)
+		protected virtual void InvokePassageChanged(BCVRef reference)
 		{
 			if (PassageChanged != null)
-				PassageChanged(new ScrReference(reference));
+				PassageChanged(new BCVRef(reference));
 		}
 		#endregion
 
@@ -702,7 +644,7 @@ namespace SILUBS.SharedScrControls
 		/// ------------------------------------------------------------------------------------
 		protected virtual ScrPassageDropDown CreateScrPassageDropDown(ScrPassageControl owner)
 		{
-			return new ScrPassageDropDown(owner, false, Versification);
+			return new ScrPassageDropDown(owner, false, m_versification);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -788,8 +730,7 @@ namespace SILUBS.SharedScrControls
 		{
 			if (ScReference.Book != book)
 			{
-				Reference = m_mulScrBooks.GetRefString(new ScrReference(book, 1, 1, 
-					Versification));
+				Reference = m_mulScrBooks.GetRefString(new BCVRef(book, 1, 1));
 			}
 
 			// Select the chapter portion of the reference in the text box.
@@ -814,8 +755,7 @@ namespace SILUBS.SharedScrControls
 			// in the text box.
 			if (ScReference.Book != book || ScReference.Chapter != chapter)
 			{
-				Reference = m_mulScrBooks.GetRefString(
-					new ScrReference(book, chapter, 1, Versification));
+				Reference = m_mulScrBooks.GetRefString(new BCVRef(book, chapter, 1));
 			}
 
 			// Select the verse portion of the reference in the text box.
@@ -839,7 +779,7 @@ namespace SILUBS.SharedScrControls
 				return;
 
 			bool fCanceled = ((ScrPassageDropDown)m_dropdownForm).Canceled;
-			ScrReference curRef = ((ScrPassageDropDown)m_dropdownForm).CurrentScRef;
+			BCVRef curRef = ((ScrPassageDropDown)m_dropdownForm).CurrentScRef;
 			m_dropdownForm.Dispose();
 			m_dropdownForm = null;
 
@@ -850,8 +790,7 @@ namespace SILUBS.SharedScrControls
 			else
 				InvokePassageChanged(curRef);
 
-			if (m_scrProj == null)
-				txtScrRef.Focus();
+			txtScrRef.Focus();
 
 			// If the user canceled the drop down we want to leave the focus in the combo box
 			// - similar to a real combo box
@@ -909,7 +848,7 @@ namespace SILUBS.SharedScrControls
 				Reference = ScReference.AsString;
 				// HACK (EberhardB): This is a little bit of a hack. The passage hasn't actually 
 				// changed, but this is the easiest way to put the focus back to where it belongs. 
-				InvokePassageChanged(ScrReference.Empty);
+				InvokePassageChanged(BCVRef.Empty);
 			}
 		}
 
