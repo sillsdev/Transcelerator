@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SIL/UBS Shared")]
-[assembly: AssemblyCopyright("Copyright © 2011-$YEAR SIL International ")]
+[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International ")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,9 +31,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-// Format: FwMajorVersion.FwMinorVersion.FwRevision.NumberOfDays
-[assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$NUMBEROFDAYS")]
-// Format: FwMajorVersion.FwMinorVersion.FwRevision
-[assembly: AssemblyInformationalVersionAttribute("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}")]
-// Format: FwMajorVersion.FwMinorVersion.FwRevision.Days since Jan 1, 2000.Seconds since midnight
-[assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]
+[assembly: AssemblyFileVersion("7.3.0.41100")]
+[assembly: AssemblyInformationalVersionAttribute("7.3.0")]
+[assembly: AssemblyVersion("7.3.0.*")]

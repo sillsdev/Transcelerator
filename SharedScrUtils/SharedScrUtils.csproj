@@ -79,8 +79,7 @@
   <ItemGroup>
     <Compile Include="BCVRef.cs" />
     <Compile Include="BookLabel.cs" />
-    <None Include="AssemblyInfo.cs" />
-    <Compile Include="GeneratedAssemblyInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="MultilingScrBooks.cs" />
   </ItemGroup>
   <ItemGroup>
