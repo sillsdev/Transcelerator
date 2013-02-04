@@ -1,22 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}</ProjectGuid>
+    <ProjectGuid>{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SILUBS.SharedScrControls</RootNamespace>
-    <AssemblyName>SharedScrControls</AssemblyName>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>SILUBS.Transcelerator</RootNamespace>
+    <AssemblyName>TransceleratorTests</AssemblyName>
+    <FileAlignment>512</FileAlignment>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -25,6 +19,10 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -37,81 +35,71 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Output\Debug\</OutputPath>
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
     <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\Output\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Paratext\Utilities\nunit\bin\framework\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="ParatextPluginFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\ParatextPluginFramework.dll</HintPath>
+      <HintPath>..\..\..\Paratext\ParatextPluginFramework\bin\Debug\ParatextPluginFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QuestionSfmFileAccessorTests.cs" />
+    <Compile Include="KeyTermMatchTests.cs" />
+    <Compile Include="KeyTermMatchBuilderTests.cs" />
+    <Compile Include="PhraseSubstitutionsDlgTests.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PhraseTranslationHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DropDownContainer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LabelButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SantaFeFocusMessageHandler.cs" />
-    <Compile Include="ScrPassageControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ScrPassageDropDown.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="QuestionProviderTests.cs" />
+    <Compile Include="RenderingSelectionRuleTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScrPassageControl.resx">
-      <DependentUpon>ScrPassageControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ScrPassageDropDown.resx">
-      <DependentUpon>ScrPassageDropDown.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -119,41 +107,40 @@
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\DropDownArrowWide.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharedScrUtils\SharedScrUtils.csproj">
+    <ProjectReference Include="..\..\SharedScrControls\SharedScrControls.csproj">
+      <Project>{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}</Project>
+      <Name>SharedScrControls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtils.csproj">
       <Project>{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}</Project>
       <Name>SharedScrUtils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SilUtils\SilUtils.csproj">
+    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj">
+      <Project>{4528287F-BA86-49D8-AFBB-1250A60CE7EA}</Project>
+      <Name>SharedScrUtilsTests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transcelerator.csproj">
+      <Project>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</Project>
+      <Name>PhraseTranslationHelper</Name>
+    </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

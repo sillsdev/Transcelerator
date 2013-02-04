@@ -4,3 +4,4 @@ PhraseTranslationHelper/_*
 *.user
 obj/*
 Output/*
+Installer/output/*

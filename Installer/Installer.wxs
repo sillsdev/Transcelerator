@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
+<!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
+<?define Property_ProductVersion = "1.0.0" ?>
+
+<!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
+<?define Property_ProductCode = "*" ?>
+
+<!--Don't even think of EVER changing this, despite the counter-intuitive name. What it is: "a shared identifier that represents multiple versions of an application" -->
+<?define Property_UpgradeCode = "{6CA771D3-AA98-4cab-8616-2777C8EEA23D}" ?>
+
+<!-- good intro to the component vs. file thing, and why each file here is a separate component:
+http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+
+  <Product Id="$(var.Property_ProductCode)" Name="Transcelerator $(var.Property_ProductVersion)" Language="1033"
+             Version="$(var.Property_ProductVersion)" Manufacturer="SIL"
+             UpgradeCode="$(var.Property_UpgradeCode)">
+
+    <Package  Compressed="yes" InstallerVersion="200" />
+
+	  <MajorUpgrade   Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="A later version of Transcelerator is already installed. If you really want to downgrade, first uninstall Transcelerator, then do this install again."/>
+
+    <Upgrade Id ="$(var.Property_UpgradeCode)" >
+      <UpgradeVersion Minimum ="$(var.Property_ProductVersion)" OnlyDetect ="yes" Property ="NEWVERSIONDETECTED" />
+      <UpgradeVersion Minimum ="0.0.0" IncludeMinimum ="yes" Maximum ="$(var.Property_ProductVersion)" IncludeMaximum ="no" Property ="OLDERVERSIONBEINGUPGRADED" />
+    </Upgrade >
+
+    <!-- show the license page -->
+    <UIRef Id="WixUI_Minimal"/>
+    <!-- Top banner / 493 × 58 -->
+    <WixVariable Id='WixUIBannerBmp' Value='installerBanner.jpg' />
+    <!-- Background bitmap used on the welcome and completion dialogs / 493 × 312 -->
+    <WixVariable Id='WixUIDialogBmp' Value='installerBackground.jpg' />
+    <WixVariable Id="WixUILicenseRtf" Value="..\DistFiles\License.rtf" />
+    
+    <!-- 
+    "from the list: Don't use Advertise="yes" Advertised shortcuts are designed to allow
+users to install just the shortcut for your app, then demand-install the
+rest of the app the first time the icon is run.  If this is not behavior you
+are trying to support, you're better off using non-advertised shortcuts. "-->
+
+    <Property Id="PARATEXT7">
+      <RegistrySearch Id="Paratext7"
+                      Root="HKLM"
+                      Key="SOFTWARE\ScrChecks\1.0\Program_Files_Directory_Ptw7"
+                      Type="directory" />
+    </Property>
+    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4 or later.">
+      <![CDATA[Installed OR PARATEXT7]]>
+    </Condition>
+
+    <!--because of bug, this needs to be 1 -->
+    <Property Id ="ALLUSERS">1</Property>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="PARATEXT7" Name="ParatextDir">
+          <Directory Id="PLUGINDIR" Name="plugins">
+            <Directory Id="INSTALLDIR" Name="Txl"/>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="Transcelerator.plug" Guid="{AC56B7F3-C820-43f3-A47D-E30B01BB4FC6}">
+        <File Id="Transcelerator.plug" Name="Transcelerator.plug"  Source="..\Transcelerator\output\release\Transcelerator.dll" />
+      </Component>
+      <Component Id="keyTermRules.xml" Guid="{C0907C0A-1400-44bf-BFC3-6F0D0F3ED03B}">
+        <File Id="keyTermRules.xml" Name="keyTermRules.xml"  Source="..\Transcelerator\output\release\keyTermRules.xml" />
+      </Component>
+      <Component Id="keyTermRules.xsd" Guid="{120C24DA-4D9B-4192-B5CB-0B13CDC8410B}">
+        <File Id="keyTermRules.xsd" Name="keyTermRules.xsd"  Source="..\Transcelerator\output\release\keyTermRules.xsd" />
+      </Component>
+      <Component Id="QTTallBooks.AlternateFormOverrides.xml" Guid="{C03B656F-CE84-486f-8285-870BD4953CE3}">
+        <File Id="QTTallBooks.AlternateFormOverrides.xml" Name="QTTallBooks - AlternateFormOverrides.xml"  Source="..\Transcelerator\output\release\QTTallBooks - AlternateFormOverrides.xml" />
+      </Component>
+      <Component Id="QTTallBooks.sfm" Guid="{38AB2260-068E-49cb-BA2E-00F83B5B0AAE}">
+        <File Id="QTTallBooks.sfm" Name="QTTallBooks.sfm"  Source="..\Transcelerator\output\release\QTTallBooks.sfm" />
+      </Component>
+      <Component Id="SharedScrControls.dll" Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
+        <File Id="SharedScrControls.dll" Name="SharedScrControls.dll"  Source="..\Transcelerator\output\release\SharedScrControls.dll" />
+      </Component>
+      <Component Id="SharedScrUtils.dll" Guid="{ED70C349-50FA-46f8-B1E8-B314A900D1BC}">
+        <File Id="SharedScrUtils.dll" Name="SharedScrUtils.dll"  Source="..\Transcelerator\output\release\SharedScrUtils.dll" />
+      </Component>
+      <Component Id="SilUtils.dll" Guid="{ECA02522-194A-4694-B90B-C760595D24C5}">
+        <File Id="SilUtils.dll" Name="SilUtils.dll"  Source="..\Transcelerator\output\release\SilUtils.dll" />
+      </Component>
+      <Component Id="System.ComponentModel.Composition.dll" Guid="{B3823867-B6D4-48b1-B73E-6D1C5B868B9C}">
+        <File Id="System.ComponentModel.Composition.dll" Name="System.ComponentModel.Composition.dll"  Source="..\Transcelerator\output\release\System.ComponentModel.Composition.dll" />
+      </Component>
+    </DirectoryRef>
+
+    <Feature Id="PluginFeature" Level="1" Title="Plugin for Paratext">
+      <ComponentRef Id ="Transcelerator.plug"/>
+      <ComponentRef Id="keyTermRules.xml"/>
+      <ComponentRef Id="keyTermRules.xsd"/>
+      <ComponentRef Id="QTTallBooks.AlternateFormOverrides.xml"/>
+      <ComponentRef Id="QTTallBooks.sfm"/>
+      <ComponentRef Id="SharedScrControls.dll"/>
+      <ComponentRef Id="SharedScrUtils.dll"/>
+      <ComponentRef Id="SilUtils.dll"/>
+      <ComponentRef Id="System.ComponentModel.Composition.dll"/>
+    </Feature>
+
+    <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
+    
+    <!-- Icon you see in add/remove programs control panel -->
+    <Icon Id="Transcelerator.ico" SourceFile ="..\Transcelerator\output\release\Transcelerator.dll" />
+    <Property Id="ARPPRODUCTICON" Value="Transcelerator.ico" />
+  </Product>
+</Wix>
+

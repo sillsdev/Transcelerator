@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharedScrUtilsTests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Transcelerator")]
+[assembly: AssemblyDescription("Tool for helping translators quickly translate Scripture comprehension checking questions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("SIL/UBS Shared")]
-[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International ")]
+[assembly: AssemblyProduct("Transcelerator")]
+[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("960370f9-0db0-4667-8e0b-db4e0eeba07f")]
+[assembly: Guid("b6e07ef9-3e1a-4200-8d7c-4464c4d04f11")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,7 +29,11 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
+// You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
+// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: AssemblyVersion("1.0.0.*")]
+
+[assembly: InternalsVisibleTo("TransceleratorTests")]

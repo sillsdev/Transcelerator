@@ -133,12 +133,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="AssemblyInfo.cs">
+    <Compile Include="AssemblyInfo.cs">
       <SubType>
       </SubType>
-    </None>
-    <Compile Include="GeneratedAssemblyInfo.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="ScrPassageControlTests.cs">
       <SubType>UserControl</SubType>
