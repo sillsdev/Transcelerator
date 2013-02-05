@@ -117,21 +117,147 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="grpMatchQuestion.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="grpMatchQuestion.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblFollowingWordExample.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_lblFollowingWordExample.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11pt</value>
+  </data>
+  <data name="m_lblFollowingWordExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblFollowingWordExample.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 168</value>
+  </data>
+  <data name="m_lblFollowingWordExample.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 18</value>
+  </data>
+  <data name="m_lblFollowingWordExample.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="m_lblFollowingWordExample.Text" xml:space="preserve">
+    <value>Example: </value>
+  </data>
+  <data name="&gt;&gt;m_lblFollowingWordExample.Name" xml:space="preserve">
+    <value>m_lblFollowingWordExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblFollowingWordExample.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblFollowingWordExample.Parent" xml:space="preserve">
+    <value>grpMatchQuestion</value>
+  </data>
+  <data name="&gt;&gt;m_lblFollowingWordExample.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11pt</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 125</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 18</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="m_lblPrecedingWordExample.Text" xml:space="preserve">
+    <value>Example: </value>
+  </data>
+  <data name="&gt;&gt;m_lblPrecedingWordExample.Name" xml:space="preserve">
+    <value>m_lblPrecedingWordExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrecedingWordExample.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrecedingWordExample.Parent" xml:space="preserve">
+    <value>grpMatchQuestion</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrecedingWordExample.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_lblPrefixExample.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblPrefixExample.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11pt</value>
+  </data>
+  <data name="m_lblPrefixExample.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblPrefixExample.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 82</value>
+  </data>
+  <data name="m_lblPrefixExample.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 18</value>
+  </data>
+  <data name="m_lblPrefixExample.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="m_lblPrefixExample.Text" xml:space="preserve">
+    <value>Example: </value>
+  </data>
+  <data name="&gt;&gt;m_lblPrefixExample.Name" xml:space="preserve">
+    <value>m_lblPrefixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrefixExample.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrefixExample.Parent" xml:space="preserve">
+    <value>grpMatchQuestion</value>
+  </data>
+  <data name="&gt;&gt;m_lblPrefixExample.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_lblSuffixExample.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblSuffixExample.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11pt</value>
+  </data>
+  <data name="m_lblSuffixExample.Location" type="System.Drawing.Point, System.Drawing">
+    <value>22, 39</value>
+  </data>
+  <data name="m_lblSuffixExample.Size" type="System.Drawing.Size, System.Drawing">
+    <value>73, 18</value>
+  </data>
+  <data name="m_lblSuffixExample.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="m_lblSuffixExample.Text" xml:space="preserve">
+    <value>Example: </value>
+  </data>
+  <data name="&gt;&gt;m_lblSuffixExample.Name" xml:space="preserve">
+    <value>m_lblSuffixExample</value>
+  </data>
+  <data name="&gt;&gt;m_lblSuffixExample.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblSuffixExample.Parent" xml:space="preserve">
+    <value>grpMatchQuestion</value>
+  </data>
+  <data name="&gt;&gt;m_lblSuffixExample.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="m_rdoUserDefinedQuestionCriteria.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_rdoUserDefinedQuestionCriteria.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_rdoUserDefinedQuestionCriteria.Location" type="System.Drawing.Point, System.Drawing">
     <value>7, 191</value>
   </data>
@@ -154,7 +280,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_rdoUserDefinedQuestionCriteria.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>4</value>
   </data>
   <data name="m_rdoFollowingWord.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -184,7 +310,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_rdoFollowingWord.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>5</value>
   </data>
   <data name="m_rdoPreceedingWord.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -211,7 +337,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_rdoPreceedingWord.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>6</value>
   </data>
   <data name="m_rdoPrefix.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -241,7 +367,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_rdoPrefix.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>7</value>
   </data>
   <data name="m_rdoSuffix.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -271,7 +397,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_rdoSuffix.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>8</value>
   </data>
   <data name="m_cboFollowingWord.Location" type="System.Drawing.Point, System.Drawing">
     <value>90, 0</value>
@@ -346,7 +472,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_pnlFollowingWordDetails.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>9</value>
   </data>
   <data name="m_cboPrecedingWord.Location" type="System.Drawing.Point, System.Drawing">
     <value>90, 0</value>
@@ -421,7 +547,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_pnlPrecedingWordDetails.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>10</value>
   </data>
   <data name="m_cboPrefix.Items" xml:space="preserve">
     <value>un</value>
@@ -502,7 +628,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_pnlPrefixDetails.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>11</value>
   </data>
   <data name="m_cboSuffix.Items" xml:space="preserve">
     <value>al</value>
@@ -628,7 +754,7 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_pnlSuffixDetails.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>12</value>
   </data>
   <data name="m_pnlUserDefinedRuleDetails.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -712,138 +838,6 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;m_pnlUserDefinedRuleDetails.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <metadata name="htmlFollowingWordExample.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="htmlFollowingWordExample.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="htmlFollowingWordExample.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
-    <value>105, 23</value>
-  </data>
-  <data name="htmlFollowingWordExample.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 164</value>
-  </data>
-  <data name="htmlFollowingWordExample.Size" type="System.Drawing.Size, System.Drawing">
-    <value>227, 23</value>
-  </data>
-  <data name="htmlFollowingWordExample.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="htmlFollowingWordExample.Text" xml:space="preserve">
-    <value>Example: slave &lt;b&gt;&lt;i&gt;girl&lt;/i&gt;&lt;/b&gt;</value>
-  </data>
-  <data name="&gt;&gt;htmlFollowingWordExample.Name" xml:space="preserve">
-    <value>htmlFollowingWordExample</value>
-  </data>
-  <data name="&gt;&gt;htmlFollowingWordExample.Type" xml:space="preserve">
-    <value>onlyconnect.HtmlLabel, HtmlEditor, Version=7.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;htmlFollowingWordExample.Parent" xml:space="preserve">
-    <value>grpMatchQuestion</value>
-  </data>
-  <data name="&gt;&gt;htmlFollowingWordExample.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <metadata name="htmlPrecedingWordExample.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="htmlPrecedingWordExample.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="htmlPrecedingWordExample.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
-  </data>
-  <data name="htmlPrecedingWordExample.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 121</value>
-  </data>
-  <data name="htmlPrecedingWordExample.Size" type="System.Drawing.Size, System.Drawing">
-    <value>227, 23</value>
-  </data>
-  <data name="htmlPrecedingWordExample.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="htmlPrecedingWordExample.Text" xml:space="preserve">
-    <value>Example: &lt;b&gt;&lt;i&gt;for&lt;/i&gt;&lt;/b&gt; Abraham</value>
-  </data>
-  <data name="&gt;&gt;htmlPrecedingWordExample.Name" xml:space="preserve">
-    <value>htmlPrecedingWordExample</value>
-  </data>
-  <data name="&gt;&gt;htmlPrecedingWordExample.Type" xml:space="preserve">
-    <value>onlyconnect.HtmlLabel, HtmlEditor, Version=7.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;htmlPrecedingWordExample.Parent" xml:space="preserve">
-    <value>grpMatchQuestion</value>
-  </data>
-  <data name="&gt;&gt;htmlPrecedingWordExample.ZOrder" xml:space="preserve">
-    <value>11</value>
-  </data>
-  <metadata name="htmlPrefixExample.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="htmlPrefixExample.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="htmlPrefixExample.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
-    <value>112, 23</value>
-  </data>
-  <data name="htmlPrefixExample.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 78</value>
-  </data>
-  <data name="htmlPrefixExample.Size" type="System.Drawing.Size, System.Drawing">
-    <value>227, 23</value>
-  </data>
-  <data name="htmlPrefixExample.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="htmlPrefixExample.Text" xml:space="preserve">
-    <value>Example: &lt;b&gt;&lt;i&gt;un&lt;/i&gt;&lt;/b&gt;believer</value>
-  </data>
-  <data name="&gt;&gt;htmlPrefixExample.Name" xml:space="preserve">
-    <value>htmlPrefixExample</value>
-  </data>
-  <data name="&gt;&gt;htmlPrefixExample.Type" xml:space="preserve">
-    <value>onlyconnect.HtmlLabel, HtmlEditor, Version=7.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;htmlPrefixExample.Parent" xml:space="preserve">
-    <value>grpMatchQuestion</value>
-  </data>
-  <data name="&gt;&gt;htmlPrefixExample.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <metadata name="htmlSuffixExample.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="htmlSuffixExample.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="htmlSuffixExample.AutoScrollMinSize" type="System.Drawing.Size, System.Drawing">
-    <value>101, 23</value>
-  </data>
-  <data name="htmlSuffixExample.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 35</value>
-  </data>
-  <data name="htmlSuffixExample.Size" type="System.Drawing.Size, System.Drawing">
-    <value>227, 23</value>
-  </data>
-  <data name="htmlSuffixExample.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="htmlSuffixExample.Text" xml:space="preserve">
-    <value>Example: bless&lt;b&gt;&lt;i&gt;ing&lt;/&gt;&lt;/b&gt;</value>
-  </data>
-  <data name="&gt;&gt;htmlSuffixExample.Name" xml:space="preserve">
-    <value>htmlSuffixExample</value>
-  </data>
-  <data name="&gt;&gt;htmlSuffixExample.Type" xml:space="preserve">
-    <value>onlyconnect.HtmlLabel, HtmlEditor, Version=7.4.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;htmlSuffixExample.Parent" xml:space="preserve">
-    <value>grpMatchQuestion</value>
-  </data>
-  <data name="&gt;&gt;htmlSuffixExample.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
   <data name="grpMatchQuestion.Location" type="System.Drawing.Point, System.Drawing">

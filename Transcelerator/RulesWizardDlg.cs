@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SILUBS.Transcelerator
@@ -39,7 +40,12 @@ namespace SILUBS.Transcelerator
 		{
 			InitializeComponent();
 
-			m_rdoSuffix.Tag = m_pnlSuffixDetails;
+            FormatExample(m_lblSuffixExample, m_pnlSuffixDetails);
+            FormatExample(m_lblPrefixExample, m_pnlPrefixDetails);
+            FormatExample(m_lblPrecedingWordExample, m_pnlPrecedingWordDetails);
+            FormatExample(m_lblFollowingWordExample, m_pnlFollowingWordDetails);
+
+		    m_rdoSuffix.Tag = m_pnlSuffixDetails;
 			m_rdoPrefix.Tag = m_pnlPrefixDetails;
 			m_rdoPreceedingWord.Tag = m_pnlPrecedingWordDetails;
 			m_rdoFollowingWord.Tag = m_pnlFollowingWordDetails;
@@ -104,7 +110,36 @@ namespace SILUBS.Transcelerator
 			}
 		}
 
-		private static void SetDetails(ComboBox cbo, string details)
+        private static void FormatExample(Label lblExample, Control rightBoundingPanel)
+	    {
+	        RichTextBox rtfBoxExample = new RichTextBox();
+	        rtfBoxExample.AutoWordSelection = false;
+	        rtfBoxExample.BorderStyle = BorderStyle.None;
+	        rtfBoxExample.CausesValidation = false;
+	        rtfBoxExample.Cursor = Cursors.Arrow;
+	        rtfBoxExample.EnableAutoDragDrop = false;
+	        rtfBoxExample.Multiline = false;
+	        rtfBoxExample.TabStop = false;
+	        rtfBoxExample.AllowDrop = false;
+	        rtfBoxExample.Margin = new Padding(0, 0, 0, 0);
+	        rtfBoxExample.ScrollBars = RichTextBoxScrollBars.None;
+	        rtfBoxExample.ShortcutsEnabled = false;
+	        rtfBoxExample.WordWrap = false;
+	        rtfBoxExample.BackColor = lblExample.BackColor;
+	        rtfBoxExample.ForeColor = lblExample.ForeColor;
+	        rtfBoxExample.Name = "rtfBoxExample1";
+	        rtfBoxExample.Rtf = "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil\\fcharset0 " +
+	        lblExample.Font.Name + ";}}\r\n\\viewkind4\\uc1\\pard\\lang9\\f0\\fs" +
+	        lblExample.Font.SizeInPoints * 2 + " " +
+	        lblExample.Tag + "\\par}";
+            ((GroupBox)lblExample.Parent).Controls.Add(rtfBoxExample);
+	        rtfBoxExample.Location = new Point(lblExample.Bounds.Right, lblExample.Location.Y);
+	        rtfBoxExample.Height = lblExample.Height;
+            rtfBoxExample.Width = rightBoundingPanel.Location.X - rtfBoxExample.Location.X - 35;
+	        rtfBoxExample.ReadOnly = true;
+	    }
+
+	    private static void SetDetails(ComboBox cbo, string details)
 		{
 			if (string.IsNullOrEmpty(details))
 				cbo.SelectedIndex = -1;
