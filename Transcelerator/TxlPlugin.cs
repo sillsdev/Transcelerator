@@ -55,6 +55,9 @@ namespace SILUBS.Transcelerator
         [Import("Get Versification")]
         public Func<string, IScrVers> GetVersification { get; set; }
 
+        [Import("Display Key Term")]
+        public Action<string, IEnumerable<IKeyTerm>> DisplayKeyTerm { get; set; }
+
         public void HandleMenuClick()
         {
             IScrVers englishVersification = GetVersification("English");
@@ -65,11 +68,12 @@ namespace SILUBS.Transcelerator
             BCVRef endRef = new BCVRef(currRef);
             endRef.Chapter = englishVersification.LastChapter(endRef.Book);
             endRef.Verse = englishVersification.LastVerse(endRef.Book, endRef.Chapter);
+            string projectName = ProjectName();
 
-            var unsDlg = new UNSQuestionsDialog(ProjectName(), KeyTerms(), VernFont(),
+            var unsDlg = new UNSQuestionsDialog(projectName, KeyTerms(), VernFont(),
                 VernIcuLocale("generate templates"), VernRtoL(), ProjectDataFolder(),
                 DefaultLcfFolder(), CallingApplicationName, englishVersification, startRef,
-                endRef, b => { }, null, null);
+                endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
 
             unsDlg.Show();
         }

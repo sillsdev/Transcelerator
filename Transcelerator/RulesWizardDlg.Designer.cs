@@ -48,15 +48,11 @@ namespace SILUBS.Transcelerator
 		// TODO-Linux: AutoCompletion is not implemented in Mono
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.GroupBox grpMatchQuestion;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RulesWizardDlg));
             System.Windows.Forms.Label label3;
-            onlyconnect.HtmlLabel htmlFollowingWordExample;
-            onlyconnect.HtmlLabel htmlPrecedingWordExample;
-            onlyconnect.HtmlLabel htmlPrefixExample;
-            onlyconnect.HtmlLabel htmlSuffixExample;
             System.Windows.Forms.Label label11;
             System.Windows.Forms.GroupBox grpSelectRendering;
+            this.grpMatchQuestion = new System.Windows.Forms.GroupBox();
             this.m_rdoUserDefinedQuestionCriteria = new System.Windows.Forms.RadioButton();
             this.m_rdoFollowingWord = new System.Windows.Forms.RadioButton();
             this.m_rdoPreceedingWord = new System.Windows.Forms.RadioButton();
@@ -94,15 +90,14 @@ namespace SILUBS.Transcelerator
             this.label12 = new System.Windows.Forms.Label();
             this.m_lblDescription = new System.Windows.Forms.Label();
             this.m_txtName = new System.Windows.Forms.TextBox();
-            grpMatchQuestion = new System.Windows.Forms.GroupBox();
+            this.m_lblSuffixExample = new System.Windows.Forms.Label();
+            this.m_lblPrefixExample = new System.Windows.Forms.Label();
+            this.m_lblPrecedingWordExample = new System.Windows.Forms.Label();
+            this.m_lblFollowingWordExample = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
-            htmlFollowingWordExample = new onlyconnect.HtmlLabel();
-            htmlPrecedingWordExample = new onlyconnect.HtmlLabel();
-            htmlPrefixExample = new onlyconnect.HtmlLabel();
-            htmlSuffixExample = new onlyconnect.HtmlLabel();
             label11 = new System.Windows.Forms.Label();
             grpSelectRendering = new System.Windows.Forms.GroupBox();
-            grpMatchQuestion.SuspendLayout();
+            this.grpMatchQuestion.SuspendLayout();
             this.m_pnlFollowingWordDetails.SuspendLayout();
             this.m_pnlPrecedingWordDetails.SuspendLayout();
             this.m_pnlPrefixDetails.SuspendLayout();
@@ -116,23 +111,23 @@ namespace SILUBS.Transcelerator
             // 
             // grpMatchQuestion
             // 
-            resources.ApplyResources(grpMatchQuestion, "grpMatchQuestion");
-            grpMatchQuestion.Controls.Add(this.m_rdoUserDefinedQuestionCriteria);
-            grpMatchQuestion.Controls.Add(this.m_rdoFollowingWord);
-            grpMatchQuestion.Controls.Add(this.m_rdoPreceedingWord);
-            grpMatchQuestion.Controls.Add(this.m_rdoPrefix);
-            grpMatchQuestion.Controls.Add(this.m_rdoSuffix);
-            grpMatchQuestion.Controls.Add(this.m_pnlFollowingWordDetails);
-            grpMatchQuestion.Controls.Add(this.m_pnlPrecedingWordDetails);
-            grpMatchQuestion.Controls.Add(this.m_pnlPrefixDetails);
-            grpMatchQuestion.Controls.Add(this.m_pnlSuffixDetails);
-            grpMatchQuestion.Controls.Add(this.m_pnlUserDefinedRuleDetails);
-            grpMatchQuestion.Controls.Add(htmlFollowingWordExample);
-            grpMatchQuestion.Controls.Add(htmlPrecedingWordExample);
-            grpMatchQuestion.Controls.Add(htmlPrefixExample);
-            grpMatchQuestion.Controls.Add(htmlSuffixExample);
-            grpMatchQuestion.Name = "grpMatchQuestion";
-            grpMatchQuestion.TabStop = false;
+            resources.ApplyResources(this.grpMatchQuestion, "grpMatchQuestion");
+            this.grpMatchQuestion.Controls.Add(this.m_lblFollowingWordExample);
+            this.grpMatchQuestion.Controls.Add(this.m_lblPrecedingWordExample);
+            this.grpMatchQuestion.Controls.Add(this.m_lblPrefixExample);
+            this.grpMatchQuestion.Controls.Add(this.m_lblSuffixExample);
+            this.grpMatchQuestion.Controls.Add(this.m_rdoUserDefinedQuestionCriteria);
+            this.grpMatchQuestion.Controls.Add(this.m_rdoFollowingWord);
+            this.grpMatchQuestion.Controls.Add(this.m_rdoPreceedingWord);
+            this.grpMatchQuestion.Controls.Add(this.m_rdoPrefix);
+            this.grpMatchQuestion.Controls.Add(this.m_rdoSuffix);
+            this.grpMatchQuestion.Controls.Add(this.m_pnlFollowingWordDetails);
+            this.grpMatchQuestion.Controls.Add(this.m_pnlPrecedingWordDetails);
+            this.grpMatchQuestion.Controls.Add(this.m_pnlPrefixDetails);
+            this.grpMatchQuestion.Controls.Add(this.m_pnlSuffixDetails);
+            this.grpMatchQuestion.Controls.Add(this.m_pnlUserDefinedRuleDetails);
+            this.grpMatchQuestion.Name = "grpMatchQuestion";
+            this.grpMatchQuestion.TabStop = false;
             // 
             // m_rdoUserDefinedQuestionCriteria
             // 
@@ -300,38 +295,6 @@ namespace SILUBS.Transcelerator
             this.m_txtQuestionMatchRegEx.Name = "m_txtQuestionMatchRegEx";
             this.m_txtQuestionMatchRegEx.TextChanged += new System.EventHandler(this.m_txtQuestionMatchRegEx_TextChanged);
             // 
-            // htmlFollowingWordExample
-            // 
-            htmlFollowingWordExample.AutoEllipsis = false;
-            resources.ApplyResources(htmlFollowingWordExample, "htmlFollowingWordExample");
-            htmlFollowingWordExample.BackColor = System.Drawing.SystemColors.Control;
-            htmlFollowingWordExample.Name = "htmlFollowingWordExample";
-            htmlFollowingWordExample.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // htmlPrecedingWordExample
-            // 
-            htmlPrecedingWordExample.AutoEllipsis = false;
-            resources.ApplyResources(htmlPrecedingWordExample, "htmlPrecedingWordExample");
-            htmlPrecedingWordExample.BackColor = System.Drawing.SystemColors.Control;
-            htmlPrecedingWordExample.Name = "htmlPrecedingWordExample";
-            htmlPrecedingWordExample.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // htmlPrefixExample
-            // 
-            htmlPrefixExample.AutoEllipsis = false;
-            resources.ApplyResources(htmlPrefixExample, "htmlPrefixExample");
-            htmlPrefixExample.BackColor = System.Drawing.SystemColors.Control;
-            htmlPrefixExample.Name = "htmlPrefixExample";
-            htmlPrefixExample.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // htmlSuffixExample
-            // 
-            htmlSuffixExample.AutoEllipsis = false;
-            resources.ApplyResources(htmlSuffixExample, "htmlSuffixExample");
-            htmlSuffixExample.BackColor = System.Drawing.SystemColors.Control;
-            htmlSuffixExample.Name = "htmlSuffixExample";
-            htmlSuffixExample.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // label11
             // 
             resources.ApplyResources(label11, "label11");
@@ -470,6 +433,30 @@ namespace SILUBS.Transcelerator
             this.m_txtName.Name = "m_txtName";
             this.m_txtName.Validating += new System.ComponentModel.CancelEventHandler(this.m_txtName_Validating);
             // 
+            // m_lblSuffixExample
+            // 
+            resources.ApplyResources(this.m_lblSuffixExample, "m_lblSuffixExample");
+            this.m_lblSuffixExample.Name = "m_lblSuffixExample";
+            this.m_lblSuffixExample.Tag = "bless\\b\\i ing";
+            // 
+            // m_lblPrefixExample
+            // 
+            resources.ApplyResources(this.m_lblPrefixExample, "m_lblPrefixExample");
+            this.m_lblPrefixExample.Name = "m_lblPrefixExample";
+            this.m_lblPrefixExample.Tag = "\\b\\i un\\b0\\i0 believer";
+            // 
+            // m_lblPrecedingWordExample
+            // 
+            resources.ApplyResources(this.m_lblPrecedingWordExample, "m_lblPrecedingWordExample");
+            this.m_lblPrecedingWordExample.Name = "m_lblPrecedingWordExample";
+            this.m_lblPrecedingWordExample.Tag = "\\b\\i for\\b0\\i0  Abraham";
+            // 
+            // m_lblFollowingWordExample
+            // 
+            resources.ApplyResources(this.m_lblFollowingWordExample, "m_lblFollowingWordExample");
+            this.m_lblFollowingWordExample.Name = "m_lblFollowingWordExample";
+            this.m_lblFollowingWordExample.Tag = "slave \\b\\i girl";
+            // 
             // RulesWizardDlg
             // 
             this.AcceptButton = this.btnOk;
@@ -480,7 +467,7 @@ namespace SILUBS.Transcelerator
             this.Controls.Add(this.m_lblDescription);
             this.Controls.Add(this.label12);
             this.Controls.Add(grpSelectRendering);
-            this.Controls.Add(grpMatchQuestion);
+            this.Controls.Add(this.grpMatchQuestion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnCancel);
@@ -491,8 +478,8 @@ namespace SILUBS.Transcelerator
             this.Name = "RulesWizardDlg";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            grpMatchQuestion.ResumeLayout(false);
-            grpMatchQuestion.PerformLayout();
+            this.grpMatchQuestion.ResumeLayout(false);
+            this.grpMatchQuestion.PerformLayout();
             this.m_pnlFollowingWordDetails.ResumeLayout(false);
             this.m_pnlFollowingWordDetails.PerformLayout();
             this.m_pnlPrecedingWordDetails.ResumeLayout(false);
@@ -555,5 +542,10 @@ namespace SILUBS.Transcelerator
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Label m_lblDescription;
 		private System.Windows.Forms.TextBox m_txtName;
+        private System.Windows.Forms.GroupBox grpMatchQuestion;
+        private System.Windows.Forms.Label m_lblSuffixExample;
+        private System.Windows.Forms.Label m_lblPrefixExample;
+        private System.Windows.Forms.Label m_lblFollowingWordExample;
+        private System.Windows.Forms.Label m_lblPrecedingWordExample;
 	}
 }

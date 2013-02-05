@@ -42,7 +42,7 @@ namespace SILUBS.Transcelerator
 		private readonly string m_vernIcuLocale;
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action m_helpDelegate;
-		private readonly Action<IEnumerable<IKeyTerm>, int, int> m_lookupTermDelegate;
+		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
 		private readonly string m_translationsFile;
 		private readonly string m_phraseCustomizationsFile;
@@ -254,31 +254,34 @@ namespace SILUBS.Transcelerator
                 Directory.CreateDirectory(s_programDataFolder);
 		}
 
+        /// ------------------------------------------------------------------------------------
         /// <summary>
-        /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
-        /// </summary>
-        /// <param name="projectName">Name of the project.</param>
-        /// <param name="keyTerms">The key terms.</param>
-        /// <param name="vernFont">The vern font.</param>
-        /// <param name="VernIcuLocale">The vern icu locale.</param>
-        /// <param name="fVernIsRtoL">if set to <c>true</c> [f vern is rto L].</param>
-        /// <param name="sDefaultLcfFolder">The s default LCF folder.</param>
-        /// <param name="appName">Name of the app.</param>
-        /// <param name="versification">The versification.</param>
-        /// <param name="startRef">The start ref.</param>
-        /// <param name="endRef">The end ref.</param>
-        /// <param name="selectKeyboard">The select keyboard.</param>
-        /// <param name="helpDelegate">The help delegate.</param>
-        /// <param name="lookupTermDelegate">The lookup term delegate.</param>
-        /// ------------------------------------------------------------------------------------
-        /// ------------------------------------------------------------------------------------
-		public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
+	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
+	    /// </summary>
+	    /// <param name="projectName">Name of the project.</param>
+	    /// <param name="keyTerms">The collection of key terms.</param>
+	    /// <param name="vernFont">The vernacular font.</param>
+	    /// <param name="VernIcuLocale">The vernacular icu locale.</param>
+	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
+	    /// <param name="baseDataFolder"></param>
+	    /// <param name="sDefaultLcfFolder">The LCF folder.</param>
+	    /// <param name="appName">Name of the calling application</param>
+	    /// <param name="versification">The versification.</param>
+	    /// <param name="startRef">The starting Scripture reference</param>
+        /// <param name="endRef">The ending Scripture reference</param>
+	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
+	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
+	    /// ------------------------------------------------------------------------------------
+	    public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
 			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string baseDataFolder,
             string sDefaultLcfFolder, string appName, IScrVers versification, BCVRef startRef,
-            BCVRef endRef, Action<bool> selectKeyboard, Action helpDelegate,
-            Action<IEnumerable<IKeyTerm>, int, int> lookupTermDelegate)
+            BCVRef endRef, Action<bool> selectKeyboard,
+            Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
             m_projectDataFolder = Path.Combine(baseDataFolder, "Transcelerator");
+            if (!Directory.Exists(m_projectDataFolder))
+                Directory.CreateDirectory(m_projectDataFolder);
+
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
@@ -288,7 +291,6 @@ namespace SILUBS.Transcelerator
             if (string.IsNullOrEmpty(m_vernIcuLocale))
                 mnuGenerateTemplate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
-			m_helpDelegate = helpDelegate;
 			m_lookupTermDelegate = lookupTermDelegate;
 			m_defaultLcfFolder = sDefaultLcfFolder;
 			m_appName = appName;
@@ -1624,7 +1626,19 @@ namespace SILUBS.Transcelerator
 
 		private void LookupTerm(IEnumerable<IKeyTerm> terms)
 		{
-			m_lookupTermDelegate(terms, CurrentPhrase.StartRef, CurrentPhrase.EndRef);
+		    List<IKeyTerm> prioritizedTerms = new List<IKeyTerm>();
+		    List<IKeyTerm> termsNotOccurringInCurrentRefRange = new List<IKeyTerm>();
+		    int startRef = CurrentPhrase.StartRef;
+		    int endRef = CurrentPhrase.EndRef;
+            foreach (IKeyTerm keyTerm in terms)
+            {
+                if (keyTerm.BcvOccurences.Any(o => o >= startRef && o <= endRef))
+                    prioritizedTerms.Add(keyTerm);
+                else
+                    termsNotOccurringInCurrentRefRange.Add(keyTerm);
+            }
+		    prioritizedTerms.AddRange(termsNotOccurringInCurrentRefRange);
+			m_lookupTermDelegate(prioritizedTerms);
 		}
 
 		/// ------------------------------------------------------------------------------------
