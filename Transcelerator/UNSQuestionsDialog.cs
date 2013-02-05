@@ -254,10 +254,11 @@ namespace SILUBS.Transcelerator
                 Directory.CreateDirectory(s_programDataFolder);
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
 	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
 	    /// </summary>
+	    /// <param name="splashScreen">The splash screen (can be null)</param>
 	    /// <param name="projectName">Name of the project.</param>
 	    /// <param name="keyTerms">The collection of key terms.</param>
 	    /// <param name="vernFont">The vernacular font.</param>
@@ -268,16 +269,23 @@ namespace SILUBS.Transcelerator
 	    /// <param name="appName">Name of the calling application</param>
 	    /// <param name="versification">The versification.</param>
 	    /// <param name="startRef">The starting Scripture reference</param>
-        /// <param name="endRef">The ending Scripture reference</param>
+	    /// <param name="endRef">The ending Scripture reference</param>
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
 	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
 	    /// ------------------------------------------------------------------------------------
-	    public UNSQuestionsDialog(string projectName, IEnumerable<IKeyTerm> keyTerms,
-			Font vernFont, string VernIcuLocale, bool fVernIsRtoL, string baseDataFolder,
-            string sDefaultLcfFolder, string appName, IScrVers versification, BCVRef startRef,
-            BCVRef endRef, Action<bool> selectKeyboard,
+	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
+            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string VernIcuLocale, bool fVernIsRtoL,
+            string baseDataFolder, string sDefaultLcfFolder, string appName, IScrVers versification,
+            BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
             Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
+            if (splashScreen == null)
+            {
+                splashScreen = new TxlSplashScreen();
+                splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+            }
+            splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
+
             m_projectDataFolder = Path.Combine(baseDataFolder, "Transcelerator");
             if (!Directory.Exists(m_projectDataFolder))
                 Directory.CreateDirectory(m_projectDataFolder);
@@ -303,10 +311,6 @@ namespace SILUBS.Transcelerator
 
             string questionsFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "QTTallBooks.sfm");
-
-			TxlSplashScreen splashScreen = new TxlSplashScreen();
-			splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-			splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
 			ClearBiblicalTermsPane();
 

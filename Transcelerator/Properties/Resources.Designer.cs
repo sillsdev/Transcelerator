@@ -356,6 +356,15 @@ namespace SILUBS.Transcelerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retrieving data from {0}....
+        /// </summary>
+        internal static string kstidSplashMsgRetrievingDataFromCaller {
+            get {
+                return ResourceManager.GetString("kstidSplashMsgRetrievingDataFromCaller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Template generation complete!.
         /// </summary>
         internal static string kstidTemplateGenerationComplete {
