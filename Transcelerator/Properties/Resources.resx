@@ -241,4 +241,7 @@
   <data name="kstidSplashMsgLoadingTranslations" xml:space="preserve">
     <value>Loading translations...</value>
   </data>
+  <data name="kstidSplashMsgRetrievingDataFromCaller" xml:space="preserve">
+    <value>Retrieving data from {0}...</value>
+  </data>
 </root>

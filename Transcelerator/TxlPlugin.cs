@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Windows.Forms;
 using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
@@ -60,6 +61,11 @@ namespace SILUBS.Transcelerator
 
         public void HandleMenuClick()
         {
+            TxlSplashScreen splashScreen = new TxlSplashScreen();
+            splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+            splashScreen.Message = string.Format(
+                Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, CallingApplicationName);
+
             IScrVers englishVersification = GetVersification("English");
             int currRef = GetCurrentRef(englishVersification);
             BCVRef startRef = new BCVRef(currRef);
@@ -70,7 +76,7 @@ namespace SILUBS.Transcelerator
             endRef.Verse = englishVersification.LastVerse(endRef.Book, endRef.Chapter);
             string projectName = ProjectName();
 
-            var unsDlg = new UNSQuestionsDialog(projectName, KeyTerms(), VernFont(),
+            var unsDlg = new UNSQuestionsDialog(splashScreen, projectName, KeyTerms(), VernFont(),
                 VernIcuLocale("generate templates"), VernRtoL(), ProjectDataFolder(),
                 DefaultLcfFolder(), CallingApplicationName, englishVersification, startRef,
                 endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
