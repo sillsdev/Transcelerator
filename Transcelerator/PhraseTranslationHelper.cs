@@ -46,7 +46,7 @@ namespace SILUBS.Transcelerator
 		private readonly Dictionary<TypeOfPhrase, string> m_initialPunct = new Dictionary<TypeOfPhrase, string>();
 		private readonly Dictionary<TypeOfPhrase, string> m_finalPunct = new Dictionary<TypeOfPhrase, string>();
 		private bool m_justGettingStarted = true;
-		private string m_keyTermRenderingRulesFile;
+		private DataFileProxy m_fileProxy;
 		private List<RenderingSelectionRule> m_termRenderingSelectionRules;
 		private SortBy m_listSortCriterion = SortBy.Default;
 		private bool m_listSortedAscending = true;
@@ -445,8 +445,9 @@ namespace SILUBS.Transcelerator
 			set
 			{
 				m_termRenderingSelectionRules = value;
-				if (m_keyTermRenderingRulesFile != null)
-					XmlSerializationHelper.SerializeToFile(m_keyTermRenderingRulesFile, m_termRenderingSelectionRules);
+				if (m_fileProxy != null)
+					m_fileProxy.Write(DataFileProxy.DataFileId.TermRenderingSelectionRules,
+                        XmlSerializationHelper.SerializeToString(m_termRenderingSelectionRules));
 			}
 		}
 
@@ -465,12 +466,14 @@ namespace SILUBS.Transcelerator
 			}
 		}
 
-		internal string KeyTermRenderingRulesFile
+		internal DataFileProxy FileProxy
 		{
 			set
 			{
-				m_keyTermRenderingRulesFile = value;
-				m_termRenderingSelectionRules = XmlSerializationHelper.LoadOrCreateList<RenderingSelectionRule>(m_keyTermRenderingRulesFile, true);
+				m_fileProxy = value;
+				m_termRenderingSelectionRules =
+                    XmlSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
+                    m_fileProxy.Read(DataFileProxy.DataFileId.TermRenderingSelectionRules), true);
 			}
 		}
 

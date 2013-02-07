@@ -44,11 +44,8 @@ namespace SILUBS.Transcelerator
 		private readonly Action m_helpDelegate;
 		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
-		private readonly string m_translationsFile;
-		private readonly string m_phraseCustomizationsFile;
-		private readonly string m_phraseSubstitutionsFile;
         private static readonly string s_programDataFolder;
-        private readonly string m_projectDataFolder;
+        private readonly DataFileProxy m_fileProxy;
 		private readonly string m_defaultLcfFolder;
 		private readonly string m_appName;
 	    private readonly IScrVers m_versification;
@@ -264,7 +261,7 @@ namespace SILUBS.Transcelerator
 	    /// <param name="vernFont">The vernacular font.</param>
 	    /// <param name="VernIcuLocale">The vernacular icu locale.</param>
 	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
-	    /// <param name="baseDataFolder"></param>
+        /// <param name="datafileProxy">helper object to store and retrieve data.</param>
 	    /// <param name="sDefaultLcfFolder">The LCF folder.</param>
 	    /// <param name="appName">Name of the calling application</param>
 	    /// <param name="versification">The versification.</param>
@@ -275,7 +272,7 @@ namespace SILUBS.Transcelerator
 	    /// ------------------------------------------------------------------------------------
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
             IEnumerable<IKeyTerm> keyTerms, Font vernFont, string VernIcuLocale, bool fVernIsRtoL,
-            string baseDataFolder, string sDefaultLcfFolder, string appName, IScrVers versification,
+            DataFileProxy datafileProxy, string sDefaultLcfFolder, string appName, IScrVers versification,
             BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
             Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
@@ -286,9 +283,7 @@ namespace SILUBS.Transcelerator
             }
             splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
-            m_projectDataFolder = Path.Combine(baseDataFolder, "Transcelerator");
-            if (!Directory.Exists(m_projectDataFolder))
-                Directory.CreateDirectory(m_projectDataFolder);
+            m_fileProxy = datafileProxy;
 
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
@@ -367,11 +362,10 @@ namespace SILUBS.Transcelerator
 				QuestionSfmFileAccessor.Generate(questionsFilePath, alternativesFilename, m_questionsFilename);
 			}
 
-			m_translationsFile = Path.Combine(m_projectDataFolder, "Translations of Checking Questions.xml");
-			m_phraseCustomizationsFile = Path.Combine(m_projectDataFolder, "Question Customizations.xml");
-			m_phraseSubstitutionsFile = Path.Combine(m_projectDataFolder, "Phrase substitutions.xml");
-			m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateList<Substitution>(m_phraseSubstitutionsFile, true);
-			KeyTermMatch.RenderingInfoFile = Path.Combine(m_projectDataFolder, "Key term rendering info.xml");
+            m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateListFromString<Substitution>(
+                m_fileProxy.Read(DataFileProxy.DataFileId.PhraseSubstitutions), true);
+
+	        KeyTermMatch.FileProxy = m_fileProxy;
 
 			LoadTranslations(splashScreen);
 
@@ -752,10 +746,10 @@ namespace SILUBS.Transcelerator
 			m_lastSaveTime = DateTime.Now;
 			if (dataGridUns.IsCurrentCellInEditMode)
 				dataGridUns.EndEdit();
-			XmlSerializationHelper.SerializeToFile(m_translationsFile,
+			m_fileProxy.Write(DataFileProxy.DataFileId.Translations, XmlSerializationHelper.SerializeToString(
 				(from translatablePhrase in m_helper.UnfilteredPhrases
 				where translatablePhrase.HasUserTranslation
-				select new XmlTranslation(translatablePhrase)).ToList());
+				select new XmlTranslation(translatablePhrase)).ToList()));
 
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 			foreach (TranslatablePhrase translatablePhrase in m_helper.UnfilteredPhrases)
@@ -776,8 +770,11 @@ namespace SILUBS.Transcelerator
 				}
 			}
 
-			if (customizations.Count > 0 || File.Exists(m_phraseCustomizationsFile))
-				XmlSerializationHelper.SerializeToFile(m_phraseCustomizationsFile, customizations);
+            if (customizations.Count > 0 || m_fileProxy.Exists(DataFileProxy.DataFileId.QuestionCustomizations))
+            {
+                m_fileProxy.Write(DataFileProxy.DataFileId.QuestionCustomizations,
+                    XmlSerializationHelper.SerializeToString(customizations));
+            }
 
 			m_saving = false;
 		}
@@ -1026,8 +1023,8 @@ namespace SILUBS.Transcelerator
 				{
 					m_phraseSubstitutions.Clear();
 					m_phraseSubstitutions.AddRange(dlg.Substitutions);
-					// Save items to file
-					XmlSerializationHelper.SerializeToFile(m_phraseSubstitutionsFile, m_phraseSubstitutions);
+                    m_fileProxy.Write(DataFileProxy.DataFileId.PhraseSubstitutions,
+                        XmlSerializationHelper.SerializeToString(m_phraseSubstitutions));
 
 					Reload(false);
 				}
@@ -1540,24 +1537,26 @@ namespace SILUBS.Transcelerator
 				MessageBox.Show(e.ToString(), Text);
 
 			List<PhraseCustomization> customizations = null;
-			if (File.Exists(m_phraseCustomizationsFile))
+		    string phraseCustData = m_fileProxy.Read(DataFileProxy.DataFileId.QuestionCustomizations);
+			if (!string.IsNullOrEmpty(phraseCustData))
 			{
-				customizations = XmlSerializationHelper.DeserializeFromFile<List<PhraseCustomization>>(m_phraseCustomizationsFile, out e);
+				customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
 				if (e != null)
 					MessageBox.Show(e.ToString());
 			}
 
 			QuestionProvider qp = new QuestionProvider(m_questionsFilename, customizations);
 			m_helper = new PhraseTranslationHelper(qp, m_keyTerms, rules, m_phraseSubstitutions);
-			m_helper.KeyTermRenderingRulesFile = Path.Combine(m_projectDataFolder, "Term rendering selection rules.xml");			
+		    m_helper.FileProxy = m_fileProxy;
 			m_sectionHeadText = qp.SectionHeads;
 			m_availableBookIds = qp.AvailableBookIds;
-			if (File.Exists(m_translationsFile))
+		    string translationData = m_fileProxy.Read(DataFileProxy.DataFileId.Translations);
+			if (!string.IsNullOrEmpty(translationData))
 			{
 				if (splashScreen != null)
 					splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingTranslations;			
 
-				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_translationsFile, out e);
+				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromString<List<XmlTranslation>>(translationData, out e);
 				if (e != null)
 					MessageBox.Show(e.ToString());
 				else

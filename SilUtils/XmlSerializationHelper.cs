@@ -415,7 +415,22 @@ namespace SIL.Utils
 					MessageBox.Show(e.ToString());
 			}
 			return list ?? new List<T>();
-		}
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Loads a list of objects of the specified type by deserializing from the given string.
+        /// If an error occurs during deserialization, a new list is created.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public static List<T> LoadOrCreateListFromString<T>(string data, bool reportErrorToUser)
+        {
+            Exception e;
+            List<T> list = DeserializeFromString<List<T>>(data, out e);
+            if (e != null && reportErrorToUser)
+                MessageBox.Show(e.ToString());
+            return list ?? new List<T>();
+        }
 		#endregion
 	}
 }

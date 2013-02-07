@@ -91,6 +91,7 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataFileProxy.cs" />
     <Compile Include="HelpAboutDlg.cs">
       <SubType>Form</SubType>
     </Compile>

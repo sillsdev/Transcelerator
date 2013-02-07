@@ -32,7 +32,7 @@ namespace SILUBS.Transcelerator
 		private string m_bestTranslation = null;
 		private readonly bool m_matchForRefOnly;
 		private HashSet<int> m_occurrences;
-		private static string m_keyTermRenderingInfoFile;
+		private static DataFileProxy m_fileProxy;
 		private static List<KeyTermRenderingInfo> m_keyTermRenderingInfo;
 		#endregion
 
@@ -56,12 +56,13 @@ namespace SILUBS.Transcelerator
 				m_bestTranslation = info.PreferredRendering;
 		}
 
-		internal static string RenderingInfoFile
+		internal static DataFileProxy FileProxy
 		{
 			set
 			{
-				m_keyTermRenderingInfoFile = value;
-				m_keyTermRenderingInfo = XmlSerializationHelper.LoadOrCreateList<KeyTermRenderingInfo>(m_keyTermRenderingInfoFile, true);
+				m_fileProxy = value;
+				m_keyTermRenderingInfo = XmlSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
+                    m_fileProxy.Read(DataFileProxy.DataFileId.KeyTermRenderingInfo), true);
 			}
 		}
 		#endregion
@@ -384,8 +385,9 @@ namespace SILUBS.Transcelerator
 		#region Private helper methods
 		private void UpdateRenderingInfoFile()
 		{
-			if (m_keyTermRenderingInfoFile != null)
-				XmlSerializationHelper.SerializeToFile(m_keyTermRenderingInfoFile, m_keyTermRenderingInfo);
+			if (m_fileProxy != null)
+				m_fileProxy.Write(DataFileProxy.DataFileId.KeyTermRenderingInfo, 
+                   XmlSerializationHelper.SerializeToString(m_keyTermRenderingInfo));
 		}
 		#endregion
 	}
