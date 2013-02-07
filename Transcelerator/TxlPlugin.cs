@@ -14,41 +14,46 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.Transcelerator
 {
-    [Export(typeof(ParatextMenuPlugin))]
+    [PartCreationPolicy(CreationPolicy.Shared)]
+    [Export(typeof(ParatextPlugin))]
     [ExportMetadata("InsertAfterMenuName", "Tools|Text Converter")]
     [ExportMetadata("MenuText", "Transcelerator")]
     [ExportMetadata("RequiresActiveProject", true)]
     public class TxlPlugin : ParatextMenuPlugin
     {
-        [Import("Project Name")]
-        public Func<string> ProjectName { get; set; }
+        [Export("Get Data File Key Specifications")]
+        public Dictionary<string, List<KeyValuePair<string, string>>> GetDataFileKeySpecifications()
+        {
+            return ParatextDataFileProxy.GetDataFileKeySpecifications();
+        }
 
         [Import("Application Name")]
         public string CallingApplicationName { get; set; }
 
-        [Import("Key Terms")]
-        public Func<IEnumerable<IKeyTerm>> KeyTerms { get; set; }
+        [Import("Get Key Terms")]
+        public Func<string, IEnumerable<IKeyTerm>> GetKeyTerms { get; set; }
 
-        [Import("Vernacular Font")]
-        public Func<Font> VernFont { get; set; }
+        [Import("Get Vernacular Font")]
+        public Func<string, Font> GetVernFont { get; set; }
 
         [Import("Get Vernacular ICU Locale")]
-        public Func<string, string> VernIcuLocale { get; set; }
+        public Func<string, string, string> GetVernIcuLocale { get; set; }
 
-        [Import("Vernacular Right-to-Left")]
-        public Func<bool> VernRtoL { get; set; }
+        [Import("Get Vernacular Right-to-Left")]
+        public Func<string, bool> GetVernRtoL { get; set; }
 
         [Import("LCF Folder")]
         public Func<string> DefaultLcfFolder { get; set; }
 
-        [Import("Project Data Folder")]
-        public Func<string> ProjectDataFolder { get; set; }
+        //[Import("Project Data Folder")]
+        //public Func<string> ProjectDataFolder { get; set; }
 
         [Import("Get Current Reference")]
         public Func<IScrVers, int> GetCurrentRef { get; set; }
@@ -59,7 +64,13 @@ namespace SILUBS.Transcelerator
         [Import("Display Key Term")]
         public Action<string, IEnumerable<IKeyTerm>> DisplayKeyTerm { get; set; }
 
-        public void HandleMenuClick()
+        [Import("Get Plugin Data")]
+        public Func<ParatextPlugin, string, string, TextReader> GetPlugInData { get; set; }
+
+        [Import("Put Plugin Data")]
+        public Action<ParatextPlugin, string, string, TextReader> PutPlugInData { get; set; }
+
+        public void HandleMenuClick(string projectName)
         {
             TxlSplashScreen splashScreen = new TxlSplashScreen();
             splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
@@ -74,10 +85,12 @@ namespace SILUBS.Transcelerator
             BCVRef endRef = new BCVRef(currRef);
             endRef.Chapter = englishVersification.LastChapter(endRef.Book);
             endRef.Verse = englishVersification.LastVerse(endRef.Book, endRef.Chapter);
-            string projectName = ProjectName();
 
-            var unsDlg = new UNSQuestionsDialog(splashScreen, projectName, KeyTerms(), VernFont(),
-                VernIcuLocale("generate templates"), VernRtoL(), ProjectDataFolder(),
+            var unsDlg = new UNSQuestionsDialog(splashScreen, projectName,
+                GetKeyTerms(projectName), GetVernFont(projectName),
+                GetVernIcuLocale(projectName, "generate templates"), GetVernRtoL(projectName),
+                new ParatextDataFileProxy(fileId => GetPlugInData(this, projectName, fileId),
+                    (fileId, reader) => PutPlugInData(this, projectName, fileId, reader)),
                 DefaultLcfFolder(), CallingApplicationName, englishVersification, startRef,
                 endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
 
