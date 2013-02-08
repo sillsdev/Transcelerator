@@ -26,12 +26,11 @@ namespace SILUBS.Transcelerator
     [ExportMetadata("InsertAfterMenuName", "Tools|Text Converter")]
     [ExportMetadata("MenuText", "Transcelerator")]
     [ExportMetadata("RequiresActiveProject", true)]
-    public class TxlPlugin : ParatextMenuPlugin
+    public class TxlPlugin : ParatextMenuPlugin, PluginWithSharedProjectData
     {
-        [Export("Get Data File Key Specifications")]
-        public Dictionary<string, List<KeyValuePair<string, string>>> GetDataFileKeySpecifications()
+        public Dictionary<string, List<KeyValuePair<string, string>>> DataFileKeySpecifications
         {
-            return ParatextDataFileProxy.GetDataFileKeySpecifications();
+            get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
         }
 
         [Import("Application Name")]
