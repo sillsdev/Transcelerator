@@ -384,7 +384,7 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase GetPhrase(string reference, string englishPhrase)
 		{
-			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormD);
+			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormC);
 			return m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
 				x.PhraseKey.Text == englishPhrase);
 		}
@@ -557,7 +557,7 @@ namespace SILUBS.Transcelerator
 				return;
 			}
 
-			partMatchString = Regex.Escape(partMatchString.Normalize(NormalizationForm.FormD));
+			partMatchString = Regex.Escape(partMatchString.Normalize(NormalizationForm.FormC));
 			if (wholeWordMatch)
 				partMatchString = @"\b" + partMatchString + @"\b";
 			Regex regexFilter = new Regex(partMatchString,

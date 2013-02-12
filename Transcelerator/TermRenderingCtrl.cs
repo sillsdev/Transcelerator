@@ -242,7 +242,7 @@ namespace SILUBS.Transcelerator
 			rect.X += 2;
 
 			// Get the item being drawn.
-			string item = m_lbRenderings.Items[e.Index].ToString();
+			string item = m_lbRenderings.Items[e.Index].ToString().Normalize(NormalizationForm.FormC);
 
 			// Draw the icon if this is the default rendering.
 			if (item == m_term.BestRendering)
@@ -254,7 +254,6 @@ namespace SILUBS.Transcelerator
 				m_rectToInvalidateOnResize = selected ? new Rectangle() : e.Bounds;
 			}
 
-			item = item.Normalize(NormalizationForm.FormC);
 			Size textSize = TextRenderer.MeasureText(e.Graphics, item, VernacularFont);
 
 			if (textSize.Height < rect.Height)

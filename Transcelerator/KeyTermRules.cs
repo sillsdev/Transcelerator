@@ -56,14 +56,14 @@ namespace SILUBS.Transcelerator
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the name.
+		/// Gets or sets the id.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute]
 		public string id
 		{
 			get { return m_id; }
-			set { m_id = value.ToLowerInvariant().Normalize(NormalizationForm.FormD); }
+			set { m_id = value.ToLowerInvariant().Normalize(NormalizationForm.FormC); }
 		}
 		
 		/// --------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ namespace SILUBS.Transcelerator
 		public string Name
 		{
 			get { return m_name; }
-			set { m_name = value.ToLowerInvariant().Normalize(NormalizationForm.FormD); }
+			set { m_name = value.ToLowerInvariant().Normalize(NormalizationForm.FormC); }
 		}
 	}
 }

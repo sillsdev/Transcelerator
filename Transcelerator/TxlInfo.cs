@@ -59,16 +59,15 @@ namespace SILUBS.Transcelerator
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "©"));
 
-			// For now, get the version of FW with which TXL is being distributed.
 			attributes = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
-			string fwVersion = (attributes != null && attributes.Length > 0) ?
+			string version = (attributes != null && attributes.Length > 0) ?
 				((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
 				Application.ProductVersion;
 			// Omit the revision number from the suite version string if it's zero.
-			int ich = fwVersion.LastIndexOf(".0");
-			if (ich == fwVersion.Length - 2 && ich > fwVersion.IndexOf('.'))
-				fwVersion = fwVersion.Substring(0, ich);
-			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, fwVersion);
+			int ich = version.LastIndexOf(".0");
+			if (ich == version.Length - 2 && ich > version.IndexOf('.'))
+				version = version.Substring(0, ich);
+			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, version);
 		}
 
 		/// <summary>
