@@ -102,9 +102,11 @@ namespace SILUBS.Transcelerator
 					m_txtVernacularSuffix.Text = m_rule.RenderingMatchSuffix;
 					break;
 				case RenderingSelectionRule.RenderingMatchType.Prefix:
-					m_txtVernacularPrefix.Text = m_rule.RenderingMatchPrefix;
+                    m_rdoRenderingHasPrefix.Checked = true;
+                    m_txtVernacularPrefix.Text = m_rule.RenderingMatchPrefix;
 					break;
 				case RenderingSelectionRule.RenderingMatchType.Custom:
+			        m_rdoUserDefinedRenderingCriteria.Checked = true;
 					m_txtRenderingMatchRegEx.Text = m_rule.RenderingMatchingPattern;
 					break;
 			}

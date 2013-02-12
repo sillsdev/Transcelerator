@@ -1360,10 +1360,10 @@ namespace SILUBS.Transcelerator
 			string partTrans = "Quie\u0301n era el hombre";
 			shortPhrase.Translation = partTrans + "?";
 
-			Assert.AreEqual(partTrans + "?", shortPhrase.Translation);
-			Assert.AreEqual(partTrans, shortPhrase[0].Translation);
-			Assert.AreEqual(partTrans + "?", longPhrase.Translation);
-			Assert.AreEqual(partTrans, longPhrase[0].Translation);
+            Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), shortPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
+			Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), longPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
 			Assert.AreEqual(0, longPhrase[1].Translation.Length);
 			Assert.IsTrue(shortPhrase.HasUserTranslation);
 			Assert.IsFalse(longPhrase.HasUserTranslation);
@@ -1392,10 +1392,10 @@ namespace SILUBS.Transcelerator
 			string trans = "\u00BF" + partTrans + "?";
 			shortPhrase.Translation = trans;
 
-			Assert.AreEqual(trans, shortPhrase.Translation);
-			Assert.AreEqual(partTrans, shortPhrase[0].Translation);
-			Assert.AreEqual(trans, longPhrase.Translation);
-			Assert.AreEqual(partTrans, longPhrase[0].Translation);
+			Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), shortPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
+            Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), longPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
 			Assert.AreEqual(0, longPhrase[1].Translation.Length);
 			Assert.IsTrue(shortPhrase.HasUserTranslation);
 			Assert.IsFalse(longPhrase.HasUserTranslation);
@@ -1431,10 +1431,10 @@ namespace SILUBS.Transcelerator
 			phrase1.Translation = transCommon + " en la fosa de leones?";
 			phrase2.Translation = transCommon + " con el jarro?";
 
-			Assert.AreEqual(transCommon + " en la fosa de leones?", phrase1.Translation);
-			Assert.AreEqual(transCommon + " con el jarro?", phrase2.Translation);
-			Assert.AreEqual(transCommon + " JESUS?", phrase3.Translation);
-			Assert.AreEqual(transPart, phrase3[0].Translation);
+			Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
+			Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
+            Assert.AreEqual(transPart.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 			Assert.IsFalse(phrase3.HasUserTranslation);
@@ -1477,12 +1477,16 @@ namespace SILUBS.Transcelerator
 			}
 
 			phrase1.Translation = "Yo le pegue\u0301 un tiro al noil con un dardo.";
-			Assert.AreEqual("Yo le pegue\u0301 un tiro al nave con un flecha.", phrase4.Translation);
-			Assert.AreEqual("Yo le pegue\u0301 un tiro al flecha con un leo\u0301n.", phrase7.Translation);
+            Assert.AreEqual("Yo le pegue\u0301 un tiro al nave con un flecha.".Normalize(NormalizationForm.FormC),
+                phrase4.Translation);
+            Assert.AreEqual("Yo le pegue\u0301 un tiro al flecha con un leo\u0301n.".Normalize(NormalizationForm.FormC),
+                phrase7.Translation);
 
 			phrase2.Translation = "\u00BFQuie\u0301n puso el leo\u0301n en la barca?";
-			Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la nave?", phrase5.Translation);
-			Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la leo\u0301n?", phrase6.Translation);
+            Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la nave?".Normalize(NormalizationForm.FormC),
+                phrase5.Translation);
+            Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la leo\u0301n?".Normalize(NormalizationForm.FormC),
+                phrase6.Translation);
 
 			phrase3.Translation = "\u00BFEl taob le pertenece al barco?";
 			// This is a bizarre special case where the original question has the same key term twice and
@@ -1490,8 +1494,8 @@ namespace SILUBS.Transcelerator
 			// the longer rendering first) dictate the order in which the key terms are considered to have
 			// been found. For the purposes of this test case, we don't care in which order the terms of the
 			// untranslated question get substituted.
-			Assert.IsTrue("\u00BFEl leo\u0301n le pertenece al flecha?" == phrase8.Translation ||
-				"\u00BFEl flecha le pertenece al leo\u0301n?" == phrase8.Translation);
+            Assert.IsTrue("\u00BFEl leo\u0301n le pertenece al flecha?".Normalize(NormalizationForm.FormC) == phrase8.Translation ||
+                "\u00BFEl flecha le pertenece al leo\u0301n?".Normalize(NormalizationForm.FormC) == phrase8.Translation);
 
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
@@ -1528,19 +1532,21 @@ namespace SILUBS.Transcelerator
 
 			phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Mateo?";
 			phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Felipe?";
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+		    string expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC);
+            Assert.AreEqual(expectedTranslation,phrase2.Translation);
 			Assert.IsFalse(phrase2.HasUserTranslation);
 
 			phrase2.HasUserTranslation = true;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 
+		    expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC);
 			phrase2.HasUserTranslation = false;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
 			Assert.IsFalse(phrase2.HasUserTranslation);
 
 			phrase2.HasUserTranslation = true;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 		}
 
@@ -1569,19 +1575,23 @@ namespace SILUBS.Transcelerator
 
 			phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Mateo?";
 			phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Felipe?";
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
 			Assert.IsFalse(phrase2.HasUserTranslation);
 
 			phrase2.HasUserTranslation = true;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?", phrase2.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 
 			phrase2.HasUserTranslation = false;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
 			Assert.IsFalse(phrase2.HasUserTranslation);
 
 			phrase2.HasUserTranslation = true;
-			Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?", phrase2.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 		}
 
@@ -1619,10 +1629,10 @@ namespace SILUBS.Transcelerator
 
 			phrase1.Translation = transCommon + " en la fosa de leones?";
 
-			Assert.AreEqual(transCommon + " en la fosa de leones?", phrase1.Translation);
-			Assert.AreEqual(transCommon + " con el jarro?", phrase2.Translation);
-			Assert.AreEqual(transCommon + " JESUS?", phrase3.Translation);
-			Assert.AreEqual(partTrans, phrase3[0].Translation);
+			Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
+			Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
+			Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
+			Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
 			Assert.IsFalse(phrase3.HasUserTranslation);
@@ -1655,8 +1665,8 @@ namespace SILUBS.Transcelerator
 			const string frame = "\u00BFQuie\u0301n era {0}?";
 			phrase1.Translation = string.Format(frame, "Timoteo");
 
-			Assert.AreEqual(string.Format(frame, "Timoteo"), phrase1.Translation);
-			Assert.AreEqual(string.Format(frame, "Eutico"), phrase2.Translation);
+            Assert.AreEqual(string.Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual(string.Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsFalse(phrase2.HasUserTranslation);
 		}
@@ -1747,9 +1757,9 @@ namespace SILUBS.Transcelerator
 			phrase4.Translation = "\u00BFQue\u0301 pregunto\u0301 Moise\u0301s?";
 			phrase5.Translation = "\u00BFEntonces que\u0301 pregunto\u0301 Juan?";
 
-			Assert.AreEqual("\u00BFEntonces que\u0301 Mari\u0301a?", phrase6.Translation);
-			Assert.AreEqual("\u00BFQue\u0301 hizo Moise\u0301s?", phrase7.Translation);
-			Assert.AreEqual("Moise\u0301s pregunto\u0301 Que\u0301 Jacob hizo", phrase8.Translation);
+			Assert.AreEqual("\u00BFEntonces que\u0301 Mari\u0301a?".Normalize(NormalizationForm.FormC), phrase6.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 hizo Moise\u0301s?".Normalize(NormalizationForm.FormC), phrase7.Translation);
+            Assert.AreEqual("Moise\u0301s pregunto\u0301 Que\u0301 Jacob hizo".Normalize(NormalizationForm.FormC), phrase8.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1913,7 +1923,7 @@ namespace SILUBS.Transcelerator
 			Assert.AreEqual(3, phrase2.TranslatableParts.Count());
 
 			phrase1.Translation = "*\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
-			Assert.AreEqual("Isai\u0301as Pablo?", phrase2.Translation);
+            Assert.AreEqual("Isai\u0301as Pablo?".Normalize(NormalizationForm.FormC), phrase2.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1982,7 +1992,7 @@ namespace SILUBS.Transcelerator
 			phrase2.Translation = "\u00BFDo\u0301nde encontro\u0301 Mari\u0301a a JESUS?";
 			phrase3.Translation = "\u00BFDo\u0301nde encontro\u0301 JESUS una piedra?";
 			phrase4.Translation = "\u00BFDo\u0301nde comio\u0301 Mari\u0301a?";
-			Assert.AreEqual("\u00BFCua\u0301ndo Mari\u0301a Do\u0301nde JESUS?", phrase5.Translation);
+			Assert.AreEqual("\u00BFCua\u0301ndo Mari\u0301a Do\u0301nde JESUS?".Normalize(NormalizationForm.FormC), phrase5.Translation);
 
 			Assert.IsTrue(phrase1.HasUserTranslation);
 			Assert.IsTrue(phrase2.HasUserTranslation);
@@ -2298,27 +2308,27 @@ namespace SILUBS.Transcelerator
 			SubstringDescriptor sd;
 			
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-			Assert.AreEqual(14, sd.Offset);
+			Assert.AreEqual(13, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 	
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-			Assert.AreEqual(21, sd.Offset);
+			Assert.AreEqual(20, sd.Offset);
 			Assert.AreEqual(5, sd.Length);
 
 			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-			Assert.AreEqual(11, sd.Offset);
+			Assert.AreEqual(10, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 
 			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktSay, 0));
-			Assert.AreEqual(6, sd.Offset);
+			Assert.AreEqual(5, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 
 			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktHave, 0));
-			Assert.AreEqual(20, sd.Offset);
+			Assert.AreEqual(19, sd.Offset);
 			Assert.AreEqual(7, sd.Length);
 
 			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-			Assert.AreEqual(38, sd.Offset);
+			Assert.AreEqual(37, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 		}
 
@@ -2351,7 +2361,7 @@ namespace SILUBS.Transcelerator
 			Assert.IsNull(sd);
 
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-			Assert.AreEqual(24, sd.Offset);
+			Assert.AreEqual(23, sd.Offset);
 			Assert.AreEqual(5, sd.Length);
 
 			sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
@@ -2389,21 +2399,21 @@ namespace SILUBS.Transcelerator
 			SubstringDescriptor sd;
 
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-			Assert.AreEqual(14, sd.Offset);
+			Assert.AreEqual(13, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 			int endOfLastOccurrenceOfGod = sd.EndOffset;
 
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-			Assert.AreEqual(21, sd.Offset);
+			Assert.AreEqual(20, sd.Offset);
 			Assert.AreEqual(5, sd.Length);
 			int endOfLastOccurrenceOfPaul = sd.EndOffset;
 
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, endOfLastOccurrenceOfGod));
-			Assert.AreEqual(59, sd.Offset);
+			Assert.AreEqual(57, sd.Offset);
 			Assert.AreEqual(4, sd.Length);
 
 			sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, endOfLastOccurrenceOfPaul));
-			Assert.AreEqual(49, sd.Offset);
+			Assert.AreEqual(47, sd.Offset);
 			Assert.AreEqual(5, sd.Length);
 		}
 		#endregion
@@ -2465,13 +2475,13 @@ namespace SILUBS.Transcelerator
 			phrase2.Translation = "\u00BFCo\u0301mo hizo Esteban?";
 
 			Assert.IsFalse(phrase3.HasUserTranslation);
-			Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?", phrase3.Translation);
+            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?".Normalize(NormalizationForm.FormC), phrase3.Translation);
 
 			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
 				new RenderingSelectionRule(@"{0} like\b", @"\bparec"),
 				new RenderingSelectionRule(@"{0} for\b", @"\bbusc")});
 
-			Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?", phrase3.Translation);
+            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?".Normalize(NormalizationForm.FormC), phrase3.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2536,7 +2546,7 @@ namespace SILUBS.Transcelerator
 			phrase1.Translation = "\u00BFSe curara\u0301 el siervo?";
 
 			Assert.IsFalse(phrase2.HasUserTranslation);
-			Assert.AreEqual("\u00BFSe sanara\u0301 el mago?", phrase2.Translation);
+            Assert.AreEqual("\u00BFSe sanara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
 
 			pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
 			    new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
@@ -2546,7 +2556,7 @@ namespace SILUBS.Transcelerator
 
 			keyTermsTable["heal"].First().BestRendering = "curara\u0301";
 
-			Assert.AreEqual("\u00BFSe curara\u0301 el mago?", phrase2.Translation);
+            Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2646,7 +2656,7 @@ namespace SILUBS.Transcelerator
 		private static void VerifyTranslatablePhrase(PhraseTranslationHelper pth, string phrase,
 			params object[] parts)
 		{
-			TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == phrase.Normalize(NormalizationForm.FormD));
+			TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == phrase);
 			Assert.IsNotNull(phr);
 			Assert.AreEqual(parts.Length / 2, phr.TranslatableParts.Count(), "Phrase \"" + phrase +
 				"\" was split into the wrong number of parts.");

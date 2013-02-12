@@ -71,7 +71,7 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(string phrase)
 		{
-			m_sOrigPhrase = phrase.Normalize(NormalizationForm.FormD);
+			m_sOrigPhrase = phrase.Normalize(NormalizationForm.FormC);
 			if (!String.IsNullOrEmpty(m_sOrigPhrase))
 			{
 				switch (m_sOrigPhrase[m_sOrigPhrase.Length - 1])
@@ -167,7 +167,7 @@ namespace SILUBS.Transcelerator
 			get { return m_sModifiedPhrase; }
 			internal set
 			{
-				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormD);
+				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormC);
 				if (IsUserAdded)
 					QuestionInfo.Text = value;
 			}
@@ -677,7 +677,7 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void SetTranslationInternal(string value)
 		{
-			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormD);
+			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormC);
 			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
 				m_allTermsMatch = false; // This will usually get updated in ProcessTranslation

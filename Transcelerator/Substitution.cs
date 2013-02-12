@@ -132,7 +132,7 @@ namespace SILUBS.Transcelerator
 			{
 				if (m_regEx == null)
 				{
-					string pattern = MatchingPattern.Normalize(NormalizationForm.FormD);
+					string pattern = MatchingPattern.Normalize(NormalizationForm.FormC);
 					if (!IsRegex)
 						pattern = Regex.Escape(pattern);
 					RegexOptions options = RegexOptions.Compiled | RegexOptions.CultureInvariant;

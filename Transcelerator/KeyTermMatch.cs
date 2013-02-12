@@ -157,7 +157,7 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public void AddRendering(string rendering)
 		{
-			if (Renderings.Contains(rendering.Normalize(NormalizationForm.FormD)))
+			if (Renderings.Contains(rendering.Normalize(NormalizationForm.FormC)))
 				throw new ArgumentException(Properties.Resources.kstidRenderingExists);
 			KeyTermRenderingInfo info = RenderingInfo;
 			if (info == null)
@@ -277,7 +277,7 @@ namespace SILUBS.Transcelerator
 					Dictionary<string, int> occurrences = new Dictionary<string, int>();
 					foreach (string rendering in m_terms.Select(keyTerm => keyTerm.BestRendering).Where(rendering => rendering != null))
 					{
-						string normalizedRendering = rendering.Normalize(NormalizationForm.FormD);
+						string normalizedRendering = rendering.Normalize(NormalizationForm.FormC);
 						int num;
 						occurrences.TryGetValue(normalizedRendering, out num);
 						occurrences[normalizedRendering] = ++num;
@@ -318,7 +318,7 @@ namespace SILUBS.Transcelerator
 				KeyTermRenderingInfo info = RenderingInfo;
 				if (info != null)
 					renderings = renderings.Union(info.AddlRenderings.Where(r => r != null));
-				return renderings.Select(r => r.Normalize(NormalizationForm.FormD)).Distinct();
+				return renderings.Select(r => r.Normalize(NormalizationForm.FormC)).Distinct();
 			}
 		}
 
@@ -343,7 +343,7 @@ namespace SILUBS.Transcelerator
 			get { return Translation; }
 			set
 			{
-				m_bestTranslation = value;
+                m_bestTranslation = value.Normalize(NormalizationForm.FormC);
 				KeyTermRenderingInfo info = RenderingInfo;
 				if (info == null)
 				{

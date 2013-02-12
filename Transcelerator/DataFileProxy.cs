@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Paratext.PluginFramework;
 
 namespace SILUBS.Transcelerator
 {
@@ -47,20 +48,26 @@ namespace SILUBS.Transcelerator
             m_putPlugInData = putPlugInData;
         }
 
-        public static Dictionary<string, List<KeyValuePair<string, string>>> GetDataFileKeySpecifications()
+        public static Dictionary<string, PluginDataFileMergeInfo> GetDataFileKeySpecifications()
         {
-            var specs = new Dictionary<string, List<KeyValuePair<string, string>>>();
-            specs[GetFileName(DataFileId.Translations)] = new List<KeyValuePair<string, string>>(
-                new[] { new KeyValuePair<string, string>("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)") });
-            specs[GetFileName(DataFileId.QuestionCustomizations)] = new List<KeyValuePair<string, string>>(
-                new[] { new KeyValuePair<string, string>("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)") });
-            specs[GetFileName(DataFileId.PhraseSubstitutions)] = new List<KeyValuePair<string, string>>(
-                new[] { new KeyValuePair<string, string>("/ArrayOfSubstitution", "@pattern") });
-            specs[GetFileName(DataFileId.KeyTermRenderingInfo)] = new List<KeyValuePair<string, string>>(
-                new[] { new KeyValuePair<string, string>("/ArrayOfKeyTermRenderingInfo", "@id"),
-                new KeyValuePair<string, string>("AdditionalRenderings", ".")});
-            specs[GetFileName(DataFileId.TermRenderingSelectionRules)] = new List<KeyValuePair<string, string>>(
-                new[] { new KeyValuePair<string, string>("/ArrayOfRenderingSelectionRule", "@questionMatcher") });
+            var specs = new Dictionary<string, PluginDataFileMergeInfo>();
+
+            specs[GetFileName(DataFileId.Translations)] = new PluginDataFileMergeInfo(
+                new MergeLevel("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
+
+            specs[GetFileName(DataFileId.QuestionCustomizations)] = new PluginDataFileMergeInfo(
+                new MergeLevel("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)"));
+
+            specs[GetFileName(DataFileId.PhraseSubstitutions)] = new PluginDataFileMergeInfo(
+                new MergeLevel("/ArrayOfSubstitution", "@pattern"));
+
+            specs[GetFileName(DataFileId.KeyTermRenderingInfo)] = new PluginDataFileMergeInfo(
+                new MergeLevel("/ArrayOfKeyTermRenderingInfo", "@id"),
+                new MergeLevel("AdditionalRenderings", "."));
+
+            specs[GetFileName(DataFileId.TermRenderingSelectionRules)] = new PluginDataFileMergeInfo(
+                new MergeLevel("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
+
             return specs;
         }
 

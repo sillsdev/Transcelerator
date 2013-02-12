@@ -45,7 +45,7 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public KeyTermMatchBuilder(IKeyTerm keyTerm, Dictionary<string, KeyTermRule> rules)
 		{
-			string normalizedLcTerm = keyTerm.Term.ToLowerInvariant().Normalize(NormalizationForm.FormD);
+			string normalizedLcTerm = keyTerm.Term.ToLowerInvariant().Normalize(NormalizationForm.FormC);
 			KeyTermRule ktRule;
 			if (rules != null && rules.TryGetValue(normalizedLcTerm, out ktRule))
 			{

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <KeyTermRules>
+  <KeyTermRule id="Ar" rule="MatchForRefOnly"/>
   <KeyTermRule id="ask" rule="MatchForRefOnly">
   	<Alternate name="asks"/>
   	<Alternate name="asked"/>

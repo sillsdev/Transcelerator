@@ -28,7 +28,7 @@ namespace SILUBS.Transcelerator
     [ExportMetadata("RequiresActiveProject", true)]
     public class TxlPlugin : ParatextMenuPlugin, PluginWithSharedProjectData
     {
-        public Dictionary<string, List<KeyValuePair<string, string>>> DataFileKeySpecifications
+        public Dictionary<string, PluginDataFileMergeInfo> DataFileKeySpecifications
         {
             get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
         }
@@ -51,9 +51,6 @@ namespace SILUBS.Transcelerator
         [Import("LCF Folder")]
         public Func<string> DefaultLcfFolder { get; set; }
 
-        //[Import("Project Data Folder")]
-        //public Func<string> ProjectDataFolder { get; set; }
-
         [Import("Get Current Reference")]
         public Func<IScrVers, int> GetCurrentRef { get; set; }
 
@@ -67,7 +64,7 @@ namespace SILUBS.Transcelerator
         public Func<ParatextPlugin, string, string, TextReader> GetPlugInData { get; set; }
 
         [Import("Put Plugin Data")]
-        public Action<ParatextPlugin, string, string, TextReader> PutPlugInData { get; set; }
+        public Func<ParatextPlugin, string, string, TextReader, bool> PutPlugInData { get; set; }
 
         public void HandleMenuClick(string projectName)
         {
