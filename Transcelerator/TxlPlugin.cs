@@ -26,44 +26,48 @@ namespace SILUBS.Transcelerator
     [ExportMetadata("InsertAfterMenuName", "Tools|Text Converter")]
     [ExportMetadata("MenuText", "Transcelerator")]
     [ExportMetadata("RequiresActiveProject", true)]
-    public class TxlPlugin : ParatextMenuPlugin, PluginWithSharedProjectData
+    public class TxlPlugin : ParatextPlugin, ParatextMenuPlugin, PluginWithSharedProjectData
     {
+        public TxlPlugin()
+        {
+        }
+
         public Dictionary<string, PluginDataFileMergeInfo> DataFileKeySpecifications
         {
             get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
         }
 
-        [Import("Application Name")]
+        [Import(applicationName)]
         public string CallingApplicationName { get; set; }
 
-        [Import("Get Key Terms")]
-        public Func<string, IEnumerable<IKeyTerm>> GetKeyTerms { get; set; }
+        [Import(getKeyTerms)]
+        public GetKeyTermsDelegate GetKeyTerms { get; set; }
 
-        [Import("Get Vernacular Font")]
+        [Import(getProjectFont)]
         public Func<string, Font> GetVernFont { get; set; }
 
-        [Import("Get Vernacular ICU Locale")]
+        [Import(getProjectLanguageId)]
         public Func<string, string, string> GetVernIcuLocale { get; set; }
 
-        [Import("Get Vernacular Right-to-Left")]
+        [Import(getProjectRtL)]
         public Func<string, bool> GetVernRtoL { get; set; }
 
         [Import("LCF Folder")]
         public Func<string> DefaultLcfFolder { get; set; }
 
-        [Import("Get Current Reference")]
+        [Import(getCurrentReference)]
         public Func<IScrVers, int> GetCurrentRef { get; set; }
 
-        [Import("Get Versification")]
+        [Import(getVersification)]
         public Func<string, IScrVers> GetVersification { get; set; }
 
-        [Import("Display Key Term")]
+        [Import(displayKeyTerm)]
         public Action<string, IEnumerable<IKeyTerm>> DisplayKeyTerm { get; set; }
 
-        [Import("Get Plugin Data")]
+        [Import(getPluginData)]
         public Func<ParatextPlugin, string, string, TextReader> GetPlugInData { get; set; }
 
-        [Import("Put Plugin Data")]
+        [Import(putPluginData)]
         public Func<ParatextPlugin, string, string, TextReader, bool> PutPlugInData { get; set; }
 
         public void HandleMenuClick(string projectName)
