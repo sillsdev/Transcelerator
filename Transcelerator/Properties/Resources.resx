@@ -244,4 +244,16 @@
   <data name="kstidSplashMsgRetrievingDataFromCaller" xml:space="preserve">
     <value>Retrieving data from {0}...</value>
   </data>
+  <data name="kstidGenerateTemplateMenuText" xml:space="preserve">
+    <value>&amp;Generate Checking Script Template...</value>
+  </data>
+  <data name="kstidTemplateFileNameLabel" xml:space="preserve">
+    <value>Template &amp;File name:</value>
+  </data>
+  <data name="kstidHtml" xml:space="preserve">
+    <value>Web Page</value>
+  </data>
+  <data name="kstidLectionaryControlFile" xml:space="preserve">
+    <value>Lectionary Control File</value>
+  </data>
 </root>

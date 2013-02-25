@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SILUBS.PhraseTranslationHelper.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SILUBS.Transcelerator.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="QuestionsFile" Type="System.String" Scope="Application">
@@ -62,9 +62,6 @@
     <Setting Name="GenerateTemplateUseOriginalQuestionIfNotTranslated" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="GenerateTemplateFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="GenerateTemplateBlankLines" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
@@ -91,6 +88,9 @@
     </Setting>
     <Setting Name="GenerateTemplateCommentTextColor" Type="System.Drawing.Color" Scope="User">
       <Value Profile="(Default)">Red</Value>
+    </Setting>
+    <Setting Name="GenerateTemplateFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

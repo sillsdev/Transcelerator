@@ -176,6 +176,24 @@ namespace SILUBS.Transcelerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &amp;Generate Checking Script Template....
+        /// </summary>
+        internal static string kstidGenerateTemplateMenuText {
+            get {
+                return ResourceManager.GetString("kstidGenerateTemplateMenuText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Web Page.
+        /// </summary>
+        internal static string kstidHtml {
+            get {
+                return ResourceManager.GetString("kstidHtml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid condition for determining when rule applies..
         /// </summary>
         internal static string kstidInvalidQuestionCondition {
@@ -208,6 +226,15 @@ namespace SILUBS.Transcelerator.Properties {
         internal static string kstidKeyTermPlaceHolderMissing {
             get {
                 return ResourceManager.GetString("kstidKeyTermPlaceHolderMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lectionary Control File.
+        /// </summary>
+        internal static string kstidLectionaryControlFile {
+            get {
+                return ResourceManager.GetString("kstidLectionaryControlFile", resourceCulture);
             }
         }
         
@@ -361,6 +388,15 @@ namespace SILUBS.Transcelerator.Properties {
         internal static string kstidSplashMsgRetrievingDataFromCaller {
             get {
                 return ResourceManager.GetString("kstidSplashMsgRetrievingDataFromCaller", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template &amp;File name:.
+        /// </summary>
+        internal static string kstidTemplateFileNameLabel {
+            get {
+                return ResourceManager.GetString("kstidTemplateFileNameLabel", resourceCulture);
             }
         }
         
