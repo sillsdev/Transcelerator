@@ -28,10 +28,6 @@ namespace SILUBS.Transcelerator
     [ExportMetadata("RequiresActiveProject", true)]
     public class TxlPlugin : ParatextPlugin, ParatextMenuPlugin, PluginWithSharedProjectData
     {
-        public TxlPlugin()
-        {
-        }
-
         public Dictionary<string, PluginDataFileMergeInfo> DataFileKeySpecifications
         {
             get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
@@ -44,31 +40,34 @@ namespace SILUBS.Transcelerator
         public GetKeyTermsDelegate GetKeyTerms { get; set; }
 
         [Import(getProjectFont)]
-        public Func<string, Font> GetVernFont { get; set; }
+        public GetProjectFontDelegate GetVernFont { get; set; }
 
         [Import(getProjectLanguageId)]
-        public Func<string, string, string> GetVernIcuLocale { get; set; }
+        public GetProjectLanguageIdDelegate GetVernIcuLocale { get; set; }
 
         [Import(getProjectRtL)]
-        public Func<string, bool> GetVernRtoL { get; set; }
-
-        [Import("LCF Folder")]
-        public Func<string> DefaultLcfFolder { get; set; }
+        public GetProjectRtoLDelegate GetVernRtoL { get; set; }
 
         [Import(getCurrentReference)]
-        public Func<IScrVers, int> GetCurrentRef { get; set; }
+        public GetCurrentRefDelegate GetCurrentRef { get; set; }
 
         [Import(getVersification)]
-        public Func<string, IScrVers> GetVersification { get; set; }
+        public GetVersificationDelegate GetVersification { get; set; }
 
         [Import(displayKeyTerm)]
-        public Action<string, IEnumerable<IKeyTerm>> DisplayKeyTerm { get; set; }
+        public DisplayKeyTermDelegate DisplayKeyTerm { get; set; }
 
         [Import(getPluginData)]
-        public Func<ParatextPlugin, string, string, TextReader> GetPlugInData { get; set; }
+        public GetPlugInDataDelegate GetPlugInData { get; set; }
 
         [Import(putPluginData)]
-        public Func<ParatextPlugin, string, string, TextReader, bool> PutPlugInData { get; set; }
+        public PutPlugInDataDelegate PutPlugInData { get; set; }
+
+        [Import(getCssStyleSheet)]
+        public GetCssStylesheetDelegate GetCssStylesheet { get; set; }
+
+        [Import(getScriptureExtractor)]
+        public GetScriptureExtractorDelegate GetScriptureExtractor { get; set; }
 
         public void HandleMenuClick(string projectName)
         {
@@ -91,7 +90,8 @@ namespace SILUBS.Transcelerator
                 GetVernIcuLocale(projectName, "generate templates"), GetVernRtoL(projectName),
                 new ParatextDataFileProxy(fileId => GetPlugInData(this, projectName, fileId),
                     (fileId, reader) => PutPlugInData(this, projectName, fileId, reader)),
-                DefaultLcfFolder(), CallingApplicationName, englishVersification, startRef,
+                GetScriptureExtractor(projectName, ExtractorType.USFX),
+                CallingApplicationName, englishVersification, startRef,
                 endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
 
             unsDlg.Show();

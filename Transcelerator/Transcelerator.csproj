@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -161,11 +161,11 @@
     <Compile Include="PhraseSubstitutionsDlg.Designer.cs">
       <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="GenerateTemplateDlg.cs">
+    <Compile Include="GenerateScriptDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GenerateTemplateDlg.Designer.cs">
-      <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
+    <Compile Include="GenerateScriptDlg.Designer.cs">
+      <DependentUpon>GenerateScriptDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="KeyTermMatch.cs" />
     <Compile Include="KeyTermMatchBuilder.cs" />
@@ -226,8 +226,8 @@
       <DependentUpon>PhraseSubstitutionsDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GenerateTemplateDlg.resx">
-      <DependentUpon>GenerateTemplateDlg.cs</DependentUpon>
+    <EmbeddedResource Include="GenerateScriptDlg.resx">
+      <DependentUpon>GenerateScriptDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

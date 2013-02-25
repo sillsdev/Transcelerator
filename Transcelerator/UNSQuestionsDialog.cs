@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Paratext;
 using Paratext.PluginFramework;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
@@ -46,7 +47,8 @@ namespace SILUBS.Transcelerator
 		private PhraseTranslationHelper m_helper;
         private static readonly string s_programDataFolder;
         private readonly DataFileProxy m_fileProxy;
-		private readonly string m_defaultLcfFolder;
+		private readonly string m_defaultLcfFolder = null;
+        private readonly IScrExtractor m_scrExtractor;
 		private readonly string m_appName;
 	    private readonly IScrVers m_versification;
 	    private BCVRef m_startRef;
@@ -110,8 +112,8 @@ namespace SILUBS.Transcelerator
 			}
 			private set
 			{
-				mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().Where(
-					menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).First().Checked = true;
+				mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().First(
+                    menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).Checked = true;
 				ApplyFilter();
 			}
 		}
@@ -259,7 +261,7 @@ namespace SILUBS.Transcelerator
 	    /// <param name="projectName">Name of the project.</param>
 	    /// <param name="keyTerms">The collection of key terms.</param>
 	    /// <param name="vernFont">The vernacular font.</param>
-	    /// <param name="VernIcuLocale">The vernacular icu locale.</param>
+	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
 	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
         /// <param name="datafileProxy">helper object to store and retrieve data.</param>
 	    /// <param name="sDefaultLcfFolder">The LCF folder.</param>
@@ -270,9 +272,40 @@ namespace SILUBS.Transcelerator
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
 	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
 	    /// ------------------------------------------------------------------------------------
-	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string VernIcuLocale, bool fVernIsRtoL,
+        public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
+            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
             DataFileProxy datafileProxy, string sDefaultLcfFolder, string appName, IScrVers versification,
+            BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
+            Action<IEnumerable<IKeyTerm>> lookupTermDelegate) :this(splashScreen, projectName,
+            keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor), appName, versification,
+            startRef, endRef, selectKeyboard, lookupTermDelegate)
+        {
+            m_defaultLcfFolder = sDefaultLcfFolder;
+            mnuGenerate.Text = Properties.Resources.kstidGenerateTemplateMenuText;
+        }
+
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
+	    /// </summary>
+	    /// <param name="splashScreen">The splash screen (can be null)</param>
+	    /// <param name="projectName">Name of the project.</param>
+	    /// <param name="keyTerms">The collection of key terms.</param>
+	    /// <param name="vernFont">The vernacular font.</param>
+	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
+	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
+        /// <param name="datafileProxy">helper object to store and retrieve data.</param>
+        /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
+	    /// <param name="appName">Name of the calling application</param>
+	    /// <param name="versification">The versification.</param>
+	    /// <param name="startRef">The starting Scripture reference</param>
+	    /// <param name="endRef">The ending Scripture reference</param>
+	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
+	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
+	    /// ------------------------------------------------------------------------------------
+	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
+            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
+            DataFileProxy datafileProxy, IScrExtractor scrExtractor, string appName, IScrVers versification,
             BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
             Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
@@ -290,13 +323,13 @@ namespace SILUBS.Transcelerator
 			m_projectName = projectName;
 			m_keyTerms = keyTerms;
 			m_vernFont = vernFont;
-			m_vernIcuLocale = VernIcuLocale;
+			m_vernIcuLocale = vernIcuLocale;
             if (string.IsNullOrEmpty(m_vernIcuLocale))
-                mnuGenerateTemplate.Enabled = false;
+                mnuGenerate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
 			m_lookupTermDelegate = lookupTermDelegate;
-			m_defaultLcfFolder = sDefaultLcfFolder;
-			m_appName = appName;
+	        m_scrExtractor = scrExtractor;
+	        m_appName = appName;
 		    m_versification = versification;
 		    TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
@@ -793,13 +826,15 @@ namespace SILUBS.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the mnuGenerateTemplate control.
+		/// Handles the Click event of the mnuGenerate control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void mnuGenerateTemplate_Click(object sender, EventArgs e)
+		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-			using (GenerateTemplateDlg dlg = new GenerateTemplateDlg(m_projectName, m_defaultLcfFolder,
-				AvailableBookIds, m_sectionHeadText.AsEnumerable()))
+            string folder = m_scrExtractor == null ? m_defaultLcfFolder :
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
+                folder, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -910,7 +945,10 @@ namespace SILUBS.Transcelerator
 								if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
 								{
 									sw.WriteLine("<p class=\"scripture\">");
-									sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(phrase.StartRef, phrase.EndRef, ".", "-"));
+                                    if (m_scrExtractor == null)
+                                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(phrase.StartRef, phrase.EndRef, ".", "-"));
+                                    else
+                                        sw.Write(m_scrExtractor.Extract(phrase.StartRef, phrase.EndRef));
 									sw.WriteLine("</p>");
 								}
 								prevQuestionRef = phrase.Reference;

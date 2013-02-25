@@ -262,18 +262,6 @@ namespace SILUBS.Transcelerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GenerateTemplateFolder {
-            get {
-                return ((string)(this["GenerateTemplateFolder"]));
-            }
-            set {
-                this["GenerateTemplateFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int GenerateTemplateBlankLines {
             get {
@@ -377,6 +365,18 @@ namespace SILUBS.Transcelerator.Properties {
             }
             set {
                 this["GenerateTemplateCommentTextColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string GenerateTemplateFolder {
+            get {
+                return ((string)(this["GenerateTemplateFolder"]));
+            }
+            set {
+                this["GenerateTemplateFolder"] = value;
             }
         }
     }
