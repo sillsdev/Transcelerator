@@ -137,15 +137,15 @@ namespace SILUBS.Transcelerator
 			Assert.IsNull(question.Notes);
 		}
 
-		///--------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests parsing of detail questions whose answers contain a verse number in parentheses.
-		/// </summary>
-		///--------------------------------------------------------------------------------------
-		[Test]
-		public void ParseBasicQuestions_InterpretVerseNumbersInAnswers()
-		{
-			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests parsing of detail questions whose answers contain a verse number in parentheses.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+        public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_Simple()
+        {
+            QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
 				@"\rf Acts 1:1-5 Introduction to the book.",
 				@"\oh Overview",
 				@"\tqref ACT 1.1-5",
@@ -163,73 +163,229 @@ namespace SILUBS.Transcelerator
 				@"\tqe On a mountain. (4)",
 				@"\tqe Outside. (5)"}, null);
 
-			Assert.AreEqual(1, sections.Items.Length);
+            Assert.AreEqual(1, sections.Items.Length);
 
-			Section section = sections.Items[0];
-			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", section.Heading);
-			Assert.AreEqual("ACT 1.1-5", section.ScriptureReference);
+            // Acts
+            Section section = sections.Items[0];
+            Assert.AreEqual("Acts 1:1-5 Introduction to the book.", section.Heading);
+            Assert.AreEqual("ACT 1.1-5", section.ScriptureReference);
 
-			Assert.AreEqual(2, section.Categories.Length);
+            Assert.AreEqual(2, section.Categories.Length);
 
-			Category category = section.Categories[0];
-			Assert.AreEqual("Overview", category.Type);
+            Category category = section.Categories[0];
+            Assert.AreEqual("Overview", category.Type);
 
-			Assert.AreEqual(1, category.Questions.Length);
-			Question question = category.Questions[0];
+            Assert.AreEqual(1, category.Questions.Length);
+            Question question = category.Questions[0];
 
-			Assert.AreEqual("What information did Luke, the writer of this book, give in this introduction?", question.Text);
-			Assert.IsNull(question.ScriptureReference);
-			Assert.AreEqual(1, question.Answers.Length);
-			Assert.IsNull(question.Notes);
-			Assert.AreEqual("Luke reminded his readers that he was about to continue the true story about Jesus and his apostles that Luke had written in his first book. (1)", question.Answers[0]);
+            Assert.AreEqual("What information did Luke, the writer of this book, give in this introduction?", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.IsNull(question.Notes);
+            Assert.AreEqual("Luke reminded his readers that he was about to continue the true story about Jesus and his apostles that Luke had written in his first book. (1)", question.Answers[0]);
 
-			category = section.Categories[1];
-			Assert.AreEqual("Details", category.Type);
+            category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(4, category.Questions.Length);
-			question = category.Questions[0];
+            Assert.AreEqual(4, category.Questions.Length);
+            question = category.Questions[0];
 
-			Assert.AreEqual("To whom did the writer of Acts address this book?", question.Text);
-			Assert.AreEqual("ACT 1.1", question.ScriptureReference);
-			Assert.AreEqual(44001001, question.StartRef);
-			Assert.AreEqual(44001001, question.EndRef);
-			Assert.AreEqual(1, question.Answers.Length);
-			Assert.IsNull(question.Notes);
-			Assert.AreEqual("He addressed this book to Theophilus. (1)", question.Answers[0]);
+            Assert.AreEqual("To whom did the writer of Acts address this book?", question.Text);
+            Assert.AreEqual("ACT 1.1", question.ScriptureReference);
+            Assert.AreEqual(44001001, question.StartRef);
+            Assert.AreEqual(44001001, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.IsNull(question.Notes);
+            Assert.AreEqual("He addressed this book to Theophilus. (1)", question.Answers[0]);
 
-			question = category.Questions[1];
+            question = category.Questions[1];
 
-			Assert.AreEqual("What happened?", question.Text);
-			Assert.AreEqual("ACT 1.2-3", question.ScriptureReference);
-			Assert.AreEqual(44001002, question.StartRef);
-			Assert.AreEqual(44001003, question.EndRef);
-			Assert.AreEqual(1, question.Answers.Length);
-			Assert.AreEqual("Stuff (2-3)", question.Answers[0]);
-			Assert.IsNull(question.Notes);
+            Assert.AreEqual("What happened?", question.Text);
+            Assert.AreEqual("ACT 1.2-3", question.ScriptureReference);
+            Assert.AreEqual(44001002, question.StartRef);
+            Assert.AreEqual(44001003, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("Stuff (2-3)", question.Answers[0]);
+            Assert.IsNull(question.Notes);
 
-			question = category.Questions[2];
+            question = category.Questions[2];
 
-			Assert.AreEqual("What question did the apostles ask Jesus about his kingdom?", question.Text);
-			Assert.AreEqual("ACT 1.4", question.ScriptureReference);
-			Assert.AreEqual(44001004, question.StartRef);
-			Assert.AreEqual(44001004, question.EndRef);
-			Assert.AreEqual(1, question.Answers.Length);
-			Assert.AreEqual("The apostles asked Jesus what was happening.", question.Answers[0]);
-			Assert.IsNull(question.Notes);
+            Assert.AreEqual("What question did the apostles ask Jesus about his kingdom?", question.Text);
+            Assert.AreEqual("ACT 1.4", question.ScriptureReference);
+            Assert.AreEqual(44001004, question.StartRef);
+            Assert.AreEqual(44001004, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("The apostles asked Jesus what was happening.", question.Answers[0]);
+            Assert.IsNull(question.Notes);
 
-			question = category.Questions[3];
+            question = category.Questions[3];
 
-			Assert.AreEqual("Where were they?", question.Text);
-			Assert.AreEqual("ACT 1.4-5", question.ScriptureReference);
-			Assert.AreEqual(44001004, question.StartRef);
-			Assert.AreEqual(44001005, question.EndRef);
-			Assert.AreEqual(2, question.Answers.Length);
-			Assert.AreEqual("On a mountain. (4)", question.Answers[0]);
-			Assert.AreEqual("Outside. (5)", question.Answers[1]);
-			Assert.IsNull(question.Notes);
-		}
+            Assert.AreEqual("Where were they?", question.Text);
+            Assert.AreEqual("ACT 1.4-5", question.ScriptureReference);
+            Assert.AreEqual(44001004, question.StartRef);
+            Assert.AreEqual(44001005, question.EndRef);
+            Assert.AreEqual(2, question.Answers.Length);
+            Assert.AreEqual("On a mountain. (4)", question.Answers[0]);
+            Assert.AreEqual("Outside. (5)", question.Answers[1]);
+            Assert.IsNull(question.Notes);
+        }
 
-		///--------------------------------------------------------------------------------------
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests parsing of detail questions whose answers contain a chapter and verse number(s)
+        /// in parentheses and/or whose sections cross chapter boundaries.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+        public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_WithChapterNumbers()
+        {
+            QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
+                @"\rf Genesis 27:41-28:5 Jacob fled (from) Esau.",
+                @"\oh Overview",
+                @"\tqref GEN 27.41-28.5",
+                @"\bttq What was happening at the time of this incident?",
+                @"\tqe Esau was plotting to take revenge on Jacob by killing him, so Rebekah told Jacob that he must flee. Rebekah told Isaac that she did not want Jacob to marry a Canaanite woman. Therefore Isaac told Jacob to go to his uncle Laban and to marry one of Laban's daughters. Then Isaac prayed a blessing for/asked God to bless/help Jacob.",
+                @"\dh Details",
+				@"\tqref GEN 27.46-28.5",
+				@"\bttq What did Rebekah say to her husband, Isaac?",
+				@"\tqe She said she was upset with Esau's Hittite wives and that she would die if Jacob took a Hittite wife. (46)",
+				@"\bttq After she told this to Isaac, what did he do?",
+				@"\tqe He summoned Jacob. (28:1)",
+				@"\rf Luke 2:39-40 The family returned to Nazareth.",
+				@"\oh Overview",
+				@"\tqref LUK 2.39-40",
+				@"\bttq What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?",
+				@"\tqe Luke told Theophilus (1:1-4) that he wanted to present a true account of Jesus's life.",
+				@"\dh Details",
+				@"\bttq When were Joseph and Mary ready to return to their home in Nazareth?",
+				@"\tqe They were ready when they had finished doing everything that the Law of the Lord commanded them to do. (2:39)",
+				@"\rf Luke 9:57-62 People who want to follow Jesus must let go of everything else they think is important.",
+				@"\dh Details",
+				@"\tqref LUK 9.57-58",
+				@"\bttq Where were Jesus and his disciples going?",
+				@"\tqe They were still headed towards Jerusalem. (9:51)",
+				@"\bttq A man approached Jesus along the road. What did this man say to Jesus?",
+				@"\tqe He said that he would follow Jesus wherever Jesus went. (57)"}, null);
+
+            Assert.AreEqual(3, sections.Items.Length);
+
+            // Genesis
+            Section section = sections.Items[0];
+            Assert.AreEqual("Genesis 27:41-28:5 Jacob fled (from) Esau.", section.Heading);
+            Assert.AreEqual("GEN 27.41-28.5", section.ScriptureReference);
+            Assert.AreEqual(2, section.Categories.Length);
+
+            Category category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(2, category.Questions.Length);
+            Question question = category.Questions[0];
+            Assert.AreEqual("What did Rebekah say to her husband, Isaac?", question.Text);
+            Assert.AreEqual("GEN 27.46", question.ScriptureReference);
+            Assert.AreEqual(001027046, question.StartRef);
+            Assert.AreEqual(001027046, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("She said she was upset with Esau's Hittite wives and that she would die if Jacob took a Hittite wife. (46)", question.Answers[0]);
+
+            question = category.Questions[1];
+            Assert.AreEqual("After she told this to Isaac, what did he do?", question.Text);
+            Assert.AreEqual("GEN 28.1", question.ScriptureReference);
+            Assert.AreEqual(001028001, question.StartRef);
+            Assert.AreEqual(001028001, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("He summoned Jacob. (28:1)", question.Answers[0]);
+
+            //Luke
+            section = sections.Items[1];
+            Assert.AreEqual("Luke 2:39-40 The family returned to Nazareth.", section.Heading);
+            Assert.AreEqual("LUK 2.39-40", section.ScriptureReference);
+            Assert.AreEqual(2, section.Categories.Length);
+
+            category = section.Categories[0];
+            Assert.AreEqual("Overview", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Length);
+            question = category.Questions[0];
+            Assert.AreEqual("What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("Luke told Theophilus (1:1-4) that he wanted to present a true account of Jesus's life.", question.Answers[0]);
+
+            category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Length);
+            question = category.Questions[0];
+            Assert.AreEqual("When were Joseph and Mary ready to return to their home in Nazareth?", question.Text);
+            Assert.AreEqual("LUK 2.39", question.ScriptureReference);
+            Assert.AreEqual(042002039, question.StartRef);
+            Assert.AreEqual(042002039, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("They were ready when they had finished doing everything that the Law of the Lord commanded them to do. (2:39)", question.Answers[0]);
+
+            section = sections.Items[2];
+            Assert.AreEqual("Luke 9:57-62 People who want to follow Jesus must let go of everything else they think is important.", section.Heading);
+            Assert.AreEqual("LUK 9.57-58", section.ScriptureReference);
+            Assert.AreEqual(1, section.Categories.Length);
+
+            category = section.Categories[0];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(2, category.Questions.Length);
+            question = category.Questions[0];
+            Assert.AreEqual("Where were Jesus and his disciples going?", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("They were still headed towards Jerusalem. (9:51)", question.Answers[0]);
+
+            question = category.Questions[1];
+            Assert.AreEqual("A man approached Jesus along the road. What did this man say to Jesus?", question.Text);
+            Assert.AreEqual("LUK 9.57", question.ScriptureReference);
+            Assert.AreEqual(042009057, question.StartRef);
+            Assert.AreEqual(042009057, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("He said that he would follow Jesus wherever Jesus went. (57)", question.Answers[0]);
+        }
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests parsing of detail questions whose answers contain a verse number in parentheses.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+        public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_WithSubverseLetters()
+        {
+            QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
+                @"\rf Luke 11:37-54 Jesus warned the religious leaders that God would punish their hypocrisy.",
+                @"\dh Details",
+                @"\tqref LUK 11.53-54",
+                @"\bttq What happened after Jesus finished talking and left that place?",
+                @"\tqe The Pharisees and scribes began to oppose Jesus fiercely. (53a)",
+                @"\tqe They raised a lot of questions (53b), just waiting until he said something (54)."}, null);
+
+            Assert.AreEqual(1, sections.Items.Length);
+
+            Section section = sections.Items[0];
+            Assert.AreEqual("Luke 11:37-54 Jesus warned the religious leaders that God would punish their hypocrisy.", section.Heading);
+            Assert.AreEqual("LUK 11.53-54", section.ScriptureReference);
+            Assert.AreEqual(1, section.Categories.Length);
+
+            Category category = section.Categories[0];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Length);
+            Question question = category.Questions[0];
+            Assert.AreEqual("What happened after Jesus finished talking and left that place?", question.Text);
+            Assert.AreEqual("LUK 11.53-54", question.ScriptureReference);
+            Assert.AreEqual(042011053, question.StartRef);
+            Assert.AreEqual(042011054, question.EndRef);
+            Assert.AreEqual(2, question.Answers.Length);
+            Assert.AreEqual("The Pharisees and scribes began to oppose Jesus fiercely. (53a)", question.Answers[0]);
+            Assert.AreEqual("They raised a lot of questions (53b), just waiting until he said something (54).", question.Answers[1]);
+        }
+
+        ///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests parsing of questions which ahppen to be split across 2 or more consecutive
 		/// \bttq fields.

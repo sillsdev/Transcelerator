@@ -50,7 +50,8 @@ namespace SILUBS.Transcelerator
 		private readonly string m_defaultLcfFolder = null;
         private readonly IScrExtractor m_scrExtractor;
 		private readonly string m_appName;
-	    private readonly IScrVers m_versification;
+        private readonly IScrVers m_masterVersification;
+        private readonly IScrVers m_projectVersification;
 	    private BCVRef m_startRef;
         private BCVRef m_endRef;
 		private IDictionary<string, string> m_sectionHeadText;
@@ -277,8 +278,8 @@ namespace SILUBS.Transcelerator
             DataFileProxy datafileProxy, string sDefaultLcfFolder, string appName, IScrVers versification,
             BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
             Action<IEnumerable<IKeyTerm>> lookupTermDelegate) :this(splashScreen, projectName,
-            keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor), appName, versification,
-            startRef, endRef, selectKeyboard, lookupTermDelegate)
+            keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor),
+            appName, versification, versification, startRef, endRef, selectKeyboard, lookupTermDelegate)
         {
             m_defaultLcfFolder = sDefaultLcfFolder;
             mnuGenerate.Text = Properties.Resources.kstidGenerateTemplateMenuText;
@@ -297,7 +298,10 @@ namespace SILUBS.Transcelerator
         /// <param name="datafileProxy">helper object to store and retrieve data.</param>
         /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
 	    /// <param name="appName">Name of the calling application</param>
-	    /// <param name="versification">The versification.</param>
+        /// <param name="englishVersification">The English versification (i.e., the versification
+        /// used for the master checking questions).</param>
+        /// <param name="projectVersification">The versification of the external project (to
+        /// be used for passing references to the scrExtractor).</param>
 	    /// <param name="startRef">The starting Scripture reference</param>
 	    /// <param name="endRef">The ending Scripture reference</param>
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
@@ -305,7 +309,8 @@ namespace SILUBS.Transcelerator
 	    /// ------------------------------------------------------------------------------------
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
             IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
-            DataFileProxy datafileProxy, IScrExtractor scrExtractor, string appName, IScrVers versification,
+            DataFileProxy datafileProxy, IScrExtractor scrExtractor, string appName,
+            IScrVers englishVersification, IScrVers projectVersification,
             BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
             Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
@@ -330,7 +335,8 @@ namespace SILUBS.Transcelerator
 			m_lookupTermDelegate = lookupTermDelegate;
 	        m_scrExtractor = scrExtractor;
 	        m_appName = appName;
-		    m_versification = versification;
+            m_masterVersification = englishVersification;
+            m_projectVersification = projectVersification;
 		    TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
 			m_endRef = endRef;
@@ -945,10 +951,19 @@ namespace SILUBS.Transcelerator
 								if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
 								{
 									sw.WriteLine("<p class=\"scripture\">");
+                                    int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
+                                    int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
                                     if (m_scrExtractor == null)
-                                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(phrase.StartRef, phrase.EndRef, ".", "-"));
+                                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
                                     else
-                                        sw.Write(m_scrExtractor.Extract(phrase.StartRef, phrase.EndRef));
+                                    {
+                                        var verseText = m_scrExtractor.Extract(startRef, endRef);
+#if DEBUG
+                                        if (verseText == null)
+                                            throw m_scrExtractor.GetLastError();
+#endif
+                                        sw.Write(verseText ?? m_scrExtractor.GetLastError().Message);
+                                    }
 									sw.WriteLine("</p>");
 								}
 								prevQuestionRef = phrase.Reference;
@@ -1330,7 +1345,7 @@ namespace SILUBS.Transcelerator
 		private void mnuReferenceRange_Click(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(m_versification,
+			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(m_masterVersification,
                 new BCVRef(m_startRef), new BCVRef(m_endRef), m_availableBookIds))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
