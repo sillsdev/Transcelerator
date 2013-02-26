@@ -109,7 +109,7 @@ namespace SILUBS.Transcelerator
 			int kCommentMarkerLen = s_kCommentMarker.Length;
 			Debug.Assert(s_kDetailsMarker.Length == s_kOverviewMarker.Length);
 			int kCategoryMarkerLen = s_kDetailsMarker.Length;
-			Regex regexVerseNum = new Regex(@"\((?<startVerse>\d+)(-(?<endVerse>\d+))?\)$", RegexOptions.Compiled);
+            Regex regexVerseNum = new Regex(@"\(((?<chapter>\d+):)?((?<startVerse>\d+)([a-b])?)(-(?<endVerse>\d+)([a-b])?)?\)", RegexOptions.Compiled);
 			foreach (string sLine in SourceFields(sourceLines))
 			{
 				if (sLine.StartsWith(s_kQuestionMarker))
@@ -140,32 +140,68 @@ namespace SILUBS.Transcelerator
 					if (!currCat.IsOverview)
 					{
 						Match match = regexVerseNum.Match(currAnswer);
+                        bool outOfRange = false;
 						if (match.Success)
 						{
+                            string sChapter = match.Result("${chapter}");
+                            int chapter = string.IsNullOrEmpty(sChapter) ? 0 : Int32.Parse(sChapter);
 							int startVerse = Int32.Parse(match.Result("${startVerse}"));
 							string sEndVerse = match.Result("${endVerse}");
 							int endVerse = string.IsNullOrEmpty(sEndVerse) ? startVerse : Int32.Parse(sEndVerse);
+                            while ((match = match.NextMatch()).Success)
+                            {
+                                sEndVerse = match.Result("${endVerse}");
+                                endVerse = string.IsNullOrEmpty(sEndVerse) ?
+                                    Int32.Parse(match.Result("${startVerse}")) : Int32.Parse(sEndVerse);
+                            }
 							BCVRef bcvStart, bcvEnd;
 							if (currQuestion.StartRef > 0)
 							{
 								bcvStart = new BCVRef(currQuestion.StartRef);
 								bcvEnd = new BCVRef(currQuestion.EndRef);
-								if (startVerse < bcvStart.Verse)
-									bcvStart.Verse = startVerse;
-								if (endVerse > bcvEnd.Verse)
-									bcvEnd.Verse = endVerse;
+                                if (chapter > 0)
+                                {
+                                    bcvStart.Chapter = bcvEnd.Chapter = chapter;
+                                }
+                                if (bcvStart.Chapter == bcvEnd.Chapter - 1 && bcvStart.Verse > bcvEnd.Verse)
+                                {
+                                    if (startVerse >= bcvStart.Verse && endVerse > bcvEnd.Verse)
+                                    {
+                                        // Question applies to a verse found wholly in the first chapter of the range
+                                        bcvStart.Verse = startVerse;
+                                        bcvEnd.Chapter = bcvStart.Chapter;
+                                        bcvEnd.Verse = endVerse;
+                                    }
+                                   // else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
+                                }
+                                else if (bcvStart.Chapter == bcvEnd.Chapter)
+                                {
+                                    if (startVerse < bcvStart.Verse)
+                                        bcvStart.Verse = startVerse;
+                                    if (endVerse > bcvEnd.Verse || chapter > 0)
+                                        bcvEnd.Verse = endVerse;
+                                }
 							}
 							else
 							{
 								bcvStart = new BCVRef(currSection.StartRef);
 								bcvEnd = new BCVRef(currSection.EndRef);
-								bcvStart.Verse = startVerse;
-								bcvEnd.Verse = endVerse;
-							}
-							currQuestion.StartRef = bcvStart.BBCCCVVV;
-							currQuestion.EndRef = bcvEnd.BBCCCVVV;
-							currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
-								currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
+                                //if (chapter > 0)
+                                if (startVerse < bcvStart.Verse || endVerse > bcvEnd.Verse)
+                                    outOfRange = true;
+                                else
+                                {
+								    bcvStart.Verse = startVerse;
+								    bcvEnd.Verse = endVerse;
+                                }
+                            }
+                            if (!outOfRange)
+                            {
+                                currQuestion.StartRef = bcvStart.BBCCCVVV;
+                                currQuestion.EndRef = bcvEnd.BBCCCVVV;
+                                currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
+                                    currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
+                            }
 						}
 					}
 					string[] source = currQuestion.Answers;

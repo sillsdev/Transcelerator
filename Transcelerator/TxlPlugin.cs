@@ -51,6 +51,9 @@ namespace SILUBS.Transcelerator
         [Import(getCurrentReference)]
         public GetCurrentRefDelegate GetCurrentRef { get; set; }
 
+        [Import(getProjectVersification)]
+        public GetProjectVersificationDelegate GetProjectVersification { get; set; }
+
         [Import(getVersification)]
         public GetVersificationDelegate GetVersification { get; set; }
 
@@ -90,8 +93,8 @@ namespace SILUBS.Transcelerator
                 GetVernIcuLocale(projectName, "generate templates"), GetVernRtoL(projectName),
                 new ParatextDataFileProxy(fileId => GetPlugInData(this, projectName, fileId),
                     (fileId, reader) => PutPlugInData(this, projectName, fileId, reader)),
-                GetScriptureExtractor(projectName, ExtractorType.USFX),
-                CallingApplicationName, englishVersification, startRef,
+                GetScriptureExtractor(projectName, ExtractorType.USFX), CallingApplicationName,
+                englishVersification, GetProjectVersification(projectName), startRef,
                 endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
 
             unsDlg.Show();
