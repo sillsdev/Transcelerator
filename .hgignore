@@ -3,5 +3,6 @@ PhraseTranslationHelper/_*
 *.suo
 *.user
 obj/*
+bin/*
 Output/*
 Installer/output/*
