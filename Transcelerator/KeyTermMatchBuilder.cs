@@ -15,9 +15,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using Paratext.PluginFramework;
+using AddInSideViews;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	public class KeyTermMatchBuilder
 	{

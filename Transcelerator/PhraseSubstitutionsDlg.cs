@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SilUtils.Controls;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

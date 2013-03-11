@@ -15,11 +15,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Paratext.PluginFramework;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class QuestionProvider
 	/// ------------------------------------------------------------------------------------

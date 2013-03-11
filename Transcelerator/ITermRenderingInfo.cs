@@ -11,9 +11,9 @@
 // File: ITermRenderingInfo.cs
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using Paratext.PluginFramework;
+using AddInSideViews;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

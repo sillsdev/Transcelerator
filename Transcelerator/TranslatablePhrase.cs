@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	public enum TypeOfPhrase : byte
 	{

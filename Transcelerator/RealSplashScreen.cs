@@ -17,7 +17,7 @@ using System.Threading;
 using System.Windows.Forms;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -32,7 +32,7 @@ namespace SILUBS.Transcelerator
 		#region Data members
 		private EventWaitHandle m_waitHandle;
 		private System.Threading.Timer m_timer;
-		private SILUBS.Transcelerator.TxlInfo m_txlInfo;
+		private TxlInfo m_txlInfo;
 		private Label lblMessage;
 
 		/// <summary>Used for locking the splash screen</summary>
@@ -112,7 +112,7 @@ namespace SILUBS.Transcelerator
 			System.Windows.Forms.PictureBox marqueeGif;
 			this.lblMessage = new System.Windows.Forms.Label();
 			marqueeGif = new System.Windows.Forms.PictureBox();
-			this.m_txlInfo = new SILUBS.Transcelerator.TxlInfo();
+			this.m_txlInfo = new TxlInfo();
 			((System.ComponentModel.ISupportInitialize)(marqueeGif)).BeginInit();
 			this.SuspendLayout();
 			//
@@ -126,7 +126,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// marqueeGif
 			// 
-			marqueeGif.Image = global::SILUBS.Transcelerator.Properties.Resources.wait22trans;
+			marqueeGif.Image = global::SIL.Transcelerator.Properties.Resources.wait22trans;
 			marqueeGif.Location = new System.Drawing.Point(343, 368);
 			marqueeGif.Name = "marqueeGif";
 			marqueeGif.Size = new System.Drawing.Size(22, 22);

@@ -21,7 +21,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class UNSQuestionsDialog
 	{
@@ -376,14 +376,14 @@ namespace SILUBS.Transcelerator
             // 
             // mnuCopy
             // 
-            this.mnuCopy.Image = global::SILUBS.Transcelerator.Properties.Resources.Copy;
+            this.mnuCopy.Image = global::SIL.Transcelerator.Properties.Resources.Copy;
             resources.ApplyResources(this.mnuCopy, "mnuCopy");
             this.mnuCopy.Name = "mnuCopy";
             this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
             // 
             // mnuPaste
             // 
-            this.mnuPaste.Image = global::SILUBS.Transcelerator.Properties.Resources.Paste;
+            this.mnuPaste.Image = global::SIL.Transcelerator.Properties.Resources.Paste;
             resources.ApplyResources(this.mnuPaste, "mnuPaste");
             this.mnuPaste.Name = "mnuPaste";
             this.mnuPaste.Click += new System.EventHandler(this.mnuPaste_Click);

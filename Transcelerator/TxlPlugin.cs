@@ -7,97 +7,115 @@
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
 // </copyright> 
 #endregion
-// 
-// File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.AddIn;
+using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Drawing;
-using System.IO;
+using System.Linq;
 using System.Windows.Forms;
-using Paratext.PluginFramework;
+using AddInSideViews;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
-    [PartCreationPolicy(CreationPolicy.Shared)]
-    [Export(typeof(ParatextPlugin))]
-    [ExportMetadata("InsertAfterMenuName", "Tools|Text Converter")]
-    [ExportMetadata("MenuText", "Transcelerator")]
-    [ExportMetadata("RequiresActiveProject", true)]
-    public class TxlPlugin : ParatextPlugin, ParatextMenuPlugin, PluginWithSharedProjectData
+    [AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
+        Version = "1.0", Publisher = "SIL International")]
+    [QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
+    [QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
+    [QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
+    [QualificationData(PluginMetaDataKeys.requiresActiveProject, "true")]
+    public class TxlPlugin : IParatextAddIn
     {
-        public Dictionary<string, PluginDataFileMergeInfo> DataFileKeySpecifications
+        public const string pluginName = "Transcelerator";
+        private UNSQuestionsDialog unsMainWindow;
+        private IHost host;
+        private string projectName;
+
+        public void RequestShutdown()
+        {
+            lock (this)
+            {
+                if (unsMainWindow != null)
+                {
+                    unsMainWindow.Activate();
+                    unsMainWindow.Close();
+                }
+            }
+        }
+
+        public Dictionary<string, IPluginDataFileMergeInfo> DataFileKeySpecifications
         {
             get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
         }
 
-        [Import(applicationName)]
-        public string CallingApplicationName { get; set; }
-
-        [Import(getKeyTerms)]
-        public GetKeyTermsDelegate GetKeyTerms { get; set; }
-
-        [Import(getProjectFont)]
-        public GetProjectFontDelegate GetVernFont { get; set; }
-
-        [Import(getProjectLanguageId)]
-        public GetProjectLanguageIdDelegate GetVernIcuLocale { get; set; }
-
-        [Import(getProjectRtL)]
-        public GetProjectRtoLDelegate GetVernRtoL { get; set; }
-
-        [Import(getCurrentReference)]
-        public GetCurrentRefDelegate GetCurrentRef { get; set; }
-
-        [Import(getProjectVersification)]
-        public GetProjectVersificationDelegate GetProjectVersification { get; set; }
-
-        [Import(getVersification)]
-        public GetVersificationDelegate GetVersification { get; set; }
-
-        [Import(displayKeyTerm)]
-        public DisplayKeyTermDelegate DisplayKeyTerm { get; set; }
-
-        [Import(getPluginData)]
-        public GetPlugInDataDelegate GetPlugInData { get; set; }
-
-        [Import(putPluginData)]
-        public PutPlugInDataDelegate PutPlugInData { get; set; }
-
-        [Import(getCssStyleSheet)]
-        public GetCssStylesheetDelegate GetCssStylesheet { get; set; }
-
-        [Import(getScriptureExtractor)]
-        public GetScriptureExtractorDelegate GetScriptureExtractor { get; set; }
-
-        public void HandleMenuClick(string projectName)
+        public void Run(IHost ptHost, string activeProjectName)
         {
-            TxlSplashScreen splashScreen = new TxlSplashScreen();
-            splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-            splashScreen.Message = string.Format(
-                Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, CallingApplicationName);
+            host = ptHost;
+            projectName = activeProjectName;
 
-            IScrVers englishVersification = GetVersification("English");
-            int currRef = GetCurrentRef(englishVersification);
-            BCVRef startRef = new BCVRef(currRef);
-            startRef.Chapter = 1;
-            startRef.Verse = 1;
-            BCVRef endRef = new BCVRef(currRef);
-            endRef.Chapter = englishVersification.LastChapter(endRef.Book);
-            endRef.Verse = englishVersification.LastVerse(endRef.Book, endRef.Chapter);
+            UNSQuestionsDialog formToShow;
+            lock (this)
+            {
+                if (unsMainWindow != null)
+                {
+                    // This should never happen
+                    unsMainWindow.Activate();
+                    return;
+                }
+                TxlSplashScreen splashScreen = new TxlSplashScreen();
+                splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+                splashScreen.Message = string.Format(
+                    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
-            var unsDlg = new UNSQuestionsDialog(splashScreen, projectName,
-                GetKeyTerms(projectName), GetVernFont(projectName),
-                GetVernIcuLocale(projectName, "generate templates"), GetVernRtoL(projectName),
-                new ParatextDataFileProxy(fileId => GetPlugInData(this, projectName, fileId),
-                    (fileId, reader) => PutPlugInData(this, projectName, fileId, reader)),
-                GetScriptureExtractor(projectName, ExtractorType.USFX), CallingApplicationName,
-                englishVersification, GetProjectVersification(projectName), startRef,
-                endRef, b => { }, terms => DisplayKeyTerm(projectName, terms));
+                int currRef = host.GetCurrentRef(UNSQuestionsDialog.englishVersificationName);
+                BCVRef startRef = new BCVRef(currRef);
+                startRef.Chapter = 1;
+                startRef.Verse = 1;
+                BCVRef endRef = new BCVRef(currRef);
+                endRef.Chapter = host.GetLastChapter(endRef.Book, UNSQuestionsDialog.englishVersificationName);
+                endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
 
-            unsDlg.Show();
+                formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
+                    host.GetKeyTerms(projectName), host.GetProjectFont(projectName),
+                    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
+                    new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
+                        (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),
+                    host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
+                    new ScrVers(host, UNSQuestionsDialog.englishVersificationName),
+                    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
+                    endRef, b => { }, terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
+            }
+            Application.Run(formToShow);
+            Environment.Exit(0);
+        }
+
+        private class ScrVers : IScrVers
+        {
+            private readonly IHost host;
+            private readonly string versificationName;
+
+            public ScrVers(IHost host, string versificationName)
+            {
+                this.host = host;
+                this.versificationName = versificationName;
+            }
+
+            public int GetLastChapter(int bookNum)
+            {
+                return host.GetLastChapter(bookNum, versificationName);
+            }
+
+            public int GetLastVerse(int bookNum, int chapterNum)
+            {
+                return host.GetLastVerse(bookNum, chapterNum, versificationName);
+            }
+
+            public int ChangeVersification(int reference, IScrVers scrVersSource)
+            {
+                return this == scrVersSource ? reference :
+                    host.ChangeVersification(reference, ((ScrVers)scrVersSource).versificationName, versificationName);
+            }
         }
     }
 }

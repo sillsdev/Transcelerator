@@ -8,7 +8,7 @@
     <ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SILUBS.Transcelerator</RootNamespace>
+    <RootNamespace>SIL.Transcelerator</RootNamespace>
     <AssemblyName>Transcelerator</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -45,7 +45,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Output\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -61,14 +61,17 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ParatextPluginFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="AddInViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\ParatextPluginFramework.dll</HintPath>
+      <HintPath>..\..\Paratext\Paratext\bin\Debug\Pipeline\AddInViews\AddInViews.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition, Version=2010.2.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Paratext\ParatextPluginFramework\bin\Debug\System.ComponentModel.Composition.dll</HintPath>
+    <Reference Include="System.AddIn">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.AddIn.Contract">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -322,7 +325,9 @@
     <Content Include="QTTallBooks - AlternateFormOverrides.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TXL no TXL.ico" />
+    <Content Include="TXL no TXL.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -333,16 +338,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>cd $(TargetDir)
-if not exist  C:\Projects\Paratext\Paratext\bin\Debug\plugins md  C:\Projects\Paratext\Paratext\bin\Debug\plugins
-if not exist  C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl md  C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetFileName) C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl\*.plug
-copy /Y $(TargetDir)\SharedScrControls.dll C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\SharedScrUtils.dll C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\SilUtils.dll C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\System.ComponentModel.Composition.dll C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\*.xml C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\*.xsd C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl
-copy /Y $(TargetDir)\*.sfm C:\Projects\Paratext\Paratext\bin\Debug\plugins\Txl</PostBuildEvent>
+    <PostBuildEvent>xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)\plugins\$(ProjectName) /y /i</PostBuildEvent>
   </PropertyGroup>
 </Project>

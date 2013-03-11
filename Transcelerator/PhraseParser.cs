@@ -17,7 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

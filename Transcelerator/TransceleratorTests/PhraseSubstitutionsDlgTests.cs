@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class DummyPhraseSubstitutionsDlg
 	internal class DummyPhraseSubstitutionsDlg : PhraseSubstitutionsDlg

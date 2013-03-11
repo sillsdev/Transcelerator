@@ -11,7 +11,7 @@
 // File: Form1.cs
 // Responsibility: bogle
 // ---------------------------------------------------------------------------------------------
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class HelpAboutDlg
 	{
@@ -42,7 +42,7 @@ namespace SILUBS.Transcelerator
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_txlInfo = new SILUBS.Transcelerator.TxlInfo();
+			this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 

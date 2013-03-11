@@ -14,10 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Paratext.PluginFramework;
+using AddInSideViews;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	public class KeyTermMatch : IPhrasePart, IKeyTerm
 	{
@@ -259,10 +259,20 @@ namespace SILUBS.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Term
 		{
-			get { return m_terms.First().Term; }
-		}
+            get { return m_terms.First().Term; }
+        }
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the term Id.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public string Id
+	    {
+			get { return m_terms.First().Id; }
+	    }
+
+	    /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the translation.
 		/// </summary>
@@ -304,7 +314,7 @@ namespace SILUBS.Transcelerator
 		/// Gets all (distinct) renderings.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<string> Renderings
+		public IList<string> Renderings
 		{
 			get
 			{
@@ -318,7 +328,7 @@ namespace SILUBS.Transcelerator
 				KeyTermRenderingInfo info = RenderingInfo;
 				if (info != null)
 					renderings = renderings.Union(info.AddlRenderings.Where(r => r != null));
-				return renderings.Select(r => r.Normalize(NormalizationForm.FormC)).Distinct();
+				return renderings.Select(r => r.Normalize(NormalizationForm.FormC)).Distinct().ToList();
 			}
 		}
 
@@ -366,9 +376,9 @@ namespace SILUBS.Transcelerator
 		/// BBBCCCVVV.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<int> BcvOccurences
+		public IList<int> BcvOccurences
 		{
-			get { return m_terms.SelectMany(keyTerm => keyTerm.BcvOccurences).Distinct(); }
+			get { return m_terms.SelectMany(keyTerm => keyTerm.BcvOccurences).Distinct().ToList(); }
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class NewQuestionDlg
 	{

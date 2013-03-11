@@ -9,11 +9,9 @@
 #endregion
 // 
 // File: BCVRefTests.cs
-// Responsibility: TE Team
 // --------------------------------------------------------------------------------------------
 using System;
 using NUnit.Framework;
-using Paratext.PluginFramework;
 using Rhino.Mocks;
 
 namespace SILUBS.SharedScrUtils
@@ -77,8 +75,8 @@ namespace SILUBS.SharedScrUtils
         public void IsValidInVersification()
         {
             var versification = MockRepository.GenerateMock<IScrVers>();
-            versification.Stub(v => v.LastChapter(65)).Return(1);
-            versification.Stub(v => v.LastVerse(65, 1)).Return(20);
+            versification.Stub(v => v.GetLastChapter(65)).Return(1);
+            versification.Stub(v => v.GetLastVerse(65, 1)).Return(20);
             Assert.IsTrue((new BCVRef(65, 1, 1)).IsValidInVersification(versification));
             Assert.IsTrue((new BCVRef(65, 1, 20)).IsValidInVersification(versification));
             Assert.IsFalse((new BCVRef(65, 99, 1)).IsValidInVersification(versification));

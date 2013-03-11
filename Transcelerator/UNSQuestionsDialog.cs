@@ -20,13 +20,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Paratext;
-using Paratext.PluginFramework;
+using AddInSideViews;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region UNSQuestionsDialog class
 	/// ----------------------------------------------------------------------------------------
@@ -36,6 +35,8 @@ namespace SILUBS.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public partial class UNSQuestionsDialog : Form
 	{
+        public const string englishVersificationName = "English";
+
 		#region Member Data
 		private readonly string m_projectName;
 		private readonly IEnumerable<IKeyTerm> m_keyTerms;
@@ -298,8 +299,6 @@ namespace SILUBS.Transcelerator
         /// <param name="datafileProxy">helper object to store and retrieve data.</param>
         /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
 	    /// <param name="appName">Name of the calling application</param>
-        /// <param name="englishVersification">The English versification (i.e., the versification
-        /// used for the master checking questions).</param>
         /// <param name="projectVersification">The versification of the external project (to
         /// be used for passing references to the scrExtractor).</param>
 	    /// <param name="startRef">The starting Scripture reference</param>
@@ -957,12 +956,17 @@ namespace SILUBS.Transcelerator
                                         sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
                                     else
                                     {
-                                        var verseText = m_scrExtractor.Extract(startRef, endRef);
+                                        try
+                                        {
+                                            sw.Write(m_scrExtractor.Extract(startRef, endRef));
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            sw.Write(ex.Message);
 #if DEBUG
-                                        if (verseText == null)
-                                            throw m_scrExtractor.GetLastError();
+                                            throw;
 #endif
-                                        sw.Write(verseText ?? m_scrExtractor.GetLastError().Message);
+                                        }
                                     }
 									sw.WriteLine("</p>");
 								}

@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	public interface IPhrasePart
 	{
@@ -157,7 +157,7 @@ namespace SILUBS.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Performs an implicit conversion from <see cref="SILUBS.Transcelerator.Part"/>
+		/// Performs an implicit conversion from <see cref="SIL.Transcelerator.Part"/>
 		/// to <see cref="System.String"/>.
 		/// </summary>
 		/// <param name="part">The part.</param>
