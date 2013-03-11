@@ -11,7 +11,7 @@
 // File: AddRenderingDlg.cs
 // Responsibility: bogle
 // ---------------------------------------------------------------------------------------------
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class AddRenderingDlg
 	{

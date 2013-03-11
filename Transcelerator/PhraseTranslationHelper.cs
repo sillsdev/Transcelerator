@@ -15,11 +15,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Paratext.PluginFramework;
+using AddInSideViews;
 using SIL.Utils;
 using System;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// --------------------------------------------------------------------------------------------
 	/// <summary>

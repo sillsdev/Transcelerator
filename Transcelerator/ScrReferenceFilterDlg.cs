@@ -12,10 +12,9 @@
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
 using System.Windows.Forms;
-using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -44,8 +43,8 @@ namespace SILUBS.Transcelerator
             scrPsgTo.Initialize(new BCVRef(initialToRef), versification, canonicalBookIds);
             m_firstAvailableRef = new BCVRef(canonicalBookIds[0], 1, 1);
 			m_lastAvailableRef = new BCVRef(canonicalBookIds.Last(), 1, 1);
-            m_lastAvailableRef.Chapter = versification.LastChapter(m_lastAvailableRef.Book);
-            m_lastAvailableRef.Verse = versification.LastVerse(m_lastAvailableRef.Book, m_lastAvailableRef.Chapter);
+            m_lastAvailableRef.Chapter = versification.GetLastChapter(m_lastAvailableRef.Book);
+            m_lastAvailableRef.Verse = versification.GetLastVerse(m_lastAvailableRef.Book, m_lastAvailableRef.Chapter);
 			if (initialFromRef == m_firstAvailableRef && initialToRef == m_lastAvailableRef)
 				btnClearFilter.Enabled = false;
 		}

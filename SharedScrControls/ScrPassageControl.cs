@@ -20,9 +20,7 @@ using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 using System.ComponentModel;
-using System.Resources;
 using System.Windows.Forms.VisualStyles;
-using Paratext.PluginFramework;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
@@ -531,16 +529,16 @@ namespace SILUBS.SharedScrControls
 			}
 
 			// Use the versification scheme to make sure the chapter number is valid.
-			int lastChapter = m_versification.LastChapter(newScRef.Book);
+			int lastChapter = m_versification.GetLastChapter(newScRef.Book);
 			if (newScRef.Chapter > lastChapter)
 			{
 				newScRef.Chapter = lastChapter;
 				newScRef.Verse = 1;
-				newScRef.Verse = m_versification.LastVerse(newScRef.Book, lastChapter);
+				newScRef.Verse = m_versification.GetLastVerse(newScRef.Book, lastChapter);
 			}
 			else
 			{
-				int lastVerse = m_versification.LastVerse(newScRef.Book, newScRef.Chapter);
+				int lastVerse = m_versification.GetLastVerse(newScRef.Book, newScRef.Chapter);
 				// Make sure the verse number is valid
 				if (newScRef.Verse > lastVerse)
 					newScRef.Verse = lastVerse;

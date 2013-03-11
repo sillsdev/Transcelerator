@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class TxlInfo
 	{
@@ -171,7 +171,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// m_picLogo
 			// 
-			this.m_picLogo.Image = global::SILUBS.Transcelerator.Properties.Resources.Transcelerator;
+			this.m_picLogo.Image = global::SIL.Transcelerator.Properties.Resources.Transcelerator;
 			this.m_picLogo.Location = new System.Drawing.Point(0, 0);
 			this.m_picLogo.Name = "m_picLogo";
 			this.m_picLogo.Size = new System.Drawing.Size(365, 365);

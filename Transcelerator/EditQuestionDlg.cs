@@ -14,7 +14,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

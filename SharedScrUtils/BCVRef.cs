@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Paratext.PluginFramework;
 
 namespace SILUBS.SharedScrUtils
 {
@@ -445,8 +444,8 @@ namespace SILUBS.SharedScrUtils
         /// ------------------------------------------------------------------------------------
         public virtual bool IsValidInVersification(IScrVers versification)
         {
-            return Valid && (versification.LastChapter(Book) >= Chapter &&
-                versification.LastVerse(Book, Chapter) >= Verse);
+            return Valid && (versification.GetLastChapter(Book) >= Chapter &&
+                versification.GetLastVerse(Book, Chapter) >= Verse);
         }
 
 	    /// ------------------------------------------------------------------------------------

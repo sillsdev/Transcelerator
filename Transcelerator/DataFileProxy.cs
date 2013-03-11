@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using Paratext.PluginFramework;
+using AddInSideViews;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
     public abstract class DataFileProxy
     {
@@ -38,19 +37,19 @@ namespace SILUBS.Transcelerator
 
     public class ParatextDataFileProxy : DataFileProxy
     {
-        private readonly Func<string, TextReader> m_getPlugInData;
-        private readonly Action<string, TextReader> m_putPlugInData;
+        private readonly Func<string, string> m_getPlugInData;
+        private readonly Action<string, string> m_putPlugInData;
 
-        public ParatextDataFileProxy(Func<string, TextReader> getPlugInData,
-            Action<string, TextReader> putPlugInData)
+        public ParatextDataFileProxy(Func<string, string> getPlugInData,
+            Action<string, string> putPlugInData)
         {
             m_getPlugInData = getPlugInData;
             m_putPlugInData = putPlugInData;
         }
 
-        public static Dictionary<string, PluginDataFileMergeInfo> GetDataFileKeySpecifications()
+        public static Dictionary<string, IPluginDataFileMergeInfo> GetDataFileKeySpecifications()
         {
-            var specs = new Dictionary<string, PluginDataFileMergeInfo>();
+            var specs = new Dictionary<string, IPluginDataFileMergeInfo>();
 
             specs[GetFileName(DataFileId.Translations)] = new PluginDataFileMergeInfo(
                 new MergeLevel("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
@@ -73,13 +72,12 @@ namespace SILUBS.Transcelerator
 
         public override void Write(DataFileId fileId, string data)
         {
-            m_putPlugInData(GetFileName(fileId), new StringReader(data));
+            m_putPlugInData(GetFileName(fileId), data);
         }
 
         public override string Read(DataFileId fileId)
         {
-            var reader = m_getPlugInData(GetFileName(fileId));
-            return reader == null ? string.Empty : reader.ReadToEnd();
+            return m_getPlugInData(GetFileName(fileId)) ?? string.Empty;
         }
 
         public override bool Exists(DataFileId fileId)

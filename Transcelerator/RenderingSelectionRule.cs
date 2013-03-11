@@ -18,7 +18,7 @@ using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class RenderingSelectionRule
 	/// ------------------------------------------------------------------------------------

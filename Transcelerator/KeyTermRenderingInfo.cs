@@ -13,7 +13,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class KeyTermRenderingInfo
 	/// ------------------------------------------------------------------------------------

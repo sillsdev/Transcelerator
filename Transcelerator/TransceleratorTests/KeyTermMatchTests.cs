@@ -11,12 +11,12 @@
 // File: KeyTermMatchTests.cs
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
+using AddInSideViews;
 using NUnit.Framework;
-using Paratext.PluginFramework;
-using Rhino.Mocks;
 using System;
+using Rhino.Mocks;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	[TestFixture]
 	public class KeyTermMatchTests

@@ -11,7 +11,7 @@
 // File: ScrReferenceFilterDlg.cs
 // Responsibility: Bogle
 // ---------------------------------------------------------------------------------------------
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class ScrReferenceFilterDlg
 	{

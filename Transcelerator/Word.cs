@@ -10,11 +10,10 @@
 // 
 // File: Word.cs
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	public sealed class Word
 	{
@@ -112,7 +111,7 @@ namespace SILUBS.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Performs an implicit conversion from <see cref="SILUBS.Transcelerator.Word"/>
+		/// Performs an implicit conversion from <see cref="SIL.Transcelerator.Word"/>
 		/// to <see cref="System.String"/>.
 		/// </summary>
 		/// <param name="word">The word.</param>
@@ -125,7 +124,7 @@ namespace SILUBS.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Performs an implicit conversion from <see cref="SILUBS.Transcelerator.Word"/>
+		/// Performs an implicit conversion from <see cref="SIL.Transcelerator.Word"/>
 		/// to <see cref="System.String"/>.
 		/// </summary>
 		/// <param name="text">The word.</param>

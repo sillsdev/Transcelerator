@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	partial class TermRenderingCtrl
 	{
@@ -66,7 +66,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// mnuSetAsDefault
 			// 
-			mnuSetAsDefault.Image = global::SILUBS.Transcelerator.Properties.Resources.check_circle;
+			mnuSetAsDefault.Image = global::SIL.Transcelerator.Properties.Resources.check_circle;
 			mnuSetAsDefault.Name = "mnuSetAsDefault";
 			mnuSetAsDefault.Size = new System.Drawing.Size(198, 22);
 			mnuSetAsDefault.Text = "&Set as default rendering";
@@ -74,7 +74,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// mnuAddRendering
 			// 
-			mnuAddRendering.Image = global::SILUBS.Transcelerator.Properties.Resources._1321382935_plus;
+			mnuAddRendering.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
 			mnuAddRendering.Name = "mnuAddRendering";
 			mnuAddRendering.Size = new System.Drawing.Size(198, 22);
 			mnuAddRendering.Text = "&Add rendering...";
@@ -129,7 +129,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// mnuDeleteRendering
 			// 
-			this.mnuDeleteRendering.Image = global::SILUBS.Transcelerator.Properties.Resources._1321385905_dialog_close;
+			this.mnuDeleteRendering.Image = global::SIL.Transcelerator.Properties.Resources._1321385905_dialog_close;
 			this.mnuDeleteRendering.Name = "mnuDeleteRendering";
 			this.mnuDeleteRendering.Size = new System.Drawing.Size(198, 22);
 			this.mnuDeleteRendering.Text = "&Delete this rendering";
@@ -137,7 +137,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// mnuLookUpTermC
 			// 
-			this.mnuLookUpTermC.Image = global::SILUBS.Transcelerator.Properties.Resources._1330980033_search_button;
+			this.mnuLookUpTermC.Image = global::SIL.Transcelerator.Properties.Resources._1330980033_search_button;
 			this.mnuLookUpTermC.Name = "mnuLookUpTermC";
 			this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
 			this.mnuLookUpTermC.Text = "Find &Term in {0}";
@@ -152,7 +152,7 @@ namespace SILUBS.Transcelerator
 			// 
 			// mnuLookUpTermH
 			// 
-			this.mnuLookUpTermH.Image = global::SILUBS.Transcelerator.Properties.Resources._1330980033_search_button;
+			this.mnuLookUpTermH.Image = global::SIL.Transcelerator.Properties.Resources._1330980033_search_button;
 			this.mnuLookUpTermH.Name = "mnuLookUpTermH";
 			this.mnuLookUpTermH.Size = new System.Drawing.Size(158, 22);
 			this.mnuLookUpTermH.Text = "Find &Term in {0}";

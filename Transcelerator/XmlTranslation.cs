@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Xml.Serialization;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class XmlTranslation
 	/// ------------------------------------------------------------------------------------

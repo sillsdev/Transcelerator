@@ -13,12 +13,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AddInSideViews;
 using NUnit.Framework;
-using Paratext.PluginFramework;
 using Rhino.Mocks;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	[TestFixture]
 	public class KeyTermMatchBuilderTests

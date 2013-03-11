@@ -13,12 +13,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AddInSideViews;
 using NUnit.Framework;
-using Paratext.PluginFramework;
 using Rhino.Mocks;
 using SIL.Utils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	[TestFixture]
 	public class PhraseTranslationHelperTests

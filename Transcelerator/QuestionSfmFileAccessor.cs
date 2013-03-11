@@ -20,7 +20,7 @@ using SIL.Utils;
 using SILUBS.SharedScrUtils;
 using System.Linq;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	#region class QuestionSfmFileAccessor
 	/// ------------------------------------------------------------------------------------

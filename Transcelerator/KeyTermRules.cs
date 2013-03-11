@@ -16,7 +16,7 @@ using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ------------------------------------------------------------------------------------
 	/// <summary>

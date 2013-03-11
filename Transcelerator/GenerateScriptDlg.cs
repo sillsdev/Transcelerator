@@ -14,11 +14,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using Paratext;
+using AddInSideViews;
 using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

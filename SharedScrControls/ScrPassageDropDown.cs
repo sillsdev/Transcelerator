@@ -12,10 +12,8 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using Paratext.PluginFramework;
 using SILUBS.SharedScrUtils;
 
 namespace SILUBS.SharedScrControls
@@ -852,7 +850,7 @@ namespace SILUBS.SharedScrControls
 			{
 				// Get the number of chapters based on the versification scheme.
 				List<int> chapterList = new List<int>();
-				for (int i = 1; i <= m_versification.LastChapter(m_scRef.Book); i++)
+				for (int i = 1; i <= m_versification.GetLastChapter(m_scRef.Book); i++)
 					chapterList.Add(i);
 				return chapterList;
 			}
@@ -875,7 +873,7 @@ namespace SILUBS.SharedScrControls
 			}
 
 			List<int> verseList = new List<int>();
-			for (int i = 1; i <= m_versification.LastVerse(m_scRef.Book, m_scRef.Chapter); i++)
+			for (int i = 1; i <= m_versification.GetLastVerse(m_scRef.Book, m_scRef.Chapter); i++)
 				verseList.Add(i);
 			
 			if (ChapterSelected != null)

@@ -15,10 +15,8 @@ using System;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Paratext.PluginFramework;
-using SILUBS.SharedScrUtils;
 
-namespace SILUBS.Transcelerator
+namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
