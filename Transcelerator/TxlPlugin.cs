@@ -24,7 +24,7 @@ namespace SIL.Transcelerator
     [QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
     [QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
     [QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
-    [QualificationData(PluginMetaDataKeys.requiresActiveProject, "true")]
+    [QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.scriptureProjectActive)]
     public class TxlPlugin : IParatextAddIn
     {
         public const string pluginName = "Transcelerator";
@@ -77,7 +77,7 @@ namespace SIL.Transcelerator
                 endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
 
                 formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
-                    host.GetKeyTerms(projectName), host.GetProjectFont(projectName),
+                    host.GetKeyTerms(projectName, "en"), host.GetProjectFont(projectName),
                     host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
                     new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
                         (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),

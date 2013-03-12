@@ -201,21 +201,27 @@
   <ItemGroup>
     <EmbeddedResource Include="AddRenderingDlg.resx">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="HelpAboutDlg.resx">
       <DependentUpon>HelpAboutDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NewQuestionDlg.resx">
       <DependentUpon>NewQuestionDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditQuestionDlg.resx">
       <DependentUpon>EditQuestionDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RealSplashScreen.resx">
       <DependentUpon>RealSplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RulesWizardDlg.resx">
       <DependentUpon>RulesWizardDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
       <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
@@ -231,6 +237,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GenerateScriptDlg.resx">
       <DependentUpon>GenerateScriptDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -239,9 +246,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TermRenderingCtrl.resx">
       <DependentUpon>TermRenderingCtrl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TxlInfo.resx">
       <DependentUpon>TxlInfo.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UNSQuestionsDialog.resx">
       <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>

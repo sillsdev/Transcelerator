@@ -123,6 +123,7 @@
     <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
