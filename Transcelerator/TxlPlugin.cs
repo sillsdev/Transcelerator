@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using AddInSideViews;
+using Palaso.Reporting;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.Transcelerator
@@ -51,43 +52,64 @@ namespace SIL.Transcelerator
 
         public void Run(IHost ptHost, string activeProjectName)
         {
-            host = ptHost;
-            projectName = activeProjectName;
-
-            UNSQuestionsDialog formToShow;
-            lock (this)
+            try
             {
-                if (unsMainWindow != null)
+                host = ptHost;
+                projectName = activeProjectName;
+
+                MessageBox.Show("Attach debugger now (if you want to)");
+
+                InitializeErrorHandling();
+
+                UNSQuestionsDialog formToShow;
+                lock (this)
                 {
-                    // This should never happen
-                    unsMainWindow.Activate();
-                    return;
+                    if (unsMainWindow != null)
+                    {
+                        // This should never happen
+                        unsMainWindow.Activate();
+                        return;
+                    }
+                    TxlSplashScreen splashScreen = new TxlSplashScreen();
+                    splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+                    splashScreen.Message = string.Format(
+                        Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
+
+                    int currRef = host.GetCurrentRef(UNSQuestionsDialog.englishVersificationName);
+                    BCVRef startRef = new BCVRef(currRef);
+                    startRef.Chapter = 1;
+                    startRef.Verse = 1;
+                    BCVRef endRef = new BCVRef(currRef);
+                    endRef.Chapter = host.GetLastChapter(endRef.Book, UNSQuestionsDialog.englishVersificationName);
+                    endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
+
+                    formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
+                        host.GetKeyTerms(projectName, "en"), host.GetProjectFont(projectName),
+                        host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
+                        new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
+                            (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),
+                        host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
+                        new ScrVers(host, UNSQuestionsDialog.englishVersificationName),
+                        new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
+                        endRef, b => { }, terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
                 }
-                TxlSplashScreen splashScreen = new TxlSplashScreen();
-                splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-                splashScreen.Message = string.Format(
-                    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
-
-                int currRef = host.GetCurrentRef(UNSQuestionsDialog.englishVersificationName);
-                BCVRef startRef = new BCVRef(currRef);
-                startRef.Chapter = 1;
-                startRef.Verse = 1;
-                BCVRef endRef = new BCVRef(currRef);
-                endRef.Chapter = host.GetLastChapter(endRef.Book, UNSQuestionsDialog.englishVersificationName);
-                endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
-
-                formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
-                    host.GetKeyTerms(projectName, "en"), host.GetProjectFont(projectName),
-                    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
-                    new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
-                        (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),
-                    host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
-                    new ScrVers(host, UNSQuestionsDialog.englishVersificationName),
-                    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
-                    endRef, b => { }, terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
+                Application.Run(formToShow);
             }
-            Application.Run(formToShow);
-            Environment.Exit(0);
+            catch (Exception e)
+            {
+                ErrorReport.ReportFatalException(e);
+            }
+            finally
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        private void InitializeErrorHandling()
+        {
+            ErrorReport.EmailAddress = "tom_bogle@sil.org";
+            ErrorReport.AddStandardProperties();
+            ExceptionHandler.Init();
         }
 
         private class ScrVers : IScrVers
