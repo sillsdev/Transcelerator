@@ -66,6 +66,14 @@
       <HintPath>..\..\Paratext\Paratext\bin\Debug\Pipeline\AddInViews\AddInViews.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Palaso, Version=1.9.366.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\dotnet\Palaso.dll</HintPath>
+    </Reference>
+    <Reference Include="PalasoUIWindowsForms, Version=1.9.366.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\dotnet\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
