@@ -59,44 +59,68 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <Directory Id="ProgramFilesFolder">
         <Directory Id="PARATEXT7" Name="ParatextDir">
           <Directory Id="PLUGINDIR" Name="plugins">
-            <Directory Id="INSTALLDIR" Name="Txl"/>
+            <Directory Id="INSTALLDIR" Name="Transcelerator"/>
           </Directory>
         </Directory>
       </Directory>
     </Directory>
 
     <DirectoryRef Id="INSTALLDIR">
-      <Component Id="Transcelerator.plug" Guid="{AC56B7F3-C820-43f3-A47D-E30B01BB4FC6}">
-        <File Id="Transcelerator.plug" Name="Transcelerator.plug"  Source="..\Transcelerator\output\release\Transcelerator.dll" />
+      <Component Guid="{AC56B7F3-C820-43f3-A47D-E30B01BB4FC6}">
+        <File Name="Transcelerator.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Transcelerator.dll" />
       </Component>
-      <Component Id="keyTermRules.xml" Guid="{C0907C0A-1400-44bf-BFC3-6F0D0F3ED03B}">
-        <File Id="keyTermRules.xml" Name="keyTermRules.xml"  Source="..\Transcelerator\output\release\keyTermRules.xml" />
+      <Component Guid="{C0907C0A-1400-44bf-BFC3-6F0D0F3ED03B}">
+        <File Name="keyTermRules.xml" KeyPath="yes" Source="..\Transcelerator\bin\Release\keyTermRules.xml" />
       </Component>
-      <Component Id="keyTermRules.xsd" Guid="{120C24DA-4D9B-4192-B5CB-0B13CDC8410B}">
-        <File Id="keyTermRules.xsd" Name="keyTermRules.xsd"  Source="..\Transcelerator\output\release\keyTermRules.xsd" />
+      <Component Guid="{120C24DA-4D9B-4192-B5CB-0B13CDC8410B}">
+        <File Name="keyTermRules.xsd" KeyPath="yes" Source="..\Transcelerator\bin\Release\keyTermRules.xsd" />
       </Component>
-      <Component Id="QTTallBooks.AlternateFormOverrides.xml" Guid="{C03B656F-CE84-486f-8285-870BD4953CE3}">
-        <File Id="QTTallBooks.AlternateFormOverrides.xml" Name="QTTallBooks - AlternateFormOverrides.xml"  Source="..\Transcelerator\output\release\QTTallBooks - AlternateFormOverrides.xml" />
+      <Component Guid="{C03B656F-CE84-486f-8285-870BD4953CE3}">
+        <File Id="QTTallBooks.AlternateFormOverrides.xml" Name="QTTallBooks - AlternateFormOverrides.xml" KeyPath="yes" Source="..\Transcelerator\bin\Release\QTTallBooks - AlternateFormOverrides.xml" />
       </Component>
-      <Component Id="QTTallBooks.sfm" Guid="{38AB2260-068E-49cb-BA2E-00F83B5B0AAE}">
-        <File Id="QTTallBooks.sfm" Name="QTTallBooks.sfm"  Source="..\Transcelerator\output\release\QTTallBooks.sfm" />
+      <Component Guid="{38AB2260-068E-49cb-BA2E-00F83B5B0AAE}">
+        <File Name="QTTallBooks.sfm" KeyPath="yes" Source="..\Transcelerator\bin\Release\QTTallBooks.sfm" />
       </Component>
-      <Component Id="SharedScrControls.dll" Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
-        <File Id="SharedScrControls.dll" Name="SharedScrControls.dll"  Source="..\Transcelerator\output\release\SharedScrControls.dll" />
+      <Component Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
+        <File Name="SharedScrControls.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.dll" />
       </Component>
-      <Component Id="SharedScrUtils.dll" Guid="{ED70C349-50FA-46f8-B1E8-B314A900D1BC}">
-        <File Id="SharedScrUtils.dll" Name="SharedScrUtils.dll"  Source="..\Transcelerator\output\release\SharedScrUtils.dll" />
+      <Component Guid="{ED70C349-50FA-46f8-B1E8-B314A900D1BC}">
+        <File Name="SharedScrUtils.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrUtils.dll" />
       </Component>
-      <Component Id="SilUtils.dll" Guid="{ECA02522-194A-4694-B90B-C760595D24C5}">
-        <File Id="SilUtils.dll" Name="SilUtils.dll"  Source="..\Transcelerator\output\release\SilUtils.dll" />
+      <Component Guid="{ECA02522-194A-4694-B90B-C760595D24C5}">
+        <File Name="SilUtils.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SilUtils.dll" />
       </Component>
-      <Component Id="System.ComponentModel.Composition.dll" Guid="{B3823867-B6D4-48b1-B73E-6D1C5B868B9C}">
-        <File Id="System.ComponentModel.Composition.dll" Name="System.ComponentModel.Composition.dll"  Source="..\Transcelerator\output\release\System.ComponentModel.Composition.dll" />
-      </Component>
-    </DirectoryRef>
-
-    <Feature Id="PluginFeature" Level="1" Title="Plugin for Paratext">
-      <ComponentRef Id ="Transcelerator.plug"/>
+	  <Component Guid="{B3823867-B6D4-48b1-B73E-6D1C5B868B9C}">
+		<File Name="Palaso.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Palaso.dll" />
+	  </Component>
+	  <Component Guid="{0FF64E02-71A7-4791-90E5-646AF7AC88CA}">
+		<File Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\PalasoUIWindowsForms.dll" />
+	  </Component>
+	  <Component Guid="{5D7D6D47-0C76-4CCB-B81A-923A90EC7AB3}">
+		<File Name="Transcelerator.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\Transcelerator.pdb" />
+	  </Component>
+	  <Component Guid="{101FE397-3F77-4156-84E8-816757256D2A}">
+		<File Name="SharedScrControls.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.pdb" />
+	  </Component>
+	  <Component Guid="{FCE5871C-4633-48DC-8E03-9280F717F539}">
+		<File Name="SharedScrUtils.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrUtils.pdb" />
+	  </Component>
+	  <Component Guid="{D381546C-F766-4532-B23C-FB8B55320A6D}">
+		<File Name="SilUtils.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SilUtils.pdb" />
+	  </Component>
+	  <Component Guid="{7D68C67E-F306-44A3-9F16-5D4F95AF34B0}">
+		<File Name="Palaso.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\Palaso.pdb" />
+	  </Component>
+	  <Component Guid="{74F3CC00-E6D4-43FA-A9A9-5970DD3F28B6}">
+		<File Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\PalasoUIWindowsForms.pdb" />
+	  </Component>
+	  <Component Guid="{32B95588-AEDD-43A3-AB4A-B4ECF3ADC49E}">
+		<File Id="Icon" Name="TXL no TXL.ico" KeyPath="yes" Source="..\Transcelerator\bin\Release\TXL no TXL.ico" />
+	  </Component>
+	</DirectoryRef>
+	
+	<Feature Id="PluginFeature" Level="1" Title="Plugin for Paratext">
+      <ComponentRef Id ="Transcelerator.dll"/>
       <ComponentRef Id="keyTermRules.xml"/>
       <ComponentRef Id="keyTermRules.xsd"/>
       <ComponentRef Id="QTTallBooks.AlternateFormOverrides.xml"/>
@@ -104,13 +128,29 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <ComponentRef Id="SharedScrControls.dll"/>
       <ComponentRef Id="SharedScrUtils.dll"/>
       <ComponentRef Id="SilUtils.dll"/>
-      <ComponentRef Id="System.ComponentModel.Composition.dll"/>
-    </Feature>
+	  <ComponentRef Id="Palaso.dll"/>
+	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
+	  <ComponentRef Id ="Transcelerator.pdb"/>
+	  <ComponentRef Id="SharedScrControls.pdb"/>
+	  <ComponentRef Id="SharedScrUtils.pdb"/>
+	  <ComponentRef Id="SilUtils.pdb"/>
+	  <ComponentRef Id="Palaso.pdb"/>
+	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
+	  <ComponentRef Id="Icon"/>
+	</Feature>
+	
+	<CustomAction Id="SetUpdatePluginStore" Property="UpdatePluginStore" Value="&quot;[PARATEXT7]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check"/>
+	<CustomAction Id="UpdatePluginStore" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no" Execute="deferred" Return="check"/>
 
+	<InstallExecuteSequence>
+	  <Custom Action="UpdatePluginStore" Before="InstallFinalize"></Custom>
+	  <Custom Action="SetUpdatePluginStore" Before="UpdatePluginStore"></Custom>
+	</InstallExecuteSequence>
+	
     <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
     
     <!-- Icon you see in add/remove programs control panel -->
-    <Icon Id="Transcelerator.ico" SourceFile ="..\Transcelerator\output\release\Transcelerator.dll" />
+    <Icon Id="Transcelerator.ico" SourceFile ="..\Transcelerator\bin\Release\Transcelerator.dll" />
     <Property Id="ARPPRODUCTICON" Value="Transcelerator.ico" />
   </Product>
 </Wix>

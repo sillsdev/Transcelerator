@@ -56,9 +56,9 @@ namespace SIL.Transcelerator
             {
                 host = ptHost;
                 projectName = activeProjectName;
-
-                MessageBox.Show("Attach debugger now (if you want to)");
-
+#if DEBUG
+                MessageBox.Show("Attach debugger now (if you want to)", pluginName);
+#endif
                 InitializeErrorHandling();
 
                 UNSQuestionsDialog formToShow;

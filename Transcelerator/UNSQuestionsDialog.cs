@@ -320,6 +320,8 @@ namespace SIL.Transcelerator
             }
             splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
+            InitializeComponent();
+
             m_fileProxy = datafileProxy;
 
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
@@ -339,8 +341,6 @@ namespace SIL.Transcelerator
 		    TermRenderingCtrl.s_AppName = appName;
 			m_startRef = startRef;
 			m_endRef = endRef;
-
-			InitializeComponent();
 
             string questionsFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 "QTTallBooks.sfm");
