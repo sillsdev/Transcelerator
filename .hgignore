@@ -6,3 +6,4 @@ obj/*
 bin/*
 Output/*
 Installer/output/*
+Transcelerator/output/*

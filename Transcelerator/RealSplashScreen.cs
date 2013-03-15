@@ -109,58 +109,60 @@ namespace SIL.Transcelerator
 			Justification="marqueeGif gets added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.PictureBox marqueeGif;
-			this.lblMessage = new System.Windows.Forms.Label();
-			marqueeGif = new System.Windows.Forms.PictureBox();
-			this.m_txlInfo = new TxlInfo();
-			((System.ComponentModel.ISupportInitialize)(marqueeGif)).BeginInit();
-			this.SuspendLayout();
-			//
-			// m_txlInfo
-			//
-			m_txlInfo.Location = new System.Drawing.Point(0, 0);
-			m_txlInfo.Name = "m_txlInfo";
-			m_txlInfo.Size = new System.Drawing.Size(623, 367);
-			m_txlInfo.TabIndex = 0;
-			m_txlInfo.TabStop = false;
-			// 
-			// marqueeGif
-			// 
-			marqueeGif.Image = global::SIL.Transcelerator.Properties.Resources.wait22trans;
-			marqueeGif.Location = new System.Drawing.Point(343, 368);
-			marqueeGif.Name = "marqueeGif";
-			marqueeGif.Size = new System.Drawing.Size(22, 22);
-			marqueeGif.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-			marqueeGif.TabIndex = 1;
-			marqueeGif.TabStop = false;
-			// 
-			// lblMessage
-			// 
-			this.lblMessage.BackColor = System.Drawing.Color.Transparent;
-			this.lblMessage.ForeColor = System.Drawing.Color.Black;
-			this.lblMessage.Location = new System.Drawing.Point(12, 368);
-			this.lblMessage.Name = "lblMessage";
-			this.lblMessage.Size = new System.Drawing.Size(325, 23);
-			this.lblMessage.TabIndex = 2;
-			// 
-			// RealSplashScreen
-			// 
-			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(629, 397);
-			this.ControlBox = false;
-			this.Controls.Add(m_txlInfo);
-			this.Controls.Add(marqueeGif);
-			this.Controls.Add(this.lblMessage);
-			this.ForeColor = System.Drawing.Color.Black;
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "RealSplashScreen";
-			this.Opacity = 0;
-			this.ShowIcon = false;
-			((System.ComponentModel.ISupportInitialize)(marqueeGif)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            System.Windows.Forms.PictureBox marqueeGif;
+            this.lblMessage = new System.Windows.Forms.Label();
+            this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
+            marqueeGif = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(marqueeGif)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // marqueeGif
+            // 
+            marqueeGif.Image = global::SIL.Transcelerator.Properties.Resources.wait22trans;
+            marqueeGif.Location = new System.Drawing.Point(343, 368);
+            marqueeGif.Name = "marqueeGif";
+            marqueeGif.Size = new System.Drawing.Size(22, 22);
+            marqueeGif.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            marqueeGif.TabIndex = 1;
+            marqueeGif.TabStop = false;
+            // 
+            // lblMessage
+            // 
+            this.lblMessage.BackColor = System.Drawing.Color.Transparent;
+            this.lblMessage.ForeColor = System.Drawing.Color.Black;
+            this.lblMessage.Location = new System.Drawing.Point(12, 368);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(325, 23);
+            this.lblMessage.TabIndex = 2;
+            // 
+            // m_txlInfo
+            // 
+            this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
+            this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
+            this.m_txlInfo.Name = "m_txlInfo";
+            this.m_txlInfo.Size = new System.Drawing.Size(623, 367);
+            this.m_txlInfo.TabIndex = 0;
+            this.m_txlInfo.TabStop = false;
+            // 
+            // RealSplashScreen
+            // 
+            this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.White;
+            this.ClientSize = new System.Drawing.Size(625, 393);
+            this.ControlBox = false;
+            this.Controls.Add(this.m_txlInfo);
+            this.Controls.Add(marqueeGif);
+            this.Controls.Add(this.lblMessage);
+            this.ForeColor = System.Drawing.Color.Black;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "RealSplashScreen";
+            this.Opacity = 0;
+            this.ShowIcon = false;
+            ((System.ComponentModel.ISupportInitialize)(marqueeGif)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		#endregion
