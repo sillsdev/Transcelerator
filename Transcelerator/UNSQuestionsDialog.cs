@@ -836,120 +836,131 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            string folder = m_scrExtractor == null ? m_defaultLcfFolder :
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                folder, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
-			{
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					Func<int, int, bool> InRange;
-					if (dlg.m_rdoWholeBook.Checked)
-					{
-						int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
-						InRange = (bcvStart, bcvEnd) =>
-						{
-							return BCVRef.GetBookFromBcv(bcvStart) == bookNum;
-						};
-					}
-					else 
-					{
-						BCVRef startRef = dlg.VerseRangeStartRef;
-						BCVRef endRef = dlg.VerseRangeEndRef;
-						InRange = (bcvStart, bcvEnd) =>
-						{
-							return bcvStart >= startRef && bcvEnd <= endRef;
-						};
-					}
+            string blah = null;
+            MessageBox.Show(blah.Equals("mom").ToString());
+            GenerateScript(m_scrExtractor == null ? m_defaultLcfFolder :
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+		}
 
-					List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
-					if (dlg.m_rdoDisplayWarning.Checked)
-					{
-						int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
-						if (untranslatedQuestions > 0 &&
-							MessageBox.Show(string.Format(Properties.Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
-							m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
-						{
-							return;
-						}
-					}
-					using (StreamWriter sw = new StreamWriter(dlg.FileName, false, Encoding.UTF8))
-					{
-						sw.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
-						sw.WriteLine("<html>");
-						sw.WriteLine("<head>");
-						sw.WriteLine("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"/>");
-						sw.WriteLine("<title>" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</title>");
-						if (!dlg.m_rdoEmbedStyleInfo.Checked)
-						{
-							sw.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href= \"" + dlg.CssFile + "\"/>");
-							if (dlg.WriteCssFile)
-							{
-								if (dlg.m_chkOverwriteCss.Checked)
-								{
-									using (StreamWriter css = new StreamWriter(dlg.FullCssPath))
-									{
-										WriteCssStyleInfo(css, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-											dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
-											dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
-											dlg.m_chkNumberQuestions.Checked);
-									}
-								}
-							}
-						}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles the Click event of the mnuGenerate control.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void GenerateScript(string defaultFolder)
+        {
+            using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
+                defaultFolder, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    Func<int, int, bool> InRange;
+                    if (dlg.m_rdoWholeBook.Checked)
+                    {
+                        int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
+                        InRange = (bcvStart, bcvEnd) =>
+                        {
+                            return BCVRef.GetBookFromBcv(bcvStart) == bookNum;
+                        };
+                    }
+                    else
+                    {
+                        BCVRef startRef = dlg.VerseRangeStartRef;
+                        BCVRef endRef = dlg.VerseRangeEndRef;
+                        InRange = (bcvStart, bcvEnd) =>
+                        {
+                            return bcvStart >= startRef && bcvEnd <= endRef;
+                        };
+                    }
 
-						sw.WriteLine("<style type=\"text/css\">");
-						// This CSS directive always gets written directly to the template file because it's
-						// important to get right and it's unlikely that someone will want to do a global override.
-						sw.WriteLine(":lang(" + m_vernIcuLocale + ") {font-family:serif," +
-							m_colTranslation.DefaultCellStyle.Font.FontFamily.Name + ",Arial Unicode MS;}");
-						if (dlg.m_rdoEmbedStyleInfo.Checked)
-						{
-							WriteCssStyleInfo(sw, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-								dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
-								dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
-								dlg.m_chkNumberQuestions.Checked);
-						}
-						sw.WriteLine("</style>");
-						sw.WriteLine("</head>");
-						sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
-						sw.WriteLine("<h1 lang=\"en\">" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</h1>");
-						int prevCategory = -1;
-						int prevSectionStartRef = -1, prevSectionEndRef = -1;
-						string prevQuestionRef = null;
-						string pendingSectionHead = null;
+                    List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
+                    if (dlg.m_rdoDisplayWarning.Checked)
+                    {
+                        int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
+                        if (untranslatedQuestions > 0 &&
+                            MessageBox.Show(string.Format(Properties.Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
+                            m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
+                        {
+                            return;
+                        }
+                    }
+                    using (StreamWriter sw = new StreamWriter(dlg.FileName, false, Encoding.UTF8))
+                    {
+                        sw.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+                        sw.WriteLine("<html>");
+                        sw.WriteLine("<head>");
+                        sw.WriteLine("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"/>");
+                        sw.WriteLine("<title>" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</title>");
+                        if (!dlg.m_rdoEmbedStyleInfo.Checked)
+                        {
+                            sw.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href= \"" + dlg.CssFile + "\"/>");
+                            if (dlg.WriteCssFile)
+                            {
+                                if (dlg.m_chkOverwriteCss.Checked)
+                                {
+                                    using (StreamWriter css = new StreamWriter(dlg.FullCssPath))
+                                    {
+                                        WriteCssStyleInfo(css, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
+                                            dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                            dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
+                                            dlg.m_chkNumberQuestions.Checked);
+                                    }
+                                }
+                            }
+                        }
 
-						foreach (TranslatablePhrase phrase in allPhrasesInRange)
-						{
-							if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
-							{
-								if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
-									pendingSectionHead = phrase.Reference;
-								prevCategory = -1;
-							}
-							prevSectionStartRef = phrase.StartRef;
-							prevSectionEndRef = phrase.EndRef;
+                        sw.WriteLine("<style type=\"text/css\">");
+                        // This CSS directive always gets written directly to the template file because it's
+                        // important to get right and it's unlikely that someone will want to do a global override.
+                        sw.WriteLine(":lang(" + m_vernIcuLocale + ") {font-family:serif," +
+                            m_colTranslation.DefaultCellStyle.Font.FontFamily.Name + ",Arial Unicode MS;}");
+                        if (dlg.m_rdoEmbedStyleInfo.Checked)
+                        {
+                            WriteCssStyleInfo(sw, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
+                                dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
+                                dlg.m_chkNumberQuestions.Checked);
+                        }
+                        sw.WriteLine("</style>");
+                        sw.WriteLine("</head>");
+                        sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
+                        sw.WriteLine("<h1 lang=\"en\">" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</h1>");
+                        int prevCategory = -1;
+                        int prevSectionStartRef = -1, prevSectionEndRef = -1;
+                        string prevQuestionRef = null;
+                        string pendingSectionHead = null;
 
-							if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
-								continue; // skip this question
+                        foreach (TranslatablePhrase phrase in allPhrasesInRange)
+                        {
+                            if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
+                            {
+                                if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
+                                    pendingSectionHead = phrase.Reference;
+                                prevCategory = -1;
+                            }
+                            prevSectionStartRef = phrase.StartRef;
+                            prevSectionEndRef = phrase.EndRef;
 
-							if (pendingSectionHead != null)
-							{
-								sw.WriteLine("<h2 lang=\"en\">" + pendingSectionHead.Normalize(NormalizationForm.FormC) + "</h2>");
-								pendingSectionHead = null;
-							}
+                            if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
+                                continue; // skip this question
 
-							if (phrase.Category != prevCategory)
-							{
-								sw.WriteLine("<h3>" + phrase.CategoryName.Normalize(NormalizationForm.FormC) + "</h3>");
-								prevCategory = phrase.Category;
-							}
+                            if (pendingSectionHead != null)
+                            {
+                                sw.WriteLine("<h2 lang=\"en\">" + pendingSectionHead.Normalize(NormalizationForm.FormC) + "</h2>");
+                                pendingSectionHead = null;
+                            }
 
-							if (prevQuestionRef != phrase.Reference)
-							{
-								if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
-								{
-									sw.WriteLine("<p class=\"scripture\">");
+                            if (phrase.Category != prevCategory)
+                            {
+                                sw.WriteLine("<h3>" + phrase.CategoryName.Normalize(NormalizationForm.FormC) + "</h3>");
+                                prevCategory = phrase.Category;
+                            }
+
+                            if (prevQuestionRef != phrase.Reference)
+                            {
+                                if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
+                                {
+                                    sw.WriteLine("<p class=\"scripture\">");
                                     int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
                                     int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
                                     if (m_scrExtractor == null)
@@ -968,37 +979,37 @@ namespace SIL.Transcelerator
 #endif
                                         }
                                     }
-									sw.WriteLine("</p>");
-								}
-								prevQuestionRef = phrase.Reference;
-							}
+                                    sw.WriteLine("</p>");
+                                }
+                                prevQuestionRef = phrase.Reference;
+                            }
 
-							sw.WriteLine("<p class=\"question\">" +
-								(phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
+                            sw.WriteLine("<p class=\"question\">" +
+                                (phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
 
-							sw.WriteLine("<div class=\"extras\" lang=\"en\">");
-							if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-								sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseToDisplayInUI.Normalize(NormalizationForm.FormC) + "</p>");
-							Question answersAndComments = phrase.QuestionInfo;
-							if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
-							{
-								foreach (string answer in answersAndComments.Answers)
-									sw.WriteLine("<p class=\"answer\">" + answer.Normalize(NormalizationForm.FormC) + "</p>");
-							}
-							if (dlg.m_chkIncludeComments.Checked && answersAndComments.Notes != null)
-							{
-								foreach (string comment in answersAndComments.Notes)
-									sw.WriteLine("<p class=\"comment\">" + comment.Normalize(NormalizationForm.FormC) + "</p>");
-							}
-							sw.WriteLine("</div>");
-						}
+                            sw.WriteLine("<div class=\"extras\" lang=\"en\">");
+                            if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+                                sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseToDisplayInUI.Normalize(NormalizationForm.FormC) + "</p>");
+                            Question answersAndComments = phrase.QuestionInfo;
+                            if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
+                            {
+                                foreach (string answer in answersAndComments.Answers)
+                                    sw.WriteLine("<p class=\"answer\">" + answer.Normalize(NormalizationForm.FormC) + "</p>");
+                            }
+                            if (dlg.m_chkIncludeComments.Checked && answersAndComments.Notes != null)
+                            {
+                                foreach (string comment in answersAndComments.Notes)
+                                    sw.WriteLine("<p class=\"comment\">" + comment.Normalize(NormalizationForm.FormC) + "</p>");
+                            }
+                            sw.WriteLine("</div>");
+                        }
 
-						sw.WriteLine("</body>");
-					}
-					MessageBox.Show(Properties.Resources.kstidTemplateGenerationComplete);
-				}
-			}
-		}
+                        sw.WriteLine("</body>");
+                    }
+                    MessageBox.Show(Properties.Resources.kstidTemplateGenerationComplete);
+                }
+            }
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
