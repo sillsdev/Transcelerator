@@ -12,8 +12,6 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -21,6 +19,7 @@ using AddInSideViews;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.Reporting;
 using SILUBS.SharedScrUtils;
+using Palaso.UI.WindowsForms.Keyboarding;
 
 namespace SIL.Transcelerator
 {
@@ -90,6 +89,13 @@ namespace SIL.Transcelerator
                         endRef.Chapter = host.GetLastChapter(endRef.Book, UNSQuestionsDialog.englishVersificationName);
                         endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
 
+                        Action<bool> activateKeyboard = vern =>
+                        {
+                            string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
+                            if (!string.IsNullOrEmpty(keyboard))
+                                KeyboardController.ActivateKeyboard(keyboard);
+                        };
+
                         formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
                             host.GetKeyTerms(projectName, "en"), host.GetProjectFont(projectName),
                             host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
@@ -98,7 +104,8 @@ namespace SIL.Transcelerator
                             host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
                             new ScrVers(host, UNSQuestionsDialog.englishVersificationName),
                             new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
-                            endRef, b => { }, terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
+                            endRef, activateKeyboard,
+                            terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
                     }
                     formToShow.ShowDialog();
                     ptHost.WriteLineToLog(this, "Closing " + pluginName);

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.   
-// <copyright from='2011' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.   
+// <copyright from='2011' to='2013 company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -20,7 +20,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using AddInSideViews;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
