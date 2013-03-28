@@ -137,10 +137,11 @@ namespace SIL.Transcelerator
             // 
             // m_txlInfo
             // 
+            this.m_txlInfo.AutoSize = true;
             this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
             this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
             this.m_txlInfo.Name = "m_txlInfo";
-            this.m_txlInfo.Size = new System.Drawing.Size(623, 367);
+            this.m_txlInfo.Size = new System.Drawing.Size(633, 368);
             this.m_txlInfo.TabIndex = 0;
             this.m_txlInfo.TabStop = false;
             // 
@@ -148,7 +149,7 @@ namespace SIL.Transcelerator
             // 
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(625, 393);
+            this.ClientSize = new System.Drawing.Size(617, 385);
             this.ControlBox = false;
             this.Controls.Add(this.m_txlInfo);
             this.Controls.Add(marqueeGif);
@@ -160,6 +161,7 @@ namespace SIL.Transcelerator
             this.Name = "RealSplashScreen";
             this.Opacity = 0;
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             ((System.ComponentModel.ISupportInitialize)(marqueeGif)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

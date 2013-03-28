@@ -44,6 +44,7 @@ namespace SIL.Transcelerator
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.m_picLogo = new System.Windows.Forms.PictureBox();
+            this.label7 = new System.Windows.Forms.Label();
             lblProductName = new System.Windows.Forms.Label();
             developerInfo = new System.Windows.Forms.Label();
             this.m_pnlCredits.SuspendLayout();
@@ -96,6 +97,7 @@ namespace SIL.Transcelerator
             // m_pnlCredits
             // 
             this.m_pnlCredits.Controls.Add(this.label6);
+            this.m_pnlCredits.Controls.Add(this.label7);
             this.m_pnlCredits.Controls.Add(this.label5);
             this.m_pnlCredits.Controls.Add(this.label1);
             this.m_pnlCredits.Controls.Add(this.label2);
@@ -118,7 +120,7 @@ namespace SIL.Transcelerator
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 26);
+            this.label5.Location = new System.Drawing.Point(3, 91);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(219, 39);
             this.label5.TabIndex = 4;
@@ -129,7 +131,7 @@ namespace SIL.Transcelerator
             // 
             this.label1.AutoSize = true;
             this.m_pnlCredits.SetFlowBreak(this.label1, true);
-            this.label1.Location = new System.Drawing.Point(3, 65);
+            this.label1.Location = new System.Drawing.Point(3, 130);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(223, 52);
             this.label1.TabIndex = 0;
@@ -140,7 +142,7 @@ namespace SIL.Transcelerator
             // 
             this.label2.AutoSize = true;
             this.m_pnlCredits.SetFlowBreak(this.label2, true);
-            this.label2.Location = new System.Drawing.Point(3, 117);
+            this.label2.Location = new System.Drawing.Point(3, 182);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(234, 52);
             this.label2.TabIndex = 1;
@@ -151,7 +153,7 @@ namespace SIL.Transcelerator
             // 
             this.label3.AutoSize = true;
             this.m_pnlCredits.SetFlowBreak(this.label3, true);
-            this.label3.Location = new System.Drawing.Point(3, 169);
+            this.label3.Location = new System.Drawing.Point(3, 234);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(227, 39);
             this.label3.TabIndex = 2;
@@ -162,7 +164,7 @@ namespace SIL.Transcelerator
             // 
             this.label4.AutoSize = true;
             this.m_pnlCredits.SetFlowBreak(this.label4, true);
-            this.label4.Location = new System.Drawing.Point(3, 208);
+            this.label4.Location = new System.Drawing.Point(3, 273);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(237, 52);
             this.label4.TabIndex = 3;
@@ -178,6 +180,17 @@ namespace SIL.Transcelerator
             this.m_picLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.m_picLogo.TabIndex = 18;
             this.m_picLogo.TabStop = false;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 26);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(226, 65);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Questions for most of the Old Testament (excluding Genesis) were produced and mad" +
+                "e available with no licensing restrictions by the generosity of Arlo E. Moehlenp" +
+                "ah of http://www.doinggood.org.";
             // 
             // TxlInfo
             // 
@@ -213,5 +226,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label m_lblAppVersion;
+        private System.Windows.Forms.Label label7;
 	}
 }
