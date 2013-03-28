@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using AddInSideViews;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
@@ -1910,6 +1911,55 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
+
+        private void textToSFMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var dlg = new OpenFileDialog())
+            {
+                dlg.CheckFileExists = true;
+                dlg.Multiselect = true;
+                dlg.RestoreDirectory = true;
+                dlg.Filter = "Standard Format Files (*.sfm)|*.sfm;*.txt|All Supported Files (*.sfm;*.txt)|*.sfm;*.txt";
+                dlg.InitialDirectory = Path.Combine(Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SoftDev"), "Transcelerator");
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var filename in dlg.FileNames)
+                    {
+                        string fileToWrite = "QTT" + Path.GetFileName(filename);
+                        string directory = Path.GetDirectoryName(filename);
+                        if (directory != null)
+                            fileToWrite = Path.Combine(directory, fileToWrite);
+
+                        if (File.Exists(fileToWrite))
+                        {
+                            if (MessageBox.Show("File " + fileToWrite + " already exists. Do you want to overwrite it?",
+                                "Transcelerator", MessageBoxButtons.YesNo) == DialogResult.No)
+                            {
+                                return;
+                            }
+                        }
+
+                        int problemsFound;
+                        using (var reader = new StreamReader(filename, Encoding.UTF8))
+                        {
+                            using (var writer = new StreamWriter(fileToWrite))
+                            {
+                                problemsFound = QuestionSfmFileAccessor.MakeStandardFormatQuestions(reader,
+                                    writer, m_masterVersification);
+                            }
+                        }
+                        sb.Append("\n");
+                        sb.Append(fileToWrite);
+                        if (problemsFound > 0)
+                            sb.Append(string.Format(", with {0} problems!", problemsFound));
+                    }
+
+                    MessageBox.Show("Finished! Questions written to the following files:" + sb, "Transcelerator");
+                }
+            }
+        }
 	}
 	#endregion
 

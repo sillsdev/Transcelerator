@@ -805,7 +805,11 @@ namespace SILUBS.SharedScrUtils
 			Assert.AreEqual(12, startVerse.Verse); // out of order
 			//Assert.AreEqual(12, endVerse.Verse); // end verse set to 12 instead of 10
 			//Assert.IsFalse(convertSuccessful); // Does not detect invalid verse number format.
-			convertSuccessful = BCVRef.VerseToScrRef("139-1140", out literal, out remaining, ref startVerse, ref endVerse);
+            convertSuccessful = BCVRef.VerseToScrRef("1-176", out literal, out remaining, ref startVerse, ref endVerse);
+            Assert.AreEqual(1, startVerse.Verse);
+            Assert.AreEqual(176, endVerse.Verse);
+            Assert.IsTrue(convertSuccessful);
+            convertSuccessful = BCVRef.VerseToScrRef("139-1140", out literal, out remaining, ref startVerse, ref endVerse);
 			Assert.AreEqual(139, startVerse.Verse); // 1140 is out of range of valid verse numbers
 			//Assert.AreEqual(139, endVerse.Verse); // end verse set to 1140 instead of 139
 			//Assert.IsFalse(convertSuccessful); // Does not detect invalid verse number format.
@@ -893,7 +897,26 @@ namespace SILUBS.SharedScrUtils
 			Assert.IsTrue(BCVRef.ParseRefRange("MRK 1:8-2:15", ref bcvRefStart, ref bcvRefEnd));
 			Assert.AreEqual(new BCVRef(41, 1, 8), bcvRefStart);
 			Assert.AreEqual(new BCVRef(41, 2, 15), bcvRefEnd);
-		}
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the BCVRef.ParseRefRange method when given a verse range that includes the
+        /// largest allowable verse number.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ParseRefRange_NormalVerseRange_MaxVerseNumber()
+        {
+            BCVRef bcvRefStart = new BCVRef();
+            BCVRef bcvRefEnd = new BCVRef();
+            Assert.IsTrue(BCVRef.ParseRefRange("PSA 119:175-176", ref bcvRefStart, ref bcvRefEnd));
+            Assert.AreEqual(new BCVRef(19, 119, 175), bcvRefStart);
+            Assert.AreEqual(new BCVRef(19, 119, 176), bcvRefEnd);
+            Assert.IsTrue(BCVRef.ParseRefRange("174-176", ref bcvRefStart, ref bcvRefEnd));
+            Assert.AreEqual(new BCVRef(19, 119, 174), bcvRefStart);
+            Assert.AreEqual(new BCVRef(19, 119, 176), bcvRefEnd);
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

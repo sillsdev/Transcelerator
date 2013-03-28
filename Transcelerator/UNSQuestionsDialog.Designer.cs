@@ -125,6 +125,7 @@ namespace SIL.Transcelerator
             this.m_lblComments = new System.Windows.Forms.Label();
             this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
             this.m_hSplitter = new System.Windows.Forms.Splitter();
+            this.textToSFMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -319,7 +320,8 @@ namespace SIL.Transcelerator
             this.toolStripSeparator2,
             this.mnuGenerate,
             this.toolStripSeparator3,
-            this.closeToolStripMenuItem});
+            this.closeToolStripMenuItem,
+            this.textToSFMToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
@@ -646,6 +648,12 @@ namespace SIL.Transcelerator
             this.m_hSplitter.TabStop = false;
             this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
             // 
+            // textToSFMToolStripMenuItem
+            // 
+            this.textToSFMToolStripMenuItem.Name = "textToSFMToolStripMenuItem";
+            resources.ApplyResources(this.textToSFMToolStripMenuItem, "textToSFMToolStripMenuItem");
+            this.textToSFMToolStripMenuItem.Click += new System.EventHandler(this.textToSFMToolStripMenuItem_Click);
+            // 
             // UNSQuestionsDialog
             // 
             resources.ApplyResources(this, "$this");
@@ -734,5 +742,6 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
 		private Splitter m_hSplitter;
+        private ToolStripMenuItem textToSFMToolStripMenuItem;
 	}
 }

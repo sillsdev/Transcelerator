@@ -1183,7 +1183,7 @@ namespace SILUBS.SharedScrUtils
 			if (string.IsNullOrEmpty(sRefRng))
 				return false;
 			sRefRng = sRefRng.Trim();
-			string[] pieces = sRefRng.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] pieces = sRefRng.Split(new [] { '-' }, StringSplitOptions.RemoveEmptyEntries);
 			if (pieces.Length > 2 || pieces.Length == 0)
 				return false;
 
@@ -1193,7 +1193,7 @@ namespace SILUBS.SharedScrUtils
 
 			if (Int32.TryParse(sFirstRef, out intVal))
 			{
-				if (intVal > 150)
+				if (intVal > 176)
 				{
 					bcvRefStart.BBCCCVVV = intVal;
 					if (!bcvRefStart.Valid)
@@ -1217,7 +1217,7 @@ namespace SILUBS.SharedScrUtils
 				{
 					if (bcvRefStart.Book != bcvRefEnd.Book)
 						return false;
-					sFirstRef = BCVRef.NumberToBookCode(bcvRefStart.Book) + " " + sFirstRef;
+					sFirstRef = NumberToBookCode(bcvRefStart.Book) + " " + sFirstRef;
 				}
 
 				bcvRefStart.Parse(sFirstRef);
@@ -1238,7 +1238,7 @@ namespace SILUBS.SharedScrUtils
 
 			if (Int32.TryParse(sEndRef, out intVal))
 			{
-				if (intVal > 150)
+				if (intVal > 176)
 				{
 					bcvRefEnd.BBCCCVVV = intVal;
 					if (!bcvRefEnd.Valid)
@@ -1257,7 +1257,7 @@ namespace SILUBS.SharedScrUtils
 			else
 			{
 				if (sEndRef.Length < 3 || !Char.IsLetter(sEndRef[1]))
-					sEndRef = BCVRef.NumberToBookCode(bcvRefStart.Book) + " " + sEndRef;
+					sEndRef = NumberToBookCode(bcvRefStart.Book) + " " + sEndRef;
 
 				bcvRefEnd.Parse(sEndRef);
 				if (!bcvRefEnd.Valid || bcvRefStart > bcvRefEnd ||

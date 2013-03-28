@@ -382,7 +382,64 @@ namespace SIL.Transcelerator
 			    }
 			}
 		}
-	}
+
+        internal static int MakeStandardFormatQuestions(StreamReader reader, StreamWriter writer, IScrVers vers)
+        {
+            int problemsFound = 0;
+            MultilingScrBooks multilingScrBooks = new MultilingScrBooks();
+            Regex regexChapterBreak = new Regex(@"\" + s_kSectionHead + @" (?<bookAndChapter>.+ \d+)", RegexOptions.Compiled);
+            Regex regexAnswer = new Regex(@"\" + s_kAnswerMarker + @" .+", RegexOptions.Compiled);
+            Regex regexQuestion = new Regex(@"\d+\. +(?<question>.+[?.])( (?<versesCovered>\(\d+(-\d+)?\)))?", RegexOptions.Compiled);
+
+            string sVersesCoveredByQuestion = null;
+            string sLine;
+            while ((sLine = reader.ReadLine()) != null)
+            {
+                sLine = sLine.Replace("  ", " ").Trim();
+
+                if (sLine.Length == 0 || sLine.StartsWith("Back to top"))
+                    continue;
+
+                Match match = regexChapterBreak.Match(sLine);
+				if (match.Success)
+				{
+                    string sBookAndChapter = match.Result("${bookAndChapter}");
+                    BCVRef reference = multilingScrBooks.ParseRefString(sBookAndChapter + ":1");
+                    int lastVerse = vers.GetLastVerse(reference.Book, reference.Chapter);
+
+                    sLine += ":1-" + lastVerse;
+                    writer.WriteLine();
+                    writer.WriteLine(sLine);
+                    writer.WriteLine(s_kDetailsMarker + " Details");
+                    writer.WriteLine(s_kRefMarker + " " + reference + "-" + lastVerse);
+                    continue;
+                }
+
+                match = regexAnswer.Match(sLine);
+                if (match.Success)
+                {
+                    writer.WriteLine(match + (string.IsNullOrEmpty(sVersesCoveredByQuestion) ? "" : " " + sVersesCoveredByQuestion));
+                    continue;
+                }
+
+                sVersesCoveredByQuestion = null;
+
+                match = regexQuestion.Match(sLine);
+                if (match.Success)
+                {
+                    string sQuestion = match.Result("${question}");
+                    writer.WriteLine(s_kQuestionMarker + " " + sQuestion);
+                    sVersesCoveredByQuestion = match.Result("${versesCovered}");
+                }
+                else
+                {
+                    writer.WriteLine("PROBLEM: " + sLine);
+                    problemsFound++;
+                }
+            }
+            return problemsFound;
+        }
+    }
 	#endregion
 
 	#region QuestionProviderAlternateFormBuilder
