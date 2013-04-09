@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCore", "TxlCore\TxlCore.csproj", "{140A72D9-B0B3-4E19-AA3B-0127C3014D39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessorTests", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessorTests\TxlMasterQuestionPreProcessorTests.csproj", "{6DE38973-4256-4AD7-A48F-56675CA826E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

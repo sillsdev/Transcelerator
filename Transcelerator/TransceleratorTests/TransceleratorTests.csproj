@@ -88,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KeyTermRulesTests.cs" />
-    <Compile Include="QuestionSfmFileAccessorTests.cs" />
     <Compile Include="KeyTermMatchTests.cs" />
     <Compile Include="KeyTermMatchBuilderTests.cs" />
     <Compile Include="PhraseSubstitutionsDlgTests.cs">
@@ -135,6 +134,10 @@
     <ProjectReference Include="..\..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TxlCore\TxlCore.csproj">
+      <Project>{140A72D9-B0B3-4E19-AA3B-0127C3014D39}</Project>
+      <Name>TxlCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transcelerator.csproj">
       <Project>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</Project>
