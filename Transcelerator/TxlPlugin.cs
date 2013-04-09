@@ -94,13 +94,13 @@ namespace SIL.Transcelerator
 							splashScreen.Message = string.Format(
 							Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
-							int currRef = host.GetCurrentRef(UNSQuestionsDialog.englishVersificationName);
+							int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
 							BCVRef startRef = new BCVRef(currRef);
 							startRef.Chapter = 1;
 							startRef.Verse = 1;
 							BCVRef endRef = new BCVRef(currRef);
-							endRef.Chapter = host.GetLastChapter(endRef.Book, UNSQuestionsDialog.englishVersificationName);
-							endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, UNSQuestionsDialog.englishVersificationName);
+							endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
+							endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
 
 							Action<bool> activateKeyboard = vern =>
 							{
@@ -116,7 +116,7 @@ namespace SIL.Transcelerator
 							new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
 							(fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),
 							host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
-							new ScrVers(host, UNSQuestionsDialog.englishVersificationName),
+							new ScrVers(host, TxlCore.englishVersificationName),
 							new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 							endRef, activateKeyboard,
 							terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
@@ -163,34 +163,6 @@ namespace SIL.Transcelerator
 			ErrorReport.AddStandardProperties();
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
-		}
-
-		private class ScrVers : IScrVers
-		{
-			private readonly IHost host;
-			private readonly string versificationName;
-
-			public ScrVers(IHost host, string versificationName)
-			{
-				this.host = host;
-				this.versificationName = versificationName;
-			}
-
-			public int GetLastChapter(int bookNum)
-			{
-				return host.GetLastChapter(bookNum, versificationName);
-			}
-
-			public int GetLastVerse(int bookNum, int chapterNum)
-			{
-				return host.GetLastVerse(bookNum, chapterNum, versificationName);
-			}
-
-			public int ChangeVersification(int reference, IScrVers scrVersSource)
-			{
-				return this == scrVersSource ? reference :
-					host.ChangeVersification(reference, ((ScrVers)scrVersSource).versificationName, versificationName);
-			}
 		}
 	}
 }

@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtilsTests", "SilUtils\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtils", "SilUtils\SilUtils.csproj", "{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessor", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessor.csproj", "{54363E9B-3A5A-46D6-9ACA-3F1626572647}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCore", "TxlCore\TxlCore.csproj", "{140A72D9-B0B3-4E19-AA3B-0127C3014D39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,14 @@ Global
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release|Any CPU.Build.0 = Release|Any CPU
+		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
