@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -114,6 +114,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="QuestionAlternativeOverrides.cs" />
+    <Compile Include="QuestionSfmFileAccessor.cs" />
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -132,10 +134,8 @@
     <Compile Include="NewQuestionDlg.Designer.cs">
       <DependentUpon>NewQuestionDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="QuestionAlternativeOverrides.cs" />
     <Compile Include="QuestionSections.cs" />
     <Compile Include="Question.cs" />
-    <Compile Include="QuestionSfmFileAccessor.cs" />
     <Compile Include="EditQuestionDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <QuestionAlternativeOverrides>
-	<Alternative>
+  <Alternative>
+    <Original>How did Paul describe the group of believers/the church?</Original>
+    <Alt>How did Paul describe the group of believers?</Alt>
+    <Alt>How did Paul describe the church?</Alt>
+  </Alternative>	<Alternative>
 		<Original>Where was Paul when he wrote/was writing this letter?</Original>
 		<Alt>Where was Paul when he wrote this letter?</Alt>
 		<Alt>Where was Paul when he was writing this letter?</Alt>

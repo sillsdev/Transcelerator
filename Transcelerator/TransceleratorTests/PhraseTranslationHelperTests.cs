@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -52,7 +52,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -268,7 +270,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -307,7 +311,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
 			TranslatablePhrase tp2 = new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 			TranslatablePhrase tp3 = new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0);                                                  // that dog (4)
 			TranslatablePhrase tp4 = new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
@@ -347,7 +353,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("This would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (2)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -383,7 +391,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("This would God have me [to] say with respect to Paul?", "A", 1, 1), 1, 0),
 				new TranslatablePhrase(new TestQ("What is that dog?", "B", 6, 6), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
@@ -408,7 +418,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -436,7 +448,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -473,7 +487,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", 1, 2, 5);
 
-			TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            TranslatablePhrase tp1 = new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0);       // what would (1)     | me to (3)       | with respect to (3)
 			TranslatablePhrase tp2 = new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0);   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 			TranslatablePhrase tp3 = new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0);                                                  // that dog (4)
 			TranslatablePhrase tp4 = new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0); // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
@@ -622,7 +638,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -654,7 +672,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -686,7 +706,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 1, 2, 3, 4, 5, 6);
 			AddMockedKeyTerm("say", null, 1, 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("This would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
@@ -1055,7 +1077,7 @@ namespace SIL.Transcelerator
 
 			VerifyTranslatablePhrase(pth, "What did John tell the Christians?", "what did", 1, "tell the christians", 1);
 			VerifyTranslatablePhrase(pth, "Why should you tell the good news?", "why should you", 1);
-		}
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1076,38 +1098,78 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			VerifyTranslatablePhrase(pth, "Did John sin when he told Herod that it was unlawful to marry Herodius?", "did", 1, "when he told herod that it was unlawful to marry herodius", 1);
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests breaking up phrases into parts where a terms list is supplied that contains
-		/// words or morphemes that are optional (either explicitly indicated using parentheses
-		/// or implicitly optional words, such as the word "to" followed by a verb.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetParts_KeyTermsWithOptionalWords()
-		{
-			AddMockedKeyTerm("ask for (earnestly)");
-			AddMockedKeyTerm("to sin");
-			AddMockedKeyTerm("(things of) this life");
-			AddMockedKeyTerm("(loving)kindness");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests breaking up phrases into parts where a terms list is supplied that contains
+        /// words or morphemes that are optional (either explicitly indicated using parentheses
+        /// or implicitly optional words, such as the word "to" followed by a verb.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetParts_KeyTermsWithOptionalWords()
+        {
+            AddMockedKeyTerm("ask for (earnestly)");
+            AddMockedKeyTerm("to sin");
+            AddMockedKeyTerm("(things of) this life");
+            AddMockedKeyTerm("(loving)kindness");
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase("Did Herod ask for John's head because he wanted to sin?"),
 				new TranslatablePhrase("Did Jambres sin when he clung to the things of this life?"),
 				new TranslatablePhrase("Whose lovingkindness is everlasting?"),
 				new TranslatablePhrase("What did John ask for earnestly?"),
 				new TranslatablePhrase("Is showing kindness in this life a way to earn salvation?")},
+                m_dummyKtList, m_keyTermRules, new List<Substitution>());
+
+            Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+            VerifyTranslatablePhrase(pth, "Did Herod ask for John's head because he wanted to sin?", "did herod", 1, "john's head because he wanted", 1);
+            VerifyTranslatablePhrase(pth, "Did Jambres sin when he clung to the things of this life?", "did jambres", 1, "when he clung to the", 1);
+            VerifyTranslatablePhrase(pth, "Whose lovingkindness is everlasting?", "whose", 1, "is everlasting", 1);
+            VerifyTranslatablePhrase(pth, "What did John ask for earnestly?", "what did john", 1);
+            VerifyTranslatablePhrase(pth, "Is showing kindness in this life a way to earn salvation?", "is showing", 1, "in", 1, "a way to earn salvation", 1);
+        }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests breaking up phrases into parts where a terms list is supplied that contains
+		/// a phrase that begins with an inflected form of a verb and a term that contains a
+		/// one-word uninflected form of that word. Phrases that contain the inflected form of
+		/// the verb but do not macth the whole phrase should match the uninflected term.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetParts_KeyTermsWithMultipleWordsAndPhrasesWithWordsWhichNeedToBeStemmed()
+		{
+            m_keyTermRules = new KeyTermRules();
+            m_keyTermRules.Items = new List<KeyTermRule>();
+
+            AddMockedKeyTerm("Blessed One", 1);
+            AddMockedKeyTerm("bless; praise", "bendito");
+            KeyTermRule rule = new KeyTermRule();
+            rule.id = "bless; praise";
+            rule.Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate { Name = "blessed" } };
+            m_keyTermRules.Items.Add(rule);
+            AddMockedKeyTerm("blessed; worthy of praise", "bienaventurado");
+            AddMockedKeyTerm("Jacob");
+
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+				new TranslatablePhrase(new TestQ("Who was the Blessed One?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("Who is blessed?", "A", 1, 1), 1, 0),
+				new TranslatablePhrase(new TestQ("Who was present when Jacob blessed one of his sons?", "B", 2, 2), 1, 0)},
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());
 
-			Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			VerifyTranslatablePhrase(pth, "Did Herod ask for John's head because he wanted to sin?", "did herod", 1, "john's head because he wanted", 1);
-			VerifyTranslatablePhrase(pth, "Did Jambres sin when he clung to the things of this life?", "did jambres", 1, "when he clung to the", 1);
-			VerifyTranslatablePhrase(pth, "Whose lovingkindness is everlasting?", "whose", 1, "is everlasting", 1);
-			VerifyTranslatablePhrase(pth, "What did John ask for earnestly?", "what did john", 1);
-			VerifyTranslatablePhrase(pth, "Is showing kindness in this life a way to earn salvation?", "is showing", 1, "in", 1, "a way to earn salvation", 1);
+            VerifyTranslatablePhrase(pth, "Who was the Blessed One?", "who was the", 1);
+			VerifyTranslatablePhrase(pth, "Who is blessed?", "who is", 1);
+            VerifyTranslatablePhrase(pth, "Who was present when Jacob blessed one of his sons?", "who was present when", 1, "one of his sons", 1);
+            TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == "Who is blessed?");
+            Assert.AreEqual(2, phr.GetParts().OfType<KeyTermMatch>().ElementAt(0).AllTerms.Count());
+            Assert.IsTrue(rule.Used);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2172,7 +2234,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 99);
 			AddMockedKeyTerm("say", 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
@@ -2202,7 +2266,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 99);
 			AddMockedKeyTerm("say", 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
@@ -2232,7 +2298,9 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("have", 99);
 			AddMockedKeyTerm("say", 2, 5);
 
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
 				new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
 				new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
@@ -2262,6 +2330,8 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("radish", 1, 2);
 			AddMockedKeyTerm("(to have) eaten or drunk", 2, 3);
 			AddMockedKeyTerm("high or drunk sailor", 2, 4);
+
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
 
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
 				new TranslatablePhrase(new TestQ("Was the high priest on his high horse?", "A", 1, 1), 1, 0),
@@ -2296,7 +2366,9 @@ namespace SIL.Transcelerator
 			IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
 			IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
 
-			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
 			TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
 
 			new PhraseTranslationHelper(new[] {phrase1, phrase2},
@@ -2346,7 +2418,9 @@ namespace SIL.Transcelerator
 			IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
 			IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
 
-			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
 			TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
 
 			new PhraseTranslationHelper(new[] { phrase1, phrase2 },
@@ -2389,7 +2463,9 @@ namespace SIL.Transcelerator
 			IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
 			IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
 
-			TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?/What was Paul told by God");
+            m_keyTermRules.Initialize("List Name Does Not Matter For This Test");
+
+            TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?/What was Paul told by God");
 
 			new PhraseTranslationHelper(new[] { phrase1 },
 				m_dummyKtList, m_keyTermRules, new List<Substitution>());

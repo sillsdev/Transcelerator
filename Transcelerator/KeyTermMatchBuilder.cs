@@ -15,7 +15,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using AddInSideViews;
+using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -24,50 +26,77 @@ namespace SIL.Transcelerator
 		private readonly List<KeyTermMatch> m_list = new List<KeyTermMatch>();
 		private List<Word> m_optionalPhraseWords;
 		private bool m_fInOptionalPhrase;
-		private bool m_fMatchForRefOnly;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public KeyTermMatchBuilder(IKeyTerm keyTerm) : this(keyTerm, null)
+		public KeyTermMatchBuilder(IKeyTerm keyTerm) : this(keyTerm, null, null)
 		{
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
-		/// </summary>
-		/// <param name="keyTerm">The key term.</param>
-		/// <param name="rules">Optional dictionary of (English) key terms to rules indicating
-		/// special handling neeeded.</param>
-		/// ------------------------------------------------------------------------------------
-		public KeyTermMatchBuilder(IKeyTerm keyTerm, Dictionary<string, KeyTermRule> rules)
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
+	    /// </summary>
+	    /// <param name="keyTerm">The key term.</param>
+	    /// <param name="rules">Optional dictionary of (English) key terms to rules indicating
+	    /// special handling neeeded.</param>
+        /// <param name="regexRules">regular-expression-based rules. If any term matches a
+	    /// regular expression in this collection, terms will be extracted using the variable
+	    /// "term". If the term variable is not present in the regular expression, this term
+	    /// will be excluded.</param>
+	    /// ------------------------------------------------------------------------------------
+	    public KeyTermMatchBuilder(IKeyTerm keyTerm, IReadonlyDictionary<string, KeyTermRule> rules,
+            IEnumerable<Regex> regexRules)
 		{
 			string normalizedLcTerm = keyTerm.Term.ToLowerInvariant().Normalize(NormalizationForm.FormC);
 			KeyTermRule ktRule;
-			if (rules != null && rules.TryGetValue(normalizedLcTerm, out ktRule))
+            bool fMatchForRefOnly = false;
+            if (rules != null && rules.TryGetValue(normalizedLcTerm, out ktRule))
 			{
+                ktRule.Used = true;
 				bool fExcludeMainTerm = false;
 				if (ktRule.Rule != null)
 				{
 					switch (ktRule.Rule)
 					{
 						case KeyTermRule.RuleType.Exclude: fExcludeMainTerm = true; break;
-						case KeyTermRule.RuleType.MatchForRefOnly: m_fMatchForRefOnly = true; break;
+                        case KeyTermRule.RuleType.MatchForRefOnly: fMatchForRefOnly = true; break;
 					}
 				}
 				if (ktRule.Alternates != null)
 				{
-					foreach (string phrase in ktRule.Alternates.Select(a => a.Name))
-						ProcessKeyTermPhrase(keyTerm, phrase);
+                    foreach (KeyTermRulesKeyTermRuleAlternate alt in ktRule.Alternates)
+                    {
+                        string phrase = alt.Name;
+                        ProcessKeyTermPhrase(keyTerm, phrase, fMatchForRefOnly || alt.MatchForRefOnly);
+                    }
 				}
 				if (fExcludeMainTerm)
 					return;
 			}
-			foreach (string phrase in normalizedLcTerm.Split(new[] { ", or ", ",", "=" }, StringSplitOptions.RemoveEmptyEntries))
-				ProcessKeyTermPhrase(keyTerm, phrase);
+            else if (regexRules != null)
+            {
+                foreach (Regex regexRule in regexRules)
+                {
+                    Match match = regexRule.Match(normalizedLcTerm);
+                    while (match.Success)
+                    {
+                        string term = match.Result("${term}");
+                        if (term == "${term}")
+                            return; // No "term" veriable found, so this rule excludes the term
+                        foreach (string phrase in term.Split(new[] { ", or ", "," }, StringSplitOptions.RemoveEmptyEntries))
+                            ProcessKeyTermPhrase(keyTerm, phrase, false); // for now, at least reg-ex based rules can't be reference-dependent
+                        match = match.NextMatch();
+                    }
+                    if (m_list.Count > 0)
+                        return;
+                }
+            }
+            foreach (string phrase in normalizedLcTerm.Split(new[] { ", or ", ",", ";", "=" }, StringSplitOptions.RemoveEmptyEntries))
+				ProcessKeyTermPhrase(keyTerm, phrase, fMatchForRefOnly);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -77,7 +106,7 @@ namespace SIL.Transcelerator
 		/// phrase. But some have multiple alternative words or phrases; hence, this method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void ProcessKeyTermPhrase(IKeyTerm keyTerm, string phrase)
+		private void ProcessKeyTermPhrase(IKeyTerm keyTerm, string phrase, bool fMatchForRefOnly)
 		{
 			int startOfListForPhrase = m_list.Count;
 			string[] orParts = phrase.Split(new [] {" or "}, 2, StringSplitOptions.RemoveEmptyEntries);
@@ -96,13 +125,13 @@ namespace SIL.Transcelerator
 
 				if (ichEndOfPreOrPhrase > 0)
 					ichEndOfPreOrPhrase++;
-				ProcessKeyTermPhrase(keyTerm, orParts[0] + orParts[1].Substring(ichStartOfPostOrPhrase));
-				ProcessKeyTermPhrase(keyTerm, orParts[0].Substring(0, ichEndOfPreOrPhrase) + orParts[1]);
+				ProcessKeyTermPhrase(keyTerm, orParts[0] + orParts[1].Substring(ichStartOfPostOrPhrase), fMatchForRefOnly);
+                ProcessKeyTermPhrase(keyTerm, orParts[0].Substring(0, ichEndOfPreOrPhrase) + orParts[1], fMatchForRefOnly);
 				return;
 			}
 
 			// Initially, we add one empty list
-			m_list.Add(new KeyTermMatch(new Word[0], keyTerm, m_fMatchForRefOnly));
+			m_list.Add(new KeyTermMatch(new Word[0], keyTerm, fMatchForRefOnly));
 			bool firstWordOfPhrase = true;
 			foreach (Word metaWord in phrase.Split(new[]{' ', '\u00a0'}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
 			{
@@ -133,7 +162,7 @@ namespace SIL.Transcelerator
 			if (words.Count > 1)
 			{
 				// Spawn a new copy of each matching phrase for this metaword.
-				m_list.AddRange(m_list.Skip(startOfListForPhrase).Select(k => new KeyTermMatch(k.Words, keyTerm, m_fMatchForRefOnly)).ToList());
+				m_list.AddRange(m_list.Skip(startOfListForPhrase).Select(k => new KeyTermMatch(k.Words, keyTerm, k.MatchForRefOnly)).ToList());
 			}
 
 			Word word = words[0];
@@ -187,9 +216,15 @@ namespace SIL.Transcelerator
 					}
 					else
 					{
-						string opt = metaWord.Text.Remove(iOpenParen, iCloseParen - iOpenParen + 1);
-						list.Add(opt == string.Empty ? null : opt);
-						list.Add(metaWord.Text.Remove(iCloseParen, 1).Remove(iOpenParen, 1));
+						string shortOrOptionalWord = metaWord.Text.Remove(iOpenParen, iCloseParen - iOpenParen + 1);
+                        if (shortOrOptionalWord.Length == 0)
+                            shortOrOptionalWord = null;
+                        string fullWord = metaWord.Text.Remove(iCloseParen, 1).Remove(iOpenParen, 1);
+                        if (shortOrOptionalWord != null || fullWord.Length > 0)
+                        {
+                            list.Add(shortOrOptionalWord);
+                            list.Add(fullWord);
+                        }
 					}
 				}
 				else if (m_fInOptionalPhrase)
@@ -204,7 +239,7 @@ namespace SIL.Transcelerator
 				}
 				else
 				{
-					Debug.Fail("Found opening parenthesis with no closer");
+                    Debug.Fail("Found opening parenthesis with no closer: " + metaWord.Text);
 				}
 			}
 			else

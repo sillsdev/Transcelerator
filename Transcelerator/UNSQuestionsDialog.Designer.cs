@@ -88,6 +88,7 @@ namespace SIL.Transcelerator
             this.mnuGenerate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textToSFMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuPaste = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,7 +126,6 @@ namespace SIL.Transcelerator
             this.m_lblComments = new System.Windows.Forms.Label();
             this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
             this.m_hSplitter = new System.Windows.Forms.Splitter();
-            this.textToSFMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -368,6 +368,12 @@ namespace SIL.Transcelerator
             resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
+            // textToSFMToolStripMenuItem
+            // 
+            this.textToSFMToolStripMenuItem.Name = "textToSFMToolStripMenuItem";
+            resources.ApplyResources(this.textToSFMToolStripMenuItem, "textToSFMToolStripMenuItem");
+            this.textToSFMToolStripMenuItem.Click += new System.EventHandler(this.textToSFMToolStripMenuItem_Click);
+            // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -589,6 +595,7 @@ namespace SIL.Transcelerator
             this.btnReceiveScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             resources.ApplyResources(this.btnReceiveScrReferences, "btnReceiveScrReferences");
             this.btnReceiveScrReferences.Name = "btnReceiveScrReferences";
+            this.btnReceiveScrReferences.Click += new System.EventHandler(this.btnReceiveScrReferences_CheckStateChanged);
             // 
             // lblFilterIndicator
             // 
@@ -647,12 +654,6 @@ namespace SIL.Transcelerator
             this.m_hSplitter.Name = "m_hSplitter";
             this.m_hSplitter.TabStop = false;
             this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
-            // 
-            // textToSFMToolStripMenuItem
-            // 
-            this.textToSFMToolStripMenuItem.Name = "textToSFMToolStripMenuItem";
-            resources.ApplyResources(this.textToSFMToolStripMenuItem, "textToSFMToolStripMenuItem");
-            this.textToSFMToolStripMenuItem.Click += new System.EventHandler(this.textToSFMToolStripMenuItem_Click);
             // 
             // UNSQuestionsDialog
             // 

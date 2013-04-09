@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KeyTermRulesTests.cs" />
     <Compile Include="QuestionSfmFileAccessorTests.cs" />
     <Compile Include="KeyTermMatchTests.cs" />
     <Compile Include="KeyTermMatchBuilderTests.cs" />

@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Utils;
 using System;
@@ -262,18 +263,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void PopulateKeyTermsTable(IEnumerable<IKeyTerm> keyTerms, KeyTermRules rules)
 		{
-			Dictionary<string, KeyTermRule> ktRules = new Dictionary<string, KeyTermRule>();
-			if (rules != null)
-			{
-				foreach (KeyTermRule keyTermRule in rules.Items.Where(keyTermRule => !String.IsNullOrEmpty(keyTermRule.id)))
-					ktRules[keyTermRule.id] = keyTermRule;
-			}
-
 			KeyTermMatchBuilder matchBuilder;
 
 			foreach (IKeyTerm keyTerm in keyTerms)
 			{
-				matchBuilder = new KeyTermMatchBuilder(keyTerm, ktRules);
+                matchBuilder = new KeyTermMatchBuilder(keyTerm,
+                    rules == null ? null : rules.RulesDictionary, rules == null ? null : rules.RegexRules);
 
 				foreach (KeyTermMatch matcher in matchBuilder.Matches)
 				{
@@ -292,6 +287,17 @@ namespace SIL.Transcelerator
 						existingMatcher.AddTerm(keyTerm);
 				}
 			}
+
+#if DEBUG
+            if (rules != null)
+            {
+                string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
+                if (unUsedRules.Length > 0)
+                {
+                    MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, "Transcelerator");
+                }
+            }
+#endif
 		}
 
 		/// ------------------------------------------------------------------------------------

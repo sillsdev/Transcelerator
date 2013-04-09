@@ -239,6 +239,15 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transcelerator uses a biblical terms list from Paratext in order to identify terms in the comprehension checking questions that can be translated automatically. Although it can theoretically work with any list, it is tuned to work best with the &quot;{0}&quot; list. The project {1} is currently associated with the &quot;{2}&quot; list. If you continue to use this list and find that Transcelerator has identified too many or too few words in the questions as key terms, change your project to use the &quot;{0}&quot; list, and then on the F [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string kstidMajorBiblicalTermsPreferred {
+            get {
+                return ResourceManager.GetString("kstidMajorBiblicalTermsPreferred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Selection Rule - {0}.
         /// </summary>
         internal static string kstidNewSelectionRuleNameTemplate {

@@ -41,22 +41,43 @@ namespace SIL.Utils
 			Assert.AreEqual("studi", s_stemmer.stemTerm("studying"));
 			Assert.AreEqual("tidi", s_stemmer.stemTerm("tidying"));
 			Assert.AreEqual("ying", s_stemmer.stemTerm("ying"));
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests the Stem method for word ending in "-le"
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void LeSuffix()
-		{
-			Assert.AreEqual("disciple", s_stemmer.stemTerm("disciples"));
-			Assert.AreEqual("temple", s_stemmer.stemTerm("temples"));
-			Assert.AreEqual("people", s_stemmer.stemTerm("people"));
-			Assert.AreEqual("cripple", s_stemmer.stemTerm("cripple"));
-			Assert.AreEqual("ample", s_stemmer.stemTerm("ample"));
-			Assert.AreEqual("battle", s_stemmer.stemTerm("battles"));
-		}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the Stem method for word ending in "-le"
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void LeSuffix()
+        {
+            Assert.AreEqual("disciple", s_stemmer.stemTerm("disciples"));
+            Assert.AreEqual("temple", s_stemmer.stemTerm("temples"));
+            Assert.AreEqual("people", s_stemmer.stemTerm("people"));
+            Assert.AreEqual("cripple", s_stemmer.stemTerm("cripple"));
+            Assert.AreEqual("ample", s_stemmer.stemTerm("ample"));
+            Assert.AreEqual("battle", s_stemmer.stemTerm("battles"));
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the Stem method for short words ending in "e"
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ShortWordsEndingInE()
+        {
+            Assert.AreEqual("one", s_stemmer.stemTerm("one"));
+            Assert.AreEqual("one", s_stemmer.stemTerm("ones"));
+            Assert.AreEqual("ire", s_stemmer.stemTerm("ire"));
+            Assert.AreEqual("are", s_stemmer.stemTerm("are"));
+            Assert.AreEqual("ore", s_stemmer.stemTerm("ore"));
+            Assert.AreEqual("ore", s_stemmer.stemTerm("ores"));
+            Assert.AreEqual("core", s_stemmer.stemTerm("core"));
+            Assert.AreEqual("bare", s_stemmer.stemTerm("bare"));
+            Assert.AreEqual("there", s_stemmer.stemTerm("there"));
+            Assert.AreEqual("bye", s_stemmer.stemTerm("bye"));
+            Assert.AreEqual("lie", s_stemmer.stemTerm("lie"));
+        }
 	}
 }

@@ -39,7 +39,8 @@ namespace SIL.Transcelerator
 
 		#region Member Data
 		private readonly string m_projectName;
-		private readonly IEnumerable<IKeyTerm> m_keyTerms;
+	    private readonly Func<string> m_getKeyTermListName;
+	    private readonly Func<IEnumerable<IKeyTerm>> m_getKeyTerms;
 		private readonly Font m_vernFont;
 		private readonly string m_vernIcuLocale;
 		private readonly Action<bool> m_selectKeyboard;
@@ -174,30 +175,6 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating whether to send Scripture references as Santa-Fe
-		/// messages.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal bool SendScrRefs
-		{
-			get { return btnSendScrReferences.Checked; }
-			set { btnSendScrReferences.Checked = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets a value indicating whether to receive Santa-Fe Scripture reference
-		/// focus messages.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal bool ReceiveScrRefs
-		{
-			get { return btnReceiveScrReferences.Checked; }
-			set { btnReceiveScrReferences.Checked = value; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets or sets a value indicating whether to show a pane with the answers and comments
 		/// on the questions.
 		/// </summary>
@@ -241,7 +218,7 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				return InTranslationCell && !dataGridUns.IsCurrentCellInEditMode;
+				return InTranslationCell && dataGridUns.IsCurrentCellInEditMode;
 			}
 		}
 		#endregion
@@ -278,8 +255,8 @@ namespace SIL.Transcelerator
             IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
             DataFileProxy datafileProxy, string sDefaultLcfFolder, string appName, IScrVers versification,
             BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
-            Action<IEnumerable<IKeyTerm>> lookupTermDelegate) :this(splashScreen, projectName,
-            keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor),
+            Action<IEnumerable<IKeyTerm>> lookupTermDelegate) :this(splashScreen, projectName, null,
+            () => keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor),
             appName, versification, versification, startRef, endRef, selectKeyboard, lookupTermDelegate)
         {
             m_defaultLcfFolder = sDefaultLcfFolder;
@@ -292,26 +269,28 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// <param name="splashScreen">The splash screen (can be null)</param>
 	    /// <param name="projectName">Name of the project.</param>
-	    /// <param name="keyTerms">The collection of key terms.</param>
+        /// <param name="getKeyTermListName">Function to get the Name of the key terms list
+	    /// currently associated with the project.</param>
+	    /// <param name="getKeyTerms">Function to get collection of key terms.</param>
 	    /// <param name="vernFont">The vernacular font.</param>
 	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
 	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
-        /// <param name="datafileProxy">helper object to store and retrieve data.</param>
-        /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
+	    /// <param name="datafileProxy">helper object to store and retrieve data.</param>
+	    /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
 	    /// <param name="appName">Name of the calling application</param>
-        /// <param name="projectVersification">The versification of the external project (to
-        /// be used for passing references to the scrExtractor).</param>
+	    /// <param name="projectVersification">The versification of the external project (to
+	    /// be used for passing references to the scrExtractor).</param>
 	    /// <param name="startRef">The starting Scripture reference</param>
 	    /// <param name="endRef">The ending Scripture reference</param>
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
 	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
 	    /// ------------------------------------------------------------------------------------
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
-            DataFileProxy datafileProxy, IScrExtractor scrExtractor, string appName,
-            IScrVers englishVersification, IScrVers projectVersification,
-            BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
-            Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
+            Func<string> getKeyTermListName, Func<IEnumerable<IKeyTerm>> getKeyTerms, Font vernFont,
+            string vernIcuLocale, bool fVernIsRtoL, DataFileProxy datafileProxy,
+            IScrExtractor scrExtractor, string appName, IScrVers englishVersification,
+            IScrVers projectVersification, BCVRef startRef, BCVRef endRef,
+            Action<bool> selectKeyboard, Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
 		{
             if (splashScreen == null)
             {
@@ -327,7 +306,8 @@ namespace SIL.Transcelerator
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
-			m_keyTerms = keyTerms;
+	        m_getKeyTermListName = getKeyTermListName;
+	        m_getKeyTerms = getKeyTerms;
 			m_vernFont = vernFont;
 			m_vernIcuLocale = vernIcuLocale;
             if (string.IsNullOrEmpty(m_vernIcuLocale))
@@ -367,7 +347,7 @@ namespace SIL.Transcelerator
 			}
 			MatchWholeWords = !Properties.Settings.Default.MatchPartialWords;
 			ShowToolbar = Properties.Settings.Default.ShowToolbar;
-			ReceiveScrRefs = Properties.Settings.Default.ReceiveScrRefs;
+			btnReceiveScrReferences.Checked = Properties.Settings.Default.ReceiveScrRefs;
 			ShowAnswersAndComments = Properties.Settings.Default.ShowAnswersAndComments;
 			MaximumHeightOfKeyTermsPane = Properties.Settings.Default.MaximumHeightOfKeyTermsPane;
 
@@ -390,8 +370,8 @@ namespace SIL.Transcelerator
 			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 			
 			if (!finfoXmlQuestions.Exists ||
-				(finfoSfmQuestions.Exists && finfoXmlQuestions.CreationTimeUtc < finfoSfmQuestions.CreationTimeUtc) ||
-				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.CreationTimeUtc < finfoAlternatives.CreationTimeUtc))
+                (finfoSfmQuestions.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoSfmQuestions.LastWriteTimeUtc) ||
+                (finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc))
 			{
 				if (!finfoSfmQuestions.Exists)
 					MessageBox.Show(Properties.Resources.kstidFileNotFound + questionsFilePath, Text);
@@ -409,7 +389,7 @@ namespace SIL.Transcelerator
 
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
-			SendScrRefs = Properties.Settings.Default.SendScrRefs;
+			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
 			splashScreen.Close();
 		}
@@ -441,6 +421,8 @@ namespace SIL.Transcelerator
 						break;
 				}
 			}
+            if (!e.Cancel)
+                Properties.Settings.Default.Save();
 
 			base.OnClosing(e);
 		}
@@ -836,8 +818,6 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            string blah = null;
-            MessageBox.Show(blah.Equals("mom").ToString());
             GenerateScript(m_scrExtractor == null ? m_defaultLcfFolder :
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
@@ -1399,18 +1379,29 @@ namespace SIL.Transcelerator
 			dataGridUns.InvalidateColumn(m_colTranslation.Index);
 			if (dataGridUns.ColumnCount == (m_colDebugInfo.Index + 1))
 				dataGridUns.InvalidateColumn(m_colDebugInfo.Index);
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the CheckStateChanged event of the btnSendScrReferences control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
-		{
-			if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
-				SendScrReference(dataGridUns.CurrentRow.Index);
-		}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles the CheckStateChanged event of the btnSendScrReferences control.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.SendScrRefs = btnSendScrReferences.Checked;
+            if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
+                SendScrReference(dataGridUns.CurrentRow.Index);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles the CheckStateChanged event of the btnSendScrReferences control.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void btnReceiveScrReferences_CheckStateChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ReceiveScrRefs = btnReceiveScrReferences.Checked;
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1603,6 +1594,8 @@ namespace SIL.Transcelerator
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
 			if (e != null)
 				MessageBox.Show(e.ToString(), Text);
+            else
+                rules.Initialize(m_getKeyTermListName == null ? null : m_getKeyTermListName());
 
 			List<PhraseCustomization> customizations = null;
 		    string phraseCustData = m_fileProxy.Read(DataFileProxy.DataFileId.QuestionCustomizations);
@@ -1614,7 +1607,7 @@ namespace SIL.Transcelerator
 			}
 
 			QuestionProvider qp = new QuestionProvider(m_questionsFilename, customizations);
-			m_helper = new PhraseTranslationHelper(qp, m_keyTerms, rules, m_phraseSubstitutions);
+            m_helper = new PhraseTranslationHelper(qp, m_getKeyTerms(), rules, m_phraseSubstitutions);
 		    m_helper.FileProxy = m_fileProxy;
 			m_sectionHeadText = qp.SectionHeads;
 			m_availableBookIds = qp.AvailableBookIds;
