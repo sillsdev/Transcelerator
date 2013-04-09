@@ -88,7 +88,6 @@ namespace SIL.Transcelerator
             this.mnuGenerate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.textToSFMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuPaste = new System.Windows.Forms.ToolStripMenuItem();
@@ -320,8 +319,7 @@ namespace SIL.Transcelerator
             this.toolStripSeparator2,
             this.mnuGenerate,
             this.toolStripSeparator3,
-            this.closeToolStripMenuItem,
-            this.textToSFMToolStripMenuItem});
+            this.closeToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
@@ -367,12 +365,6 @@ namespace SIL.Transcelerator
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
-            // textToSFMToolStripMenuItem
-            // 
-            this.textToSFMToolStripMenuItem.Name = "textToSFMToolStripMenuItem";
-            resources.ApplyResources(this.textToSFMToolStripMenuItem, "textToSFMToolStripMenuItem");
-            this.textToSFMToolStripMenuItem.Click += new System.EventHandler(this.textToSFMToolStripMenuItem_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -742,7 +734,6 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem editToolStripMenuItem;
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
-		private Splitter m_hSplitter;
-        private ToolStripMenuItem textToSFMToolStripMenuItem;
+        private Splitter m_hSplitter;
 	}
 }

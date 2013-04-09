@@ -169,10 +169,6 @@
   <data name="kstidUntranslatedQuestionsWarning" xml:space="preserve">
     <value>There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</value>
   </data>
-  <data name="kstidFileNotFound" xml:space="preserve">
-    <value>Required file not found:
-</value>
-  </data>
   <data name="kstidRenderingSelectionRuleQuestionConditionPrecededBy" xml:space="preserve">
     <value>is immediately preceded by {0}</value>
   </data>

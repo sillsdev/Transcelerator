@@ -114,8 +114,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="QuestionAlternativeOverrides.cs" />
-    <Compile Include="QuestionSfmFileAccessor.cs" />
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,15 +125,12 @@
     </Compile>
     <Compile Include="TxlPlugin.cs" />
     <Compile Include="TxlSplashScreen.cs" />
-    <Compile Include="QuestionKey.cs" />
     <Compile Include="NewQuestionDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="NewQuestionDlg.Designer.cs">
       <DependentUpon>NewQuestionDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="QuestionSections.cs" />
-    <Compile Include="Question.cs" />
     <Compile Include="EditQuestionDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -300,9 +295,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Properties\Transcelerator.png" />
-    <Content Include="QTTallBooks.sfm">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -334,15 +326,19 @@
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TxlCore\TxlCore.csproj">
+      <Project>{140A72D9-B0B3-4E19-AA3B-0127C3014D39}</Project>
+      <Name>TxlCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="keyTermRules.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="QTTallBooks - AlternateFormOverrides.xml">
+    <Content Include="TXL no TXL.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TXL no TXL.ico">
+    <Content Include="TxlQuestions.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

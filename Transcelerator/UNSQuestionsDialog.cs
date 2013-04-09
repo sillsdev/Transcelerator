@@ -35,8 +35,6 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public partial class UNSQuestionsDialog : Form
 	{
-        public const string englishVersificationName = "English";
-
 		#region Member Data
 		private readonly string m_projectName;
 	    private readonly Func<string> m_getKeyTermListName;
@@ -47,7 +45,6 @@ namespace SIL.Transcelerator
 		private readonly Action m_helpDelegate;
 		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
-        private static readonly string s_programDataFolder;
         private readonly DataFileProxy m_fileProxy;
 		private readonly string m_defaultLcfFolder = null;
         private readonly IScrExtractor m_scrExtractor;
@@ -59,7 +56,7 @@ namespace SIL.Transcelerator
 		private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
 		private readonly string m_questionsFilename;
-		private readonly string m_keyTermRulesFilename;
+		private string m_keyTermRulesFilename;
 		private DateTime m_lastSaveTime;
 		private readonly List<Substitution> m_phraseSubstitutions;
 		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
@@ -224,14 +221,6 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Constructors
-		static UNSQuestionsDialog()
-		{
-            s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                "SIL"), "Transcelerator");
-            if (!Directory.Exists(s_programDataFolder))
-                Directory.CreateDirectory(s_programDataFolder);
-		}
-
 	    /// ------------------------------------------------------------------------------------
 	    /// <summary>
 	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
@@ -322,8 +311,8 @@ namespace SIL.Transcelerator
 			m_startRef = startRef;
 			m_endRef = endRef;
 
-            string questionsFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                "QTTallBooks.sfm");
+            m_questionsFilename = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                TxlCore.questionsFilename);
 
 			ClearBiblicalTermsPane();
 
@@ -360,25 +349,6 @@ namespace SIL.Transcelerator
 			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
 				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
-
-            m_questionsFilename = Path.Combine(s_programDataFolder, Path.ChangeExtension(Path.GetFileName(questionsFilePath), "xml"));
-			string alternativesFilename = Path.Combine(Path.GetDirectoryName(questionsFilePath) ?? string.Empty,
-				Path.ChangeExtension(Path.GetFileNameWithoutExtension(questionsFilePath) + " - AlternateFormOverrides", "xml"));
-			m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(questionsFilePath) ?? string.Empty, "keyTermRules.xml");
-			FileInfo finfoXmlQuestions = new FileInfo(m_questionsFilename);
-			FileInfo finfoSfmQuestions = new FileInfo(questionsFilePath);
-			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
-			
-			if (!finfoXmlQuestions.Exists ||
-                (finfoSfmQuestions.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoSfmQuestions.LastWriteTimeUtc) ||
-                (finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc))
-			{
-				if (!finfoSfmQuestions.Exists)
-					MessageBox.Show(Properties.Resources.kstidFileNotFound + questionsFilePath, Text);
-				if (!finfoAlternatives.Exists)
-					alternativesFilename = null;
-				QuestionSfmFileAccessor.Generate(questionsFilePath, alternativesFilename, m_questionsFilename);
-			}
 
             m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateListFromString<Substitution>(
                 m_fileProxy.Read(DataFileProxy.DataFileId.PhraseSubstitutions), true);
@@ -1589,8 +1559,13 @@ namespace SIL.Transcelerator
 		private void LoadTranslations(TxlSplashScreen splashScreen)
 		{
 			if (splashScreen != null)
-				splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;			
+				splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
+
 			Exception e;
+            m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(
+                 Assembly.GetExecutingAssembly().Location) ?? string.Empty, "keyTermRules.xml");
+
+
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
 			if (e != null)
 				MessageBox.Show(e.ToString(), Text);
@@ -1837,7 +1812,7 @@ namespace SIL.Transcelerator
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
 			BCVRef bcvStartRef, bcvEndRef;
-			QuestionSfmFileAccessor.ParseRefRange(sRef, out bcvStartRef, out bcvEndRef);
+            sRef.ParseRefRange(out bcvStartRef, out bcvEndRef);
 			return reference >= bcvStartRef && reference <= bcvEndRef;
 		}
 
@@ -1903,55 +1878,6 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
-
-        private void textToSFMToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var dlg = new OpenFileDialog())
-            {
-                dlg.CheckFileExists = true;
-                dlg.Multiselect = true;
-                dlg.RestoreDirectory = true;
-                dlg.Filter = "Standard Format Files (*.sfm)|*.sfm;*.txt|All Supported Files (*.sfm;*.txt)|*.sfm;*.txt";
-                dlg.InitialDirectory = Path.Combine(Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SoftDev"), "Transcelerator");
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var filename in dlg.FileNames)
-                    {
-                        string fileToWrite = "QTT" + Path.GetFileName(filename);
-                        string directory = Path.GetDirectoryName(filename);
-                        if (directory != null)
-                            fileToWrite = Path.Combine(directory, fileToWrite);
-
-                        if (File.Exists(fileToWrite))
-                        {
-                            if (MessageBox.Show("File " + fileToWrite + " already exists. Do you want to overwrite it?",
-                                "Transcelerator", MessageBoxButtons.YesNo) == DialogResult.No)
-                            {
-                                return;
-                            }
-                        }
-
-                        int problemsFound;
-                        using (var reader = new StreamReader(filename, Encoding.UTF8))
-                        {
-                            using (var writer = new StreamWriter(fileToWrite))
-                            {
-                                problemsFound = QuestionSfmFileAccessor.MakeStandardFormatQuestions(reader,
-                                    writer, m_masterVersification);
-                            }
-                        }
-                        sb.Append("\n");
-                        sb.Append(fileToWrite);
-                        if (problemsFound > 0)
-                            sb.Append(string.Format(", with {0} problems!", problemsFound));
-                    }
-
-                    MessageBox.Show("Finished! Questions written to the following files:" + sb, "Transcelerator");
-                }
-            }
-        }
 	}
 	#endregion
 

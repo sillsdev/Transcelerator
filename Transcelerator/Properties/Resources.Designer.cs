@@ -148,16 +148,6 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Required file not found:
-        ///.
-        /// </summary>
-        internal static string kstidFileNotFound {
-            get {
-                return ResourceManager.GetString("kstidFileNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Filtered.
         /// </summary>
         internal static string kstidFilteredStatus {
