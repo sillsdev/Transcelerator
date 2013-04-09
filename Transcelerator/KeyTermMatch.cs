@@ -122,6 +122,11 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Public & internal methods
+        public bool MatchForRefOnly
+        {
+            get { return m_matchForRefOnly; }
+        }
+
 		public bool AppliesTo(int startRef, int endRef)
 		{
 			if (!m_matchForRefOnly)

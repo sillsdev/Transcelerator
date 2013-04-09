@@ -155,13 +155,13 @@ namespace SIL.Utils
 		}
 
 		/**
-		 * After a word has been stemmed, it can be retrieved by toString(),
+		 * After a word has been stemmed, it can be retrieved by ToString(),
 		 * or a reference to the internal buffer can be retrieved by getResultBuffer
 		 * and getResultLength (which is generally more efficient.)
 		 */
 		public override string ToString() 
 		{
-			return new String(b,0,i_end);
+			return getTerm();
 		}
 
 		/**
@@ -375,7 +375,7 @@ namespace SIL.Utils
 				b[k] = 'i';
 		}
 
-		/* step3() maps double suffices to single ones. so -ization ( = -ize plus
+		/* step3() maps double suffixes to single ones. so -ization ( = -ize plus
 		   -ation) maps to -ize etc. note that the string before the suffix must give
 		   m() > 0. */
 		private void step3() 
@@ -509,7 +509,7 @@ namespace SIL.Utils
 			
 			if (b[k] == 'e') 
 			{
-				if (ends("ple") || ends("ttle"))
+				if (ends("ple") || ends("ttle") || k < 3)
 					return;
 				int a = m();
 				if ((a > 1 || a == 1 && !cvc(k-1)) && b[k-1] != 'e')

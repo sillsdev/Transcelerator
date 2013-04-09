@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2011, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2011' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -122,7 +122,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the best key term in the list of words starting at m_iStartMatch and including
-		/// up to m_iNextWord. As new words are considered, the list possible matches
+		/// up to m_iNextWord. As new words are considered, the list of possible matches
 		/// (m_matches) is reduced by any that no longer match until there is exactly one match
 		/// that exactly equals the words in the key term or the list is empty.
 		/// </summary>
@@ -134,19 +134,32 @@ namespace SIL.Transcelerator
 			if (m_iStartMatch == m_iNextWord)
 			{
 				List<KeyTermMatch> matches;
-				if (!m_keyTermsTable.TryGetValue(nextWord, out matches))
+                m_matches = null;
+				if (m_keyTermsTable.TryGetValue(nextWord, out matches))
+                {
+				    m_matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
+                }
+                if (m_matches == null || m_matches.All(m => m.Words.Count() > 1))
 				{
 					Word stem = s_stemmer.stemTerm(nextWord);
-					if (m_keyTermsTable.TryGetValue(stem, out matches))
-						stem.AddAlternateForm(nextWord);
-					else
-					{
-						m_iStartMatch++;
-						return null;
-					}
+                    if (stem.Text != nextWord.Text)
+                    {
+                        if (m_keyTermsTable.TryGetValue(stem, out matches))
+                        {
+                            stem.AddAlternateForm(nextWord);
+                            matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
+                            if (m_matches == null)
+                                m_matches = matches;
+                            else
+                                m_matches.AddRange(matches);
+                        }
+                    }
+                    if (m_matches == null || m_matches.Count == 0)
+                    {
+                        m_iStartMatch++;
+                        return null;
+                    }
 				}
-
-				m_matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
 
 				// If we found a one-word exact match and there are no other key terms that start
 				// with that word, then we return it. The code below would handle this, but it's such

@@ -13,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -256,7 +257,8 @@ namespace SIL.Transcelerator
 			rule.Alternates = new [] {new KeyTermRulesKeyTermRuleAlternate()};
 			rule.Alternates[0].Name = "Jesus Christ";
 			rules[rule.id] = rule;
-			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"), rules);
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
 			Assert.AreEqual(2, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "jesus", "christ");
 			VerifyKeyTermMatch(bldr, 1, "jesus");
@@ -276,7 +278,8 @@ namespace SIL.Transcelerator
 			rule.id = "Jesus";
 			rule.Rule = KeyTermRule.RuleType.Exclude;
 			rules[rule.id] = rule;
-			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"), rules);
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
 			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
@@ -294,7 +297,8 @@ namespace SIL.Transcelerator
 			rule.id = "ask";
 			rule.Rule = KeyTermRule.RuleType.MatchForRefOnly;
 			rules[rule.id] = rule;
-			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id, 34), rules);
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id, 34),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
 			Assert.AreEqual(1, bldr.Matches.Count());
 			KeyTermMatch ktm = VerifyKeyTermMatch(bldr, 0, false, "ask");
 			Assert.IsFalse(ktm.AppliesTo(30, 33));
@@ -309,7 +313,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void RuleToReplaceOriginalTermWithAlternates()
+		public void RuleToReplaceOriginalTermWithAlternates_Basic()
 		{
 			Dictionary<string, KeyTermRule> rules = new Dictionary<string, KeyTermRule>();
 			KeyTermRule rule = new KeyTermRule();
@@ -320,12 +324,86 @@ namespace SIL.Transcelerator
 			rule.Alternates[1].Name = "praise exuberantly";
 			rule.Alternates[2].Name = "pray";
 			rules[rule.id] = rule;
-			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id), rules);
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
 			Assert.AreEqual(3, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "worship");
 			VerifyKeyTermMatch(bldr, 1, "praise", "exuberantly");
 			VerifyKeyTermMatch(bldr, 2, "pray");
-		}
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a term which has a rule to
+        /// exclude it, using alternates instead. One of the alternates has the matchForRefOnly
+        /// attribute set to true.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RuleToReplaceOriginalTermWithAlternates_AltWithMatchForRefOnly()
+        {
+            Dictionary<string, KeyTermRule> rules = new Dictionary<string, KeyTermRule>();
+            KeyTermRule rule = new KeyTermRule();
+            rule.id = "ask; pray";
+            rule.Rule = KeyTermRule.RuleType.Exclude;
+            rule.Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate(), new KeyTermRulesKeyTermRuleAlternate() };
+            rule.Alternates[0].Name = "ask";
+            rule.Alternates[0].MatchForRefOnly = true;
+            rule.Alternates[1].Name = "pray";
+            rules[rule.id] = rule;
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+            Assert.AreEqual(2, bldr.Matches.Count());
+            VerifyKeyTermMatch(bldr, 0, false, "ask");
+            VerifyKeyTermMatch(bldr, 1, true, "pray");
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a term which has a regular-
+        /// expression-based rule to exclude it.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RuleToExcludeTermBasedOnRegularExpression()
+        {
+            Regex regexRule = new Regex(@".*\(div1 type=", RegexOptions.Compiled);
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(
+                AddMockedKeyTerm("(qal) crush; (pi) crush to pieces; (pu) be crushed to pieces; (hi) scatter; (ho) be crushed to pieces, be scattered.(div1 type=letter id=LET.12)(head)ל"), null,
+                new[] { regexRule });
+            Assert.AreEqual(0, bldr.Matches.Count());
+
+            bldr = new KeyTermMatchBuilder(
+                 AddMockedKeyTerm("(qal) crumble.(div1 type=letter id=LET.18)(head)ץ"), null,
+                 new[] { regexRule });
+            Assert.AreEqual(0, bldr.Matches.Count());
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a term which has a regular-
+        /// expression-based rule to extract terms.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RuleToExtractMatchesBasedOnRegularExpression()
+        {
+            Regex regexSingleProperName = new Regex(@"(?<term>.+): \(\d+\).+; ", RegexOptions.Compiled);
+            Regex regexMultipleProperNames = new Regex(@"\(\d+\) (?<term>[^;]+): \([^;]+\)", RegexOptions.Compiled);
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(
+                AddMockedKeyTerm("(1) Judah: (a) son of Jacob, his tribe, his territory; (b)" +
+                " person in the genealogy of Jesus; (2) Judas: (a) the betrayer of Jesus; (b)" +
+                " a brother of Jesus; (c) an apostle, the son of James; (d) member of the" +
+                " Jerusalem church, called Barsabbas; (3) a disciple in Damsacus; (f)" +
+                " revolutionary leader"), null,
+                new[] { regexSingleProperName, regexMultipleProperNames });
+            Assert.AreEqual(2, bldr.Matches.Count());
+
+            bldr = new KeyTermMatchBuilder(
+                 AddMockedKeyTerm("Barsabbas: (1) Joseph; (2) Judas"), null,
+                 new[] { regexSingleProperName, regexMultipleProperNames });
+            Assert.AreEqual(1, bldr.Matches.Count());
+        }
 		#endregion
 
 		#region Really hard Real Data tests
@@ -632,6 +710,23 @@ namespace SIL.Transcelerator
 			VerifyKeyTermMatch(bldr, 0, "and", "the", "flowers", "are", "white", "off", "an", "agreeable", "odour");
 			VerifyKeyTermMatch(bldr, 1, "pink.", "the", "whole", "plant", "gives", "off", "an", "agreeable", "odour");
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+		/// real evil data: "or" separating two three-word phrases, with more text preceeding
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RealDataWithEmptyParentheses()
+		{
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("receive, welcome; pay attention to, recognize ()"));
+			Assert.AreEqual(4, bldr.Matches.Count());
+			VerifyKeyTermMatch(bldr, 0, "receive");
+            VerifyKeyTermMatch(bldr, 1, "welcome");
+            VerifyKeyTermMatch(bldr, 2, "pay", "attention", "to");
+            VerifyKeyTermMatch(bldr, 3, "recognize");
+        }
 		#endregion
 
 		#region private helper methods
@@ -671,6 +766,8 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(words.Length, ktm.Words.Count());
 			for (int i = 0; i < words.Length; i++)
 				Assert.AreEqual(words[i], ktm.Words.ElementAt(i).Text);
+            Assert.IsTrue(ktm.MatchForRefOnly != matchAnywhere);
+            // The following is really a test of the KeyTermMatch.AppliesTo method:
 			if (matchAnywhere)
 			{
 				Random r = new Random(DateTime.Now.Millisecond);

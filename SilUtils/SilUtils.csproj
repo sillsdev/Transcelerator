@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -77,6 +77,7 @@
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ComponentsExtensionMethods.cs" />
     <Compile Include="ContinuableErrorException.cs" />
+    <Compile Include="ReadonlyDictionary.cs" />
     <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
