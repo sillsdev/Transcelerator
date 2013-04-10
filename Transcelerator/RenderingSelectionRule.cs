@@ -105,9 +105,12 @@ namespace SIL.Transcelerator
 					{
 						new Regex(string.Format(m_questionMatchingPattern, "term"), RegexOptions.CultureInvariant);
 					}
-					catch (ArgumentException ex)
+					catch (Exception ex)
 					{
-						ErrorMessageQ = ex.Message;
+                        if (ex is ArgumentException || ex is FormatException)
+                            ErrorMessageQ = ex.Message;
+                        else
+                            throw;
 					}
 				}
 			}

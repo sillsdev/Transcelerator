@@ -659,6 +659,7 @@ namespace SIL.Transcelerator
             this.HelpButton = true;
             this.MainMenuStrip = this.m_mainMenu;
             this.Name = "UNSQuestionsDialog";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
             this.Activated += new System.EventHandler(this.UNSQuestionsDialog_Activated);
             this.Resize += new System.EventHandler(this.UNSQuestionsDialog_Resize);

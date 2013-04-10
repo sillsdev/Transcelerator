@@ -211,8 +211,21 @@
   <KeyTermRule id="just; righteous" rule="MatchForRefOnly"/>
   <KeyTermRule id="just, righteous person" rule="MatchForRefOnly"/>
   <KeyTermRule id="deserved; just" rule="MatchForRefOnly"/>
+  <KeyTermRule id="determine; decide" rule="Exclude"/>
+  <KeyTermRule id="judge; be judged; sue; decide; esteem; be considered" rule="Exclude">
+    <Alternate name="to judge"/>
+    <Alternate name="will judge"/>
+    <Alternate name="judge"/>
+    <Alternate name="judged"/>
+    <Alternate name="judges"/>
+    <Alternate name="judging"/>
+  </KeyTermRule>
+  <KeyTermRule id="judgment; accusation" rule="Exclude">
+    <Alternate name="judgment"/>
+  </KeyTermRule>
   <KeyTermRule id="decided" rule="MatchForRefOnly"/>
   <KeyTermRule id="anim" rule="MatchForRefOnly"/>
+  <KeyTermRule id="basket; box" rule="Exclude"/>
   <KeyTermRule id="soil; be defiled" rule="MatchForRefOnly"/>
   <KeyTermRule id="land; soil; ground; earth" rule="MatchForRefOnly"/>
   <KeyTermRule id="section; scroll" rule="MatchForRefOnly"/>
