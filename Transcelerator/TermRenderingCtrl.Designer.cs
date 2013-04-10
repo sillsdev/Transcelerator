@@ -48,7 +48,7 @@ namespace SIL.Transcelerator
 		{
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ToolStripMenuItem mnuSetAsDefault;
-            System.Windows.Forms.ToolStripMenuItem mnuAddRendering;
+            System.Windows.Forms.ToolStripMenuItem mnuAddRenderingC;
             System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
             this.m_lblKeyTermColHead = new System.Windows.Forms.Label();
             this.headerContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -57,8 +57,9 @@ namespace SIL.Transcelerator
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuDeleteRendering = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLookUpTermC = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAddRenderingH = new System.Windows.Forms.ToolStripMenuItem();
             mnuSetAsDefault = new System.Windows.Forms.ToolStripMenuItem();
-            mnuAddRendering = new System.Windows.Forms.ToolStripMenuItem();
+            mnuAddRenderingC = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.headerContextMenuStrip.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
@@ -72,13 +73,13 @@ namespace SIL.Transcelerator
             mnuSetAsDefault.Text = "&Set as default rendering";
             mnuSetAsDefault.Click += new System.EventHandler(this.mnuSetAsDefault_Click);
             // 
-            // mnuAddRendering
+            // mnuAddRenderingC
             // 
-            mnuAddRendering.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
-            mnuAddRendering.Name = "mnuAddRendering";
-            mnuAddRendering.Size = new System.Drawing.Size(198, 22);
-            mnuAddRendering.Text = "&Add rendering...";
-            mnuAddRendering.Click += new System.EventHandler(this.mnuAddRendering_Click);
+            mnuAddRenderingC.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
+            mnuAddRenderingC.Name = "mnuAddRenderingC";
+            mnuAddRenderingC.Size = new System.Drawing.Size(198, 22);
+            mnuAddRenderingC.Text = "&Add rendering...";
+            mnuAddRenderingC.Click += new System.EventHandler(this.mnuAddRendering_Click);
             // 
             // toolStripSeparator1
             // 
@@ -102,15 +103,16 @@ namespace SIL.Transcelerator
             // headerContextMenuStrip
             // 
             this.headerContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuAddRenderingH,
             this.mnuLookUpTermH});
             this.headerContextMenuStrip.Name = "contextMenuStrip1";
-            this.headerContextMenuStrip.Size = new System.Drawing.Size(159, 26);
+            this.headerContextMenuStrip.Size = new System.Drawing.Size(160, 48);
             // 
             // mnuLookUpTermH
             // 
             this.mnuLookUpTermH.Image = global::SIL.Transcelerator.Properties.Resources._1330980033_search_button;
             this.mnuLookUpTermH.Name = "mnuLookUpTermH";
-            this.mnuLookUpTermH.Size = new System.Drawing.Size(158, 22);
+            this.mnuLookUpTermH.Size = new System.Drawing.Size(193, 22);
             this.mnuLookUpTermH.Text = "Find &Term in {0}";
             this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
             // 
@@ -135,7 +137,7 @@ namespace SIL.Transcelerator
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             mnuSetAsDefault,
-            mnuAddRendering,
+            mnuAddRenderingC,
             this.mnuDeleteRendering,
             toolStripSeparator1,
             this.mnuLookUpTermC});
@@ -158,6 +160,14 @@ namespace SIL.Transcelerator
             this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
             this.mnuLookUpTermC.Text = "Find &Term in {0}";
             this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
+            // 
+            // mnuAddRenderingH
+            // 
+            this.mnuAddRenderingH.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
+            this.mnuAddRenderingH.Name = "mnuAddRenderingH";
+            this.mnuAddRenderingH.Size = new System.Drawing.Size(159, 22);
+            this.mnuAddRenderingH.Text = "&Add rendering...";
+            this.mnuAddRenderingH.Click += new System.EventHandler(this.mnuAddRendering_Click);
             // 
             // TermRenderingCtrl
             // 
@@ -185,5 +195,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ToolStripMenuItem mnuLookUpTermC;
 		private System.Windows.Forms.ContextMenuStrip headerContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem mnuLookUpTermH;
+        private System.Windows.Forms.ToolStripMenuItem mnuAddRenderingH;
 	}
 }
