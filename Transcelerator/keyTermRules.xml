@@ -5,6 +5,18 @@
     <Alternate name="ask" matchForRefOnly="true"/>
     <Alternate name="pray"/>
   </KeyTermRule>
+  <KeyTermRule id="wish; pray" rule="Exclude">
+    <Alternate name="pray"/>
+  </KeyTermRule>
+  <KeyTermRule id="word, saying; message, statement" rule="Exclude">
+    <Alternate name="word"/>
+    <Alternate name="words"/>
+    <Alternate name="message"/>
+    <Alternate name="messages"/>
+    <Alternate name="sayings"/>
+    <Alternate name="statement"/>
+    <Alternate name="statements"/>
+  </KeyTermRule>
   <KeyTermRule id="bless, praise">
   	<Alternate name="blesses"/>
   	<Alternate name="blessed"/>

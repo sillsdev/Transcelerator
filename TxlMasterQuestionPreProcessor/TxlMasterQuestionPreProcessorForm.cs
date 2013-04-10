@@ -41,6 +41,8 @@ namespace SIL.TxlMasterQuestionPreProcessor
                     alternativesFilename = null;
                 QuestionSfmFileAccessor.Generate(txtSfmQuestionFile.Text, alternativesFilename, destQuestionsFilename);
             }
+
+            MessageBox.Show(this, "Done!", TxlMasterQuestionPreProcessorPlugin.pluginName);
         }
 
         private void btnTextToSfm_Click(object sender, EventArgs e)
@@ -87,7 +89,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
                             sb.Append(string.Format(", with {0} problems!", problemsFound));
                     }
 
-                    MessageBox.Show("Finished! Questions written to the following files:" + sb, "Transcelerator");
+                    MessageBox.Show("Finished! Questions written to the following files:" + sb, TxlMasterQuestionPreProcessorPlugin.pluginName);
                 }
             }
         }
