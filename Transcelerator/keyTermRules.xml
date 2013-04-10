@@ -208,8 +208,14 @@
     <Alternate name="rescue"/>
     <Alternate name="rescued"/>
   </KeyTermRule>
-  <KeyTermRule id="just; righteous" rule="MatchForRefOnly"/>
-  <KeyTermRule id="just, righteous person" rule="MatchForRefOnly"/>
+  <KeyTermRule id="just; righteous" rule="Exclude">
+    <Alternate name="just" matchForRefOnly="true"/>
+    <Alternate name="righteous"/>
+  </KeyTermRule>
+  <KeyTermRule id="just, righteous person" rule="Exclude">
+    <Alternate name="just" matchForRefOnly="true"/>
+    <Alternate name="righteous person"/>
+  </KeyTermRule>
   <KeyTermRule id="deserved; just" rule="MatchForRefOnly"/>
   <KeyTermRule id="determine; decide" rule="Exclude"/>
   <KeyTermRule id="judge; be judged; sue; decide; esteem; be considered" rule="Exclude">
