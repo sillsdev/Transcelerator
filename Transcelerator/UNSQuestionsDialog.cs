@@ -629,10 +629,14 @@ namespace SIL.Transcelerator
 				new Func<int, int, string, bool>((start, end, sref) => m_endRef >= start && m_startRef <= end);
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
+            dataGridUns.RowEnter -= dataGridUns_RowEnter;
 
 			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter, mnuViewExcludedQuestions.Checked);
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 
+            dataGridUns.RowEnter += dataGridUns_RowEnter;
+
+            int currentRow = dataGridUns.CurrentCell == null ? -1 : dataGridUns.CurrentCell.RowIndex;
 			if (m_currentPhrase != null)
 			{
 				for (int i = 0; i < dataGridUns.Rows.Count; i++)
@@ -649,6 +653,10 @@ namespace SIL.Transcelerator
 					m_iCurrentColumn = -1;
 				}
 			}
+
+            if (dataGridUns.CurrentCell != null && currentRow == dataGridUns.CurrentCell.RowIndex)
+                dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
+
 			UpdateCountsAndFilterStatus();
 		}
 
