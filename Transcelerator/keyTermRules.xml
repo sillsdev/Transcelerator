@@ -31,7 +31,7 @@
 	  <Alternate name="favor"/>
   </KeyTermRule>
   <KeyTermRule id="covenant">
-	  <Alternate name="agreement"/>
+    <Alternate name="agreement"/>
   </KeyTermRule>
   <KeyTermRule id="so" rule="MatchForRefOnly" />
   <KeyTermRule id="official; servant; attendant" rule="MatchForRefOnly" />
@@ -331,6 +331,10 @@
   <KeyTermRule id="Israelite">
     <Alternate name="israelites"/>
   </KeyTermRule>
+  <KeyTermRule id="animal">
+    <Alternate name="animals"/>
+  </KeyTermRule>
+  <KeyTermRule id="plant; grass" rule="Exclude"/>
 
   <!-- Rules that apply only to "Major Biblical Terms" list -->
   <KeyTermRule id="be, become poor" rule="Exclude" appliesTo="Major">
