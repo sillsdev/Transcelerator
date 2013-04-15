@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
-<?define Property_ProductVersion = "1.0.1" ?>
+<?define Property_ProductVersion = "1.0.2" ?>
 
 <!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
@@ -75,15 +75,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <Component Guid="{120C24DA-4D9B-4192-B5CB-0B13CDC8410B}">
         <File Name="keyTermRules.xsd" KeyPath="yes" Source="..\Transcelerator\bin\Release\keyTermRules.xsd" />
       </Component>
-      <Component Guid="{C03B656F-CE84-486f-8285-870BD4953CE3}">
-        <File Id="QTTallBooks.AlternateFormOverrides.xml" Name="QTTallBooks - AlternateFormOverrides.xml" KeyPath="yes" Source="..\Transcelerator\bin\Release\QTTallBooks - AlternateFormOverrides.xml" />
+      <Component Guid="{1F622276-9A2E-4FAD-BC49-560AEB8FCBFA}">
+        <File Id="TxlQuestions.xml" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlQuestions.xml" />
       </Component>
-      <Component Guid="{38AB2260-068E-49cb-BA2E-00F83B5B0AAE}">
-        <File Name="QTTallBooks.sfm" KeyPath="yes" Source="..\Transcelerator\bin\Release\QTTallBooks.sfm" />
-      </Component>
-      <Component Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
-        <File Name="SharedScrControls.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.dll" />
-      </Component>
+	  <Component Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
+		<File Name="SharedScrControls.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.dll" />
+	  </Component>
+	  <Component Guid="{9FDCE013-5249-4D5E-857D-AFFD9C28DBA6}">
+		<File Name="TxlCore.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlCore.dll" />
+	  </Component>
       <Component Guid="{ED70C349-50FA-46f8-B1E8-B314A900D1BC}">
         <File Name="SharedScrUtils.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrUtils.dll" />
       </Component>
@@ -101,6 +101,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  </Component>
 	  <Component Guid="{101FE397-3F77-4156-84E8-816757256D2A}">
 		<File Name="SharedScrControls.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.pdb" />
+	  </Component>
+	  <Component Guid="{F289E8D6-42EC-4D72-8C0D-4347E17497F8}">
+		<File Name="TxlCore.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlCore.pdb" />
 	  </Component>
 	  <Component Guid="{FCE5871C-4633-48DC-8E03-9280F717F539}">
 		<File Name="SharedScrUtils.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrUtils.pdb" />
@@ -123,15 +126,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <ComponentRef Id ="Transcelerator.dll"/>
       <ComponentRef Id="keyTermRules.xml"/>
       <ComponentRef Id="keyTermRules.xsd"/>
-      <ComponentRef Id="QTTallBooks.AlternateFormOverrides.xml"/>
-      <ComponentRef Id="QTTallBooks.sfm"/>
-      <ComponentRef Id="SharedScrControls.dll"/>
+      <ComponentRef Id="TxlQuestions.xml"/>
+	  <ComponentRef Id="SharedScrControls.dll"/>
+	  <ComponentRef Id="TxlCore.dll"/>
       <ComponentRef Id="SharedScrUtils.dll"/>
       <ComponentRef Id="SilUtils.dll"/>
 	  <ComponentRef Id="Palaso.dll"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.dll"/>
 	  <ComponentRef Id ="Transcelerator.pdb"/>
 	  <ComponentRef Id="SharedScrControls.pdb"/>
+	  <ComponentRef Id="TxlCore.pdb"/>
 	  <ComponentRef Id="SharedScrUtils.pdb"/>
 	  <ComponentRef Id="SilUtils.pdb"/>
 	  <ComponentRef Id="Palaso.pdb"/>
