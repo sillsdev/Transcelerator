@@ -1,0 +1,16 @@
+Manually remove header lines.
+Using wildcards, replace \? \(?@\) with ^& (Not Bold)
+Replace bold (formatting only) with ^p\tqe ^&
+Replace Chapter with "\rf ", followed by book name.
+Save as plain text (UTF-8) as blah.sfm
+Remove the .txt extension that Word insists on tacking onto the end of the name.
+If necessary, build and  install the Transcelerator Question Pre-Processor plugin
+Run the Transcelerator Question Pre-Processor plugin (in Paratext)
+In Transcelerator Question Pre-Processor, click Text to SFM.
+Select the SFM file(s) you have prepared, and click Open.
+Note any files that are reported to have had problems. Open those files in a text editor, search for PROBLEM, and correct them.
+Either:
+	Manually add contents of all QTT* files to the QTTallBooks.sfm file in Transcelerator.
+OR
+	Vaporware: Clear the temp-file check box in Transcelerator Question Pre-Processor, and click Text to SFM.
+In Transcelerator Question Pre-Processor, click SFM to XML.
