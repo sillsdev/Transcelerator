@@ -34,7 +34,8 @@ namespace SIL.Transcelerator
 		public abstract int StartRef { get; set; }
 		[XmlAttribute("endref")]
 		public abstract int EndRef { get; set; }
-		/// <summary>Text of then question in COMPOSED form</summary>
+
+		/// <summary>Text of the question in COMPOSED form</summary>
 		[XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
 		public virtual string Text
 		{
