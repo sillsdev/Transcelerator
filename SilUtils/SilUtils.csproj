@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -40,7 +40,6 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -106,15 +105,8 @@
     <Compile Include="WaitCursor.cs" />
     <Compile Include="Win32Wrappers.cs" />
     <Compile Include="XmlSerializationHelper.cs" />
-    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
-    <Compile Include="FileDialog\Manager.cs" />
     <Compile Include="FileDialog\FileDialogAdapter.cs" />
-    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
-    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
     <None Include="FileDialog\readme.txt" />
-    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
     <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
     <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
     <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
@@ -123,7 +115,6 @@
     <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
     <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
     <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
-    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConfirmFileOverwriteDlg.resx">
@@ -158,4 +149,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="FileDialog\Linux\" />
+  </ItemGroup>
 </Project>

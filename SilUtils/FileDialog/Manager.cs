@@ -61,15 +61,9 @@ namespace SIL.Utils.FileDialog
 		/// --------------------------------------------------------------------------------
 		public static void Reset()
 		{
-#if __MonoCS__
-			SetOpenFileDialog<Linux.OpenFileDialogLinux>();
-			SetSaveFileDialog<Linux.SaveFileDialogLinux>();
-			SetFolderBrowserDialog<Linux.FolderBrowserDialogLinux>();
-#else
 			SetOpenFileDialog<Windows.OpenFileDialogWindows>();
 			SetSaveFileDialog<Windows.SaveFileDialogWindows>();
 			SetFolderBrowserDialog<Windows.FolderBrowserDialogWindows>();
-#endif
 		}
 
 		public static IOpenFileDialog CreateOpenFileDialog()
