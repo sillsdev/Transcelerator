@@ -37,15 +37,15 @@ namespace SIL.Transcelerator
 	{
 		#region Member Data
 		private readonly string m_projectName;
-	    private readonly Func<string> m_getKeyTermListName;
 	    private readonly Func<IEnumerable<IKeyTerm>> m_getKeyTerms;
-		private readonly Font m_vernFont;
+	    private readonly Font m_vernFont;
 		private readonly string m_vernIcuLocale;
 		private readonly Action<bool> m_selectKeyboard;
-		private readonly Action m_helpDelegate;
-		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTermDelegate;
+	    private readonly Func<string, IList<int>> m_getTermOccurrences;
+	    private readonly Action m_helpDelegate;
+		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private PhraseTranslationHelper m_helper;
-        private readonly DataFileProxy m_fileProxy;
+        private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
         private readonly IScrExtractor m_scrExtractor;
 		private readonly string m_appName;
@@ -55,10 +55,11 @@ namespace SIL.Transcelerator
         private BCVRef m_endRef;
 		private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
-		private readonly string m_questionsFilename;
-		private string m_keyTermRulesFilename;
+        private readonly string m_masterQuestionsFilename;
+        private static readonly string s_programDataFolder;
+        private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
-		private readonly List<Substitution> m_phraseSubstitutions;
+		private List<Substitution> m_phraseSubstitutions;
 		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
 		private bool m_fProcessingSyncMessage;
 		private BCVRef m_queuedReference;
@@ -71,7 +72,7 @@ namespace SIL.Transcelerator
 		private bool m_postponeRefresh;
 		private int m_maximumHeightOfKeyTermsPane;
 		private bool m_loadingBiblicalTermsPane = false;
-		#endregion
+	    #endregion
 
 		#region Delegates
 		public Func<IEnumerable<int>> GetAvailableBooks { private get; set; }
@@ -221,36 +222,13 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Constructors
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
-	    /// </summary>
-	    /// <param name="splashScreen">The splash screen (can be null)</param>
-	    /// <param name="projectName">Name of the project.</param>
-	    /// <param name="keyTerms">The collection of key terms.</param>
-	    /// <param name="vernFont">The vernacular font.</param>
-	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
-	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
-        /// <param name="datafileProxy">helper object to store and retrieve data.</param>
-	    /// <param name="sDefaultLcfFolder">The LCF folder.</param>
-	    /// <param name="appName">Name of the calling application</param>
-	    /// <param name="versification">The versification.</param>
-	    /// <param name="startRef">The starting Scripture reference</param>
-	    /// <param name="endRef">The ending Scripture reference</param>
-	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
-	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
-	    /// ------------------------------------------------------------------------------------
-        public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            IEnumerable<IKeyTerm> keyTerms, Font vernFont, string vernIcuLocale, bool fVernIsRtoL,
-            DataFileProxy datafileProxy, string sDefaultLcfFolder, string appName, IScrVers versification,
-            BCVRef startRef, BCVRef endRef, Action<bool> selectKeyboard,
-            Action<IEnumerable<IKeyTerm>> lookupTermDelegate) :this(splashScreen, projectName, null,
-            () => keyTerms, vernFont, vernIcuLocale, fVernIsRtoL, datafileProxy, default(IScrExtractor),
-            appName, versification, versification, startRef, endRef, selectKeyboard, lookupTermDelegate)
-        {
-            m_defaultLcfFolder = sDefaultLcfFolder;
-            mnuGenerate.Text = Properties.Resources.kstidGenerateTemplateMenuText;
-        }
+	    static UNSQuestionsDialog()
+	    {
+             s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                 "SIL"), "Transcelerator");
+             if (!Directory.Exists(s_programDataFolder))
+                 Directory.CreateDirectory(s_programDataFolder);
+	    }
 
 	    /// ------------------------------------------------------------------------------------
 	    /// <summary>
@@ -258,28 +236,30 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// <param name="splashScreen">The splash screen (can be null)</param>
 	    /// <param name="projectName">Name of the project.</param>
-        /// <param name="getKeyTermListName">Function to get the Name of the key terms list
-	    /// currently associated with the project.</param>
 	    /// <param name="getKeyTerms">Function to get collection of key terms.</param>
+	    /// <param name="getTermRenderings">Function to get renderings for given key term.</param>
 	    /// <param name="vernFont">The vernacular font.</param>
 	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
 	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
 	    /// <param name="datafileProxy">helper object to store and retrieve data.</param>
 	    /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
 	    /// <param name="appName">Name of the calling application</param>
+	    /// <param name="englishVersification">The versification typically used in English Bibles</param>
 	    /// <param name="projectVersification">The versification of the external project (to
 	    /// be used for passing references to the scrExtractor).</param>
 	    /// <param name="startRef">The starting Scripture reference</param>
 	    /// <param name="endRef">The ending Scripture reference</param>
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
+	    /// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
 	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
 	    /// ------------------------------------------------------------------------------------
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            Func<string> getKeyTermListName, Func<IEnumerable<IKeyTerm>> getKeyTerms, Font vernFont,
-            string vernIcuLocale, bool fVernIsRtoL, DataFileProxy datafileProxy,
+            Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
+            Font vernFont, string vernIcuLocale, bool fVernIsRtoL, DataFileAccessor datafileProxy,
             IScrExtractor scrExtractor, string appName, IScrVers englishVersification,
             IScrVers projectVersification, BCVRef startRef, BCVRef endRef,
-            Action<bool> selectKeyboard, Action<IEnumerable<IKeyTerm>> lookupTermDelegate)
+            Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
+            Action<IList<string>> lookupTermDelegate)
 		{
             if (splashScreen == null)
             {
@@ -290,19 +270,20 @@ namespace SIL.Transcelerator
 
             InitializeComponent();
 
-            m_fileProxy = datafileProxy;
+            m_fileAccessor = datafileProxy;
 
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
-	        m_getKeyTermListName = getKeyTermListName;
 	        m_getKeyTerms = getKeyTerms;
-			m_vernFont = vernFont;
+	        KeyTerm.GetTermRenderings = getTermRenderings;
+	        m_vernFont = vernFont;
 			m_vernIcuLocale = vernIcuLocale;
             if (string.IsNullOrEmpty(m_vernIcuLocale))
                 mnuGenerate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
-			m_lookupTermDelegate = lookupTermDelegate;
+	        m_getTermOccurrences = getTermOccurrences;
+	        m_lookupTermDelegate = lookupTermDelegate;
 	        m_scrExtractor = scrExtractor;
 	        m_appName = appName;
             m_masterVersification = englishVersification;
@@ -311,8 +292,9 @@ namespace SIL.Transcelerator
 			m_startRef = startRef;
 			m_endRef = endRef;
 
-            m_questionsFilename = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            m_masterQuestionsFilename = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 TxlCore.questionsFilename);
+	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, TxlCore.questionsFilename);
 
 			ClearBiblicalTermsPane();
 
@@ -350,10 +332,7 @@ namespace SIL.Transcelerator
 				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-            m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateListFromString<Substitution>(
-                m_fileProxy.Read(DataFileProxy.DataFileId.PhraseSubstitutions), true);
-
-	        KeyTermMatch.FileProxy = m_fileProxy;
+	        KeyTerm.FileAccessor = m_fileAccessor;
 
 			LoadTranslations(splashScreen);
 
@@ -744,7 +723,7 @@ namespace SIL.Transcelerator
 			m_lastSaveTime = DateTime.Now;
 			if (dataGridUns.IsCurrentCellInEditMode)
 				dataGridUns.EndEdit();
-			m_fileProxy.Write(DataFileProxy.DataFileId.Translations, XmlSerializationHelper.SerializeToString(
+			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations, XmlSerializationHelper.SerializeToString(
 				(from translatablePhrase in m_helper.UnfilteredPhrases
 				where translatablePhrase.HasUserTranslation
 				select new XmlTranslation(translatablePhrase)).ToList()));
@@ -768,9 +747,9 @@ namespace SIL.Transcelerator
 				}
 			}
 
-            if (customizations.Count > 0 || m_fileProxy.Exists(DataFileProxy.DataFileId.QuestionCustomizations))
+            if (customizations.Count > 0 || m_fileAccessor.Exists(DataFileAccessor.DataFileId.QuestionCustomizations))
             {
-                m_fileProxy.Write(DataFileProxy.DataFileId.QuestionCustomizations,
+                m_fileAccessor.Write(DataFileAccessor.DataFileId.QuestionCustomizations,
                     XmlSerializationHelper.SerializeToString(customizations));
             }
 
@@ -1041,6 +1020,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void phraseSubstitutionsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+		    LoadPhraseSubstitutionsIfNeeded();
 			using (PhraseSubstitutionsDlg dlg = new PhraseSubstitutionsDlg(m_phraseSubstitutions,
 				m_helper.Phrases.Where(tp => tp.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion).Select(p => p.PhraseInUse),
 				dataGridUns.CurrentRow.Index))
@@ -1049,7 +1029,7 @@ namespace SIL.Transcelerator
 				{
 					m_phraseSubstitutions.Clear();
 					m_phraseSubstitutions.AddRange(dlg.Substitutions);
-                    m_fileProxy.Write(DataFileProxy.DataFileId.PhraseSubstitutions,
+                    m_fileAccessor.Write(DataFileAccessor.DataFileId.PhraseSubstitutions,
                         XmlSerializationHelper.SerializeToString(m_phraseSubstitutions));
 
 					Reload(false);
@@ -1073,7 +1053,6 @@ namespace SIL.Transcelerator
 		/// question as was previously selected.
 		/// </summary>
 		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
-		/// <param name="key">The key of the question to try to select after reloading.</param>
 		/// ------------------------------------------------------------------------------------
 		private void Reload(bool fForceSave)
 		{
@@ -1083,7 +1062,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Reloads the specified f force save.
+        /// Reloads the data grid view and attempts to re-select the given question.
 		/// </summary>
 		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
 		/// <param name="key">The key of the question to try to select after reloading.</param>
@@ -1289,7 +1268,7 @@ namespace SIL.Transcelerator
 		private void dataGridContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			bool fExcluded = CurrentPhrase.IsExcluded;
-			mnuExcludeQuestion.Visible = !fExcluded;
+			mnuExcludeQuestion.Visible = !fExcluded && CurrentPhrase.Category != -1; // Can't exclude categories
 			mnuIncludeQuestion.Visible = fExcluded;
 			mnuEditQuestion.Enabled = !fExcluded;
 		}
@@ -1559,42 +1538,72 @@ namespace SIL.Transcelerator
 			return new BCVRef(sRef);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the translations.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void LoadTranslations(TxlSplashScreen splashScreen)
-		{
-			if (splashScreen != null)
-				splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Loads the translations.
+	    /// </summary>
+	    /// ------------------------------------------------------------------------------------
+	    private void LoadTranslations(TxlSplashScreen splashScreen)
+	    {
+	        if (splashScreen != null)
+	            splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
 
-			Exception e;
-            m_keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(
-                 Assembly.GetExecutingAssembly().Location) ?? string.Empty, "keyTermRules.xml");
+            FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
+            if (!finfoMasterQuestions.Exists)
+            {
+                MessageBox.Show("Required file missing: " + m_masterQuestionsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+                return;
+            }
 
+	        string keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(
+	            Assembly.GetExecutingAssembly().Location) ?? string.Empty, "keyTermRules.xml");
 
-			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(m_keyTermRulesFilename, out e);
-			if (e != null)
-				MessageBox.Show(e.ToString(), Text);
-            else
-                rules.Initialize(m_getKeyTermListName == null ? null : m_getKeyTermListName());
+            FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
+            FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
+            if (!finfoKtRules.Exists)
+                MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
 
-			List<PhraseCustomization> customizations = null;
-		    string phraseCustData = m_fileProxy.Read(DataFileProxy.DataFileId.QuestionCustomizations);
-			if (!string.IsNullOrEmpty(phraseCustData))
-			{
-				customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
-				if (e != null)
-					MessageBox.Show(e.ToString());
-			}
+            Exception e;
+	        ParsedQuestions parsedQuestions;
+	        if (finfoParsedQuestions.Exists &&
+                finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+                !finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
+                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
+	        {
+	            parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
+	        }
+	        else
+	        {
+	            List<PhraseCustomization> customizations = null;
+	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
+	            if (!string.IsNullOrEmpty(phraseCustData))
+	            {
+	                customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
+	                if (e != null)
+	                    MessageBox.Show(e.ToString());
+	            }
 
-			QuestionProvider qp = new QuestionProvider(m_questionsFilename, customizations);
-            m_helper = new PhraseTranslationHelper(qp, m_getKeyTerms(), rules, m_phraseSubstitutions);
-		    m_helper.FileProxy = m_fileProxy;
+                KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out e);
+	            if (e != null)
+	                MessageBox.Show(e.ToString(), Text);
+	            else
+	                rules.Initialize();
+
+	            LoadPhraseSubstitutionsIfNeeded();
+
+                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename, m_getKeyTerms(), rules,
+	                customizations, m_phraseSubstitutions);
+	            parsedQuestions = parser.Result;
+	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
+	        }
+
+	        QuestionProvider qp = new QuestionProvider(parsedQuestions);
+            m_helper = new PhraseTranslationHelper(qp);
+		    m_helper.FileProxy = m_fileAccessor;
 			m_sectionHeadText = qp.SectionHeads;
 			m_availableBookIds = qp.AvailableBookIds;
-		    string translationData = m_fileProxy.Read(DataFileProxy.DataFileId.Translations);
+		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
 			if (!string.IsNullOrEmpty(translationData))
 			{
 				if (splashScreen != null)
@@ -1619,7 +1628,20 @@ namespace SIL.Transcelerator
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 		}
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Loads the phrase substitutions if not already loaded
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void LoadPhraseSubstitutionsIfNeeded()
+	    {
+            if (m_phraseSubstitutions != null)
+                return;
+            m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateListFromString<Substitution>(
+                    m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true);
+	    }
+
+	    /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the key terms pane.
 		/// </summary>
@@ -1635,8 +1657,8 @@ namespace SIL.Transcelerator
 			m_biblicalTermsPane.Height = MaximumHeightOfKeyTermsPane;
 			int col = 0;
 			int longestListHeight = 0;
-			Dictionary<KeyTermMatch, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTermMatch, int>();
-			foreach (KeyTermMatch keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTermMatch>().Where(ktm => ktm.Renderings.Any()))
+			Dictionary<KeyTerm, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTerm, int>();
+			foreach (KeyTerm keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTerm>().Where(ktm => ktm.Renderings.Any()))
 			{
 				int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
@@ -1671,18 +1693,19 @@ namespace SIL.Transcelerator
 			m_loadingBiblicalTermsPane = false;
 		}
 
-		private void LookupTerm(IEnumerable<IKeyTerm> terms)
+		private void LookupTerm(IEnumerable<string> termIds)
 		{
-		    List<IKeyTerm> prioritizedTerms = new List<IKeyTerm>();
-		    List<IKeyTerm> termsNotOccurringInCurrentRefRange = new List<IKeyTerm>();
+		    List<string> prioritizedTerms = new List<string>();
+		    List<string> termsNotOccurringInCurrentRefRange = new List<string>();
 		    int startRef = CurrentPhrase.StartRef;
 		    int endRef = CurrentPhrase.EndRef;
-            foreach (IKeyTerm keyTerm in terms)
+            foreach (string termId in termIds)
             {
-                if (keyTerm.BcvOccurences.Any(o => o >= startRef && o <= endRef))
-                    prioritizedTerms.Add(keyTerm);
+                var occurrences = m_getTermOccurrences(termId);
+                if (occurrences.Any(o => o >= startRef && o <= endRef))
+                    prioritizedTerms.Add(termId);
                 else
-                    termsNotOccurringInCurrentRefRange.Add(keyTerm);
+                    termsNotOccurringInCurrentRefRange.Add(termId);
             }
 		    prioritizedTerms.AddRange(termsNotOccurringInCurrentRefRange);
 			m_lookupTermDelegate(prioritizedTerms);

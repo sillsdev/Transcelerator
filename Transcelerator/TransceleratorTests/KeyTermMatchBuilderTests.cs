@@ -24,12 +24,6 @@ namespace SIL.Transcelerator
 	[TestFixture]
 	public class KeyTermMatchBuilderTests
 	{
-		static KeyTermMatchBuilderTests()
-		{
-			ReflectionHelper.SetField(typeof(KeyTermMatch), "m_keyTermRenderingInfo",
-				new List<KeyTermRenderingInfo>());
-		}
-
 		#region Sanitized data Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -740,6 +734,7 @@ namespace SIL.Transcelerator
 			IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
 			mockedKt.Stub(kt => kt.Term).Return(term);
 			mockedKt.Stub(kt => kt.BcvOccurences).Return(occurences.Length > 0 ? occurences : new[] { 0 });
+		    mockedKt.Stub(kt => kt.Id).Return(new string(term.Reverse().ToArray()));
 			return mockedKt;
 		}
 
@@ -763,9 +758,9 @@ namespace SIL.Transcelerator
 			bool matchAnywhere, params string[] words)
 		{
 			KeyTermMatch ktm = bldr.Matches.ElementAt(iMatch);
-			Assert.AreEqual(words.Length, ktm.Words.Count());
+			Assert.AreEqual(words.Length, ktm.WordCount);
 			for (int i = 0; i < words.Length; i++)
-				Assert.AreEqual(words[i], ktm.Words.ElementAt(i).Text);
+				Assert.AreEqual(words[i], ktm[i].Text);
             Assert.IsTrue(ktm.MatchForRefOnly != matchAnywhere);
             // The following is really a test of the KeyTermMatch.AppliesTo method:
 			if (matchAnywhere)

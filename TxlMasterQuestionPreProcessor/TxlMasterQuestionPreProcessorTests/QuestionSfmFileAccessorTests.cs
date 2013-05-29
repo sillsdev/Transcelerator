@@ -68,7 +68,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Overview", category.Type);
 			
-			Assert.AreEqual(2, category.Questions.Length);
+			Assert.AreEqual(2, category.Questions.Count);
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What information did Luke, the writer of this book, give in this introduction?",
@@ -92,7 +92,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[1];
 			Assert.AreEqual("Details", category.Type);
 			
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			question = category.Questions[0];
 
@@ -110,7 +110,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[0];
 			Assert.AreEqual("Overview", category.Type);
 			
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			question = category.Questions[0];
 
@@ -123,7 +123,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[1];
 			Assert.AreEqual("Details", category.Type);
 			
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			question = category.Questions[0];
 
@@ -175,7 +175,7 @@ namespace SIL.Transcelerator
             Category category = section.Categories[0];
             Assert.AreEqual("Overview", category.Type);
 
-            Assert.AreEqual(1, category.Questions.Length);
+            Assert.AreEqual(1, category.Questions.Count);
             Question question = category.Questions[0];
 
             Assert.AreEqual("What information did Luke, the writer of this book, give in this introduction?", question.Text);
@@ -187,7 +187,7 @@ namespace SIL.Transcelerator
             category = section.Categories[1];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(4, category.Questions.Length);
+            Assert.AreEqual(4, category.Questions.Count);
             question = category.Questions[0];
 
             Assert.AreEqual("To whom did the writer of Acts address this book?", question.Text);
@@ -279,7 +279,7 @@ namespace SIL.Transcelerator
             Category category = section.Categories[1];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(2, category.Questions.Length);
+            Assert.AreEqual(2, category.Questions.Count);
             Question question = category.Questions[0];
             Assert.AreEqual("What did Rebekah say to her husband, Isaac?", question.Text);
             Assert.AreEqual("GEN 27.46", question.ScriptureReference);
@@ -305,7 +305,7 @@ namespace SIL.Transcelerator
             category = section.Categories[0];
             Assert.AreEqual("Overview", category.Type);
 
-            Assert.AreEqual(1, category.Questions.Length);
+            Assert.AreEqual(1, category.Questions.Count);
             question = category.Questions[0];
             Assert.AreEqual("What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?", question.Text);
             Assert.IsNull(question.ScriptureReference);
@@ -315,7 +315,7 @@ namespace SIL.Transcelerator
             category = section.Categories[1];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(1, category.Questions.Length);
+            Assert.AreEqual(1, category.Questions.Count);
             question = category.Questions[0];
             Assert.AreEqual("When were Joseph and Mary ready to return to their home in Nazareth?", question.Text);
             Assert.AreEqual("LUK 2.39", question.ScriptureReference);
@@ -332,7 +332,7 @@ namespace SIL.Transcelerator
             category = section.Categories[0];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(2, category.Questions.Length);
+            Assert.AreEqual(2, category.Questions.Count);
             question = category.Questions[0];
             Assert.AreEqual("Where were Jesus and his disciples going?", question.Text);
             Assert.IsNull(question.ScriptureReference);
@@ -374,7 +374,7 @@ namespace SIL.Transcelerator
             Category category = section.Categories[0];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(1, category.Questions.Length);
+            Assert.AreEqual(1, category.Questions.Count);
             Question question = category.Questions[0];
             Assert.AreEqual("What happened after Jesus finished talking and left that place?", question.Text);
             Assert.AreEqual("LUK 11.53-54", question.ScriptureReference);
@@ -415,7 +415,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(2, category.Questions.Length);
+			Assert.AreEqual(2, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -473,7 +473,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, section.Categories.Length);
 			Category category = section.Categories[0];
 
-			Assert.AreEqual(9, category.Questions.Length);
+			Assert.AreEqual(9, category.Questions.Count);
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What do you think it means if/that someone condemns someone else?", question.Text);
@@ -579,7 +579,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, section.Categories.Length);
 			Category category = section.Categories[0];
 
-			Assert.AreEqual(6, category.Questions.Length);
+			Assert.AreEqual(6, category.Questions.Count);
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What do you think it means if/that someone condemns someone else?", question.Text);
@@ -653,7 +653,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(3, category.Questions.Length);
+			Assert.AreEqual(3, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -712,7 +712,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Overview", category.Type);
 
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -755,7 +755,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(3, category.Questions.Length);
+			Assert.AreEqual(3, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -816,7 +816,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -872,7 +872,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.IsNull(category.Type);
 
-			Assert.AreEqual(3, category.Questions.Length);
+			Assert.AreEqual(3, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -912,7 +912,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[0];
 			Assert.IsNull(category.Type);
 
-			Assert.AreEqual(2, category.Questions.Length);
+			Assert.AreEqual(2, category.Questions.Count);
 
 			question = category.Questions[0];
 
@@ -975,7 +975,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.IsNull(category.Type);
 
-			Assert.AreEqual(2, category.Questions.Length);
+			Assert.AreEqual(2, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -1006,7 +1006,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[0];
 			Assert.AreEqual("Overview", category.Type);
 
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			question = category.Questions[0];
 
@@ -1018,7 +1018,7 @@ namespace SIL.Transcelerator
 			category = section.Categories[1];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(1, category.Questions.Length);
+			Assert.AreEqual(1, category.Questions.Count);
 
 			question = category.Questions[0];
 

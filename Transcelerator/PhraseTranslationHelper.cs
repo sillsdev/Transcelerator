@@ -35,19 +35,13 @@ namespace SIL.Transcelerator
 
 		#region Data members
 		private readonly List<TranslatablePhrase> m_phrases = new List<TranslatablePhrase>();
-		private readonly Dictionary<Regex, string> m_phraseSubstitutions;
-		/// <summary>A lookup table of the last word of all known English key terms to the
-		/// actual key term objects.</summary>
-		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
-		/// <summary>A double lookup table of all parts in all phrases managed by this class.
-		/// For improved performance, outer lookup is by wordcount.</summary>
-		private readonly SortedDictionary<int, Dictionary<Word, List<Part>>> m_partsTable;
+		private readonly List<Part> m_allParts;
 		private List<TranslatablePhrase> m_filteredPhrases;
-		private readonly Dictionary<float, TranslatablePhrase> m_categories = new Dictionary<float, TranslatablePhrase>(2);
+		private readonly Dictionary<int, TranslatablePhrase> m_categories = new Dictionary<int, TranslatablePhrase>(2);
 		private readonly Dictionary<TypeOfPhrase, string> m_initialPunct = new Dictionary<TypeOfPhrase, string>();
 		private readonly Dictionary<TypeOfPhrase, string> m_finalPunct = new Dictionary<TypeOfPhrase, string>();
 		private bool m_justGettingStarted = true;
-		private DataFileProxy m_fileProxy;
+		private DataFileAccessor m_fileAccessor;
 		private List<RenderingSelectionRule> m_termRenderingSelectionRules;
 		private SortBy m_listSortCriterion = SortBy.Default;
 		private bool m_listSortedAscending = true;
@@ -78,101 +72,24 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region SubPhraseMatch class
-		private class SubPhraseMatch
-		{
-			internal readonly int StartIndex;
-			internal readonly Part Part;
-
-			public SubPhraseMatch(int startIndex, Part part)
-			{
-				StartIndex = startIndex;
-				Part = part;
-			}
-		}
-		#endregion
-
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public PhraseTranslationHelper(IEnumerable<TranslatablePhrase> phrases,
-			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
-			IEnumerable<Substitution> phrasesToIgnore)
+		public PhraseTranslationHelper(QuestionProvider qp)
 		{
 			TranslatablePhrase.s_helper = this;
+		    m_allParts = qp.AllTranslatableParts.ToList();
 
-			m_keyTermsTable = new Dictionary<Word, List<KeyTermMatch>>(keyTerms.Count());
-			PopulateKeyTermsTable(keyTerms, keyTermRules);
-
-			m_phraseSubstitutions = new Dictionary<Regex, string>(phrasesToIgnore.Count());
-			foreach (Substitution substitutePhrase in phrasesToIgnore)
-				m_phraseSubstitutions[substitutePhrase.RegEx] = substitutePhrase.RegExReplacementString;
-
-			m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
-			foreach (TranslatablePhrase phrase in phrases.Where(p => !string.IsNullOrEmpty(p.PhraseToDisplayInUI)))
+			foreach (TranslatablePhrase phrase in qp.Where(p => !string.IsNullOrEmpty(p.PhraseToDisplayInUI)))
 			{
-				if (!phrase.IsExcluded)
-				{
-					PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions, phrase, GetOrCreatePart);
-					foreach (IPhrasePart part in parser.Parse())
-						phrase.m_parts.Add(part);
-				}
 				m_phrases.Add(phrase);
 				if (phrase.Category == -1)
 					m_categories[phrase.SequenceNumber] = phrase;
 			}
 
-			for (int wordCount = m_partsTable.Keys.Max(); wordCount > 1; wordCount--)
-			{
-				Dictionary<Word, List<Part>> partsTable;
-				if (!m_partsTable.TryGetValue(wordCount, out partsTable))
-					continue;
-
-				List<Part> partsToDelete = new List<Part>();
-
-				foreach (KeyValuePair<Word, List<Part>> phrasePartPair in partsTable) // REVIEW: problem: won't be able to add a new part that starts with this word
-				{
-					foreach (Part part in phrasePartPair.Value)
-					{
-						if (part.OwningPhrases.Count() != 1)
-							continue;
-
-						// Look to see if some other part is a sub-phrase of this part.
-						SubPhraseMatch match = FindSubPhraseMatch(part);
-						if (match != null)
-						{
-							TranslatablePhrase owningPhraseOfPart = part.OwningPhrases.First();
-							int iPart = owningPhraseOfPart.m_parts.IndexOf(part);
-							// Deal with any preceding remainder
-							if (match.StartIndex > 0)
-							{
-								Part preceedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex), owningPhraseOfPart, wordCount);
-								owningPhraseOfPart.m_parts.Insert(iPart++, preceedingPart);
-							}
-							match.Part.AddOwningPhrase(owningPhraseOfPart);
-							owningPhraseOfPart.m_parts[iPart++] = match.Part;
-							// Deal with any following remainder
-							// Breaks this part at the given position because an existing part was found to be a
-							// substring of this part. Any text before the part being excluded will be broken off
-							// as a new part and returned. Any text following the part being excluded will be kept
-							// as this part's contents.
-							if (match.StartIndex + match.Part.m_words.Count < part.m_words.Count)
-							{
-								Part followingPart = GetOrCreatePart(part.GetSubWords(match.StartIndex + match.Part.m_words.Count), owningPhraseOfPart, wordCount);
-								owningPhraseOfPart.m_parts.Insert(iPart, followingPart);
-							}
-							partsToDelete.Add(part);
-						}
-					}
-				}
-				foreach (Part partToDelete in partsToDelete)
-				{
-					partsTable[partToDelete.m_words[0]].Remove(partToDelete);
-				}
-			}
 			m_filteredPhrases = m_phrases;
 		}
 
@@ -255,130 +172,6 @@ namespace SIL.Transcelerator
 				return val * direction;
 			};
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Populates the key terms table.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void PopulateKeyTermsTable(IEnumerable<IKeyTerm> keyTerms, KeyTermRules rules)
-		{
-			KeyTermMatchBuilder matchBuilder;
-
-			foreach (IKeyTerm keyTerm in keyTerms)
-			{
-                matchBuilder = new KeyTermMatchBuilder(keyTerm,
-                    rules == null ? null : rules.RulesDictionary, rules == null ? null : rules.RegexRules);
-
-				foreach (KeyTermMatch matcher in matchBuilder.Matches)
-				{
-					if (!matcher.Words.Any())
-						continue;
-
-					List<KeyTermMatch> foundMatchers;
-					Word firstWord = matcher.Words.First();
-					if (!m_keyTermsTable.TryGetValue(firstWord, out foundMatchers))
-						m_keyTermsTable[firstWord] = foundMatchers = new List<KeyTermMatch>();
-
-					KeyTermMatch existingMatcher = foundMatchers.FirstOrDefault(m => m.Equals(matcher));
-					if (existingMatcher == null)
-						foundMatchers.Add(matcher);
-					else
-						existingMatcher.AddTerm(keyTerm);
-				}
-			}
-
-#if DEBUG
-            if (rules != null)
-            {
-                string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
-                if (unUsedRules.Length > 0)
-                {
-                    MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, "Transcelerator");
-                }
-            }
-#endif
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or creates a part matching the given sub-phrase.
-		/// </summary>
-		/// <param name="words">The words of the sub-phrase.</param>
-		/// <param name="owningPhraseOfPart">The owning phrase of the part to find or create.</param>
-		/// <param name="tempWordCountOfPhraseBeingBroken">The temp word count of phrase being broken.</param>
-		/// <returns>the newly created or found part</returns>
-		/// ------------------------------------------------------------------------------------
-		private Part GetOrCreatePart(IEnumerable<Word> words, TranslatablePhrase owningPhraseOfPart,
-			int tempWordCountOfPhraseBeingBroken)
-		{
-			Debug.Assert(words.Any());
-			Part part = null;
-
-			Dictionary<Word, List<Part>> partsTable;
-			List<Part> parts = null;
-			if (m_partsTable.TryGetValue(words.Count(), out partsTable))
-			{
-				if (partsTable.TryGetValue(words.First(), out parts))
-					part = parts.FirstOrDefault(x => x.Words.SequenceEqual(words));
-			}
-			else
-				m_partsTable[words.Count()] = partsTable = new Dictionary<Word, List<Part>>();
-
-			if (parts == null)
-				partsTable[words.First()] = parts = new List<Part>();
-
-			if (part == null)
-			{
-				Debug.Assert(tempWordCountOfPhraseBeingBroken != words.Count());
-				part = new Part(words);
-				parts.Add(part);
-			}
-
-			part.AddOwningPhrase(owningPhraseOfPart);
-
-			return part;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the longest phrase that is a sub-phrase of the specified part.
-		/// </summary>
-		/// <param name="part">The part.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private SubPhraseMatch FindSubPhraseMatch(Part part)
-		{
-			int partWordCount = part.m_words.Count;
-			for (int subPhraseWordCount = partWordCount - 1; subPhraseWordCount > 1; subPhraseWordCount--)
-			{
-				Dictionary<Word, List<Part>> subPhraseTable;
-				if (!m_partsTable.TryGetValue(subPhraseWordCount, out subPhraseTable))
-					continue;
-
-				for (int iWord = 0; iWord < partWordCount; iWord++)
-				{
-					Word word = part.m_words[iWord];
-					if (iWord + subPhraseWordCount > partWordCount)
-						break; // There aren't enough words left in this part to find a match
-					List<Part> possibleSubParts;
-					if (subPhraseTable.TryGetValue(word, out possibleSubParts))
-					{
-						foreach (Part possibleSubPart in possibleSubParts)
-						{
-							int iWordTemp = iWord + 1;
-							int isubWord = 1;
-							int possiblePartWordCount = possibleSubPart.m_words.Count;
-							while (isubWord < possiblePartWordCount && possibleSubPart.m_words[isubWord] == part.m_words[iWordTemp++])
-								isubWord++;
-							if (isubWord == possiblePartWordCount)
-								return new SubPhraseMatch(iWord, possibleSubPart);
-						}
-					}
-				}
-			}
-			return null;
-		}
 		#endregion
 
 		#region Public methods and properties
@@ -451,8 +244,8 @@ namespace SIL.Transcelerator
 			set
 			{
 				m_termRenderingSelectionRules = value;
-				if (m_fileProxy != null)
-					m_fileProxy.Write(DataFileProxy.DataFileId.TermRenderingSelectionRules,
+				if (m_fileAccessor != null)
+					m_fileAccessor.Write(DataFileAccessor.DataFileId.TermRenderingSelectionRules,
                         XmlSerializationHelper.SerializeToString(m_termRenderingSelectionRules));
 			}
 		}
@@ -472,14 +265,14 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		internal DataFileProxy FileProxy
+		internal DataFileAccessor FileProxy
 		{
 			set
 			{
-				m_fileProxy = value;
+				m_fileAccessor = value;
 				m_termRenderingSelectionRules =
                     XmlSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
-                    m_fileProxy.Read(DataFileProxy.DataFileId.TermRenderingSelectionRules), true);
+                    m_fileAccessor.Read(DataFileAccessor.DataFileId.TermRenderingSelectionRules), true);
 			}
 		}
 
@@ -680,9 +473,9 @@ namespace SIL.Transcelerator
 				string toAdd = phrase.UserTransSansOuterPunctuation;
 				foreach (IPhrasePart otherPart in phrase.GetParts().Where(otherPart => otherPart != part))
 				{
-					if (otherPart is KeyTermMatch)
+					if (otherPart is KeyTerm)
 					{
-						foreach (string ktTrans in ((KeyTermMatch)otherPart).Renderings)
+						foreach (string ktTrans in ((KeyTerm)otherPart).Renderings)
 						{
 							int ich = toAdd.IndexOf(ktTrans, StringComparison.Ordinal);
 							if (ich >= 0)
@@ -831,7 +624,7 @@ namespace SIL.Transcelerator
 			if (!m_justGettingStarted)
 				throw new InvalidOperationException("This method should only be called once, after all the saved translations have been loaded.");
 
-			foreach (Part part in m_partsTable.Values.SelectMany(thing => thing.Values.SelectMany(parts => parts)))
+			foreach (Part part in m_allParts)
 			{
 				if (part.OwningPhrases.Where(p => p.HasUserTranslation).Skip(1).Any()) // Must have at least 2 phrases with translations
 					RecalculatePartTranslation(part);

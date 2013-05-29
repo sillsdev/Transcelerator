@@ -509,7 +509,7 @@ namespace SIL.Utils
 			
 			if (b[k] == 'e') 
 			{
-				if (ends("ple") || ends("ttle") || k < 3)
+				if (ends("ple") || ends("tle") || k < 3)
 					return;
 				int a = m();
 				if ((a > 1 || a == 1 && !cvc(k-1)) && b[k-1] != 'e')

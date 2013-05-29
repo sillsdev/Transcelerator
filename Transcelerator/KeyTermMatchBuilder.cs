@@ -162,7 +162,7 @@ namespace SIL.Transcelerator
 			if (words.Count > 1)
 			{
 				// Spawn a new copy of each matching phrase for this metaword.
-				m_list.AddRange(m_list.Skip(startOfListForPhrase).Select(k => new KeyTermMatch(k.Words, keyTerm, k.MatchForRefOnly)).ToList());
+				m_list.AddRange(m_list.Skip(startOfListForPhrase).Select(k => new KeyTermMatch(k)).ToList());
 			}
 
 			Word word = words[0];

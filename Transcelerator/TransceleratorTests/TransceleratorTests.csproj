@@ -8,7 +8,7 @@
     <ProjectGuid>{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SILUBS.Transcelerator</RootNamespace>
+    <RootNamespace>SIL.Transcelerator</RootNamespace>
     <AssemblyName>TransceleratorTests</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>
@@ -87,6 +87,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KeyTermTests.cs" />
+    <Compile Include="MasterQuestionParserTests.cs" />
     <Compile Include="KeyTermRulesTests.cs" />
     <Compile Include="KeyTermMatchTests.cs" />
     <Compile Include="KeyTermMatchBuilderTests.cs" />
@@ -141,7 +143,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Transcelerator.csproj">
       <Project>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</Project>
-      <Name>PhraseTranslationHelper</Name>
+      <Name>Transcelerator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

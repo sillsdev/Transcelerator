@@ -38,10 +38,10 @@ namespace SIL.Transcelerator
 	public partial class TermRenderingCtrl : UserControl, ITermRenderingInfo
 	{
 		#region Data members
-		private readonly KeyTermMatch m_term;
+		private readonly KeyTerm m_term;
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<bool> m_selectKeyboard;
-		private readonly Action<IEnumerable<IKeyTerm>> m_lookupTerm;
+		private readonly Action<IEnumerable<string>> m_lookupTerm;
 
 		internal static string s_AppName;
 		#endregion
@@ -58,8 +58,8 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:TermRenderingCtrl"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TermRenderingCtrl(KeyTermMatch term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IEnumerable<IKeyTerm>> lookupTerm)
+		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
+			Action<bool> selectKeyboard, Action<IEnumerable<string>> lookupTerm)
 		{
 			InitializeComponent();
 
@@ -67,7 +67,7 @@ namespace SIL.Transcelerator
 			m_term = term;
 			m_selectKeyboard = selectKeyboard;
 			m_lookupTerm = lookupTerm;
-			m_lblKeyTermColHead.Text = term.Term;
+			m_lblKeyTermColHead.Text = term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			m_lbRenderings.Items.AddRange(term.Renderings.Distinct().ToArray());
 			term.BestRenderingChanged += term_BestRenderingChanged;
@@ -107,14 +107,9 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Implementation of ITermRenderingInfo
-		public IKeyTerm Term
-		{
-			get { return m_term; }
-		}
-
 		public IEnumerable<string> Renderings
 		{
-			get { return Term.Renderings; }
+			get { return m_term.Renderings; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -146,7 +141,7 @@ namespace SIL.Transcelerator
 		/// rendering.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		void term_BestRenderingChanged(KeyTermMatch sender)
+		void term_BestRenderingChanged(KeyTerm sender)
 		{
 			m_lbRenderings.Invalidate();
 		}
@@ -179,12 +174,12 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the mnuSetAsDefault control.
+        /// Handles the Click event of the mnuLookUpTermH/mnuLookUpTermC controls.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void LookUpTermInHostApplicaton(object sender, EventArgs e)
 		{
-			m_lookupTerm(m_term.AllTerms);
+			m_lookupTerm(m_term.AllTermIds);
 		}
 
 		/// ------------------------------------------------------------------------------------

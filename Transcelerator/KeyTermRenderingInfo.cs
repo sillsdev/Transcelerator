@@ -28,7 +28,7 @@ namespace SIL.Transcelerator
 		#region XML attributes
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the translation.
+        /// Gets or sets the id (see KeyTermSurrogate.id).
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute("id")]

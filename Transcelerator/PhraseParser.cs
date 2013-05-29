@@ -27,8 +27,8 @@ namespace SIL.Transcelerator
 	public class PhraseParser
 	{
 		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
-		private readonly TranslatablePhrase m_phrase;
-		private readonly Func<IEnumerable<Word>, TranslatablePhrase, int, Part> YieldPart;
+		private readonly Question m_phrase;
+        private readonly Func<IEnumerable<Word>, Question, ParsedPart> YieldTranslatablePart;
 		private readonly List<Word> m_words;
 		/// <summary>The index of the current (potential) match</summary>
 		private int m_iStartMatch;
@@ -42,18 +42,21 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal PhraseParser(Dictionary<Word, List<KeyTermMatch>> keyTermsTable,
-			Dictionary<Regex, string> substituteStrings, TranslatablePhrase phrase, 
-			Func<IEnumerable<Word>, TranslatablePhrase, int, Part> yieldPart)
+            Dictionary<Regex, string> substituteStrings, Question phrase,
+            Func<IEnumerable<Word>, Question, ParsedPart> yieldPart)
 		{
 			m_keyTermsTable = keyTermsTable;
-			YieldPart = yieldPart;
+            YieldTranslatablePart = yieldPart;
 			m_phrase = phrase;
 
 			string phraseToParse = m_phrase.PhraseInUse;
-			foreach (KeyValuePair<Regex, string> substituteString in substituteStrings)
-				phraseToParse = substituteString.Key.Replace(phraseToParse, substituteString.Value);
+		    if (substituteStrings != null)
+		    {
+		        foreach (KeyValuePair<Regex, string> substituteString in substituteStrings)
+		            phraseToParse = substituteString.Key.Replace(phraseToParse, substituteString.Value);
+		    }
 
-			m_words = GetWordsInString(phraseToParse.Trim().ToLowerInvariant(), true);
+		    m_words = GetWordsInString(phraseToParse.ToLowerInvariant());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -61,26 +64,22 @@ namespace SIL.Transcelerator
 		/// Gets a list of all of the words in the specified string.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static List<Word> GetWordsInString(string phrase, bool createNewWords)
+		internal static List<Word> GetWordsInString(string phrase)
 		{
 			List<Word> words = new List<Word>();
 			StringBuilder wordBldr = new StringBuilder();
-			string word;
 			foreach (char ch in phrase)
 			{
 				if (Char.IsLetter(ch) || ch == '\'' || ch == '-')
 					wordBldr.Append(ch);
 				else if (wordBldr.Length > 0)
 				{
-					word = wordBldr.ToString();
-					if (createNewWords || Word.Exists(word))
-						words.Add(wordBldr.ToString());
+					words.Add(wordBldr.ToString());
 					wordBldr.Length = 0;
 				}
 			}
-			word = wordBldr.ToString();
-			if (word.Length > 0 && (createNewWords || Word.Exists(word)))
-				words.Add(word);
+            if (wordBldr.Length > 0)
+				words.Add(wordBldr.ToString());
 			return words;
 		}
 
@@ -92,7 +91,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <returns>Collection of phrase parts</returns>
 		/// ------------------------------------------------------------------------------------
-		internal IEnumerable<IPhrasePart> Parse()
+		internal IEnumerable<ParsedPart> Parse()
 		{
 			KeyTermMatch bestKeyTerm = null;
 			int minUnhandled = 0;
@@ -105,17 +104,18 @@ namespace SIL.Transcelerator
 				else
 				{
 					// We've found the best key term we're going to find.
-					int keyTermWordCount = bestKeyTerm.Words.Count();
+					int keyTermWordCount = bestKeyTerm.WordCount;
 					if (m_iStartMatch > minUnhandled)
-						yield return YieldPart(m_words.Skip(minUnhandled).Take(m_iStartMatch - minUnhandled), m_phrase, 0);
-					yield return bestKeyTerm;
+						yield return YieldTranslatablePart(m_words.Skip(minUnhandled).Take(m_iStartMatch - minUnhandled), m_phrase);
+                    bestKeyTerm.MarkInUse();
+                    yield return new ParsedPart(bestKeyTerm);
 					m_iStartMatch = m_iNextWord = minUnhandled = m_iStartMatch + keyTermWordCount;
 				}
 			}
 
 			if (minUnhandled < m_words.Count)
 			{
-				yield return YieldPart(m_words.Skip(minUnhandled), m_phrase, 0);
+				yield return YieldTranslatablePart(m_words.Skip(minUnhandled), m_phrase);
 			}
 		}
 
@@ -129,6 +129,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private KeyTermMatch FindBestKeyTerm()
 		{
+		    if (m_keyTermsTable == null)
+		        return null;
+
 			Word nextWord = m_words[m_iNextWord];
 
 			if (m_iStartMatch == m_iNextWord)
@@ -139,7 +142,7 @@ namespace SIL.Transcelerator
                 {
 				    m_matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
                 }
-                if (m_matches == null || m_matches.All(m => m.Words.Count() > 1))
+                if (m_matches == null || m_matches.All(m => m.WordCount > 1))
 				{
 					Word stem = s_stemmer.stemTerm(nextWord);
                     if (stem.Text != nextWord.Text)
@@ -165,7 +168,7 @@ namespace SIL.Transcelerator
 				// with that word, then we return it. The code below would handle this, but it's such
 				// a common case, we want it to be fast. If there are one or more multi-word key
 				// terms that start with this word, we need to keep looking.
-				if (m_matches.Count == 1 && m_matches[0].Words.Count() == 1)
+				if (m_matches.Count == 1 && m_matches[0].WordCount == 1)
 					return m_matches[0];
 			}
 
@@ -178,11 +181,11 @@ namespace SIL.Transcelerator
 			{
 				KeyTermMatch term = m_matches[iTerm];
 				if (!PhraseEqualsKeyTermSoFar(term, cMatchingWordsInTermSoFar) ||
-					(AtEndOfPhrase && term.m_words.Count > cMatchingWordsInTermSoFar))
+					(AtEndOfPhrase && term.WordCount > cMatchingWordsInTermSoFar))
 					m_matches.RemoveAt(iTerm--);
-				else if (term.m_words.Count > lengthOfBestMatch)
+				else if (term.WordCount > lengthOfBestMatch)
 				{
-					lengthOfBestMatch = term.m_words.Count;
+					lengthOfBestMatch = term.WordCount;
 					longestMatch = term;
 				}
 			}
@@ -221,10 +224,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private bool PhraseEqualsKeyTermSoFar(KeyTermMatch term, int cMatchingWordsInTermSoFar)
 		{
-			int cCompare = Math.Min(term.m_words.Count, cMatchingWordsInTermSoFar);
+			int cCompare = Math.Min(term.WordCount, cMatchingWordsInTermSoFar);
 			for (int iWord = m_iStartMatch; iWord < cCompare + m_iStartMatch; iWord++)
 			{
-				if (!term.m_words[iWord - m_iStartMatch].IsEquivalent(m_words[iWord]))
+				if (!term[iWord - m_iStartMatch].IsEquivalent(m_words[iWord]))
 					return false;
 			}
 			return true;

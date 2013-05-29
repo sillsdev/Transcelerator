@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -13,30 +13,52 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AddInSideViews;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
-	public class KeyTermMatch : IPhrasePart, IKeyTerm
+	public class KeyTermMatch
 	{
-		#region Events and Delegates
-		public delegate void BestRenderingChangedHandler(KeyTermMatch sender);
-		public event BestRenderingChangedHandler BestRenderingChanged;
-		#endregion
-
 		#region Data members
-		internal readonly List<Word> m_words;
+		private readonly List<Word> m_words;
 		private readonly List<IKeyTerm> m_terms;
-		private string m_bestTranslation = null;
 		private readonly bool m_matchForRefOnly;
 		private HashSet<int> m_occurrences;
-		private static DataFileProxy m_fileProxy;
-		private static List<KeyTermRenderingInfo> m_keyTermRenderingInfo;
+	    private bool m_isInUse;
+	    private KeyTermMatchSurrogate m_surrogate; // Cached for efficiency
 		#endregion
 
-		#region Construction & initialization
+		#region Constructors
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyTermMatch"/> class that doesn't
+        /// (yet) match on any words.
+        /// </summary>
+        /// <param name="term">The term.</param>
+        /// <param name="matchForRefOnly">if set to <c>true</c> [match for ref only].</param>
+        /// ------------------------------------------------------------------------------------
+        internal KeyTermMatch(IKeyTerm term, bool matchForRefOnly) :
+            this(new Word[0], term, matchForRefOnly)
+        {
+        }
+
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Copy constructor (only valid for an object having a single term).
+	    /// </summary>
+	    /// <param name="matchBase">The base match from which this match will be created.</param>
+	    /// ------------------------------------------------------------------------------------
+	    internal KeyTermMatch(KeyTermMatch matchBase) :
+	        this(matchBase.m_words, matchBase.m_terms[0], matchBase.MatchForRefOnly)
+	    {
+	        if (matchBase.m_terms.Count != 1)
+	        {
+	            throw new ArgumentException("KeyTermMatch copy constructor only valid for making" +
+	                " copies of a new in-progress match with a single underlying key term.");
+	        }
+	    }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyTermMatch"/> class.
@@ -51,19 +73,6 @@ namespace SIL.Transcelerator
 			m_words = words.ToList();
 			m_terms = new List<IKeyTerm>();
 			m_terms.Add(term);
-			KeyTermRenderingInfo info = m_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == Term);
-			if (info != null)
-				m_bestTranslation = info.PreferredRendering;
-		}
-
-		internal static DataFileProxy FileProxy
-		{
-			set
-			{
-				m_fileProxy = value;
-				m_keyTermRenderingInfo = XmlSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
-                    m_fileProxy.Read(DataFileProxy.DataFileId.KeyTermRenderingInfo), true);
-			}
 		}
 		#endregion
 
@@ -107,7 +116,7 @@ namespace SIL.Transcelerator
 			return base.GetHashCode();
 		}
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents this instance.
 		/// </summary>
@@ -116,155 +125,20 @@ namespace SIL.Transcelerator
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
 		public override string ToString()
-		{
-			return Term; //WAS: m_words.ToString(" ");
-		}
-		#endregion
-
-		#region Public & internal methods
-        public bool MatchForRefOnly
         {
-            get { return m_matchForRefOnly; }
+            return m_words.ToString(" ");
         }
-
-		public bool AppliesTo(int startRef, int endRef)
-		{
-			if (!m_matchForRefOnly)
-				return true;
-			if (m_occurrences == null)
-				m_occurrences = new HashSet<int>(m_terms.SelectMany(term => term.BcvOccurences));
-			return m_occurrences.Any(o => startRef <= o && endRef >= o);
-		}
-
-		public void AddTerm(IKeyTerm keyTerm)
-		{
-			if (keyTerm == null)
-				throw new ArgumentNullException("keyTerm");
-			m_terms.Add(keyTerm);
-		}
-
-		public void AddWord(Word word)
-		{
-			if (word == null)
-				throw new ArgumentNullException("word");
-			m_words.Add(word);
-		}
-
-		public void AddWords(IEnumerable<Word> words)
-		{
-			m_words.AddRange(words);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds a rendering.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void AddRendering(string rendering)
-		{
-			if (Renderings.Contains(rendering.Normalize(NormalizationForm.FormC)))
-				throw new ArgumentException(Properties.Resources.kstidRenderingExists);
-			KeyTermRenderingInfo info = RenderingInfo;
-			if (info == null)
-			{
-				info = new KeyTermRenderingInfo(Term, BestRendering);
-				m_keyTermRenderingInfo.Add(info);
-			}
-			info.AddlRenderings.Add(rendering);
-			UpdateRenderingInfoFile();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether the specified rendering can be deleted.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public bool CanRenderingBeDeleted(string rendering)
-		{
-			if (rendering == BestRendering)
-				return false;
-			KeyTermRenderingInfo info = RenderingInfo;
-			if (info == null)
-				return false;
-
-			return info.AddlRenderings.Contains(rendering.Normalize(NormalizationForm.FormC));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether the specified rendering can be deleted.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void DeleteRendering(string rendering)
-		{
-			rendering = rendering.Normalize(NormalizationForm.FormC);
-			KeyTermRenderingInfo info = RenderingInfo;
-			if (info == null || !info.AddlRenderings.Contains(rendering))
-				throw new ArgumentException("Cannot delete non-existent rendering: " + rendering);
-
-			if (info.AddlRenderings.Remove(rendering))
-				UpdateRenderingInfoFile();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the best rendering for this term in when used in the context of the given
-		/// phrase.
-		/// </summary>
-		/// <remarks>If this term occurs more than once in the phrase, it is not possible to
-		/// know which occurrence is which.</remarks>
-		/// ------------------------------------------------------------------------------------
-		public string GetBestRenderingInContext(TranslatablePhrase phrase)
-		{
-			IEnumerable<string> renderings = Renderings;
-			if (!renderings.Any())
-				return string.Empty;
-			if (renderings.Count() == 1 || TranslatablePhrase.s_helper.TermRenderingSelectionRules == null)
-				return Translation;
-
-			List<string> renderingsList = null;
-			foreach (RenderingSelectionRule rule in TranslatablePhrase.s_helper.TermRenderingSelectionRules.Where(r => !r.Disabled))
-			{
-				if (renderingsList == null)
-				{
-					renderingsList = new List<string>();
-					foreach (string rendering in renderings)
-					{
-						if (rendering == Translation)
-							renderingsList.Insert(0, rendering);
-						else
-							renderingsList.Add(rendering);
-					}
-				}
-				string s = rule.ChooseRendering(phrase.PhraseInUse, Words, renderingsList);
-				if (!string.IsNullOrEmpty(s))
-					return s;
-			}
-			return Translation;
-		}
 		#endregion
 
-		#region Public properties
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Enumerates the words that this object matches on.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerable<Word> Words
-		{
-			get { return m_words; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the term in the "source" language (i.e., the source of the UNS questions list,
-		/// which is in English).
-		/// </summary>
-		/// <value></value>
-		/// ------------------------------------------------------------------------------------
-		public string Term
-		{
-            get { return m_terms.First().Term; }
+        #region Public properties
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Count of words this object matches on.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public int WordCount
+        {
+            get { return m_words.Count; }
         }
 
         /// ------------------------------------------------------------------------------------
@@ -273,107 +147,30 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         public string Id
+        {
+            get { return m_terms.First().Id; }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this match should only be considered for questions/phrases for one of
+        /// the occurrences of the term(s).
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public bool MatchForRefOnly
+        {
+            get { return m_matchForRefOnly; }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this resulted in an actual match for some question/phrase
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public bool InUse
 	    {
-			get { return m_terms.First().Id; }
+            get { return m_isInUse; }
 	    }
-
-	    /// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the translation.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Translation
-		{
-			get
-			{
-				if (m_bestTranslation == null)
-				{
-					int max = 0;
-					Dictionary<string, int> occurrences = new Dictionary<string, int>();
-					foreach (string rendering in m_terms.Select(keyTerm => keyTerm.BestRendering).Where(rendering => rendering != null))
-					{
-						string normalizedRendering = rendering.Normalize(NormalizationForm.FormC);
-						int num;
-						occurrences.TryGetValue(normalizedRendering, out num);
-						occurrences[normalizedRendering] = ++num;
-						if (num > max)
-						{
-							m_bestTranslation = normalizedRendering;
-							max = num;
-						}
-					}
-					if (m_bestTranslation == null)
-						m_bestTranslation = string.Empty;
-				}
-				return m_bestTranslation;
-			}
-		}
-
-		public string DebugInfo
-		{
-			get { return "KT: " + Translation; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets all (distinct) renderings.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IList<string> Renderings
-		{
-			get
-			{
-				//List<string> renderings = new List<string>();
-				//renderings.
-				//if (Translation == null)
-				// return renderings
-				// else
-				// renderings[0] = Translation;
-				IEnumerable<string> renderings = m_terms.SelectMany(keyTerm => keyTerm.Renderings.Where(r => r != null));
-				KeyTermRenderingInfo info = RenderingInfo;
-				if (info != null)
-					renderings = renderings.Union(info.AddlRenderings.Where(r => r != null));
-				return renderings.Select(r => r.Normalize(NormalizationForm.FormC)).Distinct().ToList();
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the rendering info (if any) corresponding to this key term match object
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public KeyTermRenderingInfo RenderingInfo
-		{
-			get { return m_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == Term); }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// The primary (best) rendering for the term in the target language (equivalent to the
-		/// Translation).
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string BestRendering
-		{
-			get { return Translation; }
-			set
-			{
-                m_bestTranslation = value.Normalize(NormalizationForm.FormC);
-				KeyTermRenderingInfo info = RenderingInfo;
-				if (info == null)
-				{
-					info = new KeyTermRenderingInfo(Term, m_bestTranslation);
-					m_keyTermRenderingInfo.Add(info);
-				}
-				else
-				{
-					info.PreferredRendering = m_bestTranslation;
-				}
-				if (BestRenderingChanged != null)
-					BestRenderingChanged(this);
-				UpdateRenderingInfoFile();
-			}
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -395,15 +192,97 @@ namespace SIL.Transcelerator
 		{
 			get { return m_terms; }
 		}
-		#endregion
 
-		#region Private helper methods
-		private void UpdateRenderingInfoFile()
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the ith Word in the sequence of words on which this object matches
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public Word this[int i]
+        {
+            get { return m_words[i]; }
+        }
+        #endregion
+
+        #region Public methods
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Indicates whether this key term match should be considered when parsing a phrase
+        /// for the given reference range
+        /// </summary>
+        /// <param name="startRef">Start reference in BBBCCCVVV format</param>
+        /// <param name="endRef">End reference in BBBCCCVVV format</param>
+        /// ------------------------------------------------------------------------------------
+        public bool AppliesTo(int startRef, int endRef)
 		{
-			if (m_fileProxy != null)
-				m_fileProxy.Write(DataFileProxy.DataFileId.KeyTermRenderingInfo, 
-                   XmlSerializationHelper.SerializeToString(m_keyTermRenderingInfo));
+			if (!m_matchForRefOnly)
+				return true;
+			if (m_occurrences == null)
+				m_occurrences = new HashSet<int>(m_terms.SelectMany(term => term.BcvOccurences));
+			return m_occurrences.Any(o => startRef <= o && endRef >= o);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Implicitly casts this as a KeyTermMatchSurrogate
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public static implicit operator KeyTermMatchSurrogate(KeyTermMatch match)
+        {
+            if (match == null)
+                return null;
+
+            // Typically, we'll only want to do this cast once the terms and words of the object
+            // have been fully set, but then we'll want to do it more than once. It's expensive
+            // enough that it's probably worth caching.
+            if (match.m_surrogate == null)
+            {
+                match.m_surrogate = new KeyTermMatchSurrogate(match.ToString(),
+                    match.m_terms.Select(t => t.Id).ToArray());
+            }
+            return match.m_surrogate;
+        }
+        #endregion
+
+        #region Internal methods
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds another underlying key term with the same (possibly partial) gloss as the
+        /// other(s)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        internal void AddTerm(IKeyTerm keyTerm)
+		{
+			if (keyTerm == null)
+				throw new ArgumentNullException("keyTerm");
+			m_terms.Add(keyTerm);
+            m_surrogate = null;
 		}
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds another Word to the sequence that constitute the phrase on which this matches.
+        /// This is intended to be  
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        internal void AddWord(Word word)
+		{
+			if (word == null)
+				throw new ArgumentNullException("word");
+			m_words.Add(word);
+            m_surrogate = null;
+        }
+
+		internal void AddWords(IEnumerable<Word> words)
+		{
+			m_words.AddRange(words);
+            m_surrogate = null;
+        }
+
+        internal void MarkInUse()
+        {
+            m_isInUse = true;
+        }
 		#endregion
 	}
 }

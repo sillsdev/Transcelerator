@@ -11,6 +11,7 @@
 // File: QuestionSections.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Schema;
@@ -67,8 +68,9 @@ namespace SIL.Transcelerator
 		[XmlAttribute("type")]
 		public string Type { get; set; }
 
-		[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Question", typeof(Question), IsNullable = false)]
-		public Question[] Questions { get; set; }
+	    private List<Question> m_questions;
+		[XmlElement]
+        public List<Question> Questions { get { return m_questions ?? (m_questions = new List<Question>()); } }
 	}
 	#endregion
 }
