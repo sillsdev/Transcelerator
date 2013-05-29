@@ -11,6 +11,7 @@
 // File: Question.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Schema;
@@ -40,32 +41,87 @@ namespace SIL.Transcelerator
 		[XmlAttribute("startref")]
 		public override int StartRef { get; set; }
 
-		[XmlAttribute("endref")]
-		public override int EndRef { get; set; }
+        [XmlAttribute("endref")]
+        public override int EndRef { get; set; }
 
-		[XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
-		public override string Text
+        [XmlAttribute("exclude")]
+        public bool IsExcluded { get; set; }
+
+        [XmlAttribute("user")]
+        public bool IsUserAdded { get; set; }
+
+        [XmlAttribute("modified")]
+        public string ModifiedPhrase { get; set; }
+
+        [XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
+        public override string Text
 		{
-			get { return m_text; }
+			get
+            {
+                return m_text; // Note: this is not base.m_text
+            }
 			set
 			{
 				if (String.IsNullOrEmpty(value))
 					m_text = kGuidPrefix + Guid.NewGuid();
 				else
-					m_text = value;
+					m_text = value.Trim();
 			}
 		}
 
-		[XmlElement("A", Form = XmlSchemaForm.Unqualified, IsNullable = false)]
-		public string[] Answers { get; set; }
+        [XmlElement("A", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
+        public string[] Answers { get; set; }
 
-		[XmlElement("Note", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
+        [XmlElement("Note", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
 		public string[] Notes { get; set; }
 
-		[XmlElement("Alternative", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
-		public string[] AlternateForms { get; set; }
+        [XmlElement("Alternative", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
+        public string[] AlternateForms { get; set; }
 
-		/// --------------------------------------------------------------------------------
+        protected List<ParsedPart> m_parsedParts;
+        [XmlElement]
+        public List<ParsedPart> ParsedParts { get { return m_parsedParts ?? (m_parsedParts = new List<ParsedPart>()); } }
+
+        [XmlIgnore]
+        public Question InsertedQuestionBefore { get; set; }
+
+        [XmlIgnore]
+        public Question AddedQuestionAfter { get; set; }
+
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+        /// Gets whether the question/phrase can be parsed. If it is excluded or Text is
+        /// empty/null or this is a question/phrase with no LWC version (i.e., text is merely a
+        /// GUID), then it should not be parsed. 
+	    /// </summary>
+	    /// ------------------------------------------------------------------------------------
+	    [XmlIgnore]
+	    public bool IsParsable
+	    {
+            get
+            {
+                return !IsExcluded && !string.IsNullOrEmpty(m_text) && !m_text.StartsWith(kGuidPrefix);
+            }
+	    }
+
+	    /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the question/phrase to use for processing & comparison purposes (either the
+        /// original text or a modified form of it).
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [XmlIgnore]
+        public string PhraseInUse
+        {
+            get
+            {
+                if (IsExcluded)
+                    throw new InvalidOperationException("Cannot access PhraseInUseFor an excluded question.");
+                return ModifiedPhrase ?? Text;
+            }
+        }
+
+        /// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Question"/> class, needed
 		/// for XML serialization.
@@ -77,7 +133,7 @@ namespace SIL.Transcelerator
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Constructor to make a new Question.
+		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public Question(Question baseQuestion, string newQuestion, string answer)
@@ -86,6 +142,7 @@ namespace SIL.Transcelerator
 			StartRef = baseQuestion.StartRef;
 			EndRef = baseQuestion.EndRef;
 			Text = newQuestion;
+		    IsUserAdded = true;
 
 			if (!string.IsNullOrEmpty(answer))
 				Answers = new [] { answer };

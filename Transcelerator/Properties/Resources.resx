@@ -252,8 +252,4 @@
   <data name="kstidLectionaryControlFile" xml:space="preserve">
     <value>Lectionary Control File</value>
   </data>
-  <data name="kstidMajorBiblicalTermsPreferred" xml:space="preserve">
-    <value>Transcelerator uses a biblical terms list from Paratext in order to identify terms in the comprehension checking questions that can be translated automatically. Although it can theoretically work with any list, it is tuned to work best with the "{0}" list. The project {1} is currently associated with the "{2}" list. If you continue to use this list and find that Transcelerator has identified too many or too few words in the questions as key terms, change your project to use the "{0}" list, and then on the File menu in Transcelerator, click Reload.
-Do you want to continue starting Transcelerator using the {2} list?</value>
-  </data>
 </root>

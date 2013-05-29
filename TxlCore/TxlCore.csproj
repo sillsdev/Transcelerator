@@ -50,17 +50,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParsedPart.cs" />
+    <Compile Include="ParsedQuestions.cs" />
+    <Compile Include="KeyTermMatchSurrogate.cs" />
     <Compile Include="ScrVers.cs" />
     <Compile Include="TxlCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Question.cs" />
     <Compile Include="QuestionKey.cs" />
     <Compile Include="QuestionSections.cs" />
+    <Compile Include="Word.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharedScrUtils\SharedScrUtils.csproj">
       <Project>{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}</Project>
       <Name>SharedScrUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SilUtils\SilUtils.csproj">
+      <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
+      <Name>SilUtils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

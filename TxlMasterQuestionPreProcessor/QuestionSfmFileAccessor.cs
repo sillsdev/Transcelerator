@@ -227,7 +227,8 @@ namespace SIL.TxlMasterQuestionPreProcessor
 					{
 						if (currentQuestions.Count > 0)
 						{
-							currCat.Questions = currentQuestions.ToArray();
+                            currCat.Questions.Clear();
+                            currCat.Questions.AddRange(currentQuestions);
 							currentQuestions.Clear();
 						}
 						currSection = new Section();
@@ -245,10 +246,11 @@ namespace SIL.TxlMasterQuestionPreProcessor
 						{
 							if (currentQuestions.Count > 0)
 							{
-								currCat.Questions = currentQuestions.ToArray();
+								currCat.Questions.Clear();
+                                currCat.Questions.AddRange(currentQuestions);
 								currentQuestions.Clear();
 							}
-							if (currCat.Type != null || currCat.Questions != null)
+							if (currCat.Type != null || currCat.Questions.Count > 0)
 							{
 								currCat = new Category();
 								Category[] source = currSection.Categories;
@@ -271,10 +273,13 @@ namespace SIL.TxlMasterQuestionPreProcessor
 					}
 				}
 			}
-			if (currCat != null && currentQuestions.Count > 0)
-				currCat.Questions = currentQuestions.ToArray();
+		    if (currCat != null && currentQuestions.Count > 0)
+		    {
+		        currCat.Questions.Clear();
+		        currCat.Questions.AddRange(currentQuestions);
+		    }
 
-			QuestionSections questionSections = new QuestionSections();
+		    QuestionSections questionSections = new QuestionSections();
 			questionSections.Items = sections.ToArray();
 			GenerateAlternateForms(questionSections, alternatives);
 			return questionSections;

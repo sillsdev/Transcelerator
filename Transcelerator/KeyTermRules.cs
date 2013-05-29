@@ -72,12 +72,11 @@ namespace SIL.Transcelerator
             }
         }
 
-	    public void Initialize(string keyTermListName)
+	    public void Initialize()
 	    {
             Dictionary<string, KeyTermRule> dictionary = new Dictionary<string, KeyTermRule>();
             m_regexRules = null;
-            foreach (KeyTermRule keyTermRule in Items.Where(rule => !String.IsNullOrEmpty(rule.id) &&
-                (rule.AppliesTo == null || rule.AppliesTo == keyTermListName)))
+            foreach (KeyTermRule keyTermRule in Items.Where(rule => !String.IsNullOrEmpty(rule.id)))
             {
                 if (keyTermRule.IsRegEx)
                 {
@@ -155,14 +154,6 @@ namespace SIL.Transcelerator
 		/// --------------------------------------------------------------------------------
         [XmlAttribute("regex")]
         public bool IsRegEx { get; set; }
-
-        /// --------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        /// --------------------------------------------------------------------------------
-        [XmlAttribute("appliesTo")]
-        public string AppliesTo { get; set; }
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>

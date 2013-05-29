@@ -147,7 +147,7 @@ namespace SIL.Transcelerator
             this.label2.Size = new System.Drawing.Size(234, 52);
             this.label2.TabIndex = 1;
             this.label2.Text = "The Copy icon was developed by Momenticons and is covered by this Creative Common" +
-                "s Licence: http://creativecommons.org/licenses/by/3.0/";
+                "s License: http://creativecommons.org/licenses/by/3.0/";
             // 
             // label3
             // 

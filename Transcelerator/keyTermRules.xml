@@ -18,9 +18,17 @@
     <Alternate name="statements"/>
   </KeyTermRule>
   <KeyTermRule id="bless, praise">
-  	<Alternate name="blesses"/>
-  	<Alternate name="blessed"/>
-  	<Alternate name="blessing"/>
+    <Alternate name="blesses"/>
+    <Alternate name="blessed"/>
+    <Alternate name="blessing"/>
+  </KeyTermRule>
+  <KeyTermRule id="bless; be blessed; praise; give thanks">
+    <Alternate name="blesses"/>
+    <Alternate name="blessed"/>
+    <Alternate name="blessing"/>
+  </KeyTermRule>
+  <KeyTermRule id="be blessed; blessed one">
+    <Alternate name="blessed"/>
   </KeyTermRule>
   <KeyTermRule id="Jesus">
   	<Alternate name="Jesus Christ"/>
@@ -478,7 +486,7 @@
   </KeyTermRule>
 
   <!-- Rules that apply only to "All Biblical Terms" list -->
-  <KeyTermRule id=".*\(div1 type=" regex="true" rule="Exclude" appliesTo="All"/>
+  <!--<KeyTermRule id=".*\(div1 type=" regex="true" rule="Exclude" appliesTo="All"/>
   <KeyTermRule id="Zarethan.(div1 type=letter id=LET.19)(head)ק" rule="Exclude" appliesTo="All">
     <Alternate name="Zarethan"/>
   </KeyTermRule>
@@ -585,5 +593,5 @@
     <Alternate name="wanted"/>
     <Alternate name="wants"/>
     <Alternate name="wanting"/>
-  </KeyTermRule>
+  </KeyTermRule>-->
 </KeyTermRules>

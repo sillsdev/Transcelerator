@@ -33,12 +33,11 @@ namespace SIL.Transcelerator
 		private readonly string m_sOrigPhrase;
 		private string m_sModifiedPhrase;
 		private HashSet<string> m_alternateForms;
-		private bool m_fExclude;
 		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
-		private readonly float m_seqNumber;
-		private readonly QuestionKey m_questionInfo;
+		private readonly int m_seqNumber;
+		internal readonly QuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsMatch;
@@ -55,7 +54,7 @@ namespace SIL.Transcelerator
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular category and reference).</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(QuestionKey questionInfo, int category, float seqNumber)
+		public TranslatablePhrase(QuestionKey questionInfo, int category, int seqNumber)
 			: this(questionInfo.Text)
 		{
 			m_questionInfo = questionInfo;
@@ -197,8 +196,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public bool IsExcluded
 		{
-			get { return m_fExclude; }
-			internal set { m_fExclude = value; }
+			get
+			{
+			    Question q = m_questionInfo as Question;
+			    return q != null && q.IsExcluded;
+			}
+			internal set { ((Question)m_questionInfo).IsExcluded = value; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -208,7 +211,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal bool IsExcludedOrModified
 		{
-			get { return (m_fExclude || (m_sModifiedPhrase != null && !IsUserAdded)); }
+            get { return (IsExcluded || (m_sModifiedPhrase != null && !IsUserAdded)); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -220,7 +223,8 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				return SequenceNumber != Math.Round(SequenceNumber);
+			    Question q = m_questionInfo as Question;
+				return q != null && q.IsUserAdded;
 			}
 		}
 
@@ -375,9 +379,9 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				object[] retArray = new object[m_parts.OfType<KeyTermMatch>().Count()];
+				object[] retArray = new object[m_parts.OfType<KeyTerm>().Count()];
 				int i = 0;
-				foreach (KeyTermMatch kt in m_parts.OfType<KeyTermMatch>())
+				foreach (KeyTerm kt in m_parts.OfType<KeyTerm>())
 					retArray[i++] = kt.GetBestRenderingInContext(this);
 				return retArray;
 			}
@@ -409,7 +413,7 @@ namespace SIL.Transcelerator
 		/// given category and for a particular reference).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public float SequenceNumber
+		public int SequenceNumber
 		{
 			get { return m_seqNumber; }
 		}
@@ -561,9 +565,9 @@ namespace SIL.Transcelerator
 			switch (ktFilter)
 			{
 				case PhraseTranslationHelper.KeyTermFilterType.WithRenderings:
-					return m_parts.OfType<KeyTermMatch>().All(kt => !string.IsNullOrEmpty(kt.Translation));
+					return m_parts.OfType<KeyTerm>().All(kt => !string.IsNullOrEmpty(kt.Translation));
 				case PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings:
-					bool temp = m_parts.OfType<KeyTermMatch>().Any(kt => string.IsNullOrEmpty(kt.Translation));
+					bool temp = m_parts.OfType<KeyTerm>().Any(kt => string.IsNullOrEmpty(kt.Translation));
 					return temp;
 				default: // PhraseTranslationHelper.KeyTermFilterType.All
 					return true;
@@ -583,7 +587,7 @@ namespace SIL.Transcelerator
 			int iKeyTerm = 0;
 			string translation = Translation;
 			m_allTermsMatch = true;
-			foreach (KeyTermMatch term in GetParts().Where(p => p is KeyTermMatch))
+			foreach (KeyTerm term in m_parts.OfType<KeyTerm>())
 			{
 				int ich = -1;
 				foreach (string ktTrans in term.Renderings.OrderBy(r => r, new StrLengthComparer(false)))

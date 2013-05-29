@@ -57,6 +57,7 @@ namespace SIL.Utils
             Assert.AreEqual("cripple", s_stemmer.stemTerm("cripple"));
             Assert.AreEqual("ample", s_stemmer.stemTerm("ample"));
             Assert.AreEqual("battle", s_stemmer.stemTerm("battles"));
+            Assert.AreEqual("apostle", s_stemmer.stemTerm("apostles"));
         }
 
         /// ------------------------------------------------------------------------------------

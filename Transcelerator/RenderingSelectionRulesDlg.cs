@@ -66,7 +66,7 @@ namespace SIL.Transcelerator
 		/// Handles the Click event of the btnNew control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void btnNew_Click(object sender, System.EventArgs e)
+		private void btnNew_Click(object sender, EventArgs e)
 		{
 			int i = 1;
 			string name = string.Format(Properties.Resources.kstidNewSelectionRuleNameTemplate, i);

@@ -47,7 +47,7 @@ namespace SIL.Transcelerator
 
 		public Dictionary<string, IPluginDataFileMergeInfo> DataFileKeySpecifications
 		{
-			get { return ParatextDataFileProxy.GetDataFileKeySpecifications(); }
+			get { return ParatextDataFileAccessor.GetDataFileKeySpecifications(); }
 		}
 
 		public void Run(IHost ptHost, string activeProjectName)
@@ -72,57 +72,47 @@ namespace SIL.Transcelerator
 				{
 					InitializeErrorHandling();
 
-					bool runTxl = true;
-                    Func<string> getKeyTermListName = () => host.GetProjectKeyTermListType(projectName);
-                    string keyTermListType = getKeyTermListName();
                     const string kMajorList = "Major";
-					if (host.ApplicationName == "Paratext" && keyTermListType != kMajorList)
-					{
-						runTxl = MessageBox.Show(string.Format(Properties.Resources.kstidMajorBiblicalTermsPreferred,
-                            host.GetKeyTermListName(kMajorList, projectName),
-                            projectName, host.GetKeyTermListName(keyTermListType, projectName)),
-							pluginName, MessageBoxButtons.YesNo) == DialogResult.Yes;
-					}
 
-					if (runTxl)
+					UNSQuestionsDialog formToShow;
+					lock (this)
 					{
-						UNSQuestionsDialog formToShow;
-						lock (this)
+						TxlSplashScreen splashScreen = new TxlSplashScreen();
+						splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+						splashScreen.Message = string.Format(
+						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
+
+						int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
+						BCVRef startRef = new BCVRef(currRef);
+						startRef.Chapter = 1;
+						startRef.Verse = 1;
+						BCVRef endRef = new BCVRef(currRef);
+						endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
+						endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+
+						Action<bool> activateKeyboard = vern =>
 						{
-							TxlSplashScreen splashScreen = new TxlSplashScreen();
-							splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-							splashScreen.Message = string.Format(
-							Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
+							string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
+							if (!string.IsNullOrEmpty(keyboard))
+								KeyboardController.ActivateKeyboard(keyboard);
+						};
 
-							int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
-							BCVRef startRef = new BCVRef(currRef);
-							startRef.Chapter = 1;
-							startRef.Verse = 1;
-							BCVRef endRef = new BCVRef(currRef);
-							endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
-							endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+                        var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, projectName, fileId),
+                            (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader),
+                            fileId => host.GetPlugInDataLastModifiedTime(this, projectName, fileId));
 
-							Action<bool> activateKeyboard = vern =>
-							{
-								string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
-								if (!string.IsNullOrEmpty(keyboard))
-									KeyboardController.ActivateKeyboard(keyboard);
-							};
-
-							formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
-                            getKeyTermListName, () => host.GetKeyTerms(projectName, "en"),
-							host.GetProjectFont(projectName),
-							host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
-							new ParatextDataFileProxy(fileId => host.GetPlugInData(this, projectName, fileId),
-							(fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader)),
-							host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
-							new ScrVers(host, TxlCore.englishVersificationName),
-							new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
-							endRef, activateKeyboard,
-							terms => host.LookUpKeyTerm(projectName, terms.Select(t => t.Id).ToList()));
-						}
-						formToShow.ShowDialog();
+						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
+                            () => host.GetFactoryKeyTerms(kMajorList, "en"),
+                            termId => host.GetProjectTermRenderings(projectName, termId, true),
+                            host.GetProjectFont(projectName),
+						    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
+						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
+						    new ScrVers(host, TxlCore.englishVersificationName),
+						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
+						    endRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
+						    terms => host.LookUpKeyTerm(projectName, terms));
 					}
+					formToShow.ShowDialog();
 					ptHost.WriteLineToLog(this, "Closing " + pluginName);
 					Environment.Exit(0);
 				});
