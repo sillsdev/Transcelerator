@@ -47,6 +47,10 @@
 	  <Alternate name="flock"/>
   </KeyTermRule>
   <KeyTermRule id="people" rule="MatchForRefOnly" />
+  <KeyTermRule id="preserve; give life" rule="Exclude">
+    <Alternate name="give life"/>
+    <Alternate name="gave life"/>
+  </KeyTermRule>
   <KeyTermRule id="think" rule="MatchForRefOnly" />
   <KeyTermRule id="living; (of) life; property; means" rule="MatchForRefOnly" />
   <KeyTermRule id="Put" rule="MatchForRefOnly" />
@@ -220,6 +224,7 @@
     <Alternate name="just" matchForRefOnly="true"/>
     <Alternate name="righteous"/>
   </KeyTermRule>
+  <KeyTermRule id="literally: go out and come in; hence: lead" rule="Exclude"/>
   <KeyTermRule id="just, righteous person" rule="Exclude">
     <Alternate name="just" matchForRefOnly="true"/>
     <Alternate name="righteous person"/>

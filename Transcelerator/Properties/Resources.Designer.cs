@@ -373,6 +373,15 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing questions using Major Biblical Terms list....
+        /// </summary>
+        internal static string kstidSplashMsgParsingQuestions {
+            get {
+                return ResourceManager.GetString("kstidSplashMsgParsingQuestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieving data from {0}....
         /// </summary>
         internal static string kstidSplashMsgRetrievingDataFromCaller {

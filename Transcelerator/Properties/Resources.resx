@@ -252,4 +252,7 @@
   <data name="kstidLectionaryControlFile" xml:space="preserve">
     <value>Lectionary Control File</value>
   </data>
+  <data name="kstidSplashMsgParsingQuestions" xml:space="preserve">
+    <value>Processing questions using Major Biblical Terms list...</value>
+  </data>
 </root>
