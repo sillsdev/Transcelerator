@@ -102,7 +102,7 @@ namespace SIL.Transcelerator
                             fileId => host.GetPlugInDataLastModifiedTime(this, projectName, fileId));
 
 						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
-                            () => host.GetFactoryKeyTerms(kMajorList, "en"),
+                            () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
                             host.GetProjectFont(projectName),
 						    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),

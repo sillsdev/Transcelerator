@@ -1567,7 +1567,7 @@ namespace SIL.Transcelerator
 	        ParsedQuestions parsedQuestions;
 	        if (finfoParsedQuestions.Exists &&
                 finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
-                !finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+                (!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
 	        {
@@ -1575,6 +1575,9 @@ namespace SIL.Transcelerator
 	        }
 	        else
 	        {
+	            if (splashScreen != null)
+	                splashScreen.Message = Properties.Resources.kstidSplashMsgParsingQuestions;
+
 	            List<PhraseCustomization> customizations = null;
 	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
 	            if (!string.IsNullOrEmpty(phraseCustData))
