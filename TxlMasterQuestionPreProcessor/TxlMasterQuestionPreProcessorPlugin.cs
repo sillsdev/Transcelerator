@@ -12,17 +12,12 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.Reporting;
 using SIL.Transcelerator;
-using SILUBS.SharedScrUtils;
-using Palaso.UI.WindowsForms.Keyboarding;
 
 namespace SIL.TxlMasterQuestionPreProcessor
 {
@@ -35,7 +30,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	{
         public const string pluginName = "Transcelerator Question Pre-Processor";
 		private IHost host;
-		private string projectName;
         private TxlMasterQuestionPreProcessorForm unsMainWindow;
 		public void RequestShutdown()
 		{
@@ -56,7 +50,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			try
 			{
 				host = ptHost;
-				projectName = activeProjectName;
 #if DEBUG
 				MessageBox.Show("Attach debugger now (if you want to)", pluginName);
 #endif

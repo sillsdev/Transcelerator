@@ -41,7 +41,7 @@ namespace SIL.Transcelerator
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsMatch;
-		internal static PhraseTranslationHelper s_helper;
+		internal static IPhraseTranslationHelper s_helper;
 		#endregion
 
 		#region Constructors
@@ -687,7 +687,6 @@ namespace SIL.Transcelerator
 				m_allTermsMatch = false; // This will usually get updated in ProcessTranslation
 				s_helper.ProcessTranslation(this);
 			}
-
 		}
 		#endregion
 	}

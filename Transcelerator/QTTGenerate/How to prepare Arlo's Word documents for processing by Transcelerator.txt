@@ -2,7 +2,7 @@ Manually remove header lines.
 Using wildcards, replace \? \(?@\) with ^& (Not Bold)
 Replace bold (formatting only) with ^p\tqe ^&
 Replace Chapter with "\rf ", followed by book name.
-Save as plain text (UTF-8) as blah.sfm
+Save as plain text (UTF-8) as ..\Processed OT question files\bookname.sfm
 Remove the .txt extension that Word insists on tacking onto the end of the name.
 If necessary, build and  install the Transcelerator Question Pre-Processor plugin
 Run the Transcelerator Question Pre-Processor plugin (in Paratext)
@@ -14,3 +14,5 @@ Either:
 OR
 	Vaporware: Clear the temp-file check box in Transcelerator Question Pre-Processor, and click Text to SFM.
 In Transcelerator Question Pre-Processor, click SFM to XML.
+Add the new SFM files to source control.
+Note: You will need to close Paratext and rebuild TXL to get the new list of master questions copied over to be used.
