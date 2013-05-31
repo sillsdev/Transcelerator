@@ -13,26 +13,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
-	[TestFixture]
-	public class PhraseTranslationHelperTests
-	{
-        private QuestionSections m_sections;
+    #region class PhraseTranslationTestBase
+    public abstract class PhraseTranslationTestBase
+    {
+        protected QuestionSections m_sections;
         private List<IKeyTerm> m_dummyKtList;
-	    private Dictionary<string, List<string>> m_dummyKtRenderings;
-	    private TestKeyTermRenderingDataFileAccessor m_testFileAccessor;
+        protected Dictionary<string, List<string>> m_dummyKtRenderings;
         private Dictionary<string, KeyTermMatchSurrogate> m_keyTermsDictionary;
         private Dictionary<string, ParsedPart> m_translatablePartsDictionary;
 
-	    [SetUp]
-        public void Setup()
+        [SetUp]
+        public virtual void Setup()
         {
             m_sections = new QuestionSections();
             m_sections.Items = new Section[1];
@@ -49,13 +46,113 @@ namespace SIL.Transcelerator
                     return renderings;
                 };
 
-            KeyTerm.FileAccessor = m_testFileAccessor = new TestKeyTermRenderingDataFileAccessor();
+            KeyTerm.FileAccessor = new TestKeyTermRenderingDataFileAccessor();
             m_keyTermsDictionary = new Dictionary<string, KeyTermMatchSurrogate>();
             m_translatablePartsDictionary = new Dictionary<string, ParsedPart>();
         }
 
-		#region List sorting tests
-		/// ------------------------------------------------------------------------------------
+        #region Helper methods
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a list of ParsedParts based on a string array representing key terms and parts
+        /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
+        /// be treated as translatable parts unless prefixed with "kt:", in which case they
+        /// will be treated as key terms (corresponding key terms must be added by calling
+        /// AddMockedKeyTerm.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        protected List<ParsedPart> GetParsedParts(string[] parts)
+        {
+            List<ParsedPart> parsedParts = new List<ParsedPart>();
+            foreach (string part in parts)
+            {
+                ParsedPart parsedPart;
+                if (part.StartsWith("kt:"))
+                {
+                    string sWords = part.Substring(3);
+                    KeyTermMatchSurrogate kt;
+                    if (!m_keyTermsDictionary.TryGetValue(sWords, out kt))
+                        m_keyTermsDictionary[sWords] = kt = new KeyTermMatchSurrogate(sWords, new string(sWords.Reverse().ToArray()));
+                    parsedPart = new ParsedPart(kt);
+                }
+                else
+                {
+                    if (!m_translatablePartsDictionary.TryGetValue(part, out parsedPart))
+                    {
+                        m_translatablePartsDictionary[part] = parsedPart = new ParsedPart(part.Split(new[] {' '},
+                             StringSplitOptions.RemoveEmptyEntries).Select(w => (Word) w));
+                    }
+                }
+                parsedParts.Add(parsedPart);
+            }
+            return parsedParts;
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a ParsedQuestions object.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        protected ParsedQuestions GetParsedQuestions()
+        {
+            ParsedQuestions pq = new ParsedQuestions();
+            pq.Sections = m_sections;
+            pq.KeyTerms = m_keyTermsDictionary.Values.ToArray();
+            pq.TranslatableParts = m_translatablePartsDictionary.Keys.ToArray();
+            return pq;
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds the mocked key term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm)
+        {
+            return AddMockedKeyTerm(englishGlossOfTerm, englishGlossOfTerm.ToUpper());
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds the mocked key term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
+        {
+            return AddMockedKeyTerm(englishGlossOfTerm, new string(englishGlossOfTerm.ToLowerInvariant().Reverse().ToArray()),
+                bestRendering, (bestRendering != null) ? new[] { englishGlossOfTerm } : new string[0]);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds the mocked key term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
+            string bestRendering, params string[] otherRenderings)
+        {
+            if (bestRendering != null)
+            {
+                m_dummyKtRenderings[underlyingTermId] = (otherRenderings == null) ? new List<string>() : new List<string>(otherRenderings);
+                m_dummyKtRenderings[underlyingTermId].Insert(0, bestRendering);
+            }
+
+            IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
+            mockedKt.Stub(kt => kt.Term).Return(englishGlossOfTerm);
+            mockedKt.Stub(kt => kt.Id).Return(underlyingTermId);
+
+            m_dummyKtList.Add(mockedKt);
+            return mockedKt;
+        }
+        #endregion
+    }
+    #endregion
+
+    [TestFixture]
+	public class PhraseTranslationHelperTests : PhraseTranslationTestBase
+    {
+        #region List sorting tests
+        /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests getting phrases, where the phrases that have parts that are used by lots of
 		/// other phrases sort first in the list. Specifically, based on the number of owning
@@ -745,659 +842,86 @@ namespace SIL.Transcelerator
             Assert.AreEqual("E", pth[1].Reference);
         }
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests getting phrases filtered by part and reference, retrieving only phrases whose
-        ///// key terms have renderings
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetPhrasesFilteredTextuallyAndRef_WholeWordMatch_KeyTermsWithRenderings()
-        //{
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("have");
-        //    AddMockedKeyTerm("say", null, 1, 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-        //        new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4) **** "say" isn't rendered
-        //        new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
-        //        new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-        //        new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is have radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-        //        new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings,
-        //        ((start, end, sref) => start < 6), false);
-        //    Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    Assert.AreEqual("E", pth[0].Reference);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests filtering by part doing a partial match, retrieving only phrases whose key
-        ///// terms do NOT have renderings
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetPhrasesFilteredTextually_PartialMatchWithoutRenderings()
-        //{
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("have");
-        //    AddMockedKeyTerm("say", null, 1, 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("This would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),       // what would (1)     | me to (3)       | with respect to (3)
-        //        new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),   // what is (3)        | asking (1)      | me to (3)           | with respect to (3) | that dog (4)
-        //        new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),                                                  // that dog (4)
-        //        new TranslatablePhrase(new TestQ("Is it okay for Paul me to talk with respect to God today?", "D", 4, 4), 1, 0), // is it okay for (1) | me to (3)       | talk (1)            | with respect to (3) | today (1)
-        //        new TranslatablePhrase(new TestQ("that dog wishes this Paul and what is say radish", "E", 5, 5), 1, 0),          // that dog (4)       | wishes this (1) | and (1)             | what is (3)         | radish (1)
-        //        new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)},                                        // what is (3)        | that dog (4)
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
-        //    Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
-        //    pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
-
-        //    Assert.AreEqual("A", pth[0].Reference);
-        //    Assert.AreEqual("B", pth[1].Reference);
-        //    Assert.AreEqual("E", pth[2].Reference);
-        //}
-        //#endregion
-
-        //#region GetParts tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where an empty key terms list is supplied
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_EmptyKeyTermsList_NoPhraseSubstitutions()
-        //{
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new [] {
-        //        new TranslatablePhrase(" What do  you think?"), 
-        //        new TranslatablePhrase("What  do you think it means to forgive?"),
-        //        new TranslatablePhrase(string.Empty),
-        //        new TranslatablePhrase("-OR-"),
-        //        new TranslatablePhrase("How could I have forgotten the question mark"),
-        //        new TranslatablePhrase("What do you think  it means to bless someone? "),
-        //        new TranslatablePhrase("What is this? ")}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, " What do  you think?", "what do you think", 3);
-        //    VerifyTranslatablePhrase(pth, "What  do you think it means to forgive?", "what do you think", 3, "it means to forgive", 1);
-        //    VerifyTranslatablePhrase(pth, "-OR-", "-or-", 1);
-        //    VerifyTranslatablePhrase(pth, "How could I have forgotten the question mark", "how could i have forgotten the question mark", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think  it means to bless someone? ", "what do you think", 3, "it means to bless someone", 1);
-        //    VerifyTranslatablePhrase(pth, "What is this? ", "what is this", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsList_NoPhraseSubstitutions()
-        //{
-        //    AddMockedKeyTerm("John"); // The apostle
-        //    AddMockedKeyTerm("John"); // The Baptist
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("Mary");
-        //    AddMockedKeyTerm("temple");
-        //    AddMockedKeyTerm("forgive");
-        //    AddMockedKeyTerm("bless");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("sin");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Who was John?"), 
-        //        new TranslatablePhrase("Who was Paul?"),
-        //        new TranslatablePhrase("Who was Mary?"),
-        //        new TranslatablePhrase("Who went to the well?"),
-        //        new TranslatablePhrase("Who went to the temple?"),
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase("What do you think it means to bless someone?"),
-        //        new TranslatablePhrase("What do you think God wants you to do?"),
-        //        new TranslatablePhrase("Why do you think God created man?"),
-        //        new TranslatablePhrase("Why do you think God  sent Jesus to earth?"),
-        //        new TranslatablePhrase("Who went to the well with Jesus?"),
-        //        new TranslatablePhrase("Do you think God could forgive someone who sins?"),
-        //        new TranslatablePhrase("What do you think it means to serve two masters?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(13, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Who was John?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Paul?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well?", "who went to the well", 2);
-        //    VerifyTranslatablePhrase(pth, "Who went to the temple?", "who went to the", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what do you think it means to", 3);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to bless someone?", "what do you think it means to", 3, "someone", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think God wants you to do?", "what", 1, "do you think", 2, "wants you to do", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God created man?", "why do you think", 2, "created man", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God  sent Jesus to earth?", "why do you think", 2, "sent", 1, "to earth", 1);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well with Jesus?", "who went to the well", 2, "with", 1);
-        //    VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "do you think", 2, "could", 1, "someone who", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to serve two masters?", "what do you think it means to", 3, "serve two masters", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where an empty key terms list is supplied and
-        ///// there are phrases ignored/substituted.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_EmptyKeyTermsList_PhraseSubstitutions()
-        //{
-        //    List<Substitution> ignored = new List<Substitution>();
-        //    ignored.Add(new Substitution("What do you think it means", "What means", false, false));
-        //    ignored.Add(new Substitution("tHe", null, false, false));
-        //    ignored.Add(new Substitution("do", string.Empty, false, false));
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("What do you think it means?"), 
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase(string.Empty),
-        //        new TranslatablePhrase("-OR-"),
-        //        new TranslatablePhrase("How could I have forgotten the question mark"),
-        //        new TranslatablePhrase("What do you think it means to bless someone? "),
-        //        new TranslatablePhrase("What means of support do disciples have?")},
-        //        m_dummyKtList, m_keyTermRules, ignored);
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "What do you think it means?", "what means", 4);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means", 4, "to forgive", 1);
-        //    VerifyTranslatablePhrase(pth, "-OR-", "-or-", 1);
-        //    VerifyTranslatablePhrase(pth, "How could I have forgotten the question mark", "how could i have forgotten question mark", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to bless someone? ", "what means", 4, "to bless someone", 1);
-        //    VerifyTranslatablePhrase(pth, "What means of support do disciples have?", "what means", 4, "of support disciples have", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsList_Apostrophes()
-        //{
-        //    AddMockedKeyTerm("(God described as the) Most High");
-        //    AddMockedKeyTerm("(God of) hosts");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("heavenly creature, symbol of God's majesty and associated with his presence");
-        //    AddMockedKeyTerm("(one's own) burial-place");
-        //    AddMockedKeyTerm("to make straight (one's way)");
-        //    AddMockedKeyTerm("love for one's fellow believer");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("If one gives one's word and doesn't keep it, is it sin?"), 
-        //        new TranslatablePhrase("Is there one way to heaven?"),
-        //        new TranslatablePhrase("Is the Bible God's Word?"),
-        //        new TranslatablePhrase("Who is God's one and only Son?"),
-        //        new TranslatablePhrase("Can the God of hosts also be called the Most High God?"),
-        //        new TranslatablePhrase("Should one be buried in one's own burial-place?"),
-        //        new TranslatablePhrase("Do wise people make straight paths for themselves?"),
-        //        new TranslatablePhrase("How can you tell if one has love for one's fellow believer?"),
-        //        new TranslatablePhrase("Is the earth God's?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(9, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "If one gives one's word and doesn't keep it, is it sin?", "if one gives one's word and doesn't keep it is it sin", 1);
-        //    VerifyTranslatablePhrase(pth, "Is there one way to heaven?", "is there one way to heaven", 1);
-        //    VerifyTranslatablePhrase(pth, "Is the Bible God's Word?", "is the bible", 1, "word", 1);
-        //    VerifyTranslatablePhrase(pth, "Who is God's one and only Son?", "who is", 1, "one and only son", 1);
-        //    VerifyTranslatablePhrase(pth, "Can the God of hosts also be called the Most High God?", "can the", 1, "also be called the", 1);
-        //    VerifyTranslatablePhrase(pth, "Should one be buried in one's own burial-place?", "should one be buried in", 1);
-        //    VerifyTranslatablePhrase(pth, "Do wise people make straight paths for themselves?", "do wise people", 1, "paths for themselves", 1);
-        //    VerifyTranslatablePhrase(pth, "How can you tell if one has love for one's fellow believer?", "how can you tell if one has", 1);
-        //    VerifyTranslatablePhrase(pth, "Is the earth God's?", "is the earth", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// and there are substitutions defined with regular expressions and case-sensitive
-        ///// matching.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsList_SimplePhraseSubstitutions()
-        //{
-        //    AddMockedKeyTerm("John"); // The apostle
-        //    AddMockedKeyTerm("John"); // The Baptist
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("Mary");
-        //    AddMockedKeyTerm("temple");
-        //    AddMockedKeyTerm("forgive");
-        //    AddMockedKeyTerm("bless");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("sin");
-
-        //    List<Substitution> ignored = new List<Substitution>();
-        //    ignored.Add(new Substitution("What do you think it means", "What means", false, false));
-        //    ignored.Add(new Substitution("the", null, false, false));
-        //    ignored.Add(new Substitution("do", string.Empty, false, false));
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Who was John?"), 
-        //        new TranslatablePhrase("Who was Paul?"),
-        //        new TranslatablePhrase("Who was Mary?"),
-        //        new TranslatablePhrase("Who went to the well?"),
-        //        new TranslatablePhrase("Who went to the temple?"),
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase("What do you think it means to bless someone?"),
-        //        new TranslatablePhrase("What do you think God wants you to do?"),
-        //        new TranslatablePhrase("Why do you think God created man?"),
-        //        new TranslatablePhrase("Why do you think God  sent Jesus to the earth?"),
-        //        new TranslatablePhrase("Who went to the well with Jesus?"),
-        //        new TranslatablePhrase("Do you think God could forgive someone who sins?"),
-        //        new TranslatablePhrase("What do you think it means to serve two masters?")},
-        //        m_dummyKtList, m_keyTermRules, ignored);
-
-        //    Assert.AreEqual(13, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Who was John?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Paul?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well?", "who went to well", 2);
-        //    VerifyTranslatablePhrase(pth, "Who went to the temple?", "who went to", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means to", 3);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to bless someone?", "what means to", 3, "someone", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think God wants you to do?", "what", 1, "you think", 2, "wants you to", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God created man?", "why you think", 2, "created man", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God  sent Jesus to the earth?", "why you think", 2, "sent", 1, "to earth", 1);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well with Jesus?", "who went to well", 2, "with", 1);
-        //    VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "you think", 2, "could", 1, "someone who", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to serve two masters?", "what means to", 3, "serve two masters", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// and there are phrases ignored/substituted.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsList_ComplexPhraseSubstitutions()
-        //{
-        //    AddMockedKeyTerm("John"); // The apostle
-        //    AddMockedKeyTerm("John"); // The Baptist
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("Mary");
-        //    AddMockedKeyTerm("altar");
-        //    AddMockedKeyTerm("forgive");
-        //    AddMockedKeyTerm("bless");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("sin");
-
-        //    List<Substitution> ignored = new List<Substitution>();
-        //    ignored.Add(new Substitution("what do you think it means", "what means", false, true));
-        //    ignored.Add(new Substitution(@"\ban\b", "a", true, false));
-        //    ignored.Add(new Substitution(@"did (\S+) do", @"did $1", true, true));
-        //    ignored.Add(new Substitution(@"ed\b", null, true, true));
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("What did John do?"), 
-        //        new TranslatablePhrase("What did Paul do?"), 
-        //        new TranslatablePhrase("Who was Mary?"),
-        //        new TranslatablePhrase("Who walked on a wall?"),
-        //        new TranslatablePhrase("Who walked on an altar?"),
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase("what do you think it means to bless someone?"),
-        //        new TranslatablePhrase("Did Mary do the right thing?")},
-        //        m_dummyKtList, m_keyTermRules, ignored);
-
-        //    Assert.AreEqual(8, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "What did John do?", "what did", 2);
-        //    VerifyTranslatablePhrase(pth, "What did Paul do?", "what did", 2);
-        //    VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 1);
-        //    VerifyTranslatablePhrase(pth, "Who walked on a wall?", "who walk on a", 2, "wall", 1);
-        //    VerifyTranslatablePhrase(pth, "Who walked on an altar?", "who walk on a", 2);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what do you think it means to", 1);
-        //    VerifyTranslatablePhrase(pth, "what do you think it means to bless someone?", "what means to", 1, "someone", 1);
-        //    VerifyTranslatablePhrase(pth, "Did Mary do the right thing?", "did", 1, "do the right thing", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where the key terms list contains some terms
-        ///// consisting of more than one word
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_MultiWordKeyTermsList()
-        //{
-        //    AddMockedKeyTerm("to forgive (flamboyantly)");
-        //    AddMockedKeyTerm("to forgive always and forever");
-        //    AddMockedKeyTerm("high priest");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("sentence that is seven words long");
-        //    AddMockedKeyTerm("sentence");
-        //    AddMockedKeyTerm("seven");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase("Bla bla bla to forgive always?"),
-        //        new TranslatablePhrase("Please forgive!"),
-        //        new TranslatablePhrase("Who do you think God wants you to forgive and why?"),
-        //        new TranslatablePhrase("Can you say a sentence that is seven words long?"),
-        //        new TranslatablePhrase("high priest"),
-        //        new TranslatablePhrase("If the high priest wants you to forgive God, can he ask you using a sentence that is seven words long or not?"),
-        //        new TranslatablePhrase("Is this sentence that is seven dwarves?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(8, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what do you think it means", 1);
-        //    VerifyTranslatablePhrase(pth, "Bla bla bla to forgive always?", "bla bla bla", 1, "always", 1);
-        //    VerifyTranslatablePhrase(pth, "Please forgive!", "please", 1);
-        //    VerifyTranslatablePhrase(pth, "Who do you think God wants you to forgive and why?", "who do you think", 1, "wants you", 2, "and why", 1);
-        //    VerifyTranslatablePhrase(pth, "Can you say a sentence that is seven words long?", "can you say a", 1);
-        //    VerifyTranslatablePhrase(pth, "high priest");
-        //    VerifyTranslatablePhrase(pth, "If the high priest wants you to forgive God, can he ask you using a sentence that is seven words long or not?",
-        //        "if the", 1, "wants you", 2, "can he ask you using a", 1, "or not", 1);
-        //    VerifyTranslatablePhrase(pth, "Is this sentence that is seven dwarves?", "is this", 1, "that is", 1, "dwarves", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where the phrase contains the word "Pharisees"
-        ///// This deals with a weakness in the original (v1) Porter Stemmer algortihm. (TXL-52)
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_MatchPluralFormOfMultiSyllabicWordEndingInDoubleE()
-        //{
-        //    AddMockedKeyTerm("pharisee");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("What did the pharisee want?"),
-        //        new TranslatablePhrase("What did the pharisees eat?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "What did the pharisee want?", "what did the", 2, "want", 1);
-        //    VerifyTranslatablePhrase(pth, "What did the pharisees eat?", "what did the", 2, "eat", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where the key terms list contains a term
-        ///// consisting of more than one word where there is a partial match that fails at the
-        ///// end of the phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_MultiWordKeyTermsList_AvoidFalseMatchAtEnd()
-        //{
-        //    AddMockedKeyTerm("John");
-        //    AddMockedKeyTerm("tell the good news");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("What did John tell the Christians?"),
-        //        new TranslatablePhrase("Why should you tell the good news?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "What did John tell the Christians?", "what did", 1, "tell the christians", 1);
-        //    VerifyTranslatablePhrase(pth, "Why should you tell the good news?", "why should you", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a two consectutive key terms appear in a
-        ///// phrase
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_TwoConsecutiveKeyTerms()
-        //{
-        //    AddMockedKeyTerm("John");
-        //    AddMockedKeyTerm("sin");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Did John sin when he told Herod that it was unlawful to marry Herodius?")}, 
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Did John sin when he told Herod that it was unlawful to marry Herodius?", "did", 1, "when he told herod that it was unlawful to marry herodius", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a terms list is supplied that contains
-        ///// words or morphemes that are optional (either explicitly indicated using parentheses
-        ///// or implicitly optional words, such as the word "to" followed by a verb.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsWithOptionalWords()
-        //{
-        //    AddMockedKeyTerm("ask for (earnestly)");
-        //    AddMockedKeyTerm("to sin");
-        //    AddMockedKeyTerm("(things of) this life");
-        //    AddMockedKeyTerm("(loving)kindness");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Did Herod ask for John's head because he wanted to sin?"),
-        //        new TranslatablePhrase("Did Jambres sin when he clung to the things of this life?"),
-        //        new TranslatablePhrase("Whose lovingkindness is everlasting?"),
-        //        new TranslatablePhrase("What did John ask for earnestly?"),
-        //        new TranslatablePhrase("Is showing kindness in this life a way to earn salvation?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Did Herod ask for John's head because he wanted to sin?", "did herod", 1, "john's head because he wanted", 1);
-        //    VerifyTranslatablePhrase(pth, "Did Jambres sin when he clung to the things of this life?", "did jambres", 1, "when he clung to the", 1);
-        //    VerifyTranslatablePhrase(pth, "Whose lovingkindness is everlasting?", "whose", 1, "is everlasting", 1);
-        //    VerifyTranslatablePhrase(pth, "What did John ask for earnestly?", "what did john", 1);
-        //    VerifyTranslatablePhrase(pth, "Is showing kindness in this life a way to earn salvation?", "is showing", 1, "in", 1, "a way to earn salvation", 1);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a terms list is supplied that contains
-        ///// a phrase that begins with an inflected form of a verb and a term that contains a
-        ///// one-word uninflected form of that word. Phrases that contain the inflected form of
-        ///// the verb but do not macth the whole phrase should match the uninflected term.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_KeyTermsWithMultipleWordsAndPhrasesWithWordsWhichNeedToBeStemmed()
-        //{
-        //    m_keyTermRules = new KeyTermRules();
-        //    m_keyTermRules.Items = new List<KeyTermRule>();
-
-        //    AddMockedKeyTerm("Blessed One", 1);
-        //    AddMockedKeyTerm("bless; praise", "bendito");
-        //    KeyTermRule rule = new KeyTermRule();
-        //    rule.id = "bless; praise";
-        //    rule.Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate { Name = "blessed" } };
-        //    m_keyTermRules.Items.Add(rule);
-        //    AddMockedKeyTerm("blessed; worthy of praise", "bienaventurado");
-        //    AddMockedKeyTerm("Jacob");
-
-        //    m_keyTermRules.Initialize();
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("Who was the Blessed One?", "A", 1, 1), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Who is blessed?", "A", 1, 1), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Who was present when Jacob blessed one of his sons?", "B", 2, 2), 1, 0)},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Who was the Blessed One?", "who was the", 1);
-        //    VerifyTranslatablePhrase(pth, "Who is blessed?", "who is", 1);
-        //    VerifyTranslatablePhrase(pth, "Who was present when Jacob blessed one of his sons?", "who was present when", 1, "one of his sons", 1);
-        //    TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == "Who is blessed?");
-        //    Assert.AreEqual(2, phr.GetParts().OfType<KeyTermMatch>().ElementAt(0).AllTerms.Count());
-        //    Assert.IsTrue(rule.Used);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests sub-part matching logic in case where breaking a phrase into smaller subparts
-        ///// causes a remainder which is an existing part (in use in another phrase).
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_SubPartBreakingCausesRemainderWhichIsAnExistingPart()
-        //{
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Who was the man who went to the store?"),
-        //        new TranslatablePhrase("Who was the man?"),
-        //        new TranslatablePhrase("Who went to the store?"),
-        //        new TranslatablePhrase("Who was the man with the goatee who went to the store?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Who was the man who went to the store?", "who was the man", 3, "who went to the store", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was the man?", "who was the man", 3);
-        //    VerifyTranslatablePhrase(pth, "Who went to the store?", "who went to the store", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was the man with the goatee who went to the store?", "who was the man", 3, "with the goatee", 1, "who went to the store", 3);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests sub-part matching logic in case where breaking a phrase into smaller subparts
-        ///// causes both a preceeding and a following remainder.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_SubPartMatchInTheMiddle()
-        //{
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Are you the one who knows the man who ate the monkey?"),
-        //        new TranslatablePhrase("Who knows the man?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Are you the one who knows the man who ate the monkey?",
-        //        "are you the one", 1, "who knows the man", 2, "who ate the monkey", 1);
-        //    VerifyTranslatablePhrase(pth, "Who knows the man?", "who knows the man", 2);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests sub-part matching logic in case where a phrase could theoretically match a
-        ///// sub-phrase  on smoething other than a word boundary.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetParts_PreventMatchOfPartialWords()
-        //{
-        //    AddMockedKeyTerm("think");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Was a man happy?"),
-        //        new TranslatablePhrase("As a man thinks in his heart, how is he?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
-
-        //    VerifyTranslatablePhrase(pth, "Was a man happy?", "was a man happy", 1);
-        //    VerifyTranslatablePhrase(pth, "As a man thinks in his heart, how is he?", "as a man", 1, "in his heart how is he", 1);
-        //}
-        //#endregion
-
-        //#region PartPatternMatches tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests the PartPatternMatches method with phrases that consist of a single part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void PartPatternMatches_SinglePart()
-        //{
-        //    TranslatablePhrase tp1 = new TranslatablePhrase("Wuzzee?");
-        //    TranslatablePhrase tp2 = new TranslatablePhrase("Wuzzee!");
-        //    TranslatablePhrase tp3 = new TranslatablePhrase("As a man thinks in his heart, how is he?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        tp1,
-        //        tp2,
-        //        tp3},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.IsTrue(tp1.PartPatternMatches(tp2));
-        //    Assert.IsTrue(tp2.PartPatternMatches(tp1));
-        //    Assert.IsTrue(tp2.PartPatternMatches(tp2));
-        //    Assert.IsFalse(tp3.PartPatternMatches(tp2));
-        //    Assert.IsFalse(tp3.PartPatternMatches(tp1));
-        //    Assert.IsFalse(tp1.PartPatternMatches(tp3));
-        //    Assert.IsFalse(tp2.PartPatternMatches(tp3));
-        //    Assert.IsTrue(tp3.PartPatternMatches(tp3));
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests the PartPatternMatches method with phrases that consist of a single part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void PartPatternMatches_OneTranslatablePartOneKeyTerm()
-        //{
-        //    AddMockedKeyTerm("wunkers");
-        //    AddMockedKeyTerm("punkers");
-
-        //    TranslatablePhrase tp1 = new TranslatablePhrase("Wuzzee wunkers?");
-        //    TranslatablePhrase tp2 = new TranslatablePhrase("Wuzzee punkers.");
-        //    TranslatablePhrase tp3 = new TranslatablePhrase("Wuzzee wunkers!");
-        //    TranslatablePhrase tp4 = new TranslatablePhrase("Wunkers wuzzee!");
-        //    TranslatablePhrase tp5 = new TranslatablePhrase("A dude named punkers?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        tp1,
-        //        tp2,
-        //        tp3,
-        //        tp4,
-        //        tp5},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.IsTrue(tp1.PartPatternMatches(tp2));
-        //    Assert.IsTrue(tp1.PartPatternMatches(tp3));
-        //    Assert.IsFalse(tp1.PartPatternMatches(tp4));
-        //    Assert.IsFalse(tp1.PartPatternMatches(tp5));
-
-        //    Assert.IsTrue(tp2.PartPatternMatches(tp3));
-        //    Assert.IsFalse(tp2.PartPatternMatches(tp4));
-        //    Assert.IsFalse(tp2.PartPatternMatches(tp5));
-
-        //    Assert.IsFalse(tp3.PartPatternMatches(tp4));
-        //    Assert.IsFalse(tp3.PartPatternMatches(tp5));
-
-        //    Assert.IsFalse(tp4.PartPatternMatches(tp5));
-        //}
-        //#endregion
-
-        //#region Translation tests
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting phrases filtered by part and reference, retrieving only phrases whose
+        /// key terms have renderings
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetPhrasesFilteredTextuallyAndByRef_WholeWordMatch_KeyTermsWithRenderings()
+        {
+            AddMockedKeyTerm("God");
+            AddMockedKeyTerm("Paul");
+            AddMockedKeyTerm("have");
+            AddMockedKeyTerm("say", null);
+
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
+                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+            AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+            AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+            AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+                "is it okay for" /* 1 */, "paul" /* 1 */, "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+            AddTestQuestion(cat, "that dog wishes this Paul and what is have radish", "E", 5, 5,
+                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:have", "radish" /* 1 */);
+            AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+            Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+            pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.WithRenderings,
+                ((start, end, sref) => start < 6), false);
+            Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+            Assert.AreEqual("E", pth[0].Reference);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests filtering by part doing a partial match, retrieving only phrases whose key
+        /// terms do NOT have renderings
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetPhrasesFilteredTextually_PartialMatchWithoutRenderings()
+        {
+            AddMockedKeyTerm("God");
+            AddMockedKeyTerm("Paul");
+            AddMockedKeyTerm("have");
+            AddMockedKeyTerm("say", null);
+
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+                "this would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+            AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+            AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+            AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+                "is it okay for" /* 1 */, "paul" /* 1 */, "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+            AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+            AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+            Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+            pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
+            Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
+            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+
+            Assert.AreEqual("A", pth[0].Reference);
+            Assert.AreEqual("B", pth[1].Reference);
+            Assert.AreEqual("E", pth[2].Reference);
+        }
+        #endregion
+
+        #region Translation tests
         ///// ------------------------------------------------------------------------------------
         ///// <summary>
         ///// Tests setting the translation to null for a phrase.
@@ -2305,283 +1829,9 @@ namespace SIL.Transcelerator
         //    Assert.IsTrue(phrase4.HasUserTranslation);
         //    Assert.IsFalse(phrase5.HasUserTranslation);
         //}
-        //#endregion
+        #endregion
 
-        //#region Constrain Key Terms to References tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests constraining the use of key terms to only the applicable "verses"
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ConstrainByRef_Simple()
-        //{
-        //    AddMockedKeyTerm("God", 4);
-        //    AddMockedKeyTerm("Paul", 1, 5);
-        //    AddMockedKeyTerm("have", 99);
-        //    AddMockedKeyTerm("say", 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A", 1, 1), 1, 0),
-        //        new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
-        //        new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "D", 4, 4), 1, 0),
-        //        new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
-        //        new TranslatablePhrase(new TestQ("What is that dog?", "F", 6, 6), 1, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-        //    VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would god have me to say with respect to", 1);
-        //    VerifyTranslatablePhrase(pth, "What is Paul asking me to say with respect to that dog?", "what is", 3, "paul asking me to", 1, "with respect to", 1, "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "that dog", "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "Is it okay for Paul to talk with respect to God today?", "is it okay for paul to talk with respect to", 1, "today", 1);
-        //    VerifyTranslatablePhrase(pth, "that dog wishes this Paul what is say radish", "that dog", 4, "wishes this", 1, "what is", 3, "radish", 1);
-        //    VerifyTranslatablePhrase(pth, "What is that dog?", "what is", 3, "that dog", 4);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests constraining the use of key terms to only the applicable "verses"
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ConstrainByRef_RefRanges()
-        //{
-        //    AddMockedKeyTerm("God", 4);
-        //    AddMockedKeyTerm("Paul", 1, 3, 5);
-        //    AddMockedKeyTerm("have", 99);
-        //    AddMockedKeyTerm("say", 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
-        //        new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
-        //        new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "B-D", 2, 4), 0, 0),
-        //        new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
-        //        new TranslatablePhrase(new TestQ("What is that dog?", "E-F", 5, 6), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-        //    VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
-        //    VerifyTranslatablePhrase(pth, "What is Paul asking me to say with respect to that dog?", "what is", 3, "paul asking me to", 1, "with respect to", 3, "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "that dog", "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "Is it okay for Paul to talk with respect to God today?", "is it okay for", 1, "to talk", 1, "with respect to", 3, "today", 1);
-        //    VerifyTranslatablePhrase(pth, "that dog wishes this Paul what is say radish", "that dog", 4, "wishes this", 1, "what is", 3, "radish", 1);
-        //    VerifyTranslatablePhrase(pth, "What is that dog?", "what is", 3, "that dog", 4);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests constraining the use of key terms to only the applicable "verses"
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ConstrainByRef_GodMatchesAnywhere()
-        //{
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Paul", 1, 3, 5);
-        //    AddMockedKeyTerm("have", 99);
-        //    AddMockedKeyTerm("say", 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("What would God have me to say with respect to Paul?", "A-D", 1, 4), 0, 0),
-        //        new TranslatablePhrase(new TestQ("What is Paul asking me to say with respect to that dog?", "B", 2, 2), 1, 0),
-        //        new TranslatablePhrase(new TestQ("that dog", "C", 3, 3), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Is it okay for Paul to talk with respect to God today?", "B-D", 2, 4), 0, 0),
-        //        new TranslatablePhrase(new TestQ("that dog wishes this Paul what is say radish", "E", 5, 5), 1, 0),
-        //        new TranslatablePhrase(new TestQ("What is that dog?", "E-F", 5, 6), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-        //    VerifyTranslatablePhrase(pth, "What would God have me to say with respect to Paul?", "what would", 1, "have me to", 1, "with respect to", 3);
-        //    VerifyTranslatablePhrase(pth, "What is Paul asking me to say with respect to that dog?", "what is", 3, "paul asking me to", 1, "with respect to", 3, "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "that dog", "that dog", 4);
-        //    VerifyTranslatablePhrase(pth, "Is it okay for Paul to talk with respect to God today?", "is it okay for", 1, "to talk", 1, "with respect to", 3, "today", 1);
-        //    VerifyTranslatablePhrase(pth, "that dog wishes this Paul what is say radish", "that dog", 4, "wishes this", 1, "what is", 3, "radish", 1);
-        //    VerifyTranslatablePhrase(pth, "What is that dog?", "what is", 3, "that dog", 4);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests constraining the use of key terms to only the applicable "verses"
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ConstrainByRef_ComplexKeyTerms()
-        //{
-        //    AddMockedKeyTerm("high priest", 1);
-        //    AddMockedKeyTerm("high", 1, 2);
-        //    AddMockedKeyTerm("radish", 1, 2);
-        //    AddMockedKeyTerm("(to have) eaten or drunk", 2, 3);
-        //    AddMockedKeyTerm("high or drunk sailor", 2, 4);
-
-        //    m_keyTermRules.Initialize();
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase(new TestQ("Was the high priest on his high horse?", "A", 1, 1), 1, 0),
-        //        new TranslatablePhrase(new TestQ("Who was the high priest?", "B", 2, 2), 1, 0),
-        //        new TranslatablePhrase(new TestQ("I have eaten the horse.", "A", 1, 1), 1, 0),
-        //        new TranslatablePhrase(new TestQ("How high is this?", "C", 3, 3), 1, 0),
-        //        new TranslatablePhrase(new TestQ("That drunk sailor has eaten a radish", "C-D", 3, 4), 0, 0),
-        //        new TranslatablePhrase(new TestQ("That high sailor was to have drunk some radish juice", "A-B", 1, 2), 0, 0)}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
-        //    VerifyTranslatablePhrase(pth, "Was the high priest on his high horse?", "was the", 2, "on his", 1, "horse", 1);
-        //    VerifyTranslatablePhrase(pth, "Who was the high priest?", "who", 1, "was the", 2, "priest", 1);
-        //    VerifyTranslatablePhrase(pth, "I have eaten the horse.", "i have eaten the horse", 1);
-        //    VerifyTranslatablePhrase(pth, "How high is this?", "how high is this", 1);
-        //    VerifyTranslatablePhrase(pth, "That drunk sailor has eaten a radish", "that", 2, "has", 1, "a radish", 1);
-        //    VerifyTranslatablePhrase(pth, "That high sailor was to have drunk some radish juice", "that", 2, "was", 1, "some", 1, "juice", 1);
-        //}
-        //#endregion
-
-        //#region TranslatablePhrase.FindTermRenderingInUse tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests finding renderings of key terms when there is exactly one occurrence of each
-        ///// term in a particular phrase and one of the renderings is present in the translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void TestFindTermRenderingInUse_Present()
-        //{
-        //    IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
-        //    IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
-        //    IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
-        //    IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
-
-        //    new PhraseTranslationHelper(new[] {phrase1, phrase2},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    phrase1.Translation = "\u00BFQue\u0301 le dijo Dios a Pablo?";
-        //    phrase2.Translation = "\u00BFQue\u0301 dice luaP que tenemos que dar a Dios?";
-
-        //    SubstringDescriptor sd;
-			
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-        //    Assert.AreEqual(13, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-	
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-        //    Assert.AreEqual(20, sd.Offset);
-        //    Assert.AreEqual(5, sd.Length);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-        //    Assert.AreEqual(10, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktSay, 0));
-        //    Assert.AreEqual(5, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktHave, 0));
-        //    Assert.AreEqual(19, sd.Offset);
-        //    Assert.AreEqual(7, sd.Length);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-        //    Assert.AreEqual(37, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests finding renderings of key terms when there is exactly one occurrence of each
-        ///// term in a particular phrase and one of the renderings is present in the translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void TestFindTermRenderingInUse_SomeMissing()
-        //{
-        //    IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
-        //    IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
-        //    IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos", 1, 2, 3, 4, 5, 6);
-        //    IKeyTerm ktSay = AddMockedKeyTerm("say", "dice", 1, 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What does Paul say we have to give to God?");
-
-        //    new PhraseTranslationHelper(new[] { phrase1, phrase2 },
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    phrase1.Translation = "\u00BFQue\u0301 le dijo Jehovah a Pablo?";
-        //    phrase2.Translation = "Pi\u0301dale ayuda a Bill.";
-
-        //    SubstringDescriptor sd;
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-        //    Assert.IsNull(sd);
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-        //    Assert.AreEqual(23, sd.Offset);
-        //    Assert.AreEqual(5, sd.Length);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-        //    Assert.IsNull(sd);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktSay, 0));
-        //    Assert.IsNull(sd);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktHave, 0));
-        //    Assert.IsNull(sd);
-
-        //    sd = phrase2.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-        //    Assert.IsNull(sd);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests finding renderings of key terms when there is exactly one occurrence of each
-        ///// term in a particular phrase and one of the renderings is present in the translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void TestFindTermRenderingInUse_RepeatedTerms()
-        //{
-        //    IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios", 1, 4);
-        //    IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo", 1, 2, 5);
-
-        //    m_keyTermRules.Initialize();
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did God tell Paul?/What was Paul told by God");
-
-        //    new PhraseTranslationHelper(new[] { phrase1 },
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-
-        //    phrase1.Translation = "\u00BFQue\u0301 le dijo Dios a Pablo?/\u00BFQue\u0301 le fue dicho a Pablo por Dios?";
-
-        //    SubstringDescriptor sd;
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, 0));
-        //    Assert.AreEqual(13, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-        //    int endOfLastOccurrenceOfGod = sd.EndOffset;
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, 0));
-        //    Assert.AreEqual(20, sd.Offset);
-        //    Assert.AreEqual(5, sd.Length);
-        //    int endOfLastOccurrenceOfPaul = sd.EndOffset;
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktGod, endOfLastOccurrenceOfGod));
-        //    Assert.AreEqual(57, sd.Offset);
-        //    Assert.AreEqual(4, sd.Length);
-
-        //    sd = phrase1.FindTermRenderingInUse(new DummyKeyTermRenderingInfo(ktPaul, endOfLastOccurrenceOfPaul));
-        //    Assert.AreEqual(47, sd.Offset);
-        //    Assert.AreEqual(5, sd.Length);
-        //}
-        //#endregion
-
-        //#region Rendering Selection Rules tests
+        #region Rendering Selection Rules tests
         ///// ------------------------------------------------------------------------------------
         ///// <summary>
         ///// Tests that adding a rendering selection rule based on the preceding (English) word
@@ -2749,25 +1999,25 @@ namespace SIL.Transcelerator
 
         //    Assert.AreEqual("Cristo", phrase1.Translation);
         //}
-		#endregion
+        #endregion
 
-		#region private helper methods
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Adds a test question to the given category and adds info about key terms and parts
-	    /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
-	    /// be treated as translatable parts unless prefixed with "kt:", in which case they
-	    /// will be treated as key terms (corresponding key terms must be added by calling
-	    /// AddMockedKeyTerm.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
-	    private Question AddTestQuestion(Category cat, string text, string sRef,
+        #region Private helper methods
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds a test question to the given category and adds info about key terms and parts
+        /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
+        /// be treated as translatable parts unless prefixed with "kt:", in which case they
+        /// will be treated as key terms (corresponding key terms must be added by calling
+        /// AddMockedKeyTerm.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private Question AddTestQuestion(Category cat, string text, string sRef,
             int startRef, int endRef, params string[] parts)
-	    {
-	        return AddTestQuestion(cat, false, text, sRef, startRef, endRef, parts);
-	    }
+        {
+            return AddTestQuestion(cat, false, text, sRef, startRef, endRef, parts);
+        }
 
-	    /// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Adds a test question to the given category and adds info about key terms and parts
         /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
@@ -2779,163 +2029,13 @@ namespace SIL.Transcelerator
         private Question AddTestQuestion(Category cat, bool excluded, string text, string sRef,
             int startRef, int endRef, params string[] parts)
         {
-            List<ParsedPart> parsedParts;
-            if (excluded)
-                parsedParts = null;
-            else
-            {
-                parsedParts = new List<ParsedPart>();
-                foreach (string part in parts)
-                {
-                    ParsedPart parsedPart;
-                    if (part.StartsWith("kt:"))
-                    {
-                        string sWords = part.Substring(3);
-                        KeyTermMatchSurrogate kt;
-                        if (!m_keyTermsDictionary.TryGetValue(sWords, out kt))
-                            m_keyTermsDictionary[sWords] = kt = new KeyTermMatchSurrogate(sWords, new string(sWords.Reverse().ToArray()));
-                        parsedPart = new ParsedPart(kt);
-                    }
-                    else
-                    {
-                        if (!m_translatablePartsDictionary.TryGetValue(part, out parsedPart))
-                        {
-                            m_translatablePartsDictionary[part] = parsedPart = new ParsedPart(part.Split(new[] { ' ' },
-                                StringSplitOptions.RemoveEmptyEntries).Select(w => (Word)w));
-                        }
-                    }
-                    parsedParts.Add(parsedPart);
-                }
-            }
-
-            var q = new TestQ(text, sRef, startRef, endRef, parsedParts);
-	        q.IsExcluded = excluded;
+            var q = new TestQ(text, sRef, startRef, endRef, excluded ? null : GetParsedParts(parts));
+            q.IsExcluded = excluded;
             cat.Questions.Add(q);
             return q;
         }
-
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a ParsedQuestions object.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private ParsedQuestions GetParsedQuestions()
-        {
-            ParsedQuestions pq = new ParsedQuestions();
-            pq.Sections = m_sections;
-            pq.KeyTerms = m_keyTermsDictionary.Values.ToArray();
-            pq.TranslatableParts = m_translatablePartsDictionary.Keys.ToArray();
-            return pq;
-        }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the mocked key term.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-        private void AddMockedKeyTerm(string englishGlossOfTerm)
-		{
-            AddMockedKeyTerm(englishGlossOfTerm, englishGlossOfTerm.ToUpper());
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the mocked key term.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
-		{
-            AddMockedKeyTerm(englishGlossOfTerm, new string(englishGlossOfTerm.ToLowerInvariant().Reverse().ToArray()),
-                bestRendering, (bestRendering != null) ? new[] { englishGlossOfTerm } : new string[0]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds the mocked key term.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-        private void AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
-            string bestRendering, string[] otherRenderings)
-		{
-			if (bestRendering != null)
-			{
-                m_dummyKtRenderings[underlyingTermId] = (otherRenderings == null) ? new List<string>() : new List<string>(otherRenderings);
-                m_dummyKtRenderings[underlyingTermId].Insert(0, bestRendering);
-			}
-
-			IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
-            mockedKt.Stub(kt => kt.Term).Return(englishGlossOfTerm);
-		    mockedKt.Stub(kt => kt.Id).Return(underlyingTermId);
-			
-			m_dummyKtList.Add(mockedKt);
-			//return mockedKt;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Verifies the translatable phrase.
-		/// </summary>
-		/// <param name="pth">The PhraseTranslationHelper.</param>
-		/// <param name="phrase">The phrase.</param>
-		/// <param name="parts">Parts information, with alternating sub-phrases and their
-		/// occurrence counts (across all phrases in the test).</param>
-		/// ------------------------------------------------------------------------------------
-		private static void VerifyTranslatablePhrase(PhraseTranslationHelper pth, string phrase,
-			params object[] parts)
-		{
-			TranslatablePhrase phr = pth.UnfilteredPhrases.FirstOrDefault(x => x.OriginalPhrase == phrase);
-			Assert.IsNotNull(phr);
-			Assert.AreEqual(parts.Length / 2, phr.TranslatableParts.Count(), "Phrase \"" + phrase +
-				"\" was split into the wrong number of parts.");
-			int i = 0;
-			foreach (Part part in phr.TranslatableParts)
-			{
-				Assert.AreEqual(parts[i++], part.Text, "Unexpected part");
-				Assert.AreEqual(GetWordCount(part.Text), part.Words.Count(),
-					"Unexpected word count for part \"" + part.Text + "\"");
-				Assert.AreEqual(parts[i++], part.OwningPhrases.Count(),
-					"Unexpected number of owning phrases for part \"" + part.Text + "\"");
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the word count of the specified text.
-		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		private static int GetWordCount(IEnumerable<char> text)
-		{
-			return 1 + text.Count(c => c == ' ');
-		}
-		#endregion
-	}
-
-    ///// ----------------------------------------------------------------------------------------
-    ///// <summary>
-    ///// Dummy class so we don't have to use a real list box
-    ///// </summary>
-    ///// ----------------------------------------------------------------------------------------
-    //internal class DummyKeyTermRenderingInfo : ITermRenderingInfo
-    //{
-    //    #region Implementation of ITermRenderingInfo
-    //    public IKeyTerm Term { get; private set; }
-
-    //    public IEnumerable<string> Renderings
-    //    {
-    //        get { return Term.Renderings; }
-    //    }
-
-    //    public int EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm { get; set; }
-
-    //    public DummyKeyTermRenderingInfo(IKeyTerm keyTerm, int endOffsetOfPrev)
-    //    {
-    //        Term = keyTerm;
-    //        EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
-    //    }
-    //    #endregion
-    //}
+        #endregion
+    }
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

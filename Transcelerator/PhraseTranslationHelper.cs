@@ -27,7 +27,7 @@ namespace SIL.Transcelerator
 	/// 
 	/// </summary>
 	/// --------------------------------------------------------------------------------------------
-	public class PhraseTranslationHelper
+    internal class PhraseTranslationHelper : IPhraseTranslationHelper
 	{
 		#region Events
 		public event Action TranslationsChanged;
@@ -241,7 +241,7 @@ namespace SIL.Transcelerator
 		public List<RenderingSelectionRule> TermRenderingSelectionRules
 		{
 			get { return m_termRenderingSelectionRules; }
-			set
+			internal set
 			{
 				m_termRenderingSelectionRules = value;
 				if (m_fileAccessor != null)
@@ -301,7 +301,7 @@ namespace SIL.Transcelerator
 		/// Gets the translation of the requested category; if not translated, use the English.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal string GetCategoryName(int categoryId)
+		public string GetCategoryName(int categoryId)
 		{
 			string catName = m_categories[categoryId].Translation;
 			if (string.IsNullOrEmpty(catName))
@@ -374,7 +374,7 @@ namespace SIL.Transcelerator
 		/// Processes a new translation on a phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal void ProcessTranslation(TranslatablePhrase tp)
+		void IPhraseTranslationHelper.ProcessTranslation(TranslatablePhrase tp)
 		{
 			string initialPunct, finalPunct;
 
@@ -606,13 +606,27 @@ namespace SIL.Transcelerator
 			return sCommonSubstring;
 		}
 
-		internal string InitialPunctuationForType(TypeOfPhrase type)
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the character(s) that normally occur at the beginning of a phrase/question of
+        /// the specified type. Returns an empty string (never null) if no such punctuation has
+        /// been determined.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public string InitialPunctuationForType(TypeOfPhrase type)
 		{
 			string p;
 			return m_initialPunct.TryGetValue(type, out p) ? p : string.Empty;
 		}
 
-		internal string FinalPunctuationForType(TypeOfPhrase type)
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the character(s) that normally occur at the end of a phrase/question of
+        /// the specified type. Returns an empty string (never null) if no such punctuation has
+        /// been determined.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public string FinalPunctuationForType(TypeOfPhrase type)
 		{
 			string p;
 			return m_finalPunct.TryGetValue(type, out p) ? p : string.Empty;
@@ -633,4 +647,22 @@ namespace SIL.Transcelerator
 			m_justGettingStarted = false;
 		}
 	}
+
+    public interface IPhraseTranslationHelper
+    {
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Processes a new translation on a phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        void ProcessTranslation(TranslatablePhrase tp);
+
+        string InitialPunctuationForType(TypeOfPhrase type);
+
+        string FinalPunctuationForType(TypeOfPhrase type);
+
+        string GetCategoryName(int category);
+
+        List<RenderingSelectionRule> TermRenderingSelectionRules { get; }
+    }
 }

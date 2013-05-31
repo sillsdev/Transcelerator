@@ -275,16 +275,6 @@ namespace SIL.Transcelerator
                 {
                     Category category = section.Categories[iCat];
 
-                    // REVIEW: Categories probably don't need to be processed against key terms
-                    // and shouldn't be customizable. It's not very convenient in the XML to store
-                    // parse info for them, so maybe they can be handled simply in the
-                    // PhraseTranslationHelper.
-                    //if (category.Type != null && !processedCategories.Contains(category.Type.ToLowerInvariant()))
-                    //{
-                    //    yield return new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, processedCategories.Count);
-                    //    processedCategories.Add(category.Type.ToLowerInvariant());
-                    //}
-
                     for (int iQuestion = 0; iQuestion < category.Questions.Count;)
                     {
                         Question q = category.Questions[iQuestion];

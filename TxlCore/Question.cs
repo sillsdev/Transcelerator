@@ -62,10 +62,15 @@ namespace SIL.Transcelerator
             }
 			set
 			{
-				if (String.IsNullOrEmpty(value))
-					m_text = kGuidPrefix + Guid.NewGuid();
-				else
-					m_text = value.Trim();
+			    if (String.IsNullOrEmpty(value))
+			    {
+                    if (IsUserAdded)
+			            m_text = kGuidPrefix + Guid.NewGuid();
+                    else
+                        throw new ArgumentException("Factory-supplied questions must not be empty.");
+			    }
+			    else
+			        m_text = value.Trim();
 			}
 		}
 
@@ -141,8 +146,8 @@ namespace SIL.Transcelerator
 			ScriptureReference = baseQuestion.ScriptureReference;
 			StartRef = baseQuestion.StartRef;
 			EndRef = baseQuestion.EndRef;
-			Text = newQuestion;
-		    IsUserAdded = true;
+            IsUserAdded = true;
+            Text = newQuestion;
 
 			if (!string.IsNullOrEmpty(answer))
 				Answers = new [] { answer };

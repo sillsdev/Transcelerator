@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TranslatablePhraseTests.cs" />
     <Compile Include="KeyTermTests.cs" />
     <Compile Include="MasterQuestionParserTests.cs" />
     <Compile Include="KeyTermRulesTests.cs" />
