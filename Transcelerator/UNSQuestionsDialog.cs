@@ -1661,7 +1661,7 @@ namespace SIL.Transcelerator
 			int col = 0;
 			int longestListHeight = 0;
 			Dictionary<KeyTerm, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTerm, int>();
-			foreach (KeyTerm keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTerm>().Where(ktm => ktm.Renderings.Any()))
+			foreach (KeyTerm keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTerm>())//.Where(ktm => ktm.Renderings.Any()))
 			{
 				int ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm;
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);

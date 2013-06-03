@@ -348,14 +348,40 @@
     <Alternate name="animals"/>
   </KeyTermRule>
   <KeyTermRule id="plant; grass" rule="Exclude"/>
+  <KeyTermRule id="seek/find refuge, protection" rule="Exclude">
+    <Alternate name="trust"/>
+    <Alternate name="trusts"/>
+    <Alternate name="trusted"/>
+    <Alternate name="trusting"/>
+    <Alternate name="took shelter"/>
+    <Alternate name="protection"/>
+  </KeyTermRule>
+  <KeyTermRule id="Yah (=Yahweh) / LORD" rule="Exclude">
+    <Alternate name="yahweh"/>
+    <Alternate name="jehovah"/>
+    <Alternate name="lord"/>
+    <Alternate name="god"/>
+  </KeyTermRule>
+  <KeyTermRule id="YHWH / Yahweh / LORD" rule="Exclude">
+    <Alternate name="yahweh"/>
+    <Alternate name="jehovah"/>
+    <Alternate name="lord"/>
+    <Alternate name="god"/>
+  </KeyTermRule>
+  <KeyTermRule id="always; forever; forever and ever; eternally" rule="Exclude">
+    <Alternate name="forever"/>
+    <Alternate name="eternally"/>
+  </KeyTermRule>
+  <KeyTermRule id="be; become a disciple; make disciples" rule="Exclude"/>
+  <KeyTermRule id="skin; hide" rule="Exclude"/>
 
   <!-- Rules that apply only to "Major Biblical Terms" list -->
-  <KeyTermRule id="be, become poor" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="be, become poor" rule="Exclude">
     <Alternate name="become poor"/>
     <Alternate name="be poor"/>
     <Alternate name="poor"/>
   </KeyTermRule>
-  <KeyTermRule id="fear; be afraid (people; God; actions; in a negative sense)" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="fear; be afraid (people; God; actions; in a negative sense)" rule="Exclude">
     <Alternate name="fear"/>
     <Alternate name="be afraid"/>
     <Alternate name="being afraid"/>
@@ -368,106 +394,106 @@
     <Alternate name="was afraid"/>
     <Alternate name="afraid"/>
   </KeyTermRule>
-  <KeyTermRule id="inner man, soul" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="inner man, soul" rule="Exclude">
     <Alternate name="soul"/>
   </KeyTermRule>
-  <KeyTermRule id="soul" appliesTo="Major">
+  <KeyTermRule id="soul">
     <Alternate name="souls"/>
     <Alternate name="life"/>
     <Alternate name="lives"/>
   </KeyTermRule>
-  <KeyTermRule id="unclean spirit" appliesTo="Major">
+  <KeyTermRule id="unclean spirit">
     <Alternate name="unclean spirits"/>
     <Alternate name="evil spirit"/>
     <Alternate name="evil spirits"/>
     <Alternate name="demon"/>
     <Alternate name="demons"/>
   </KeyTermRule>
-  <KeyTermRule id="sword and bow; military strength, achievement" rule="Exclude" appliesTo="Major"/>
-  <KeyTermRule id="remember for good: be gracious, have mercy" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="hosts (in: Lord, LORD, God of hosts)" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="sword and bow; military strength, achievement" rule="Exclude"/>
+  <KeyTermRule id="remember for good: be gracious, have mercy" rule="MatchForRefOnly"/>
+  <KeyTermRule id="hosts (in: Lord, LORD, God of hosts)" rule="Exclude">
     <Alternate name="lord of hosts"/>
     <Alternate name="god of hosts"/>
   </KeyTermRule>
-  <KeyTermRule id="Judas" appliesTo="Major">
+  <KeyTermRule id="Judas">
     <Alternate name="Jude"/>
   </KeyTermRule>
-  <KeyTermRule id="Christ" appliesTo="Major">
+  <KeyTermRule id="Christ">
     <Alternate name="Christ Jesus"/>
   </KeyTermRule>
-  <KeyTermRule id="resentment; jealousy" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="resentment; jealousy" rule="Exclude">
     <Alternate name="jealousy"/>
     <Alternate name="jealous"/>
   </KeyTermRule>
-  <KeyTermRule id="official; judge; magistrate" rule="MatchForRefOnly" appliesTo="Major" />
-  <KeyTermRule id="tool; instrument; means" rule="MatchForRefOnly" appliesTo="Major" />
-  <KeyTermRule id="plan, purpose, device, scheme" rule="MatchForRefOnly" appliesTo="Major" />
-  <KeyTermRule id="one one who shows favoritism; respecter of persons" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="official; judge; magistrate" rule="MatchForRefOnly"/>
+  <KeyTermRule id="tool; instrument; means" rule="MatchForRefOnly" />
+  <KeyTermRule id="plan, purpose, device, scheme" rule="MatchForRefOnly" />
+  <KeyTermRule id="one one who shows favoritism; respecter of persons" rule="Exclude">
     <Alternate name="one who shows favoritism"/>
   </KeyTermRule>
-  <KeyTermRule id="one who is under an obligation" appliesTo="Major">
+  <KeyTermRule id="one who is under an obligation">
     <Alternate name="debtor"/>
     <Alternate name="debtors"/>
     <Alternate name="under obligation"/>
   </KeyTermRule>
-  <KeyTermRule id="someone who sins against someone else and therefore 'owes' that person" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="someone who sins against someone else and therefore 'owes' that person" rule="Exclude">
     <Alternate name="guilty"/>
     <Alternate name="sinner"/>
     <Alternate name="sinners"/>
   </KeyTermRule>
-  <KeyTermRule id="sin against; wrong" appliesTo="Major">
+  <KeyTermRule id="sin against; wrong">
     <Alternate name="sinned against"/>
     <Alternate name="sinning against"/>
   </KeyTermRule>
-  <KeyTermRule id="glory, presence of God" rule="Exclude" appliesTo="Major" />
-  <KeyTermRule id="remember for evil: punish" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="glory, presence of God" rule="Exclude" />
+  <KeyTermRule id="remember for evil: punish" rule="Exclude">
     <Alternate name="punish"/>
     <Alternate name="punishes"/>
     <Alternate name="punished"/>
     <Alternate name="punishing"/>
     <Alternate name="punishment"/>
   </KeyTermRule>
-  <KeyTermRule id="have power" rule="Exclude" appliesTo="Major" />
-  <KeyTermRule id="wick" rule="MatchForRefOnly" appliesTo="Major">
+  <KeyTermRule id="have power" rule="Exclude" />
+  <KeyTermRule id="wick" rule="MatchForRefOnly">
     <Alternate name="linen"/>
   </KeyTermRule>
-  <KeyTermRule id="fellowship meal" appliesTo="Major">
+  <KeyTermRule id="fellowship meal">
     <Alternate name="love feast"/>
   </KeyTermRule>
-  <KeyTermRule id="(Most) Holy Place" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="(Most) Holy Place" rule="Exclude">
     <Alternate name="Most Holy Place"/>
   </KeyTermRule>
-  <KeyTermRule id="be (or show oneself) just, in the right" rule="Exclude" appliesTo="Major"/>
-  <KeyTermRule id="glory; splendor" appliesTo="Major">
+  <KeyTermRule id="be (or show oneself) just, in the right" rule="Exclude"/>
+  <KeyTermRule id="glory; splendor">
     <Alternate name="greatness"/>
     <Alternate name="glorious"/>
   </KeyTermRule>
-  <KeyTermRule id="wild animal" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="on" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="hen" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="saying" rule="Exclude" appliesTo="Major"/>
-  <KeyTermRule id="wrong; sin; guilt" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="strength, power, might; substance, wealth, riches" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="wild animal" rule="MatchForRefOnly"/>
+  <KeyTermRule id="on" rule="MatchForRefOnly"/>
+  <KeyTermRule id="hen" rule="MatchForRefOnly"/>
+  <KeyTermRule id="saying" rule="Exclude"/>
+  <KeyTermRule id="wrong; sin; guilt" rule="MatchForRefOnly"/>
+  <KeyTermRule id="strength, power, might; substance, wealth, riches" rule="Exclude">
     <Alternate name="strength"/>
     <Alternate name="power"/>
   </KeyTermRule>
-  <KeyTermRule id="bring in, carry in; cause to, bring in to, lead to" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="carry, bear = to forgive" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="bring in, carry in; cause to, bring in to, lead to" rule="MatchForRefOnly"/>
+  <KeyTermRule id="carry, bear = to forgive" rule="Exclude">
     <Alternate name="forgive"/>
   </KeyTermRule>
-  <KeyTermRule id="female fallow deer" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="female fallow deer" rule="Exclude">
     <Alternate name="wild deer"/>
   </KeyTermRule>
-  <KeyTermRule id="sprout; blade" rule="MatchForRefOnly" appliesTo="Major">
+  <KeyTermRule id="sprout; blade" rule="MatchForRefOnly">
     <Alternate name="grass"/>
     <Alternate name="spear grass"/>
   </KeyTermRule>
-  <KeyTermRule id="gathering, congregation, band" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="gathering, congregation, band" rule="Exclude">
     <Alternate name="congregation"/>
     <Alternate name="group"/>
   </KeyTermRule>
-  <KeyTermRule id="bodily" rule="Exclude" appliesTo="Major"/>
-  <KeyTermRule id="rely on; trust in; depend on; have (complete) confidence in; confidence; trust" appliesTo="Major">
+  <KeyTermRule id="bodily" rule="Exclude"/>
+  <KeyTermRule id="rely on; trust in; depend on; have (complete) confidence in; confidence; trust">
     <Alternate name="to trust"/>
     <Alternate name="trust"/>
     <Alternate name="trusts"/>
@@ -479,14 +505,14 @@
     <Alternate name="been confident"/>
     <Alternate name="confident"/>
   </KeyTermRule>
-  <KeyTermRule id="be (or show oneself) just, in the right" rule="MatchForRefOnly" appliesTo="Major">
+  <KeyTermRule id="be (or show oneself) just, in the right" rule="MatchForRefOnly">
     <Alternate name="justify"/>
     <Alternate name="justified"/>
     <Alternate name="justifies"/>
     <Alternate name="justifying"/>
   </KeyTermRule>
-  <KeyTermRule id="sin against; wrong" rule="MatchForRefOnly" appliesTo="Major"/>
-  <KeyTermRule id="sound wisdom" rule="Exclude" appliesTo="Major">
+  <KeyTermRule id="sin against; wrong" rule="MatchForRefOnly"/>
+  <KeyTermRule id="sound wisdom" rule="Exclude">
     <Alternate name="wisdom"/>
   </KeyTermRule>
 

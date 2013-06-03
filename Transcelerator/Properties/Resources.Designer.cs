@@ -433,6 +433,13 @@ namespace SIL.Transcelerator.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Refresh {
+            get {
+                object obj = ResourceManager.GetObject("Refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Transcelerator {
             get {
                 object obj = ResourceManager.GetObject("Transcelerator", resourceCulture);
