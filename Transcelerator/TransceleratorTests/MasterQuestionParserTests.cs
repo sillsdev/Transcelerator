@@ -464,137 +464,384 @@ namespace SIL.Transcelerator
         [Test]
         public void GetResult_EmptyKeyTermsList_PhraseSubstitutions()
         {
-            //List<Substitution> substitutions = new List<Substitution>();
-            //substitutions.Add(new Substitution("What do you think it means", "What means", false, false));
-            //substitutions.Add(new Substitution("tHe", null, false, false));
-            //substitutions.Add(new Substitution("do", string.Empty, false, false));
+            List<Substitution> substitutions = new List<Substitution>();
+            substitutions.Add(new Substitution("What do you think it means", "What means", false, false));
+            substitutions.Add(new Substitution("tHe", null, false, false));
+            substitutions.Add(new Substitution("do", string.Empty, false, false));
 
-            //var qs = GenerateSimpleSectionWithSingleCategory(4);
-            //var cat = qs.Items[0].Categories[0];
-            //cat.Questions[0].Text = "What do you think it means?";
-            //cat.Questions[1].Text = "What do you think it means to forgive?";
-            ////cat.Questions[2]; -- leave empty!
-            //cat.Questions[3].Text = "What do you think it means to bless someone? ";
+            var qs = GenerateSimpleSectionWithSingleCategory(6);
+            var cat = qs.Items[0].Categories[0];
+            int i = 0;
+            cat.Questions[0].Text = "What do you think it means?";
+            cat.Questions[1].Text = "What do you think it means to forgive?";
+            //cat.Questions[2]; -- leave empty!
+            cat.Questions[3].Text = "How could I have forgotten the question mark";
+            cat.Questions[4].Text = "What do you think it means to bless someone? ";
+            cat.Questions[5].Text = "What means of support do disciples have?";
 
-            //PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-            //    new TranslatablePhrase("What do you think it means?"), 
-            //    new TranslatablePhrase("What do you think it means to forgive?"),
-            //    new TranslatablePhrase(string.Empty),
-            //    new TranslatablePhrase("-OR-"),
-            //    new TranslatablePhrase("How could I have forgotten the question mark"),
-            //    new TranslatablePhrase("What do you think it means to bless someone? "),
-            //    new TranslatablePhrase("What means of support do disciples have?")},
-            //    m_dummyKtList, m_keyTermRules, substitutions);
+            MasterQuestionParser qp = new MasterQuestionParser(qs, m_dummyKtList, m_keyTermRules, null, substitutions);
+            ParsedQuestions pq = qp.Result;
+            Assert.AreEqual(0, pq.KeyTerms.Length);
+            Assert.AreEqual(5, pq.TranslatableParts.Length);
+            Assert.AreEqual(5, pq.Sections.Items[0].Categories[0].Questions.Count);
 
-            //Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+            i = 0;
+            int pp = 0;
+            Question q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means?", q.Text);
+            Assert.AreEqual(1, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means", q.ParsedParts[pp++].Text);
 
-            //VerifyTranslatablePhrase(pth, "What do you think it means?", "what means", 4);
-            //VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means", 4, "to forgive", 1);
-            //VerifyTranslatablePhrase(pth, "-OR-", "-or-", 1);
-            //VerifyTranslatablePhrase(pth, "How could I have forgotten the question mark", "how could i have forgotten question mark", 1);
-            //VerifyTranslatablePhrase(pth, "What do you think it means to bless someone? ", "what means", 4, "to bless someone", 1);
-            //VerifyTranslatablePhrase(pth, "What means of support do disciples have?", "what means", 4, "of support disciples have", 1);
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means to forgive?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("to forgive", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("How could I have forgotten the question mark", q.Text);
+            Assert.AreEqual(1, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("how could i have forgotten question mark", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means to bless someone?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("to bless someone", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What means of support do disciples have?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("of support disciples have", q.ParsedParts[pp++].Text);
         }
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetResult_KeyTermsList_Apostrophes()
-        //{
-        //    AddMockedKeyTerm("(God described as the) Most High");
-        //    AddMockedKeyTerm("(God of) hosts");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("heavenly creature, symbol of God's majesty and associated with his presence");
-        //    AddMockedKeyTerm("(one's own) burial-place");
-        //    AddMockedKeyTerm("to make straight (one's way)");
-        //    AddMockedKeyTerm("love for one's fellow believer");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests breaking up phrases into parts where a non-empty key terms list is supplied,
+        /// with some more complicated muli-word terms, including some with apostrophes. 
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetResult_KeyTermsList_Apostrophes()
+        {
+            AddMockedKeyTerm("(God described as the) Most High");
+            AddMockedKeyTerm("(God of) hosts");
+            AddMockedKeyTerm("God");
+            AddMockedKeyTerm("heavenly creature, symbol of God's majesty and associated with his presence");
+            AddMockedKeyTerm("(one's own) burial-place");
+            AddMockedKeyTerm("to make straight (one's way)");
+            AddMockedKeyTerm("love for one's fellow believer");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("If one gives one's word and doesn't keep it, is it sin?"), 
-        //        new TranslatablePhrase("Is there one way to heaven?"),
-        //        new TranslatablePhrase("Is the Bible God's Word?"),
-        //        new TranslatablePhrase("Who is God's one and only Son?"),
-        //        new TranslatablePhrase("Can the God of hosts also be called the Most High God?"),
-        //        new TranslatablePhrase("Should one be buried in one's own burial-place?"),
-        //        new TranslatablePhrase("Do wise people make straight paths for themselves?"),
-        //        new TranslatablePhrase("How can you tell if one has love for one's fellow believer?"),
-        //        new TranslatablePhrase("Is the earth God's?")},
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
+            var qs = GenerateSimpleSectionWithSingleCategory(9);
+            var cat = qs.Items[0].Categories[0];
+            int i = 0;
+            cat.Questions[0].Text = "If one gives one's word and doesn't keep it, is it sin?";
+            cat.Questions[1].Text = "Is there one way to heaven?";
+            cat.Questions[2].Text = "Is the Bible God's Word?";
+            cat.Questions[3].Text = "Who is God's one and only Son?";
+            cat.Questions[4].Text = "Can the God of hosts also be called the Most High God?";
+            cat.Questions[5].Text = "Should one be buried in one's own burial-place?";
+            cat.Questions[6].Text = "Do wise people make straight paths for themselves?";
+            cat.Questions[7].Text = "How can you tell if one has love for one's fellow believer?";
+            cat.Questions[8].Text = "Is the earth God's?";
 
-        //    Assert.AreEqual(9, pth.Phrases.Count(), "Wrong number of phrases in helper");
+            MasterQuestionParser qp = new MasterQuestionParser(qs, m_dummyKtList, m_keyTermRules, null, null);
+            ParsedQuestions pq = qp.Result;
+            Assert.AreEqual(6, pq.KeyTerms.Length);
+            Assert.AreEqual(13, pq.TranslatableParts.Length);
+            Assert.AreEqual(9, pq.Sections.Items[0].Categories[0].Questions.Count);
 
-        //    VerifyTranslatablePhrase(pth, "If one gives one's word and doesn't keep it, is it sin?", "if one gives one's word and doesn't keep it is it sin", 1);
-        //    VerifyTranslatablePhrase(pth, "Is there one way to heaven?", "is there one way to heaven", 1);
-        //    VerifyTranslatablePhrase(pth, "Is the Bible God's Word?", "is the bible", 1, "word", 1);
-        //    VerifyTranslatablePhrase(pth, "Who is God's one and only Son?", "who is", 1, "one and only son", 1);
-        //    VerifyTranslatablePhrase(pth, "Can the God of hosts also be called the Most High God?", "can the", 1, "also be called the", 1);
-        //    VerifyTranslatablePhrase(pth, "Should one be buried in one's own burial-place?", "should one be buried in", 1);
-        //    VerifyTranslatablePhrase(pth, "Do wise people make straight paths for themselves?", "do wise people", 1, "paths for themselves", 1);
-        //    VerifyTranslatablePhrase(pth, "How can you tell if one has love for one's fellow believer?", "how can you tell if one has", 1);
-        //    VerifyTranslatablePhrase(pth, "Is the earth God's?", "is the earth", 1);
-        //}
+            i = 0;
+            int pp = 0;
+            Question q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("If one gives one's word and doesn't keep it, is it sin?", q.Text);
+            Assert.AreEqual(1, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("if one gives one's word and doesn't keep it is it sin", q.ParsedParts[pp++].Text);
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests breaking up phrases into parts where a non-empty key terms list is supplied
-        ///// and there are substitutions defined with regular expressions and case-sensitive
-        ///// matching.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void GetResult_KeyTermsList_SimplePhraseSubstitutions()
-        //{
-        //    AddMockedKeyTerm("John"); // The apostle
-        //    AddMockedKeyTerm("John"); // The Baptist
-        //    AddMockedKeyTerm("Paul");
-        //    AddMockedKeyTerm("Mary");
-        //    AddMockedKeyTerm("temple");
-        //    AddMockedKeyTerm("forgive");
-        //    AddMockedKeyTerm("bless");
-        //    AddMockedKeyTerm("God");
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("sin");
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Is there one way to heaven?", q.Text);
+            Assert.AreEqual(1, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("is there one way to heaven", q.ParsedParts[pp++].Text);
 
-        //    List<Substitution> ignored = new List<Substitution>();
-        //    ignored.Add(new Substitution("What do you think it means", "What means", false, false));
-        //    ignored.Add(new Substitution("the", null, false, false));
-        //    ignored.Add(new Substitution("do", string.Empty, false, false));
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Is the Bible God's Word?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("is the bible", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("word", q.ParsedParts[pp++].Text);
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        new TranslatablePhrase("Who was John?"), 
-        //        new TranslatablePhrase("Who was Paul?"),
-        //        new TranslatablePhrase("Who was Mary?"),
-        //        new TranslatablePhrase("Who went to the well?"),
-        //        new TranslatablePhrase("Who went to the temple?"),
-        //        new TranslatablePhrase("What do you think it means to forgive?"),
-        //        new TranslatablePhrase("What do you think it means to bless someone?"),
-        //        new TranslatablePhrase("What do you think God wants you to do?"),
-        //        new TranslatablePhrase("Why do you think God created man?"),
-        //        new TranslatablePhrase("Why do you think God  sent Jesus to the earth?"),
-        //        new TranslatablePhrase("Who went to the well with Jesus?"),
-        //        new TranslatablePhrase("Do you think God could forgive someone who sins?"),
-        //        new TranslatablePhrase("What do you think it means to serve two masters?")},
-        //        m_dummyKtList, m_keyTermRules, ignored);
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who is God's one and only Son?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who is", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("one and only son", q.ParsedParts[pp++].Text);
 
-        //    Assert.AreEqual(13, pth.Phrases.Count(), "Wrong number of phrases in helper");
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Can the God of hosts also be called the Most High God?", q.Text);
+            Assert.AreEqual(5, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("can the", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god of hosts", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("also be called the", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("most high", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
 
-        //    VerifyTranslatablePhrase(pth, "Who was John?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Paul?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who was Mary?", "who was", 3);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well?", "who went to well", 2);
-        //    VerifyTranslatablePhrase(pth, "Who went to the temple?", "who went to", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to forgive?", "what means to", 3);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to bless someone?", "what means to", 3, "someone", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think God wants you to do?", "what", 1, "you think", 2, "wants you to", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God created man?", "why you think", 2, "created man", 1);
-        //    VerifyTranslatablePhrase(pth, "Why do you think God  sent Jesus to the earth?", "why you think", 2, "sent", 1, "to earth", 1);
-        //    VerifyTranslatablePhrase(pth, "Who went to the well with Jesus?", "who went to well", 2, "with", 1);
-        //    VerifyTranslatablePhrase(pth, "Do you think God could forgive someone who sins?", "you think", 2, "could", 1, "someone who", 1);
-        //    VerifyTranslatablePhrase(pth, "What do you think it means to serve two masters?", "what means to", 3, "serve two masters", 1);
-        //}
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Should one be buried in one's own burial-place?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("should one be buried in", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("one's own burial-place", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Do wise people make straight paths for themselves?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("do wise people", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("make straight", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("paths for themselves", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("How can you tell if one has love for one's fellow believer?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("how can you tell if one has", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("love for one's fellow believer", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Is the earth God's?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("is the earth", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests breaking up phrases into parts where a non-empty key terms list is supplied
+        /// and there are substitutions defined with regular expressions and case-sensitive
+        /// matching.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetResult_KeyTermsList_SimplePhraseSubstitutions()
+        {
+            AddMockedKeyTerm("John"); // The apostle
+            AddMockedKeyTerm("John"); // The Baptist
+            AddMockedKeyTerm("Paul");
+            AddMockedKeyTerm("Mary");
+            AddMockedKeyTerm("temple");
+            AddMockedKeyTerm("forgive");
+            AddMockedKeyTerm("bless");
+            AddMockedKeyTerm("God");
+            AddMockedKeyTerm("Jesus");
+            AddMockedKeyTerm("sin");
+
+            List<Substitution> substitutions = new List<Substitution>();
+            substitutions.Add(new Substitution("What do you think it means", "What means", false, false));
+            substitutions.Add(new Substitution("the", null, false, false));
+            substitutions.Add(new Substitution("do", string.Empty, false, false));
+
+            var qs = GenerateSimpleSectionWithSingleCategory(13);
+            var cat = qs.Items[0].Categories[0];
+            int i = 0;
+            cat.Questions[i++].Text = "Who was John?";
+            cat.Questions[i++].Text = "Who was Paul?";
+            cat.Questions[i++].Text = "Who was Mary?";
+            cat.Questions[i++].Text = "Who went to the well?";
+            cat.Questions[i++].Text = "Who went to the temple?";
+            cat.Questions[i++].Text = "What do you think it means to forgive?";
+            cat.Questions[i++].Text = "What do you think it means to bless someone?";
+            cat.Questions[i++].Text = "What do you think God wants you to do?";
+            cat.Questions[i++].Text = "Why do you think God created man?";
+            cat.Questions[i++].Text = "Why do you think God  sent Jesus to the earth?";
+            cat.Questions[i++].Text = "Who went to the well with Jesus?";
+            cat.Questions[i++].Text = "Do you think God could forgive someone who sins?";
+            cat.Questions[i].Text = "What do you think it means to serve two masters?";
+
+            MasterQuestionParser qp = new MasterQuestionParser(qs, m_dummyKtList, m_keyTermRules, null, substitutions);
+            ParsedQuestions pq = qp.Result;
+            Assert.AreEqual(9, pq.KeyTerms.Length);
+            Assert.AreEqual(16, pq.TranslatableParts.Length);
+            Assert.AreEqual(13, pq.Sections.Items[0].Categories[0].Questions.Count);
+
+            i = 0;
+            int pp = 0;
+            Question q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who was John?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who was", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("john", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who was Paul?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who was", q.ParsedParts[pp++].Text);
+            Assert.AreEqual("paul", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who was Mary?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who was", q.ParsedParts[pp++].Text);
+            Assert.AreEqual("mary", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who went to the well?", q.Text);
+            Assert.AreEqual(1, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who went to well", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who went to the temple?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who went to", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("temple", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means to forgive?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means to", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("forgive", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means to bless someone?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means to", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("bless", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("someone", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think God wants you to do?", q.Text);
+            Assert.AreEqual(4, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("you think", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("wants you to", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Why do you think God created man?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("why you think", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("created man", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Why do you think God  sent Jesus to the earth?", q.Text);
+            Assert.AreEqual(5, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("why you think", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("sent", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("jesus", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("to earth", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Who went to the well with Jesus?", q.Text);
+            Assert.AreEqual(3, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("who went to well", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("with", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("jesus", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("Do you think God could forgive someone who sins?", q.Text);
+            Assert.AreEqual(6, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("you think", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("god", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("could", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("forgive", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("someone who", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.KeyTerm, q.ParsedParts[pp].Type);
+            Assert.AreEqual("sin", q.ParsedParts[pp++].Text);
+
+            pp = 0;
+            q = pq.Sections.Items[0].Categories[0].Questions[i++];
+            Assert.AreEqual("What do you think it means to serve two masters?", q.Text);
+            Assert.AreEqual(2, q.ParsedParts.Count);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("what means to", q.ParsedParts[pp++].Text);
+            Assert.AreEqual(PartType.TranslatablePart, q.ParsedParts[pp].Type);
+            Assert.AreEqual("serve two masters", q.ParsedParts[pp++].Text);
+        }
 
         ///// ------------------------------------------------------------------------------------
         ///// <summary>
@@ -616,11 +863,11 @@ namespace SIL.Transcelerator
         //    AddMockedKeyTerm("Jesus");
         //    AddMockedKeyTerm("sin");
 
-        //    List<Substitution> ignored = new List<Substitution>();
-        //    ignored.Add(new Substitution("what do you think it means", "what means", false, true));
-        //    ignored.Add(new Substitution(@"\ban\b", "a", true, false));
-        //    ignored.Add(new Substitution(@"did (\S+) do", @"did $1", true, true));
-        //    ignored.Add(new Substitution(@"ed\b", null, true, true));
+        //    List<Substitution> substitutions = new List<Substitution>();
+        //    substitutions.Add(new Substitution("what do you think it means", "what means", false, true));
+        //    substitutions.Add(new Substitution(@"\ban\b", "a", true, false));
+        //    substitutions.Add(new Substitution(@"did (\S+) do", @"did $1", true, true));
+        //    substitutions.Add(new Substitution(@"ed\b", null, true, true));
 
         //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
         //        new TranslatablePhrase("What did John do?"), 
@@ -631,7 +878,7 @@ namespace SIL.Transcelerator
         //        new TranslatablePhrase("What do you think it means to forgive?"),
         //        new TranslatablePhrase("what do you think it means to bless someone?"),
         //        new TranslatablePhrase("Did Mary do the right thing?")},
-        //        m_dummyKtList, m_keyTermRules, ignored);
+        //        m_dummyKtList, m_keyTermRules, substitutions);
 
         //    Assert.AreEqual(8, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
