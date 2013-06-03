@@ -336,6 +336,13 @@
     <Content Include="keyTermRules.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="keyTermRules.xsc">
+      <DependentUpon>keyTermRules.xsd</DependentUpon>
+    </None>
+    <None Include="keyTermRules.xss">
+      <DependentUpon>keyTermRules.xsd</DependentUpon>
+    </None>
+    <None Include="Properties\Refresh.png" />
     <Content Include="TXL no TXL.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

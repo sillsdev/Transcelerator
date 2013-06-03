@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -25,7 +25,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using AddInSideViews;
 
 namespace SIL.Transcelerator
 {
@@ -69,13 +68,14 @@ namespace SIL.Transcelerator
 			m_lookupTerm = lookupTerm;
 			m_lblKeyTermColHead.Text = term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
-			m_lbRenderings.Items.AddRange(term.Renderings.Distinct().ToArray());
+			PopulateRenderings();
 			term.BestRenderingChanged += term_BestRenderingChanged;
 
 			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
-			mnuLookUpTermH.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, s_AppName);
+            mnuRefreshRenderingsH.Text = string.Format(mnuRefreshRenderingsH.Text, s_AppName);
 		}
-		#endregion
+	    #endregion
 
 		#region Public properties
 		public string SelectedRendering
@@ -181,6 +181,17 @@ namespace SIL.Transcelerator
 		{
 			m_lookupTerm(m_term.AllTermIds);
 		}
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles the Click event of the Refresh Renderings from Paratext menu item.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void mnuRefreshRenderingsH_Click(object sender, EventArgs e)
+        {
+            m_term.LoadRenderings();
+            PopulateRenderings();
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -317,6 +328,7 @@ namespace SIL.Transcelerator
 		{
 			mnuDeleteRendering.Enabled = m_lbRenderings.SelectedItem != null &&
 				m_term.CanRenderingBeDeleted(m_lbRenderings.SelectedItem.ToString());
+		    mnuSetAsDefault.Enabled = m_lbRenderings.SelectedItem != null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -334,5 +346,18 @@ namespace SIL.Transcelerator
 			m_lbRenderings.Items.Remove(rendering);
 		}
 		#endregion
-	}
+
+        #region Private helper methods
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Loads the listbox with the renderings associated with the term
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void PopulateRenderings()
+        {
+            m_lbRenderings.Items.Clear();
+            m_lbRenderings.Items.AddRange(m_term.Renderings.Distinct().ToArray());
+        }
+        #endregion
+    }
 }
