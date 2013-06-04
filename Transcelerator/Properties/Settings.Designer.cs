@@ -23,6 +23,15 @@ namespace SIL.Transcelerator.Properties {
             }
         }
         
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("QTTallBooks.sfm")]
+        public string QuestionsFile {
+            get {
+                return ((string)(this["QuestionsFile"]));
+            }
+        }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
@@ -368,6 +377,42 @@ namespace SIL.Transcelerator.Properties {
             }
             set {
                 this["GenerateTemplateFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int FilterStartRef {
+            get {
+                return ((int)(this["FilterStartRef"]));
+            }
+            set {
+                this["FilterStartRef"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int FilterEndRef {
+            get {
+                return ((int)(this["FilterEndRef"]));
+            }
+            set {
+                this["FilterEndRef"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpgradeNeeded {
+            get {
+                return ((bool)(this["UpgradeNeeded"]));
+            }
+            set {
+                this["UpgradeNeeded"] = value;
             }
         }
     }

@@ -69,10 +69,7 @@ namespace SIL.Transcelerator
 				if (ktRule.Alternates != null)
 				{
                     foreach (KeyTermRulesKeyTermRuleAlternate alt in ktRule.Alternates)
-                    {
-                        string phrase = alt.Name;
-                        ProcessKeyTermPhrase(keyTerm, phrase, fMatchForRefOnly || alt.MatchForRefOnly);
-                    }
+                        AddMatchesForPhrase(keyTerm, alt.Name, fMatchForRefOnly || alt.MatchForRefOnly, false, m_list.Count);
 				}
 				if (fExcludeMainTerm)
 					return;
@@ -86,7 +83,7 @@ namespace SIL.Transcelerator
                     {
                         string term = match.Result("${term}");
                         if (term == "${term}")
-                            return; // No "term" veriable found, so this rule excludes the term
+                            return; // No "term" variable found, so this rule excludes the term
                         foreach (string phrase in term.Split(new[] { ", or ", "," }, StringSplitOptions.RemoveEmptyEntries))
                             ProcessKeyTermPhrase(keyTerm, phrase, false); // for now, at least reg-ex based rules can't be reference-dependent
                         match = match.NextMatch();
@@ -130,33 +127,44 @@ namespace SIL.Transcelerator
 				return;
 			}
 
-			// Initially, we add one empty list
-			m_list.Add(new KeyTermMatch(new Word[0], keyTerm, fMatchForRefOnly));
-			bool firstWordOfPhrase = true;
-			foreach (Word metaWord in phrase.Split(new[]{' ', '\u00a0'}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
-			{
-				List<Word> allWords = AllWords(metaWord, firstWordOfPhrase);
-				if (allWords.Count > 0)
-				    AddWordsToMatches(keyTerm, allWords, startOfListForPhrase);
-				firstWordOfPhrase = false;
-			}
+            AddMatchesForPhrase(keyTerm, phrase, fMatchForRefOnly, true, startOfListForPhrase);
 
 			if (m_fInOptionalPhrase)
-				AddWordsToMatches(keyTerm, m_optionalPhraseWords, startOfListForPhrase);
+				AddWordsToMatches(m_optionalPhraseWords, startOfListForPhrase);
 		}
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Processes a (potentially multi-word) phrase for a key term, adding at least one new
+        /// KeyTermMatch and appending the new word(s) to any existing match(es) that should
+        /// include this phrase as part of the sequence of words used to form a match.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void AddMatchesForPhrase(IKeyTerm keyTerm, string phrase, bool fMatchForRefOnly,
+	        bool createExtraMatchIfPhraseStartsWithTo, int startOfListForPhrase)
+	    {
+            // Initially, we add one empty list
+	        m_list.Add(new KeyTermMatch(new Word[0], keyTerm, fMatchForRefOnly));
+	        foreach (Word metaWord in phrase.Split(new[] {' ', '\u00a0'}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim('\'')))
+	        {
+	            List<Word> allWords = AllWords(metaWord, createExtraMatchIfPhraseStartsWithTo);
+	            if (allWords.Count > 0)
+	                AddWordsToMatches(allWords, startOfListForPhrase);
+	            createExtraMatchIfPhraseStartsWithTo = false;
+	        }
+	    }
+
+	    /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the words to matches. If adding more than one word, then this represents an
 		/// optional word/phrase, which results in doubling the number of matches for the
 		/// current phrase.
 		/// </summary>
-		/// <param name="keyTerm">The key term.</param>
 		/// <param name="words">The words to append to the matches' word lists.</param>
 		/// <param name="startOfListForPhrase">The index of the position in m_list that
 		/// corresponds to the start of the matches relevant to the current phrase.</param>
 		/// ------------------------------------------------------------------------------------
-		private void AddWordsToMatches(IKeyTerm keyTerm, List<Word> words, int startOfListForPhrase)
+		private void AddWordsToMatches(List<Word> words, int startOfListForPhrase)
 		{
 			int originalCount = m_list.Count;
 			if (words.Count > 1)
@@ -199,7 +207,7 @@ namespace SIL.Transcelerator
 		/// a list representing the whole phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private List<Word> AllWords(Word metaWord, bool firstWordOfPhrase)
+		private List<Word> AllWords(Word metaWord, bool createExtraMatchIfPhraseStartsWithTo)
 		{
 			List<Word> list = new List<Word>();
 			int iOpenParen = (m_fInOptionalPhrase) ? 0 : metaWord.Text.IndexOf('(');
@@ -244,7 +252,7 @@ namespace SIL.Transcelerator
 			}
 			else
 			{
-				if (firstWordOfPhrase && metaWord == "to")
+				if (createExtraMatchIfPhraseStartsWithTo && metaWord == "to")
 					list.Add(null);
 				list.Add(metaWord);
 			}

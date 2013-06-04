@@ -59,14 +59,7 @@ namespace SIL.Transcelerator
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "©"));
 
-			attributes = assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
-			string version = (attributes != null && attributes.Length > 0) ?
-				((AssemblyInformationalVersionAttribute)attributes[0]).InformationalVersion :
-				Application.ProductVersion;
-			// Omit the revision number from the suite version string if it's zero.
-			int ich = version.LastIndexOf(".0");
-			if (ich == version.Length - 2 && ich > version.IndexOf('.'))
-				version = version.Substring(0, ich);
+            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, version);
 		}
 

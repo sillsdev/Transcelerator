@@ -22,6 +22,8 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("b6e07ef9-3e1a-4200-8d7c-4464c4d04f11")]
 
+[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("1.0.0")]
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -29,11 +31,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("1.0.0")]
-[assembly: AssemblyVersion("1.0.0.*")]
+// Build number updates daily. Revision Number is random (see http://msdn.microsoft.com/en-us/library/system.reflection.assemblyversionattribute.aspx)
+[assembly: AssemblyVersion("1.0.*")]
 
 [assembly: InternalsVisibleTo("TransceleratorTests")]

@@ -136,11 +136,11 @@
     <Alternate name="prophesying"/>
   </KeyTermRule>
   <KeyTermRule id="kind, sort" rule="Exclude" />
-  <KeyTermRule id="timothy">
+  <!--<KeyTermRule id="timothy">
     <Alternate name="about timothy"/>
     <Alternate name="for timothy"/>
     <Alternate name="to timothy"/>
-  </KeyTermRule>
+  </KeyTermRule>-->
   <KeyTermRule id="genus, kind (of animals); clan" rule="Exclude">
     <Alternate name="family"/>
     <Alternate name="families"/>
@@ -374,8 +374,17 @@
   </KeyTermRule>
   <KeyTermRule id="be; become a disciple; make disciples" rule="Exclude"/>
   <KeyTermRule id="skin; hide" rule="Exclude"/>
-
-  <!-- Rules that apply only to "Major Biblical Terms" list -->
+  <KeyTermRule id="fasting; fast" rule="Exclude">
+    <Alternate name="fast" matchForRefOnly="true"/>
+    <Alternate name="fasting"/>
+    <Alternate name="to fast"/>
+    <Alternate name="fasted"/>
+  </KeyTermRule>
+  <KeyTermRule id="fast" rule="MatchForRefOnly">
+    <Alternate name="fasting"/>
+    <Alternate name="to fast"/>
+    <Alternate name="fasted"/>
+  </KeyTermRule>
   <KeyTermRule id="be, become poor" rule="Exclude">
     <Alternate name="become poor"/>
     <Alternate name="be poor"/>
@@ -515,114 +524,8 @@
   <KeyTermRule id="sound wisdom" rule="Exclude">
     <Alternate name="wisdom"/>
   </KeyTermRule>
-
-  <!-- Rules that apply only to "All Biblical Terms" list -->
-  <!--<KeyTermRule id=".*\(div1 type=" regex="true" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="Zarethan.(div1 type=letter id=LET.19)(head)ק" rule="Exclude" appliesTo="All">
-    <Alternate name="Zarethan"/>
+  <KeyTermRule id="declare solemnly and emphatically; charge under solemn oath; warn" rule="Exclude"/>
+  <KeyTermRule id="warn; rebuke" rule="Exclude">
+    <Alternate name="rebuke"/>
   </KeyTermRule>
-  <KeyTermRule id="(?&lt;term&gt;.+): \(\d+\).+; " regex="true" appliesTo="All"/>
-  <KeyTermRule id="\(\d+\) (?&lt;term&gt;[^;]+): \([^;]+\)" regex="true" appliesTo="All"/>
-  <KeyTermRule id="manna; what" rule="Exclude" appliesTo="All">
-    <Alternate name="manna"/>
-  </KeyTermRule>
-  <KeyTermRule id="where, from where; and so, therefore, for which reason" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="interrog. pro. what, which; what kind of" rule="Exclude" appliesTo="All">
-    <Alternate name="what"/>
-  </KeyTermRule>
-  <KeyTermRule id="interrog. adv. from where, where; how, why" rule="Exclude" appliesTo="All">
-    <Alternate name="from where"/>
-    <Alternate name="how"/>
-  </KeyTermRule>
-  <KeyTermRule id="interrog. adv. when?" rule="Exclude" appliesTo="All">
-    <Alternate name="when"/>
-  </KeyTermRule>
-  <KeyTermRule id="interrog. adv. where, at what place; to what place" rule="Exclude" appliesTo="All">
-    <Alternate name="where"/>
-  </KeyTermRule>
-  <KeyTermRule id="interrog. particle how? in what way? how is it possible?" rule="Exclude" appliesTo="All">
-    <Alternate name="how"/>
-    <Alternate name="why"/>
-  </KeyTermRule>
-  <KeyTermRule id="(pe quot) say" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="(qal) watch, keep" rule="Exclude" appliesTo="All">
-    <Alternate name="observe"/>
-    <Alternate name="observing"/>
-    <Alternate name="obey"/>
-    <Alternate name="obeyed"/>
-    <Alternate name="obeying"/>
-    <Alternate name="guard"/>
-    <Alternate name="guarded"/>
-  </KeyTermRule>
-  <KeyTermRule id="(qal) be wise, become wise, act wisely; (pi) make wise, teach wisdom; (pu) made wise; (hi) make wise; (htp) show oneself wise, deal wisely" rule="Exclude" appliesTo="All">
-    <Alternate name="wise"/>
-  </KeyTermRule>
-  <KeyTermRule id="(qal) oppress, wrong, extort; (pu) be wronged" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="(1) adv. with all earnestness, more than ever; very highly indeed; (2) prep. with gen. far beyond, so much more than" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="call, cry out, shout" rule="MatchForRefOnly" appliesTo="All" />
-  <KeyTermRule id="say (impers. it is said ); mean, imply" rule="Exclude" appliesTo="All" />
-  <KeyTermRule id="speak, talk, say; preach, proclaim; tell; be able to speak; address, converse (with); promise (of God); sound (of thunder)" rule="Exclude" appliesTo="All" />
-  <KeyTermRule id="Christ (lit. the Anointed One, equivalent to the Hebrew Messiah)" rule="Exclude" appliesTo="All">
-    <Alternate name="Christ" appliesTo="All"/>
-    <Alternate name="Christ Jesus" appliesTo="All"/>
-  </KeyTermRule>
-  <KeyTermRule id="official" rule="MatchForRefOnly" appliesTo="All" />
-  <KeyTermRule id="know, have knowledge of (of sexual relations); find out, learn, understand; perceive, discern; to have knowledge; acknowledge, recognize; impv. be very certain, remember" rule="Exclude" appliesTo="All">
-    <Alternate name="having intercourse"/>
-    <Alternate name="had sexual relations"/>
-    <Alternate name="have sexual relations"/>
-    <Alternate name="having sexual relations"/>
-    <Alternate name="have sexual union"/>
-    <Alternate name="sleep with"/>
-  </KeyTermRule>
-  <KeyTermRule id="name" rule="MatchForRefOnly" appliesTo="All" />
-  <KeyTermRule id="instruction" rule="Exclude" appliesTo="All">
-    <Alternate name="law"/>
-    <Alternate name="laws"/>
-  </KeyTermRule>
-  <KeyTermRule id="hundred; the Hundred" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="violence, wrong" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="reason, cause; accusation, charge; guilt, wrong; relationship" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="improper, wrong, evil; harmful, unusual" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="evil, wrong, bad, vile" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="evil, bad, wrong; injury, harm (as a noun); foul, troublesome (sore)" rule="MatchForRefOnly" appliesTo="All"/>
-  <KeyTermRule id="really, certainly, indeed; real (used as attributive adj.)" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="indeed; fostering" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="now, at the present (often with article as equivalent of adj. now, present or noun the present, the present time); now, then, indeed" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="living" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="living, alive; as surely as the Lord lives (formula of oath); kinsfolk" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="receive, share in; have, take (opportunity)" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="family, race, nation, people; offspring, descendants; sort, kind" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="rest upon; rely upon" appliesTo="All">
-    <Alternate name="to trust"/>
-    <Alternate name="trust"/>
-    <Alternate name="trusts"/>
-    <Alternate name="trusted"/>
-    <Alternate name="trusting"/>
-    <Alternate name="rely on put confidence in"/>
-    <Alternate name="put confidence in"/>
-    <Alternate name="be confident"/>
-    <Alternate name="been confident"/>
-    <Alternate name="confident"/>
-  </KeyTermRule>
-  <KeyTermRule id="branding; that, for, when; yea; on the contrary, but" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="will" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="will; wish, desire" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="delight, satisfaction; will, pleasure; goodwill, favour" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="will, desire; purpose, intention" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="be pleased; take delight or pleasure in; choose, will, resolve; be content" rule="Exclude" appliesTo="All">
-    <Alternate name="delight"/>
-    <Alternate name="delighted"/>
-    <Alternate name="please"/>
-    <Alternate name="pleases"/>
-    <Alternate name="pleased"/>
-    <Alternate name="to please"/>
-  </KeyTermRule>
-  <KeyTermRule id="impulse, attempt; mind, will" rule="Exclude" appliesTo="All"/>
-  <KeyTermRule id="wish, desire, want; will; like" rule="Exclude" appliesTo="All">
-    <Alternate name="want"/>
-    <Alternate name="wanted"/>
-    <Alternate name="wants"/>
-    <Alternate name="wanting"/>
-  </KeyTermRule>-->
 </KeyTermRules>
