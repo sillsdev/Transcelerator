@@ -12,7 +12,6 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
@@ -84,11 +83,30 @@ namespace SIL.Transcelerator
 
 						int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
 						BCVRef startRef = new BCVRef(currRef);
-						startRef.Chapter = 1;
-						startRef.Verse = 1;
 						BCVRef endRef = new BCVRef(currRef);
-						endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
-						endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+					    bool useSavedRefRange = false;
+                        // See TXL-131 for explanation of this code, if needed.
+                        if (Properties.Settings.Default.FilterStartRef > 0 &&
+                            Properties.Settings.Default.FilterStartRef < Properties.Settings.Default.FilterEndRef)
+                        {
+                            var savedStartRef = new BCVRef(Properties.Settings.Default.FilterStartRef);
+                            var savedEndRef = new BCVRef(Properties.Settings.Default.FilterEndRef);
+                            if (savedStartRef.Valid && savedEndRef.Valid &&
+                                savedStartRef <= startRef && savedEndRef >= endRef)
+                            {
+                                useSavedRefRange = true;
+                                startRef = savedStartRef;
+                                endRef = savedEndRef;
+                            }
+                        }
+
+                        if (!useSavedRefRange)
+                        {
+                            startRef.Chapter = 1;
+                            startRef.Verse = 1;
+                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
+                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+                        }
 
 						Action<bool> activateKeyboard = vern =>
 						{

@@ -354,6 +354,31 @@ namespace SIL.Transcelerator
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
+        /// Tests the KeyTermMatchBuilder class in the case of a term which has a rule to
+        /// exclude it, using alternates instead. Ensure that each alternate is used exactly as
+        /// it is to create a single match, not parsed for internal "or"s or leading "to"s.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void RuleToReplaceOriginalTermWithAlternates_PreventFurtherParsingOfAlts()
+        {
+            Dictionary<string, KeyTermRule> rules = new Dictionary<string, KeyTermRule>();
+            KeyTermRule rule = new KeyTermRule();
+            rule.id = "fast; fasting";
+            rule.Rule = KeyTermRule.RuleType.Exclude;
+            rule.Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate(), new KeyTermRulesKeyTermRuleAlternate() };
+            rule.Alternates[0].Name = "to fast";
+            rule.Alternates[1].Name = "fast or pray";
+            rules[rule.id] = rule;
+            KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
+                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+            Assert.AreEqual(2, bldr.Matches.Count());
+            VerifyKeyTermMatch(bldr, 0, true, "to", "fast");
+            VerifyKeyTermMatch(bldr, 1, true, "fast", "or", "pray");
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
         /// Tests the KeyTermMatchBuilder class in the case of a term which has a regular-
         /// expression-based rule to exclude it.
         /// </summary>

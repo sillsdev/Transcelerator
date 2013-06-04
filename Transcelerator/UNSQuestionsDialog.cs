@@ -289,9 +289,10 @@ namespace SIL.Transcelerator
             m_masterVersification = englishVersification;
             m_projectVersification = projectVersification;
 		    TermRenderingCtrl.s_AppName = appName;
-			m_startRef = startRef;
-			m_endRef = endRef;
-
+           
+            m_startRef = startRef;
+            m_endRef = endRef;                
+            
             m_masterQuestionsFilename = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                 TxlCore.questionsFilename);
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, TxlCore.questionsFilename);
@@ -1304,6 +1305,8 @@ namespace SIL.Transcelerator
 				{
 					m_startRef = dlg.FromRef;
 					m_endRef = dlg.ToRef;
+                    Properties.Settings.Default.FilterStartRef = m_startRef;
+                    Properties.Settings.Default.FilterEndRef = m_endRef;
 					ApplyFilter();
 				}
 			}
