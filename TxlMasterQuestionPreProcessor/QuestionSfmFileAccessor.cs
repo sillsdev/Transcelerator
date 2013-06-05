@@ -123,11 +123,10 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				else if (sLine.StartsWith(s_kAnswerMarker))
 				{
 					string currAnswer = sLine.Substring(kAMarkerLen).Trim();
-					if (!currCat.IsOverview)
+                    if (!currCat.IsOverview)
 					{
 						Match match = regexVerseNum.Match(currAnswer);
-                        bool outOfRange = false;
-						if (match.Success)
+                        if (match.Success)
 						{
                             string sChapter = match.Result("${chapter}");
                             int chapter = string.IsNullOrEmpty(sChapter) ? 0 : Int32.Parse(sChapter);
@@ -140,49 +139,56 @@ namespace SIL.TxlMasterQuestionPreProcessor
                                 endVerse = string.IsNullOrEmpty(sEndVerse) ?
                                     Int32.Parse(match.Result("${startVerse}")) : Int32.Parse(sEndVerse);
                             }
-							BCVRef bcvStart, bcvEnd;
-							if (currQuestion.StartRef > 0)
-							{
-								bcvStart = new BCVRef(currQuestion.StartRef);
-								bcvEnd = new BCVRef(currQuestion.EndRef);
-                                if (chapter > 0)
+
+							BCVRef bcvStart = new BCVRef(currSection.StartRef);
+							BCVRef bcvEnd = new BCVRef(currSection.EndRef);
+                            // if (chapter > 0)
+                            // if reference in the answer is not in range for the current section, disregard it.
+						    bool inSectionRange = true;
+                            if (chapter == 0)
+                                inSectionRange = (bcvStart.Chapter == bcvEnd.Chapter - 1) || (startVerse >= bcvStart.Verse && endVerse <= bcvEnd.Verse);
+                            else
+                            {
+                                if ((chapter < bcvStart.Chapter || chapter > bcvEnd.Chapter) ||
+                                   (chapter == bcvStart.Chapter && startVerse < bcvStart.Verse) ||
+                                   (chapter == bcvEnd.Chapter && startVerse > bcvEnd.Verse))
+                                    inSectionRange = false;
+                            }
+                            if (inSectionRange)
+                            {
+                                if (currQuestion.StartRef <= 0)
                                 {
-                                    bcvStart.Chapter = bcvEnd.Chapter = chapter;
+                                    bcvStart.Verse = startVerse;
+                                    bcvEnd.Verse = endVerse;
                                 }
-                                if (bcvStart.Chapter == bcvEnd.Chapter - 1 && bcvStart.Verse > bcvEnd.Verse)
-                                {
-                                    if (startVerse >= bcvStart.Verse && endVerse > bcvEnd.Verse)
-                                    {
-                                        // Question applies to a verse found wholly in the first chapter of the range
-                                        bcvStart.Verse = startVerse;
-                                        bcvEnd.Chapter = bcvStart.Chapter;
-                                        bcvEnd.Verse = endVerse;
-                                    }
-                                   // else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
-                                }
-                                else if (bcvStart.Chapter == bcvEnd.Chapter)
-                                {
-                                    if (startVerse < bcvStart.Verse)
-                                        bcvStart.Verse = startVerse;
-                                    if (endVerse > bcvEnd.Verse || chapter > 0)
-                                        bcvEnd.Verse = endVerse;
-                                }
-							}
-							else
-							{
-								bcvStart = new BCVRef(currSection.StartRef);
-								bcvEnd = new BCVRef(currSection.EndRef);
-                                //if (chapter > 0)
-                                if (startVerse < bcvStart.Verse || endVerse > bcvEnd.Verse)
-                                    outOfRange = true;
                                 else
                                 {
-								    bcvStart.Verse = startVerse;
-								    bcvEnd.Verse = endVerse;
+                                    bcvStart = new BCVRef(currQuestion.StartRef);
+                                    bcvEnd = new BCVRef(currQuestion.EndRef);
+                                    if (chapter > 0)
+                                    {
+                                        bcvStart.Chapter = bcvEnd.Chapter = chapter;
+                                    }
+                                    if (bcvStart.Chapter == bcvEnd.Chapter - 1 && bcvStart.Verse > bcvEnd.Verse)
+                                    {
+                                        if (startVerse >= bcvStart.Verse && endVerse > bcvEnd.Verse)
+                                        {
+                                            // Question applies to a verse found wholly in the first chapter of the range
+                                            bcvStart.Verse = startVerse;
+                                            bcvEnd.Chapter = bcvStart.Chapter;
+                                            bcvEnd.Verse = endVerse;
+                                        }
+                                        // else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
+                                    }
+                                    else if (bcvStart.Chapter == bcvEnd.Chapter)
+                                    {
+                                        if (startVerse < bcvStart.Verse)
+                                            bcvStart.Verse = startVerse;
+                                        if (endVerse > bcvEnd.Verse || chapter > 0)
+                                            bcvEnd.Verse = endVerse;
+                                    }
                                 }
-                            }
-                            if (!outOfRange)
-                            {
+
                                 currQuestion.StartRef = bcvStart.BBCCCVVV;
                                 currQuestion.EndRef = bcvEnd.BBCCCVVV;
                                 currQuestion.ScriptureReference = BCVRef.MakeReferenceString(

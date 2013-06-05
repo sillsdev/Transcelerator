@@ -139,6 +139,185 @@ namespace SIL.Transcelerator
 
         ///--------------------------------------------------------------------------------------
         /// <summary>
+        /// TXL-116: Ensure references for single-chapter books are parsed correctly.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+        public void ParseQuestionsForSingleChapterBook()
+        {
+            QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
+				@"\rf Philemon 1-3",
+				@"\oh Overview",
+				@"\tqref PHM 1-3",
+				@"\bttq Tell in your own words what Paul said.",
+				@"\tqe Paul is writing a letter to Philemon.",
+				@"\dh Details",
+				@"\tqref PHM 1-2",
+				@"\bttq Who is writing this letter?",
+				@"\tqe Paul. Timothy is not a co-author, but joined Paul in sending the greeting.",
+				@"\bttq Where is Paul when he is writing this letter?",
+				@"\tqe In prison.",
+				@"\tqref PHM 3",
+				@"\bttq What does Paul want God to do for these people?",
+				@"\tqe He wants God to bless them and give them inner peace.",
+
+				@"\rf Philemon 4-7",
+				@"\oh Overview",
+				@"\tqref PHM 4-7",
+				@"\bttq Tell in your own words what Paul said.",
+				@"\tqe He thanks God for Philemon.",
+				@"\dh Details",
+				@"\tqref PHM 4-5",
+				@"\bttq Why does Paul thank God?",
+				@"\tqe Because of what he has heard about Philemon.",
+				@"\bttq What has he heard about him?",
+				@"\tqe That Philemon loves all believers.",
+				@"\tqref PHM 6",
+				@"\bttq What does Paul pray for in this verse?",
+				@"\tqe That their fellowship will result in knowing more.",
+				@"\tqref PHM 7",
+				@"\bttq What gives Paul much joy?",
+				@"\tqe The love that Philemon shows to others.",
+				@"\bttq What was the evidence of that love?",
+				@"\tqe The help and encouragement he has given to the believers.",
+            
+				@"\rf Philemon 23-25",
+				@"\oh Overview",
+				@"\tqref PHM 23-25",
+				@"\bttq Tell in your own words what Paul said.",
+				@"\tqe Paul sends greetings.",
+				@"\dh Details",
+				@"\tqref PHM 23-24",
+				@"\bttq To whom does Paul send greetings?",
+				@"\tqe To Philemon and the believers with him (2)."}, null);
+
+            Assert.AreEqual(3, sections.Items.Length);
+
+            // SECTION 0 : PHM 1-3
+            Section section = sections.Items[0];
+            Assert.AreEqual("Philemon 1-3", section.Heading);
+            Assert.AreEqual(57001001, section.StartRef);
+            Assert.AreEqual(57001003, section.EndRef);
+
+            Assert.AreEqual(2, section.Categories.Length);
+
+            Category category = section.Categories[0];
+            Assert.AreEqual("Overview", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Count);
+
+            Question question = category.Questions[0];
+            Assert.AreEqual("Tell in your own words what Paul said.", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+
+            category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
+
+            const int numberOfDetailQuestionsS0 = 3;
+            Assert.AreEqual(numberOfDetailQuestionsS0, category.Questions.Count);
+
+            Assert.AreEqual("Who is writing this letter?", category.Questions[0].Text);
+            Assert.AreEqual("Where is Paul when he is writing this letter?", category.Questions[1].Text);
+
+            for (int i = 0; i < numberOfDetailQuestionsS0 - 1; i++)
+            {
+                question = category.Questions[i];
+                Assert.AreEqual("PHM 1-2", question.ScriptureReference);
+                Assert.AreEqual(57001001, question.StartRef);
+                Assert.AreEqual(57001002, question.EndRef);                
+            }
+            question = category.Questions[numberOfDetailQuestionsS0 - 1];
+
+            Assert.AreEqual("What does Paul want God to do for these people?", question.Text);
+            Assert.AreEqual("PHM 3", question.ScriptureReference);
+            Assert.AreEqual(57001003, question.StartRef);
+            Assert.AreEqual(57001003, question.EndRef);
+
+            // SECTION 1 : PHM 4-7
+            section = sections.Items[1];
+            Assert.AreEqual("Philemon 4-7", section.Heading);
+            Assert.AreEqual(57001004, section.StartRef);
+            Assert.AreEqual(57001007, section.EndRef);
+
+            Assert.AreEqual(2, section.Categories.Length);
+
+            category = section.Categories[0];
+            Assert.AreEqual("Overview", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Count);
+
+            question = category.Questions[0];
+            Assert.AreEqual("Tell in your own words what Paul said.", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+
+            category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(5, category.Questions.Count);
+
+            question = category.Questions[0];
+            Assert.AreEqual("Why does Paul thank God?", question.Text);
+            Assert.AreEqual("PHM 4-5", question.ScriptureReference);
+            Assert.AreEqual(57001004, question.StartRef);
+            Assert.AreEqual(57001005, question.EndRef);
+
+            question = category.Questions[1];
+            Assert.AreEqual("What has he heard about him?", question.Text);
+            Assert.AreEqual("PHM 4-5", question.ScriptureReference);
+            Assert.AreEqual(57001004, question.StartRef);
+            Assert.AreEqual(57001005, question.EndRef);
+
+            question = category.Questions[2];
+            Assert.AreEqual("What does Paul pray for in this verse?", question.Text);
+            Assert.AreEqual("PHM 6", question.ScriptureReference);
+            Assert.AreEqual(57001006, question.StartRef);
+            Assert.AreEqual(57001006, question.EndRef);
+
+            question = category.Questions[3];
+            Assert.AreEqual("What gives Paul much joy?", question.Text);
+            Assert.AreEqual("PHM 7", question.ScriptureReference);
+            Assert.AreEqual(57001007, question.StartRef);
+            Assert.AreEqual(57001007, question.EndRef);
+
+            question = category.Questions[4];
+            Assert.AreEqual("What was the evidence of that love?", question.Text);
+            Assert.AreEqual("PHM 7", question.ScriptureReference);
+            Assert.AreEqual(57001007, question.StartRef);
+            Assert.AreEqual(57001007, question.EndRef);
+
+            // SECTION 2 : PHM 23-25",
+            section = sections.Items[2];
+            Assert.AreEqual("Philemon 23-25", section.Heading);
+            Assert.AreEqual(57001023, section.StartRef);
+            Assert.AreEqual(57001025, section.EndRef);
+
+            Assert.AreEqual(2, section.Categories.Length);
+
+            category = section.Categories[0];
+            Assert.AreEqual("Overview", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Count);
+
+            question = category.Questions[0];
+            Assert.AreEqual("Tell in your own words what Paul said.", question.Text);
+            Assert.IsNull(question.ScriptureReference);
+
+            category = section.Categories[1];
+            Assert.AreEqual("Details", category.Type);
+
+            Assert.AreEqual(1, category.Questions.Count);
+
+            question = category.Questions[0];
+            Assert.AreEqual("To whom does Paul send greetings?", question.Text);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("To Philemon and the believers with him (2).", question.Answers[0]);
+            Assert.AreEqual("PHM 23-24", question.ScriptureReference);
+            Assert.AreEqual(57001023, question.StartRef);
+            Assert.AreEqual(57001024, question.EndRef);
+        }
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
         /// Tests parsing of detail questions whose answers contain a verse number in parentheses.
         /// </summary>
         ///--------------------------------------------------------------------------------------

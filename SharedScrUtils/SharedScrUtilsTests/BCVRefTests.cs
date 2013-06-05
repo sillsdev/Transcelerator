@@ -46,21 +46,21 @@ namespace SILUBS.SharedScrUtils
 		{
 			BCVRef bcvRef = new BCVRef(1, 2, 3, 0);
 			Assert.IsTrue(bcvRef.Valid);
-			Assert.AreEqual(1002003, (int)bcvRef);
+			Assert.AreEqual(1002003, bcvRef);
 			Assert.AreEqual(1, bcvRef.Book);
 			Assert.AreEqual(2, bcvRef.Chapter);
 			Assert.AreEqual(3, bcvRef.Verse);
 
 			bcvRef = new BCVRef(4005006);
 			Assert.IsTrue(bcvRef.Valid);
-			Assert.AreEqual(4005006, (int)bcvRef);
+			Assert.AreEqual(4005006, bcvRef);
 			Assert.AreEqual(4, bcvRef.Book);
 			Assert.AreEqual(5, bcvRef.Chapter);
 			Assert.AreEqual(6, bcvRef.Verse);
 
 			bcvRef = new BCVRef();
 			Assert.IsFalse(bcvRef.Valid);
-			Assert.AreEqual(0, (int)bcvRef);
+			Assert.AreEqual(0, bcvRef);
 			Assert.AreEqual(0, bcvRef.Book);
 			Assert.AreEqual(0, bcvRef.Chapter);
 			Assert.AreEqual(0, bcvRef.Verse);
@@ -252,6 +252,50 @@ namespace SILUBS.SharedScrUtils
 			Assert.IsTrue(reference.Valid);
 			Assert.AreEqual(03001001, reference.BBCCCVVV);
 		}
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that verses or verse bridges can be given without an explicit chapter number
+        /// for any of the 5 single-chapter books (Obadiah, Philemon, 2 John, 3 John, Jude).
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ParseRefString_ChapterOptionalForSingleChapterBooks()
+        {
+            BCVRef reference = new BCVRef("OBA 2");
+            Assert.IsTrue(reference.Valid);
+            Assert.AreEqual(31001002, reference.BBCCCVVV);
+
+            BCVRef start = new BCVRef();
+            BCVRef end = new BCVRef();
+            BCVRef.ParseRefRange("PHM 23-25", ref start, ref end);
+            Assert.IsTrue(start.Valid);
+            Assert.IsTrue(end.Valid);
+            Assert.AreEqual(57001023, start.BBCCCVVV);
+            Assert.AreEqual(57001025, end.BBCCCVVV);
+
+            reference = new BCVRef("2JN 8");
+            Assert.IsTrue(reference.Valid);
+            Assert.AreEqual(63001008, reference.BBCCCVVV);
+
+            BCVRef.ParseRefRange("3JN 12-15", ref start, ref end, false);
+            Assert.IsTrue(start.Valid);
+            Assert.IsTrue(end.Valid);
+            Assert.AreEqual(64001012, start.BBCCCVVV);
+            Assert.AreEqual(64001015, end.BBCCCVVV);
+
+            BCVRef.ParseRefRange("JUD 10-24", ref start, ref end, false);
+            Assert.IsTrue(start.Valid);
+            Assert.IsTrue(end.Valid);
+            Assert.AreEqual(65001010, start.BBCCCVVV);
+            Assert.AreEqual(65001024, end.BBCCCVVV);
+
+            // Test to make sure non-single chapter book doesn't get away with any funny business!
+            reference = new BCVRef("EXO 3-4");
+            Assert.IsTrue(reference.Valid);
+            // May not seem right or logical, but BCVRef doesn't hard-code a particular chapter-verse separator character.
+            Assert.AreEqual(02003004, reference.BBCCCVVV);
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
