@@ -492,6 +492,29 @@ namespace SILUBS.SharedScrUtils
 				return m_book == 0 && m_chapter == 0 && m_verse == 0 && m_segment == 0;
 			}
 		}
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this book only has one chapter. Since BCVRef doesn't have versification
+        /// info, we just hardcode this.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public virtual bool IsSingleChapterBook
+        {
+            get
+            {
+                switch (m_book)
+                {
+                    case 31:
+                    case 57:
+                    case 63:
+                    case 64:
+                    case 65:
+                        return true;
+                }
+                return false;
+            }
+        }
 		#endregion
 
 		#region ToString methods
@@ -837,17 +860,25 @@ namespace SILUBS.SharedScrUtils
 				return;
 			}
 
-			// Break out the chapter and verse numbers
-			bool inChapter = true;
+		    sAfterToken = sAfterToken.TrimStart(null);
 
 			// If there is no chapter:verse portion then just set 1:1
-			if (sAfterToken == string.Empty)
-				m_chapter = m_verse = 1;
-			else
-			{
-				m_chapter = 0;
-				m_verse = -1;
-			}
+		    if (sAfterToken == string.Empty)
+		    {
+		        m_chapter = m_verse = 1;
+                return;
+		    }
+		    
+		    m_chapter = 0;
+		    m_verse = -1;
+
+		    // Break out the chapter and verse numbers
+			bool inChapter = true;
+            if (IsSingleChapterBook && (sAfterToken[0] != '1' || (sAfterToken.Length > 1 && Char.IsDigit(sAfterToken[1]))))
+            {
+                m_chapter = 1;
+                inChapter = false;
+            }
 
 			foreach (char ch in sAfterToken)
 			{
@@ -886,7 +917,7 @@ namespace SILUBS.SharedScrUtils
 			if (m_verse == -1)
 				m_verse = 1;
 		}
-		#endregion
+	    #endregion
 
 		#region Book/Chapter/Verse conversions
 		/// ------------------------------------------------------------------------------------

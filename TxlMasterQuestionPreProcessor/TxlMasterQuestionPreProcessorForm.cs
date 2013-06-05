@@ -31,9 +31,11 @@ namespace SIL.TxlMasterQuestionPreProcessor
             FileInfo finfoXmlQuestions = new FileInfo(destQuestionsFilename);
             FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 
-            if (!finfoXmlQuestions.Exists ||
+            if ((!finfoXmlQuestions.Exists ||
                 (finfoSfmQuestions.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoSfmQuestions.LastWriteTimeUtc) ||
-                (finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc))
+                (finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc)) ||
+                MessageBox.Show("File " + destQuestionsFilename + " already exists and appears to be up-to-date relative to " + finfoSfmQuestions.Name +
+                " and " + finfoAlternatives.Name + ". Do you want to re-generate it anyway?", Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 if (!finfoSfmQuestions.Exists)
                     MessageBox.Show("Required file not found:\n" + txtSfmQuestionFile.Text, Text);
