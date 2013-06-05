@@ -400,15 +400,6 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Template generation complete!.
-        /// </summary>
-        internal static string kstidTemplateGenerationComplete {
-            get {
-                return ResourceManager.GetString("kstidTemplateGenerationComplete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.).
         /// </summary>
         internal static string kstidUntranslatedQuestionsWarning {

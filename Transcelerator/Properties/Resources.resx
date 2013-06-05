@@ -157,9 +157,6 @@
   <data name="kstidNewSelectionRuleNameTemplate" xml:space="preserve">
     <value>Selection Rule - {0}</value>
   </data>
-  <data name="kstidTemplateGenerationComplete" xml:space="preserve">
-    <value>Template generation complete!</value>
-  </data>
   <data name="kstidUserAddedEmptyPhrase" xml:space="preserve">
     <value>User-added question with no English version</value>
   </data>
