@@ -944,7 +944,7 @@ namespace SIL.Transcelerator
 
                         sw.WriteLine("</body>");
                     }
-                    MessageBox.Show(Properties.Resources.kstidTemplateGenerationComplete);
+                    Process.Start(dlg.FileName);
                 }
             }
         }
