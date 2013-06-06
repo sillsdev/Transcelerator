@@ -127,7 +127,7 @@ namespace SIL.Transcelerator
 						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
 						    new ScrVers(host, TxlCore.englishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
-						    endRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
+						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
 						    terms => host.LookUpKeyTerm(projectName, terms));
 					}
 					formToShow.ShowDialog();

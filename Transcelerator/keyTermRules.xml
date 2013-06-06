@@ -528,4 +528,10 @@
   <KeyTermRule id="warn; rebuke" rule="Exclude">
     <Alternate name="rebuke"/>
   </KeyTermRule>
+  <KeyTermRule id="sword, violence, warfare, death" rule="Exclude">
+    <Alternate name="sword"/>
+    <Alternate name="violence" matchForRefOnly="true"/>
+    <Alternate name="warfare" matchForRefOnly="true"/>
+    <Alternate name="death" matchForRefOnly="true"/>
+  </KeyTermRule>
 </KeyTermRules>
