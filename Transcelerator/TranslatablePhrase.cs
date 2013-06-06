@@ -97,7 +97,29 @@ namespace SIL.Transcelerator
 		public int Category
 		{
 			get { return m_category; }
-		}
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this is a Detail (as oppposed to Overview or category name)
+        /// question/phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public bool IsDetail
+        {
+            get { return m_category > 0; }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this is a category name (as oppposed to a Detail or Overview
+        /// question/phrase.)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public bool IsCategoryName
+        {
+            get { return m_category < 0; }
+        }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -659,6 +681,16 @@ namespace SIL.Transcelerator
 			SetTranslationInternal(Translation.Remove(sd.Offset, sd.Length).Insert(sd.Offset, newRendering));
 		}
 
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets whether this phrase/question applies to the given Scripture reference.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        public bool AppliesToReference(SILUBS.SharedScrUtils.BCVRef reference)
+        {
+            return !IsCategoryName && reference >= StartRef && reference <= EndRef;
+        }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds an alternate form of the phrase/question.
@@ -689,5 +721,5 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
-	}
+    }
 }

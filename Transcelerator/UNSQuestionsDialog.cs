@@ -257,7 +257,7 @@ namespace SIL.Transcelerator
             Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
             Font vernFont, string vernIcuLocale, bool fVernIsRtoL, DataFileAccessor datafileProxy,
             IScrExtractor scrExtractor, string appName, IScrVers englishVersification,
-            IScrVers projectVersification, BCVRef startRef, BCVRef endRef,
+            IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
             Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
             Action<IList<string>> lookupTermDelegate)
 		{
@@ -337,6 +337,8 @@ namespace SIL.Transcelerator
 
 			LoadTranslations(splashScreen);
 
+            dataGridUns.HandleCreated += (sender, args) => ProcessReceivedMessage(currRef);
+
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
@@ -346,6 +348,14 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Events
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            // On Windows XP, TXL comes up underneath Paratext. See if this fixes it:
+            TopMost = true;
+            TopMost = false;
+        }
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Raises the <see cref="E:System.Windows.Forms.Form.Closing"/> event.
@@ -1814,6 +1824,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void ProcessReceivedMessage(BCVRef reference)
 		{
+            if (dataGridUns.IsCurrentCellInEditMode)
+                return;
+
 			// While we process the given reference we might get additional synch events, the
 			// most recent of which we store in m_queuedReference. If we're done
 			// and we have a new reference in m_queuedReference we process that one, etc.
@@ -1822,52 +1835,58 @@ namespace SIL.Transcelerator
 				m_queuedReference = null;
 				m_fProcessingSyncMessage = true;
 
-				try
-				{
-					if (reference.Valid && (dataGridUns.CurrentRow == null ||
-						!QuestionCoversRef(dataGridUns.CurrentRow.Index, reference)))
-					{
-						GoToReference(reference);
-					}
-				}
-				finally
-				{
-					m_fProcessingSyncMessage = false;
-				}
+			    try
+			    {
+			        if (reference.Valid)
+			        {
+                        TranslatablePhrase phrase = (dataGridUns.CurrentRow == null) ? null :
+                            m_helper.Phrases.ElementAt(dataGridUns.CurrentRow.Index);
+
+			            bool phraseAppliesToRef = phrase != null && phrase.AppliesToReference(reference);
+                        
+			            if (!phraseAppliesToRef || !phrase.IsDetail)
+			                GoToReference(reference, phraseAppliesToRef && !phrase.IsDetail);
+			        }
+			    }
+			    finally
+			    {
+			        m_fProcessingSyncMessage = false;
+			    }
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Determines whether the question in the given row covers the given Scripture
-		/// reference.
+		/// Goes to the first row in the data grid corresponding to the given reference,
+		/// preferably for a detail question.
 		/// </summary>
-		/// <param name="iRow">The index of the row</param>
-		/// <param name="reference">The reference.</param>
-		/// ------------------------------------------------------------------------------------
-		internal bool QuestionCoversRef(int iRow, BCVRef reference)
+        /// <param name="reference">The reference to check against</param>
+        /// <param name="detailOnly">If <c>true</c> only move to a new row if a matching detail
+        /// question is found (i.e., disregard overview questions)</param>
+        /// ------------------------------------------------------------------------------------
+        private void GoToReference(BCVRef reference, bool detailOnly)
 		{
-			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
-			BCVRef bcvStartRef, bcvEndRef;
-            sRef.ParseRefRange(out bcvStartRef, out bcvEndRef);
-			return reference >= bcvStartRef && reference <= bcvEndRef;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Goes to the first row in the data grid corresponding to the given reference.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void GoToReference(BCVRef reference)
-		{
-			for (int iRow = 0; iRow < dataGridUns.Rows.Count; iRow++)
-			{
-				if (QuestionCoversRef(iRow, reference))
-				{
-					dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[dataGridUns.CurrentCell.ColumnIndex];
-					return;
-				}
-			}
+		    int iFound = -1;
+		    int iRow = 0;
+		    foreach (TranslatablePhrase phrase in m_helper.Phrases)
+		    {
+                if (phrase.AppliesToReference(reference))
+		        {
+		            if (phrase.IsDetail)
+		            {
+		                iFound = iRow;
+		                break;
+		            }
+                    if (!detailOnly && iFound < 0)
+		                iFound = iRow; // But don't break yet because we might find a detail question, which is preferred.
+		        }
+		        iRow++;
+		    }
+            if (iFound >= 0)
+            {
+                dataGridUns.CurrentCell = dataGridUns.Rows[iFound].Cells[dataGridUns.CurrentCell == null ? 2 :
+                    dataGridUns.CurrentCell.ColumnIndex];
+            }
 		}
 
 		/// ------------------------------------------------------------------------------------
