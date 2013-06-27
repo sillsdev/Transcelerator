@@ -32,17 +32,26 @@ namespace SIL.Transcelerator
 	public class TxlPlugin : IParatextAddIn2
 	{
 		public const string pluginName = "Transcelerator";
+	    private TxlSplashScreen splashScreen;
 		private UNSQuestionsDialog unsMainWindow;
 		private IHost host;
 		private string projectName;
 
 		public void RequestShutdown()
 		{
-			InvokeOnMainWindowIfNotNull(delegate 
-			{
-				unsMainWindow.Activate();
-				unsMainWindow.Close();
-			});
+		    lock (this)
+		    {
+		        if (unsMainWindow != null)
+		        {
+		            InvokeOnUiThread(delegate
+		                {
+		                    unsMainWindow.Activate();
+		                    unsMainWindow.Close();
+		                });
+		        }
+		        else
+                    Environment.Exit(0);
+		    }
 		}
 
 		public Dictionary<string, IPluginDataFileMergeInfo> DataFileKeySpecifications
@@ -52,17 +61,39 @@ namespace SIL.Transcelerator
 
 	    public void Activate(string activeProjectName)
 	    {
-	        InvokeOnMainWindowIfNotNull(() => unsMainWindow.Activate());
+            if (unsMainWindow != null)
+	        {
+	            lock (this)
+	            {
+	                InvokeOnUiThread(delegate { unsMainWindow.Activate(); });
+	            }
+	        }
+            else
+            {
+                // Can't lock because the whole start-up sequence takes several seconds and the
+                // whole point of this code is to activate the splash screen so the user can see
+                // it's still starting up. But there is no harm in calling Activate on the splash
+                // screen if we happen to catch it between the time it is closed and the member
+                // variable is set to null, since in that case, the "real" splash scree is closed
+                // and Activate is a no-op. But we do need to use a temp variable because it could
+                // get set to null between the time we check for null and the call to Activate.
+                TxlSplashScreen tempSplashScreen = splashScreen;
+                if (tempSplashScreen != null)
+                    tempSplashScreen.Activate();
+            }
 	    }
 
 	    public void Run(IHost ptHost, string activeProjectName)
 		{
-			// This should never happen, but just in case Host does something wrong...
-			if (InvokeOnMainWindowIfNotNull(() => unsMainWindow.Activate()))
-			{
-				ptHost.WriteLineToLog(this, "Run called more than once!");
-				return;
-			}
+            lock (this)
+            {
+                if (host != null)
+                {
+                    // This should never happen, but just in case Host does something wrong...
+                    ptHost.WriteLineToLog(this, "Run called more than once!");
+                    return;
+                }
+            }
 
 			try
 			{
@@ -82,8 +113,8 @@ namespace SIL.Transcelerator
 					UNSQuestionsDialog formToShow;
 					lock (this)
 					{
-						TxlSplashScreen splashScreen = new TxlSplashScreen();
-						splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+						splashScreen = new TxlSplashScreen();
+					    splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
 						splashScreen.Message = string.Format(
 						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
@@ -135,9 +166,10 @@ namespace SIL.Transcelerator
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
 						    terms => host.LookUpKeyTerm(projectName, terms));
+					    splashScreen = null;
 					}
 					formToShow.ShowDialog();
-					ptHost.WriteLineToLog(this, "Closing " + pluginName);
+                    ptHost.WriteLineToLog(this, "Closing " + pluginName);
 					Environment.Exit(0);
 				});
 				mainUIThread.Name = pluginName;
@@ -154,20 +186,15 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private bool InvokeOnMainWindowIfNotNull(Action action)
+		private void InvokeOnUiThread(Action action)
 		{
-			lock (this)
-			{
-				if (unsMainWindow != null)
-				{
-					if (unsMainWindow.InvokeRequired)
-						unsMainWindow.Invoke(action);
-					else
-						action();
-					return true;
-				}
-			}
-			return false;
+		    lock (this)
+		    {
+		        if (unsMainWindow.InvokeRequired)
+		            unsMainWindow.Invoke(action);
+		        else
+		            action();
+		    }
 		}
 
 		private void InitializeErrorHandling()

@@ -27,7 +27,6 @@ namespace SIL.Transcelerator
 	{
 		#region Data members
 		private delegate void SetStringPropDelegate(string value);
-		private delegate string GetStringPropDelegate();
 
 		private Thread m_thread;
 		private RealSplashScreen m_splashScreen;
@@ -104,6 +103,29 @@ namespace SIL.Transcelerator
 			Debug.Assert(m_splashScreen != null);
 			Message = string.Empty;
 		}
+
+        /// ----------------------------------------------------------------------------------------
+        /// <summary>
+        /// Activates the (real) splash screen
+        /// </summary>
+        /// ----------------------------------------------------------------------------------------
+        public void Activate()
+        {
+            if (m_splashScreen != null)
+            {
+                lock (m_splashScreen.m_Synchronizer)
+                {
+                    try
+                    {
+                        m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.Activate));
+                    }
+                    catch
+                    {
+                        // Something bad happened, but don't die
+                    }
+                }
+            }
+        }
 
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
