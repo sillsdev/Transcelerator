@@ -534,4 +534,13 @@
     <Alternate name="warfare" matchForRefOnly="true"/>
     <Alternate name="death" matchForRefOnly="true"/>
   </KeyTermRule>
+  <KeyTermRule id="heavenly (one; place; things)" rule="Exclude">
+    <Alternate name="heavenly"/>
+  </KeyTermRule>
+  <KeyTermRule id="name; person, people; category of, being of the type that..." rule="Exclude">
+    <Alternate name="name"/>
+    <Alternate name="names"/>
+    <Alternate name="named"/>
+    <Alternate name="called"/>
+  </KeyTermRule>
 </KeyTermRules>

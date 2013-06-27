@@ -28,7 +28,8 @@ namespace SIL.Transcelerator
 	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
 	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
 	[QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.scriptureProjectActive)]
-	public class TxlPlugin : IParatextAddIn
+    [QualificationData(PluginMetaDataKeys.multipleInstances, CreateInstanceRule.forEachActiveProject)]
+	public class TxlPlugin : IParatextAddIn2
 	{
 		public const string pluginName = "Transcelerator";
 		private UNSQuestionsDialog unsMainWindow;
@@ -49,7 +50,12 @@ namespace SIL.Transcelerator
 			get { return ParatextDataFileAccessor.GetDataFileKeySpecifications(); }
 		}
 
-		public void Run(IHost ptHost, string activeProjectName)
+	    public void Activate(string activeProjectName)
+	    {
+	        InvokeOnMainWindowIfNotNull(() => unsMainWindow.Activate());
+	    }
+
+	    public void Run(IHost ptHost, string activeProjectName)
 		{
 			// This should never happen, but just in case Host does something wrong...
 			if (InvokeOnMainWindowIfNotNull(() => unsMainWindow.Activate()))
