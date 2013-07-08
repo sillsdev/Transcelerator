@@ -348,6 +348,13 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Events
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Forms.Form.Shown"/> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data.
+        /// </param>
+        /// ------------------------------------------------------------------------------------
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
@@ -416,7 +423,157 @@ namespace SIL.Transcelerator
 			base.WndProc(ref msg);
 		}
 
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Cut cell contents (Translation column only) - from context menu for cell, not in
+        /// editing mode
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CutToClipboard();
+        }
+
+	    /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Copy cell contents - from context menu for cell, not in editing mode
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopyToClipboard();
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Paste cell contents (Translation column only)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PasteClipboardValue();
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Cuts cell contents (single Translation cell only)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (txtFilterByPart.Focused)
+                txtFilterByPart.Copy();
+            else if (EditingTranslation)
+            {
+                Clipboard.SetDataObject(new DataObject(TextControl.SelectedText));
+                TextControl.SelectedText = string.Empty;
+            }
+            else
+            {
+                CutToClipboard();
+            }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles copying and pasting cell contents (TXL-100)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void mnuCopy_Click(object sender, EventArgs e)
+        {
+            if (txtFilterByPart.Focused)
+                txtFilterByPart.Copy();
+            else if (EditingTranslation)
+            {
+                string text = TextControl.SelectedText;
+                if (text != null)
+                    Clipboard.SetText(text);
+            }
+            else
+            {
+                CopyToClipboard();
+            }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles copying and pasting cell contents (TXL-100)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void mnuPaste_Click(object sender, EventArgs e)
+        {
+            if (txtFilterByPart.Focused)
+                txtFilterByPart.Paste();
+            else if (EditingTranslation)
+            {
+                string text = Clipboard.GetText();
+                if (!string.IsNullOrEmpty(text))
+                    TextControl.SelectedText = text;
+            }
+            else
+            {
+                PasteClipboardValue();
+            }
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Cut is only valid for a single Translation cell. Puts the formatted values that
+        /// represent the contents of the selected cells onto the
+        /// <see cref="T:System.Windows.Forms.Clipboard"/> and clears the existing cell value.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void CutToClipboard()
+        {
+            if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
+                dataGridUns.SelectedCells.Count > 1)
+                return;
+
+            //Copy to clipboard
+            CopyToClipboard();
+
+            //Clear selected cell
+            dataGridUns.SelectedCells[0].Value = string.Empty;
+            m_helper[dataGridUns.CurrentCell.RowIndex].HasUserTranslation = false;
+            SaveNeeded = true;
+            dataGridUns.InvalidateRow(dataGridUns.CurrentCell.RowIndex);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Puts the formatted values that represent the contents of the selected cells onto the
+        /// <see cref="T:System.Windows.Forms.Clipboard"/>.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void CopyToClipboard()
+        {
+            //Copy to clipboard
+            DataObject dataObj = dataGridUns.GetClipboardContent();
+            if (dataObj != null)
+                Clipboard.SetDataObject(dataObj);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Paste is only valid for a single Translation cell. Sets the value of the current
+        /// cell from the text value on the <see cref="T:System.Windows.Forms.Clipboard"/>. To
+        /// prevent pasting garbage, if clipboard contains any line breaks, this does nothing.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void PasteClipboardValue()
+        {
+            if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
+                dataGridUns.SelectedCells.Count > 1)
+                return;
+
+            string clipboardText = Clipboard.GetText();
+            if (!clipboardText.Contains('\n'))
+                dataGridUns.CurrentCell.Value = clipboardText;
+
+            SaveNeeded = true;
+        }
+
+        /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes the data grid when the translations change.
 		/// </summary>
@@ -1486,41 +1643,7 @@ namespace SIL.Transcelerator
 				TextControl.Select(TextControl.TextLength, 0);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles copying and pasting cell contents (TXL-100)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void mnuCopy_Click(object sender, EventArgs e)
-		{
-			if (txtFilterByPart.Focused)
-				txtFilterByPart.Copy();
-			else if (EditingTranslation)
-			{
-				string text = dataGridUns.CurrentCell.Value as string;
-				if (text != null)
-					Clipboard.SetText(text);
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles copying and pasting cell contents (TXL-100)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void mnuPaste_Click(object sender, EventArgs e)
-		{
-			if (txtFilterByPart.Focused)
-				txtFilterByPart.Paste();
-			else if (EditingTranslation)
-			{
-				string text = Clipboard.GetText();
-				if (!string.IsNullOrEmpty(text))
-					m_helper[dataGridUns.CurrentCell.RowIndex].Translation = text; SaveNeeded = true;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
+        /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the aboutTransceleratorToolStripMenuItem control.
 		/// </summary>
