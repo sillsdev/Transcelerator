@@ -74,6 +74,10 @@ namespace SIL.Transcelerator
             this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuExcludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuIncludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
@@ -125,6 +129,7 @@ namespace SIL.Transcelerator
             this.m_lblComments = new System.Windows.Forms.Label();
             this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
             this.m_hSplitter = new System.Windows.Forms.Splitter();
+            this.cutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -259,6 +264,10 @@ namespace SIL.Transcelerator
             // dataGridContextMenu
             // 
             this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cutToolStripMenuItem,
+            this.copyToolStripMenuItem,
+            this.pasteToolStripMenuItem,
+            this.toolStripSeparator7,
             this.mnuExcludeQuestion,
             this.mnuIncludeQuestion,
             this.mnuEditQuestion,
@@ -267,6 +276,29 @@ namespace SIL.Transcelerator
             this.dataGridContextMenu.Name = "dataGridContextMenu";
             resources.ApplyResources(this.dataGridContextMenu, "dataGridContextMenu");
             this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
+            // 
+            // cutToolStripMenuItem
+            // 
+            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+            resources.ApplyResources(this.cutToolStripMenuItem, "cutToolStripMenuItem");
+            this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            resources.ApplyResources(this.copyToolStripMenuItem, "copyToolStripMenuItem");
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // pasteToolStripMenuItem
+            // 
+            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
             // 
             // mnuExcludeQuestion
             // 
@@ -369,6 +401,7 @@ namespace SIL.Transcelerator
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cutToolStripMenuItem1,
             this.mnuCopy,
             this.mnuPaste});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
@@ -647,6 +680,12 @@ namespace SIL.Transcelerator
             this.m_hSplitter.TabStop = false;
             this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
             // 
+            // cutToolStripMenuItem1
+            // 
+            this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
+            resources.ApplyResources(this.cutToolStripMenuItem1, "cutToolStripMenuItem1");
+            this.cutToolStripMenuItem1.Click += new System.EventHandler(this.cutToolStripMenuItem1_Click);
+            // 
             // UNSQuestionsDialog
             // 
             resources.ApplyResources(this, "$this");
@@ -736,5 +775,10 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
         private Splitter m_hSplitter;
+        private ToolStripMenuItem cutToolStripMenuItem;
+        private ToolStripMenuItem copyToolStripMenuItem;
+        private ToolStripMenuItem pasteToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator7;
+        private ToolStripMenuItem cutToolStripMenuItem1;
 	}
 }

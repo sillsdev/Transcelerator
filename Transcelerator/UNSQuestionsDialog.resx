@@ -216,6 +216,36 @@
   <metadata name="dataGridContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>108, 27</value>
   </metadata>
+  <data name="cutToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+X</value>
+  </data>
+  <data name="cutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 22</value>
+  </data>
+  <data name="cutToolStripMenuItem.Text" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="copyToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="copyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 22</value>
+  </data>
+  <data name="copyToolStripMenuItem.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="pasteToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="pasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 22</value>
+  </data>
+  <data name="pasteToolStripMenuItem.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>197, 6</value>
+  </data>
   <data name="mnuExcludeQuestion.Size" type="System.Drawing.Size, System.Drawing">
     <value>200, 22</value>
   </data>
@@ -250,7 +280,7 @@
     <value>Insert Question &amp;Below...</value>
   </data>
   <data name="dataGridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>201, 114</value>
+    <value>201, 186</value>
   </data>
   <data name="&gt;&gt;dataGridContextMenu.Name" xml:space="preserve">
     <value>dataGridContextMenu</value>
@@ -332,6 +362,15 @@
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;File</value>
   </data>
+  <data name="cutToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+X</value>
+  </data>
+  <data name="cutToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="cutToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Cu&amp;t</value>
+  </data>
   <data name="mnuCopy.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Fuchsia</value>
   </data>
@@ -339,7 +378,7 @@
     <value>Ctrl+C</value>
   </data>
   <data name="mnuCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="mnuCopy.Text" xml:space="preserve">
     <value>&amp;Copy</value>
@@ -351,7 +390,7 @@
     <value>Ctrl+V</value>
   </data>
   <data name="mnuPaste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>144, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="mnuPaste.Text" xml:space="preserve">
     <value>&amp;Paste</value>
@@ -506,9 +545,9 @@
   <data name="btnSave.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAPCAYAAADtc08vAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACCSURBVDhPzVLBDcAgCOTXcRzJURiBkRyN9kgw2ioxto+S
-        EA1w5wkQfWEpibpLIo3c6+ggrW8jmLMogiqxo6aUYrVjAo3NgO7O0ClYIHC12wp+TFCltY263VEz/YIn
-        V87hGFcUABgq6ObcyMd0fYG2CAB+TcDMtoUPBbZRQeenuQt2Ap4knyauqYIGAAAAAElFTkSuQmCC
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABtSURBVDhP3ZLBDYAgEAT3ZzmURClXAiVR2hkO1mAMJ6Iv
+        N5mEyO7wEZ8khKQkBbiwhw3a5lUQY/2oyad0cs6O4CY2JMxTAbtt/ivBceFw6jG9YJahoH9txJKghD/Q
+        kqCMXwtExM4XgaUrTwNgB54knyYq8qL+AAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="btnSave.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -541,9 +580,9 @@
   <data name="btnSendScrReferences.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAB9SURBVDhPrVEJDoAwCONP/snX+icUEhZE2qBxCdnRUigT
-        KWvbD61vcWeYc4wQ0Qkj7JFciVkYijDSSODmU1UlInnxGQBs0RapmSTD/hNwJWsTLYbBpAlwlbSyHowP
-        OTkRnd0dKtAlxVveaQcV7Gx96iDP5JVAeGYzmXwQ5Zx0d7TlTUyoZAAAAABJRU5ErkJggg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABzSURBVDhPrYyBDYAwCAS7kzs5rTuhEEBK4WPUS0jp34eR
+        2faDdF1ATuCCjUYOckIs5CJyDiohtyCS6J4Aco6XCpBzPh8QUOnRgTdcZ/m0jEYlbSeG3c7kvxOF7dVr
+        w/+JSnaZrjNVKWZGlQlR5L1zPzDGCXR3tOX+Xq4mAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="btnSendScrReferences.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -561,9 +600,9 @@
   <data name="btnReceiveScrReferences.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAB6SURBVDhPrZIBCsAwCAP90/601+5PDgVLtDXQrYWysotZ
-        tBM5tVREYzPPVmMgCruzcWTpQ6uieIdPmqDCVVufEmDULYPomc3k1CUe9LnuZ1xntWVsaF2k9k/Ni7H/
-        BuZed7gylnKi0NuAVhibTGoxJulYnlgzRBcV9gLBtaL3PLeeNAAAAABJRU5ErkJggg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABwSURBVDhPzY/RDYAwCES7kzs5rTtVaYBwCGdi/PClRMo7
+        Wx2fMa9lpaOSNhOHXS/kvROF9dXTSvZAJbuZtkgVijOjmi2iyH3nfsq2H+0nMues0JTfvsOc8/oAkblU
+        UQdAQG4KtzEHsMDjyw4LgBvjBMG1ovcn6aLiAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="btnReceiveScrReferences.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -7092,6 +7131,30 @@
   <data name="&gt;&gt;m_colDebugInfo.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;cutToolStripMenuItem.Name" xml:space="preserve">
+    <value>cutToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;cutToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;copyToolStripMenuItem.Name" xml:space="preserve">
+    <value>copyToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;copyToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pasteToolStripMenuItem.Name" xml:space="preserve">
+    <value>pasteToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;pasteToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
+    <value>toolStripSeparator7</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuExcludeQuestion.Name" xml:space="preserve">
     <value>mnuExcludeQuestion</value>
   </data>
@@ -7343,6 +7406,12 @@
   </data>
   <data name="&gt;&gt;lblRemainingWork.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cutToolStripMenuItem1.Name" xml:space="preserve">
+    <value>cutToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;cutToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>UNSQuestionsDialog</value>
