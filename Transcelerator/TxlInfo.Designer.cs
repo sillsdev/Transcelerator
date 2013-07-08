@@ -80,7 +80,7 @@ namespace SIL.Transcelerator
             this.m_lblAppVersion.Name = "m_lblAppVersion";
             this.m_lblAppVersion.Size = new System.Drawing.Size(259, 13);
             this.m_lblAppVersion.TabIndex = 19;
-            this.m_lblAppVersion.Text = "Version {0} (alpha)";
+            this.m_lblAppVersion.Text = "Version {0} (beta)";
             this.m_lblAppVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.m_lblAppVersion.UseMnemonic = false;
             // 
