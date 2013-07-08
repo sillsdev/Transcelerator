@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
-<?define Property_ProductVersion = "1.0.4905" ?>
+<?define Property_ProductVersion = "1.0.4926" ?>
 
 <!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
@@ -48,8 +48,17 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
                       Key="SOFTWARE\ScrChecks\1.0\Program_Files_Directory_Ptw7"
                       Type="directory" />
     </Property>
-    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4 or later.">
-      <![CDATA[Installed OR PARATEXT7]]>
+    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4.100.2 or later.">
+        <![CDATA[Installed OR PARATEXT7]]>
+    </Condition>
+        
+    <Property Id="PARATEXT7VERSION">
+        <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT7]">
+          <FileSearch Name="Paratext.exe" MinVersion="7.4.100.3"/>
+        </DirectorySearch>
+    </Property>
+    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4.100.2 or later.">
+      <![CDATA[Installed OR PARATEXT7VERSION]]>
     </Condition>
 
     <!--because of bug, this needs to be 1 -->
