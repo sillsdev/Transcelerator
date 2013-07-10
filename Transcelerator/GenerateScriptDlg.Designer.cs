@@ -218,6 +218,8 @@ namespace SIL.Transcelerator
             // 
             // m_cboEndSection
             // 
+            this.m_cboEndSection.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.m_cboEndSection.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.m_cboEndSection.DropDownHeight = 156;
             this.m_cboEndSection.DropDownWidth = 250;
             this.m_cboEndSection.FormattingEnabled = true;
@@ -228,6 +230,8 @@ namespace SIL.Transcelerator
             // 
             // m_cboStartSection
             // 
+            this.m_cboStartSection.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.m_cboStartSection.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.m_cboStartSection.DropDownHeight = 156;
             this.m_cboStartSection.DropDownWidth = 250;
             this.m_cboStartSection.FormattingEnabled = true;
@@ -245,6 +249,8 @@ namespace SIL.Transcelerator
             // 
             // m_cboSection
             // 
+            this.m_cboSection.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.m_cboSection.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.m_cboSection.DropDownHeight = 156;
             this.m_cboSection.DropDownWidth = 250;
             this.m_cboSection.FormattingEnabled = true;
