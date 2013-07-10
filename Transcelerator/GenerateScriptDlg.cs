@@ -252,6 +252,7 @@ namespace SIL.Transcelerator
 
 		private void UpdateTitleAndFilenameForSingleSection(object sender, EventArgs e)
 		{
+		    UpdateOkButtonEnabledState();
 			if (m_cboSection.SelectedIndex < 0)
 				return;
 			string sRef = m_sectionRefs[m_cboSection.SelectedIndex];
@@ -260,7 +261,7 @@ namespace SIL.Transcelerator
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}
 
-		private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
+	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
 		{
 			if (txt.Tag == null || txt.Text == (string)txt.Tag)
 				txt.Tag = txt.Text = string.Format(fmt, passage);
@@ -348,7 +349,8 @@ namespace SIL.Transcelerator
 				m_cboEndSection.SelectedIndex = m_cboStartSection.SelectedIndex;
 			if (UpdateSectionRangeStartRef())
 				UpdateTitleAndFilenameForSectionRange();
-		}
+            UpdateOkButtonEnabledState();
+        }
 
 		private void m_cboEndSection_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -356,13 +358,15 @@ namespace SIL.Transcelerator
 				m_cboStartSection.SelectedIndex = m_cboEndSection.SelectedIndex;
 			if (UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
+            UpdateOkButtonEnabledState();
 		}
 
 		private void m_rdoSectionRange_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rdoSectionRange.Checked && UpdateSectionRangeStartRef() && UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
-		}
+            UpdateOkButtonEnabledState();
+        }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
@@ -408,6 +412,15 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Private helper methods
+        private void UpdateOkButtonEnabledState()
+        {
+            btnOk.Enabled = true;
+            if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
+                btnOk.Enabled = false;
+            else if (m_rdoSectionRange.Checked && (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0))
+                btnOk.Enabled = false;
+        }
+
 		private bool UpdateSectionRangeStartRef()
 		{
 			if (m_cboStartSection.SelectedIndex < 0)
