@@ -161,8 +161,9 @@ namespace SIL.Transcelerator
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
                             host.GetProjectFont(projectName),
 						    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
-						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX), host.ApplicationName,
-						    new ScrVers(host, TxlCore.englishVersificationName),
+						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX),
+                            () => host.GetCssStylesheet(projectName), host.ApplicationName,
+                            new ScrVers(host, TxlCore.englishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
 						    terms => host.LookUpKeyTerm(projectName, terms));

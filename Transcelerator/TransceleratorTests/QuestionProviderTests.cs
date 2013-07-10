@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
-// <copyright from='2011' to='2012' company='SIL International'>
-//		Copyright (c) 2011, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2011' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -10,7 +10,6 @@
 // 
 // File: QuestionProviderTests.cs
 // ---------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -170,6 +169,59 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("The apostles asked Jesus whether he was soon going to set up his kingdom in a way that everybody could see and cause the people of Israel to have power in that kingdom.",
 				phrase.QuestionInfo.Answers.First());
 		}
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests enumerating overview and detail categories and questions with answers and
+        /// comments.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+        public void GetSectionHeads_InCanonicalOrder()
+        {
+            QuestionSections qs = new QuestionSections();
+            qs.Items = new Section[4];
+            int iS = 0;
+            qs.Items[iS] = MasterQuestionParserTests.CreateSection("ACT 2.6-10", "Acts 2:6-10 Preaching.", 44002006,
+                44002010, 0, 1);
+            Question q = qs.Items[iS].Categories[0].Questions[0];
+            q.Text = "q1";
+
+            iS++;
+            qs.Items[iS] = MasterQuestionParserTests.CreateSection("ACT 2.1-5", "Acts 2:1-5 Stuff.", 44002001,
+                44002005, 0, 1);
+            q = qs.Items[iS].Categories[0].Questions[0];
+            q.Text = "q2";
+
+            iS++;
+            qs.Items[iS] = MasterQuestionParserTests.CreateSection("ACT 1.1-18", "Acts 1:1-18 Jesus Leaves.", 44001001,
+                44001018, 0, 1);
+            q = qs.Items[iS].Categories[0].Questions[0];
+            q.Text = "q3";
+
+            iS++;
+            qs.Items[iS] = MasterQuestionParserTests.CreateSection("MAT 13.1-7", "Matthew 13:1-7 Parable.", 40013001,
+                44013007, 0, 1);
+            q = qs.Items[iS].Categories[0].Questions[0];
+            q.Text = "q4";
+
+            QuestionProvider qp = new QuestionProvider(qs, null);
+
+            Assert.AreEqual(4, qp.SectionHeads.Count);
+            IEnumerable<string> keys = qp.SectionReferences;
+            string key = keys.ElementAt(0);
+            Assert.AreEqual("MAT 13.1-7", key);
+            Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionHeads[key]);
+            key = keys.ElementAt(1);
+            Assert.AreEqual("ACT 1.1-18", key);
+            Assert.AreEqual("Acts 1:1-18 Jesus Leaves.", qp.SectionHeads[key]);
+            key = keys.ElementAt(2);
+            Assert.AreEqual("ACT 2.1-5", key);
+            Assert.AreEqual("Acts 2:1-5 Stuff.", qp.SectionHeads[key]);
+            key = keys.ElementAt(3);
+            Assert.AreEqual("ACT 2.6-10", key);
+            Assert.AreEqual("Acts 2:6-10 Preaching.", qp.SectionHeads[key]);
+        }
 
         ///--------------------------------------------------------------------------------------
         /// <summary>

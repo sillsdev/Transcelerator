@@ -48,12 +48,14 @@ namespace SIL.Transcelerator
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
         private readonly IScrExtractor m_scrExtractor;
-		private readonly string m_appName;
+	    private readonly Func<string> m_getCss;
+	    private readonly string m_appName;
         private readonly IScrVers m_masterVersification;
         private readonly IScrVers m_projectVersification;
 	    private BCVRef m_startRef;
         private BCVRef m_endRef;
-		private IDictionary<string, string> m_sectionHeadText;
+        private IEnumerable<string> m_sectionRefs;
+        private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
         private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
@@ -72,6 +74,7 @@ namespace SIL.Transcelerator
 		private bool m_postponeRefresh;
 		private int m_maximumHeightOfKeyTermsPane;
 		private bool m_loadingBiblicalTermsPane = false;
+
 	    #endregion
 
 		#region Delegates
@@ -219,6 +222,20 @@ namespace SIL.Transcelerator
 				return InTranslationCell && dataGridUns.IsCurrentCellInEditMode;
 			}
 		}
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the list of section references and headings in canonical order.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private IEnumerable<KeyValuePair<string, string>> SectionHeadsInCanonicalOrder
+        {
+            get
+            {
+                return m_sectionRefs.Select(sectionRef =>
+                    new KeyValuePair<string, string>(sectionRef, m_sectionHeadText[sectionRef]));
+            }
+        }
 		#endregion
 
 		#region Constructors
@@ -243,6 +260,7 @@ namespace SIL.Transcelerator
 	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
 	    /// <param name="datafileProxy">helper object to store and retrieve data.</param>
 	    /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
+        /// <param name="getCss">Function to retrieve the project's USFX cascading style sheet</param>
 	    /// <param name="appName">Name of the calling application</param>
 	    /// <param name="englishVersification">The versification typically used in English Bibles</param>
 	    /// <param name="projectVersification">The versification of the external project (to
@@ -256,7 +274,7 @@ namespace SIL.Transcelerator
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
             Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
             Font vernFont, string vernIcuLocale, bool fVernIsRtoL, DataFileAccessor datafileProxy,
-            IScrExtractor scrExtractor, string appName, IScrVers englishVersification,
+            IScrExtractor scrExtractor, Func<string> getCss, string appName, IScrVers englishVersification,
             IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
             Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
             Action<IList<string>> lookupTermDelegate)
@@ -285,6 +303,7 @@ namespace SIL.Transcelerator
 	        m_getTermOccurrences = getTermOccurrences;
 	        m_lookupTermDelegate = lookupTermDelegate;
 	        m_scrExtractor = scrExtractor;
+	        m_getCss = getCss;
 	        m_appName = appName;
             m_masterVersification = englishVersification;
             m_projectVersification = projectVersification;
@@ -947,7 +966,7 @@ namespace SIL.Transcelerator
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
 
-        /// ------------------------------------------------------------------------------------
+	    /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Handles the Click event of the mnuGenerate control.
         /// </summary>
@@ -955,7 +974,7 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, m_sectionHeadText.AsEnumerable()))
+                defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder))
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -1065,16 +1084,33 @@ namespace SIL.Transcelerator
                             {
                                 if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
                                 {
-                                    sw.WriteLine("<p class=\"scripture\">");
                                     int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
                                     int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
                                     if (m_scrExtractor == null)
+                                    {
+                                        sw.WriteLine("<p class=\"scripture\">");
                                         sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+                                        sw.WriteLine("</p>");
+                                    }
                                     else
                                     {
                                         try
                                         {
-                                            sw.Write(m_scrExtractor.Extract(startRef, endRef));
+                                            StringBuilder extractedScr = new StringBuilder(m_scrExtractor.Extract(startRef, endRef));
+                                            // ENHANCE: Rather than getting the data as USFX and doing these somewhat-kludgey cleanup
+                                            // steps, we could implement an HTML extractor in Paratext and let it do the transformation
+                                            // using its XSLT scripts.
+                                            const string usfxHead = "<usx version=\"2.0\">";
+                                            const string usfxTail = "</usx>";
+                                            if (extractedScr.ToString(0, usfxHead.Length) == usfxHead)
+                                                extractedScr.Remove(0, usfxHead.Length);
+                                            if (extractedScr.ToString(extractedScr.Length - usfxTail.Length, usfxTail.Length) == usfxTail)
+                                                extractedScr.Remove(extractedScr.Length - usfxTail.Length, usfxTail.Length);
+                                            extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
+                                            extractedScr.Replace("/para", "/DIV");
+                                            extractedScr.Replace(" />", "></DIV>");
+
+                                            sw.Write(extractedScr.ToString());
                                         }
                                         catch (Exception ex)
                                         {
@@ -1084,7 +1120,6 @@ namespace SIL.Transcelerator
 #endif
                                         }
                                     }
-                                    sw.WriteLine("</p>");
                                 }
                                 prevQuestionRef = phrase.Reference;
                             }
@@ -1156,6 +1191,9 @@ namespace SIL.Transcelerator
 			sw.WriteLine(".answer {color:" + englishAnswerClr.Name + ";}");
 			sw.WriteLine(".comment {color:" + commentClr.Name + ";}");
 			sw.WriteLine(".extras {margin-bottom:" + cBlankLines + "em;}");
+
+            if (m_getCss != null)
+                sw.WriteLine(m_getCss());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1740,6 +1778,7 @@ namespace SIL.Transcelerator
 	        QuestionProvider qp = new QuestionProvider(parsedQuestions);
             m_helper = new PhraseTranslationHelper(qp);
 		    m_helper.FileProxy = m_fileAccessor;
+	        m_sectionRefs = qp.SectionReferences;
 			m_sectionHeadText = qp.SectionHeads;
 			m_availableBookIds = qp.AvailableBookIds;
 		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);

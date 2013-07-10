@@ -34,9 +34,11 @@ namespace SIL.Transcelerator
         /// <summary>A double lookup table of all parts in all phrases managed by this class.
         /// For improved performance, outer lookup is by wordcount.</summary>
         private readonly SortedDictionary<int, Dictionary<Word, List<Part>>> m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
-		private IDictionary<string, string> m_sectionHeads;
+        private SortedDictionary<int, string> m_sectionRefs;
+        private IDictionary<string, string> m_sectionHeads;
 		private int[] m_availableBookIds;
-        #endregion
+
+	    #endregion
 
         #region Constructors
         /// ------------------------------------------------------------------------------------
@@ -69,6 +71,25 @@ namespace SIL.Transcelerator
         #endregion
 
         #region Public Properties
+        /// --------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets a sorted list of all section references (as strings), that can be used as
+        /// keys to the SectionHeads dictionary.
+        /// </summary>
+        /// --------------------------------------------------------------------------------
+        public IEnumerable<string> SectionReferences
+        {
+            get
+            {
+                if (m_sectionRefs == null)
+                {
+                    m_sectionRefs = new SortedDictionary<int, string>(
+                        m_sections.Items.ToDictionary(s => s.StartRef, s => s.ScriptureReference));
+                }
+                return m_sectionRefs.Values;
+            }
+        }
+
         /// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a dictionary that correlates (textual) Scripture references to
@@ -110,7 +131,6 @@ namespace SIL.Transcelerator
 	    {
             get { return m_partsTable.Values.SelectMany(thing => thing.Values.SelectMany(parts => parts)); }
 	    }
-
 	    #endregion
 
 		#region Private helper methods
