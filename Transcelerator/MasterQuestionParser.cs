@@ -42,7 +42,10 @@ namespace SIL.Transcelerator
 		/// <summary>A double lookup table of all parts in all phrases managed by this class.
 		/// For improved performance, outer lookup is by wordcount.</summary>
         private readonly SortedDictionary<int, Dictionary<Word, List<ParsedPart>>> m_partsTable;
-		#endregion
+
+	    private IEnumerable<Word> m_questionWords;
+
+	    #endregion
 
         #region SubPhraseMatch class
         private class SubPhraseMatch
@@ -64,11 +67,12 @@ namespace SIL.Transcelerator
         /// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(string filename, IEnumerable<IKeyTerm> keyTerms,
-            KeyTermRules keyTermRules, IEnumerable<PhraseCustomization> customizations,
+        public MasterQuestionParser(string filename, IEnumerable<Word> questionWords,
+            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
-            this(XmlSerializationHelper.DeserializeFromFile<QuestionSections>(filename), keyTerms,
-            keyTermRules, customizations, phraseSubstitutions)
+            this(XmlSerializationHelper.DeserializeFromFile<QuestionSections>(filename),
+            questionWords, keyTerms, keyTermRules, customizations, phraseSubstitutions)
         {
         }
         
@@ -77,11 +81,13 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(QuestionSections sections, IEnumerable<IKeyTerm> keyTerms,
-            KeyTermRules keyTermRules, IEnumerable<PhraseCustomization> customizations,
+        public MasterQuestionParser(QuestionSections sections, IEnumerable<Word> questionWords,
+            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
             m_sections = sections;
+            m_questionWords = questionWords;
             m_customizations = customizations;
             if (keyTerms != null)
             {
@@ -110,7 +116,8 @@ namespace SIL.Transcelerator
 	        {
 	            if (question.IsParsable)
 	            {
-	                PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions, question, GetOrCreatePart);
+	                PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
+                        m_questionWords, question, GetOrCreatePart);
 	                foreach (ParsedPart part in parser.Parse())
 	                    question.ParsedParts.Add(part);
 	            }
@@ -156,7 +163,7 @@ namespace SIL.Transcelerator
 	                        {
 	                            ParsedPart followingPart =
 	                                GetOrCreatePart(part.GetSubWords(match.StartIndex + match.Part.Words.Count),
-	                                                owningPhraseOfPart);
+	                                owningPhraseOfPart);
 	                            owningPhraseOfPart.ParsedParts.Insert(iPart, followingPart);
 	                        }
 	                        partsToDelete.Add(part);
@@ -391,7 +398,6 @@ namespace SIL.Transcelerator
 		/// Finds the longest phrase that is a sub-phrase of the specified part.
 		/// </summary>
 		/// <param name="part">The part.</param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		private SubPhraseMatch FindSubPhraseMatch(ParsedPart part)
 		{

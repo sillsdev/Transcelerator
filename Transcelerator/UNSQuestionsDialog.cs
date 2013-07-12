@@ -1737,10 +1737,13 @@ namespace SIL.Transcelerator
             if (!finfoKtRules.Exists)
                 MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
 
+	        FileInfo finfoTxlDll = new FileInfo(Assembly.GetExecutingAssembly().Location);
+
             Exception e;
 	        ParsedQuestions parsedQuestions;
 	        if (finfoParsedQuestions.Exists &&
                 finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+                finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
                 (!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
@@ -1769,8 +1772,9 @@ namespace SIL.Transcelerator
 
 	            LoadPhraseSubstitutionsIfNeeded();
 
-                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename, m_getKeyTerms(), rules,
-	                customizations, m_phraseSubstitutions);
+                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename,
+                    new List<Word>(new Word[] { "who", "what", "when", "why", "how", "where", "which" }), // TODO: Don't hardcode this -- needs to be localizable when non-English lists are supported
+                    m_getKeyTerms(), rules, customizations, m_phraseSubstitutions);
 	            parsedQuestions = parser.Result;
 	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
 	        }
