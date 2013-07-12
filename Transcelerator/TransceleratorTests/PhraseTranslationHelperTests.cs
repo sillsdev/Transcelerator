@@ -13,9 +13,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -133,8 +135,12 @@ namespace SIL.Transcelerator
         {
             if (bestRendering != null)
             {
-                m_dummyKtRenderings[underlyingTermId] = (otherRenderings == null) ? new List<string>() : new List<string>(otherRenderings);
-                m_dummyKtRenderings[underlyingTermId].Insert(0, bestRendering);
+                List<string> listOfRenderings;
+                if (!m_dummyKtRenderings.TryGetValue(underlyingTermId, out listOfRenderings))
+                    m_dummyKtRenderings[underlyingTermId] = listOfRenderings = new List<string>();
+                if (otherRenderings != null)
+                    listOfRenderings.AddRange(otherRenderings.Where(r => !listOfRenderings.Contains(r)));
+                listOfRenderings.Insert(0, bestRendering);
             }
 
             IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
@@ -173,14 +179,14 @@ namespace SIL.Transcelerator
 		    var cat = m_sections.Items[0].Categories[0];
 
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
 		    AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-		        "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+		        "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
 		    var qp = new QuestionProvider(GetParsedQuestions());
@@ -415,14 +421,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -460,14 +466,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, false, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, true, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, false, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, false, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, false, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, true, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -503,14 +509,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
-                "this would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 2 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 2 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 2 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -573,14 +579,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -607,14 +613,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -650,14 +656,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, false, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, false, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, false, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, true, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, true, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, false, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -694,14 +700,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -734,14 +740,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, true, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, true, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, false, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, false, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, true, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, false, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -781,14 +787,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "kt:paul", "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -820,14 +826,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "paul" /* 1 */, "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is have radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:have", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:have", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -858,14 +864,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1,
-                "what would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "what would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "paul" /* 1 */, "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is have radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:have", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:have", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -896,14 +902,14 @@ namespace SIL.Transcelerator
 
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
-                "this would" /* 1 */, "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+                "this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
             AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-                "what is" /* 3 */, "kt:paul", "asking" /* 1 */, "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+                "what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
             AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
             AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-                "is it okay for" /* 1 */, "paul" /* 1 */, "me to" /* 3 */, "talk" /* 1 */, "with respect to" /* 3 */, "kt:god", "today" /* 1 */);
+                "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-                "that dog" /* 4 */, "wishes this" /* 1 */, "kt:paul", "and" /* 1 */, "what is" /* 3 */, "kt:say", "radish" /* 1 */);
+                "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
             var qp = new QuestionProvider(GetParsedQuestions());
@@ -922,1083 +928,1211 @@ namespace SIL.Transcelerator
         #endregion
 
         #region Translation tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation to null for a phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetNewTranslation_Null()
-        //{
-        //    TranslatablePhrase phrase = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase}, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    phrase.Translation = null;
-
-        //    Assert.AreEqual(0, phrase.Translation.Length);
-        //    Assert.IsFalse(phrase.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase when that whole phrase matches part of
-        ///// another phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetNewTranslation_AutoAcceptTranslationForAllIdenticalPhrases()
-        //{
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Where was the woman?", "A", 1, 1), 1, 0);
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase(new TestQ("Who was the man?", "B", 2, 2), 1, 0);
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase(new TestQ("Where was the woman?", "C", 3, 3), 1, 0);
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
-        //    phrase2.Translation = "\u00BFDo\u0301nde estaba la mujer?";
-
-        //    Assert.AreEqual(phrase1.Translation, phrase3.Translation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.AreEqual(phrase2.Translation, phrase4.Translation);
-        //    Assert.IsTrue(phrase4.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase when that whole phrase matches part of
-        ///// another phrase. TXL-108
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetNewTranslation_AcceptTranslationConsistingOnlyOfInitialAndFinalPunctuation()
-        //{
-        //    AddMockedKeyTerm("Paul", null);
-        //    AddMockedKeyTerm("Judas", null);
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was Paul talking to?", "A", 1, 1), 1, 0);
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Who was Judas kissing?", "A", 1, 1), 1, 0);
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase(new TestQ("Why was Judas talking to Paul?", "B", 2, 2), 1, 0);
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    phrase1.Translation = "\u00BFCon quie\u0301n estaba hablando Pablo?";
-        //    phrase2.HasUserTranslation = true;
-
-        //    Assert.AreEqual("\u00BF?", phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.AreEqual(phrase2.Translation, phrase3.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase when that whole phrase matches part of
-        ///// another phrase, even if it has an untranslated key term.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetNewTranslation_AutoAcceptTranslationForAllIdenticalPhrases_WithUntranslatedKeyTerm()
-        //{
-        //    AddMockedKeyTerm("man", null);
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase(new TestQ("Who was the man?", "A", 1, 1), 1, 0);
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase(new TestQ("Who was the man?", "B", 2, 2), 1, 0);
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
-
-        //    Assert.AreEqual(phrase1.Translation, phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase when that whole phrase matches part of
-        ///// another phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetNewTranslation_WholePhraseMatchesPartOfAnotherPhrase()
-        //{
-        //    TranslatablePhrase shortPhrase = new TranslatablePhrase("Who was the man?");
-        //    TranslatablePhrase longPhrase = new TranslatablePhrase("Who was the man with the jar?");
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
-        //    Assert.AreEqual(2, longPhrase.TranslatableParts.Count());
-
-        //    string partTrans = "Quie\u0301n era el hombre";
-        //    shortPhrase.Translation = partTrans + "?";
-
-        //    Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), shortPhrase.Translation);
-        //    Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
-        //    Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), longPhrase.Translation);
-        //    Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
-        //    Assert.AreEqual(0, longPhrase[1].Translation.Length);
-        //    Assert.IsTrue(shortPhrase.HasUserTranslation);
-        //    Assert.IsFalse(longPhrase.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase when that whole phrase matches part of
-        ///// another phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_WholePhraseMatchesPartOfAnotherPhrase()
-        //{
-        //    TranslatablePhrase shortPhrase = new TranslatablePhrase("Who was the man?");
-        //    TranslatablePhrase longPhrase = new TranslatablePhrase("Who was the man with the jar?");
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        shortPhrase, longPhrase }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
-        //    Assert.AreEqual(2, longPhrase.TranslatableParts.Count());
-
-        //    shortPhrase.Translation = "Quiem fue el hambre?";
-        //    string partTrans = "Quie\u0301n era el hombre";
-        //    string trans = "\u00BF" + partTrans + "?";
-        //    shortPhrase.Translation = trans;
-
-        //    Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), shortPhrase.Translation);
-        //    Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
-        //    Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), longPhrase.Translation);
-        //    Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
-        //    Assert.AreEqual(0, longPhrase[1].Translation.Length);
-        //    Assert.IsTrue(shortPhrase.HasUserTranslation);
-        //    Assert.IsFalse(longPhrase.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for two phrases that have a common part and verify
-        ///// that a third phrase that has that part shows the translation of the translated part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_GuessAtPhraseTranslationBasedOnTriangulation()
-        //{
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("lion");
-        //    AddMockedKeyTerm("jar");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man in the lion's den?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Who was the man with the jar?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man Jesus healed?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-
-        //    string transPart = "Quie\u0301n era el hombre";
-        //    string transCommon = "\u00BF" + transPart;
-        //    phrase1.Translation = transCommon + " en la fosa de leones?";
-        //    phrase2.Translation = transCommon + " con el jarro?";
-
-        //    Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
-        //    Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
-        //    Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
-        //    Assert.AreEqual(transPart.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsFalse(phrase3.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for two phrases that have a common part and verify
-        ///// that a third phrase that has that part shows the translation of the translated part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_FindKeyTermRenderingWhenKtHasMultiplesTranslations()
-        //{
-        //    AddMockedKeyTerm("arrow", "flecha");
-        //    AddMockedKeyTerm("arrow", "dardo");
-        //    AddMockedKeyTerm("arrow", "dardos");
-        //    AddMockedKeyTerm("lion", "leo\u0301n");
-        //    AddMockedKeyTerm("boat", "nave");
-        //    AddMockedKeyTerm("boat", "barco");
-        //    AddMockedKeyTerm("boat", "barca");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("I shot the lion with the arrow.");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Who put the lion in the boat?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Does the boat belong to the boat?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("I shot the boat with the arrow.");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("Who put the arrow in the boat?");
-        //    TranslatablePhrase phrase6 = new TranslatablePhrase("Who put the arrow in the lion?");
-        //    TranslatablePhrase phrase7 = new TranslatablePhrase("I shot the arrow with the lion.");
-        //    TranslatablePhrase phrase8 = new TranslatablePhrase("Does the arrow belong to the lion?");
-
-        //    PhraseTranslationHelper helper = new PhraseTranslationHelper(
-        //        new[] { phrase1, phrase2, phrase3, phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
-
-        //    foreach (TranslatablePhrase phrase in helper.Phrases)
-        //    {
-        //        Assert.AreEqual(4, phrase.GetParts().Count(), "Wrong number of parts for phrase: " + phrase.OriginalPhrase);
-        //        Assert.AreEqual(2, phrase.TranslatableParts.Count(), "Wrong number of translatable parts for phrase: " + phrase.OriginalPhrase);
-        //    }
-
-        //    phrase1.Translation = "Yo le pegue\u0301 un tiro al noil con un dardo.";
-        //    Assert.AreEqual("Yo le pegue\u0301 un tiro al nave con un flecha.".Normalize(NormalizationForm.FormC),
-        //        phrase4.Translation);
-        //    Assert.AreEqual("Yo le pegue\u0301 un tiro al flecha con un leo\u0301n.".Normalize(NormalizationForm.FormC),
-        //        phrase7.Translation);
-
-        //    phrase2.Translation = "\u00BFQuie\u0301n puso el leo\u0301n en la barca?";
-        //    Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la nave?".Normalize(NormalizationForm.FormC),
-        //        phrase5.Translation);
-        //    Assert.AreEqual("\u00BFQuie\u0301n puso el flecha en la leo\u0301n?".Normalize(NormalizationForm.FormC),
-        //        phrase6.Translation);
-
-        //    phrase3.Translation = "\u00BFEl taob le pertenece al barco?";
-        //    // This is a bizarre special case where the original question has the same key term twice and
-        //    // the user has translated it differently. Internal details of the logic (specifically, it finds
-        //    // the longer rendering first) dictate the order in which the key terms are considered to have
-        //    // been found. For the purposes of this test case, we don't care in which order the terms of the
-        //    // untranslated question get substituted.
-        //    Assert.IsTrue("\u00BFEl leo\u0301n le pertenece al flecha?".Normalize(NormalizationForm.FormC) == phrase8.Translation ||
-        //        "\u00BFEl flecha le pertenece al leo\u0301n?".Normalize(NormalizationForm.FormC) == phrase8.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsFalse(phrase4.HasUserTranslation);
-        //    Assert.IsFalse(phrase5.HasUserTranslation);
-        //    Assert.IsFalse(phrase6.HasUserTranslation);
-        //    Assert.IsFalse(phrase7.HasUserTranslation);
-        //    Assert.IsFalse(phrase8.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for one phrase and then repeatedly accepting and
-        ///// un-accepting the generated translation for the other phrase that differs only by
-        ///// key terms. (TXL-51)
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_PreventAddedSpacesWhenAcceptingGeneratedTranslation()
-        //{
-        //    AddMockedKeyTerm("Jesus", "Jesu\u0301s");
-        //    AddMockedKeyTerm("Phillip", "Felipe");
-        //    AddMockedKeyTerm("Matthew", "Mateo");
-
-        //    TranslatablePhrase phrase0 = new TranslatablePhrase("What asked Jesus Matthew?");
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What asked Jesus Phillip?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What asked Phillip Matthew?");
-
-        //    PhraseTranslationHelper helper = new PhraseTranslationHelper(
-        //        new[] { phrase0, phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
-
-
-        //    phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Mateo?";
-        //    phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Felipe?";
-        //    string expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC);
-        //    Assert.AreEqual(expectedTranslation,phrase2.Translation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-
-        //    phrase2.HasUserTranslation = true;
-        //    Assert.AreEqual(expectedTranslation, phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-
-        //    expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC);
-        //    phrase2.HasUserTranslation = false;
-        //    Assert.AreEqual(expectedTranslation, phrase2.Translation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-
-        //    phrase2.HasUserTranslation = true;
-        //    Assert.AreEqual(expectedTranslation, phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that unconfirming a user translation will go back to a template-based
-        ///// translation if one is available. Specifically, it will revert to the template of the
-        ///// first translated question it finds.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_ClearingUserTranslationFlagRestoresTemplateBasedTranslation()
-        //{
-        //    AddMockedKeyTerm("Jesus", "Jesu\u0301s");
-        //    AddMockedKeyTerm("Phillip", "Felipe");
-        //    AddMockedKeyTerm("Matthew", "Mateo");
-
-        //    TranslatablePhrase phrase0 = new TranslatablePhrase("What asked Jesus Matthew?");
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What asked Jesus Phillip?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What asked Phillip Matthew?");
-
-        //    PhraseTranslationHelper helper = new PhraseTranslationHelper(
-        //        new[] { phrase0, phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(helper, "m_justGettingStarted", false);
-
-
-        //    phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Mateo?";
-        //    phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Felipe?";
-        //    Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
-        //        phrase2.Translation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-
-        //    phrase2.HasUserTranslation = true;
-        //    Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
-        //        phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-
-        //    phrase2.HasUserTranslation = false;
-        //    Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
-        //        phrase2.Translation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-
-        //    phrase2.HasUserTranslation = true;
-        //    Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
-        //        phrase2.Translation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for two phrases that have a common part and verify
-        ///// that a third phrase that has that part shows the translation of the translated part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_GuessAtPhraseTranslationBasedOnTriangulation()
-        //{
-        //    AddMockedKeyTerm("Jesus");
-        //    AddMockedKeyTerm("lion");
-        //    AddMockedKeyTerm("jar");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man in the lions' den?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Who was the man with the jar?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Who was the man Jesus healed?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-
-        //    string partTrans = "Quie\u0301n era el hombre";
-        //    string transCommon = "\u00BF" + partTrans;
-        //    phrase1.Translation = "Quien fue lo hambre en la fosa de leones?";
-        //    phrase2.Translation = transCommon + " con el jarro?";
-        //    Assert.AreEqual("\u00BFmbre JESUS?", phrase3.Translation);
-        //    Assert.AreEqual("mbre", phrase3[0].Translation);
-
-        //    phrase1.Translation = transCommon + " en la fosa de leones?";
-
-        //    Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
-        //    Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
-        //    Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
-        //    Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsFalse(phrase3.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase with only one translatable part when
-        ///// another phrase differs only by a key term.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_GuessAtOnePartPhraseThatDiffersBySingleKeyTerm()
-        //{
-        //    AddMockedKeyTerm("Timothy", "Timoteo");
-        //    AddMockedKeyTerm("Euticus", "Eutico");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Who was Timothy?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Who was Euticus?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(1, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase1.GetParts().Count());
-        //    Assert.AreEqual(1, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.GetParts().Count());
-
-        //    const string frame = "\u00BFQuie\u0301n era {0}?";
-        //    phrase1.Translation = string.Format(frame, "Timoteo");
-
-        //    Assert.AreEqual(string.Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
-        //    Assert.AreEqual(string.Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for two phrases that have a common part and verify
-        ///// that a third phrase that has that part shows the translation of the translated part.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_GuessAtTwoPartPhraseThatDiffersBySingleKeyTerm()
-        //{
-        //    AddMockedKeyTerm("Jacob", "Jacobo");
-        //    AddMockedKeyTerm("Matthew", "Mateo");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Was Jacob one of the disciples?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Was Matthew one of the disciples?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase1.GetParts().Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.GetParts().Count());
-
-        //    const string frame = "\u00BFFue {0} uno de los discipulos?";
-        //    phrase1.Translation = string.Format(frame, "Jacobo");
-
-        //    Assert.AreEqual(string.Format(frame, "Jacobo"), phrase1.Translation);
-        //    Assert.AreEqual(string.Format(frame, "Mateo"), phrase2.Translation);
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for multiple phrases. Possible part translations
-        ///// should be assigned to parts according to length and numbers of occurrences, but no
-        ///// portion of a translation should be used as the translation for two parts of the same
-        ///// owning phrase
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_PreventTranslationFromBeingUsedForMultipleParts()
-        //{
-        //    AddMockedKeyTerm("Jacob", "Jacob");
-        //    AddMockedKeyTerm("John", "Juan");
-        //    AddMockedKeyTerm("Jesus", "Jesu\u0301s");
-        //    AddMockedKeyTerm("Mary", "Mari\u0301a");
-        //    AddMockedKeyTerm("Moses", "Moise\u0301s");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("So what did Jacob do?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("So what did Jesus do?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("What did Jacob do?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("What did Moses ask?");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("So what did John ask?");
-        //    TranslatablePhrase phrase6 = new TranslatablePhrase("So what did Mary want?");
-        //    TranslatablePhrase phrase7 = new TranslatablePhrase("What did Moses do?");
-        //    TranslatablePhrase phrase8 = new TranslatablePhrase("Did Moses ask, \"What did Jacob do?\"");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3,
-        //        phrase4, phrase5, phrase6, phrase7, phrase8 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase1.GetParts().Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.GetParts().Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.GetParts().Count());
-        //    Assert.AreEqual(2, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase4.GetParts().Count());
-        //    Assert.AreEqual(2, phrase5.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase5.GetParts().Count());
-        //    Assert.AreEqual(2, phrase6.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase6.GetParts().Count());
-        //    Assert.AreEqual(2, phrase7.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase7.GetParts().Count());
-        //    Assert.AreEqual(4, phrase8.TranslatableParts.Count());
-        //    Assert.AreEqual(6, phrase8.GetParts().Count());
-
-        //    phrase1.Translation = "\u00BFEntonces que\u0301 hizo Jacob?";
-        //    phrase2.Translation = "\u00BFEntonces que\u0301 hizo Jesu\u0301s?";
-        //    phrase3.Translation = "\u00BFQue\u0301 hizo Jacob?";
-        //    phrase4.Translation = "\u00BFQue\u0301 pregunto\u0301 Moise\u0301s?";
-        //    phrase5.Translation = "\u00BFEntonces que\u0301 pregunto\u0301 Juan?";
-
-        //    Assert.AreEqual("\u00BFEntonces que\u0301 Mari\u0301a?".Normalize(NormalizationForm.FormC), phrase6.Translation);
-        //    Assert.AreEqual("\u00BFQue\u0301 hizo Moise\u0301s?".Normalize(NormalizationForm.FormC), phrase7.Translation);
-        //    Assert.AreEqual("Moise\u0301s pregunto\u0301 Que\u0301 Jacob hizo".Normalize(NormalizationForm.FormC), phrase8.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for multiple phrases. Possible part translations
-        ///// should be assigned to parts according to length and numbers of occurrences, but no
-        ///// portion of a translation should be used as the translation for two parts of the same
-        ///// owning phrase.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_UseStatsAndConfidenceToDeterminePartTranslations()
-        //{
-        //    AddMockedKeyTerm("ask");
-        //    AddMockedKeyTerm("give");
-        //    AddMockedKeyTerm("want");
-        //    AddMockedKeyTerm("whatever");
-        //    AddMockedKeyTerm("thing");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("ABC ask DEF");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("ABC give XYZ");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("XYZ want ABC whatever EFG");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("EFG thing ABC");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-        //        phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase1.GetParts().Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.GetParts().Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(5, phrase3.GetParts().Count());
-        //    Assert.AreEqual(2, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase4.GetParts().Count());
-
-        //    phrase1.Translation = "def ASK abc";
-        //    phrase2.Translation = "abc xyz GIVE";
-        //    phrase3.Translation = "WANT xyz abc WHATEVER efg";
-
-        //    Assert.AreEqual("efg THING abc", phrase4.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that the code to determine the best translation for a part of a phrase will
-        ///// not take a substring common to all phrases if it would mean selecting less than a
-        ///// whole word instead of a statistically viable substring that consists of whole
-        ///// words.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_UseStatisticalBestPartTranslations()
-        //{
-        //    AddMockedKeyTerm("Isaac", "Isaac");
-        //    AddMockedKeyTerm("Paul", "Pablo");
-
-        //    TranslatablePhrase phraseBreakerA = new TranslatablePhrase("Now what?");
-        //    TranslatablePhrase phraseBreakerB = new TranslatablePhrase("What did Isaac say?");
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("So now what did those two brothers do?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("So what did they do about the problem?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("So what did he do?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("So now what was Isaac complaining about?");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("So what did the Apostle Paul say about that?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phraseBreakerA, phraseBreakerB,
-        //        phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase1.GetParts().Count());
-        //    Assert.AreEqual(3, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.GetParts().Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.GetParts().Count());
-        //    Assert.AreEqual(4, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(5, phrase4.GetParts().Count());
-        //    Assert.AreEqual(4, phrase5.TranslatableParts.Count());
-        //    Assert.AreEqual(5, phrase5.GetParts().Count());
-
-        //    phrase1.Translation = "\u00BFEntonces ahora que\u0301 hicieron esos dos hermanos?";
-        //    phrase2.Translation = "\u00BFEntonces que\u0301 hicieron acerca del problema?";
-        //    phrase3.Translation = "\u00BFEntonces que\u0301 hizo?";
-        //    phrase5.Translation = "\u00BFEntonces que\u0301 dijo Pablo acerca de eso?";
-
-        //    Assert.AreEqual("\u00BFEntonces Isaac?", phrase4.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that the code to determine the best translation for a part of a phrase will
-        ///// not take a substring common to all phrases if it would mean selecting less than a
-        ///// whole word instead of a statistically viable substring that consists of whole
-        ///// words.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_UseStatisticalBestPartTranslationsRatherThanCommonPartialWord()
-        //{
-        //    AddMockedKeyTerm("Isaac", "Isaac");
-        //    AddMockedKeyTerm("Paul", "Pablo");
-
-        //    TranslatablePhrase phraseBreakerA = new TranslatablePhrase("Now what?");
-        //    TranslatablePhrase phraseBreakerB = new TranslatablePhrase("What did Isaac say?");
-        //    TranslatablePhrase phraseBreakerC = new TranslatablePhrase("What could Isaac say?");
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("So now what did those two brothers do?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("So what could they do about the problem?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("So what did he do?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("So now what was Isaac complaining about?");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("So what did the Apostle Paul say about that?");
-        //    TranslatablePhrase phrase6 = new TranslatablePhrase("Why did they treat the Apostle Paul so?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phraseBreakerA, phraseBreakerB, phraseBreakerC,
-        //        phrase1, phrase2, phrase3, phrase4, phrase5, phrase6 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase1.GetParts().Count());
-        //    Assert.AreEqual(3, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.GetParts().Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.GetParts().Count());
-        //    Assert.AreEqual(4, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(5, phrase4.GetParts().Count());
-        //    Assert.AreEqual(4, phrase5.TranslatableParts.Count());
-        //    Assert.AreEqual(5, phrase5.GetParts().Count());
-        //    Assert.AreEqual(2, phrase6.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase6.GetParts().Count());
-
-        //    phrase1.Translation = "Entonces AB Zuxelopitmyfor CD EF GH";
-        //    phrase2.Translation = "Entonces Vuxelopitmyfor IJ KL MN OP QR";
-        //    phrase3.Translation = "Entonces Wuxelopitmyfor ST";
-        //    phrase5.Translation = "Entonces Xuxelopitmyfor dijo Pablo UV WX YZ";
-        //    phrase6.Translation = "BG LP Yuxelopitmyfor DW MR Pablo";
-
-        //    Assert.AreEqual("Entonces Isaac", phrase4.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a group of phrases such that the only common
-        ///// character for a part they have in common is a punctuation character.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SetTranslation_DoNotTreatNormalLeadingPuncAsOpeningQuestionMark()
-        //{
-        //    AddMockedKeyTerm("Isaiah", "Isai\u0301as");
-        //    AddMockedKeyTerm("Paul", "Pablo");
-        //    AddMockedKeyTerm("Silas", "Silas");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did Paul and Silas do in jail?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Were Isaiah and Paul prophets?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2 },
-        //        m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.TranslatableParts.Count());
-
-        //    phrase1.Translation = "*\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
-        //    Assert.AreEqual("Isai\u0301as Pablo?".Normalize(NormalizationForm.FormC), phrase2.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a group of phrases such that the only common
-        ///// character for a part they have in common is a punctuation character.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_PreventPartTranslationFromBeingSetToPunctuation()
-        //{
-        //    AddMockedKeyTerm("Isaiah", "Isai\u0301as");
-        //    AddMockedKeyTerm("Paul", "Pablo");
-        //    AddMockedKeyTerm("Silas", "Silas");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did Paul and Silas do in jail?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Were Isaiah and Paul prophets?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Did Paul and Silas run away?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("And what did Paul do next?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-        //        phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase4.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
-        //    phrase2.Translation = "\u00BFEran profetas Pablo e Isai\u0301as?";
-        //    phrase3.Translation = "\u00BFSe corrieron Pablo y Silas?";
-        //    Assert.AreEqual("\u00BFy Pablo?", phrase4.Translation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase that has parts that are also in another
-        ///// phrase that does not have a user translation but does have parts that do have a
-        ///// translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_PreventTrashingPartTranslationsWhenReCalculating()
-        //{
-        //    AddMockedKeyTerm("Mary", "Mari\u0301a");
-        //    AddMockedKeyTerm("Jesus");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("When?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Where did Mary find Jesus?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Where did Jesus find a rock?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("Where did Mary eat?");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("When Mary went to the tomb, where did Jesus meet her?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-        //        phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(1, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(4, phrase5.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFCua\u0301ndo?";
-        //    phrase2.Translation = "\u00BFDo\u0301nde encontro\u0301 Mari\u0301a a JESUS?";
-        //    phrase3.Translation = "\u00BFDo\u0301nde encontro\u0301 JESUS una piedra?";
-        //    phrase4.Translation = "\u00BFDo\u0301nde comio\u0301 Mari\u0301a?";
-        //    Assert.AreEqual("\u00BFCua\u0301ndo Mari\u0301a Do\u0301nde JESUS?".Normalize(NormalizationForm.FormC), phrase5.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsFalse(phrase5.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a group of phrases that have a common part such
-        ///// that phrases A & B have a common substring that is longer than the substring that
-        ///// all three share in common.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_FallbackToSmallerCommonSubstring()
-        //{
-        //    AddMockedKeyTerm("the squirrel", "la ardilla");
-        //    AddMockedKeyTerm("donkey", "asno");
-        //    AddMockedKeyTerm("Balaam", "Balaam");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("When did the donkey and the squirrel fight?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What did the donkey and Balaam do?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("Where are Balaam and the squirrel?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-        //        phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(1, phrase4.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno y la ardilla?";
-        //    phrase2.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
-        //    phrase3.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam y la ardilla?";
-        //    Assert.AreEqual("\u00BFy?", phrase4.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsFalse(phrase4.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a group of phrases that have a common part such
-        ///// that phrases A & B have a common substring that is longer than the substring that
-        ///// all three share in common.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_FallbackToSmallerCommonSubstring_EndingInLargerSubstring()
-        //{
-        //    AddMockedKeyTerm("the squirrel", "ardilla");
-        //    AddMockedKeyTerm("donkey", "asno");
-        //    AddMockedKeyTerm("Balaam", "Balaam");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("When did the donkey and the squirrel fight?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Where are Balaam and the squirrel?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("What did the donkey and Balaam do?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2,
-        //        phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(1, phrase4.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno loco y ardilla?";
-        //    phrase2.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam loco y ardilla?";
-        //    phrase3.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
-        //    Assert.AreEqual("\u00BFy?", phrase4.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsFalse(phrase4.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a group of phrases that have a common part such
-        ///// that phrases A & B have a common substring that is longer than the substring that
-        ///// all three share in common.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_FallbackToSmallerCommonSubstring_StartingInLargerSubstring()
-        //{
-        //    AddMockedKeyTerm("the squirrel", "ardilla");
-        //    AddMockedKeyTerm("donkey", "asno");
-        //    AddMockedKeyTerm("Balaam", "Balaam");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("When did the donkey and the squirrel fight?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Where are Balaam and the squirrel?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("What did the donkey and Balaam do?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("and?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(3, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(3, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(1, phrase4.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno y la ardilla?";
-        //    phrase2.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam y la ardilla?";
-        //    phrase3.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
-        //    Assert.AreEqual("\u00BFy?", phrase4.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsFalse(phrase4.HasUserTranslation);
-        //}
-
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests setting the translation for a phrase such that there is a single part whose
-        ///// rendering does not match the statistically best rendering for that part. The
-        ///// statistically best part should win.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void ChangeTranslation_PreventUpdatedTranslationFromChangingGoodPartTranslation()
-        //{
-        //    AddMockedKeyTerm("donkey", "asno");
-        //    AddMockedKeyTerm("Balaam", "Balaam");
-
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("When?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("When Balaam eats donkey.");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("What donkey eats?");
-        //    TranslatablePhrase phrase4 = new TranslatablePhrase("What Balaam eats?");
-        //    TranslatablePhrase phrase5 = new TranslatablePhrase("Donkey eats?");
-
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] { phrase1, phrase2, phrase3, phrase4, phrase5 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
-
-        //    Assert.AreEqual(1, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase4.TranslatableParts.Count());
-        //    Assert.AreEqual(1, phrase5.TranslatableParts.Count());
-
-        //    phrase1.Translation = "\u00BFCua\u0301ndo?";
-        //    phrase2.Translation = "\u00BFCua\u0301ndo come Balaam al asno.";
-        //    phrase3.Translation = "\u00BFQue\u0301 come el asno?";
-        //    phrase4.Translation = "\u00BFQue\u0301 ingiere Balaam?";
-        //    Assert.AreEqual("\u00BFasno come?", phrase5.Translation);
-
-        //    Assert.IsTrue(phrase1.HasUserTranslation);
-        //    Assert.IsTrue(phrase2.HasUserTranslation);
-        //    Assert.IsTrue(phrase3.HasUserTranslation);
-        //    Assert.IsTrue(phrase4.HasUserTranslation);
-        //    Assert.IsFalse(phrase5.HasUserTranslation);
-        //}
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation to null for a phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetNewTranslation_Null()
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            var phrase = pth.GetPhrase("A", "Who was the man?");
+            phrase.Translation = null;
+
+            Assert.AreEqual(0, phrase.Translation.Length);
+            Assert.IsFalse(phrase.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase when that whole phrase matches part of
+        /// another phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetNewTranslation_AutoAcceptTranslationForAllIdenticalPhrases()
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
+            Question q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
+            Question q2 = AddTestQuestion(cat, "Where was the woman?", "A", 1, 1, "where was the woman" /* 2 */);
+            Question q3 = AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man" /* 2 */);
+            Question q4 = AddTestQuestion(cat, "Where was the woman?", "C", 3, 3, "where was the woman" /* 2 */);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
+            phrase2.Translation = "\u00BFDo\u0301nde estaba la mujer?";
+
+            Assert.AreEqual(phrase1.Translation, phrase3.Translation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.AreEqual(phrase2.Translation, phrase4.Translation);
+            Assert.IsTrue(phrase4.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase when that whole phrase matches part of
+        /// another phrase. TXL-108
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetNewTranslation_AcceptTranslationConsistingOnlyOfInitialAndFinalPunctuation()
+        {
+            AddMockedKeyTerm("Paul", null);
+            AddMockedKeyTerm("Judas", null);
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was Paul talking to?", "A", 1, 1, "who was" /* 2 */, "kt:paul", "talking to" /* 2 */);
+            Question q2 = AddTestQuestion(cat, "Who was Judas kissing?", "A", 1, 1, "who was" /* 2 */, "kt:judas", "kissing");
+            Question q3 = AddTestQuestion(cat, "Why was Judas talking to Paul?", "B", 2, 2, "why was", "kt:judas", "talking to" /* 2*/, "kt:paul");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+
+            phrase1.Translation = "\u00BFCon quie\u0301n estaba hablando Pablo?";
+            phrase2.HasUserTranslation = true;
+
+            Assert.AreEqual("\u00BF?", phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.AreEqual(phrase2.Translation, phrase3.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase when that whole phrase matches part of
+        /// another phrase, even if it has an untranslated key term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetNewTranslation_AutoAcceptTranslationForAllIdenticalPhrases_WithUntranslatedKeyTerm()
+        {
+            AddMockedKeyTerm("man", null);
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
+            Question q2 = AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man" /* 2 */);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
+
+            Assert.AreEqual(phrase1.Translation, phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase when that whole phrase matches part of
+        /// another phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetNewTranslation_WholePhraseMatchesPartOfAnotherPhrase()
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            Question shortQ = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
+            Question longQ = AddTestQuestion(cat, "Who was the man with the jar?", "B", 2, 2, "who was the man" /* 2 */, "with the jar" /*1*/);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase shortPhrase = pth.GetPhrase(shortQ.ScriptureReference, shortQ.Text);
+            TranslatablePhrase longPhrase = pth.GetPhrase(longQ.ScriptureReference, longQ.Text);
+
+            Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
+            Assert.AreEqual(2, longPhrase.TranslatableParts.Count());
+
+            string partTrans = "Quie\u0301n era el hombre";
+            shortPhrase.Translation = partTrans + "?";
+
+            Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), shortPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
+            Assert.AreEqual((partTrans + "?").Normalize(NormalizationForm.FormC), longPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
+            Assert.AreEqual(0, longPhrase[1].Translation.Length);
+            Assert.IsTrue(shortPhrase.HasUserTranslation);
+            Assert.IsFalse(longPhrase.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase when that whole phrase matches part of
+        /// another phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_WholePhraseMatchesPartOfAnotherPhrase()
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            Question shortQ = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
+            Question longQ = AddTestQuestion(cat, "Who was the man with the jar?", "B", 2, 2, "who was the man" /* 2 */, "with the jar" /*1*/);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase shortPhrase = pth.GetPhrase(shortQ.ScriptureReference, shortQ.Text);
+            TranslatablePhrase longPhrase = pth.GetPhrase(longQ.ScriptureReference, longQ.Text);
+
+            Assert.AreEqual(1, shortPhrase.TranslatableParts.Count());
+            Assert.AreEqual(2, longPhrase.TranslatableParts.Count());
+
+            shortPhrase.Translation = "Quiem fue el hambre?";
+            string partTrans = "Quie\u0301n era el hombre";
+            string trans = "\u00BF" + partTrans + "?";
+            shortPhrase.Translation = trans;
+
+            Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), shortPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), shortPhrase[0].Translation);
+            Assert.AreEqual(trans.Normalize(NormalizationForm.FormC), longPhrase.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), longPhrase[0].Translation);
+            Assert.AreEqual(0, longPhrase[1].Translation.Length);
+            Assert.IsTrue(shortPhrase.HasUserTranslation);
+            Assert.IsFalse(longPhrase.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for two phrases that have a common part and verify
+        /// that a third phrase that has that part shows the translation of the translated part.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_GuessAtPhraseTranslationBasedOnTriangulation()
+        {
+            AddMockedKeyTerm("Jesus");
+            AddMockedKeyTerm("lion");
+            AddMockedKeyTerm("jar");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was the man in the lion's den?", "A", 1, 1, "who was the man" /* 2 */,
+                "in the", "kt:lion", "den");
+            Question q2 = AddTestQuestion(cat, "Who was the man with the jar?", "B", 2, 2, "who was the man" /* 2 */,
+                "with the", "kt:jar");
+            Question q3 = AddTestQuestion(cat, "Who was the man Jesus healed?", "C", 3, 3, "who was the man" /* 2 */,
+                "kt:jesus", "healed");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+
+            Assert.AreEqual(3, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase3.TranslatableParts.Count());
+
+            string transPart = "Quie\u0301n era el hombre";
+            string transCommon = "\u00BF" + transPart;
+            phrase1.Translation = transCommon + " en la fosa de leones?";
+            phrase2.Translation = transCommon + " con el jarro?";
+
+            Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
+            Assert.AreEqual(transPart.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsFalse(phrase3.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for two phrases that have a common part and verify
+        /// that a third phrase that has that part shows the translation of the translated part.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_FindKeyTermRenderingWhenKtHasMultiplesTranslations()
+        {
+            AddMockedKeyTerm("arrow", "flecha");
+            AddMockedKeyTerm("arrow", "dardo");
+            AddMockedKeyTerm("arrow", "dardos");
+            AddMockedKeyTerm("lion", "noil", "leo\u0301n", "noil");
+            AddMockedKeyTerm("boat", "nave");
+            AddMockedKeyTerm("boat", "barco");
+            AddMockedKeyTerm("boat", "barca");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "I shot the lion with the arrow.", "A", 1, 1, "i shot the", "kt:lion", "with the", "kt:arrow");
+            Question q2 = AddTestQuestion(cat, "Who put the lion in the boat?", "A", 1, 1, "who put the", "kt:lion", "in the", "kt:boat");
+            Question q3 = AddTestQuestion(cat, "Does the boat belong to the boat?", "A", 1, 1, "does the", "kt:boat", "belong to the", "kt:boat");
+            Question q4 = AddTestQuestion(cat, "I shot the boat with the arrow.", "A", 1, 1, "i shot the", "kt:boat", "with the", "kt:arrow");
+            Question q5 = AddTestQuestion(cat, "Who put the arrow in the boat?", "A", 1, 1, "who put the", "kt:arrow", "in the", "kt:boat");
+            Question q6 = AddTestQuestion(cat, "Who put the arrow in the lion?", "A", 1, 1, "who put the", "kt:arrow", "in the", "kt:lion");
+            Question q7 = AddTestQuestion(cat, "I shot the arrow with the lion.", "A", 1, 1, "i shot the", "kt:arrow", "with the", "kt:lion");
+            Question q8 = AddTestQuestion(cat, "Does the arrow belong to the lion?", "A", 1, 1, "does the", "kt:arrow", "belong to the", "kt:lion");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+            TranslatablePhrase phrase6 = pth.GetPhrase(q6.ScriptureReference, q6.Text);
+            TranslatablePhrase phrase7 = pth.GetPhrase(q7.ScriptureReference, q7.Text);
+            TranslatablePhrase phrase8 = pth.GetPhrase(q8.ScriptureReference, q8.Text);
+
+            foreach (TranslatablePhrase phrase in pth.Phrases)
+            {
+                Assert.AreEqual(4, phrase.GetParts().Count(), "Wrong number of parts for phrase: " + phrase.OriginalPhrase);
+                Assert.AreEqual(2, phrase.TranslatableParts.Count(), "Wrong number of translatable parts for phrase: " + phrase.OriginalPhrase);
+            }
+
+            phrase1.Translation = "Yo le pegue\u0301 un tiro al noil con un dardo.";
+            Assert.AreEqual("Yo le pegue\u0301 un tiro al barca con un dardos.".Normalize(NormalizationForm.FormC),
+                phrase4.Translation);
+            Assert.AreEqual("Yo le pegue\u0301 un tiro al dardos con un leo\u0301n.".Normalize(NormalizationForm.FormC),
+                phrase7.Translation);
+
+            phrase2.Translation = "\u00BFQuie\u0301n puso el leo\u0301n en la barca?";
+            Assert.AreEqual("\u00BFQuie\u0301n puso el dardos en la barca?".Normalize(NormalizationForm.FormC),
+                phrase5.Translation);
+            Assert.AreEqual("\u00BFQuie\u0301n puso el dardos en la leo\u0301n?".Normalize(NormalizationForm.FormC),
+                phrase6.Translation);
+
+            phrase3.Translation = "\u00BFEl boat le pertenece al barco?";
+            // This is a bizarre special case where the original question has the same key term twice and
+            // the user has translated it differently. Internal details of the logic (specifically, it finds
+            // the longer rendering first) dictate the order in which the key terms are considered to have
+            // been found. For the purposes of this test case, we don't care in which order the terms of the
+            // untranslated question get substituted.
+            Assert.IsTrue("\u00BFEl leo\u0301n le pertenece al dardos?".Normalize(NormalizationForm.FormC) == phrase8.Translation ||
+                "\u00BFEl dardos le pertenece al leo\u0301n?".Normalize(NormalizationForm.FormC) == phrase8.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsFalse(phrase4.HasUserTranslation);
+            Assert.IsFalse(phrase5.HasUserTranslation);
+            Assert.IsFalse(phrase6.HasUserTranslation);
+            Assert.IsFalse(phrase7.HasUserTranslation);
+            Assert.IsFalse(phrase8.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for one phrase and then repeatedly accepting and
+        /// un-accepting the generated translation for the other phrase that differs only by
+        /// key terms. (TXL-51)
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_PreventAddedSpacesWhenAcceptingGeneratedTranslation()
+        {
+            AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+            AddMockedKeyTerm("Phillip", "Felipe");
+            AddMockedKeyTerm("Matthew", "Mateo");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q0 = AddTestQuestion(cat, "What asked Jesus Matthew?", "A", 1, 1, "what asked", "kt:jesus", "kt:matthew");
+            Question q1 = AddTestQuestion(cat, "What asked Jesus Phillip?", "A", 1, 1, "what asked", "kt:jesus", "kt:phillip");
+            Question q2 = AddTestQuestion(cat, "What asked Phillip Matthew?", "A", 1, 1, "what asked", "kt:phillip", "kt:matthew");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase0 = pth.GetPhrase(q0.ScriptureReference, q0.Text);
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Mateo?";
+            phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Felipe?";
+            string expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC);
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            phrase2.HasUserTranslation = true;
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+
+            expectedTranslation = "\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC);
+            phrase2.HasUserTranslation = false;
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            phrase2.HasUserTranslation = true;
+            Assert.AreEqual(expectedTranslation, phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that unconfirming a user translation will go back to a template-based
+        /// translation if one is available. Specifically, it will revert to the template of the
+        /// first translated question it finds.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_ClearingUserTranslationFlagRestoresTemplateBasedTranslation()
+        {
+            AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+            AddMockedKeyTerm("Phillip", "Felipe");
+            AddMockedKeyTerm("Matthew", "Mateo");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q0 = AddTestQuestion(cat, "What asked Jesus Matthew?", "A", 1, 1, "what asked", "kt:jesus", "kt:matthew");
+            Question q1 = AddTestQuestion(cat, "What asked Jesus Phillip?", "A", 1, 1, "what asked", "kt:jesus", "kt:phillip");
+            Question q2 = AddTestQuestion(cat, "What asked Phillip Matthew?", "A", 1, 1, "what asked", "kt:phillip", "kt:matthew");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase0 = pth.GetPhrase(q0.ScriptureReference, q0.Text);
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            phrase0.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s a Mateo?";
+            phrase1.Translation = "\u00BFQue\u0301 le pregunto\u0301 Jesu\u0301s Felipe?";
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            phrase2.HasUserTranslation = true;
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+
+            phrase2.HasUserTranslation = false;
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            phrase2.HasUserTranslation = true;
+            Assert.AreEqual("\u00BFQue\u0301 le pregunto\u0301 Felipe a Mateo?".Normalize(NormalizationForm.FormC),
+                phrase2.Translation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for two phrases that have a common part and verify
+        /// that a third phrase that has that part shows the translation of the translated part.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_GuessAtPhraseTranslationBasedOnTriangulation()
+        {
+            AddMockedKeyTerm("Jesus");
+            AddMockedKeyTerm("lion");
+            AddMockedKeyTerm("jar");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was the man in the lions' den?", "A", 1, 1, "who was the man", "in the", "kt:lions", "den");
+            Question q2 = AddTestQuestion(cat, "Who was the man with the jar?", "A", 1, 1, "who was the man", "with the", "kt:jar");
+            Question q3 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus", " healed");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+
+            Assert.AreEqual(3, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase3.TranslatableParts.Count());
+
+            string partTrans = "Quie\u0301n era el hombre";
+            string transCommon = "\u00BF" + partTrans;
+            phrase1.Translation = "Quien fue lo hambre en la fosa de leones?";
+            phrase2.Translation = transCommon + " con el jarro?";
+            Assert.AreEqual("\u00BFmbre JESUS?", phrase3.Translation);
+            Assert.AreEqual("mbre", phrase3[0].Translation);
+
+            phrase1.Translation = transCommon + " en la fosa de leones?";
+
+            Assert.AreEqual((transCommon + " en la fosa de leones?").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual((transCommon + " con el jarro?").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.AreEqual((transCommon + " JESUS?").Normalize(NormalizationForm.FormC), phrase3.Translation);
+            Assert.AreEqual(partTrans.Normalize(NormalizationForm.FormC), phrase3[0].Translation);
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsFalse(phrase3.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase with only one translatable part when
+        /// another phrase differs only by a key term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_GuessAtOnePartPhraseThatDiffersBySingleKeyTerm()
+        {
+            AddMockedKeyTerm("Timothy", "Timoteo");
+            AddMockedKeyTerm("Euticus", "Eutico");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was Timothy?", "A", 1, 1, "who was", "kt:timothy");
+            Question q2 = AddTestQuestion(cat, "Who was Euticus?", "A", 1, 1, "who was", "kt:euticus");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            Assert.AreEqual(1, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase1.GetParts().Count());
+            Assert.AreEqual(1, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(2, phrase2.GetParts().Count());
+
+            const string frame = "\u00BFQuie\u0301n era {0}?";
+            phrase1.Translation = string.Format(frame, "Timoteo");
+
+            Assert.AreEqual(string.Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual(string.Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for two phrases that have a common part and verify
+        /// that a third phrase that has that part shows the translation of the translated part.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_GuessAtTwoPartPhraseThatDiffersBySingleKeyTerm()
+        {
+            AddMockedKeyTerm("Jacob", "Jacobo");
+            AddMockedKeyTerm("Matthew", "Mateo");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Was Jacob one of the disciples?", "A", 1, 1, "was", "kt:jacob", "one of the disciples");
+            Question q2 = AddTestQuestion(cat, "Was Matthew one of the disciples?", "A", 1, 1, "was", "kt:matthew", " one of the disciples");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase1.GetParts().Count());
+            Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase2.GetParts().Count());
+
+            const string frame = "\u00BFFue {0} uno de los discipulos?";
+            phrase1.Translation = string.Format(frame, "Jacobo");
+
+            Assert.AreEqual(string.Format(frame, "Jacobo"), phrase1.Translation);
+            Assert.AreEqual(string.Format(frame, "Mateo"), phrase2.Translation);
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsFalse(phrase2.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for multiple phrases. Possible part translations
+        /// should be assigned to parts according to length and numbers of occurrences, but no
+        /// portion of a translation should be used as the translation for two parts of the same
+        /// owning phrase
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_PreventTranslationFromBeingUsedForMultipleParts()
+        {
+            AddMockedKeyTerm("Jacob", "Jacob");
+            AddMockedKeyTerm("John", "Juan");
+            AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+            AddMockedKeyTerm("Mary", "Mari\u0301a");
+            AddMockedKeyTerm("Moses", "Moise\u0301s");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "So what did Jacob do?", "A", 1, 1, "so what did", "kt:jacob", "do");
+            Question q2 = AddTestQuestion(cat, "So what did Jesus do?", "A", 1, 1, "so what did", "kt:jesus", " do");
+            Question q3 = AddTestQuestion(cat, "What did Jacob do?", "A", 1, 1, "what did", "kt:jacob", "do");
+            Question q4 = AddTestQuestion(cat, "What did Moses ask?", "A", 1, 1, "what did", "kt:moses", "ask");
+            Question q5 = AddTestQuestion(cat, "So what did John ask?", "A", 1, 1, "so what did", "kt:john", "ask");
+            Question q6 = AddTestQuestion(cat, "So what did Mary want?", "A", 1, 1, "so what did", "kt:mary", "want");
+            Question q7 = AddTestQuestion(cat, "What did Moses do?", "A", 1, 1, "what did", "kt:moses", "do");
+            Question q8 = AddTestQuestion(cat, "Did Moses ask, \"What did Jacob do?\"", "a", 1, 1, "did", "kt:moses", "ask", "what did", "kt:jacob", "do");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+            TranslatablePhrase phrase6 = pth.GetPhrase(q6.ScriptureReference, q6.Text);
+            TranslatablePhrase phrase7 = pth.GetPhrase(q7.ScriptureReference, q7.Text);
+            TranslatablePhrase phrase8 = pth.GetPhrase(q8.ScriptureReference, q8.Text);
+
+            Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase1.GetParts().Count());
+            Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase2.GetParts().Count());
+            Assert.AreEqual(2, phrase3.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase3.GetParts().Count());
+            Assert.AreEqual(2, phrase4.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase4.GetParts().Count());
+            Assert.AreEqual(2, phrase5.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase5.GetParts().Count());
+            Assert.AreEqual(2, phrase6.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase6.GetParts().Count());
+            Assert.AreEqual(2, phrase7.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase7.GetParts().Count());
+            Assert.AreEqual(4, phrase8.TranslatableParts.Count());
+            Assert.AreEqual(6, phrase8.GetParts().Count());
+
+            phrase1.Translation = "\u00BFEntonces que\u0301 hizo Jacob?";
+            phrase2.Translation = "\u00BFEntonces que\u0301 hizo Jesu\u0301s?";
+            phrase3.Translation = "\u00BFQue\u0301 hizo Jacob?";
+            phrase4.Translation = "\u00BFQue\u0301 pregunto\u0301 Moise\u0301s?";
+            phrase5.Translation = "\u00BFEntonces que\u0301 pregunto\u0301 Juan?";
+
+            Assert.AreEqual("\u00BFEntonces que\u0301 Mari\u0301a?".Normalize(NormalizationForm.FormC), phrase6.Translation);
+            Assert.AreEqual("\u00BFQue\u0301 hizo Moise\u0301s?".Normalize(NormalizationForm.FormC), phrase7.Translation);
+            Assert.AreEqual("Moise\u0301s pregunto\u0301 Que\u0301 Jacob hizo".Normalize(NormalizationForm.FormC), phrase8.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for multiple phrases. Possible part translations
+        /// should be assigned to parts according to length and numbers of occurrences, but no
+        /// portion of a translation should be used as the translation for two parts of the same
+        /// owning phrase.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_UseStatsAndConfidenceToDeterminePartTranslations()
+        {
+            AddMockedKeyTerm("ask");
+            AddMockedKeyTerm("give");
+            AddMockedKeyTerm("want");
+            AddMockedKeyTerm("whatever");
+            AddMockedKeyTerm("thing");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "ABC ask DEF", "A", 1, 1, "abc", "kt:ask", "def");
+            Question q2 = AddTestQuestion(cat, "ABC give XYZ", "A", 1, 1, "abc", "kt:give", "xyz");
+            Question q3 = AddTestQuestion(cat, "XYZ want ABC whatever EFG", "a", 1, 1, "xyz", "kt:want", "abc", "kt:whatever", "efg");
+            Question q4 = AddTestQuestion(cat, "EFG thing ABC", "A", 1, 1, "efg", "kt:thing", "abc");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase1.GetParts().Count());
+            Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase2.GetParts().Count());
+            Assert.AreEqual(3, phrase3.TranslatableParts.Count());
+            Assert.AreEqual(5, phrase3.GetParts().Count());
+            Assert.AreEqual(2, phrase4.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase4.GetParts().Count());
+
+            phrase1.Translation = "def ASK abc";
+            phrase2.Translation = "abc xyz GIVE";
+            phrase3.Translation = "WANT xyz abc WHATEVER efg";
+
+            Assert.AreEqual("efg THING abc", phrase4.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that the code to determine the best translation for a part of a phrase will
+        /// not take a substring common to all phrases if it would mean selecting less than a
+        /// whole word instead of a statistically viable substring that consists of whole
+        /// words.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_UseStatisticalBestPartTranslations()
+        {
+            AddMockedKeyTerm("Isaac", "Isaac");
+            AddMockedKeyTerm("Paul", "Pablo");
+
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "Now what?", "A", 1, 1, "now what");
+            AddTestQuestion(cat, "What did Isaac say?", "A", 1, 1, "what did", "kt:isaac", "say");
+            Question q1 = AddTestQuestion(cat, "So now what did those two brothers do?", "A", 1, 1, "so", "now what", "did those two brothers do");
+            Question q2 = AddTestQuestion(cat, "So what did they do about the problem?", "A", 1, 1, "so", "what did", "they do about the problem");
+            Question q3 = AddTestQuestion(cat, "So what did he do?", "A", 1, 1, "so", "what did", "he do");
+            Question q4 = AddTestQuestion(cat, "So now what was Isaac complaining about?", "A", 1, 1, "so", "now what", "was", "kt:isaac", "complaining about");
+            Question q5 = AddTestQuestion(cat, "So what did the Apostle Paul say about that?", "A", 1, 1, "so", "what did", "the apostle", "kt:paul", "say about that");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+
+            Assert.AreEqual(3, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase1.GetParts().Count());
+            Assert.AreEqual(3, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase2.GetParts().Count());
+            Assert.AreEqual(3, phrase3.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase3.GetParts().Count());
+            Assert.AreEqual(4, phrase4.TranslatableParts.Count());
+            Assert.AreEqual(5, phrase4.GetParts().Count());
+            Assert.AreEqual(4, phrase5.TranslatableParts.Count());
+            Assert.AreEqual(5, phrase5.GetParts().Count());
+
+            phrase1.Translation = "\u00BFEntonces ahora que\u0301 hicieron esos dos hermanos?";
+            phrase2.Translation = "\u00BFEntonces que\u0301 hicieron acerca del problema?";
+            phrase3.Translation = "\u00BFEntonces que\u0301 hizo?";
+            phrase5.Translation = "\u00BFEntonces que\u0301 dijo Pablo acerca de eso?";
+
+            Assert.AreEqual("\u00BFEntonces Isaac?", phrase4.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that the code to determine the best translation for a part of a phrase will
+        /// not take a substring common to all phrases if it would mean selecting less than a
+        /// whole word instead of a statistically viable substring that consists of whole
+        /// words.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_UseStatisticalBestPartTranslationsRatherThanCommonPartialWord()
+        {
+            AddMockedKeyTerm("Isaac", "Isaac");
+            AddMockedKeyTerm("Paul", "Pablo");
+
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "Now what?", "A", 1, 1, "now what");
+            AddTestQuestion(cat, "What did Isaac say?", "A", 1, 1, "what did", "kt:isaac", "say");
+            AddTestQuestion(cat, "What could Isaac say?", "A", 1, 1, "what could", "kt:isaac", "say");
+            Question q1 = AddTestQuestion(cat, "So now what did those two brothers do?", "A", 1, 1, "so", "now what", "did those two brothers do");
+            Question q2 = AddTestQuestion(cat, "So what could they do about the problem?", "A", 1, 1, "so", "what could", "they do about the problem");
+            Question q3 = AddTestQuestion(cat, "So what did he do?", "A", 1, 1, "so", "what did", "he do");
+            Question q4 = AddTestQuestion(cat, "So now what was Isaac complaining about?", "A", 1, 1, "so", "now what", "was", "kt:isaac", "complaining about");
+            Question q5 = AddTestQuestion(cat, "So what did the Apostle Paul say about that?", "A", 1, 1, "so", "what did", "the apostle", "kt:paul", "say about that");
+            Question q6 = AddTestQuestion(cat, "Why did they treat the Apostle Paul so?", "A", 1, 1, "why did they treat the apostle", "kt:paul", "so");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+            TranslatablePhrase phrase6 = pth.GetPhrase(q6.ScriptureReference, q6.Text);
+
+            Assert.AreEqual(3, phrase1.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase1.GetParts().Count());
+            Assert.AreEqual(3, phrase2.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase2.GetParts().Count());
+            Assert.AreEqual(3, phrase3.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase3.GetParts().Count());
+            Assert.AreEqual(4, phrase4.TranslatableParts.Count());
+            Assert.AreEqual(5, phrase4.GetParts().Count());
+            Assert.AreEqual(4, phrase5.TranslatableParts.Count());
+            Assert.AreEqual(5, phrase5.GetParts().Count());
+            Assert.AreEqual(2, phrase6.TranslatableParts.Count());
+            Assert.AreEqual(3, phrase6.GetParts().Count());
+
+            phrase1.Translation = "Entonces AB Zuxelopitmyfor CD EF GH";
+            phrase2.Translation = "Entonces Vuxelopitmyfor IJ KL MN OP QR";
+            phrase3.Translation = "Entonces Wuxelopitmyfor ST";
+            phrase5.Translation = "Entonces Xuxelopitmyfor dijo Pablo UV WX YZ";
+            phrase6.Translation = "BG LP Yuxelopitmyfor DW MR Pablo";
+
+            Assert.AreEqual("Entonces Isaac", phrase4.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a group of phrases such that the only common
+        /// character for a part they have in common is a punctuation character.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_DoNotTreatNormalLeadingPuncAsOpeningQuestionMark()
+        {
+            AddMockedKeyTerm("Isaiah", "Isai\u0301as");
+            AddMockedKeyTerm("Paul", "Pablo");
+            AddMockedKeyTerm("Silas", "Silas");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "What did Paul and Silas do in jail?", "A", 1, 1, "what", "did", "kt:paul", "and", "kt:silas", "do in jail");
+            Question q2 = AddTestQuestion(cat, "Were Isaiah and Paul prophets?", "A", 1, 1, "were", "kt:isaiah", "and", "kt:paul", "prophets");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+            phrase1.Translation = "*\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
+            Assert.AreEqual("Isai\u0301as Pablo?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a group of phrases such that the only common
+        /// character for a part they have in common is a punctuation character.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_PreventPartTranslationFromBeingSetToPunctuation()
+        {
+            AddMockedKeyTerm("Isaiah", "Isai\u0301as");
+            AddMockedKeyTerm("Paul", "Pablo");
+            AddMockedKeyTerm("Silas", "Silas");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "What did Paul and Silas do in jail?", "A", 1, 1, "what did", "kt:paul", "and", "kt:silas", "do in jail");
+            Question q2 = AddTestQuestion(cat, "Were Isaiah and Paul prophets?", "A", 1, 1, "were", "kt:isaiah", "and", "kt:paul", "prophets");
+            Question q3 = AddTestQuestion(cat, "Did Paul and Silas run away?", "A", 1, 1, "did", "kt:paul", "and", "kt:silas", "run away");
+            Question q4 = AddTestQuestion(cat, "And what did Paul do next?", "A", 1, 1, "and", "what did", "kt:paul", "do next");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            phrase1.Translation = "\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
+            phrase2.Translation = "\u00BFEran profetas Pablo e Isai\u0301as?";
+            phrase3.Translation = "\u00BFSe corrieron Pablo y Silas?";
+            Assert.AreEqual("\u00BFy Pablo?", phrase4.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase that has parts that are also in another
+        /// phrase that does not have a user translation but does have parts that do have a
+        /// translation.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_PreventTrashingPartTranslationsWhenReCalculating()
+        {
+            AddMockedKeyTerm("Mary", "Mari\u0301a");
+            AddMockedKeyTerm("Jesus");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "When?", "A", 1, 1, "when");
+            Question q2 = AddTestQuestion(cat, "Where did Mary find Jesus?", "A", 1, 1, "where did", "kt:mary", "find", "kt:jesus");
+            Question q3 = AddTestQuestion(cat, "Where did Jesus find a rock?", "A", 1, 1, "where did", "kt:jesus", " find a rock");
+            Question q4 = AddTestQuestion(cat, "Where did Mary eat?", "A", 1, 1, "where did", "kt:mary", "eat");
+            Question q5 = AddTestQuestion(cat, "When Mary went to the tomb, where did Jesus meet her?", "A", 1, 1, "when", "kt:mary", "went to the tomb", "where did", "kt:jesus", " meet her");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+
+            phrase1.Translation = "\u00BFCua\u0301ndo?";
+            phrase2.Translation = "\u00BFDo\u0301nde encontro\u0301 Mari\u0301a a JESUS?";
+            phrase3.Translation = "\u00BFDo\u0301nde encontro\u0301 JESUS una piedra?";
+            phrase4.Translation = "\u00BFDo\u0301nde comio\u0301 Mari\u0301a?";
+            Assert.AreEqual("\u00BFCua\u0301ndo Mari\u0301a Do\u0301nde JESUS?".Normalize(NormalizationForm.FormC), phrase5.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsFalse(phrase5.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a group of phrases that have a common part such
+        /// that phrases A & B have a common substring that is longer than the substring that
+        /// all three share in common.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_FallbackToSmallerCommonSubstring()
+        {
+            AddMockedKeyTerm("the squirrel", "la ardilla");
+            AddMockedKeyTerm("donkey", "asno");
+            AddMockedKeyTerm("Balaam", "Balaam");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "When did the donkey and the squirrel fight?", "A", 1, 1, "when", "did the", "kt:donkey", "and", "kt:the squirrel", "fight");
+            Question q2 = AddTestQuestion(cat, "What did the donkey and Balaam do?", "A", 1, 1, "what", "did the", "kt:donkey", "and", "kt:balaam", "do");
+            Question q3 = AddTestQuestion(cat, "Where are Balaam and the squirrel?", "A", 1, 1, "where", "are", "kt:balaam", "and", "kt:the squirrel");
+            Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno y la ardilla?";
+            phrase2.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
+            phrase3.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam y la ardilla?";
+            Assert.AreEqual("\u00BFy?", phrase4.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsFalse(phrase4.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a group of phrases that have a common part such
+        /// that phrases A & B have a common substring that is longer than the substring that
+        /// all three share in common.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_FallbackToSmallerCommonSubstring_EndingInLargerSubstring()
+        {
+            AddMockedKeyTerm("the squirrel", "ardilla");
+            AddMockedKeyTerm("donkey", "asno");
+            AddMockedKeyTerm("Balaam", "Balaam");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "When did the donkey and the squirrel fight?", "A", 1, 1, "when", "did the", "kt:donkey", "and", "kt:the squirrel", "fight");
+            Question q2 = AddTestQuestion(cat, "Where are Balaam and the squirrel?", "A", 1, 1, "where", "are", "kt:balaam", "and", "kt:the squirrel");
+            Question q3 = AddTestQuestion(cat, "What did the donkey and Balaam do?", "A", 1, 1, "what", "did the", "kt:donkey", "and", "kt:balaam", "do");
+            Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno loco y ardilla?";
+            phrase2.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam loco y ardilla?";
+            phrase3.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
+            Assert.AreEqual("\u00BFy?", phrase4.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsFalse(phrase4.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a group of phrases that have a common part such
+        /// that phrases A & B have a common substring that is longer than the substring that
+        /// all three share in common.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_FallbackToSmallerCommonSubstring_StartingInLargerSubstring()
+        {
+            AddMockedKeyTerm("the squirrel", "ardilla");
+            AddMockedKeyTerm("donkey", "asno");
+            AddMockedKeyTerm("Balaam", "Balaam");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "When did the donkey and the squirrel fight?", "A", 1, 1, "when did the", "kt:donkey", "and", "kt:the squirrel", "fight");
+            Question q2 = AddTestQuestion(cat, "Where are Balaam and the squirrel?", "A", 1, 1, "where are", "kt:balaam", "and", "kt:the squirrel");
+            Question q3 = AddTestQuestion(cat, "What did the donkey and Balaam do?", "A", 1, 1, "what did the", "kt:donkey", "and", "kt:balaam", "do");
+            Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+            phrase1.Translation = "\u00BFCua\u0301ndo pelearon el asno y la ardilla?";
+            phrase2.Translation = "\u00BFDo\u0301nde esta\u0301n Balaam y la ardilla?";
+            phrase3.Translation = "\u00BFQue\u0301 hicieron el asno y Balaam?";
+            Assert.AreEqual("\u00BFy?", phrase4.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsFalse(phrase4.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests setting the translation for a phrase such that there is a single part whose
+        /// rendering does not match the statistically best rendering for that part. The
+        /// statistically best part should win.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void ChangeTranslation_PreventUpdatedTranslationFromChangingGoodPartTranslation()
+        {
+            AddMockedKeyTerm("donkey", "asno");
+            AddMockedKeyTerm("Balaam", "Balaam");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "When?", "A", 1, 1, "When");
+            Question q2 = AddTestQuestion(cat, "When Balaam eats donkey.", "A", 1, 1, "when", "kt:balaam", "eats", "kt:donkey");
+            Question q3 = AddTestQuestion(cat, "What donkey eats?", "A", 1, 1, "what", "kt:donkey", "eats");
+            Question q4 = AddTestQuestion(cat, "What Balaam eats?", "A", 1, 1, "what", "kt:balaam", "eats");
+            Question q5 = AddTestQuestion(cat, "Donkey eats?", "A", 1, 1, "kt:donkey", "eats");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+            TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+            TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+
+            phrase1.Translation = "\u00BFCua\u0301ndo?";
+            phrase2.Translation = "\u00BFCua\u0301ndo come Balaam al asno.";
+            phrase3.Translation = "\u00BFQue\u0301 come el asno?";
+            phrase4.Translation = "\u00BFQue\u0301 ingiere Balaam?";
+            Assert.AreEqual("\u00BFasno come?", phrase5.Translation);
+
+            Assert.IsTrue(phrase1.HasUserTranslation);
+            Assert.IsTrue(phrase2.HasUserTranslation);
+            Assert.IsTrue(phrase3.HasUserTranslation);
+            Assert.IsTrue(phrase4.HasUserTranslation);
+            Assert.IsFalse(phrase5.HasUserTranslation);
+        }
         #endregion
 
         #region Rendering Selection Rules tests
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that adding a rendering selection rule based on the preceding (English) word
-        ///// causes the correct vernacular rendering to be selected.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SelectCorrectTermRendering_NoPartsTranslated_BasedOnPrecedingWordRule()
-        //{
-        //    AddMockedKeyTerm("Jesus", "Cristo", new [] {"Jesucristo", "Jesus", "Cristo Jesus"});
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that adding a rendering selection rule based on the preceding (English) word
+        /// causes the correct vernacular rendering to be selected.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SelectCorrectTermRendering_NoPartsTranslated_BasedOnPrecedingWordRule()
+        {
+            AddMockedKeyTerm("Jesus", "susej", "Cristo", "Jesucristo", "Jesus", "Cristo Jesus");
 
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man Jesus healed?");
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus", " healed");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 
-        //    Assert.IsFalse(phrase1.HasUserTranslation);
-        //    Assert.AreEqual("Cristo", phrase1.Translation);
+            Assert.AreEqual(2, phrase1.TranslatableParts.Count());
 
-        //    pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new [] {new RenderingSelectionRule(@"\bman {0}", @"ucristo\b") });
+            Assert.IsFalse(phrase1.HasUserTranslation);
+            Assert.AreEqual("Cristo", phrase1.Translation);
 
-        //    Assert.AreEqual("Jesucristo", phrase1.Translation);
-        //}
+            pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] { new RenderingSelectionRule(@"\bman {0}", @"ucristo\b") });
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that adding a rendering selection rule based on the following (English) word
-        ///// causes the correct vernacular rendering to be inserted into the partial translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SelectCorrectTermRendering_SomePartsTranslated_BasedOnFollowingWordRule()
-        //{
-        //    AddMockedKeyTerm("Stephen", "Esteban");
-        //    AddMockedKeyTerm("Mary", "Mari\u0301a");
-        //    AddMockedKeyTerm("look", "mirar", new[] { "pareci\u0301a", "buscaba", "busca", "busco" });
+            Assert.AreEqual("Jesucristo", phrase1.Translation);
+        }
 
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("What did Stephen look like to the priests and elders and other people present?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("What did Stephen do?");
-        //    TranslatablePhrase phrase3 = new TranslatablePhrase("What did Mary look for?");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that adding a rendering selection rule based on the following (English) word
+        /// causes the correct vernacular rendering to be inserted into the partial translation.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SelectCorrectTermRendering_SomePartsTranslated_BasedOnFollowingWordRule()
+        {
+            AddMockedKeyTerm("Stephen", "Esteban");
+            AddMockedKeyTerm("Mary", "Mari\u0301a");
+            AddMockedKeyTerm("look", "kool", "mirar", "pareci\u0301a", "buscaba", "busca", "busco");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2, phrase3 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "What did Stephen look like to the priests and elders and other people present?", "A", 1, 1, "what", "did", "kt:stephen", "kt:look", "like to the priests and elders and other people present");
+            Question q2 = AddTestQuestion(cat, "What did Stephen do?", "A", 1, 1, "what", "did", "kt:stephen", "do");
+            Question q3 = AddTestQuestion(cat, "What did Mary look for?", "A", 1, 1, "what", "did", "kt:mary", "kt:look", "for");
 
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase3.TranslatableParts.Count());
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-        //    phrase1.Translation = "\u00BFCo\u0301mo pareci\u0301a Esteban a los sacerdotes y ancianos y a los dema\u0301s?";
-        //    phrase2.Translation = "\u00BFCo\u0301mo hizo Esteban?";
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
 
-        //    Assert.IsFalse(phrase3.HasUserTranslation);
-        //    Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+            phrase1.Translation = "\u00BFCo\u0301mo pareci\u0301a Esteban a los sacerdotes y ancianos y a los dema\u0301s?";
+            phrase2.Translation = "\u00BFCo\u0301mo hizo Esteban?";
 
-        //    pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
-        //        new RenderingSelectionRule(@"{0} like\b", @"\bparec"),
-        //        new RenderingSelectionRule(@"{0} for\b", @"\bbusc")});
+            Assert.IsFalse(phrase3.HasUserTranslation);
+            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?".Normalize(NormalizationForm.FormC), phrase3.Translation);
 
-        //    Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?".Normalize(NormalizationForm.FormC), phrase3.Translation);
-        //}
+            pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+                new RenderingSelectionRule(@"{0} like\b", @"\bparec"),
+                new RenderingSelectionRule(@"{0} for\b", @"\bbusc")});
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that adding a rendering selection rule based on the (English) suffix causes
-        ///// the correct vernacular rendering to be inserted into the translation template.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule()
-        //{
-        //    AddMockedKeyTerm("magician", "mago", new[] { "brujo" });
-        //    AddMockedKeyTerm("servant", "criado", new[] { "siervo" });
-        //    AddMockedKeyTerm("heal", "sanar", new[] { "curada", "sanada", "sanara\u0301", "sanas", "curan", "cura", "sana", "sanado" });
+            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+        }
 
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Was the servant healed?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Was the magician healed?");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that adding a rendering selection rule based on the (English) suffix causes
+        /// the correct vernacular rendering to be inserted into the translation template.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule()
+        {
+            AddMockedKeyTerm("magician", "naicigam", "mago", "brujo");
+            AddMockedKeyTerm("servant", "tnavres", "criado", "siervo");
+            AddMockedKeyTerm("heal", "laeh", "sanar", "curada", "sanada", "sanara\u0301", "sanas", "curan", "cura", "sana", "sanado");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Was the servant healed?", "A", 1, 1, "was the", "kt:servant", "kt:heal");
+            Question q2 = AddTestQuestion(cat, "Was the magician healed?", "A", 1, 1, "was the", "kt:magician", "kt:heal");
 
-        //    Assert.AreEqual(1, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(1, phrase2.TranslatableParts.Count());
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-        //    phrase1.Translation = "\u00BFFue sanado el siervo?";
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
 
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-        //    Assert.AreEqual("\u00BFFue sanar el mago?", phrase2.Translation);
+            phrase1.Translation = "\u00BFFue sanado el siervo?";
 
-        //    pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
-        //        new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
+            Assert.IsFalse(phrase2.HasUserTranslation);
+            Assert.AreEqual("\u00BFFue sanar el mago?", phrase2.Translation);
 
-        //    Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
-        //}
+            pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+                new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that adding a rendering selection rule based on the (English) suffix causes
-        ///// the correct vernacular rendering to be inserted into the translation template. In
-        ///// this test, there are multiple renderings which conform to the rendering selection
-        ///// rule -- we want the one that is also the default rendering for the term.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule_PreferDefault()
-        //{
-        //    AddMockedKeyTerm("magician", "mago", new[] { "brujo" });
-        //    AddMockedKeyTerm("servant", "criado", new[] { "siervo" });
-        //    AddMockedKeyTerm("heal", "sanara\u0301", new[] { "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado" });
+            Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
+        }
 
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Will the servant be healed?");
-        //    TranslatablePhrase phrase2 = new TranslatablePhrase("Will the magician be healed?");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that adding a rendering selection rule based on the (English) suffix causes
+        /// the correct vernacular rendering to be inserted into the translation template. In
+        /// this test, there are multiple renderings which conform to the rendering selection
+        /// rule -- we want the one that is also the default rendering for the term.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule_PreferDefault()
+        {
+            AddMockedKeyTerm("magician", "naicigam", "mago", "brujo");
+            AddMockedKeyTerm("servant", "tnavres", "criado", "siervo");
+            AddMockedKeyTerm("heal", "laeh", "sanara\u0301", "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1, phrase2 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Will the servant be healed?", "A", 1, 1, "will the", "kt:servant", "be", "kt:heal");
+            Question q2 = AddTestQuestion(cat, "Will the magician be healed?", "A", 1, 1, "will the", "kt:magician", "be", "kt:heal");
 
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
-        //    Assert.AreEqual(2, phrase2.TranslatableParts.Count());
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-        //    phrase1.Translation = "\u00BFSe curara\u0301 el siervo?";
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
 
-        //    Assert.IsFalse(phrase2.HasUserTranslation);
-        //    Assert.AreEqual("\u00BFSe sanara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+            phrase1.Translation = "\u00BFSe curara\u0301 el siervo?";
 
-        //    pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
-        //        new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
+            Assert.IsFalse(phrase2.HasUserTranslation);
+            Assert.AreEqual("\u00BFSe sanara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
 
-        //    Dictionary<Word, List<KeyTermMatch>> keyTermsTable =
-        //        (Dictionary<Word, List<KeyTermMatch>>)ReflectionHelper.GetField(pth, "m_keyTermsTable");
+            pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
+                new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
 
-        //    keyTermsTable["heal"].First().BestRendering = "curara\u0301";
+            m_dummyKtRenderings["laeh"].Remove("curara\u0301");
+            m_dummyKtRenderings["laeh"].Insert(0, "curara\u0301");
 
-        //    Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
-        //}
+            Dictionary<Word, List<KeyTerm>> keyTermsTable =
+                (Dictionary<Word, List<KeyTerm>>)ReflectionHelper.GetField(qp, "m_keyTermsTable");
+            keyTermsTable["heal"].First().LoadRenderings();
 
-        ///// ------------------------------------------------------------------------------------
-        ///// <summary>
-        ///// Tests that adding a disabled rendering selection rule does not change the resulting
-        ///// translation.
-        ///// </summary>
-        ///// ------------------------------------------------------------------------------------
-        //[Test]
-        //public void SelectCorrectTermRendering_RuleDisabled()
-        //{
-        //    AddMockedKeyTerm("Jesus", "Cristo", new[] { "Jesucristo", "Jesus", "Cristo Jesus" });
+            Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+        }
 
-        //    TranslatablePhrase phrase1 = new TranslatablePhrase("Who was the man Jesus healed?");
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that adding a disabled rendering selection rule does not change the resulting
+        /// translation.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SelectCorrectTermRendering_RuleDisabled()
+        {
+            AddMockedKeyTerm("Jesus", "susej", "Cristo", "Jesucristo", "Jesus", "Cristo Jesus");
 
-        //    PhraseTranslationHelper pth = new PhraseTranslationHelper(new[] {
-        //        phrase1 }, m_dummyKtList, m_keyTermRules, new List<Substitution>());
-        //    ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus",
+                "healed");
 
-        //    Assert.AreEqual(2, phrase1.TranslatableParts.Count());
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-        //    Assert.IsFalse(phrase1.HasUserTranslation);
-        //    Assert.AreEqual("Cristo", phrase1.Translation);
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 
-        //    pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] { new RenderingSelectionRule(@"\bman {0}", @"ucristo\b") });
-        //    pth.TermRenderingSelectionRules[0].Disabled = true;
+            Assert.IsFalse(phrase1.HasUserTranslation);
+            Assert.AreEqual("Cristo", phrase1.Translation);
 
-        //    Assert.AreEqual("Cristo", phrase1.Translation);
-        //}
+            pth.TermRenderingSelectionRules =
+                new List<RenderingSelectionRule>(new[] {new RenderingSelectionRule(@"\bman {0}", @"ucristo\b")});
+            pth.TermRenderingSelectionRules[0].Disabled = true;
+
+            Assert.AreEqual("Cristo", phrase1.Translation);
+        }
+
         #endregion
 
         #region Private helper methods

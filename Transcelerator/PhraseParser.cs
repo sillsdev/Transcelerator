@@ -28,7 +28,8 @@ namespace SIL.Transcelerator
 	public class PhraseParser
 	{
 		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
-		private readonly Question m_phrase;
+	    private readonly IEnumerable<Word> m_questionWords;
+	    private readonly Question m_phrase;
         private readonly Func<IEnumerable<Word>, Question, ParsedPart> YieldTranslatablePart;
 		private readonly List<Word> m_words;
 		/// <summary>The index of the current (potential) match</summary>
@@ -43,11 +44,12 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal PhraseParser(Dictionary<Word, List<KeyTermMatch>> keyTermsTable,
-            Dictionary<Regex, string> substituteStrings, Question phrase,
-            Func<IEnumerable<Word>, Question, ParsedPart> yieldPart)
+            Dictionary<Regex, string> substituteStrings, IEnumerable<Word> questionWords,
+            Question phrase, Func<IEnumerable<Word>, Question, ParsedPart> yieldPart)
 		{
 			m_keyTermsTable = keyTermsTable;
-            YieldTranslatablePart = yieldPart;
+		    m_questionWords = questionWords;
+		    YieldTranslatablePart = yieldPart;
 			m_phrase = phrase;
 
 			string phraseToParse = m_phrase.PhraseInUse;
@@ -95,11 +97,17 @@ namespace SIL.Transcelerator
 		internal IEnumerable<ParsedPart> Parse()
 		{
 			KeyTermMatch bestKeyTerm = null;
-			int minUnhandled = 0;
+			int minUnhandled = m_iStartMatch = m_iNextWord = 0;
 
-			for (m_iStartMatch = m_iNextWord = 0; m_iNextWord < m_words.Count; )
+            if (m_questionWords.Contains(m_words[m_iNextWord]))
+            {
+                yield return YieldTranslatablePart(m_words.Take(1), m_phrase);
+                m_iStartMatch = m_iNextWord = minUnhandled = 1;
+            }
+
+			for (; m_iNextWord < m_words.Count; )
 			{
-				bestKeyTerm = FindBestKeyTerm();
+			    bestKeyTerm = FindBestKeyTerm();
 				if (bestKeyTerm == null)
 					m_iNextWord++;
 				else
