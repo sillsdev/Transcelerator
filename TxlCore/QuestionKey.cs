@@ -43,7 +43,15 @@ namespace SIL.Transcelerator
 			set { m_text = value.Normalize(NormalizationForm.FormC); }
 		}
 
-		public bool Matches(QuestionKey other)
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Gets the text to use for processing & comparison purposes
+	    /// </summary>
+	    /// ------------------------------------------------------------------------------------
+	    [XmlIgnore]
+	    public virtual string PhraseInUse { get { return m_text; } }
+
+	    public bool Matches(QuestionKey other)
 		{
 			return StartRef == other.StartRef && EndRef == other.EndRef && Text == other.Text;
 		}

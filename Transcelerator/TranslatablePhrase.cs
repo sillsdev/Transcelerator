@@ -55,7 +55,7 @@ namespace SIL.Transcelerator
 		/// a phrase within a particular category and reference).</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(QuestionKey questionInfo, int category, int seqNumber)
-			: this(questionInfo.Text)
+			: this(questionInfo.PhraseInUse)
 		{
 			m_questionInfo = questionInfo;
 			m_category = category;

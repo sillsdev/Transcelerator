@@ -116,14 +116,9 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         [XmlIgnore]
-        public string PhraseInUse
+        public override string PhraseInUse
         {
-            get
-            {
-                if (IsExcluded)
-                    throw new InvalidOperationException("Cannot access PhraseInUseFor an excluded question.");
-                return ModifiedPhrase ?? Text;
-            }
+            get { return IsExcluded ? Text : (ModifiedPhrase ?? Text); }
         }
 
         /// --------------------------------------------------------------------------------
