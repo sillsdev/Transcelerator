@@ -13,6 +13,10 @@
     <Alternate name="poor"/>
     <Alternate name="meek"/>
   </KeyTermRule>
+  <KeyTermRule id="distinguish; doubt; waver; hesitate; take issue with someone" rule="Exclude">
+    <Alternate name="distinguish"/>
+    <Alternate name="doubt"/>
+  </KeyTermRule>
   <KeyTermRule id="good; kind; easy" rule="Exclude">
     <Alternate name="kindness"/>
   </KeyTermRule>
@@ -32,7 +36,8 @@
     <Alternate name="blessed"/>
     <Alternate name="blessing"/>
   </KeyTermRule>
-  <KeyTermRule id="bless; be blessed; praise; give thanks">
+  <KeyTermRule id="bless; be blessed; praise; give thanks" rule="Exclude">
+    <Alternate name="bless"/>
     <Alternate name="blesses"/>
     <Alternate name="blessed"/>
     <Alternate name="blessing"/>
