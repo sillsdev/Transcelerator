@@ -38,13 +38,14 @@ namespace SIL.Transcelerator
             this.m_lblCopyright = new System.Windows.Forms.Label();
             this.m_pnlCredits = new System.Windows.Forms.FlowLayoutPanel();
             this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.m_picLogo = new System.Windows.Forms.PictureBox();
-            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             lblProductName = new System.Windows.Forms.Label();
             developerInfo = new System.Windows.Forms.Label();
             this.m_pnlCredits.SuspendLayout();
@@ -103,6 +104,7 @@ namespace SIL.Transcelerator
             this.m_pnlCredits.Controls.Add(this.label2);
             this.m_pnlCredits.Controls.Add(this.label3);
             this.m_pnlCredits.Controls.Add(this.label4);
+            this.m_pnlCredits.Controls.Add(this.label8);
             this.m_pnlCredits.Location = new System.Drawing.Point(378, 205);
             this.m_pnlCredits.Name = "m_pnlCredits";
             this.m_pnlCredits.Size = new System.Drawing.Size(243, 149);
@@ -116,6 +118,17 @@ namespace SIL.Transcelerator
             this.label6.Size = new System.Drawing.Size(203, 26);
             this.label6.TabIndex = 5;
             this.label6.Text = "Thanks to Karl Rascher for designing the Transcelerator logo.";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 26);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(226, 65);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Questions for most of the Old Testament (excluding Genesis) were produced and mad" +
+                "e available with no licensing restrictions by the generosity of Arlo E. Moehlenp" +
+                "ah of http://www.doinggood.org.";
             // 
             // label5
             // 
@@ -181,16 +194,17 @@ namespace SIL.Transcelerator
             this.m_picLogo.TabIndex = 18;
             this.m_picLogo.TabStop = false;
             // 
-            // label7
+            // label8
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 26);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(226, 65);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Questions for most of the Old Testament (excluding Genesis) were produced and mad" +
-                "e available with no licensing restrictions by the generosity of Arlo E. Moehlenp" +
-                "ah of http://www.doinggood.org.";
+            this.label8.AutoSize = true;
+            this.m_pnlCredits.SetFlowBreak(this.label8, true);
+            this.label8.Location = new System.Drawing.Point(3, 325);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(235, 65);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "The Up and Down Arrow icons were developed by Double-J Design (downloaded from ic" +
+                "onarchive.com)  and are covered by this Creative Commons License: http://creativ" +
+                "ecommons.org/licenses/by/3.0/";
             // 
             // TxlInfo
             // 
@@ -227,5 +241,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label m_lblAppVersion;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
 	}
 }

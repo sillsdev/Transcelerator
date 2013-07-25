@@ -17,6 +17,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -590,6 +591,44 @@ namespace SIL.Transcelerator
                 dataGridUns.CurrentCell.Value = clipboardText;
 
             SaveNeeded = true;
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Navigates to the next untranslated question in the grid. Beeps if all currently
+        /// filtered questions have been translated
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void nextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int iRow = dataGridUns.CurrentRow.Index + 1; iRow < m_helper.FilteredPhraseCount; iRow++)
+            {
+                if (!m_helper[iRow].HasUserTranslation)
+                {
+                    dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[m_colTranslation.Index];
+                    return;
+                }
+            }
+            SystemSounds.Beep.Play();
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Navigates to the previous untranslated question in the grid. Beeps if all currently
+        /// filtered questions have been translated
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        private void prevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int iRow = dataGridUns.CurrentRow.Index - 1; iRow >= 0; iRow--)
+            {
+                if (!m_helper[iRow].HasUserTranslation)
+                {
+                    dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[m_colTranslation.Index];
+                    return;
+                }
+            }
+            SystemSounds.Beep.Play();
         }
 
         /// ------------------------------------------------------------------------------------
