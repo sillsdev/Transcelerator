@@ -344,6 +344,8 @@
       <DependentUpon>keyTermRules.xsd</DependentUpon>
     </None>
     <None Include="Properties\Refresh.png" />
+    <None Include="Properties\Arrow-Down-icon.png" />
+    <None Include="Properties\Arrow-Up-icon.png" />
     <Content Include="TXL no TXL.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
