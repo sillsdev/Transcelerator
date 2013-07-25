@@ -564,9 +564,11 @@ namespace SIL.Utils
 					bestCandidate = candidate;
 					if (ich + cchMatch == shortestLen)
 						break;
+                    if (shortestStr[ich + cchMatch] == kChObject)
+                        break;
 					candidate = shortestStr.Substring(ich, ++cchMatch);
 				} while (true);
-				if (cchMatch > cchBestMatch)
+				if (cchMatch > cchBestMatch && bestCandidate.Any(c => !Char.IsWhiteSpace(c)))
 				{
 					cchMinUsefulMatch = cchBestMatch = cchMatch;
 					bestMatch = bestCandidate;
