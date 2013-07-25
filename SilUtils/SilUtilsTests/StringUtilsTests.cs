@@ -481,23 +481,40 @@ namespace SIL.Utils
 				"floppy " + StringUtils.kszObject + " friends",
 				"best " + StringUtils.kszObject + " forks", false, out fWholeWord));
 			Assert.IsFalse(fWholeWord);
-		}
+        }
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Test the LongestUsefulCommonSubstring method. This test ensures that ORCs don't match
-		/// when matching partial words.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void LongestUsefulCommonSubstring_PreventOrcMatching_PartialWordMatch_OnlyOrcsAndWhitespaceMatch()
-		{
-			bool fWholeWord;
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Test the LongestUsefulCommonSubstring method. This test ensures that ORCs don't match
+        /// when matching partial words.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void LongestUsefulCommonSubstring_PreventOrcMatching_OnlyOrcsAndWhitespaceMatch()
+        {
+            bool fWholeWord;
 
-			Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(
-				StringUtils.kszObject + " " + StringUtils.kszObject + "ab?",
-				StringUtils.kszObject + " " + StringUtils.kszObject + "?", false, out fWholeWord));
-			Assert.IsFalse(fWholeWord);
-		}
+            Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(
+                StringUtils.kszObject + " " + StringUtils.kszObject + "ab?",
+                StringUtils.kszObject + " " + StringUtils.kszObject + "?", false, out fWholeWord));
+            Assert.IsFalse(fWholeWord);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Test the LongestUsefulCommonSubstring method. This test ensures that ORCs don't match
+        /// when matching partial words.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void LongestUsefulCommonSubstring_PreventOrcMatching_OneStringIsAllOrcsAndSpaces()
+        {
+            bool fWholeWord;
+
+            Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(
+                StringUtils.kszObject + " " + StringUtils.kszObject + " " + StringUtils.kszObject + " " + StringUtils.kszObject + " ",
+                StringUtils.kszObject + " " + StringUtils.kszObject + " " + StringUtils.kszObject + "a " + StringUtils.kszObject + " ", false, out fWholeWord));
+            Assert.IsFalse(fWholeWord);
+        }
 	}
 }
