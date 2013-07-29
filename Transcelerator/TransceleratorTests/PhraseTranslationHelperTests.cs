@@ -2014,13 +2014,13 @@ namespace SIL.Transcelerator
             phrase2.Translation = "\u00BFCo\u0301mo hizo Esteban?";
 
             Assert.IsFalse(phrase3.HasUserTranslation);
-            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a mirar?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+            Assert.AreEqual("\u00BFCo\u0301mo i Mari\u0301a mirar?".Normalize(NormalizationForm.FormC), phrase3.Translation);
 
             pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
                 new RenderingSelectionRule(@"{0} like\b", @"\bparec"),
                 new RenderingSelectionRule(@"{0} for\b", @"\bbusc")});
 
-            Assert.AreEqual("\u00BFCo\u0301mo Mari\u0301a buscaba?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+            Assert.AreEqual("\u00BFCo\u0301mo i Mari\u0301a buscaba?".Normalize(NormalizationForm.FormC), phrase3.Translation);
         }
 
         /// ------------------------------------------------------------------------------------
