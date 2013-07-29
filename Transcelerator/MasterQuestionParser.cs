@@ -32,6 +32,8 @@ namespace SIL.Transcelerator
 	public class MasterQuestionParser
 	{
 	    #region Data members
+        // TODO: Don't hard-code this. Should be read from language-specific file along with leading question words.
+        static List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
 
 	    private QuestionSections m_sections;
 	    private readonly IEnumerable<PhraseCustomization> m_customizations;
@@ -123,50 +125,57 @@ namespace SIL.Transcelerator
 	            }
 	        }
 
-	        for (int wordCount = m_partsTable.Keys.Max(); wordCount > 1; wordCount--)
+	        for (int wordCount = m_partsTable.Keys.Max(); wordCount > 0; wordCount--)
 	        {
 	            Dictionary<Word, List<ParsedPart>> partsTable;
 	            if (!m_partsTable.TryGetValue(wordCount, out partsTable))
 	                continue;
 
+	            int maxAllowableOccurrencesForSplitting = Math.Max(2, (26 - 2^wordCount)/2);
+
 	            List<ParsedPart> partsToDelete = new List<ParsedPart>();
 
 	            foreach (KeyValuePair<Word, List<ParsedPart>> phrasePartPair in partsTable)
-	                // REVIEW: problem: won't be able to add a new part that starts with this word
+	                // REVIEW: problem: won't be able to add a new part that starts with this word - Is this really a problem?
 	            {
 	                foreach (ParsedPart part in phrasePartPair.Value)
 	                {
-	                    if (part.Owners.Count() != 1)
-	                        continue;
+	                    int numberOfOccurrencesOfPart = part.Owners.Count();
+                        if (numberOfOccurrencesOfPart > maxAllowableOccurrencesForSplitting)
+                            continue;
 
 	                    // Look to see if some other part is a sub-phrase of this part.
 	                    SubPhraseMatch match = FindSubPhraseMatch(part);
-	                    if (match != null)
+                        // Should an uncommon match be able to break a common one? If not, should we keep looking for a better sub-phrase match?
+                        if (match != null/* && NEEDS WORK: part.Owners.Count() < match.Part.Owners.Count() * 2*/)
 	                    {
-	                        Question owningPhraseOfPart = part.Owners.First();
-	                        int iPart = owningPhraseOfPart.ParsedParts.IndexOf(part);
-	                        // Deal with any preceding remainder
-	                        if (match.StartIndex > 0)
+	                        foreach (var owningPhraseOfPart in part.Owners)
 	                        {
-	                            ParsedPart preceedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex),
-	                                                                        owningPhraseOfPart);
-	                            owningPhraseOfPart.ParsedParts.Insert(iPart++, preceedingPart);
+	                            //Question owningPhraseOfPart = part.Owners.First();
+	                            int iPart = owningPhraseOfPart.ParsedParts.IndexOf(part);
+	                            // Deal with any preceding remainder
+	                            if (match.StartIndex > 0)
+	                            {
+	                                ParsedPart preceedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex),
+	                                     owningPhraseOfPart);
+	                                owningPhraseOfPart.ParsedParts.Insert(iPart++, preceedingPart);
+	                            }
+	                            match.Part.AddOwningPhrase(owningPhraseOfPart);
+	                            owningPhraseOfPart.ParsedParts[iPart++] = match.Part;
+	                            // Deal with any following remainder
+	                            // Breaks this part at the given position because an existing part was found to be a
+	                            // substring of this part. Any text before the part being excluded will be broken off
+	                            // as a new part and returned. Any text following the part being excluded will be kept
+	                            // as this part's contents.
+	                            if (match.StartIndex + match.Part.Words.Count < part.Words.Count)
+	                            {
+	                                ParsedPart followingPart =
+	                                    GetOrCreatePart(part.GetSubWords(match.StartIndex + match.Part.Words.Count),
+	                                        owningPhraseOfPart);
+	                                owningPhraseOfPart.ParsedParts.Insert(iPart, followingPart);
+	                            }
+	                            partsToDelete.Add(part);
 	                        }
-	                        match.Part.AddOwningPhrase(owningPhraseOfPart);
-	                        owningPhraseOfPart.ParsedParts[iPart++] = match.Part;
-	                        // Deal with any following remainder
-	                        // Breaks this part at the given position because an existing part was found to be a
-	                        // substring of this part. Any text before the part being excluded will be broken off
-	                        // as a new part and returned. Any text following the part being excluded will be kept
-	                        // as this part's contents.
-	                        if (match.StartIndex + match.Part.Words.Count < part.Words.Count)
-	                        {
-	                            ParsedPart followingPart =
-	                                GetOrCreatePart(part.GetSubWords(match.StartIndex + match.Part.Words.Count),
-	                                owningPhraseOfPart);
-	                            owningPhraseOfPart.ParsedParts.Insert(iPart, followingPart);
-	                        }
-	                        partsToDelete.Add(part);
 	                    }
 	                }
 	            }
@@ -402,7 +411,7 @@ namespace SIL.Transcelerator
 		private SubPhraseMatch FindSubPhraseMatch(ParsedPart part)
 		{
 			int partWordCount = part.Words.Count;
-			for (int subPhraseWordCount = partWordCount - 1; subPhraseWordCount > 1; subPhraseWordCount--)
+			for (int subPhraseWordCount = partWordCount - 1; subPhraseWordCount > 0; subPhraseWordCount--)
 			{
 				Dictionary<Word, List<ParsedPart>> subPhraseTable;
 				if (!m_partsTable.TryGetValue(subPhraseWordCount, out subPhraseTable))
@@ -413,6 +422,9 @@ namespace SIL.Transcelerator
 					Word word = part.Words[iWord];
 					if (iWord + subPhraseWordCount > partWordCount)
 						break; // There aren't enough words left in this part to find a match
+                    if (subPhraseWordCount == 1 && prepositionsAndArticles.Contains(word))
+				        break; // Don't want to split a phrase using a part that consists of a single preposition or article.
+
 					List<ParsedPart> possibleSubParts;
 					if (subPhraseTable.TryGetValue(word, out possibleSubParts))
 					{

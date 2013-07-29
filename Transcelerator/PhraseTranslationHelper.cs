@@ -448,7 +448,7 @@ namespace SIL.Transcelerator
 			if (unTranslatedParts.Count == 1)
 				unTranslatedParts[0].Translation = Regex.Replace(translation, @"\{.+\}", string.Empty).Trim();
 
-			foreach (Part partNeedingUpdating in partsNeedingUpdating)
+			foreach (Part partNeedingUpdating in partsNeedingUpdating.OrderBy(p => -p.Words.Count()))
 				RecalculatePartTranslation(partNeedingUpdating);
 
 			if (TranslationsChanged != null)
@@ -500,9 +500,13 @@ namespace SIL.Transcelerator
 			}
 
 			string commonTranslation = GetBestCommonPartTranslation(userTranslations);
-			if (commonTranslation != null)
-				part.Translation = commonTranslation;
-			if (originalTranslation.Length > 0 && (part.Translation.Length == 0 || originalTranslation.Contains(part.Translation)))
+		    if (commonTranslation != null)
+		    {
+                if (commonTranslation.Contains(StringUtils.kszObject))
+                    Debug.WriteLine("ORC in part translation");
+		        part.Translation = commonTranslation;
+		    }
+		    if (originalTranslation.Length > 0 && (part.Translation.Length == 0 || originalTranslation.Contains(part.Translation)))
 			{
 				// The translation of the part has shrunk
 				return part.OwningPhrases.Where(phr => phr.HasUserTranslation).SelectMany(otherPhrases => otherPhrases.TranslatableParts).Distinct();
