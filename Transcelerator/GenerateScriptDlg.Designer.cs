@@ -227,6 +227,7 @@ namespace SIL.Transcelerator
             this.m_cboEndSection.Name = "m_cboEndSection";
             this.m_cboEndSection.SelectedIndexChanged += new System.EventHandler(this.m_cboEndSection_SelectedIndexChanged);
             this.m_cboEndSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
+            this.m_cboEndSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             // 
             // m_cboStartSection
             // 
@@ -239,6 +240,7 @@ namespace SIL.Transcelerator
             this.m_cboStartSection.Name = "m_cboStartSection";
             this.m_cboStartSection.SelectedIndexChanged += new System.EventHandler(this.m_cboStartSection_SelectedIndexChanged);
             this.m_cboStartSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
+            this.m_cboStartSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             // 
             // m_rdoSectionRange
             // 
@@ -258,6 +260,7 @@ namespace SIL.Transcelerator
             this.m_cboSection.Name = "m_cboSection";
             this.m_cboSection.SelectedIndexChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
             this.m_cboSection.Enter += new System.EventHandler(this.m_cboSection_Enter);
+            this.m_cboSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             // 
             // m_rdoSingleSection
             // 
