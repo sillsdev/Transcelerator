@@ -409,6 +409,13 @@ namespace SIL.Transcelerator
                 Properties.Settings.Default.GenerateTemplateAbsoluteCssPath = m_chkAbsoluteCssPath.Checked;
             }
         }
+
+        private void ComboTextUpdate(object sender, EventArgs e)
+        {
+            ComboBox cbo = (ComboBox)sender;
+            if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
+                cbo.SelectedIndex = -1;
+        }
 		#endregion
 
 		#region Private helper methods
