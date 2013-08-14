@@ -1651,6 +1651,26 @@ namespace SIL.Transcelerator
 				return;
 			TextControl.KeyDown += txtControl_KeyDown;
 			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
+			TextControl.MouseDown += TextControl_MouseDown;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>Allows user to drag selected text from TextControl</summary>
+		/// ------------------------------------------------------------------------------------
+		void TextControl_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left && TextControl.SelectedText.Length > 0)
+			{
+				var dxStartOfSelection = TextControl.SelectionStart == 0 ? TextControl.ClientRectangle.Left :
+					TextControl.GetPositionFromCharIndex(TextControl.SelectionStart - 1).X;
+				var limSelection = TextControl.SelectionStart + TextControl.SelectionLength;
+				var dxEndOfSelection = limSelection == TextControl.Text.Length ? TextControl.ClientSize.Width :
+					TextControl.GetPositionFromCharIndex(limSelection).X;
+				if (e.Location.X >= dxStartOfSelection && e.Location.X <= dxEndOfSelection)
+				{
+					DoDragDrop(TextControl.SelectedText, DragDropEffects.Copy);
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
