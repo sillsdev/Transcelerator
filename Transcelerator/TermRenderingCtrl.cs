@@ -10,7 +10,7 @@
 //
 // File: TermRenderingCtrl.cs
 //
-// Some icons used in this dialog box were downloaded from http://www.iconfinder.com
+// Some icons used in this control were downloaded from http://www.iconfinder.com
 // The Add Rendering icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons
 // License: http://creativecommons.org/licenses/by/3.0/
 // The Delete Rendering icon was developed by Rodolphe and is covered by the GNU General Public
@@ -20,7 +20,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -80,7 +79,7 @@ namespace SIL.Transcelerator
 		#region Public properties
 		public string SelectedRendering
 		{
-			get { return m_lbRenderings.SelectedItem.ToString(); }
+			get { return m_lbRenderings.SelectedItem as string; }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -297,25 +296,12 @@ namespace SIL.Transcelerator
 		/// Handles the Click event of the addRenderingToolStripMenuItem control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="FindForm() returns a reference")]
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
 			using (var dlg = new AddRenderingDlg(m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
-				{
-					try
-					{
-						m_term.AddRendering(dlg.Rendering);
-						m_lbRenderings.Items.Add(dlg.Rendering);
-					}
-					catch (ArgumentException ex)
-					{
-						MessageBox.Show(FindForm(), ex.Message, dlg.Text);
-					}
-					SelectedRendering = dlg.Rendering;
-				}
+					AddRendering(dlg.Rendering, dlg.Text);
 			}
 		}
 
@@ -345,6 +331,29 @@ namespace SIL.Transcelerator
 			m_term.DeleteRendering(rendering);
 			m_lbRenderings.Items.Remove(rendering);
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the DragDrop event.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void TermRenderingCtrl_DragDrop(object sender, DragEventArgs e)
+		{
+			var newRendering = GetRenderingFromDragDropData(e);
+			if (newRendering != null)
+				AddRendering(newRendering, "Transcelerator");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the DragEnter event to determine whether to allow dropping.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void TermRenderingCtrl_DragEnter(object sender, DragEventArgs e)
+		{
+			if (GetRenderingFromDragDropData(e) != null)
+                e.Effect = DragDropEffects.Copy;
+		}
 		#endregion
 
         #region Private helper methods
@@ -358,6 +367,47 @@ namespace SIL.Transcelerator
             m_lbRenderings.Items.Clear();
             m_lbRenderings.Items.AddRange(m_term.Renderings.Distinct().ToArray());
         }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Examines the DragEventArgs to see if the format and effects are what we're expecting
+		/// and retrieves a space-trimmed string if it's not already one of the existing
+		/// renderings for this term.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private string GetRenderingFromDragDropData(DragEventArgs e)
+		{
+			if ((e.AllowedEffect & DragDropEffects.Copy) > 0 &&
+				(e.Data.GetDataPresent(DataFormats.StringFormat, false) ||
+				e.Data.GetDataPresent(DataFormats.UnicodeText, false) ||
+				e.Data.GetDataPresent(DataFormats.Text, false)))
+			{
+				string rendering = ((string)e.Data.GetData(DataFormats.StringFormat)).Trim();
+
+				if (rendering.Length > 0 && !m_term.Renderings.Contains(rendering))
+					return rendering;
+			}
+			return null;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds the given new rendering and selects it as the current one in the list.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void AddRendering(string newRendering, string errorCaption)
+		{
+			try
+			{
+				m_term.AddRendering(newRendering);
+				m_lbRenderings.Items.Add(newRendering);
+			}
+			catch (ArgumentException ex)
+			{
+				MessageBox.Show(FindForm(), ex.Message, errorCaption);
+			}
+			SelectedRendering = newRendering;
+		}
         #endregion
     }
 }
