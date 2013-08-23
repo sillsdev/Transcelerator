@@ -129,7 +129,7 @@ namespace SIL.Transcelerator
 			set
 			{
 				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
-					Save(true);
+					Save(true, false);
 				else
 					saveToolStripMenuItem.Enabled = btnSave.Enabled = value;
 			}
@@ -394,14 +394,14 @@ namespace SIL.Transcelerator
 			{
 				if (mnuAutoSave.Checked)
 				{
-					Save(true);
+					Save(true, false);
 					return;
 				}
 				switch (MessageBox.Show(this, "You have made changes. Do you wish to save before closing?",
 					"Save changes?", MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
-						Save(true);
+						Save(true, false);
 						break;
 					case DialogResult.Cancel:
 						e.Cancel = true;
@@ -937,10 +937,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void Save(object sender, EventArgs e)
 		{
-			Save(false);
+			Save(false, false);
 		}
 
-		private void Save(bool fForce)
+		private void Save(bool fForce, bool fSaveCustomizations)
 		{
 			if (m_saving || (!fForce && !SaveNeeded))
 				return;
@@ -954,30 +954,33 @@ namespace SIL.Transcelerator
 				where translatablePhrase.HasUserTranslation
 				select new XmlTranslation(translatablePhrase)).ToList()));
 
-			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
-			foreach (TranslatablePhrase translatablePhrase in m_helper.UnfilteredPhrases)
+			if (fSaveCustomizations)
 			{
-				if (translatablePhrase.IsExcludedOrModified)
-					customizations.Add(new PhraseCustomization(translatablePhrase));
-				if (translatablePhrase.InsertedPhraseBefore != null)
+				List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+				foreach (TranslatablePhrase translatablePhrase in m_helper.UnfilteredPhrases)
 				{
-					customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
-						translatablePhrase.InsertedPhraseBefore,
-						PhraseCustomization.CustomizationType.InsertionBefore));
+					if (translatablePhrase.IsExcludedOrModified)
+						customizations.Add(new PhraseCustomization(translatablePhrase));
+					if (translatablePhrase.InsertedPhraseBefore != null)
+					{
+						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+							translatablePhrase.InsertedPhraseBefore,
+							PhraseCustomization.CustomizationType.InsertionBefore));
+					}
+					if (translatablePhrase.AddedPhraseAfter != null)
+					{
+						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+							translatablePhrase.AddedPhraseAfter,
+							PhraseCustomization.CustomizationType.AdditionAfter));
+					}
 				}
-				if (translatablePhrase.AddedPhraseAfter != null)
+
+				if (customizations.Count > 0 || m_fileAccessor.Exists(DataFileAccessor.DataFileId.QuestionCustomizations))
 				{
-					customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
-						translatablePhrase.AddedPhraseAfter,
-						PhraseCustomization.CustomizationType.AdditionAfter));
+					m_fileAccessor.Write(DataFileAccessor.DataFileId.QuestionCustomizations,
+						XmlSerializationHelper.SerializeToString(customizations));
 				}
 			}
-
-            if (customizations.Count > 0 || m_fileAccessor.Exists(DataFileAccessor.DataFileId.QuestionCustomizations))
-            {
-                m_fileAccessor.Write(DataFileAccessor.DataFileId.QuestionCustomizations,
-                    XmlSerializationHelper.SerializeToString(customizations));
-            }
 
 			m_saving = false;
 		}
@@ -1255,7 +1258,7 @@ namespace SIL.Transcelerator
 		private void mnuAutoSave_CheckedChanged(object sender, EventArgs e)
 		{
 			if (mnuAutoSave.Checked)
-				Save(false);
+				Save(false, false);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1309,7 +1312,10 @@ namespace SIL.Transcelerator
 		/// <summary>
         /// Reloads the data grid view and attempts to re-select the given question.
 		/// </summary>
-		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
+		/// <param name="fForceSave">if set to <c>true</c> data will be saved even if
+		/// Transcelerator doesn't know the data is dirty. Note: Currently, when this method is
+		/// called with fForceSave set, it's always in response to a customization change, so
+		/// this parameter will also control whether customization changes are saved.</param>
 		/// <param name="key">The key of the question to try to select after reloading.</param>
 		/// <param name="fallBackRow">the index of the row to select if a question witht the
 		/// given key cannot be found.</param>
@@ -1319,7 +1325,7 @@ namespace SIL.Transcelerator
 			using (new WaitCursor(this))
 			{
 				int iCol = dataGridUns.CurrentCell.ColumnIndex;
-				Save(fForceSave);
+				Save(fForceSave, fForceSave); // See comment above for fForceSave
 
 				int iSortedCol = -1;
 				bool sortAscending = true;
