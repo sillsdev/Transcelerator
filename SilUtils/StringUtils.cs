@@ -438,6 +438,62 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Removes the given string from the string builder if it is unique (only occurs once
+		/// as a substring) or is a whole-word match (surrounded by white-space, punctuation, or
+		/// start/end of string).
+		/// </summary>
+		/// <param name="bldr">The string builder.</param>
+		/// <param name="toRemove">The string to look for and remove.</param>
+		/// ------------------------------------------------------------------------------------
+		public static int RemoveUniqueOrWholeWordSubstring(this StringBuilder bldr,
+			string toRemove)
+		{
+			return bldr.ReplaceUniqueOrWholeWordSubstring(toRemove, string.Empty, 1);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Replaces the given string from the string builder if it is unique (only occurs once
+		/// as a substring) or is a whole-word match (surrounded by white-space, punctuation, or
+		/// start/end of string).
+		/// </summary>
+		/// <param name="bldr">The string builder.</param>
+		/// <param name="toRemove">The string to look for and remove.</param>
+		/// <param name="replacement">The string to insert in place of the removed text.</param>
+		/// <param name="minLengthForPartialMatch">Partial-word matches will only be performed
+		/// if toRemove is at least minLengthForPartialMatch characters long</param>
+		/// ------------------------------------------------------------------------------------
+		public static int ReplaceUniqueOrWholeWordSubstring(this StringBuilder bldr,
+			string toRemove, string replacement, int minLengthForPartialMatch)
+		{
+			string s = bldr.ToString();
+			int useThisMatch;
+			int ichMatch = useThisMatch = s.IndexOf(toRemove, StringComparison.Ordinal);
+			while (ichMatch >= 0)
+			{
+				bool wordBreakAtStart = (ichMatch == 0 || !Char.IsLetter(s[ichMatch - 1]));
+				int ichLim = ichMatch + toRemove.Length;
+				bool wordBreakAtEnd = (ichLim == s.Length || !Char.IsLetter(s[ichLim]));
+				if (wordBreakAtStart && wordBreakAtEnd)
+				{
+					useThisMatch = ichMatch;
+					break;
+				}
+
+				if (useThisMatch != ichMatch || toRemove.Length < minLengthForPartialMatch)
+					useThisMatch = -1; // This isn't the first match, so the only way we'll do the replacement is if we find a whole-word match.
+
+				// Found a partial-word match. Keep looking to see if there's another (possibly a whole-word one)
+				ichMatch = s.IndexOf(toRemove, ichMatch + 1, StringComparison.Ordinal);
+			}
+
+			if (useThisMatch >= 0)
+				bldr.Remove(useThisMatch, toRemove.Length).Insert(useThisMatch, replacement);
+			return useThisMatch;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the longest substring that two strings have in common. The substring returned
 		/// will either be one or more contiguous whole words or a sustring that is part of a
 		/// single word (if so requested by the caller). In the latter case, the returned

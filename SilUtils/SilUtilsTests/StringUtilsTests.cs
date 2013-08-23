@@ -12,6 +12,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using NUnit.Framework;
 
 namespace SIL.Utils
@@ -227,6 +228,99 @@ namespace SIL.Utils
 			Assert.AreEqual(1, ichMin);
 			Assert.AreEqual(2, ichLim1);
 			Assert.AreEqual(3, ichLim2);
+		}
+		#endregion
+
+		#region ReplaceUniqueOrWholeWordSubstring tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RemoveUniqueOrWholeWordSubstring_SingleWholeWordMatch_RemovesWord()
+		{
+			StringBuilder bldr = new StringBuilder("This word will be removed");
+			Assert.AreEqual(5, bldr.RemoveUniqueOrWholeWordSubstring("word"));
+			Assert.AreEqual("This  will be removed", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_SingleWholeWordMatch_ReplacedWithAsterisk()
+		{
+			StringBuilder bldr = new StringBuilder("This word will be replaced");
+			Assert.AreEqual(5, bldr.ReplaceUniqueOrWholeWordSubstring("word", "*", 1));
+			Assert.AreEqual("This * will be replaced", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_SinglePartialWordMatch_ReplacedPartialWord()
+		{
+			StringBuilder bldr = new StringBuilder("Part of this word will be replaced.");
+			Assert.AreEqual(13, bldr.ReplaceUniqueOrWholeWordSubstring("wor", "*", 1));
+			Assert.AreEqual("Part of this *d will be replaced.", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_SinglePartialWordMatchOfShortWord_NoReplacement()
+		{
+			StringBuilder bldr = new StringBuilder("Part of this word will be replaced.");
+			Assert.AreEqual(-1, bldr.ReplaceUniqueOrWholeWordSubstring("wo", "*", 3));
+			Assert.AreEqual("Part of this word will be replaced.", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_MultipleWholeWordMatch_FirstOccurrenceReplaced()
+		{
+			StringBuilder bldr = new StringBuilder("This word will be replaced like a word.");
+			Assert.AreEqual(5, bldr.ReplaceUniqueOrWholeWordSubstring("word", "*", 1));
+			Assert.AreEqual("This * will be replaced like a word.", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_PartialWordFollowedByWholeWordMatch_WholeWordMatchReplaced()
+		{
+			StringBuilder bldr = new StringBuilder("These words will not be replaced like a word.");
+			Assert.AreEqual(40, bldr.ReplaceUniqueOrWholeWordSubstring("word", "*", 1));
+			Assert.AreEqual("These words will not be replaced like a *.", bldr.ToString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the ReplaceUniqueOrWholeWordSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ReplaceUniqueOrWholeWordSubstring_TwoPartialWordMatches_NoReplacement()
+		{
+			StringBuilder bldr = new StringBuilder("These words are from a crossword.");
+			Assert.AreEqual(-1, bldr.ReplaceUniqueOrWholeWordSubstring("word", "*", 1));
+			Assert.AreEqual("These words are from a crossword.", bldr.ToString());
 		}
 		#endregion
 

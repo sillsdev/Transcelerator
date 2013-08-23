@@ -1162,7 +1162,58 @@ namespace SIL.Transcelerator
             Assert.IsTrue(phrase1.HasUserTranslation);
             Assert.IsTrue(phrase2.HasUserTranslation);
             Assert.IsFalse(phrase3.HasUserTranslation);
-        }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for two phrases that have a common part and verify
+		/// that a third phrase that has that part shows the translation of the translated part.
+		/// In this test, there is a long partial-word match for a pair of sentences, but the
+		/// partial word also contains a short word that happens to be a match for a different
+		/// part.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_PreventShortProvisionalTranslationFromObscuringLongerMatchForAnotherPart()
+		{
+			AddMockedKeyTerm("Paul", "Pablo");
+			AddMockedKeyTerm("power","poder");
+			AddMockedKeyTerm("Lord", "Senor");
+			AddMockedKeyTerm("God", "Dios");
+			AddMockedKeyTerm("favor", "favor");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "What had Paul described to them?", "A", 1, 1, "what",
+				"had", "kt:paul", "described", "to them");
+			Question q2 = AddTestQuestion(cat, "How is the power of the Lord described?", "B", 2, 2, "how",
+				"is", "the", "kt:power", "of", "the", "kt:lord", "described");
+			Question q3 = AddTestQuestion(cat, "How is God described?", "C", 3, 3, "how",
+				"is", "kt:god", "described");
+			Question q4 = AddTestQuestion(cat, "of", "D", 4, 4, "of");
+			Question q5 = AddTestQuestion(cat, "Where is the Lord?", "E", 5, 5, "where", "is the", "kt:Lord");
+			Question q6 = AddTestQuestion(cat, "How can man obtain the favor of God?", "F", 6, 6, "how",
+				"can man obtain", "the", "kt:favor", "of", "kt:god");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+			TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+			TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+			TranslatablePhrase phrase6 = pth.GetPhrase(q6.ScriptureReference, q6.Text);
+
+			phrase4.Translation = "de";
+			phrase5.Translation = "¿Do\u0301nde esta\u0301 el Senor?";
+			phrase6.Translation = "¿Co\u0301mo puede el hombre obtener el favor de Dios?";
+			phrase2.Translation = "¿Co\u0301mo se describe el poder del Senor?";
+			phrase1.Translation = "¿Que\u0301 les habi\u0301a descrito Pablo?";
+
+			Assert.AreEqual("¿Co\u0301mo Dios descri?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+			Assert.IsFalse(phrase3.HasUserTranslation);
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>

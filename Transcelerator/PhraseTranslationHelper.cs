@@ -470,14 +470,14 @@ namespace SIL.Transcelerator
 			List<string> userTranslations = new List<string>();
 			foreach (TranslatablePhrase phrase in part.OwningPhrases.Where(op => op.HasUserTranslation))
 			{
-				string toAdd = phrase.UserTransSansOuterPunctuation;
+				StringBuilder toAdd = new StringBuilder(phrase.UserTransSansOuterPunctuation);
 				foreach (IPhrasePart otherPart in phrase.GetParts().Where(otherPart => otherPart != part))
 				{
 					if (otherPart is KeyTerm)
 					{
 						foreach (string ktTrans in ((KeyTerm)otherPart).Renderings)
 						{
-							int ich = toAdd.IndexOf(ktTrans, StringComparison.Ordinal);
+							int ich = toAdd.ToString().IndexOf(ktTrans, StringComparison.Ordinal);
 							if (ich >= 0)
 							{
 								toAdd = toAdd.Remove(ich, ktTrans.Length).Insert(ich, StringUtils.kszObject);
@@ -488,15 +488,11 @@ namespace SIL.Transcelerator
 					else
 					{
 						if (otherPart.Translation.Length > 0)
-						{
-							int ichMatch = toAdd.IndexOf(otherPart.Translation, StringComparison.Ordinal);
-							if (ichMatch >= 0)
-								toAdd = toAdd.Remove(ichMatch, otherPart.Translation.Length).Insert(ichMatch, StringUtils.kszObject);
-						}
+							toAdd.ReplaceUniqueOrWholeWordSubstring(otherPart.Translation, StringUtils.kszObject, 3);
 					}
 				}
-				if (!string.IsNullOrEmpty(toAdd))
-					userTranslations.Add(toAdd);
+				if (toAdd.Length > 0)
+					userTranslations.Add(toAdd.ToString());
 			}
 
 			string commonTranslation = GetBestCommonPartTranslation(userTranslations);
@@ -506,7 +502,8 @@ namespace SIL.Transcelerator
                     Debug.WriteLine("ORC in part translation");
 		        part.Translation = commonTranslation;
 		    }
-		    if (originalTranslation.Length > 0 && (part.Translation.Length == 0 || originalTranslation.Contains(part.Translation)))
+		    if (originalTranslation.Length > 0 && (part.Translation.Length == 0 ||
+				(originalTranslation.Length > part.Translation.Length && originalTranslation.Contains(part.Translation))))
 			{
 				// The translation of the part has shrunk
 				return part.OwningPhrases.Where(phr => phr.HasUserTranslation).SelectMany(otherPhrases => otherPhrases.TranslatableParts).Distinct();
