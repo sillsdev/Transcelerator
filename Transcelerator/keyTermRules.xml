@@ -98,6 +98,9 @@
   <KeyTermRule id="passing; discerning; distinguishing" rule="Exclude">
     <Alternate name="discernment"/>
   </KeyTermRule>
+  <KeyTermRule id="traditionally: Almighty One; better: All-sufficient One (= the One every good and perfect gift comes from)" rule="Exclude">
+    <Alternate name="almighty"/>
+  </KeyTermRule>
   <KeyTermRule id="something that has been devoted to idols and so made unclean" rule="Exclude" />
   <KeyTermRule id="be, become guilty; to be held guilty, suffer punishment; declare guilty" rule="Exclude">
 	  <Alternate name="is guilty"/>
@@ -123,8 +126,10 @@
 	  <Alternate name="punish"/>
 	  <Alternate name="punishes"/>
 	  <Alternate name="punished"/>
-	  <Alternate name="punishing"/>
-	  <Alternate name="punishment"/>
+    <Alternate name="punishing"/>
+    <Alternate name="punishment"/>
+    <Alternate name="iniquity"/>
+    <Alternate name="iniquities"/>
   </KeyTermRule>
   <KeyTermRule id="sentence" rule="MatchForRefOnly"/>
   <KeyTermRule id="perform the ritual of removing the state of guilt or uncleanness from oneself" rule="Exclude">
