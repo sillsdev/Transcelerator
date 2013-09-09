@@ -11,6 +11,7 @@
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -291,6 +292,10 @@ namespace SIL.Transcelerator
             splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
 
             InitializeComponent();
+
+#if DEBUG
+		    generateOutputForArloToolStripMenuItem.Visible = true;
+#endif
 
             m_fileAccessor = datafileProxy;
 
@@ -1197,6 +1202,104 @@ namespace SIL.Transcelerator
                 }
             }
         }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Writes a file with the questions having verse numbers in parentheses and an
+		/// line containing the answers.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------		
+		private void generateOutputForArloToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new SaveFileDialog())
+			{
+				dlg.DefaultExt = "txt";
+				dlg.InitialDirectory = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+					"SoftDev"), "Transcelerator");
+
+				string sRef;
+				Func<BCVRef, BCVRef, bool> InRange;
+				if (m_startRef == BCVRef.Empty)
+				{
+					sRef = "- All";
+					InRange = (bcvStart, bcvEnd) => true;
+				}
+				else
+				{
+					sRef = BCVRef.NumberToBookCode(m_startRef.Book);
+					if (m_startRef.Book != m_endRef.Book)
+						sRef += "-" + BCVRef.NumberToBookCode(m_endRef.Book);
+
+					InRange = (bcvStart, bcvEnd) => bcvStart >= m_startRef && bcvEnd <= m_endRef;
+				}
+
+				dlg.FileName = string.Format("Translations of Spanish Questions {0}", sRef);
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					try
+					{
+						using (var sw = new StreamWriter(dlg.FileName, false, Encoding.UTF8))
+						{
+							foreach (TranslatablePhrase phrase in m_helper.UnfilteredPhrases.Where(tp => tp.Category >= 0))
+							{
+								BCVRef startRef = phrase.StartRef;
+								BCVRef endRef = phrase.EndRef;
+
+								if (!InRange(startRef, endRef))
+									continue;
+
+								if (phrase.IsUserAdded)
+									sw.WriteLine("***Added Question:");
+
+								if (!phrase.HasUserTranslation || phrase.IsExcluded)
+									sw.WriteLine("***Not translated:");
+
+								sw.WriteLine("\"{0}\"",
+									BCVRef.MakeReferenceString(new BCVRef(phrase.StartRef), new BCVRef(phrase.EndRef), ".", "-"));
+
+								string sVerse = " (" + ((startRef.Verse != endRef.Verse)
+									? startRef.Verse.ToString() + "-" + endRef.Verse.ToString()
+									: startRef.Verse.ToString()) + ")";
+
+								if (!phrase.IsUserAdded && phrase.ModifiedPhrase != null)
+								{
+									sw.WriteLine("***Modified Question");
+									sw.WriteLine("Original: " + phrase.OriginalPhrase);
+									sw.WriteLine("Modified: " + phrase.ModifiedPhrase);
+								}
+								else
+								{
+									sw.WriteLine(phrase.OriginalPhrase + sVerse);
+								}
+								var qi = phrase.QuestionInfo;
+								if (qi != null)
+								{
+									if (qi.Answers != null)
+									{
+										foreach (string a in qi.Answers)
+											sw.WriteLine("A: " + a);
+									}
+									if (qi.Notes != null)
+									{
+										foreach (string n in qi.Notes)
+											sw.WriteLine("Note: " + n);
+									}
+								}
+
+								if (phrase.HasUserTranslation && !phrase.IsExcluded)
+									sw.WriteLine(phrase.Translation + sVerse);
+
+								sw.WriteLine(); // blank line
+							}
+						}
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(ex.Message, Text);
+					}
+				}
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2214,17 +2317,17 @@ namespace SIL.Transcelerator
 		/// Handles DragOver and DragEnter events
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		void TextControl_Drag(object sender, DragEventArgs e)
+		private void TextControl_Drag(object sender, DragEventArgs e)
 		{
 			if ((e.AllowedEffect & (DragDropEffects.Move)) > 0 &&
 				(e.Data.GetDataPresent(DataFormats.StringFormat, false)))
 			{
 				// For now, we can safely assume that any "string" that
 				// allows move is originating in the same TextControl because any
-				// text form an outside app will not come in as a StringFormat
+				// text from an outside app will not come in as a StringFormat
 				// object and no other control in Transcelerator supports
 				// moving string data.
-				e.Effect = DragDropEffects.Move;
+				e.Effect = m_fEnableDragDrop ? DragDropEffects.Move : DragDropEffects.None;
 			}
 			else if ((e.AllowedEffect & (DragDropEffects.Copy)) > 0 &&
 				(e.Data.GetDataPresent(DataFormats.StringFormat, false) ||

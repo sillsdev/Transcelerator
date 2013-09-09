@@ -157,7 +157,6 @@ namespace SIL.Transcelerator
                             fileId => host.GetPlugInDataLastModifiedTime(this, projectName, fileId));
 
 						bool fEnableDragDrop = true;
-#if Paratext7p4p100pWhatever
 						try
 						{
 						    string dragDropSetting = host.GetApplicationSetting("EnableDragAndDrop");
@@ -167,7 +166,6 @@ namespace SIL.Transcelerator
 						catch (Exception)
 						{
 						}
-#endif
 						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
