@@ -200,8 +200,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_lbRenderings_MouseDown(object sender, MouseEventArgs e)
 		{
+			if (e.Button != MouseButtons.Right)
+				return;
 			m_lbRenderings.Focus(); // This can fail if validation fails in control that had focus.
-			if (m_lbRenderings.Focused && e.Button == MouseButtons.Right)
+			if (m_lbRenderings.Focused)
 			{
 				int index = m_lbRenderings.IndexFromPoint(e.Location);
 				if (index >= 0)

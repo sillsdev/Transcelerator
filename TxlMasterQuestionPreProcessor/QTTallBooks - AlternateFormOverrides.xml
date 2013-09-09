@@ -2772,9 +2772,41 @@
 		<Alt>Then what is the significance of Pharaoh having two dreams?</Alt>
 		<Alt>What is the significance of Pharaoh having two dreams?</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>Why would John not want to do (or, hesitate to do) even very simple work for such a person, like untying his shoes?</Original>
-		<Alt>Why would John not want to do even very simple work for such a person, like untying his shoes?</Alt>
-		<Alt>Why would John hesitate to do even very simple work for such a person, like untying his shoes?</Alt>
-	</Alternative>
+  <Alternative>
+    <Original>Why would John not want to do (or, hesitate to do) even very simple work for such a person, like untying his shoes?</Original>
+    <Alt>Why would John not want to do even very simple work for such a person, like untying his shoes?</Alt>
+    <Alt>Why would John hesitate to do even very simple work for such a person, like untying his shoes?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>With what did Job make a covenant?</Original>
+    <Alt>With what did Job make a covenant?</Alt>
+    <Alt>What kind of covenant did Job make?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How does the psalmist respond (and encourage others to respond) to the blessings of the Lord?</Original>
+    <Alt>How does the psalmist respond to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond (and encourage others to respond) to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond repeatedly (and encourage others to respond) to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond and encourage others to respond to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond (in his soul) to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond in his soul to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond repeatedly (in his soul) to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond repeatedly in his soul to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond repeatedly to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond three times (in his soul) to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond three times in his soul to the blessings of the Lord?</Alt>
+    <Alt>How does the psalmist respond three times to the blessings of the Lord?</Alt>
+    <Alt>What phrase is repeated several times at the beginning and end of this psalm?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What was said among the nations/heathens when the LORD returned the captives to Zion (or restored the fortunes of Zion)?</Original>
+    <Alt>What was said among the nations when the LORD returned the captives to Zion?</Alt>
+    <Alt>What was said among the nations when the LORD restored the fortunes of Zion?</Alt>
+    <Alt>What was said among the heathens when the LORD returned the captives to Zion?</Alt>
+    <Alt>What was said among the heathens when the LORD restored the fortunes of Zion?</Alt>
+    <Alt>What will they say among the nations when the LORD returns the captives to Zion?</Alt>
+    <Alt>What will they say among the nations when the LORD restores the fortunes of Zion?</Alt>
+    <Alt>What will they say among the heathens when the LORD returns the captives to Zion?</Alt>
+    <Alt>What will they say among the heathens when the LORD restores the fortunes of Zion?</Alt>
+  </Alternative>
 </QuestionAlternativeOverrides>

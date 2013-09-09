@@ -45,6 +45,7 @@ namespace SIL.Transcelerator
 	    private readonly Func<string, IList<int>> m_getTermOccurrences;
 	    private readonly Action m_helpDelegate;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
+		private readonly bool m_fEnableDragDrop;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
@@ -75,8 +76,8 @@ namespace SIL.Transcelerator
 		private bool m_postponeRefresh;
 		private int m_maximumHeightOfKeyTermsPane;
 		private bool m_loadingBiblicalTermsPane = false;
-
-	    #endregion
+		private SubstringDescriptor m_lastTranslationSelectionState;
+		#endregion
 
 		#region Delegates
 		public Func<IEnumerable<int>> GetAvailableBooks { private get; set; }
@@ -266,11 +267,13 @@ namespace SIL.Transcelerator
 	    /// <param name="englishVersification">The versification typically used in English Bibles</param>
 	    /// <param name="projectVersification">The versification of the external project (to
 	    /// be used for passing references to the scrExtractor).</param>
-	    /// <param name="startRef">The starting Scripture reference</param>
-	    /// <param name="endRef">The ending Scripture reference</param>
+	    /// <param name="startRef">The starting Scripture reference to filter on</param>
+	    /// <param name="endRef">The ending Scripture reference to filter on</param>
+		/// <param name="currRef">The current reference in the calling application</param>
 	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
 	    /// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
 	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
+		/// <param name="fEnableDragDrop">Allow drag-drop editing (moving text within a translation)</param>
 	    /// ------------------------------------------------------------------------------------
 	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
             Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
@@ -278,7 +281,7 @@ namespace SIL.Transcelerator
             IScrExtractor scrExtractor, Func<string> getCss, string appName, IScrVers englishVersification,
             IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
             Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
-            Action<IList<string>> lookupTermDelegate)
+            Action<IList<string>> lookupTermDelegate, bool fEnableDragDrop)
 		{
             if (splashScreen == null)
             {
@@ -303,7 +306,8 @@ namespace SIL.Transcelerator
 			m_selectKeyboard = selectKeyboard;
 	        m_getTermOccurrences = getTermOccurrences;
 	        m_lookupTermDelegate = lookupTermDelegate;
-	        m_scrExtractor = scrExtractor;
+		    m_fEnableDragDrop = fEnableDragDrop;
+		    m_scrExtractor = scrExtractor;
 	        m_getCss = getCss;
 	        m_appName = appName;
             m_masterVersification = englishVersification;
@@ -652,6 +656,7 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
+			m_lastTranslationSelectionState = null;
 			if (e.ColumnIndex == m_colTranslation.Index && m_selectKeyboard != null)
 				m_selectKeyboard(true);
 			if (e.ColumnIndex != m_colUserTranslated.Index || e.RowIndex != m_lastTranslationSet)
@@ -1574,8 +1579,18 @@ namespace SIL.Transcelerator
 			if (sender.SelectedRendering == null)
 				return;
 			int rowIndex = dataGridUns.CurrentRow.Index;
-			m_helper[rowIndex].ReplaceKeyTermRendering(FindTermRenderingInUse(sender, rowIndex),
-				sender.SelectedRendering);
+			if (m_helper[rowIndex].InsertKeyTermRendering(sender, m_lastTranslationSelectionState,
+				sender.SelectedRendering))
+			{
+				// Replacement was based on previous editing selection, so put the translation
+				// back into edit mode, and select the inserted rendering.
+				dataGridUns.BeginEdit(false);
+				// Start and Length values may have been modified
+				TextControl.SelectionStart = m_lastTranslationSelectionState.Start;
+				TextControl.SelectionLength = m_lastTranslationSelectionState.Length;
+				m_lastTranslationSelectionState = null;
+				TextControl.Focus();
+			}
 			dataGridUns.InvalidateRow(rowIndex);
 		}
 
@@ -1675,6 +1690,7 @@ namespace SIL.Transcelerator
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
 			if (TextControl != null)
 			{
+				m_lastTranslationSelectionState = new SubstringDescriptor(TextControl);
 				TextControl.KeyDown -= txtControl_KeyDown;
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
 				Application.RemoveMessageFilter(this);
@@ -1904,7 +1920,7 @@ namespace SIL.Transcelerator
 					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard, LookupTerm);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
-				SubstringDescriptor sd = FindTermRenderingInUse(ktRenderCtrl, rowIndex);
+				SubstringDescriptor sd = m_helper[rowIndex].FindTermRenderingInUse(ktRenderCtrl);
 				if (sd == null)
 				{
 					// Didn't find any renderings for this term in the translation, so don't select anything
@@ -1913,7 +1929,7 @@ namespace SIL.Transcelerator
 				else
 				{
 					previousKeyTermEndOfRenderingOffsets[keyTerm] = sd.EndOffset;
-					ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Offset, sd.Length);
+					ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Start, sd.Length);
 				}
 				ktRenderCtrl.Dock = DockStyle.Fill;
 				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
@@ -2007,22 +2023,6 @@ namespace SIL.Transcelerator
 				ctrl.SelectedRenderingChanged -= KeyTermRenderingSelected;
 			m_biblicalTermsPane.Controls.Clear();
 			m_biblicalTermsPane.ColumnCount = 0;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the term rendering (from the known ones in the renderingInfo) in use in
-		/// the current translation.
-		/// </summary>
-		/// <param name="renderingInfo">The information about a single occurrence of a key
-		/// biblical term and its rendering in a string in the target language.</param>
-		/// <param name="rowIndex">Index of the row.</param>
-		/// <returns>An object that indicates where in the translation string the match was
-		/// found (offset and length)</returns>
-		/// ------------------------------------------------------------------------------------
-		private SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo, int rowIndex)
-		{
-			return m_helper[rowIndex].FindTermRenderingInUse(renderingInfo);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2324,12 +2324,12 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public class SubstringDescriptor
 	{
-		public int Offset { get; set; }
+		public int Start { get; set; }
 		public int Length { get; set; }
 
 		public int EndOffset
 		{
-			get { return Offset + Length; }
+			get { return Start + Length; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2337,10 +2337,22 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="SubstringDescriptor"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public SubstringDescriptor(int offset, int length)
+		public SubstringDescriptor(int start, int length)
 		{
-			Offset = offset;
+			Start = start;
 			Length = length;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SubstringDescriptor"/> class based on
+		/// the existing text selection in a text box.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public SubstringDescriptor(TextBox textBoxCtrl)
+		{
+			Start = textBoxCtrl.SelectionStart;
+			Length = textBoxCtrl.SelectionLength;
 		}
 	}
 	#endregion
