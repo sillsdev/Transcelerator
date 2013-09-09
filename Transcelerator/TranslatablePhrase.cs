@@ -664,21 +664,113 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Replaces the key term.
+		/// Inserts a newly selected key term rendering into the appropriate place in the
+		/// translation.
 		/// </summary>
-		/// <param name="sd">object that indicates what part of the translation represents the
-		/// original key term rendering to replace.</param>
-		/// <param name="newRendering">To string.</param>
+		/// <param name="renderingInfo">object that indicates all the renderings for the term
+		/// and the offset of the end of the preceding occurrence of the rendering of the term
+		/// (if any).</param>
+		/// <param name="editingSelectionState">Substring descriptor (location & length) that
+		/// indicates what part of the transaltion text the user had selected if this
+		/// translation was being edited at the time the new rendering was chosen. If this is
+		/// not null, we'll consider whether the new rendering should be inserted at that point.
+		/// </param>
+		/// <param name="newRendering">The selected rendering.</param>
+		/// <returns>true if the rendering is inserted based on the editing state; false
+		/// otehrwise (merely replaces an existing rendering or is inserted at the end).</returns>
 		/// ------------------------------------------------------------------------------------
-		internal void ReplaceKeyTermRendering(SubstringDescriptor sd, string newRendering)
+		public bool InsertKeyTermRendering(ITermRenderingInfo renderingInfo,
+			SubstringDescriptor editingSelectionState, string newRendering)
 		{
+			var locationOfExistingRendering = FindTermRenderingInUse(renderingInfo);
+			string text = Translation;
+			if (editingSelectionState != null)
+			{
+				// If the user had selected the entire translation, we treat it as if they weren't
+				// editing at all, since we can't make any reasonable guess as to what part of the
+				// translation should be replaced based on the selection.
+				if (editingSelectionState.Length < text.Length)
+				{
+					int start = editingSelectionState.Start;
+					int length = editingSelectionState.Length;
+					bool fInsertAtSelectionStart = false;
+					// Before blindly replacing the (first) existing rendering, we want to look to see if
+					// one of the following conditions exists:
+					// 1) The existing text of the translation which the user has been editing does not
+					//    contain any rendering for this term at all. In this case, we insert the rendering
+					//    at the insertion point or replace the existing selection.
+					// 2) The selected word or phrase is a (known) rendering for the same term.
+					//    In this case, we replace the selection with the newly chosen rendering. This
+					//    gives the user a way to explicitly control which instance of a term is to be
+					//    replaced in those cases where the same term (or another term with some of the
+					//    same renderings) occurs more than once in a question.
+					if (length > 0)
+					{
+						var existingSelectedText = text.Substring(start, length).TrimEnd();
+						if (existingSelectedText.Length > 0)
+						{
+							length = existingSelectedText.Length;
+							existingSelectedText = existingSelectedText.TrimStart();
+							if (length > existingSelectedText.Length)
+							{
+								start += length - existingSelectedText.Length;
+								length = existingSelectedText.Length;
+							}
+						}
+						else
+						{
+							// selection consists entirely of spaces. Leave one leading and one trailing space. 
+							start++;
+							length--;
+							if (length > 0)
+								length--;
+						}
+
+						if (locationOfExistingRendering == null || (length > 0 && renderingInfo.Renderings.Contains(existingSelectedText)))
+						{
+							text = text.Remove(start, length);
+							fInsertAtSelectionStart = true;
+						}
+					}
+					else
+						fInsertAtSelectionStart = locationOfExistingRendering == null;
+
+					if (fInsertAtSelectionStart)
+					{
+						if (length == 0)
+						{
+							if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
+							{
+								text = text.Insert(start, " ");
+								start++;
+							}
+							if (start < text.Length && Char.IsLetterOrDigit(text[start]))
+								text = text.Insert(start, " ");
+						}
+						text = text.Insert(start, newRendering);
+						SetTranslationInternal(text);
+						editingSelectionState.Start = start;
+						editingSelectionState.Length = newRendering.Length;
+						return true;
+					}
+				}
+			}
+
+			// Since we didn't insert the new term into the translation based on the editing
+			// position, just replace the existing rendering (if any) or stick it at the end.
+			var sd = locationOfExistingRendering;
 			if (sd == null)
 			{
-				// Caller probably couldn't find an existing rendering to replace,
-				// so we'll just stick it at the end.
-				sd = new SubstringDescriptor(Translation.Length, 0);
+				var finalPunct = s_helper.FinalPunctuationForType(TypeOfPhrase);
+				int start = text.Length;
+				if (finalPunct != null && text.EndsWith(finalPunct))
+					start -= finalPunct.Length;
+				sd = new SubstringDescriptor(start, 0);
+				if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
+					newRendering = " " + newRendering;
 			}
-			SetTranslationInternal(Translation.Remove(sd.Offset, sd.Length).Insert(sd.Offset, newRendering));
+			SetTranslationInternal(text.Remove(sd.Start, sd.Length).Insert(sd.Start, newRendering));
+			return false;
 		}
 
         /// ------------------------------------------------------------------------------------

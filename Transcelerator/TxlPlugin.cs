@@ -156,6 +156,18 @@ namespace SIL.Transcelerator
                             (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader),
                             fileId => host.GetPlugInDataLastModifiedTime(this, projectName, fileId));
 
+						bool fEnableDragDrop = true;
+#if Paratext7p4p100pWhatever
+						try
+						{
+						    string dragDropSetting = host.GetApplicationSetting("EnableDragAndDrop");
+						    if (dragDropSetting != null)
+						        fEnableDragDrop = bool.Parse(dragDropSetting);
+						}
+						catch (Exception)
+						{
+						}
+#endif
 						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
@@ -166,7 +178,7 @@ namespace SIL.Transcelerator
                             new ScrVers(host, TxlCore.englishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
-						    terms => host.LookUpKeyTerm(projectName, terms));
+						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);
 					    splashScreen = null;
 					}
 					formToShow.ShowDialog();
