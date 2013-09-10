@@ -3,8 +3,7 @@
 // <copyright from='2012' to='2012' company='SIL International'>
 //		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -31,11 +30,11 @@ namespace SIL.Transcelerator
 			InitializeComponent();
 		}
 
-		protected override void OnVisibleChanged(System.EventArgs e)
+		/// ------------------------------------------------------------------------------------
+		protected override void OnHandleCreated(System.EventArgs e)
 		{
-			base.OnVisibleChanged(e);
-			if (Visible)
-				m_txlInfo.StartMarqueeScrolling();
+			base.OnHandleCreated(e);
+			m_txlInfo.ShowCreditsAndLicense = true;
 		}
 	}
 }

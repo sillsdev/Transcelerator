@@ -67,16 +67,16 @@ namespace SIL.Transcelerator.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap _1321385905_dialog_close {
+        internal static System.Drawing.Bitmap _1330980033_search_button {
             get {
-                object obj = ResourceManager.GetObject("_1321385905_dialog_close", resourceCulture);
+                object obj = ResourceManager.GetObject("_1330980033_search_button", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
-        internal static System.Drawing.Bitmap _1330980033_search_button {
+        internal static System.Drawing.Bitmap _20130910100219692_easyicon_net_16 {
             get {
-                object obj = ResourceManager.GetObject("_1330980033_search_button", resourceCulture);
+                object obj = ResourceManager.GetObject("_20130910100219692_easyicon_net_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -116,6 +116,13 @@ namespace SIL.Transcelerator.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap FWSILLogoColor2005 {
+            get {
+                object obj = ResourceManager.GetObject("FWSILLogoColor2005", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Answers:.
         /// </summary>
@@ -144,7 +151,7 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}. All rights reserved. Distributable under the terms of either the Common Public License or the GNU Lesser General Public License..
+        ///   Looks up a localized string similar to {0}. All rights reserved. Distributable under the terms of the MIT License..
         /// </summary>
         internal static string kstidCopyrightFmt {
             get {

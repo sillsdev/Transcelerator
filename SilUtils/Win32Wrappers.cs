@@ -3,8 +3,7 @@
 // <copyright from='2002' to='2007' company='SIL International'>
 //		Copyright (c) 2007, SIL International. All Rights Reserved.   
 //    
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 

@@ -3,8 +3,7 @@
 // <copyright from='2012' to='2012' company='SIL International'>
 //		Copyright (c) 2012, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -48,17 +47,18 @@ namespace SIL.Transcelerator
 			// 
 			// m_txlInfo
 			// 
+			this.m_txlInfo.AutoSize = true;
 			this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
 			this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
 			this.m_txlInfo.Name = "m_txlInfo";
-			this.m_txlInfo.Size = new System.Drawing.Size(623, 367);
+			this.m_txlInfo.Size = new System.Drawing.Size(666, 368);
 			this.m_txlInfo.TabIndex = 0;
 			// 
 			// btnOk
 			// 
 			this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.btnOk.Location = new System.Drawing.Point(280, 392);
+			this.btnOk.Location = new System.Drawing.Point(300, 392);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(75, 23);
 			this.btnOk.TabIndex = 1;
@@ -70,7 +70,8 @@ namespace SIL.Transcelerator
 			this.AcceptButton = this.btnOk;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(635, 427);
+			this.AutoSize = true;
+			this.ClientSize = new System.Drawing.Size(674, 427);
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.m_txlInfo);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -80,6 +81,7 @@ namespace SIL.Transcelerator
 			this.ShowIcon = false;
 			this.Text = "About Transcelerator";
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
