@@ -3,8 +3,7 @@
 // <copyright from='2012' company='SIL International'>
 //		Copyright © 2012, SIL International. All Rights Reserved.   
 //    
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 
@@ -57,7 +56,6 @@ namespace SIL.Transcelerator
 			InitializeComponent();
             AccessibleName = GetType().Name;
             Opacity = 0;
-			HandleCreated += SetPosition;
 		}
 
 		/// <summary>
@@ -233,10 +231,13 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Tasks needing to be done when Window is being opened:
 		///		Set window position.
+		///		Display credits and license info 
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SetPosition(object obj, System.EventArgs e)
+		protected override void OnHandleCreated(EventArgs e)
 		{
+			base.OnHandleCreated(e);
+
 			Left = m_displayToUse.WorkingArea.X + (m_displayToUse.WorkingArea.Width - Width) / 2;
 			Top = m_displayToUse.WorkingArea.Y + (m_displayToUse.WorkingArea.Height - Height) / 2;
 		}
@@ -319,7 +320,6 @@ namespace SIL.Transcelerator
 					{
 						m_timer.Dispose();
 						m_timer = null;
-						m_txlInfo.StartMarqueeScrolling();
 					}
 				}
 			}

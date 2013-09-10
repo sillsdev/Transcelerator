@@ -3,8 +3,7 @@
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -15,8 +14,10 @@
 // License: http://creativecommons.org/licenses/by/3.0/
 // The Copy Rule icon was developed by Momenticons and is covered by this Creative Commons
 // License: http://creativecommons.org/licenses/by/3.0/
-// The Delete Rule icon was developed by Rodolphe and is covered by the GNU General Public
-// License: http://www.gnu.org/copyleft/gpl.html
+// The Delete Rule icon was downloaded from http://www.easyicon.net and was developed by
+// Creative Freedom (http://www.creativefreedom.co.uk/free-icons/free-icons-funktional). It is
+// covered by the Creative Commons Attribution 3.0 Unported License:
+// http://creativecommons.org/licenses/by/3.0/deed.en_GB
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;

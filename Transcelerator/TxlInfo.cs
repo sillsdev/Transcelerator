@@ -3,8 +3,7 @@
 // <copyright from='2012' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -12,8 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace SIL.Transcelerator
@@ -26,12 +25,7 @@ namespace SIL.Transcelerator
 	[Serializable]
 	public partial class TxlInfo : UserControl
 	{
-		private System.Threading.Timer m_timer;
-		/// <summary>Used for locking the splash screen</summary>
-		/// <remarks>Note: we can't use lock(this) (or equivalent) since .NET uses lock(this)
-		/// e.g. in it's Dispose(bool) method which might result in dead locks!
-		/// </remarks>
-		internal object m_Synchronizer = new object();
+		private WebBrowser browserCreditsAndLicense;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -42,25 +36,71 @@ namespace SIL.Transcelerator
 		{
 			InitializeComponent();
 
-			if (ParentForm != null)
-			{
-				ParentForm.FormClosing += (sender, args) =>
-				{
-					if (m_timer != null)
-						m_timer.Change(Timeout.Infinite, Timeout.Infinite);
-				};
-			}
-
 			// Get copyright information from assembly info. By doing this we don't have
 			// to update the splash screen each year.
 			var assembly = Assembly.GetExecutingAssembly();
-			object[] attributes = assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+			object[] attributes = assembly.GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
-				m_lblCopyright.Text = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+				m_lblCopyright.Text = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "©"));
 
-            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, version);
+			lblBuildDate.Text = string.Format(lblBuildDate.Text,
+				File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToShortDateString());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		public bool ShowCreditsAndLicense
+		{
+			set
+			{
+				if (value)
+				{
+					if (browserCreditsAndLicense == null)
+					{
+						browserCreditsAndLicense = new WebBrowser();
+						browserCreditsAndLicense.AllowWebBrowserDrop = false;
+						browserCreditsAndLicense.AllowNavigation = true;
+						tableLayoutPanel.Controls.Add(browserCreditsAndLicense,
+							0, tableLayoutPanel.RowCount - 1);
+						tableLayoutPanel.SetColumnSpan(browserCreditsAndLicense, 2);
+						browserCreditsAndLicense.Padding = new Padding(0, 6, 0, 0);
+					}
+					if (browserCreditsAndLicense.IsHandleCreated)
+						LoadCreditsAndLicense();
+					else
+						browserCreditsAndLicense.HandleCreated += delegate { LoadCreditsAndLicense(); };
+				}
+				else if (browserCreditsAndLicense != null)
+				{
+					browserCreditsAndLicense.Dispose();
+					browserCreditsAndLicense = null;
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		private void LoadCreditsAndLicense()
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Action(LoadCreditsAndLicense));
+				return;
+			}
+			browserCreditsAndLicense.Navigate(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+				"CreditsAndLicense.htm"));
+
+			browserCreditsAndLicense.Navigating += browserCreditsAndLicense_Navigating;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		void browserCreditsAndLicense_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+		{
+			var url = e.Url.ToString();
+			e.Cancel = true;
+			if (!string.IsNullOrEmpty(url))
+				Process.Start(url);
 		}
 
 		/// <summary>
@@ -69,98 +109,15 @@ namespace SIL.Transcelerator
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
 				if (components != null)
 					components.Dispose();
-				if (m_timer != null)
-					m_timer.Dispose();
+				if (browserCreditsAndLicense != null)
+					browserCreditsAndLicense.Dispose();
 			}
-			m_timer = null;
 			base.Dispose(disposing);
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Starts the marquee scrolling.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public void StartMarqueeScrolling()
-		{
-			if (!IsDisposed && IsHandleCreated)
-				m_timer = new System.Threading.Timer(ScrollCreditsCallback, null, 0, 700);
-		}
-
-		#region Marquee scrolling related methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Timer event to scroll the credits "marquee" style. Since this event can occur in a
-		/// different thread from the one in which the form exists, we cannot make the change in
-		/// this thread because it could generate a cross threading error. Calling the invoke
-		/// method will invoke the method on the same thread in which the form was created.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ScrollCreditsCallback(object state)
-		{
-			// This callback might get called multiple times before the Invoke is finished,
-			// which causes some problems. We just ignore any callbacks we get while we are
-			// processing one, so we are using TryEnter/Exit(m_Synchronizer) instead of 
-			// lock(m_Synchronizer).
-			// We sync on "m_Synchronizer" so that we're using the same flag as the FwSplashScreen class.
-			if (Monitor.TryEnter(m_Synchronizer))
-			{
-				try
-				{
-
-#if DEBUG && !__MonoCS__
-					Thread.CurrentThread.Name = "ScrollCreditsCallback";
-#endif
-
-					// In some rare cases the splash screen is already disposed and the 
-					// timer is still running. It happened to me (EberhardB) when I stopped 
-					// debugging while starting up, but it might happen at other times too 
-					// - so just be safe.
-					if (m_timer == null || IsDisposed)
-						return;
-
-#if !__MonoCS__
-					Invoke(new Action(ScrollCredits));
-#else // Windows have to be on the main thread on mono.
-					ScrollCredits();
-					Application.DoEvents(); // force a paint
-#endif
-				}
-				catch (Exception e)
-				{
-					// just ignore any exceptions
-					Debug.WriteLine("Got exception in ScrollCreditsCallback: " + e.Message);
-				}
-				finally
-				{
-					Monitor.Exit(m_Synchronizer);
-				}
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Give a "scrolling marquee" effect with the credits
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void ScrollCredits()
-		{
-			try
-			{
-				Control first = m_pnlCredits.Controls[0];
-				m_pnlCredits.Controls.RemoveAt(0);
-				m_pnlCredits.Controls.Add(first);
-			}
-			catch
-			{
-			}
-		}
-		#endregion
-
 	}
 }

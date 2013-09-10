@@ -195,7 +195,7 @@
     <value>check-circle.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="kstidCopyrightFmt" xml:space="preserve">
-    <value>{0}. All rights reserved. Distributable under the terms of either the Common Public License or the GNU Lesser General Public License.</value>
+    <value>{0}. All rights reserved. Distributable under the terms of the MIT License.</value>
     <comment>Displays in the Help/About box and the splash screen</comment>
   </data>
   <data name="kstidCommentsLabel" xml:space="preserve">
@@ -212,9 +212,6 @@
   </data>
   <data name="_1321382935_plus" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>1321382935_plus.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="_1321385905_dialog_close" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>1321385905_dialog-close.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_1330980033_search_button" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>1330980033_search_button.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -260,5 +257,11 @@
   </data>
   <data name="Arrow_Up_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Arrow-Up-icon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_20130910100219692_easyicon_net_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>20130910100219692_easyicon_net_16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FWSILLogoColor2005" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>FWSILLogoColor2005.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

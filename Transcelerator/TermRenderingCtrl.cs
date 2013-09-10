@@ -3,8 +3,7 @@
 // <copyright from='2011' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -13,10 +12,12 @@
 // Some icons used in this control were downloaded from http://www.iconfinder.com
 // The Add Rendering icon was developed by Yusuke Kamiyamane and is covered by this Creative Commons
 // License: http://creativecommons.org/licenses/by/3.0/
-// The Delete Rendering icon was developed by Rodolphe and is covered by the GNU General Public
-// License: http://www.gnu.org/copyleft/gpl.html
 // The Find icon was developed by Liam McKay and is free for commercial use:
 // http://www.woothemes.com/2009/09/woofunction-178-amazing-web-design-icons/
+// The Delete Rendering icon was downloaded from http://www.easyicon.net and was developed by
+// Creative Freedom (http://www.creativefreedom.co.uk/free-icons/free-icons-funktional). It is
+// covered by the Creative Commons Attribution 3.0 Unported License:
+// http://creativecommons.org/licenses/by/3.0/deed.en_GB
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;

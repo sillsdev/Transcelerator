@@ -3,8 +3,7 @@
 // <copyright from='2011' to='2011' company='SIL International'>
 //		Copyright (c) 2011, SIL International. All Rights Reserved.
 //
-//		Distributable under the terms of either the Common Public License or the
-//		GNU Lesser General Public License, as specified in the LICENSING.txt file.
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
@@ -123,7 +122,7 @@ namespace SIL.Transcelerator
 			// 
 			// btnDelete
 			// 
-			this.btnDelete.Image = global::SIL.Transcelerator.Properties.Resources._1321385905_dialog_close;
+			this.btnDelete.Image = global::SIL.Transcelerator.Properties.Resources._20130910100219692_easyicon_net_16;
 			resources.ApplyResources(this.btnDelete, "btnDelete");
 			this.btnDelete.Margin = new System.Windows.Forms.Padding(5, 1, 0, 2);
 			this.btnDelete.Name = "btnDelete";
