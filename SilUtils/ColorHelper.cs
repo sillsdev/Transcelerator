@@ -8,7 +8,6 @@
 #endregion
 // 
 // File: ColorHelper.cs
-// Responsibility: FW Team, especially David Olson (this is of interest to PA also)
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Drawing;

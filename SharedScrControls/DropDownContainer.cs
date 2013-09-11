@@ -1,14 +1,13 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003, SIL International. All Rights Reserved.   
-// <copyright from='2003' to='2003' company='SIL International'>
-//		Copyright (c) 2003, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.   
+// <copyright from='2003' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 
 // File: DropDownContainer.cs
-// Responsibility: DavidO
 // --------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;

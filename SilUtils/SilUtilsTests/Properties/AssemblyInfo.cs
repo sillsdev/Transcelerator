@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharedScrControlsTests")]
-[assembly: AssemblyDescription("Unit tests for classes in SharedScrControls.DLL")]
+[assembly: AssemblyTitle("SilUtilsTests")]
+[assembly: AssemblyDescription("Unit tests for classes in SilUtils.DLL")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("SIL/UBS Shared Libraries")]
-[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International")]
+[assembly: AssemblyProduct("SilUtils")]
+[assembly: AssemblyCopyright("Copyright © 2009-2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("960370f9-0db0-4667-8e0b-db4e0eeba07f")]
+[assembly: Guid("2903fd88-58b3-44cd-bbc4-85e86e65c111")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,7 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

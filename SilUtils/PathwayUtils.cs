@@ -1,14 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2010, SIL International. All Rights Reserved.
-// <copyright from='2010' to='2010' company='SIL International'>
-//		Copyright (c) 2010, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+// <copyright from='2010' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 
 // File: PathwayUtils.cs
-// Responsibility: TE Team
 // 
 // <remarks>
 // </remarks>

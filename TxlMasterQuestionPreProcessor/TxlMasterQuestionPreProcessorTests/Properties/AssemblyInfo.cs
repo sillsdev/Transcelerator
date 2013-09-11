@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TxlMasterQuestionPreProcessorTests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Unit tests for classes in TxlMasterQuestionPreProcessor.DLL")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("TxlMasterQuestionPreProcessorTests")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
+[assembly: AssemblyCompany("SIL")]
+[assembly: AssemblyProduct("Transcelerator")]
+[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

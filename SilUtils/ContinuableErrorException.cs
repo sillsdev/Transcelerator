@@ -8,7 +8,6 @@
 #endregion
 // 
 // File: ContinuableErrorException.cs
-// Responsibility: All SIL developers in the whole wide world
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;

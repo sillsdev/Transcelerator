@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TxlCore")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Common core library for Transcelerator and TxlMasterQuestionPreProcessor")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("TxlCore")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
+[assembly: AssemblyCompany("SIL")]
+[assembly: AssemblyProduct("Transcelerato")]
+[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1239,6 +1239,11 @@ namespace SIL.Transcelerator
 					{
 						using (var sw = new StreamWriter(dlg.FileName, false, Encoding.UTF8))
 						{
+							int questionNbr = 0;
+							int lastBookNbr = -1;
+							int lastChapterNbr = -1;
+							int psalms = BCVRef.BookToNumber("PSA");
+							var multilingScrBooks = new MultilingScrBooks();
 							foreach (TranslatablePhrase phrase in m_helper.UnfilteredPhrases.Where(tp => tp.Category >= 0))
 							{
 								BCVRef startRef = phrase.StartRef;
@@ -1247,13 +1252,28 @@ namespace SIL.Transcelerator
 								if (!InRange(startRef, endRef))
 									continue;
 
+								if (startRef.Book != lastBookNbr)
+								{
+									sw.WriteLine("{0} Study Questions", multilingScrBooks.GetBookName(startRef.Book));
+									sw.WriteLine();
+									lastBookNbr = startRef.Book;
+								}
+
+								if (startRef.Chapter != lastChapterNbr)
+								{
+									questionNbr = 1;
+									lastChapterNbr = startRef.Chapter;
+									sw.WriteLine("{0} {1}", lastBookNbr == psalms ? "Psalm" : "Chapter", lastChapterNbr);
+									sw.WriteLine();
+								}
+
 								if (phrase.IsUserAdded)
 									sw.WriteLine("***Added Question:");
 
 								if (!phrase.HasUserTranslation || phrase.IsExcluded)
 									sw.WriteLine("***Not translated:");
 
-								sw.WriteLine("\"{0}\"",
+								sw.WriteLine("{0}. \"{1}\"", questionNbr,
 									BCVRef.MakeReferenceString(new BCVRef(phrase.StartRef), new BCVRef(phrase.EndRef), ".", "-"));
 
 								string sVerse = " (" + ((startRef.Verse != endRef.Verse)
@@ -1286,9 +1306,11 @@ namespace SIL.Transcelerator
 								}
 
 								if (phrase.HasUserTranslation && !phrase.IsExcluded)
-									sw.WriteLine(phrase.Translation + sVerse);
+									sw.WriteLine("Spanish: {0}", phrase.Translation + sVerse);
 
 								sw.WriteLine(); // blank line
+
+								questionNbr++;
 							}
 						}
 					}

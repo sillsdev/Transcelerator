@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SharedScrControls")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Shared Scripture-related user Controls and related utilities")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("SIL/UBS Shared")]
-[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International ")]
+[assembly: AssemblyCompany("SIL/UBS")]
+[assembly: AssemblyProduct("SIL/UBS Shared Libraries")]
+[assembly: AssemblyCopyright("Copyright © 2011-2013 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

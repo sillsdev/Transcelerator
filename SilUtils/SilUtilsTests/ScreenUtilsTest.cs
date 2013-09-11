@@ -8,7 +8,6 @@
 #endregion
 // 
 // File: ScreenUtilsTest.cs
-// Responsibility: DavidO
 // --------------------------------------------------------------------------------------------
 using System.Windows.Forms;
 using NUnit.Framework;
