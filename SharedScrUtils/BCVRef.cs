@@ -1,14 +1,13 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2012, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.
 // <copyright from='2005' to='2012' company='SIL International'>
-//		Copyright (c) 2012, SIL International. All Rights Reserved.   
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 
 // File: BCVRef.cs
-// Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;

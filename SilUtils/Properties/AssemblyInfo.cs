@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SilUtils")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("General library of low-level utilities useful for SIL (many divergent versions of this library have been created, some called SilTool)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SilUtils")]

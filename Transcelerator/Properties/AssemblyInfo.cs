@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Transcelerator")]
-[assembly: AssemblyDescription("Tool for helping translators quickly translate Scripture comprehension checking questions.")]
+[assembly: AssemblyDescription("Paratext plugin for helping translators quickly translate Scripture comprehension checking questions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("Transcelerator")]

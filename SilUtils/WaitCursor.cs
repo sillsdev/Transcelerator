@@ -1,15 +1,13 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2002, SIL International. All Rights Reserved.   
-// <copyright from='2002' to='2002' company='SIL International'>
-//		Copyright (c) 2002, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2013, SIL International. All Rights Reserved.   
+// <copyright from='2002' to='2013' company='SIL International'>
+//		Copyright (c) 2013, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // 
 // File: WaitCursor.cs
-// Responsibility: Eberhard Beilharz
-// Last reviewed: 
 // 
 // <remarks>
 // Helper class to display a wait cursor
@@ -17,7 +15,6 @@
 // --------------------------------------------------------------------------------------------
 //#define DEBUG_WAITCURSOR
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
