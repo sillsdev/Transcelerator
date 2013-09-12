@@ -76,6 +76,12 @@
   <ItemGroup>
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ComponentsExtensionMethods.cs" />
+    <Compile Include="ConfirmFileOverwriteDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfirmFileOverwriteDlg.Designer.cs">
+      <DependentUpon>ConfirmFileOverwriteDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="ContinuableErrorException.cs" />
     <Compile Include="ReadonlyDictionary.cs" />
     <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
@@ -121,6 +127,9 @@
     <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ConfirmFileOverwriteDlg.resx">
+      <DependentUpon>ConfirmFileOverwriteDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
