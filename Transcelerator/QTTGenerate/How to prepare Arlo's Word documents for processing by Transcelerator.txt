@@ -1,18 +1,17 @@
-Manually remove header lines.
-Using wildcards, replace \? \(?@\) with ^& (Not Bold)
-Replace bold (formatting only) with ^p\tqe ^&
-Replace Chapter with "\rf ", followed by book name.
-Save as plain text (UTF-8) as ..\Processed OT question files\bookname.sfm
-Remove the .txt extension that Word insists on tacking onto the end of the name.
-If necessary, build and  install the Transcelerator Question Pre-Processor plugin
-Run the Transcelerator Question Pre-Processor plugin (in Paratext)
-In Transcelerator Question Pre-Processor, click Text to SFM.
-Select the SFM file(s) you have prepared, and click Open.
-Note any files that are reported to have had problems. Open those files in a text editor, search for PROBLEM, and correct them.
-Either:
-	Manually add contents of all QTT* files to the QTTallBooks.sfm file in Transcelerator.
-OR
-	Vaporware: Clear the temp-file check box in Transcelerator Question Pre-Processor, and click Text to SFM.
-In Transcelerator Question Pre-Processor, click SFM to XML.
-Add the new SFM files to source control.
+ 1. Manually remove header lines.
+ 2. Using wildcards, replace \? \(?@\) with ^& (Not Bold)
+ 3. Clear "Use Wildcards" option
+ 4. Replace bold (formatting only) with ^p\tqe ^&
+ 5. Replace Chapter (match case) with "\rf ", followed by book name or 3-letter abbreviation.
+ 6. Save as plain text (UTF-8) as ..\Processed OT question files\bookname.sfm
+ 7. Deal with "Discussion Questions"  (Should these become Overview Questions?)
+ 8. If necessary, build and install the Transcelerator Question Pre-Processor plugin
+ 9. Run the Transcelerator Question Pre-Processor plugin (in Paratext)
+10. In Transcelerator Question Pre-Processor, click Text to SFM.
+11. Select the *.sfm.txt file(s) you have prepared (they will be renamed to *.sfm for you), and click Open.
+12. Note any files that are reported to have had problems. Open those files in a text editor, search for PROBLEM, and correct them.
+13. Assuming at least some of the files processed correctly, click Yes to have their contents added to master SFM file.
+14. If there were errors in 1 or more files, repeat steps 9-13.
+15. In Transcelerator Question Pre-Processor, click SFM to XML.
+16. Add the new SFM files to source control.
 Note: You will need to close Paratext and rebuild TXL to get the new list of master questions copied over to be used.

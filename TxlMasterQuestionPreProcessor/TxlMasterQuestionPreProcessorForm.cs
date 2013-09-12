@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using SIL.Transcelerator;
+using SIL.Utils;
 using SILUBS.SharedScrUtils;
 
 namespace SIL.TxlMasterQuestionPreProcessor
@@ -59,25 +61,69 @@ namespace SIL.TxlMasterQuestionPreProcessor
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SoftDev"), "Transcelerator");
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    StringBuilder sb = new StringBuilder();
+					StringBuilder sb = new StringBuilder("Finished! Questions written to the following files:");
+					bool overwriteAll = false;
+					bool skipAll = false;
+					List<string> successfullyProcessedFiles = new List<string>(dlg.FileNames.Length);
                     foreach (var filename in dlg.FileNames)
                     {
-                        string fileToWrite = "QTT" + Path.GetFileName(filename);
-                        string directory = Path.GetDirectoryName(filename);
+	                    string srcFile;
+						// Rename *.sfm.txt to *.sfm (MS Word insists on adding .txt extension when saving as plain text)
+	                    if (filename.EndsWith(".sfm.txt"))
+	                    {
+		                    srcFile = filename.Remove(filename.Length - 4);
+		                    if (File.Exists(srcFile))
+			                    srcFile = filename;
+		                    else
+		                    {
+			                    try
+			                    {
+				                    File.Move(filename, srcFile);
+			                    }
+			                    catch (Exception)
+			                    {
+				                    srcFile = filename;
+			                    }
+		                    }
+	                    }
+	                    else
+		                    srcFile = filename;
+
+						string fileToWrite = "QTT" + Path.GetFileName(srcFile);
+						
+						// Just in case rename failed above...
+						if (fileToWrite.EndsWith(".sfm.txt"))
+							fileToWrite = fileToWrite.Remove(filename.Length - 4);
+
+						string directory = Path.GetDirectoryName(srcFile);
                         if (directory != null)
                             fileToWrite = Path.Combine(directory, fileToWrite);
 
                         if (File.Exists(fileToWrite))
                         {
-                            if (MessageBox.Show("File " + fileToWrite + " already exists. Do you want to overwrite it?",
-                                "Transcelerator", MessageBoxButtons.YesNo) == DialogResult.No)
-                            {
-                                return;
-                            }
+							if (skipAll)
+								continue;
+
+	                        if (!overwriteAll)
+	                        {
+								using (var overwriteDlg = new ConfirmFileOverwriteDlg(fileToWrite,
+									TxlMasterQuestionPreProcessorPlugin.pluginName, true))
+		                        {
+									if (overwriteDlg.ShowDialog(this) == DialogResult.Yes)
+			                        {
+										overwriteAll = overwriteDlg.ApplyToAll;
+			                        }
+			                        else
+			                        {
+										skipAll = overwriteDlg.ApplyToAll;
+				                        continue;
+			                        }
+		                        }
+	                        }
                         }
 
                         int problemsFound;
-                        using (var reader = new StreamReader(filename, Encoding.UTF8))
+                        using (var reader = new StreamReader(srcFile, Encoding.UTF8))
                         {
                             using (var writer = new StreamWriter(fileToWrite))
                             {
@@ -89,9 +135,33 @@ namespace SIL.TxlMasterQuestionPreProcessor
                         sb.Append(fileToWrite);
                         if (problemsFound > 0)
                             sb.Append(string.Format(", with {0} problems!", problemsFound));
+                        else
+	                        successfullyProcessedFiles.Add(fileToWrite);
                     }
 
-                    MessageBox.Show("Finished! Questions written to the following files:" + sb, TxlMasterQuestionPreProcessorPlugin.pluginName);
+	                if (successfullyProcessedFiles.Count == 0)
+	                {
+		                MessageBox.Show(sb.ToString(), TxlMasterQuestionPreProcessorPlugin.pluginName);
+	                }
+	                else
+	                {
+						sb.Append("\n\n");
+		                sb.Append("Include questions from successfully processed files in master SF file?");
+		                if (MessageBox.Show(sb.ToString(), TxlMasterQuestionPreProcessorPlugin.pluginName,
+			                MessageBoxButtons.YesNo) == DialogResult.Yes)
+		                {
+			                using (var writer = new StreamWriter(txtSfmQuestionFile.Text, true))
+			                {
+				                foreach (string file in successfullyProcessedFiles)
+				                {
+					                using (var reader = new StreamReader(file, Encoding.UTF8))
+					                {
+							            writer.WriteLine(reader.ReadToEnd());
+					                }
+				                }
+			                }
+		                }
+	                }
                 }
             }
         }
