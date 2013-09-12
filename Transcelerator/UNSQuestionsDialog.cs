@@ -1232,7 +1232,17 @@ namespace SIL.Transcelerator
 					InRange = (bcvStart, bcvEnd) => bcvStart >= m_startRef && bcvEnd <= m_endRef;
 				}
 
-				dlg.FileName = string.Format("Translations of Spanish Questions {0}", sRef);
+				string language = m_vernIcuLocale;
+				string sChapter = "Chapter";
+				string sPsalm = "Psalm";
+				if (language == "es")
+				{
+					language = "Spanish";
+					sChapter = "Capi\u0301tulo";
+					sPsalm = "Salmo";
+				}
+
+				dlg.FileName = string.Format("Translations of {0} Questions {1}", language, sRef);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					try
@@ -1254,8 +1264,9 @@ namespace SIL.Transcelerator
 
 								if (startRef.Book != lastBookNbr)
 								{
-									sw.WriteLine("{0} Study Questions", multilingScrBooks.GetBookName(startRef.Book));
-									sw.WriteLine();
+									if (lastBookNbr != -1)
+										sw.WriteLine();
+									sw.WriteLine("{0} Study Questions in {1}", multilingScrBooks.GetBookName(startRef.Book), language);
 									lastBookNbr = startRef.Book;
 								}
 
@@ -1263,54 +1274,47 @@ namespace SIL.Transcelerator
 								{
 									questionNbr = 1;
 									lastChapterNbr = startRef.Chapter;
-									sw.WriteLine("{0} {1}", lastBookNbr == psalms ? "Psalm" : "Chapter", lastChapterNbr);
+									sw.WriteLine();
+									sw.WriteLine("{0} {1}", lastBookNbr == psalms ? sPsalm : sChapter, lastChapterNbr);
 									sw.WriteLine();
 								}
-
-								if (phrase.IsUserAdded)
-									sw.WriteLine("***Added Question:");
-
-								if (!phrase.HasUserTranslation || phrase.IsExcluded)
-									sw.WriteLine("***Not translated:");
-
-								sw.WriteLine("{0}. \"{1}\"", questionNbr,
-									BCVRef.MakeReferenceString(new BCVRef(phrase.StartRef), new BCVRef(phrase.EndRef), ".", "-"));
-
 								string sVerse = " (" + ((startRef.Verse != endRef.Verse)
 									? startRef.Verse.ToString() + "-" + endRef.Verse.ToString()
 									: startRef.Verse.ToString()) + ")";
 
-								if (!phrase.IsUserAdded && phrase.ModifiedPhrase != null)
+								if (phrase.IsUserAdded)
+									sw.WriteLine("***Added Question:");
+								else if (phrase.ModifiedPhrase != null)
 								{
 									sw.WriteLine("***Modified Question");
 									sw.WriteLine("Original: " + phrase.OriginalPhrase);
 									sw.WriteLine("Modified: " + phrase.ModifiedPhrase);
 								}
+
+								if (!phrase.HasUserTranslation || phrase.IsExcluded)
+								{
+									sw.WriteLine("***Not translated:" + phrase.OriginalPhrase + sVerse);
+								}
 								else
 								{
-									sw.WriteLine(phrase.OriginalPhrase + sVerse);
+									sw.WriteLine("{0}. {1}", questionNbr, phrase.Translation + sVerse);
+									questionNbr++;
+
+									//var qi = phrase.QuestionInfo;
+									//if (qi != null)
+									//{
+									//    if (qi.Answers != null)
+									//    {
+									//        foreach (string a in qi.Answers)
+									//            sw.WriteLine("A: " + a);
+									//    }
+									//    if (qi.Notes != null)
+									//    {
+									//        foreach (string n in qi.Notes)
+									//            sw.WriteLine("Note: " + n);
+									//    }
+									//}
 								}
-								var qi = phrase.QuestionInfo;
-								if (qi != null)
-								{
-									if (qi.Answers != null)
-									{
-										foreach (string a in qi.Answers)
-											sw.WriteLine("A: " + a);
-									}
-									if (qi.Notes != null)
-									{
-										foreach (string n in qi.Notes)
-											sw.WriteLine("Note: " + n);
-									}
-								}
-
-								if (phrase.HasUserTranslation && !phrase.IsExcluded)
-									sw.WriteLine("Spanish: {0}", phrase.Translation + sVerse);
-
-								sw.WriteLine(); // blank line
-
-								questionNbr++;
 							}
 						}
 					}
