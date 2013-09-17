@@ -12,8 +12,8 @@
 ¿Qué tribus acamparon al norte del tabernáculo? (25-31)
 
 \rf NUM 3
-¿Por qué mueren Nadab y Abiú? (4)
-¿Qué hijos de Aarón continuarón como sacerdotes? (4)
+¿Por qué murieron Nadab y Abiú? (4)
+¿Cuáles de los hijos de Aarón continuaron como sacerdotes? (4)
 ¿Qué tomó el Señor de entre los hijos de Israel en lugar de todos los primogénitos que abren la matriz? (12)
 ¿Quiénes eran los hijos de Levi? (17)
 ¿Dónde está el campo de Gersón y cuáles son sus funciones? (21-26)
@@ -59,11 +59,11 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 ¿Cómo los israelitas saben cuándo moverse o quedarse? (17-23)
  
 \rf NUM 10
-1. ¿Quién fue a reunirse en el tabernáculo cuando ambas trompetas sonaban? (2-3)
-2. ¿Quién iba a reunirse si solo una trompeta sonó? (4)
-3. ¿Por qué otros tres propósitos las trompetas sonaban? (5-10)
-4. ¿Cuál fue el orden de la marcha cuando los israelitas se trasladaron? (14-28)
-5. ¿Quién quería Moisés que fuera con ellos? (29-32)
+¿Quiénes habían de reunirse en el tabernáculo cuando ambas trompetas sonaban? (2-3)
+¿Quiénes habían de reunirse si solo una trompeta sonó? (4)
+¿Por qué otros tres propósitos las trompetas sonaban? (5-10)
+¿Cuál fue el orden de la marcha cuando los israelitas se trasladaron? (14-28)
+¿Quién quería Moisés que fuera con ellos? (29-32)
 
 \rf NUM 11
 ¿Qué envió el Señor cuando el pueblo se quejó de sus penalidades? (1-3)
@@ -80,14 +80,14 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
  
 ¿Por qué Miriam y Aaron hablaron contra Moisés? (1-2)
 ¿Cómo tan manso era Moisés? (3)
-¿Qué le dijo el Señor a Moisés? (8)
+¿Cómo hablo el Señor con Moisés? (8)
 ¿Qué juicio cayó sobre Miriam? (9-14)
  
 \rf NUM 13
  
 ¿Cuántos hombres envió Moisés a explorar la tierra de Canaán? (4-15)
-¿Qué descubrierón los hombres acerca de la tierra? (17-20)
-¿ Qué debían traer de vuelta los hombres? (20-24)
+¿Qué habián de descubrir los hombres acerca de la tierra? (17-20)
+¿Qué debían traer de vuelta los hombres? (20-24)
 ¿Cuánto tiempo los hombres explorarón la tierra? (25)
 ¿Qué informe dierón los hombres a Moisés? (26-29)
 ¿Quién animó a Moisés a tomar posesión de la tierra? (30)
@@ -113,7 +113,7 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 ¿Qué clase de pecado está siendo perdonado en los versículos 24-29?
 ¿Qué tipo de pecado resultó en ser cortado de la gente? (30-31)
 ¿Qué pasó con el hombre que recogía leña en el día de reposo? (32-36)
-¿Por qué los hijos de Israel debían poner flecos en los dobladillos de la ropa? (38-40)
+¿Por qué los hijos de Israel debían poner flecos en los bordes de sus vestidos? (38-40)
  
 \rf NUM 16
 ¿Qué hicieron Coré, Datán y Abiram? (1-11)
@@ -143,7 +143,7 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 ¿Quién murió en Cades? (1)
 ¿Qué le dijo el Señor a Moisés que hiciera para suministrar agua a los israelitas? (8)
 ¿Qué hizo Moisés en su lugar? (9-11)
-¿Como resultado de esta desobediencia, qué no permite el Señor que Moisés y Aarón hagan? (12)
+¿Como resultado de esta desobediencia, qué no permitió el Señor que Moisés y Aarón hicieran? (12)
 ¿Quién no le permitirá pasar a Israel por su país? (18-21)
 ¿Qué hizo Moisés a Eleazar antes de que Aarón murió? (28)
 
@@ -181,20 +181,20 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 \rf NUM 25
 ¿De qué fueron muchos de los hombres de Israel culpable? (1)
 ¿Cómo fue Balaam involucrado en esto? (Apocalipsis 02:14)
-¿Qué iba a hacer con los que adoraban a Baal de Peor? (4-5)
-¿Qué Finees hace al hombre israelita y a la mujer madianita? (6-8,11-15)
+¿Qué se iba a hacer con los que adoraban a Baal de Peor? (4-5)
+¿Qué hizo Finees al hombre israelita y a la mujer madianita? (6-8,11-15)
 ¿Cuántos murieron en la plaga? (9)
 ¿Cómo debían los hijos de Israel tratar a los madianitas? (17-18)
 
 \rf NUM 26
-¿Cuando Moisés tomó su segundo censo cuántos estaban contados? (51)
+¿Cuando Moisés tomó su segundo censo cuántos hombres eran en total? (51)
 ¿Cómo fue el censo utilizado para dividir la tierra? (53-56)
 ¿Cuántas levitas fueron contados? (62)
 ¿Quiénes eran los únicos que seguían vivos en el segundo censo que estaban vivos en el primer censo? (63-65)
 
 \rf NUM 27
 ¿Qué incidente provocó que se dieran las leyes de la herencia? (1-11)
-¿Quién escogió el Señor para suceder a Moisés? (18-19)
+¿A quién escogió el Señor para suceder a Moisés? (18-19)
 ¿Qué debía darle Moisés? (20-23)
 
 \rf NUM 28
@@ -214,7 +214,7 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 ¿Qué se dice acerca de los votos de las viudas y las mujeres divorciadas? (9)
 
 \rf NUM 31
-¿Con quiénes debían los hijos de Israel luchar antes de la muerte de Moisés? (1-3)
+¿Contra quiénes habían de pelear los hijos de Israel antes de la muerte de Moisés? (1-3)
 ¿Cuántos reyes de Madián fueron asesinados? (8)
 ¿Quién más fue asesinado con la espada? (8)
 ¿Por qué se enojó Moisés cuando el ejército regresó? (14-16)
@@ -223,25 +223,25 @@ Los levitas estaban enteramente dedicados al Señor en lugar de qué personas? (
 \rf NUM 32
 ¿Qué hicieron los hijos de Rubén y qué solicitarón los de Gad? (1-5)
 ¿Por qué Moisés nego su solicitud primero? (6-15)
-¿Qué ofrecierón hacer los hijos de Rubén y Gad si Moisés le concedería su petición (16-19)
+¿Qué ofrecieron hacer los hijos de Rubén y Gad si Moisés les concedería su petición? (16-19)
 ¿A qué otra tribu se le dio la tierra al este del Jordán? (33)
 
 \rf NUM 33
-¿Qué se resume en este Capítulo? (1-49)
+¿Qué se resume en este capítulo? (1-49)
 ¿Qué debían hacer los israelitas cuando cruzaron el Jordán? (51-54)
 ¿Qué pasaría si los israelitas desobedecían? (55-56)
 
 \rf NUM 34
 ¿Quién establece los límites de la tierra de Canaán a los israelitas? (1-12)
 ¿Entre cuántas tribus este terreno fue dividido? (13)
-¿Cuántos hombres de cada tribu fueron designados para ayudar a asignar a la tierra? (18)
+¿Cuántos hombres de cada tribu fueron designados para ayudar a distribuir la tierra? (18)
 
 \rf NUM 35
-¿Por qué era la tierra alrededor de las ciudades dadas a los levitas? (3)
-¿Cuántos pueblos en total iban a ser dado a los levitas? (7)
-¿Cuántas ciudades iban a ser seleccionadas como ciudades de refugio? (6,13)
+¿Para qué fue dada a los levitas la tierra alrededor de las ciudades? (3)
+¿Cuántos ciudades en total iban a ser dado a los levitas? (7)
+¿Cuántas ciudades iban a ser seleccionadas como ciudades de refugio? (6, 13)
 ¿Qué tipo de asesinos fueron puestos a muerte? (16-21)
-¿A qué tipo de asesinos se le permitió ir a una ciudad de refugio? (22-23)
+¿A qué tipo de asesinos se les permitió ir a una ciudad de refugio? (22-23)
 ¿Qué le puede pasar a un asesino que salió de una ciudad de refugio? (26-28)
 ¿Por lo menos cuántos testigos se requieren antes de que un hombre sea condenado a muerte? (30)
 

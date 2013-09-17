@@ -570,19 +570,27 @@ namespace SIL.Transcelerator
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void ParseBasicQuestions_QuestionsSplitAcrossConsecutiveFields()
+		public void ParseBasicQuestions_ConsecutiveQuestions()
 		{
 			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
 				@"\rf Luke 1:1-79 Introduction to the book.",
 				@"\dh Details",
 				@"\tqref LUK 1.1-79",
-				@"\bttq For what reason did Paul remind the people in the synagogue that after David had died and ",
-				@"\bttq [people] had buried his body, his body had decayed?",
+				@"\bttq Tell in your own words what happened in this chapter.",
+				@"\bttq For what reason did Paul remind the people in the synagogue that after David had died and [people] had buried his body, his body had decayed?",
 				@"\tqe Paul wanted the people in the synagogue to recognize that David was not speaking about himself...",
-				@"\bttq [IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:]",
-				@"\bttq Tell me what the picture language about the sun/darkness/shadows means to you?",
+				@"\bttq -or-",
+				@"\bttq Tell me what the picture language about the sun/darkness/shadows means to you.",
 				@"\tqe [THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.",
-				@"\tqe [DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)"}, null);
+				@"\tqe [DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)",
+				@"\bttq Question A?",
+				@"\bttq -OR-",
+				@"\bttq Question B?",
+				@"\tqe These questions should be joined as options.",
+				@"\bttq Have you ever tried to do a miracle?",
+				@"\an Personal question - answers will vary.",
+				@"\bttq Who was born in Bethlehem?",
+				@"\tqe Jesus"}, null);
 
 			Assert.AreEqual(1, sections.Items.Length);
 
@@ -593,22 +601,58 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(2, category.Questions.Count);
+			Assert.AreEqual(6, category.Questions.Count);
 
 			Question question = category.Questions[0];
+
+			Assert.AreEqual("Tell in your own words what happened in this chapter.", question.Text);
+			Assert.IsNull(question.ScriptureReference);
+	        Assert.IsNull(question.Answers);
+			Assert.IsNull(question.Notes);
+			Assert.IsNull(question.AlternateForms);
+
+			question = category.Questions[1];
 
 			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and [people] had buried his body, his body had decayed?", question.Text);
 			Assert.IsNull(question.ScriptureReference);
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("Paul wanted the people in the synagogue to recognize that David was not speaking about himself...", question.Answers[0]);
+			Assert.IsNull(question.Notes);
+			Assert.AreEqual(2, question.AlternateForms.Length);
 
-			question = category.Questions[1];
+			question = category.Questions[2];
 
-			Assert.AreEqual("[IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:] Tell me what the picture language about the sun/darkness/shadows means to you?", question.Text);
+			Assert.AreEqual("-or- Tell me what the picture language about the sun/darkness/shadows means to you.", question.Text);
 			Assert.AreEqual("LUK 1.78-79", question.ScriptureReference);
 			Assert.AreEqual(2, question.Answers.Length);
 			Assert.AreEqual("[THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.", question.Answers[0]);
 			Assert.AreEqual("[DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)", question.Answers[1]);
+			Assert.IsNull(question.Notes);
+			Assert.AreEqual(3, question.AlternateForms.Length);
+
+			question = category.Questions[3];
+
+			Assert.AreEqual("Question A? -OR- Question B?", question.Text);
+			Assert.IsNull(question.ScriptureReference);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("These questions should be joined as options.", question.Answers[0]);
+			Assert.IsNull(question.Notes);
+			Assert.AreEqual(2, question.AlternateForms.Length);
+			Assert.AreEqual("Question A?", question.AlternateForms[0]);
+			Assert.AreEqual("Question B?", question.AlternateForms[1]);
+
+			question = category.Questions[4];
+
+			Assert.AreEqual("Have you ever tried to do a miracle?", question.Text);
+			Assert.IsNull(question.ScriptureReference);
+			Assert.IsNull(question.Answers);
+			Assert.AreEqual(1, question.Notes.Length);
+			Assert.AreEqual("Personal question - answers will vary.", question.Notes[0]);
+
+			question = category.Questions[5];
+
+			Assert.AreEqual("Who was born in Bethlehem?", question.Text);
+			Assert.AreEqual("Jesus", question.Answers[0]);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -814,11 +858,9 @@ namespace SIL.Transcelerator
 				@"\tqref LUK 1.1-79",
 				@"\bttq [Read verses 22-23 again. Then ask this question:] How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?",
 				@"\tqe He was frustrated and angry.",
-				@"\bttq For what reason did Paul remind the people in the synagogue that after David had died and ",
-				@"\bttq [people] had buried his body, his body had decayed?",
+				@"\bttq For what reason did Paul remind the people in the synagogue that after David had died and [people] had buried his body, his body had decayed?",
 				@"\tqe Paul wanted the people in the synagogue to recognize that David was not speaking about himself...",
-				@"\bttq [IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:]",
-				@"\bttq Tell me what the picture language about the sun/darkness/shadows means to you?",
+				@"\bttq [IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:] Tell me what the picture language about the sun/darkness/shadows means to you?",
 				@"\tqe [THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.",
 				@"\tqe [DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)"}, null);
 

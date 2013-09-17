@@ -11,13 +11,13 @@
 
 \rf EXO 2   
 
-¿Quién le dio a Moisés su nombre? (10) 
-¿De qué tribu era Moisés ? (2) 
-¿Cómo se salvo Moisés de ser muerto? (2-6) 
-¿A quién se le pagó para alimentar a Moisés ? (7-9) 
-¿Qué causó a Moisés  huir de Faraón a la tierra de Madián? (11-15) 
-¿Con quien vivió Moisés en Madián?/ (16-22) 
-¿Qué hicieron los hijos de Israel después de que el Rey de Egipto murió? (23-25) 
+¿Quién le dio a Moisés su nombre? (10)
+¿De qué tribu era Moisés ? (1)
+¿Cómo se salvo Moisés de ser muerto? (2-6)
+¿A quién se le pagó para alimentar a Moisés ? (7-9)
+¿Qué causó a Moisés  huir de Faraón a la tierra de Madián? (11-15)
+¿Con quien vivió Moisés en Madián? (16-22)
+¿Qué hicieron los hijos de Israel después de que el Rey de Egipto murió? (23-25)
 
 \rf EXO 3 
 
@@ -35,7 +35,7 @@
 ¿Cuáles tres señales Moisés realizaría a la vista de los ancianos en caso de que ellos no le creyeran? (1-9) 
 ¿Qué otra excusa ofreció Moisés? (10) 
 ¿A quién ofreció Dios a Moisés como un portavoz ? (11-17) 
-¿Por qué el Señor busca matar a Moisés camino a Egipto? (18-26) 
+¿Por qué el Señor quiso matar a Moisés en el camino a Egipto? (18-26) 
 ¿A quién envió el Señor al desierto para encontrar a Moisés? (27-28) 
 ¿Cuál fue la reacción de los ancianos de Israel a las palabras que el Señor había hablado a Moisés? (29-31) 
 \rf EXO 5   
@@ -55,10 +55,10 @@
 
 \rf EXO 7 
 
-¿Qué sabrían los egipcios cuándo el Señor envíe los juicios sobre Egipto? (4-5, 17, 8:22, 9:14) 
-¿Cuántos años tenían Moisés y Aaron cuándo hablaron a Faraón? (7) 
+¿Qué sabrían los egipcios cuándo el Señor enviara los juicios sobre Egipto? (4-5, 17, 8:22, 9:14) 
+¿Cuántos años tenían Moisés y Aarón cuándo le hablaron a Faraón? (7) 
 ¿Qué hicieron los magos de Faraón cuándo la vara se volvió una serpiente? (8-13) 
-¿Qué hizo la vara  de Aarón  a las varas de los magos de Faraón? 
+¿Qué les hizo la vara de Aarón a las varas de los magos de Faraón? (12)
 ¿Cuál fue la primera plaga que se puso sobre los egipcios? (14-21) 
 ¿Cuál fue la reacción de Faraón cuándo sus magos imitaron esta plaga? (22-23) 
 
@@ -177,7 +177,7 @@ Escriba los Diez Mandamientos. (2-17)
 ¿Después de cuántos años sería liberado un siervo hebreo? (2) 
 ¿Qué pasaba si un siervo amaba a su amo y no deseaba salir libre? (5-6) 
 ¿Por que hechos de violencia fueron dadas las leyes? (12-27) 
-¿Qué le pasaba al dueño de un animal que mataba  a una persona si ese dueño tenía el conocimiento de que el animal tenía un registro previo de violencia? 
+¿Qué le pasaba al dueño de un animal que mataba a una persona si ese dueño supiera de que el animal tenía un registro previo de violencia? (29)
 
 \rf EXO 22   
 
@@ -211,10 +211,10 @@ Quién no sería maltratado? (21-22)
 ¿Con qué actitud estaban los hijos  de Israel para dar una ofrenda? (2) 
 ¿Qué le ayudó a Moisés para edificación del tabernáculo? (9, 40, 26:30) 
 ¿Qué partes de muebles fueron cubiertas con oro puro? (10-30) 
-¿Qué se puso encima del arca? (21) 
-¿Qué sería puesto en el arca? (21) 
+¿Qué había de ponerse encima del arca? (21) 
+¿Qué había de ponerse dentro del arca? (21) 
 ¿De qué material se hicieron los candeleron? (31) 
-¿Cuántos lámparas habían en el candelero? 
+¿Cuántas lámparas habían en el candelero? (32)
 
 \rf EXO 26   
 
@@ -223,7 +223,7 @@ Quién no sería maltratado? (21-22)
 ¿Qué fue puesto en el Lugar Santísimo? (34) 
 ¿Qué fue puesto en el Lugar Santo? (35) 
 
-Cpítulo 27   
+\rf EXO 27   
 
 ¿Con qué se cubría el altar para ofrecer el sacrificio? (2) 
 ¿Cuáles eran las dimensiones del atrio del tabernáculo? (9-13) 
@@ -285,7 +285,7 @@ Qué ofrendas diferentes fueron se hicieron cuando se consabraban los sacerdotes
 \rf EXO 35   
 
 ¿Con qué actitud la gente traía sus ofrendas para el tabernáculo? (5, 21-22, 29) 
-¿Quién hizo varios artículos para el tabernáculo? (10, 25-26, 30-35) 
+¿Quiénes hicieron los varios artículos para el tabernáculo? (10, 25-26, 30-35) 
 
 \rf EXO 36   
 

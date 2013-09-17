@@ -20,6 +20,7 @@ using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Utils;
@@ -294,6 +295,7 @@ namespace SIL.Transcelerator
 
 #if DEBUG
 		    generateOutputForArloToolStripMenuItem.Visible = true;
+		    mnuLoadTranslationsFromTextFile.Visible = true;
 #endif
 
             m_fileAccessor = datafileProxy;
@@ -1322,6 +1324,40 @@ namespace SIL.Transcelerator
 					{
 						MessageBox.Show(ex.Message, Text);
 					}
+				}
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Processes translations in a file having format: \rf BOOK C#, followed by questions
+		/// with verse reference(s) in parentheses.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuLoadTranslationsFromTextFile_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new OpenFileDialog())
+			{
+				dlg.CheckFileExists = true;
+				dlg.Multiselect = true;
+				dlg.RestoreDirectory = true;
+				dlg.Filter = "Text Files (*.txt)|*.txt|All Supported Files (*.sfm;*.txt)|*.sfm;*.txt";
+				dlg.InitialDirectory = @"C:\Projects\Transcelerator\Transcelerator\QTTGenerate\Original Word documents from Arlo\Spanish Translations";
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					string reportFilename = Path.GetTempFileName();
+					using (var reportWriter = new StreamWriter(reportFilename))
+					{
+						foreach (var filename in dlg.FileNames)
+						{
+							using (var reader = new StreamReader(filename, Encoding.UTF8))
+							{
+								m_helper.SetTranslationsFromText(reader, filename, m_masterVersification, reportWriter);
+							}
+						}
+					}
+					dataGridUns.Invalidate();
+					MessageBox.Show("Finished! See report in " + reportFilename, TxlPlugin.pluginName);
 				}
 			}
 		}

@@ -25,7 +25,7 @@
  
 \rf NEH 4
 ¿Qué dijo Tobías que derribaría su muro de piedra? (1-3)
-¿Con qué actitud lo hicieron los constructores de la obra mural? (6)
+¿Con qué actitud trabajaron los constructores de la muralla? (6)
 ¿Qué complot hicieron Sanbalat y Tobías? (7-8)
 ¿Qué hizo Nehemías para cumplir con esta amenaza? (9-14)
 ¿Qué  sostenían en una mano los que llevaban materiales? (16-17)
@@ -34,7 +34,7 @@
 ¿Con qué frecuencia los hombres cambiaban de ropa? (23)
 
 \rf NEH 5
-¿Qué motivó a Nehemías para detenerse después de escuchar el grito de los pobres? (10)
+¿Qué práctica hizo parar Nehemías después de escuchar el grito de los pobres? (6-10)
 ¿Qué mandó Nehemías que debe darse a los pobres? (11-12)
 ¿Qué lección práctica Nehemías da sobre los que no mantuvieron su promesa? (13)
 ¿Cómo Nehemías difiere de los gobernadores anteriores? (14-19)
@@ -45,7 +45,7 @@ Después de escuchar que el muro fue reconstruido ¿Qué petición hizo Sanbalat
 ¿Cómo Nehemías respondió a las acusaciones de Sanbalat? (5-8)
 ¿Por que Nehemías ora? (9)
 ¿A quién Tobías y Sanbalat contratan para profetizar contra Nehemías? (10-14)
-¿Cuánto tiempo se tarda en completar las paredes? (15)
+¿Cuánto tiempo se tardó en terminar el muro? (15)
 ¿Con qué propósito Tobías envió cartas? (19)
  
 \rf NEH 7
