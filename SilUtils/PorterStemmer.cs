@@ -1,9 +1,13 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International. All Rights Reserved (derivitive work only).
+#region // Copyright (c) 2013, SIL International.
 // <copyright from='2011' to='2013' company='SIL International'>
 //		Copyright (c) 2013, SIL International. All Rights Reserved (derivitive work only).
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+//		This file incorporates work covered by the following permission notice:
+//		The software is completely free for any purpose, unless notes at the head of
+//		the program text indicates otherwise (which is rare). In any case, the notes
+//		about licensing are never more restrictive than the BSD License.
 // </copyright>
 #endregion
 //
@@ -15,6 +19,8 @@
 //    no. 3, pp 130-137,
 //
 //See also http://www.tartarus.org/~martin/PorterStemmer
+//
+
 //
 //History:
 //
