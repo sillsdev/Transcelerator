@@ -211,30 +211,10 @@ namespace SILUBS.SharedScrControls
 
 		#region Setup methods
 		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// 
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
 		[SetUp]
 		public void TestSetup()
 		{
-		    m_versification = MockRepository.GenerateMock<IScrVers>();
-            m_versification.Stub(v => v.GetLastChapter(1)).Return(50);
-            m_versification.Stub(v => v.GetLastVerse(1, 1)).Return(31);
-            m_versification.Stub(v => v.GetLastVerse(1, 2)).Return(25);
-            m_versification.Stub(v => v.GetLastChapter(5)).Return(34);
-            m_versification.Stub(v => v.GetLastVerse(5, 1)).Return(46);
-            m_versification.Stub(v => v.GetLastVerse(5, 17)).Return(20);
-            m_versification.Stub(v => v.GetLastChapter(6)).Return(24);
-            m_versification.Stub(v => v.GetLastVerse(6, 1)).Return(18);
-            m_versification.Stub(v => v.GetLastChapter(7)).Return(21);
-            m_versification.Stub(v => v.GetLastVerse(7, 21)).Return(25);
-            m_versification.Stub(v => v.GetLastChapter(57)).Return(1);
-            m_versification.Stub(v => v.GetLastVerse(57, 1)).Return(25);
-            m_versification.Stub(v => v.GetLastChapter(59)).Return(5);
-            m_versification.Stub(v => v.GetLastVerse(59, 1)).Return(27);
-            m_versification.Stub(v => v.GetLastChapter(66)).Return(22);
-            m_versification.Stub(v => v.GetLastVerse(66, 1)).Return(20);
+		    m_versification = new TestScrVers();
             m_ctrlOwner = new Form();
 
 			m_scp = new DummyScrPassageControl();

@@ -11,12 +11,14 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Utils;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.Transcelerator
 {
@@ -2184,6 +2186,293 @@ namespace SIL.Transcelerator
         }
 
         #endregion
+
+		#region SetTranslationsFromText tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has no lines of text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_EmptyFile_NoTranslationsSet()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase = pth.GetPhrase("A", "Who was the man?");
+
+			using (TextReader reader = new StringReader(""))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "empty", new TestScrVers(), writer);
+				Assert.AreEqual(0, phrase.Translation.Length);
+				Assert.IsFalse(phrase.HasUserTranslation);
+				Assert.AreEqual("Processing file: empty\r\nSummary\r\n=======\r\n" +
+					"Read: 0, Matched: 0, Set: 0, Unparsable Lines: 0\r\n",
+					writer.ToString());
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has some bogus lines.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_UnparsableLines_ProblemsReported()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
+
+			var translations = "Genesis es un libro muy especial.\r\n" +
+				"\\rf GEN 1\r\n" +
+				"Quien es el unico creador de todas las cosas? (1)\r\n" +
+				"Translated by Jennifer";
+
+			using (TextReader reader = new StringReader(translations))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "Genesis.txt", new TestScrVers(), writer);
+
+				Assert.AreEqual("Quien es el unico creador de todas las cosas?", phrase1.Translation);
+				Assert.IsTrue(phrase1.HasUserTranslation);
+
+				Assert.AreEqual("Processing file: Genesis.txt\r\n" +
+					"   ***Parsing problem at line 1: \"Genesis es un libro muy especial.\"\r\n" +
+					"   GEN 1:1 - \"Who was the man?\" ---> \"Quien es el unico creador de todas las cosas?\"\r\n" +
+					"   ***Parsing problem at line 4: \"Translated by Jennifer\"\r\n" +
+					"Summary\r\n=======\r\n" +
+					"Read: 1, Matched: 1, Set: 1, Unparsable Lines: 2\r\n",
+					writer.ToString());
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has exactly one matching
+		/// translation for each question (none of which are translated).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_ExactMatchesNoExistingTranslations_AllTranslationsSet()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
+			var phrase2 = pth.GetPhrase("GEN 1:2", "Who is the girl?");
+			var phrase3 = pth.GetPhrase("GEN 2:2", "Why do you ask?");
+
+			var translations = "\\rf GEN 1\r\n" +
+				"\r\n" +
+				"Quien es el unico creador de todas las cosas? (1)\r\n" +
+				"Cual era la condicion de la tierra en el principio? (2)\r\n" +
+				"\r\n" +
+				"\\rf GEN 2\r\n" +
+				"\r\n" +
+				"Que hizo Dios en el septimo dia? (2)";
+
+			using (TextReader reader = new StringReader(translations))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "Genesis.txt", new TestScrVers(), writer);
+
+				Assert.AreEqual("Quien es el unico creador de todas las cosas?", phrase1.Translation);
+				Assert.IsTrue(phrase1.HasUserTranslation);
+				Assert.AreEqual("Cual era la condicion de la tierra en el principio?", phrase2.Translation);
+				Assert.IsTrue(phrase2.HasUserTranslation);
+				Assert.AreEqual("Que hizo Dios en el septimo dia?", phrase3.Translation);
+				Assert.IsTrue(phrase3.HasUserTranslation);
+				
+				Assert.AreEqual("Processing file: Genesis.txt\r\n" +
+					"   GEN 1:1 - \"Who was the man?\" ---> \"Quien es el unico creador de todas las cosas?\"\r\n" +
+					"   GEN 1:2 - \"Who is the girl?\" ---> \"Cual era la condicion de la tierra en el principio?\"\r\n" +
+					"   GEN 2:2 - \"Why do you ask?\" ---> \"Que hizo Dios en el septimo dia?\"\r\n" +
+					"Summary\r\n=======\r\n" +
+					"Read: 3, Matched: 3, Set: 3, Unparsable Lines: 0\r\n",
+					writer.ToString());
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has exactly one matching
+		/// translation for each question (some of which are already translated).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_ExactMatchesSomeExistingTranslations_UntranslatedQuestionsHaveTranslationsSet()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
+			phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
+			var phrase2 = pth.GetPhrase("GEN 1:2", "Who is the girl?");
+			var phrase3 = pth.GetPhrase("GEN 2:2", "Why do you ask?");
+			phrase3.Translation = "\u00BFPor que\u0301 preguntas?";
+
+			var translations = "\\rf GEN 1\r\n" +
+				"\r\n" +
+				"Quien es el unico creador de todas las cosas? (1)\r\n" +
+				"Cual era la condicion de la tierra en el principio? (2)\r\n" +
+				"\r\n" +
+				"\\rf GEN 2\r\n" +
+				"\r\n" +
+				"Que hizo Dios en el septimo dia? (2)";
+
+			using (TextReader reader = new StringReader(translations))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "Genesis.txt", new TestScrVers(), writer);
+
+				Assert.AreEqual("\u00BFQuie\u0301n era el hombre?".Normalize(NormalizationForm.FormC), phrase1.Translation);
+				Assert.AreEqual("Cual era la condicion de la tierra en el principio?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+				Assert.IsTrue(phrase2.HasUserTranslation);
+				Assert.AreEqual("\u00BFPor que\u0301 preguntas?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+
+				Assert.AreEqual("Processing file: Genesis.txt\r\n" +
+					"   GEN 1:1 - \"Who was the man?\" ***Already translated as: \"\u00BFQuie\u0301n era el hombre?\" ***Not set to: \"Quien es el unico creador de todas las cosas?\"\r\n" +
+					"   GEN 1:2 - \"Who is the girl?\" ---> \"Cual era la condicion de la tierra en el principio?\"\r\n" +
+					"   GEN 2:2 - \"Why do you ask?\" ***Already translated as: \"\u00BFPor que\u0301 preguntas?\" ***Not set to: \"Que hizo Dios en el septimo dia?\"\r\n" +
+					"Summary\r\n=======\r\n" +
+					"Read: 3, Matched: 3, Set: 1, Unparsable Lines: 0\r\n".Normalize(NormalizationForm.FormD),
+					writer.ToString().Normalize(NormalizationForm.FormD));
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has some questions that
+		/// don't match or that match multiple original questions.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_MultipleAndMissingQuestions_ExactMatchesHaveTranslationsSet()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "GEN 1:1-31", 001001001, 001001031, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 2:2-13", 001002002, 001002013, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2-13", 001002002, 001002013, "why do you ask");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase1 = pth.GetPhrase("GEN 1:1-31", "Who was the man?");
+			var phrase2 = pth.GetPhrase("GEN 2:2-13", "Who is the girl?");
+			var phrase3 = pth.GetPhrase("GEN 2:2-13", "Why do you ask?");
+			phrase3.Translation = "\u00BFPor que\u0301 preguntas?";
+
+			var translations = "\\rf GEN 1\r\n" +
+				"\r\n" +
+				"\u00BFQuie\u0301n es el unico creador de todas las cosas?\r\n" + // No explicit ref - should match whole chapter
+				"Despue\u0301s de que Zorobabel los rechazo, que tres cosas hicieron estos adversarios? (10-12)\r\n" +
+				"\r\n" +
+				"\\rf GEN 2\r\n" +
+				"\r\n" +
+				"Cual era la condicion de la tierra en el principio? (2-13)\r\n" +
+				"Que hizo Dios en el septimo dia? (2-13)";
+
+			using (TextReader reader = new StringReader(translations))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "Genesis.txt", new TestScrVers(), writer);
+
+				Assert.AreEqual("\u00BFQuie\u0301n es el unico creador de todas las cosas?".Normalize(NormalizationForm.FormC), phrase1.Translation);
+				Assert.IsTrue(phrase1.HasUserTranslation);
+				Assert.IsFalse(phrase2.HasUserTranslation);
+				Assert.AreEqual("\u00BFPor que\u0301 preguntas?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+				Assert.IsTrue(phrase3.HasUserTranslation);
+
+				Assert.AreEqual("Processing file: Genesis.txt\r\n" +
+					"   GEN 1:1-31 - \"Who was the man?\" ---> \"\u00BFQuie\u0301n es el unico creador de todas las cosas?\"\r\n" +
+					"   GEN 1:10-12 - ***No matching question: \"Despue\u0301s de que Zorobabel los rechazo, que tres cosas hicieron estos adversarios?\"\r\n" +
+					"   GEN 2:2-13 - ***Multiple matching questions: \"Cual era la condicion de la tierra en el principio?\"\r\n" +
+					"   GEN 2:2-13 - ***Multiple matching questions: \"Que hizo Dios en el septimo dia?\"\r\n" +
+					"Summary\r\n=======\r\n" +
+					"Read: 4, Matched: 1, Set: 1, Unparsable Lines: 0\r\n".Normalize(NormalizationForm.FormD),
+					writer.ToString().Normalize(NormalizationForm.FormD));
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling SetTranslationsFromText with a reader that has some questions that
+		/// match multiple original questions, but where all matches already have translations
+		/// set.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslationsFromText_MultipleQuestionsAllTranslated_NotFlaggedAsErrorNoTranslationsSet()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "GEN 2:2-13", 001002002, 001002013, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 2:2-13", 001002002, 001002013, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2-13", 001002002, 001002013, "why do you ask");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			var phrase1 = pth.GetPhrase("GEN 2:2-13", "Who was the man?");
+			var phrase2 = pth.GetPhrase("GEN 2:2-13", "Who is the girl?");
+			var phrase3 = pth.GetPhrase("GEN 2:2-13", "Why do you ask?");
+			phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
+			phrase2.Translation = "\u00BFQuie\u0301n es la chica?";
+			phrase3.Translation = "\u00BFPor que\u0301 preguntas?";
+
+			var translations = "\\rf GEN 2\r\n" +
+				"\u00BFQuie\u0301n es el unico creador de todas las cosas? (2-13)\r\n" +
+				"\u00BFCual era la condicion de la tierra en el principio? (2-13)\r\n" +
+				"\u00BFQue hizo Dios en el septimo dia? (2-13)";
+
+			using (TextReader reader = new StringReader(translations))
+			using (TextWriter writer = new StringWriter())
+			{
+				pth.SetTranslationsFromText(reader, "Genesis.txt", new TestScrVers(), writer);
+
+				Assert.AreEqual("\u00BFQuie\u0301n era el hombre?".Normalize(NormalizationForm.FormC), phrase1.Translation);
+				Assert.IsTrue(phrase1.HasUserTranslation);
+				Assert.AreEqual("\u00BFQuie\u0301n es la chica?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+				Assert.IsTrue(phrase2.HasUserTranslation);
+				Assert.AreEqual("\u00BFPor que\u0301 preguntas?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+				Assert.IsTrue(phrase3.HasUserTranslation);
+
+				Assert.AreEqual("Processing file: Genesis.txt\r\n" +
+					"   GEN 2:2-13 - \"\u00BFQuie\u0301n es el unico creador de todas las cosas?\" ***All matching questions have translations\r\n" +
+					"   GEN 2:2-13 - \"\u00BFCual era la condicion de la tierra en el principio?\" ***All matching questions have translations\r\n" +
+					"   GEN 2:2-13 - \"\u00BFQue hizo Dios en el septimo dia?\" ***All matching questions have translations\r\n" +
+					"Summary\r\n=======\r\n" +
+					"Read: 3, Matched: 0, Set: 0, Unparsable Lines: 0\r\n".Normalize(NormalizationForm.FormD),
+					writer.ToString().Normalize(NormalizationForm.FormD));
+			}
+		}
+		#endregion
 
         #region Private helper methods
         /// ------------------------------------------------------------------------------------

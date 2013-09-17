@@ -23,15 +23,15 @@
 ¿Qué hicieron los Judios hacer en cada una de las provincias? (3)
 ¿Qué le dijo Mardoqueo a Ester que solicitara? (7-8)
 ¿Qué solía ocurrir a una persona que entró en la corte del rey y no fue invitado? (11)
-¿Qué dijó Mardoqueo que le pasaría a Ester si ella no hacía nada? (14)
-¿Qué pregunta hizo Mardoqueo a Ester? (14)
+¿Qué le dijo Mardoqueo a Ester que le pasaría si ella no hacía nada? (14)
+¿Qué pregunta le hizo Mardoqueo a Ester? (14)
 ¿Cómo respondió Ester? (16)
  
 \rf EST 5
 ¿Qué hizo el rey cuando Ester entró en el patio interior? (1-3)
 ¿Qué pidió Ester del rey? (4-5)
 ¿Qué solicitó Ester en el banquete? (6-8)
-¿Qué causó indignación a Aman? (9)
+¿Qué le causó indignación a Aman? (9)
 ¿Qué sugirierón a Aman su esposa y amigos? (14)
 
 \rf EST 6
@@ -39,27 +39,27 @@
 ¿Qué hizo el rey que se le leeyerá esa noche? (1-2)
 ¿Qué preguntó el rey? (3)
 ¿Qué dijo el rey a Amán? (6)
-¿Quién pensó Amán que el rey quería honrar? (6)
+¿A quién pensó Amán que el rey quería honrar? (6)
 ¿Cómo Aman sugirió que el rey mostrará su honor? (7-9)
 ¿A quién hizo el rey que Amán honrara? (10-11)
-¿Qué reconocierón la esposa de Amán y los sabios? (13)
+¿Qué reconocieron la esposa de Amán y los sabios? (13)
  
 \rf EST 7
 ¿Qué pidió Ester del rey en el banquete? (1-4)
-¿Qué reveló Ester al rey? (5-6)
+¿Qué le reveló Ester al rey? (5-6)
 ¿Cómo reaccionó Amán? (6-8)
 ¿Qué pensó el rey que Amán estaba haciendo? (8)
-Cuando fue ahorcado Amán? (9-10)
+¿Dónde fue ahorcado Amán? (9-10)
  
 \rf EST 8
-¿Qué dió el rey a Mardoqueo? (2,15)
+¿Qué le dio el rey a Mardoqueo? (2, 15)
 ¿Quién estaba a cargo de la casa de Amán? (2)
 ¿Qué pidió Ester del rey? (3-6)
 ¿Cuál era el contenido del decreto sellado y enviado a todas las provincias? (11-12)
 ¿Cómo reaccionan los Judios cuando el decreto vino a ellos? (15-16)
 
 \rf EST 9
-¿Quién ayudó a los Judios? (3)
+¿Quiénes les apoyaban a los judíos? (3)
 ¿Qué hicieron los Judios a sus enemigos? (5-6)
 ¿Qué pasó con los hijos de Haman? (10)
 ¿Cuál es el propósito de los días de Purim? (28)

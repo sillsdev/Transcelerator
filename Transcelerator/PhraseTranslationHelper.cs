@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +19,7 @@ using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Utils;
 using System;
+using SILUBS.SharedScrUtils;
 
 namespace SIL.Transcelerator
 {
@@ -364,6 +366,148 @@ namespace SIL.Transcelerator
 				phrase.MatchesKeyTermFilter(ktFilter) &&
 				filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
 				(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Parses lines from given stream reader to get translated questions for a particular
+		/// referenceand attempts to find the corresponding master question and set the
+		/// translation if there is a unique match and the question is not already translated. 
+		/// </summary>
+		/// <param name="reader">Stream reader with \rf lines to indicate book and chapter and
+		/// untagged lines with questions followed by verse references in parentheses.</param>
+		/// <param name="filename">Name of the file being processed (for reporting purposes)
+		/// </param>
+		/// <param name="vers">Master versification system used</param>
+		/// <param name="reportWriter">writable stream to report results</param>
+		/// ------------------------------------------------------------------------------------
+		internal void SetTranslationsFromText(TextReader reader, string filename, IScrVers vers,
+			TextWriter reportWriter)
+		{
+			reportWriter.WriteLine("Processing file: " + filename);
+
+			int questionsRead = 0;
+			int questionsMatched = 0;
+			int translationsSet = 0;
+			int problemsFound = 0;
+			MultilingScrBooks multilingScrBooks = new MultilingScrBooks();
+			Regex regexChapterBreak = new Regex(@"\\rf (?<bookAndChapter>.+ \d+)", RegexOptions.Compiled);
+			Regex regexTranslation = new Regex(@" *(?<translation>.+[?.])( *\((?<versesCovered>\d+(-\d+)?)\))?", RegexOptions.Compiled);
+
+			string sLine;
+			int lineNbr = 0;
+			string sBookAndChapter = null;
+			while ((sLine = reader.ReadLine()) != null)
+			{
+				lineNbr++;
+				sLine = sLine.Replace("  ", " ").Trim();
+
+				if (sLine.Length == 0)
+					continue;
+
+				Match match = regexChapterBreak.Match(sLine);
+				if (match.Success)
+				{
+					sBookAndChapter = match.Result("${bookAndChapter}");
+					continue;
+				}
+
+				if (sBookAndChapter == null)
+				{
+					reportWriter.WriteLine("   ***Parsing problem at line {0}: \"{1}\"", lineNbr, sLine);
+					problemsFound++;
+					continue;
+				}
+
+				match = regexTranslation.Match(sLine);
+				if (match.Success)
+				{
+					questionsRead++;
+					string sVersesCoveredByQuestion = match.Result("${versesCovered}");
+					int startVerse = 0;
+					BCVRef startRef = multilingScrBooks.ParseRefString(sBookAndChapter + ":1");
+					foreach (char c in sVersesCoveredByQuestion)
+					{
+						if (!Char.IsDigit(c))
+							break;
+						startVerse *= 10;
+						startVerse += (int)Char.GetNumericValue(c);
+					}
+					if (startVerse > 0)
+						startRef.Verse = startVerse;
+
+					BCVRef endRef = new BCVRef(startRef);
+					int factor = 1;
+					int endVerse = 0;
+					for (int i = sVersesCoveredByQuestion.Length - 1; i >= 0; i--)
+					{
+						char c = sVersesCoveredByQuestion[i];
+						if (!Char.IsDigit(c))
+							break;
+						endVerse += (int)Char.GetNumericValue(c) * factor;
+						factor *= 10;
+					}
+					if (endVerse > 0)
+						endRef.Verse = endVerse;
+					else if (startVerse == 0)
+						endRef.Verse = vers.GetLastVerse(endRef.Book, endRef.Chapter);
+
+					Func<int, int, string, bool> refFilter = (start, end, sref) => endRef == end && startRef == start;
+
+					var matches = m_phrases.Where(phrase => refFilter(phrase.StartRef, phrase.EndRef, phrase.Reference)).ToList();
+
+					string sTranslation = match.Result("${translation}");
+
+					if (matches.Count == 1)
+					{
+						questionsMatched++;
+
+						var uniqueMatch = matches[0];
+						if (!uniqueMatch.HasUserTranslation)
+						{
+							uniqueMatch.Translation = sTranslation;
+							reportWriter.WriteLine("   {0} - \"{1}\" ---> \"{2}\"",
+								BCVRef.MakeReferenceString(startRef, endRef, ":", "-"),
+								uniqueMatch.OriginalPhrase, uniqueMatch.Translation);
+							translationsSet++;
+						}
+						else
+						{
+							reportWriter.WriteLine("   {0} - \"{1}\" ***Already translated as: \"{2}\" ***Not set to: \"{3}\"",
+								BCVRef.MakeReferenceString(startRef, endRef, ":", "-"),
+								uniqueMatch.OriginalPhrase, uniqueMatch.Translation, sTranslation);
+						}
+					}
+					else if (matches.Count == 0)
+					{
+						reportWriter.WriteLine("   {0} - ***No matching question: \"{1}\"",
+							BCVRef.MakeReferenceString(startRef, endRef, ":", "-"), sTranslation);
+					}
+					else
+					{
+						if (matches.All(tp => tp.HasUserTranslation))
+						{
+							reportWriter.WriteLine("   {0} - \"{1}\" ***All matching questions have translations",
+								BCVRef.MakeReferenceString(startRef, endRef, ":", "-"), sTranslation);
+						}
+						else
+						{
+							reportWriter.WriteLine("   {0} - ***Multiple matching questions: \"{1}\"",
+								BCVRef.MakeReferenceString(startRef, endRef, ":", "-"), sTranslation);
+						}
+					}
+				}
+				else
+				{
+					reportWriter.WriteLine("   ***Parsing problem at line {0}: \"{1}\"", lineNbr, sLine);
+					problemsFound++;
+				}
+			}
+
+			reportWriter.WriteLine("Summary");
+			reportWriter.WriteLine("=======");
+			reportWriter.WriteLine("Read: {0}, Matched: {1}, Set: {2}, Unparsable Lines: {3}", questionsRead, questionsMatched,
+				translationsSet, problemsFound);
 		}
 		#endregion
 

@@ -99,7 +99,9 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			{
 				if (sLine.StartsWith(s_kQuestionMarker))
 				{
-					if (currQuestion != null && cAnswers == 0 && cComments == 0)
+					if (currQuestion != null && cAnswers == 0 && cComments == 0 &&
+						(sLine.ToLowerInvariant() == s_kQuestionMarker + " -or-" ||
+						(currQuestion.Text != null && currQuestion.Text.ToLowerInvariant().EndsWith("-or-"))))
 					{
 						// Question continued in a subsequent field. Just append the text to the existing question.
 						currQuestion.Text += " " + sLine.Substring(kQMarkerLen).Trim();

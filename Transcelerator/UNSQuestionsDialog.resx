@@ -216,15 +216,6 @@
   <metadata name="dataGridContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>108, 27</value>
   </metadata>
-  <data name="dataGridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>201, 186</value>
-  </data>
-  <data name="&gt;&gt;dataGridContextMenu.Name" xml:space="preserve">
-    <value>dataGridContextMenu</value>
-  </data>
-  <data name="&gt;&gt;dataGridContextMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="cutToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+X</value>
   </data>
@@ -288,6 +279,15 @@
   <data name="mnuAddQuestion.Text" xml:space="preserve">
     <value>Insert Question &amp;Below...</value>
   </data>
+  <data name="dataGridContextMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>201, 186</value>
+  </data>
+  <data name="&gt;&gt;dataGridContextMenu.Name" xml:space="preserve">
+    <value>dataGridContextMenu</value>
+  </data>
+  <data name="&gt;&gt;dataGridContextMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <metadata name="m_mainMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>3, 3</value>
   </metadata>
@@ -315,13 +315,13 @@
     <value>Ctrl+S</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
   </data>
   <data name="mnuAutoSave.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="mnuAutoSave.Text" xml:space="preserve">
     <value>&amp;Auto Save</value>
@@ -330,25 +330,25 @@
     <value>Ctrl+R</value>
   </data>
   <data name="reloadToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="reloadToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Reload</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>255, 6</value>
+    <value>277, 6</value>
   </data>
   <data name="mnuGenerate.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+G</value>
   </data>
   <data name="mnuGenerate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="mnuGenerate.Text" xml:space="preserve">
     <value>&amp;Generate Checking Script...</value>
   </data>
   <data name="generateOutputForArloToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="generateOutputForArloToolStripMenuItem.Text" xml:space="preserve">
     <value>Generate output for Arlo...</value>
@@ -356,11 +356,20 @@
   <data name="generateOutputForArloToolStripMenuItem.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <data name="mnuLoadTranslationsFromTextFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>280, 22</value>
+  </data>
+  <data name="mnuLoadTranslationsFromTextFile.Text" xml:space="preserve">
+    <value>Load Translations from Plain Text File...</value>
+  </data>
+  <data name="mnuLoadTranslationsFromTextFile.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>255, 6</value>
+    <value>277, 6</value>
   </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>280, 22</value>
   </data>
   <data name="closeToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close</value>
@@ -370,60 +379,6 @@
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;File</value>
-  </data>
-  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 20</value>
-  </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Edit</value>
-  </data>
-  <data name="filterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 20</value>
-  </data>
-  <data name="filterToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Filter</value>
-  </data>
-  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 20</value>
-  </data>
-  <data name="viewToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;View</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>72, 20</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Advanced</value>
-  </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 20</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Help</value>
-  </data>
-  <data name="m_mainMenu.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 3</value>
-  </data>
-  <data name="m_mainMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>792, 24</value>
-  </data>
-  <data name="m_mainMenu.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="m_mainMenu.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;m_mainMenu.Name" xml:space="preserve">
-    <value>m_mainMenu</value>
-  </data>
-  <data name="&gt;&gt;m_mainMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_mainMenu.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_mainMenu.ZOrder" xml:space="preserve">
-    <value>5</value>
   </data>
   <data name="cutToolStripMenuItem1.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+X</value>
@@ -485,17 +440,17 @@
   <data name="nextUntranslatedQuestionToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Next Untranslated Question</value>
   </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 20</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
   <data name="mnuReferenceRange.Size" type="System.Drawing.Size, System.Drawing">
     <value>307, 22</value>
   </data>
   <data name="mnuReferenceRange.Text" xml:space="preserve">
     <value>&amp;Set Reference Range...</value>
-  </data>
-  <data name="mnuKtFilter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>307, 22</value>
-  </data>
-  <data name="mnuKtFilter.Text" xml:space="preserve">
-    <value>Biblical &amp;Terms</value>
   </data>
   <data name="mnuShowAllPhrases.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+A</value>
@@ -524,6 +479,12 @@
   <data name="mnuShowPhrasesWithMissingKtRenderings.Text" xml:space="preserve">
     <value>Show Phrases With Key Terms &amp;Missing Renderings</value>
   </data>
+  <data name="mnuKtFilter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 22</value>
+  </data>
+  <data name="mnuKtFilter.Text" xml:space="preserve">
+    <value>Biblical &amp;Terms</value>
+  </data>
   <data name="mnuMatchWholeWords.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+W</value>
   </data>
@@ -532,6 +493,12 @@
   </data>
   <data name="mnuMatchWholeWords.Text" xml:space="preserve">
     <value>Match &amp;Whole Words When Filtering</value>
+  </data>
+  <data name="filterToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>45, 20</value>
+  </data>
+  <data name="filterToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Filter</value>
   </data>
   <data name="mnuViewToolbar.Size" type="System.Drawing.Size, System.Drawing">
     <value>228, 22</value>
@@ -554,6 +521,12 @@
   <data name="mnuViewExcludedQuestions.Text" xml:space="preserve">
     <value>&amp;Excluded Questions</value>
   </data>
+  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 20</value>
+  </data>
+  <data name="viewToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;View</value>
+  </data>
   <data name="phraseSubstitutionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>296, 22</value>
   </data>
@@ -566,39 +539,51 @@
   <data name="biblicalTermsRenderingSelectionRulesToolStripMenuItem.Text" xml:space="preserve">
     <value>Biblical Terms &amp;Rendering Selection Rules...</value>
   </data>
+  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 20</value>
+  </data>
+  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Advanced</value>
+  </data>
   <data name="mnuHelpAbout.Size" type="System.Drawing.Size, System.Drawing">
     <value>185, 22</value>
   </data>
   <data name="mnuHelpAbout.Text" xml:space="preserve">
     <value>&amp;About Transcelerator</value>
   </data>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 20</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="m_mainMenu.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 3</value>
+  </data>
+  <data name="m_mainMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>792, 24</value>
+  </data>
+  <data name="m_mainMenu.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="m_mainMenu.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;m_mainMenu.Name" xml:space="preserve">
+    <value>m_mainMenu</value>
+  </data>
+  <data name="&gt;&gt;m_mainMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_mainMenu.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_mainMenu.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
   <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>3, 27</value>
   </metadata>
-  <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 27</value>
-  </data>
-  <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>792, 25</value>
-  </data>
-  <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="toolStrip1.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Name" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="btnSave.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -694,6 +679,30 @@
   </data>
   <data name="lblRemainingWork.Text" xml:space="preserve">
     <value>Untranslated Questions: {0}/{1}</value>
+  </data>
+  <data name="toolStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 27</value>
+  </data>
+  <data name="toolStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>792, 25</value>
+  </data>
+  <data name="toolStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="toolStrip1.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Name" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;toolStrip1.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="m_biblicalTermsPane.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -7257,6 +7266,12 @@
   <data name="&gt;&gt;mnuGenerate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;generateOutputForArloToolStripMenuItem.Name" xml:space="preserve">
+    <value>generateOutputForArloToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;generateOutputForArloToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
     <value>toolStripSeparator3</value>
   </data>
@@ -7267,12 +7282,6 @@
     <value>closeToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;closeToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;generateOutputForArloToolStripMenuItem.Name" xml:space="preserve">
-    <value>generateOutputForArloToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;generateOutputForArloToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
@@ -7472,6 +7481,12 @@
   </data>
   <data name="&gt;&gt;lblRemainingWork.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Name" xml:space="preserve">
+    <value>mnuLoadTranslationsFromTextFile</value>
+  </data>
+  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>UNSQuestionsDialog</value>

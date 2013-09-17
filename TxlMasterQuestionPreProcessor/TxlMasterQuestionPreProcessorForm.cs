@@ -56,7 +56,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
                 dlg.CheckFileExists = true;
                 dlg.Multiselect = true;
                 dlg.RestoreDirectory = true;
-                dlg.Filter = "Standard Format Files (*.sfm)|*.sfm;*.txt|All Supported Files (*.sfm;*.txt)|*.sfm;*.txt";
+                dlg.Filter = "Standard Format Files (*.sfm)|*.sfm|All Supported Files (*.sfm;*.txt)|*.sfm;*.txt";
                 dlg.InitialDirectory = Path.Combine(Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SoftDev"), "Transcelerator");
                 if (dlg.ShowDialog() == DialogResult.OK)
