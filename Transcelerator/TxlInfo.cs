@@ -58,14 +58,14 @@ namespace SIL.Transcelerator
 				if (value)
 				{
 					if (browserCreditsAndLicense == null)
-					{
+					{	
+						panelBrowser.BorderStyle = BorderStyle.Fixed3D;
 						browserCreditsAndLicense = new WebBrowser();
 						browserCreditsAndLicense.AllowWebBrowserDrop = false;
 						browserCreditsAndLicense.AllowNavigation = true;
-						tableLayoutPanel.Controls.Add(browserCreditsAndLicense,
-							0, tableLayoutPanel.RowCount - 1);
-						tableLayoutPanel.SetColumnSpan(browserCreditsAndLicense, 2);
-						browserCreditsAndLicense.Padding = new Padding(0, 6, 0, 0);
+						browserCreditsAndLicense.AutoSize = true;
+						panelBrowser.Controls.Add(browserCreditsAndLicense);
+						browserCreditsAndLicense.Dock = DockStyle.Fill;
 					}
 					if (browserCreditsAndLicense.IsHandleCreated)
 						LoadCreditsAndLicense();
@@ -76,6 +76,7 @@ namespace SIL.Transcelerator
 				{
 					browserCreditsAndLicense.Dispose();
 					browserCreditsAndLicense = null;
+					panelBrowser.BorderStyle = BorderStyle.None;
 				}
 			}
 		}

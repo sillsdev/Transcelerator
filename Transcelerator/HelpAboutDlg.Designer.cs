@@ -41,18 +41,9 @@ namespace SIL.Transcelerator
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
 			this.btnOk = new System.Windows.Forms.Button();
+			this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
 			this.SuspendLayout();
-			// 
-			// m_txlInfo
-			// 
-			this.m_txlInfo.AutoSize = true;
-			this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
-			this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
-			this.m_txlInfo.Name = "m_txlInfo";
-			this.m_txlInfo.Size = new System.Drawing.Size(666, 368);
-			this.m_txlInfo.TabIndex = 0;
 			// 
 			// btnOk
 			// 
@@ -65,18 +56,30 @@ namespace SIL.Transcelerator
 			this.btnOk.Text = "OK";
 			this.btnOk.UseVisualStyleBackColor = true;
 			// 
+			// m_txlInfo
+			// 
+			this.m_txlInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_txlInfo.AutoSize = true;
+			this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
+			this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
+			this.m_txlInfo.Name = "m_txlInfo";
+			this.m_txlInfo.Size = new System.Drawing.Size(666, 368);
+			this.m_txlInfo.TabIndex = 0;
+			// 
 			// HelpAboutDlg
 			// 
 			this.AcceptButton = this.btnOk;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ClientSize = new System.Drawing.Size(674, 427);
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.m_txlInfo);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(690, 465);
 			this.Name = "HelpAboutDlg";
 			this.ShowIcon = false;
 			this.Text = "About Transcelerator";
