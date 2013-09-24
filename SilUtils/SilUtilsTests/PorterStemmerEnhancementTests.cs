@@ -160,7 +160,7 @@ namespace SIL.Utils
 			Assert.AreEqual("mid-morning", s_stemmer.stemTerm("mid-morning"));
 			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-fly"));
 			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-fly's"));
-			Assert.AreEqual("fire-fli", s_stemmer.stemTerm("fire-flies"));
+			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-flies"));
 			Assert.AreEqual("raisin-cake", s_stemmer.stemTerm("raisin-cake"));
 			Assert.AreEqual("raisin-cake", s_stemmer.stemTerm("raisin-cakes"));
 			Assert.AreEqual("drink-offering", s_stemmer.stemTerm("drink-offering"));
