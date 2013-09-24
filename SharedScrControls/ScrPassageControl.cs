@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International. All Rights Reserved.
+#region // Copyright (c) 2013, SIL International.
 // <copyright from='2003' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International. All Rights Reserved.   
+//		Copyright (c) 2013, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
