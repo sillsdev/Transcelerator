@@ -5,6 +5,10 @@
     <Alternate name="ask" matchForRefOnly="true"/>
     <Alternate name="pray"/>
   </KeyTermRule>
+  <KeyTermRule id="commandment, order" rule="Exclude">
+    <Alternate name="commandment"/>
+    <Alternate name="order" matchForRefOnly="true"/>
+  </KeyTermRule>
   <KeyTermRule id="wish; pray" rule="Exclude">
     <Alternate name="pray"/>
   </KeyTermRule>
@@ -19,6 +23,12 @@
   </KeyTermRule>
   <KeyTermRule id="good; kind; easy" rule="Exclude">
     <Alternate name="kindness"/>
+  </KeyTermRule>
+  <KeyTermRule id="topheth">
+    <Alternate name="tophet"/>
+  </KeyTermRule>
+  <KeyTermRule id="to command">
+    <Alternate name="command"/>
   </KeyTermRule>
   <KeyTermRule id="word, saying; message, statement" rule="Exclude">
     <Alternate name="word"/>

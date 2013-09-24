@@ -22,6 +22,9 @@ namespace SIL.Transcelerator
 {
 	public class KeyTermMatchBuilder
 	{
+		// The following "magic number" is based on the observation that in real life, and matcher
+		// longer than 6 words never gets used.
+		private const int kMaxWordsInMatcher = 6;
 		private readonly List<KeyTermMatch> m_list = new List<KeyTermMatch>();
 		private List<Word> m_optionalPhraseWords;
 		private bool m_fInOptionalPhrase;
@@ -156,8 +159,8 @@ namespace SIL.Transcelerator
 	    /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Adds the words to matches. If adding more than one word, then this represents an
-		/// optional word/phrase, which results in doubling the number of matches for the
-		/// current phrase.
+		/// optional or alternative word/phrase, which results in doubling the number of matches
+		/// for the current phrase.
 		/// </summary>
 		/// <param name="words">The words to append to the matches' word lists.</param>
 		/// <param name="startOfListForPhrase">The index of the position in m_list that
@@ -181,7 +184,12 @@ namespace SIL.Transcelerator
 				{
 					if (index == originalCount)
 						word = words[1];
-					m_list[index].AddWord(word);
+
+					// Don't go over the maximum word limit. Also, don't put a "stem" after the word "to"
+					if (m_list[index].WordCount == kMaxWordsInMatcher)
+						m_list.RemoveAt(index--);
+					else
+						m_list[index].AddWord(word);
 				}
 			}
 			m_fInOptionalPhrase = false;

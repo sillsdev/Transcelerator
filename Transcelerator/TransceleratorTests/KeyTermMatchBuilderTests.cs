@@ -190,6 +190,23 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests the KeyTermMatchBuilder class in the case of a key term where "or" separates
+		/// two three-word phrases, with more text preceeding
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ThreeWordPhrasesSeparatedWithOr()
+		{
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("to remove the state of guilt or uncleanness from oneself"));
+			Assert.AreEqual(4, bldr.Matches.Count());
+			VerifyKeyTermMatch(bldr, 0, true, "remove", "the", "state", "of", "guilt");
+			VerifyKeyTermMatch(bldr, 1, "to", "remove", "the", "state", "of", "guilt");
+			VerifyKeyTermMatch(bldr, 2, "remove", "the", "uncleanness", "from", "oneself");
+			VerifyKeyTermMatch(bldr, 3, "to", "remove", "the", "uncleanness", "from", "oneself");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a complex multi-word key term
 		/// consisting of weird optional parts and phrases.
 		/// </summary>
@@ -492,7 +509,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
-		/// real evil data.
+		/// real evil data. This is a term whose "gloss" is so long that the matcher gets
+		/// discarded because in real life we never manage to match a term over 6 words.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -526,11 +544,10 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void RealData7()
+		public void RealData7_ExceedsMaxWordCount()
 		{
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("someone who sins against someone else and therefore 'owes' that person"));
-			Assert.AreEqual(1, bldr.Matches.Count());
-			VerifyKeyTermMatch(bldr, 0, "someone", "who", "sins", "against", "someone", "else", "and", "therefore", "owes", "that", "person");
+			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -558,11 +575,9 @@ namespace SIL.Transcelerator
 		public void RealData9()
 		{
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("to be favorably disposed to someone, or to experience an emotion of compassion towards other people"));
-			Assert.AreEqual(4, bldr.Matches.Count());
+			Assert.AreEqual(2, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "be", "favorably", "disposed", "to", "someone");
 			VerifyKeyTermMatch(bldr, 1, "to", "be", "favorably", "disposed", "to", "someone");
-			VerifyKeyTermMatch(bldr, 2, "experience", "an", "emotion", "of", "compassion", "towards", "other", "people");
-			VerifyKeyTermMatch(bldr, 3, "to", "experience", "an", "emotion", "of", "compassion", "towards", "other", "people");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -701,32 +716,28 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
 		/// real evil data: "or" separating two three-word phrases, with more text preceeding
+		/// Result is too long and is discarded.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void RealDataWithOr3()
 		{
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("to perform the ritual of removing the state of guilt or uncleanness from oneself"));
-			Assert.AreEqual(4, bldr.Matches.Count());
-			VerifyKeyTermMatch(bldr, 0, "perform", "the", "ritual", "of", "removing", "the", "state", "of", "guilt");
-			VerifyKeyTermMatch(bldr, 1, "to", "perform", "the", "ritual", "of", "removing", "the", "state", "of", "guilt");
-			VerifyKeyTermMatch(bldr, 2, "perform", "the", "ritual", "of", "removing", "the", "uncleanness", "from", "oneself");
-			VerifyKeyTermMatch(bldr, 3, "to", "perform", "the", "ritual", "of", "removing", "the", "uncleanness", "from", "oneself");
+			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
-		/// real evil data: "or" separating two three-word phrases, with more text preceeding
+		/// real evil data: "or" separating two three-word phrases, with more text preceeding.
+		/// Results are all too long and get discarded.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void RealDataWithOr4()
 		{
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("and the flowers are white or pink. The whole plant gives off an agreeable odour"));
-			Assert.AreEqual(2, bldr.Matches.Count());
-			VerifyKeyTermMatch(bldr, 0, "and", "the", "flowers", "are", "white", "off", "an", "agreeable", "odour");
-			VerifyKeyTermMatch(bldr, 1, "pink.", "the", "whole", "plant", "gives", "off", "an", "agreeable", "odour");
+			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
 		/// ------------------------------------------------------------------------------------

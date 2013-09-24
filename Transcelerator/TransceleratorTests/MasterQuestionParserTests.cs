@@ -315,6 +315,74 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests parsing questions using a set of key terms where the questions have words that
+		/// need to be stemmed to find matches
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_PossessiveFormsOfKeyTerms_StemmingResultsInAppropriateMatches()
+		{
+			//m_keyTermRules = new KeyTermRules();
+			//m_keyTermRules.Items = new List<KeyTermRule>();
+			//KeyTermRule rule = new KeyTermRule();
+			//rule.id = "believer";
+			//rule.Rule = KeyTermRule.RuleType.PreventStemming;
+			//m_keyTermRules.Items.Add(rule);
+
+			AddMockedKeyTerm("apostle");
+			AddMockedKeyTerm("Luke");
+			AddMockedKeyTerm("believer");
+			AddMockedKeyTerm("believe");
+
+			//m_keyTermRules.Initialize();
+
+			var qs = GenerateSimpleSectionWithSingleCategory(3);
+			var cat = qs.Items[0].Categories[0];
+			var q1 = cat.Questions[0];
+			q1.Text = "What was Luke's last name?";
+			q1.ScriptureReference = "A";
+			q1.StartRef = 1;
+			q1.EndRef = 1;
+			var q2 = cat.Questions[1];
+			q2.Text = "Who should believers' friends be?";
+			q2.ScriptureReference = "B";
+			q2.StartRef = 2;
+			q2.EndRef = 2;
+			var q3 = cat.Questions[2];
+			q3.Text = "What did the apostles say?";
+			q3.ScriptureReference = "C";
+			q3.StartRef = 3;
+			q3.EndRef = 3;
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			ParsedQuestions pq = qp.Result;
+			Assert.AreEqual(3, pq.KeyTerms.Length);
+			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "apostle"));
+			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "luke"));
+			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "believer"));
+			Assert.IsFalse(pq.KeyTerms.Any(kt => kt.TermId == "believe"));
+
+			VerifyParts(q1, "What was Luke's last name?",
+				"what",
+				"was",
+				new KeyTermPart("luke"),
+				"last name");
+
+			VerifyParts(q2, "Who should believers' friends be?",
+				"who",
+				"should",
+				new KeyTermPart("believer"),
+				"friends be");
+
+			VerifyParts(q3, "What did the apostles say?",
+				"what",
+				"did the",
+				new KeyTermPart("apostle"),
+				"say");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests parsing questions using a set of key terms
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
