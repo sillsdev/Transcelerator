@@ -53,7 +53,7 @@ namespace SIL.Transcelerator
                     m_text = m_words.ToString(" ");
                 return m_text;
             }
-            set
+            set // Intended only for XML deserialization (but also tested in unit tests)
             {
                 if (m_words != null)
                     throw new InvalidOperationException("Can't set Text if Words has already been set.");
@@ -78,7 +78,7 @@ namespace SIL.Transcelerator
                 }
                 return m_words;
             }
-            set
+			set // Intended only for XML deserialization (but also tested in unit tests)
             {
                 if (m_text != null)
                     throw new InvalidOperationException("Can't set Words if Text has already been set.");

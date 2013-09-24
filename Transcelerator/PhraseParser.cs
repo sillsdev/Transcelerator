@@ -50,6 +50,7 @@ namespace SIL.Transcelerator
 		    m_questionWords = questionWords;
 		    YieldTranslatablePart = yieldPart;
 			m_phrase = phrase;
+			s_stemmer.StagedStemming = true;
 
 			string phraseToParse = m_phrase.PhraseInUse;
 		    if (substituteStrings != null)
@@ -151,9 +152,11 @@ namespace SIL.Transcelerator
 				    m_matches = new List<KeyTermMatch>(matches.Where(m => m.AppliesTo(m_phrase.StartRef, m_phrase.EndRef)));
                 }
                 if (m_matches == null || m_matches.All(m => m.WordCount > 1))
-				{
-					Word stem = s_stemmer.stemTerm(nextWord);
-                    if (stem.Text != nextWord.Text)
+                {
+	                var baseWord = nextWord.Text;
+					Word stem = s_stemmer.stemTerm(baseWord);
+
+                    while (stem.Text != baseWord)
                     {
                         if (m_keyTermsTable.TryGetValue(stem, out matches))
                         {
@@ -164,6 +167,8 @@ namespace SIL.Transcelerator
                             else
                                 m_matches.AddRange(matches);
                         }
+	                    baseWord = stem.Text;
+						stem = s_stemmer.stemTerm(baseWord);
                     }
                     if (m_matches == null || m_matches.Count == 0)
                     {
