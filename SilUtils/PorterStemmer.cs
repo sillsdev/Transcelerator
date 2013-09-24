@@ -52,6 +52,7 @@
 // Added ability to strip off possessives & prevent removal of final "ee" (TomB)
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace SIL.Utils
@@ -76,7 +77,9 @@ namespace SIL.Utils
 		private int i,     /* offset into b */
 			i_end, /* offset to end of stemmed word */
 			j, k;
+		private bool changed;
 		private static int INC = 200;
+
 		/* unit of size whereby b is increased */
 		
 		public PorterStemmer() 
@@ -84,7 +87,10 @@ namespace SIL.Utils
 			b = new char[INC];
 			i = 0;
 			i_end = 0;
+			changed = false;
 		}
+
+		public bool StagedStemming { get; set; }
 
 		/* Implementation of the .NET interface - added as part of realease 4 (Leif) */
 		public string stemTerm( string s )
@@ -111,7 +117,8 @@ namespace SIL.Utils
 			for (int c = 0; c < i; c++)
 			new_b[c] = s[c];
 
-			b  = new_b;		
+			b = new_b;
+			changed = false;
 		}
 
 		public string getTerm()
@@ -138,6 +145,7 @@ namespace SIL.Utils
 				b = new_b;
 			}
 			b[i++] = ch;
+			changed = false;
 		}
 
 
@@ -157,6 +165,7 @@ namespace SIL.Utils
 			}
 			for (int c = 0; c < wLen; c++)
 				b[i++] = w[c];
+			changed = false;
 		}
 
 		/**
@@ -300,6 +309,7 @@ namespace SIL.Utils
 			for (int i = 0; i < l; i++)
 				b[o+i] = sc[i];
 			k = j+l;
+			changed = true;
 		}
 
 		/* r(s) is used further down. */
@@ -330,28 +340,45 @@ namespace SIL.Utils
 
 		*/
 
-		private void step1() 
+		private void step1A()
 		{
 			if (ends("s'"))
 			{
 				k--;
 			}
-			if (b[k] == 's') 
+			if (b[k] == 's')
 			{
 				if (ends("sses"))
 					k -= 2;
 				else if (ends("ies"))
-					setto("i");
+					setto("y");
 				else if (ends("'s"))
 					k -= 2;
+				else if (b[k - 1] == 'u')
+				{
+					if (b.Length > 3)
+					{
+						if (ends("ous"))
+							k -= 3;
+						else if (cons(k - 2) && b[k - 2] != 's' && !ends("stus"))
+						{
+							k--;
+						}
+					}
+				}
 				else if (b[k - 1] != 's')
 					k--;
 			}
+		}
+
+		private void step1B()
+		{
+
 			if (ends("eed")) 
 			{
 				if (m() > 0)
 					k--;
-			} 
+			}
 			else if ((ends("ed") || ends("ing")) && vowelinstem()) 
 			{
 				k = j;
@@ -376,8 +403,11 @@ namespace SIL.Utils
 		 * immediately preceding letter is a vowel. */
 		private void step2() 
 		{
-			if (ends("y") && (k > 0 && cons(k -1 )) && vowelinstem())
+			if (ends("y") && (k > 0 && cons(k - 1)) && vowelinstem())
+			{
+				changed = true;
 				b[k] = 'i';
+			}
 		}
 
 		/* step3() maps double suffixes to single ones. so -ization ( = -ize plus
@@ -404,9 +434,12 @@ namespace SIL.Utils
 					break;
 				case 'l':
 					if (ends("bli")) { r("ble"); break; }
+					if (ends("ealli")) { setto("eal"); break; }
 					if (ends("alli")) { r("al"); break; }
+					if (ends("ulli")) { setto((j == 0) ? "ull" : "ul"); break; }
 					if (ends("entli")) { r("ent"); break; }
-					if (ends("eli")) { r("e"); break; }
+					if (ends("eli") && (changed)) { r("e"); break; }
+					if (ends("obeli")) { setto("obel"); break; }
 					if (ends("ousli")) { r("ous"); break; }
 					break;
 				case 'o':
@@ -534,15 +567,40 @@ namespace SIL.Utils
 			k = i - 1;
 			if (k > 1) 
 			{
-				step1();
-				step2();
-				step3();
-				step4();
-				step5();
-				step6();
+				step1A();
+				if (!specialCaseNoun() && !b.Contains('-'))
+				{
+					if ((!changed && k == i - 1) || !StagedStemming)
+					{
+						step1B();
+						if ((!changed && k == i - 1) || !StagedStemming)
+						{
+							step2();
+							step3();
+							if (!changed || !StagedStemming)
+							{
+								step4();
+								if (!changed || !StagedStemming)
+								{
+									step5();
+									if ((!changed && k == i - 1) || !StagedStemming)
+										step6();
+								}
+							}
+						}
+					}
+				}
 			}
 			i_end = k+1;
 			i = 0;
+		}
+
+		private bool specialCaseNoun()
+		{
+			return (ends("morning") || ends("olive") ||
+				ends("someone") || ends("anyone") || ends("everyone") ||
+				ends("something") || ends("anything") || ends("everything") || ends("nothing") ||
+				ends("somebody") || ends("anybody") || ends("everybody") || ends("nobody"));
 		}
 	}
 }
