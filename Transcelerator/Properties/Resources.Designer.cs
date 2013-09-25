@@ -151,7 +151,7 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}. All rights reserved. Distributable under the terms of the MIT License..
+        ///   Looks up a localized string similar to {0}. Distributable under the terms of the MIT License..
         /// </summary>
         internal static string kstidCopyrightFmt {
             get {
