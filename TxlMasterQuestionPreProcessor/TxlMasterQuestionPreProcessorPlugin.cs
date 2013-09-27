@@ -49,9 +49,9 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			try
 			{
 				host = ptHost;
-#if DEBUG
-				MessageBox.Show("Attach debugger now (if you want to)", pluginName);
-#endif
+//#if DEBUG
+//                MessageBox.Show("Attach debugger now (if you want to)", pluginName);
+//#endif
 				ptHost.WriteLineToLog(this, "Starting " + pluginName);
 
 				Thread mainUIThread = new Thread(() =>

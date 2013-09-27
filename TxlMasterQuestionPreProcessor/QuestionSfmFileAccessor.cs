@@ -94,7 +94,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			int kCommentMarkerLen = s_kCommentMarker.Length;
 			Debug.Assert(s_kDetailsMarker.Length == s_kOverviewMarker.Length);
 			int kCategoryMarkerLen = s_kDetailsMarker.Length;
-            Regex regexVerseNum = new Regex(@"\(((?<chapter>\d+):)?((?<startVerse>\d+)([a-b])?)(-(?<endVerse>\d+)([a-b])?)?\)", RegexOptions.Compiled);
+			Regex regexVerseNum = new Regex(@"\(((?<chapter>\d+):)?((?<startVerse>\d+)(a|b)?)(.*((, )|-)(?<endVerse>\d+)(a|b)?)?\)", RegexOptions.Compiled);
 			foreach (string sLine in SourceFields(sourceLines))
 			{
 				if (sLine.StartsWith(s_kQuestionMarker))
@@ -444,9 +444,9 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	public class QuestionProviderAlternateFormBuilder
 	{
 		private readonly List<string> m_list = new List<string>();
-		static Regex s_regexBracket = new Regex(@"\[(?<optionalPart>.+)\] ", RegexOptions.Compiled);
+		static Regex s_regexBracket = new Regex(@"(?<optionalLeadingSpace> )?\[(?<optionalPart>[^\]]+)\]", RegexOptions.Compiled);
 		static Regex s_regexParentheticalOr = new Regex(@" \(or, (?<alternateQestion>.+)\) *$", RegexOptions.Compiled);
-		static Regex s_regexAlternatives = new Regex(@"(?<firstAlt>[a-zA-Z\-']+)/(?<secondAlt>[a-zA-Z\-']+)", RegexOptions.Compiled);
+		static Regex s_regexAlternatives = new Regex("(?<firstAlt>[a-zA-Z\\-'\"]+)/(?<secondAlt>[a-zA-Z\\-'\"]+)", RegexOptions.Compiled);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -482,7 +482,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				// If bracketed part is the entire question, it should not be considered as optional (should never happen).
 				if (sOptionalPartOmitted.Length > 0)
 				{
-					ProcessQuestion(match.Result("$`${optionalPart} $'"));
+					ProcessQuestion(match.Result("$`${optionalLeadingSpace}${optionalPart}$'"));
 					ProcessQuestion(sOptionalPartOmitted);
 					return;
 				}

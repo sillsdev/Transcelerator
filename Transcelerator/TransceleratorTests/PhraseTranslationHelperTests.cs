@@ -2226,9 +2226,9 @@ namespace SIL.Transcelerator
 		public void SetTranslationsFromText_UnparsableLines_ProblemsReported()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
-			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
-			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+			AddTestQuestion(cat, "Who was the man?", "GEN 1.1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -2269,17 +2269,17 @@ namespace SIL.Transcelerator
 		public void SetTranslationsFromText_ExactMatchesNoExistingTranslations_AllTranslationsSet()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
-			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
-			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+			AddTestQuestion(cat, "Who was the man?", "GEN 1.1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
-			var phrase2 = pth.GetPhrase("GEN 1:2", "Who is the girl?");
-			var phrase3 = pth.GetPhrase("GEN 2:2", "Why do you ask?");
+			var phrase1 = pth.GetPhrase("GEN 1.1", "Who was the man?");
+			var phrase2 = pth.GetPhrase("GEN 1.2", "Who is the girl?");
+			var phrase3 = pth.GetPhrase("GEN 2.2", "Why do you ask?");
 
 			var translations = "\\rf GEN 1\r\n" +
 				"\r\n" +
@@ -2322,9 +2322,9 @@ namespace SIL.Transcelerator
 		public void SetTranslationsFromText_ExactMatchesSomeExistingTranslations_UntranslatedQuestionsHaveTranslationsSet()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Who was the man?", "GEN 1:1", 001001001, 001001001, "who was the man");
-			AddTestQuestion(cat, "Who is the girl?", "GEN 1:2", 001001002, 001001002, "who is the girl");
-			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2", 001002002, 001002002, "why do you ask");
+			AddTestQuestion(cat, "Who was the man?", "GEN 1.1", 001001001, 001001001, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -2375,9 +2375,9 @@ namespace SIL.Transcelerator
 		public void SetTranslationsFromText_MultipleAndMissingQuestions_ExactMatchesHaveTranslationsSet()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Who was the man?", "GEN 1:1-31", 001001001, 001001031, "who was the man");
-			AddTestQuestion(cat, "Who is the girl?", "GEN 2:2-13", 001002002, 001002013, "who is the girl");
-			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2-13", 001002002, 001002013, "why do you ask");
+			AddTestQuestion(cat, "Who was the man?", "GEN 1.1-31", 001001001, 001001031, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 2.2-13", 001002002, 001002013, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2-13", 001002002, 001002013, "why do you ask");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -2431,9 +2431,9 @@ namespace SIL.Transcelerator
 		public void SetTranslationsFromText_MultipleQuestionsAllTranslated_NotFlaggedAsErrorNoTranslationsSet()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Who was the man?", "GEN 2:2-13", 001002002, 001002013, "who was the man");
-			AddTestQuestion(cat, "Who is the girl?", "GEN 2:2-13", 001002002, 001002013, "who is the girl");
-			AddTestQuestion(cat, "Why do you ask?", "GEN 2:2-13", 001002002, 001002013, "why do you ask");
+			AddTestQuestion(cat, "Who was the man?", "GEN 2.2-13", 001002002, 001002013, "who was the man");
+			AddTestQuestion(cat, "Who is the girl?", "GEN 2.2-13", 001002002, 001002013, "who is the girl");
+			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2-13", 001002002, 001002013, "why do you ask");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -2471,6 +2471,142 @@ namespace SIL.Transcelerator
 					"Read: 3, Matched: 0, Set: 0, Unparsable Lines: 0\r\n".Normalize(NormalizationForm.FormD),
 					writer.ToString().Normalize(NormalizationForm.FormD));
 			}
+		}
+		#endregion
+
+		#region GetPhrase tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when there is an exact match.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_ExactMatchExists_GetsIt()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
+			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
+			AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phrase = pth.GetPhrase("A", "Who was the man?");
+			Assert.AreEqual("A", phrase.Reference);
+			Assert.AreEqual(1, phrase.StartRef);
+			Assert.AreEqual(1, phrase.EndRef);
+			Assert.AreEqual("Who was the man?", phrase.PhraseInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when there is exactly one match in the same chapter.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_OneMatchExistsForDifferentReferenceInSameChapter_GetsIt()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.15", 003002015, 003002015, "who was the man");
+			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
+			AddTestQuestion(cat, "Who was the man?", "LEV 3.15", 003003015, 003003015, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phrase = pth.GetPhrase("LEV 2:1-13", "Who was the man?");
+			Assert.AreEqual("LEV 2.15", phrase.Reference);
+			Assert.AreEqual(003002015, phrase.StartRef);
+			Assert.AreEqual(003002015, phrase.EndRef);
+			Assert.AreEqual("Who was the man?", phrase.PhraseInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when there are multiple matches in the same chapter, but
+		/// none for the exact reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_TwoMatchesExistForDifferentReferencesInSameChapter_ReturnsNull()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.15", 003002015, 003002015, "who was the man");
+			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.1-14", 003002001, 003002014, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			Assert.IsNull(pth.GetPhrase("LEV 2.1-13", "Who was the man?"));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when the reference being sought is specified with a colon
+		/// instead of a period (which is what is used in the master question list).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_MatchColonWithPeriod_GetsIt()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.1", 003002001, 003002001, "who was the man");
+			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
+			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phrase = pth.GetPhrase("LEV 2:1", "Who was the man?");
+			Assert.AreEqual("LEV 2.1", phrase.Reference);
+			Assert.AreEqual(003002001, phrase.StartRef);
+			Assert.AreEqual(003002001, phrase.EndRef);
+			Assert.AreEqual("Who was the man?", phrase.PhraseInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when no reference is specified and there are multiple exact
+		/// textual matches for the phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_NullReferenceExactMatchesExist_GetsFirst()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.1", 003002001, 003002001, "who was the man");
+			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
+			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phrase = pth.GetPhrase(null, "Who was the man?");
+			Assert.AreEqual("LEV 2.1", phrase.Reference);
+			Assert.AreEqual(003002001, phrase.StartRef);
+			Assert.AreEqual(003002001, phrase.EndRef);
+			Assert.AreEqual("Who was the man?", phrase.PhraseInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests calling GetPhrase when no reference is specified and there is no exact textual
+		/// match for the phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_NullReferenceNoExactMatchExists_ReturnsNull()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Who was the man?", "LEV 2.1", 003002001, 003002001, "who was the man");
+			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
+			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			Assert.IsNull(pth.GetPhrase(null, "Who was the manager?"));
 		}
 		#endregion
 

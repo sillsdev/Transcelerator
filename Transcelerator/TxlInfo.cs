@@ -44,10 +44,10 @@ namespace SIL.Transcelerator
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "©"));
 
-			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			string version = assembly.GetName().Version.ToString();
 			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, version);
 			lblBuildDate.Text = string.Format(lblBuildDate.Text,
-				File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location).ToShortDateString());
+				File.GetLastWriteTime(assembly.Location).ToShortDateString());
 		}
 
 		/// ------------------------------------------------------------------------------------
