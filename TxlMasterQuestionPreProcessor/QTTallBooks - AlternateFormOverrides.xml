@@ -698,10 +698,15 @@
 		<Alt>After God promised to do good for Abraham, for whom did he promise to do good in this passage?</Alt>
 	</Alternative>	
 	<Alternative>
-		<Original>What did [God] do when Abraham believed what God [said to/promised him]?</Original>
-		<Alt>What did God do when Abraham believed what God said to him?</Alt>
-		<Alt>What did God do when Abraham believed what God promised him?</Alt>
-	</Alternative>
+		<Original>What did he/God do when Abraham believed [what God said to/promised him]?</Original>
+    <Alt>What did God do when Abraham believed what he said to him?</Alt>
+    <Alt>What did God do when Abraham believed what he promised him?</Alt>
+    <Alt>What did God do when Abraham believed?</Alt>
+    <Alt>What did God do when Abraham believed what God said to him?</Alt>
+    <Alt>What did God do when Abraham believed what God promised him?</Alt>
+    <Alt>What did he do when Abraham believed what he said to him?</Alt>
+    <Alt>What did he do when Abraham believed what he promised him?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>What does a person who does evil [deeds] think about Jesus/the light?</Original>
 		<Alt>What does a person who does evil think about Jesus?</Alt>
@@ -727,7 +732,8 @@
 		<Original>What did Jesus carry [to his crucifixion/on the way to be crucified]?</Original>
 		<Alt>What did Jesus carry to his crucifixion?</Alt>
 		<Alt>What did Jesus carry on the way to be crucified?</Alt>
-	</Alternative>
+    <Alt>What did Jesus carry?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>What is the reason that [someone] wrote those things/about those events?</Original>
 		<Alt>What is the reason that someone wrote those things?</Alt>
@@ -756,13 +762,6 @@
 		<Alt>What was Christ's attitude about his position with God in heaven?</Alt>
 		<Alt>What was Christ's attitude about his place with God?</Alt>
 		<Alt>What was Christ's attitude about his position with God?</Alt>
-	</Alternative>
-	<Alternative>
-		<Original>How did Paul say he would feel on the day Christ [returns to the earth from heaven], if the believers had been/were faithful to God?</Original>
-		<Alt>How did Paul say he would feel on the day Christ returns to the earth from heaven, if the believers had been faithful to God?</Alt>
-		<Alt>How did Paul say he would feel on the day Christ returns to the earth from heaven, if the believers were faithful to God?</Alt>
-		<Alt>How did Paul say he would feel on the day Christ returns, if the believers had been faithful to God?</Alt>
-		<Alt>How did Paul say he would feel on the day Christ returns, if the believers were faithful to God?</Alt>
 	</Alternative>
 	<Alternative>
 		<Original>In what ways did God promise to do good to Sarah/to bless Sarah?</Original>
@@ -1069,7 +1068,7 @@
 		<Alt>What is the reason that Paul considered that all that he did before to please God like garbage?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What will the one/[God] who sits on the throne do?</Original>
+		<Original>What will the one/God who sits on the throne do?</Original>
 		<Alt>What will the one who sits on the throne do?</Alt>
 		<Alt>What will God, who sits on the throne, do?</Alt>
 		<Alt>What will God do?</Alt>
@@ -1090,17 +1089,17 @@
 		<Alt>What did the teachers preach to them?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>How strongly are they supposed to love pure spiritual milk/[God's word]?</Original>
+		<Original>How strongly are they supposed to love pure spiritual milk/God's word?</Original>
 		<Alt>How strongly are they supposed to love pure spiritual milk?</Alt>
 		<Alt>How strongly are they supposed to love God's word?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What is the reason that they should love pure spiritual milk/[God's word] in this way?</Original>
+		<Original>What is the reason that they should love pure spiritual milk/God's word in this way?</Original>
 		<Alt>What is the reason that they should love pure spiritual milk in this way?</Alt>
 		<Alt>What is the reason that they should love God's word in this way?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What other reason did Peter give for why they should love pure spiritual milk/[God's word]?</Original>
+		<Original>What other reason did Peter give for why they should love pure spiritual milk/God's word?</Original>
 		<Alt>What other reason did Peter give for why they should love pure spiritual milk?</Alt>
 		<Alt>What other reason did Peter give for why they should love God's word?</Alt>
 	</Alternative>
@@ -2778,6 +2777,105 @@
     <Alt>Why would John hesitate to do even very simple work for such a person, like untying his shoes?</Alt>
   </Alternative>
   <Alternative>
+    <Original>What would the descendants of Abraham do when they returned to the land that God had given them [Canaan]?</Original>
+    <Alt>What would the descendants of Abraham do when they returned to the land that God had given them?</Alt>
+    <Alt>What would the descendants of Abraham do when they returned to the land of Canaan?</Alt>
+    <Alt>What would the descendants of Abraham do when they returned to Canaan?</Alt>
+    <Alt>What would the descendants of Abraham do when they returned to the land of Canaan, that God had given them?</Alt>
+    <Alt>What would the descendants of Abraham do when they returned to Canaan, the land that God had given them?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Many of the Jews, some of the Gentiles and some important leaders [opposed Paul and Barnabas]. What did those people plan to do?</Original>
+    <Alt>Many of the Jews, some of the Gentiles and some important leaders opposed Paul and Barnabas. What did those people plan to do?</Alt>
+    <Alt>What did the people who opposed Paul and Barnabas plan to do?</Alt>
+    <Alt>What did the people who sided with the Jews and opposed Paul and Barnabas plan to do?</Alt>
+    <Alt>What did many of the Jews, some of the Gentiles and some important leaders who opposed Paul and Barnabas plan to do?</Alt>
+    <Alt>What did the Jews, Gentiles and important leaders who opposed Paul and Barnabas plan to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that Paul needed to teach/preach the word of God [to them/the Gentiles]?</Original>
+    <Alt>What is the reason that Paul needed to teach the word of God to the Gentiles?</Alt>
+    <Alt>What is the reason that Paul needed to teach the word of God to them?</Alt>
+    <Alt>What is the reason that Paul needed to teach the word of God?</Alt>
+    <Alt>What is the reason that Paul needed to preach the word of God to the Gentiles?</Alt>
+    <Alt>What is the reason that Paul needed to preach the word of God to them?</Alt>
+    <Alt>What is the reason that Paul needed to preach the word of God?</Alt>
+    <Alt>Why did Paul need to teach the word of God to the Gentiles?</Alt>
+    <Alt>Why did Paul need to teach the word of God to them?</Alt>
+    <Alt>Why did Paul need to teach the word of God?</Alt>
+    <Alt>Why did Paul need to preach the word of God to the Gentiles?</Alt>
+    <Alt>Why did Paul need to preach the word of God to them?</Alt>
+    <Alt>Why did Paul need to preach the word of God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God], the one who called them, not do to them? // What did God not do to them?</Original>
+    <Alt>What did God, the one who called them, not do to them?</Alt>
+    <Alt>What did the one who called them not do to them?</Alt>
+    <Alt>What did God, who called them, not do to them?</Alt>
+    <Alt>What did God not do to them?</Alt>
+    <Alt></Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Jesus say about people who believe in him [the Son of God]?</Original>
+    <Alt>What did Jesus say about people who believe in him, the Son of God?</Alt>
+    <Alt>What did Jesus say about people who believe in him?</Alt>
+    <Alt>What did Jesus say about people who believe in the Son of God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Who did the hard work [planted the seed]?</Original>
+    <Alt>Who did the hard work and planted the seed?</Alt>
+    <Alt>Who did the hard work of planting the seed?</Alt>
+    <Alt>Who did the hard work, planting the seed?</Alt>
+    <Alt>Who did the hard work?</Alt>
+    <Alt>Who planted the seed?</Alt>
+    <Alt>Who planted the seed (the hard work)?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did his disciples remember after [God] glorified Jesus [when Jesus was resurrected by God and had returned to heaven]?</Original>
+    <Alt>What did his disciples remember after God glorified Jesus when Jesus was resurrected by God and had returned to heaven?</Alt>
+    <Alt>What did his disciples remember after God glorified Jesus?</Alt>
+    <Alt>What did his disciples remember when Jesus was resurrected by God and had returned to heaven?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What had made them [free from their sin]/clean?</Original>
+    <Alt>What had made them free from their sin?</Alt>
+    <Alt>What had made them clean?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Where did [the Jewish authorities]/they take Jesus next?</Original>
+    <Alt>Where did the Jewish authorities take Jesus next?</Alt>
+    <Alt>Where did they take Jesus next?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did the notice read that Pilate wrote/[told someone to write]?</Original>
+    <Alt>What did the notice read that Pilate told someone to write?</Alt>
+    <Alt>What did the notice read that Pilate had written?</Alt>
+    <Alt>What did the notice read that Pilate wrote?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How did Paul say he would feel on the day Christ [returns to the earth from heaven], if the believers had been/were faithful to God?</Original>
+    <Alt>How did Paul say he would feel on the day Christ returns to the earth from heaven, if the believers had been faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day Christ returns to the earth, if the believers had been faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day Christ returns, if the believers had been faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day of Christ, if the believers had been faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day Christ returns to the earth from heaven, if the believers were faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day Christ returns to the earth, if the believers were faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day of Christ, if the believers were faithful to God?</Alt>
+    <Alt>How did Paul say he would feel on the day Christ returns, if the believers were faithful to God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How do believers know that they belong to [God who shows them what is true]/the truth?</Original>
+    <Alt>How do believers know that they belong to the truth?</Alt>
+    <Alt>How do believers know that they are of the truth?</Alt>
+    <Alt>How do believers know that they belong to God who shows them what is true?</Alt>
+    <Alt>How do believers know that they belong to God who shows them the truth?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How have men treated the living stone [the Lord]?</Original>
+    <Alt>How have men treated the living stone?</Alt>
+    <Alt>How have men treated the Lord?</Alt>
+  </Alternative>
+  <Alternative>
     <Original>With what did Job make a covenant?</Original>
     <Alt>With what did Job make a covenant?</Alt>
     <Alt>What kind of covenant did Job make?</Alt>
@@ -2799,7 +2897,7 @@
     <Alt>What phrase is repeated several times at the beginning and end of this psalm?</Alt>
   </Alternative>
   <Alternative>
-    <Original>What was said among the nations/heathens when the LORD returned the captives to Zion (or restored the fortunes of Zion)?</Original>
+    <Original>What was said among the nations/heathens when the LORD returned the captives to Zion/restored the fortunes of Zion?</Original>
     <Alt>What was said among the nations when the LORD returned the captives to Zion?</Alt>
     <Alt>What was said among the nations when the LORD restored the fortunes of Zion?</Alt>
     <Alt>What was said among the heathens when the LORD returned the captives to Zion?</Alt>

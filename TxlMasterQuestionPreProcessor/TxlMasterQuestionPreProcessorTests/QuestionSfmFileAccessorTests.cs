@@ -528,13 +528,91 @@ namespace SIL.Transcelerator
 
         ///--------------------------------------------------------------------------------------
         /// <summary>
-        /// Tests parsing of detail questions whose answers contain a verse number in parentheses.
+        /// Tests parsing of detail questions whose answers contain 2 or more comma-sparated
+        /// verse numbers and ranges in parentheses.
         /// </summary>
         ///--------------------------------------------------------------------------------------
         [Test]
-        public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_WithSubverseLetters()
+        public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_CommaDelimitedSetAndMultipleAnswers()
         {
             QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
+                @"\rf Leviticus 1:1-17",
+                @"\dh Details",
+                @"\tqref LEV 1.1-17",
+                @"\bttq Who sprinkled the blood on the altar?",
+				@"\tqe The priests, Aaron's sons (5, 11)",
+                @"\rf Leviticus 27:1-34",
+                @"\dh Details",
+                @"\tqref LEV 27.1-34",
+                @"\bttq What was added to the price of redemption?",
+				@"\tqe A fifth part (13, 15, 19, 27, 31)",
+                @"\rf Luke 5:1-11 Jesus called Simon and his companions to follow him.",
+                @"\dh Details",
+                @"\tqref LUK 5.1-11",
+                @"\bttq How did Simon and his companions respond to Jesus's words and actions?",
+                @"\tqe They obeyed his requests (3, 4-5),",
+                @"\tqe saw that he had great power (9)",
+                @"\tqe and then followed him (11)."}, null);
+
+            Assert.AreEqual(3, sections.Items.Length);
+
+			Section section = sections.Items[0];
+			Assert.AreEqual("Leviticus 1:1-17", section.Heading);
+			Assert.AreEqual("LEV 1.1-17", section.ScriptureReference);
+			Assert.AreEqual(1, section.Categories.Length);
+			Category category = section.Categories[0];
+			Assert.AreEqual("Details", category.Type);
+			Assert.AreEqual(1, category.Questions.Count);
+			Question question = category.Questions[0];
+			Assert.AreEqual("Who sprinkled the blood on the altar?", question.Text);
+			Assert.AreEqual("LEV 1.5-11", question.ScriptureReference);
+			Assert.AreEqual(003001005, question.StartRef);
+			Assert.AreEqual(003001011, question.EndRef);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("The priests, Aaron's sons (5, 11)", question.Answers[0]);
+
+			section = sections.Items[1];
+			Assert.AreEqual("Leviticus 27:1-34", section.Heading);
+			Assert.AreEqual("LEV 27.1-34", section.ScriptureReference);
+			Assert.AreEqual(1, section.Categories.Length);
+			category = section.Categories[0];
+			Assert.AreEqual("Details", category.Type);
+			Assert.AreEqual(1, category.Questions.Count);
+			question = category.Questions[0];
+			Assert.AreEqual("What was added to the price of redemption?", question.Text);
+			Assert.AreEqual("LEV 27.13-31", question.ScriptureReference);
+			Assert.AreEqual(003027013, question.StartRef);
+			Assert.AreEqual(003027031, question.EndRef);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("A fifth part (13, 15, 19, 27, 31)", question.Answers[0]);
+
+            section = sections.Items[2];
+			Assert.AreEqual("Luke 5:1-11 Jesus called Simon and his companions to follow him.", section.Heading);
+            Assert.AreEqual("LUK 5.1-11", section.ScriptureReference);
+            Assert.AreEqual(1, section.Categories.Length);
+            category = section.Categories[0];
+			Assert.AreEqual("Details", category.Type);
+            Assert.AreEqual(1, category.Questions.Count);
+            question = category.Questions[0];
+			Assert.AreEqual("How did Simon and his companions respond to Jesus's words and actions?", question.Text);
+            Assert.AreEqual("LUK 5.3-11", question.ScriptureReference);
+            Assert.AreEqual(042005003, question.StartRef);
+            Assert.AreEqual(042005011, question.EndRef);
+            Assert.AreEqual(3, question.Answers.Length);
+			Assert.AreEqual("They obeyed his requests (3, 4-5),", question.Answers[0]);
+			Assert.AreEqual(@"saw that he had great power (9)", question.Answers[1]);
+			Assert.AreEqual(@"and then followed him (11).", question.Answers[2]);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests parsing of detail questions whose answers contain a verse number in parentheses.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_WithSubverseLetters()
+		{
+			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
                 @"\rf Luke 11:37-54 Jesus warned the religious leaders that God would punish their hypocrisy.",
                 @"\dh Details",
                 @"\tqref LUK 11.53-54",
@@ -542,30 +620,30 @@ namespace SIL.Transcelerator
                 @"\tqe The Pharisees and scribes began to oppose Jesus fiercely. (53a)",
                 @"\tqe They raised a lot of questions (53b), just waiting until he said something (54)."}, null);
 
-            Assert.AreEqual(1, sections.Items.Length);
+			Assert.AreEqual(1, sections.Items.Length);
 
-            Section section = sections.Items[0];
-            Assert.AreEqual("Luke 11:37-54 Jesus warned the religious leaders that God would punish their hypocrisy.", section.Heading);
-            Assert.AreEqual("LUK 11.53-54", section.ScriptureReference);
-            Assert.AreEqual(1, section.Categories.Length);
+			Section section = sections.Items[0];
+			Assert.AreEqual("Luke 11:37-54 Jesus warned the religious leaders that God would punish their hypocrisy.", section.Heading);
+			Assert.AreEqual("LUK 11.53-54", section.ScriptureReference);
+			Assert.AreEqual(1, section.Categories.Length);
 
-            Category category = section.Categories[0];
-            Assert.AreEqual("Details", category.Type);
+			Category category = section.Categories[0];
+			Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(1, category.Questions.Count);
-            Question question = category.Questions[0];
-            Assert.AreEqual("What happened after Jesus finished talking and left that place?", question.Text);
-            Assert.AreEqual("LUK 11.53-54", question.ScriptureReference);
-            Assert.AreEqual(042011053, question.StartRef);
-            Assert.AreEqual(042011054, question.EndRef);
-            Assert.AreEqual(2, question.Answers.Length);
-            Assert.AreEqual("The Pharisees and scribes began to oppose Jesus fiercely. (53a)", question.Answers[0]);
-            Assert.AreEqual("They raised a lot of questions (53b), just waiting until he said something (54).", question.Answers[1]);
-        }
+			Assert.AreEqual(1, category.Questions.Count);
+			Question question = category.Questions[0];
+			Assert.AreEqual("What happened after Jesus finished talking and left that place?", question.Text);
+			Assert.AreEqual("LUK 11.53-54", question.ScriptureReference);
+			Assert.AreEqual(042011053, question.StartRef);
+			Assert.AreEqual(042011054, question.EndRef);
+			Assert.AreEqual(2, question.Answers.Length);
+			Assert.AreEqual("The Pharisees and scribes began to oppose Jesus fiercely. (53a)", question.Answers[0]);
+			Assert.AreEqual("They raised a lot of questions (53b), just waiting until he said something (54).", question.Answers[1]);
+		}
 
         ///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests parsing of questions which ahppen to be split across 2 or more consecutive
+		/// Tests parsing of questions which happen to be split across 2 or more consecutive
 		/// \bttq fields.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
@@ -685,6 +763,8 @@ namespace SIL.Transcelerator
 		            @"\bttq What does Christ do for the body/the church/the believers?",
 		            @"\tqe Answer E",
 		            @"\bttq What did the prophets write about Jesus/the Messiah long ago?",
+		            @"\tqe Answer F",
+		            "\\bttq From what Matthew wrote, when do you think he \"came\"/\"appeared\"?",
 		            @"\tqe Answer F"}, null);
 
 			Assert.AreEqual(1, sections.Items.Length);
@@ -695,7 +775,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, section.Categories.Length);
 			Category category = section.Categories[0];
 
-			Assert.AreEqual(9, category.Questions.Count);
+			Assert.AreEqual(10, category.Questions.Count);
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What do you think it means if/that someone condemns someone else?", question.Text);
@@ -759,6 +839,12 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(2, question.AlternateForms.Count());
 			Assert.AreEqual("What did the prophets write about Jesus Messiah long ago?", question.AlternateForms.ElementAt(0));
 			Assert.AreEqual("What did the prophets write about the Messiah long ago?", question.AlternateForms.ElementAt(1));
+
+			question = category.Questions[9];
+			Assert.AreEqual("From what Matthew wrote, when do you think he \"came\"/\"appeared\"?", question.Text);
+			Assert.AreEqual(2, question.AlternateForms.Length);
+			Assert.AreEqual("From what Matthew wrote, when do you think he \"came\"?", question.AlternateForms.ElementAt(0));
+			Assert.AreEqual("From what Matthew wrote, when do you think he \"appeared\"?", question.AlternateForms.ElementAt(1));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -862,7 +948,11 @@ namespace SIL.Transcelerator
 				@"\tqe Paul wanted the people in the synagogue to recognize that David was not speaking about himself...",
 				@"\bttq [IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:] Tell me what the picture language about the sun/darkness/shadows means to you?",
 				@"\tqe [THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.",
-				@"\tqe [DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)"}, null);
+				@"\tqe [DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)",
+				"\\bttq When would these events about which Joel prophesied take place [in relation to the \"day of the Lord\"]?",
+				"\\tqe All of the events that Peter mentioned in what he quoted from the prophet Joel would take place before the \"day of the Lord.\" They would happen before the time when God judges people for what they have done. (20b)",
+				@"\bttq At what places did Paul stop as he returned from Corinth [in Greece/Achaia] to Antioch [in Syria]?",
+				@"\tqe [God] counted/accepted him as a righteous person. (23)"}, null);
 
 			Assert.AreEqual(1, sections.Items.Length);
 
@@ -873,7 +963,7 @@ namespace SIL.Transcelerator
 			Category category = section.Categories[0];
 			Assert.AreEqual("Details", category.Type);
 
-			Assert.AreEqual(3, category.Questions.Count);
+			Assert.AreEqual(5, category.Questions.Count);
 
 			Question question = category.Questions[0];
 
@@ -905,6 +995,30 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(2, question.Answers.Length);
 			Assert.AreEqual("[THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.", question.Answers[0]);
 			Assert.AreEqual("[DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)", question.Answers[1]);
+
+			question = category.Questions[3];
+
+			Assert.AreEqual("When would these events about which Joel prophesied take place [in relation to the \"day of the Lord\"]?", question.Text);
+			Assert.AreEqual(2, question.AlternateForms.Length);
+			Assert.AreEqual("When would these events about which Joel prophesied take place in relation to the \"day of the Lord\"?", question.AlternateForms[0]);
+			Assert.AreEqual("When would these events about which Joel prophesied take place?", question.AlternateForms[1]);
+			Assert.AreEqual("LUK 1.20", question.ScriptureReference);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("All of the events that Peter mentioned in what he quoted from the prophet Joel would take place before the \"day of the Lord.\" They would happen before the time when God judges people for what they have done. (20b)", question.Answers[0]);
+
+			question = category.Questions[4];
+
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth [in Greece/Achaia] to Antioch [in Syria]?", question.Text);
+			Assert.AreEqual(6, question.AlternateForms.Length);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch in Syria?", question.AlternateForms[0]);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch in Syria?", question.AlternateForms[1]);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch?", question.AlternateForms[2]);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch?", question.AlternateForms[3]);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch in Syria?", question.AlternateForms[4]);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch?", question.AlternateForms[5]);
+			Assert.AreEqual("LUK 1.23", question.ScriptureReference);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("[God] counted/accepted him as a righteous person. (23)", question.Answers[0]);
 		}
 
 		///--------------------------------------------------------------------------------------

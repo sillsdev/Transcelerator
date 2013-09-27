@@ -11,6 +11,8 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
@@ -212,6 +214,14 @@ namespace SIL.Transcelerator
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
 			ErrorReport.EmailAddress = "tom_bogle@sil.org";
 			ErrorReport.AddStandardProperties();
+			// The version that gets added to the report by default is for the entry assembly, which is
+			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very
+			// useful.
+			ErrorReport.AddProperty("Plugin Name", pluginName);
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			ErrorReport.AddProperty("Version", string.Format("{0} (apparent build date: {1})",
+				assembly.GetName().Version,
+				File.GetLastWriteTime(assembly.Location).ToShortDateString()));
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}

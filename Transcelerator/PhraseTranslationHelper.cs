@@ -179,14 +179,38 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the (first) phrase in the collection that matches the given text for the given
-		/// reference.
+		/// reference. If no exact match, it will try to find one for the same book and chapter
+		/// if there is exactly one.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase GetPhrase(string reference, string englishPhrase)
 		{
+			if (reference != null)
+				reference = reference.Replace(':', '.');
 			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormC);
-			return m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
+			var phrase = m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
 				x.PhraseKey.Text == englishPhrase);
+			if (phrase == null && reference != null)
+			{
+				var iEndOfChapter = reference.IndexOf(".", StringComparison.InvariantCulture);
+				//                                                  0123456789
+				// "Magic numbers" based on a reference in the form ABC 0.0
+				// TO                                               ABC 000.000
+				if (iEndOfChapter >= 5 && iEndOfChapter <= 7)
+				{
+					reference = reference.Substring(0, iEndOfChapter + 1);
+					try
+					{
+						phrase = m_phrases.SingleOrDefault(x => (x.PhraseKey.ScriptureReference.StartsWith(reference)) &&
+							x.PhraseKey.Text == englishPhrase);
+					}
+					catch (InvalidOperationException)
+					{
+						phrase = null;
+					}
+				}
+			}
+			return phrase;
 		}
 
 		/// ------------------------------------------------------------------------------------
