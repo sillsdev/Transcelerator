@@ -9,8 +9,6 @@
 //
 // File: PhraseSubstitutionsDlgTests.cs
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 using NUnit.Framework;

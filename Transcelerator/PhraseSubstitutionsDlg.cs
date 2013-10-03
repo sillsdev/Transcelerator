@@ -221,12 +221,12 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the CurrentCellChanged event of the m_dataGridView control.
+		/// Handles the CellEndEdit event of the m_dataGridView control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
-		private void m_dataGridView_CurrentCellChanged(object sender, EventArgs e)
+		private void m_dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
 			if (m_regexMatchDropDown.Visible)
 				m_regexMatchDropDown.Close(ToolStripDropDownCloseReason.CloseCalled);
@@ -333,7 +333,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_dataGridView_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
-			UpdatePreview(e.RowIndex >= 0, m_dataGridView.Rows[e.RowIndex]);
+			btnUp.Enabled = e.RowIndex > 0;
+			btnDown.Enabled = e.RowIndex < m_dataGridView.RowCount - 1;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -345,7 +346,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdatePreview(object sender, EventArgs e)
 		{
-			UpdatePreview(m_dataGridView.CurrentRow != null, m_dataGridView.CurrentRow);
+			UpdatePreview();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -357,7 +358,69 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
-			UpdatePreview(m_dataGridView.CurrentRow != null, m_dataGridView.CurrentRow);
+			UpdatePreview();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Swaps the current row's substitution rule with the previous one
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// ------------------------------------------------------------------------------------
+		private void btnUp_Click(object sender, EventArgs e)
+		{
+			if (m_dataGridView.CurrentRow == null)
+				return;
+
+			if (m_dataGridView.IsCurrentCellInEditMode)
+				m_dataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+			var prevRow = m_dataGridView.Rows[m_dataGridView.CurrentRow.Index - 1];
+			Substitution prevSubstitution = GetSubstitutionForRow(prevRow);
+
+			prevRow.Cells[colMatch.Index].Value = m_dataGridView.CurrentRow.Cells[colMatch.Index].Value;
+			prevRow.Cells[colReplacement.Index].Value = m_dataGridView.CurrentRow.Cells[colReplacement.Index].Value;
+			prevRow.Cells[colIsRegEx.Index].Value = m_dataGridView.CurrentRow.Cells[colIsRegEx.Index].Value;
+			prevRow.Cells[colMatchCase.Index].Value = m_dataGridView.CurrentRow.Cells[colMatchCase.Index].Value;
+
+			m_dataGridView.CurrentRow.Cells[colMatch.Index].Value = prevSubstitution.MatchingPattern;
+			m_dataGridView.CurrentRow.Cells[colReplacement.Index].Value = prevSubstitution.Replacement;
+			m_dataGridView.CurrentRow.Cells[colIsRegEx.Index].Value = prevSubstitution.IsRegex;
+			m_dataGridView.CurrentRow.Cells[colMatchCase.Index].Value = prevSubstitution.MatchCase;
+
+			m_dataGridView.CurrentCell = prevRow.Cells[m_dataGridView.CurrentCell.ColumnIndex];
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Swaps the current row's substitution rule with the following one
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// ------------------------------------------------------------------------------------
+		private void btnDown_Click(object sender, EventArgs e)
+		{
+			if (m_dataGridView.CurrentRow == null)
+				return;
+
+			if (m_dataGridView.IsCurrentCellInEditMode)
+				m_dataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+			var nextRow = m_dataGridView.Rows[m_dataGridView.CurrentRow.Index + 1];
+			Substitution nextSubstitution = GetSubstitutionForRow(nextRow);
+
+			nextRow.Cells[colMatch.Index].Value = m_dataGridView.CurrentRow.Cells[colMatch.Index].Value;
+			nextRow.Cells[colReplacement.Index].Value = m_dataGridView.CurrentRow.Cells[colReplacement.Index].Value;
+			nextRow.Cells[colIsRegEx.Index].Value = m_dataGridView.CurrentRow.Cells[colIsRegEx.Index].Value;
+			nextRow.Cells[colMatchCase.Index].Value = m_dataGridView.CurrentRow.Cells[colMatchCase.Index].Value;
+
+			m_dataGridView.CurrentRow.Cells[colMatch.Index].Value = nextSubstitution.MatchingPattern;
+			m_dataGridView.CurrentRow.Cells[colReplacement.Index].Value = nextSubstitution.Replacement;
+			m_dataGridView.CurrentRow.Cells[colIsRegEx.Index].Value = nextSubstitution.IsRegex;
+			m_dataGridView.CurrentRow.Cells[colMatchCase.Index].Value = nextSubstitution.MatchCase;
+
+			m_dataGridView.CurrentCell = nextRow.Cells[m_dataGridView.CurrentCell.ColumnIndex];
 		}
 		#endregion
 
@@ -387,40 +450,55 @@ namespace SIL.Transcelerator
 		/// Updates the regex preview for the given row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void UpdatePreview(bool enabled, DataGridViewRow row)
+		private void UpdatePreview()
 		{
-			m_grpPreview.Enabled = enabled;
-			if (enabled)
+			Substitution sub;
+			string sample = m_cboPreviewQuestion.Text;
+			for (int index = 0; index < m_dataGridView.Rows.Count; index++)
 			{
-				m_lblResult.ForeColor = SystemColors.ControlText;
-				Substitution sub;
-				if (TextControl == null)
+				var row = m_dataGridView.Rows[index];
+				if (TextControl == null || m_dataGridView.CurrentCellAddress.Y != index)
 					sub = GetSubstitutionForRow(row);
 				else
 				{
-					string match = (m_dataGridView.CurrentCell.ColumnIndex == colMatch.Index) ?
-						TextControl.Text : row.Cells[colMatch.Index].Value as string;
-					string replacement = (m_dataGridView.CurrentCell.ColumnIndex == colReplacement.Index) ?
-						TextControl.Text : row.Cells[colReplacement.Index].Value as String;
+					string match = (m_dataGridView.CurrentCell.ColumnIndex == colMatch.Index)
+						? TextControl.Text
+						: row.Cells[colMatch.Index].Value as string;
+					string replacement = (m_dataGridView.CurrentCell.ColumnIndex == colReplacement.Index)
+						? TextControl.Text
+						: row.Cells[colReplacement.Index].Value as String;
 					sub = GetSubstitutionForRow(match, replacement, row);
 				}
 				if (sub != null)
 				{
 					if (sub.Valid)
-						m_lblResult.Text = sub.RegEx.Replace(m_cboPreviewQuestion.Text, sub.RegExReplacementString);
+					{
+						string sResult = sub.RegEx.Replace(sample, sub.RegExReplacementString);
+						if (sResult == sample)
+						{
+							row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
+							row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Goldenrod;
+							row.Cells[colPreviewResult.Index].Value = Properties.Resources.kstidRuleDidNotChangeResult;
+						}
+						else
+						{
+							row.Cells[colPreviewResult.Index].Style = null;
+							row.Cells[colPreviewResult.Index].Value = sResult;
+							sample = sResult;
+						}
+					}
 					else
 					{
-						m_lblResult.ForeColor = Color.Red;
-						m_lblResult.Text = sub.ErrorMessage;
+						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
+						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Red;
+						row.Cells[colPreviewResult.Index].Value = sub.ErrorMessage;
 					}
 				}
 				else
 				{
-					m_lblResult.Text = m_cboPreviewQuestion.Text;
+					row.Cells[colPreviewResult.Index].Value = string.Empty;
 				}
 			}
-			else
-				m_lblResult.Text = string.Empty;
 		}
 
 		/// ------------------------------------------------------------------------------------

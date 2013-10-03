@@ -349,6 +349,15 @@ namespace SIL.Transcelerator.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Change.
+        /// </summary>
+        internal static string kstidRuleDidNotChangeResult {
+            get {
+                return ResourceManager.GetString("kstidRuleDidNotChangeResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This name is already in use by another rule..
         /// </summary>
         internal static string kstidRuleNameInUse {
