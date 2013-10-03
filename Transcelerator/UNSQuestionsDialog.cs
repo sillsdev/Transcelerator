@@ -78,6 +78,7 @@ namespace SIL.Transcelerator
 		private int m_maximumHeightOfKeyTermsPane;
 		private bool m_loadingBiblicalTermsPane = false;
 		private SubstringDescriptor m_lastTranslationSelectionState;
+		private bool m_preventReEntrantCommitEditDuringSave = false;
 		#endregion
 
 		#region Delegates
@@ -706,7 +707,7 @@ namespace SIL.Transcelerator
 			if (m_saving)
 				return;
 
-			PostponeRefresh = true;
+			PostponeRefresh = m_preventReEntrantCommitEditDuringSave = true;
 
 			if (e.ColumnIndex == m_colTranslation.Index)
 			{
@@ -721,7 +722,7 @@ namespace SIL.Transcelerator
 				dataGridUns.InvalidateRow(e.RowIndex);
 			}
 
-			PostponeRefresh = false;
+			PostponeRefresh = m_preventReEntrantCommitEditDuringSave = false;
 			UpdateCountsAndFilterStatus();
 		}
 
@@ -958,7 +959,7 @@ namespace SIL.Transcelerator
 			m_saving = true;
 			SaveNeeded = false;
 			m_lastSaveTime = DateTime.Now;
-			if (dataGridUns.IsCurrentCellInEditMode)
+			if (dataGridUns.IsCurrentCellInEditMode && !m_preventReEntrantCommitEditDuringSave)
 				dataGridUns.EndEdit();
 			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations, XmlSerializationHelper.SerializeToString(
 				(from translatablePhrase in m_helper.UnfilteredPhrases
@@ -1442,6 +1443,7 @@ namespace SIL.Transcelerator
 				m_helper.Phrases.Where(tp => tp.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion).Select(p => p.PhraseInUse),
 				dataGridUns.CurrentRow.Index))
 			{
+				m_selectKeyboard(false);
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
 					m_phraseSubstitutions.Clear();
@@ -1451,6 +1453,7 @@ namespace SIL.Transcelerator
 
 					Reload(false);
 				}
+				m_selectKeyboard(true);
 			}
 		}
 
