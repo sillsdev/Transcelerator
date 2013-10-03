@@ -18,6 +18,11 @@
     <Alternate name="poor"/>
     <Alternate name="meek"/>
   </KeyTermRule>
+  <KeyTermRule id="blaspheme; revile">
+    <Alternate name="blasphemed"/>
+    <Alternate name="blasphemes"/>
+    <Alternate name="blaspheming"/>
+  </KeyTermRule>
   <KeyTermRule id="distinguish; doubt; waver; hesitate; take issue with someone" rule="Exclude">
     <Alternate name="distinguish"/>
     <Alternate name="doubt"/>
@@ -416,6 +421,12 @@
   </KeyTermRule>
   <KeyTermRule id="be; become a disciple; make disciples" rule="Exclude"/>
   <KeyTermRule id="skin; hide" rule="Exclude"/>
+  <KeyTermRule id="skin (of grape)" rule="MatchForRefOnly"/>
+  <KeyTermRule id="infectious skin disease; person suffering from an infectious skin disease" rule="Exclude">
+    <Alternate name="bad skin disease"/>
+    <Alternate name="leprosy"/>
+    <Alternate name="leper"/>
+  </KeyTermRule>
   <KeyTermRule id="fasting; fast" rule="Exclude">
     <Alternate name="fast" matchForRefOnly="true"/>
     <Alternate name="fasting"/>
