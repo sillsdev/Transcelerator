@@ -221,7 +221,6 @@ namespace SIL.Transcelerator
         {
             Question added = null;
             var list = m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)).ToList();
-            Debug.WriteLine(list);
             foreach (PhraseCustomization customization in m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)))
             {
                 switch (customization.Type)
