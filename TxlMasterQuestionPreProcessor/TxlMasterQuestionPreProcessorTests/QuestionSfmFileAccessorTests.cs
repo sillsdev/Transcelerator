@@ -408,7 +408,6 @@ namespace SIL.Transcelerator
             Assert.IsNull(question.Notes);
         }
 
-
         ///--------------------------------------------------------------------------------------
         /// <summary>
         /// Tests parsing of detail questions whose answers contain a chapter and verse number(s)
@@ -430,6 +429,17 @@ namespace SIL.Transcelerator
 				@"\tqe She said she was upset with Esau's Hittite wives and that she would die if Jacob took a Hittite wife. (46)",
 				@"\bttq After she told this to Isaac, what did he do?",
 				@"\tqe He summoned Jacob. (28:1)",
+				@"\bttq Why is this question for two verses?",
+				@"\tqe Just because (1-2)",
+				@"\rf Genesis 49:29-50:14 Joseph mourned Jacob.",
+				@"\oh Overview",
+				@"\tqref GEN 49.29-50.14",
+				@"\bttq Tell what happened after Jacob had spoken to all of his sons.",
+				@"\tqe Jacob died, and his sons took him back to Canaan and buried him.",
+                @"\dh Details",
+				@"\tqref GEN 50.1-6",
+				@"\bttq What was Joseph's message to Pharaoh?",
+				@"\tqe Joseph told Pharaoh about the promise that he (Joseph) had made to his father. He (Joseph) had promised to bury Jacob in Canaan. (Therefore) Joseph asked Pharaoh to allow him to go to bury Jacob's corpse in Canaan. (4-5)",
 				@"\rf Luke 2:39-40 The family returned to Nazareth.",
 				@"\oh Overview",
 				@"\tqref LUK 2.39-40",
@@ -446,7 +456,7 @@ namespace SIL.Transcelerator
 				@"\bttq A man approached Jesus along the road. What did this man say to Jesus?",
 				@"\tqe He said that he would follow Jesus wherever Jesus went. (57)"}, null);
 
-            Assert.AreEqual(3, sections.Items.Length);
+            Assert.AreEqual(4, sections.Items.Length);
 
             // Genesis
             Section section = sections.Items[0];
@@ -457,7 +467,7 @@ namespace SIL.Transcelerator
             Category category = section.Categories[1];
             Assert.AreEqual("Details", category.Type);
 
-            Assert.AreEqual(2, category.Questions.Count);
+            Assert.AreEqual(3, category.Questions.Count);
             Question question = category.Questions[0];
             Assert.AreEqual("What did Rebekah say to her husband, Isaac?", question.Text);
             Assert.AreEqual("GEN 27.46", question.ScriptureReference);
@@ -474,8 +484,33 @@ namespace SIL.Transcelerator
             Assert.AreEqual(1, question.Answers.Length);
             Assert.AreEqual("He summoned Jacob. (28:1)", question.Answers[0]);
 
+            question = category.Questions[2];
+            Assert.AreEqual("Why is this question for two verses?", question.Text);
+            Assert.AreEqual("GEN 28.1-2", question.ScriptureReference);
+            Assert.AreEqual(001028001, question.StartRef);
+            Assert.AreEqual(001028002, question.EndRef);
+            Assert.AreEqual(1, question.Answers.Length);
+            Assert.AreEqual("Just because (1-2)", question.Answers[0]);
+
+			section = sections.Items[1];
+			Assert.AreEqual("Genesis 49:29-50:14 Joseph mourned Jacob.", section.Heading);
+			Assert.AreEqual("GEN 49.29-50.14", section.ScriptureReference);
+			Assert.AreEqual(2, section.Categories.Length);
+
+			category = section.Categories[1];
+			Assert.AreEqual("Details", category.Type);
+
+			Assert.AreEqual(1, category.Questions.Count);
+			question = category.Questions[0];
+			Assert.AreEqual("What was Joseph's message to Pharaoh?", question.Text);
+			Assert.AreEqual("GEN 50.4-5", question.ScriptureReference);
+			Assert.AreEqual(001050004, question.StartRef);
+			Assert.AreEqual(001050005, question.EndRef);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("Joseph told Pharaoh about the promise that he (Joseph) had made to his father. He (Joseph) had promised to bury Jacob in Canaan. (Therefore) Joseph asked Pharaoh to allow him to go to bury Jacob's corpse in Canaan. (4-5)", question.Answers[0]);
+
             //Luke
-            section = sections.Items[1];
+            section = sections.Items[2];
             Assert.AreEqual("Luke 2:39-40 The family returned to Nazareth.", section.Heading);
             Assert.AreEqual("LUK 2.39-40", section.ScriptureReference);
             Assert.AreEqual(2, section.Categories.Length);
@@ -502,7 +537,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(1, question.Answers.Length);
             Assert.AreEqual("They were ready when they had finished doing everything that the Law of the Lord commanded them to do. (2:39)", question.Answers[0]);
 
-            section = sections.Items[2];
+            section = sections.Items[3];
             Assert.AreEqual("Luke 9:57-62 People who want to follow Jesus must let go of everything else they think is important.", section.Heading);
             Assert.AreEqual("LUK 9.57-58", section.ScriptureReference);
             Assert.AreEqual(1, section.Categories.Length);
@@ -526,7 +561,47 @@ namespace SIL.Transcelerator
             Assert.AreEqual("He said that he would follow Jesus wherever Jesus went. (57)", question.Answers[0]);
         }
 
-        ///--------------------------------------------------------------------------------------
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests parsing of detail questions whose answers contain 2 or more comma-sparated
+		/// verse numbers and ranges in parentheses.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_MultipleVersesInWrongOrder()
+		{
+			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[]
+				{
+					@"\rf Genesis 20:1-18 Abraham and Sarah deceived King Abimelech at Gerar.",
+					@"\oh Overview",
+					@"\tqref GEN 20.1-18",
+					@"\bttq Tell what Abraham and Sarah did here/at this time, and what was the outcome.",
+					@"\tqe They went to a place called Gerar, and while they were there, they said that Sarah was Abraham's sister. King Abimelech took Sarah into his palace (to be one of his concubines). But God came to the king in a dream and told him that Sarah was Abraham's wife. God also caused Abimelech's wife and the other women of the royal household to be barren/unable to become pregnant. So the king returned Sarah to Abraham, along with a gift of sheep and oxen and servants, and much silver (money). Abraham prayed to God, and God then healed Abimelech and his household.",
+					@"\dh Details",
+					@"\tqref GEN 20.1-3",
+					@"\bttq What did King Abimelech do?",
+					@"\tqe He had someone bring Sarah to him at his palace. He already had a wife (17), so he probably intended to make Sarah one of his concubines. (2)"
+				}, null);
+
+			Assert.AreEqual(1, sections.Items.Length);
+
+			Section section = sections.Items[0];
+			Assert.AreEqual("Genesis 20:1-18 Abraham and Sarah deceived King Abimelech at Gerar.", section.Heading);
+			Assert.AreEqual("GEN 20.1-18", section.ScriptureReference);
+			Assert.AreEqual(2, section.Categories.Length);
+			Category category = section.Categories[1];
+			Assert.AreEqual("Details", category.Type);
+			Assert.AreEqual(1, category.Questions.Count);
+			Question question = category.Questions[0];
+			Assert.AreEqual("What did King Abimelech do?", question.Text);
+			Assert.AreEqual("GEN 20.2-17", question.ScriptureReference);
+			Assert.AreEqual(001020002, question.StartRef);
+			Assert.AreEqual(001020017, question.EndRef);
+			Assert.AreEqual(1, question.Answers.Length);
+			Assert.AreEqual("He had someone bring Sarah to him at his palace. He already had a wife (17), so he probably intended to make Sarah one of his concubines. (2)", question.Answers[0]);
+		}
+
+		///--------------------------------------------------------------------------------------
         /// <summary>
         /// Tests parsing of detail questions whose answers contain 2 or more comma-sparated
         /// verse numbers and ranges in parentheses.

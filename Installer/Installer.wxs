@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
-<?define Property_ProductVersion = "1.0.5024" ?>
+<?define Property_ProductVersion = "1.0.5039" ?>
 
 <!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
@@ -129,6 +129,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <Component Guid="{32B95588-AEDD-43A3-AB4A-B4ECF3ADC49E}">
 		<File Id="Icon" Name="TXL no TXL.ico" KeyPath="yes" Source="..\Transcelerator\bin\Release\TXL no TXL.ico" />
 	  </Component>
+    <Component Guid="{C8A6EE73-5613-49B6-A656-1C030DC81E49}">
+      <File Name="CreditsAndLicense.htm" KeyPath="yes" Source="..\Transcelerator\bin\Release\CreditsAndLicense.htm" />
+    </Component>
 	</DirectoryRef>
 	
 	<Feature Id="PluginFeature" Level="1" Title="Plugin for Paratext">
@@ -150,7 +153,8 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="Palaso.pdb"/>
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 	  <ComponentRef Id="Icon"/>
-	</Feature>
+    <ComponentRef Id="CreditsAndLicense.htm"/>
+  </Feature>
 	
 	<CustomAction Id="SetUpdatePluginStore" Property="UpdatePluginStore" Value="&quot;[PARATEXT7]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check"/>
 	<CustomAction Id="UpdatePluginStore" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no" Execute="deferred" Return="check"/>

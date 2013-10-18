@@ -88,6 +88,20 @@ namespace SIL.Transcelerator.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Arrow_Left_icon {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Left_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Arrow_Right_icon {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Right_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap Arrow_Up_icon {
             get {
                 object obj = ResourceManager.GetObject("Arrow_Up_icon", resourceCulture);

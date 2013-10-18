@@ -440,6 +440,42 @@
   <data name="nextUntranslatedQuestionToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Next Untranslated Question</value>
   </data>
+  <data name="toolStripSeparatorShiftWords.Size" type="System.Drawing.Size, System.Drawing">
+    <value>286, 6</value>
+  </data>
+  <data name="toolStripSeparatorShiftWords.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="mnuShiftWordsRight.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Fuchsia</value>
+  </data>
+  <data name="mnuShiftWordsRight.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Alt+Shift+Right</value>
+  </data>
+  <data name="mnuShiftWordsRight.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 22</value>
+  </data>
+  <data name="mnuShiftWordsRight.Text" xml:space="preserve">
+    <value>Shift Word(s) Right</value>
+  </data>
+  <data name="mnuShiftWordsRight.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="mnuShiftWordsLeft.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Fuchsia</value>
+  </data>
+  <data name="mnuShiftWordsLeft.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Alt+Shift+Left</value>
+  </data>
+  <data name="mnuShiftWordsLeft.Size" type="System.Drawing.Size, System.Drawing">
+    <value>289, 22</value>
+  </data>
+  <data name="mnuShiftWordsLeft.Text" xml:space="preserve">
+    <value>Shift Word(s) &amp;Left</value>
+  </data>
+  <data name="mnuShiftWordsLeft.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 20</value>
   </data>
@@ -7272,6 +7308,12 @@
   <data name="&gt;&gt;generateOutputForArloToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Name" xml:space="preserve">
+    <value>mnuLoadTranslationsFromTextFile</value>
+  </data>
+  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
     <value>toolStripSeparator3</value>
   </data>
@@ -7324,6 +7366,24 @@
     <value>nextUntranslatedQuestionToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;nextUntranslatedQuestionToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorShiftWords.Name" xml:space="preserve">
+    <value>toolStripSeparatorShiftWords</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorShiftWords.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuShiftWordsRight.Name" xml:space="preserve">
+    <value>mnuShiftWordsRight</value>
+  </data>
+  <data name="&gt;&gt;mnuShiftWordsRight.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuShiftWordsLeft.Name" xml:space="preserve">
+    <value>mnuShiftWordsLeft</value>
+  </data>
+  <data name="&gt;&gt;mnuShiftWordsLeft.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;filterToolStripMenuItem.Name" xml:space="preserve">
@@ -7481,12 +7541,6 @@
   </data>
   <data name="&gt;&gt;lblRemainingWork.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Name" xml:space="preserve">
-    <value>mnuLoadTranslationsFromTextFile</value>
-  </data>
-  <data name="&gt;&gt;mnuLoadTranslationsFromTextFile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>UNSQuestionsDialog</value>

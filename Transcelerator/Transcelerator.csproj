@@ -353,6 +353,8 @@
     <None Include="Properties\20130910100219692_easyicon_net_16.png" />
     <None Include="Properties\SILLogo.ico" />
     <None Include="Properties\FWSILLogoColor2005.bmp" />
+    <None Include="Properties\Arrow-Left-icon.png" />
+    <None Include="Properties\Arrow-Right-icon.png" />
     <Content Include="TXL no TXL.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

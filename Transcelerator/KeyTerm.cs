@@ -221,6 +221,8 @@ namespace SIL.Transcelerator
             }
             info.AddlRenderings.Add(rendering);
             m_allRenderings.Add(normalizedForm);
+	        if (m_bestTranslation == string.Empty)
+		        m_bestTranslation = rendering;
             UpdateRenderingInfoFile();
         }
 
@@ -231,13 +233,11 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         public bool CanRenderingBeDeleted(string rendering)
         {
-            if (rendering == BestRendering)
-                return false;
             KeyTermRenderingInfo info = RenderingInfo;
             if (info == null)
                 return false;
-
-            return info.AddlRenderings.Contains(rendering.Normalize(NormalizationForm.FormC));
+	        var normalized = rendering.Normalize(NormalizationForm.FormC);
+            return info.AddlRenderings.Contains(normalized) && info.PreferredRendering != normalized;
         }
 
         /// ------------------------------------------------------------------------------------
@@ -256,6 +256,8 @@ namespace SIL.Transcelerator
             {
                 m_allRenderings.Remove(rendering);
                 UpdateRenderingInfoFile();
+	            if (m_bestTranslation == rendering)
+		            m_bestTranslation = null; // New "best" will be re-determined when needed.
             }
         }
 
@@ -308,6 +310,7 @@ namespace SIL.Transcelerator
         public void LoadRenderings()
         {
             m_allRenderings = new HashSet<string>();
+	        m_bestTranslation = null;
             int max = -1;
             Dictionary<string, int> occurrences = new Dictionary<string, int>();
 
@@ -336,10 +339,11 @@ namespace SIL.Transcelerator
             KeyTermRenderingInfo info = RenderingInfo;
             if (info != null)
             {
-                if (!string.IsNullOrEmpty(info.PreferredRendering))
-                    m_bestTranslation = info.PreferredRendering;
-
                 m_allRenderings.UnionWith(info.AddlRenderings.Where(r => r != null));
+				if (!string.IsNullOrEmpty(info.PreferredRendering))
+					m_bestTranslation = info.PreferredRendering;
+				else if (m_bestTranslation == null)
+					m_bestTranslation = info.AddlRenderings.FirstOrDefault(r => r != null);
             }
 
             if (m_bestTranslation == null)

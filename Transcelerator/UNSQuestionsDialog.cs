@@ -42,6 +42,7 @@ namespace SIL.Transcelerator
 	    private readonly Func<IEnumerable<IKeyTerm>> m_getKeyTerms;
 	    private readonly Font m_vernFont;
 		private readonly string m_vernIcuLocale;
+		private readonly bool m_fVernIsRtoL;
 		private readonly Action<bool> m_selectKeyboard;
 	    private readonly Func<string, IList<int>> m_getTermOccurrences;
 	    private readonly Action m_helpDelegate;
@@ -308,7 +309,8 @@ namespace SIL.Transcelerator
 	        KeyTerm.GetTermRenderings = getTermRenderings;
 	        m_vernFont = vernFont;
 			m_vernIcuLocale = vernIcuLocale;
-            if (string.IsNullOrEmpty(m_vernIcuLocale))
+		    m_fVernIsRtoL = fVernIsRtoL;
+		    if (string.IsNullOrEmpty(m_vernIcuLocale))
                 mnuGenerate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
 	        m_getTermOccurrences = getTermOccurrences;
@@ -1150,21 +1152,7 @@ namespace SIL.Transcelerator
                                     {
                                         try
                                         {
-                                            StringBuilder extractedScr = new StringBuilder(m_scrExtractor.Extract(startRef, endRef));
-                                            // ENHANCE: Rather than getting the data as USFX and doing these somewhat-kludgey cleanup
-                                            // steps, we could implement an HTML extractor in Paratext and let it do the transformation
-                                            // using its XSLT scripts.
-                                            const string usfxHead = "<usx version=\"2.0\">";
-                                            const string usfxTail = "</usx>";
-                                            if (extractedScr.ToString(0, usfxHead.Length) == usfxHead)
-                                                extractedScr.Remove(0, usfxHead.Length);
-                                            if (extractedScr.ToString(extractedScr.Length - usfxTail.Length, usfxTail.Length) == usfxTail)
-                                                extractedScr.Remove(extractedScr.Length - usfxTail.Length, usfxTail.Length);
-                                            extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
-                                            extractedScr.Replace("/para", "/DIV");
-                                            extractedScr.Replace(" />", "></DIV>");
-
-                                            sw.Write(extractedScr.ToString());
+											sw.Write(GetExtractedScripture(startRef, endRef));
                                         }
                                         catch (Exception ex)
                                         {
@@ -1203,7 +1191,67 @@ namespace SIL.Transcelerator
                     Process.Start(dlg.FileName);
                 }
             }
-        }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the requested range of Scripture text.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private string GetExtractedScripture(int startRef, int endRef)
+		{
+			StringBuilder extractedScr = new StringBuilder();
+
+			BCVRef startRefTemp = new BCVRef(startRef);
+			BCVRef endRefTemp = new BCVRef(endRef);
+			int endChapter = endRefTemp.Chapter;
+			if (endRefTemp.Chapter > startRefTemp.Chapter)
+			{
+				endRefTemp = new BCVRef(startRefTemp);
+				endRefTemp.Verse = m_projectVersification.GetLastVerse(endRefTemp.Book, endRefTemp.Chapter);
+			}
+
+			for (;;)
+			{
+				extractedScr.Append(GetExtractedScriptureFromSingleChapter(startRefTemp.BBCCCVVV, endRefTemp.BBCCCVVV));
+				if (endRefTemp.Chapter == endChapter)
+					break;
+				startRefTemp.Chapter++;
+				startRefTemp.Verse = 1;
+				if (startRefTemp.Chapter == endChapter)
+					endRefTemp = new BCVRef(endRef);
+				else
+				{
+					endRefTemp.Chapter++;
+					endRefTemp.Verse = m_projectVersification.GetLastVerse(endRefTemp.Book, endRefTemp.Chapter);
+				}
+			}
+			return extractedScr.ToString();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the requested range of Scripture text. (Until Paratext 7.5 is available, this
+		/// is limited to text within a single chapter.)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private string GetExtractedScriptureFromSingleChapter(int startRef, int endRef)
+		{
+			StringBuilder extractedScr = new StringBuilder(m_scrExtractor.Extract(startRef, endRef));
+			// ENHANCE: Rather than getting the data as USFX and doing these somewhat-kludgey cleanup
+			// steps, we could implement an HTML extractor in Paratext and let it do the transformation
+			// using its XSLT scripts.
+			const string usfxHead = "<usx version=\"2.0\">";
+			const string usfxTail = "</usx>";
+			if (extractedScr.ToString(0, usfxHead.Length) == usfxHead)
+				extractedScr.Remove(0, usfxHead.Length);
+			if (extractedScr.ToString(extractedScr.Length - usfxTail.Length, usfxTail.Length) == usfxTail)
+				extractedScr.Remove(extractedScr.Length - usfxTail.Length, usfxTail.Length);
+			extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
+			extractedScr.Replace("/para", "/DIV");
+			extractedScr.Replace(" />", "></DIV>");
+			return extractedScr.ToString();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1842,7 +1890,6 @@ namespace SIL.Transcelerator
 			TextControl.DragEnter += TextControl_Drag;
 			TextControl.DragOver += TextControl_Drag;
 			TextControl.GiveFeedback += TextControl_GiveFeedback;
-			TextControl.KeyDown += txtControl_KeyDown;
 			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
 			Application.AddMessageFilter(this);
 		}
@@ -1858,7 +1905,6 @@ namespace SIL.Transcelerator
 			if (TextControl != null)
 			{
 				m_lastTranslationSelectionState = new SubstringDescriptor(TextControl);
-				TextControl.KeyDown -= txtControl_KeyDown;
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
 				Application.RemoveMessageFilter(this);
 				TextControl.DragEnter -= TextControl_Drag;
@@ -1894,15 +1940,26 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the KeyDown event of the dataGridUns control.
+		/// Handles hiding/showing the mnuShiftWordsRight and mnuShiftWordsLeft menus.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void txtControl_KeyDown(object sender, KeyEventArgs e)
+		private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
 		{
-			if (EditingTranslation && e.Alt && e.Shift && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left))
-			{
-				e.SuppressKeyPress = TextControl.MoveSelectedWord(e.KeyCode == Keys.Right);
-			}
+			mnuShiftWordsLeft.Visible = mnuShiftWordsRight.Visible = toolStripSeparatorShiftWords.Visible =
+				(TextControl != null && EditingTranslation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the click event for mnuShiftWordsRight and mnuShiftWordsLeft.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleShiftWordsMenuClick(object sender, EventArgs e)
+		{
+			if (TextControl == null || !EditingTranslation)
+				return;
+
+			TextControl.MoveSelectedWord(sender == (m_fVernIsRtoL ? mnuShiftWordsLeft : mnuShiftWordsRight));
 		}
 
 		/// ------------------------------------------------------------------------------------

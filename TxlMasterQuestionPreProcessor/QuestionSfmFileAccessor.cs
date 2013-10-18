@@ -83,6 +83,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			int startRef = 0, endRef = 0;
 			Section currSection = null;
 			bool currSectionRefSet = false;
+			bool currQuestionRefBasedOnAnswer = false;
 			Question currQuestion = null;
 			List<Section> sections = new List<Section>();
 			List<Question> currentQuestions = new List<Question>();
@@ -116,6 +117,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 							currQuestion.ScriptureReference = currRef;
 							currQuestion.StartRef = startRef;
 							currQuestion.EndRef = endRef;
+							currQuestionRefBasedOnAnswer = false;
 						}
 						cAnswers = 0;
 						cComments = 0;
@@ -139,11 +141,18 @@ namespace SIL.TxlMasterQuestionPreProcessor
                                 sEndVerse = match.Result("${endVerse}");
                                 endVerse = string.IsNullOrEmpty(sEndVerse) ?
                                     Int32.Parse(match.Result("${startVerse}")) : Int32.Parse(sEndVerse);
+
+								// Answer might have multiple parts, not ordered according to verse ref.
+	                            if (endVerse < startVerse)
+	                            {
+		                            var temp = startVerse;
+		                            startVerse = endVerse;
+		                            endVerse = temp;
+	                            }
                             }
 
 							BCVRef bcvStart = new BCVRef(currSection.StartRef);
 							BCVRef bcvEnd = new BCVRef(currSection.EndRef);
-                            // if (chapter > 0)
                             // if reference in the answer is not in range for the current section, disregard it.
 						    bool inSectionRange = true;
                             if (chapter == 0)
@@ -179,13 +188,22 @@ namespace SIL.TxlMasterQuestionPreProcessor
                                             bcvEnd.Chapter = bcvStart.Chapter;
                                             bcvEnd.Verse = endVerse;
                                         }
-                                        // else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
+										else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
+										{
+											bcvStart.Verse = startVerse;
+											bcvStart.Chapter = bcvEnd.Chapter;
+											bcvEnd.Verse = endVerse;
+										}
                                     }
                                     else if (bcvStart.Chapter == bcvEnd.Chapter)
                                     {
-                                        if (startVerse < bcvStart.Verse)
+										// If the current ref is based on (a previous) answer, we only want to
+										// expand the reference range, not contract it. If it's based on the
+										// section, then we want to set it to exactly what's specifiedf in the
+										// answer.
+										if (!currQuestionRefBasedOnAnswer || startVerse < bcvStart.Verse)
                                             bcvStart.Verse = startVerse;
-                                        if (endVerse > bcvEnd.Verse || chapter > 0)
+										if (!currQuestionRefBasedOnAnswer || endVerse > bcvEnd.Verse || chapter > 0)
                                             bcvEnd.Verse = endVerse;
                                     }
                                 }
@@ -194,6 +212,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
                                 currQuestion.EndRef = bcvEnd.BBCCCVVV;
                                 currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
                                     currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
+	                            currQuestionRefBasedOnAnswer = true;
                             }
 						}
 					}
