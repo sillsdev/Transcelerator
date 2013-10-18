@@ -90,6 +90,7 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuGenerate = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateOutputForArloToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuLoadTranslationsFromTextFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,6 +100,9 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
 			this.previousUntranslatedQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.nextUntranslatedQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparatorShiftWords = new System.Windows.Forms.ToolStripSeparator();
+			this.mnuShiftWordsRight = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuShiftWordsLeft = new System.Windows.Forms.ToolStripMenuItem();
 			this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuReferenceRange = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuKtFilter = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,7 +137,6 @@ namespace SIL.Transcelerator
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
-			this.mnuLoadTranslationsFromTextFile = new System.Windows.Forms.ToolStripMenuItem();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -399,6 +402,12 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.generateOutputForArloToolStripMenuItem, "generateOutputForArloToolStripMenuItem");
 			this.generateOutputForArloToolStripMenuItem.Click += new System.EventHandler(this.generateOutputForArloToolStripMenuItem_Click);
 			// 
+			// mnuLoadTranslationsFromTextFile
+			// 
+			this.mnuLoadTranslationsFromTextFile.Name = "mnuLoadTranslationsFromTextFile";
+			resources.ApplyResources(this.mnuLoadTranslationsFromTextFile, "mnuLoadTranslationsFromTextFile");
+			this.mnuLoadTranslationsFromTextFile.Click += new System.EventHandler(this.mnuLoadTranslationsFromTextFile_Click);
+			// 
 			// toolStripSeparator3
 			// 
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -418,9 +427,13 @@ namespace SIL.Transcelerator
             this.mnuPaste,
             this.toolStripSeparator8,
             this.previousUntranslatedQuestionToolStripMenuItem,
-            this.nextUntranslatedQuestionToolStripMenuItem});
+            this.nextUntranslatedQuestionToolStripMenuItem,
+            this.toolStripSeparatorShiftWords,
+            this.mnuShiftWordsRight,
+            this.mnuShiftWordsLeft});
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+			this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
 			// 
 			// cutToolStripMenuItem1
 			// 
@@ -460,6 +473,25 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.nextUntranslatedQuestionToolStripMenuItem, "nextUntranslatedQuestionToolStripMenuItem");
 			this.nextUntranslatedQuestionToolStripMenuItem.Name = "nextUntranslatedQuestionToolStripMenuItem";
 			this.nextUntranslatedQuestionToolStripMenuItem.Click += new System.EventHandler(this.nextUntranslatedQuestionToolStripMenuItem_Click);
+			// 
+			// toolStripSeparatorShiftWords
+			// 
+			this.toolStripSeparatorShiftWords.Name = "toolStripSeparatorShiftWords";
+			resources.ApplyResources(this.toolStripSeparatorShiftWords, "toolStripSeparatorShiftWords");
+			// 
+			// mnuShiftWordsRight
+			// 
+			this.mnuShiftWordsRight.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Right_icon;
+			resources.ApplyResources(this.mnuShiftWordsRight, "mnuShiftWordsRight");
+			this.mnuShiftWordsRight.Name = "mnuShiftWordsRight";
+			this.mnuShiftWordsRight.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
+			// 
+			// mnuShiftWordsLeft
+			// 
+			this.mnuShiftWordsLeft.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Left_icon;
+			resources.ApplyResources(this.mnuShiftWordsLeft, "mnuShiftWordsLeft");
+			this.mnuShiftWordsLeft.Name = "mnuShiftWordsLeft";
+			this.mnuShiftWordsLeft.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
 			// 
 			// filterToolStripMenuItem
 			// 
@@ -648,7 +680,9 @@ namespace SIL.Transcelerator
 			// 
 			// btnSendScrReferences
 			// 
+			this.btnSendScrReferences.Checked = true;
 			this.btnSendScrReferences.CheckOnClick = true;
+			this.btnSendScrReferences.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.btnSendScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			resources.ApplyResources(this.btnSendScrReferences, "btnSendScrReferences");
 			this.btnSendScrReferences.Name = "btnSendScrReferences";
@@ -719,12 +753,6 @@ namespace SIL.Transcelerator
 			this.m_hSplitter.Name = "m_hSplitter";
 			this.m_hSplitter.TabStop = false;
 			this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
-			// 
-			// mnuLoadTranslationsFromTextFile
-			// 
-			this.mnuLoadTranslationsFromTextFile.Name = "mnuLoadTranslationsFromTextFile";
-			resources.ApplyResources(this.mnuLoadTranslationsFromTextFile, "mnuLoadTranslationsFromTextFile");
-			this.mnuLoadTranslationsFromTextFile.Click += new System.EventHandler(this.mnuLoadTranslationsFromTextFile_Click);
 			// 
 			// UNSQuestionsDialog
 			// 
@@ -825,5 +853,8 @@ namespace SIL.Transcelerator
         private ToolStripMenuItem previousUntranslatedQuestionToolStripMenuItem;
 		private ToolStripMenuItem generateOutputForArloToolStripMenuItem;
 		private ToolStripMenuItem mnuLoadTranslationsFromTextFile;
+		private ToolStripMenuItem mnuShiftWordsRight;
+		private ToolStripSeparator toolStripSeparatorShiftWords;
+		private ToolStripMenuItem mnuShiftWordsLeft;
 	}
 }

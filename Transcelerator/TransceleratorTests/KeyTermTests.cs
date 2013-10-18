@@ -87,6 +87,29 @@ namespace SIL.Transcelerator
             Assert.IsFalse(kt.Renderings.Contains("wunkyboo"));
         }
 
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that adding a rendering will cause it to be used (as the best/default) if
+		/// there are no other renderings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddRendering_NoOtherRenderings_AddedRenderingIsDefault()
+		{
+			m_renderings["GreekWord"] = new string[0];
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			kt.AddRendering("wunkyboo");
+			Assert.AreEqual(1, kt.Renderings.Count());
+			Assert.AreEqual("wunkyboo", kt.BestRendering);
+			Assert.AreEqual("wunkyboo", kt.Translation);
+			kt.LoadRenderings();
+			Assert.AreEqual("wunkyboo", kt.BestRendering);
+			Assert.AreEqual("wunkyboo", kt.Translation);
+			kt.DeleteRendering("wunkyboo");
+			Assert.AreEqual(string.Empty, kt.BestRendering);
+			Assert.AreEqual(string.Empty, kt.Translation);
+		}
+
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Tests that the KeyTerm.AddRendering method throws an exception if a duplicate
@@ -109,30 +132,60 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         [Test]
-        public void CanRenderingBeDeleted_NonExistentRendering()
+        public void CanRenderingBeDeleted_NonExistentRendering_ReturnsFalse()
         {
             string[] renderings = new[] { "abc", "xyz" };
             m_renderings["GreekWord"] = renderings;
             var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
             Assert.IsFalse(kt.CanRenderingBeDeleted("xyz"));
-        }
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Tests that the KeyTerm.CanRenderingBeDeleted method returns false for the
-        /// default rendering.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        [Test]
-        public void CanRenderingBeDeleted_DefaultRendering()
-        {
-            string[] renderings = new[] { "abc", "xyz" };
-            m_renderings["GreekWord"] = renderings;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
-            kt.AddRendering("bestest");
-            kt.BestRendering = "bestest";
-            Assert.IsFalse(kt.CanRenderingBeDeleted("bestest"));
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the KeyTerm.CanRenderingBeDeleted method returns false for the
+		/// default rendering.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void CanRenderingBeDeleted_NotUserAdded_ReturnsFalse()
+		{
+			string[] renderings = new[] { "abc", "xyz" };
+			m_renderings["GreekWord"] = renderings;
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			Assert.IsFalse(kt.CanRenderingBeDeleted("xyz"));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the KeyTerm.CanRenderingBeDeleted method returns false for the
+		/// default rendering.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void CanRenderingBeDeleted_ExplicitDefaultRendering_ReturnsFalse()
+		{
+			string[] renderings = new[] { "abc", "xyz" };
+			m_renderings["GreekWord"] = renderings;
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			kt.AddRendering("bestest");
+			kt.BestRendering = "bestest";
+			Assert.IsFalse(kt.CanRenderingBeDeleted("bestest"));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the KeyTerm.CanRenderingBeDeleted method returns false for the
+		/// default rendering.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void CanRenderingBeDeleted_ImplicitDefaultRendering_ReturnsTrue()
+		{
+			m_renderings["GreekWord"] = new string[0];
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			kt.AddRendering("bestest");
+			Assert.IsTrue(kt.CanRenderingBeDeleted("bestest"));
+		}
 	}
 
     internal class TestKeyTermRenderingDataFileAccessor : DataFileAccessor

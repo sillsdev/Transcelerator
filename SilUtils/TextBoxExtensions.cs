@@ -34,6 +34,12 @@ namespace SIL.Utils
 					selStart--;
 				while (selLim < txt.TextLength && !Char.IsWhiteSpace(txt.Text[selLim]))
 					selLim++;
+				if (selLim == txt.TextLength)
+				{
+					// exclude final punctuation
+					while (selLim > selStart && Char.IsPunctuation(txt.Text[selLim - 1]))
+						selLim--;
+				}
 				if (selStart == selLim)
 					return false;
 			}

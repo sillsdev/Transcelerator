@@ -817,6 +817,28 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests the MoveSelectedWord method when IP is in a word immediately preceding
+		/// sentence-final punctuation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void MoveSelectedWord_Left_WordPrecedingSentenceFinalPunc()
+		{
+			//                           0         1         2         3         4
+			//                           0123456789012345678901234567890123456789012
+			const string initial = "\u00BFQue\u0301 hizo la Potifar familia?";
+			using (TextBox txt = new TextBox())
+			{
+				txt.Text = initial;
+				txt.SelectionStart = 30;
+				txt.SelectionLength = 0;
+				Assert.IsTrue(txt.MoveSelectedWord(false));
+				Assert.AreEqual("\u00BFQue\u0301 hizo la familia Potifar?", txt.Text);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests the MoveSelectedWord method when sentence-initial punctuation is selected.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
