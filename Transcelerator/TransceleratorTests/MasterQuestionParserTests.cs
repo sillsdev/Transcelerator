@@ -27,14 +27,14 @@ namespace SIL.Transcelerator
 	{
 		private List<IKeyTerm> m_dummyKtList;
 		private KeyTermRules m_keyTermRules;
-		private List<Word> m_questionWords;
+		private List<string> m_questionWords;
 			
 		[SetUp]
 		public void Setup()
 		{
 			m_dummyKtList = new List<IKeyTerm>();
 			m_keyTermRules = null;
-			m_questionWords = new List<Word>(new Word[] { "who", "what", "when", "why", "how", "where", "which" });
+			m_questionWords = new List<string>(new [] { "who", "what", "when", "why", "how", "where", "which", "how many", "how much", "how long", "how old" });
 		}
 
 		#region Parsing tests
@@ -49,7 +49,7 @@ namespace SIL.Transcelerator
 		public void GetResult_NoKeyTermsOrCustomizationsAndAllQuestionsUnique_EachQuestionHasOneTranslatablePart()
 		{
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				new List<Word>(), null, null, null, null);
+				new List<string>(), null, null, null, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -500,7 +500,7 @@ namespace SIL.Transcelerator
 				"Did he ask, \"What do you think about this?\"",
 				"What do you think  it means to bless someone? ");
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<Word>(), m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<string>(), m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(0, pq.KeyTerms.Length);
 			Assert.AreEqual(5, pq.TranslatableParts.Length);
@@ -1124,6 +1124,46 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests breaking up phrases into parts where questions begin with two-word phrases
+		/// that are treated as special "question words".
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_MultiWordQuestionWords_QuestionWordPhrasesKeptTogether()
+		{
+			var qs = GenerateSimpleSectionWithSingleCategory(4);
+			var cat = qs.Items[0].Categories[0];
+			int i = 0;
+			cat.Questions[i++].Text = "How do you forgive?";
+			cat.Questions[i++].Text = "How long is your nose?";
+			cat.Questions[i++].Text = "How much did it cost?";
+			cat.Questions[i++].Text = "How many frogs are there?";
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			ParsedQuestions pq = qp.Result;
+			Assert.AreEqual(4, pq.Sections.Items[0].Categories[0].Questions.Count);
+
+			i = 0;
+			var questions = pq.Sections.Items[0].Categories[0].Questions;
+			VerifyParts(questions[i++], "How do you forgive?",
+				"how",
+				"do you forgive");
+
+			VerifyParts(questions[i++], "How long is your nose?",
+				"how long",
+				"is your nose");
+
+			VerifyParts(questions[i++], "How much did it cost?",
+				"how much",
+				"did it cost");
+
+			VerifyParts(questions[i++], "How many frogs are there?",
+				"how many",
+				"frogs are there");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests breaking up phrases into parts where the phrase contains the word "Pharisees"
 		/// This deals with a weakness in the original (v1) Porter Stemmer algortihm. (TXL-52)
 		/// </summary>
@@ -1354,7 +1394,7 @@ namespace SIL.Transcelerator
 				"Who went to the store?",
 				"Who was the man with the goatee who went to the store?");
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<Word>(), m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<string>(), m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 
 			int i = 0;
@@ -1385,7 +1425,7 @@ namespace SIL.Transcelerator
 				"Are you the one who knows the man who ate the monkey?",
 				"Who knows the man?");
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<Word>(), m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<string>(), m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 
 			int i = 0;
@@ -1805,7 +1845,7 @@ namespace SIL.Transcelerator
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				new List<Word>(), null, null, customizations, null);
+				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -1866,7 +1906,7 @@ namespace SIL.Transcelerator
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				new List<Word>(), null, null, customizations, null);
+				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -1930,7 +1970,7 @@ namespace SIL.Transcelerator
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				new List<Word>(), null, null, customizations, null);
+				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -2024,7 +2064,7 @@ namespace SIL.Transcelerator
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				new List<Word>(), null, null, customizations, null);
+				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -2121,7 +2161,7 @@ namespace SIL.Transcelerator
 			q.Text = "What question did the apostles ask Jesus about his kingdom?";
 			q.Answers = new[] { "Stuff." };
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<Word>(), null, null, customizations, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			List<Question> questions = pq.Sections.Items[0].Categories[0].Questions;

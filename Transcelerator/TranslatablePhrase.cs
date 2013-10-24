@@ -31,7 +31,6 @@ namespace SIL.Transcelerator
 		#region Data Members
 		private readonly string m_sOrigPhrase;
 		private string m_sModifiedPhrase;
-		private HashSet<string> m_alternateForms;
 		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
@@ -468,7 +467,13 @@ namespace SIL.Transcelerator
 
 		public IEnumerable<string> AlternateForms
 		{
-			get { return m_alternateForms; }
+			get
+			{
+				var qi = QuestionInfo;
+				if (qi != null)
+                    return qi.AlternateForms;
+				return null;
+			}
 		}
 		#endregion
 
@@ -781,18 +786,6 @@ namespace SIL.Transcelerator
         {
             return !IsCategoryName && reference >= StartRef && reference <= EndRef;
         }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Adds an alternate form of the phrase/question.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal void AddAlternateForm(string form)
-		{
-			if (m_alternateForms == null)
-				m_alternateForms = new HashSet<string>();
-			m_alternateForms.Add(form);
-		}
 		#endregion
 
 		#region Private Helper methods

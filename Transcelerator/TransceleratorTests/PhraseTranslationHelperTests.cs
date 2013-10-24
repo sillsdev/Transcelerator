@@ -2500,6 +2500,32 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Tests calling GetPhrase when there is not an exact match with any of the questions
+		/// in use, but there is an exact match with the original phrase or one of the alternate
+		/// forms.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void GetPhrase_MatchesAlternate_GetsIt()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
+			q1.AlternateForms = new[] { "Who was the adult male person?", "Who was that man?", "Who was the gentleman?" };
+			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
+			AddTestQuestion(cat, "Who was that man?", "B", 2, 2, "who was the man");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phrase = pth.GetPhrase("A", "Who was that man?");
+			Assert.AreEqual("A", phrase.Reference);
+			Assert.AreEqual(1, phrase.StartRef);
+			Assert.AreEqual(1, phrase.EndRef);
+			Assert.AreEqual("Who was the man?", phrase.PhraseInUse);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests calling GetPhrase when there is exactly one match in the same chapter.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

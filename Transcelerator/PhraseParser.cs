@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,7 +28,7 @@ namespace SIL.Transcelerator
 	public class PhraseParser
 	{
 		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
-	    private readonly IEnumerable<Word> m_questionWords;
+		private readonly IDictionary<int, List<List<Word>>> m_questionWords;
 	    private readonly Question m_phrase;
         private readonly Func<IEnumerable<Word>, Question, ParsedPart> YieldTranslatablePart;
 		private readonly List<Word> m_words;
@@ -43,12 +44,12 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal PhraseParser(Dictionary<Word, List<KeyTermMatch>> keyTermsTable,
-            Dictionary<Regex, string> substituteStrings, IEnumerable<Word> questionWords,
+            Dictionary<Regex, string> substituteStrings, IDictionary<int, List<List<Word>>> questionWords,
             Question phrase, Func<IEnumerable<Word>, Question, ParsedPart> yieldPart)
 		{
 			m_keyTermsTable = keyTermsTable;
-		    m_questionWords = questionWords;
-		    YieldTranslatablePart = yieldPart;
+			m_questionWords = questionWords;
+			YieldTranslatablePart = yieldPart;
 			m_phrase = phrase;
 			s_stemmer.StagedStemming = true;
 
@@ -99,11 +100,31 @@ namespace SIL.Transcelerator
 			KeyTermMatch bestKeyTerm = null;
 			int minUnhandled = m_iStartMatch = m_iNextWord = 0;
 
-            if (m_questionWords.Contains(m_words[m_iNextWord]))
-            {
-                yield return YieldTranslatablePart(m_words.Take(1), m_phrase);
-                m_iStartMatch = m_iNextWord = minUnhandled = 1;
-            }
+			if (m_questionWords != null)
+			{
+				foreach (int count in m_questionWords.Keys.OrderByDescending(k => k))
+				{
+					foreach (List<Word> questionPhrase in m_questionWords[count])
+					{
+						bool match = true;
+						int i;
+						for (i = 0; i < count; i++)
+						{
+							if (m_iNextWord + i >= m_words.Count || questionPhrase[i] != m_words[m_iNextWord + i])
+							{
+								match = false;
+								break;
+							}
+						}
+						if (match)
+						{
+							yield return YieldTranslatablePart(m_words.Take(count), m_phrase);
+							m_iStartMatch = m_iNextWord = minUnhandled = count;
+							break;
+						}
+					}
+				}
+			}
 
 			for (; m_iNextWord < m_words.Count; )
 			{
