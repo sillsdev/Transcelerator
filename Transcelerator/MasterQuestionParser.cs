@@ -44,7 +44,8 @@ namespace SIL.Transcelerator
 		/// For improved performance, outer lookup is by wordcount.</summary>
         private readonly SortedDictionary<int, Dictionary<Word, List<ParsedPart>>> m_partsTable;
 
-	    private IEnumerable<Word> m_questionWords;
+		private readonly IDictionary<int, List<List<Word>>> m_questionWordsLookupTable;
+		private readonly IEnumerable<string> m_questionWords;
 
 	    #endregion
 
@@ -68,7 +69,7 @@ namespace SIL.Transcelerator
         /// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(string filename, IEnumerable<Word> questionWords,
+        public MasterQuestionParser(string filename, IEnumerable<string> questionWords,
             IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
@@ -82,14 +83,27 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(QuestionSections sections, IEnumerable<Word> questionWords,
+        public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
             IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
             m_sections = sections;
-            m_questionWords = questionWords;
-            m_customizations = customizations;
+	        m_questionWords = questionWords;
+	        if (questionWords != null)
+	        {
+		        m_questionWordsLookupTable = new Dictionary<int, List<List<Word>>>();
+		        foreach (string questionWordPhrase in questionWords)
+		        {
+			        List<Word> listOfWordsInQuestion = questionWordPhrase.Split(' ').Select(w => (Word) w).ToList();
+			        int count = listOfWordsInQuestion.Count;
+			        List<List<Word>> listOfQuestionsForCount;
+			        if (!m_questionWordsLookupTable.TryGetValue(count, out listOfQuestionsForCount))
+				        m_questionWordsLookupTable[count] = listOfQuestionsForCount = new List<List<Word>>();
+			        listOfQuestionsForCount.Add(listOfWordsInQuestion);
+		        }
+	        }
+	        m_customizations = customizations;
             if (keyTerms != null)
             {
                 m_keyTermsTable = new Dictionary<Word, List<KeyTermMatch>>(keyTerms.Count());
@@ -118,7 +132,7 @@ namespace SIL.Transcelerator
 	            if (question.IsParsable)
 	            {
 	                PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
-                        m_questionWords, question, GetOrCreatePart);
+                        m_questionWordsLookupTable, question, GetOrCreatePart);
 	                foreach (ParsedPart part in parser.Parse())
 	                    question.ParsedParts.Add(part);
 	            }
@@ -408,6 +422,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private SubPhraseMatch FindSubPhraseMatch(ParsedPart part)
 		{
+			if (m_questionWords != null && m_questionWords.Contains(part.Text))
+				return null;
+
 			int partWordCount = part.Words.Count;
 			for (int subPhraseWordCount = partWordCount - 1; subPhraseWordCount > 0; subPhraseWordCount--)
 			{

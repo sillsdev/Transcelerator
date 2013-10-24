@@ -77,7 +77,7 @@ namespace SIL.Transcelerator
 			this.m_lblAppVersion.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
 			this.m_lblAppVersion.Size = new System.Drawing.Size(282, 19);
 			this.m_lblAppVersion.TabIndex = 19;
-			this.m_lblAppVersion.Text = "Version {0} (Release Candidate)";
+			this.m_lblAppVersion.Text = "Version {0}";
 			this.m_lblAppVersion.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			this.m_lblAppVersion.UseMnemonic = false;
 			// 

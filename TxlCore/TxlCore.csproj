@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QuestionWords.cs" />
     <Compile Include="ParsedPart.cs" />
     <Compile Include="ParsedQuestions.cs" />
     <Compile Include="KeyTermMatchSurrogate.cs" />

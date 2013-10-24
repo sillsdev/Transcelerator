@@ -190,23 +190,37 @@ namespace SIL.Transcelerator
 			englishPhrase = englishPhrase.Normalize(NormalizationForm.FormC);
 			var phrase = m_phrases.FirstOrDefault(x => (reference == null || x.PhraseKey.ScriptureReference == reference) &&
 				x.PhraseKey.Text == englishPhrase);
-			if (phrase == null && reference != null)
+			if (phrase == null)
 			{
-				var iEndOfChapter = reference.IndexOf(".", StringComparison.InvariantCulture);
-				//                                                  0123456789
-				// "Magic numbers" based on a reference in the form ABC 0.0
-				// TO                                               ABC 000.000
-				if (iEndOfChapter >= 5 && iEndOfChapter <= 7)
+				foreach (TranslatablePhrase x in m_phrases.Where(p => p.AlternateForms != null))
 				{
-					reference = reference.Substring(0, iEndOfChapter + 1);
-					try
+					if (reference == null || x.PhraseKey.ScriptureReference == reference)
+						if (x.AlternateForms.Contains(englishPhrase))
 					{
-						phrase = m_phrases.SingleOrDefault(x => (x.PhraseKey.ScriptureReference.StartsWith(reference)) &&
-							x.PhraseKey.Text == englishPhrase);
+						phrase = x;
+						break;
 					}
-					catch (InvalidOperationException)
+				}
+
+				if (phrase == null && reference != null)
+				{
+					var iEndOfChapter = reference.IndexOf(".", StringComparison.InvariantCulture);
+					//                                                  0123456789
+					// "Magic numbers" based on a reference in the form ABC 0.0
+					// TO                                               ABC 000.000
+					if (iEndOfChapter >= 5 && iEndOfChapter <= 7)
 					{
-						phrase = null;
+						reference = reference.Substring(0, iEndOfChapter + 1);
+						try
+						{
+							phrase = m_phrases.SingleOrDefault(x => (x.PhraseKey.ScriptureReference.StartsWith(reference)) &&
+								x.PhraseKey.Text == englishPhrase);
+						}
+						catch (InvalidOperationException)
+						{
+							phrase = null;
+						}
+
 					}
 				}
 			}

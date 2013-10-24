@@ -61,7 +61,7 @@ namespace SIL.Transcelerator
         private IEnumerable<string> m_sectionRefs;
         private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
-        private readonly string m_masterQuestionsFilename;
+		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
         private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
@@ -2018,20 +2018,28 @@ namespace SIL.Transcelerator
 	        if (splashScreen != null)
 	            splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
 
-            FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
-            if (!finfoMasterQuestions.Exists)
-            {
-                MessageBox.Show("Required file missing: " + m_masterQuestionsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
-                return;
-            }
+			FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
+			if (!finfoMasterQuestions.Exists)
+			{
+				MessageBox.Show("Required file missing: " + m_masterQuestionsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				return;
+			}
 
-	        string keyTermRulesFilename = Path.Combine(Path.GetDirectoryName(
-	            Assembly.GetExecutingAssembly().Location) ?? string.Empty, "keyTermRules.xml");
+		    string installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
 
-            FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
+	        string keyTermRulesFilename = Path.Combine(installDir, "keyTermRules.xml");
+
             FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
             if (!finfoKtRules.Exists)
                 MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+
+			string questionWordsFilename = Path.Combine(installDir, TxlCore.questionWordsFilename);
+
+			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
+			if (!finfoQuestionWords.Exists)
+				MessageBox.Show("Expected file missing: " + questionWordsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+
+			FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
 
 	        FileInfo finfoTxlDll = new FileInfo(Assembly.GetExecutingAssembly().Location);
 
@@ -2039,8 +2047,9 @@ namespace SIL.Transcelerator
 	        ParsedQuestions parsedQuestions;
 	        if (finfoParsedQuestions.Exists &&
                 finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
-                finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
-                (!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
+				finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+				(!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
+				(!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
 	        {
@@ -2066,10 +2075,13 @@ namespace SIL.Transcelerator
 	            else
 	                rules.Initialize();
 
-	            LoadPhraseSubstitutionsIfNeeded();
+				QuestionWords questionWords = XmlSerializationHelper.DeserializeFromFile<QuestionWords>(questionWordsFilename, out e);
+				if (e != null)
+					MessageBox.Show(e.ToString(), Text);
 
-                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename,
-                    new List<Word>(new Word[] { "who", "what", "when", "why", "how", "where", "which" }), // TODO: Don't hardcode this -- needs to be localizable when non-English lists are supported
+		        LoadPhraseSubstitutionsIfNeeded();
+
+                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename, questionWords.Items,
                     m_getKeyTerms(), rules, customizations, m_phraseSubstitutions);
 	            parsedQuestions = parser.Result;
 	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);

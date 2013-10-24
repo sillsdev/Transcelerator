@@ -65,7 +65,8 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				//alternatives = new Dictionary<string, string[]>();
 				//foreach (Alternative a in qAlts.Items)
 				//{
-				//    Debug.Assert(!alternatives.ContainsKey(a.Text));
+				//    if (alternatives.ContainsKey(a.Text))
+				//        Debug.Fail("Duplicate key: " + a.Text);
 				//    alternatives[a.Text] = a.AlternateForms;
 				//}
 				alternatives = qAlts.Items.ToDictionary(a => a.Text, a => a.AlternateForms);

@@ -1078,12 +1078,26 @@
 		<Alt>What did John say about him?</Alt>
 		<Alt>What did John say about Christ?</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>What didn't [God] use to redeem them from the empty/worthless ways that they learned from their ancestors?</Original>
-		<Alt>What didn't God use to redeem them from the empty ways that they learned from their ancestors?</Alt>
-		<Alt>What didn't God use to redeem them from the Sworthless ways that they learned from their ancestors?</Alt>
-	</Alternative>
-	<Alternative>
+  <Alternative>
+    <Original>What didn't [God] use to redeem them from the empty/worthless ways that they learned from their ancestors?</Original>
+    <Alt>What didn't God use to redeem them from the empty ways that they learned from their ancestors?</Alt>
+    <Alt>What didn't God use to redeem them from the Sworthless ways that they learned from their ancestors?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>When did [God] choose Christ?</Original>
+    <Alt>When did God choose Christ?</Alt>
+    <Alt>When was Christ chosen?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] revealed Christ in these last days?</Original>
+    <Alt>What is the reason that God revealed Christ in these last days?</Alt>
+    <Alt>What is the reason that Christ was revealed in these last days?</Alt>
+    <Alt>Why did God reveal Christ in these last days?</Alt>
+    <Alt>Why was Christ revealed in these last days?</Alt>
+    <Alt>What is the reason that God revealed Christ in these last times?</Alt>
+    <Alt>What is the reason that Christ was revealed in these last times?</Alt>
+  </Alternative>
+  <Alternative>
 		<Original>What did [the preachers/teachers] preach to them?</Original>
 		<Alt>What did the preachers preach to them?</Alt>
 		<Alt>What did the teachers preach to them?</Alt>
@@ -2831,12 +2845,6 @@
     <Alt>Who planted the seed (the hard work)?</Alt>
   </Alternative>
   <Alternative>
-    <Original>What did his disciples remember after [God] glorified Jesus [when Jesus was resurrected by God and had returned to heaven]?</Original>
-    <Alt>What did his disciples remember after God glorified Jesus when Jesus was resurrected by God and had returned to heaven?</Alt>
-    <Alt>What did his disciples remember after God glorified Jesus?</Alt>
-    <Alt>What did his disciples remember when Jesus was resurrected by God and had returned to heaven?</Alt>
-  </Alternative>
-  <Alternative>
     <Original>What had made them [free from their sin]/clean?</Original>
     <Alt>What had made them free from their sin?</Alt>
     <Alt>What had made them clean?</Alt>
@@ -2906,5 +2914,372 @@
     <Alt>What will they say among the nations when the LORD restores the fortunes of Zion?</Alt>
     <Alt>What will they say among the heathens when the LORD returns the captives to Zion?</Alt>
     <Alt>What will they say among the heathens when the LORD restores the fortunes of Zion?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] give to this rider?</Original>
+    <Alt>What did God give to this rider?</Alt>
+    <Alt>What was given to this rider?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] give to each of them?</Original>
+    <Alt>What did God give to each of them?</Alt>
+    <Alt>What was given to each of them?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] tell them to do?</Original>
+    <Alt>What did God tell them to do?</Alt>
+    <Alt>What were they told to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] tell the locusts to do?</Original>
+    <Alt>What did God tell the locusts to do?</Alt>
+    <Alt>What were the locusts told to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What kind of power did [God] give to the locusts?</Original>
+    <Alt>What kind of power did [God] give to the locusts?</Alt>
+    <Alt>What kind of power was given to the locusts?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] tell John to do?</Original>
+    <Alt>What did God tell John to do?</Alt>
+    <Alt>What was John told to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] allow the second beast to do?</Original>
+    <Alt>What did God allow the second beast to do?</Alt>
+    <Alt>What was the second beast allowed to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What kind of things did [God] allow the beast to say?</Original>
+    <Alt>What kind of things did God allow the beast to say?</Alt>
+    <Alt>What kind of things was the beast allowed to say?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How long did [God] allow the beast to have authority?</Original>
+    <Alt>How long did God allow the beast to have authority?</Alt>
+    <Alt>How long was the beast allowed to have authority?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What power and authority did [God] give to the beast?</Original>
+    <Alt>What power and authority did God give to the beast?</Alt>
+    <Alt>What power and authority was given to the beast?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What will Satan do when [God] releases him from his prison?</Original>
+    <Alt>What will Satan do when God releases him from his prison?</Alt>
+    <Alt>What will Satan do when he is released from his prison?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] forgave their sins?</Original>
+    <Alt>What is the reason that God forgave their sins?</Alt>
+    <Alt>Why did God forgive their sins?</Alt>
+    <Alt>What is the reason that their sins were forgiven?</Alt>
+    <Alt>Why were their sins forgiven?</Alt>
+    <Alt>On what account were their sins forgiven?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How do we know that [God] is living in us?</Original>
+    <Alt>How do we know that God is living in us?</Alt>
+    <Alt>How do we know that he is living in us?</Alt>
+    <Alt>How do we know that Jesus is living in us?</Alt>
+    <Alt>How do we know God is living in us?</Alt>
+    <Alt>How do we know he is living in us?</Alt>
+    <Alt>How do we know Jesus is living in us?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] will help us to love others?</Original>
+    <Alt>What is the reason that God will help us to love others?</Alt>
+    <Alt>What is the reason that God's love is perfected among us?</Alt>
+    <Alt>What is the reason that God's love is made complete among us?</Alt>
+    <Alt>What is the result of having God's love in us?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] reveal to the prophets about their work?</Original>
+    <Alt>What did God reveal to the prophets about their work?</Alt>
+    <Alt>What was revealed to the prophets about their work?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] use in order to redeem them?</Original>
+    <Alt>What did God use in order to redeem them?</Alt>
+    <Alt>What was used in order to redeem them?</Alt>
+    <Alt>What did God use to redeem them?</Alt>
+    <Alt>What was used to redeem them?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did [God] decide, long ago, to do to these false teachers?</Original>
+    <Alt>What did God decide, long ago, to do to these false teachers?</Alt>
+    <Alt>What fate was determined long ago for these false teachers?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What power did [God] give to Death and Hades?</Original>
+    <Alt>What power did God give to Death and Hades?</Alt>
+    <Alt>What power was given to Death and Hades?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that we do not have to be afraid of what [God] will do to us?</Original>
+    <Alt>What is the reason that we do not have to be afraid of what God will do to us?</Alt>
+    <Alt>What is the reason that we do not have to be afraid of what will happen to us on the day of judgment?</Alt>
+    <Alt>What is the reason that we do not have to be afraid?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the purpose that [God] made them his possession?</Original>
+    <Alt>What is the purpose that God made them his possession?</Alt>
+    <Alt>What is the purpose that he made them his possession?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What has [God] called all believers to experience?</Original>
+    <Alt>What has God called all believers to experience?</Alt>
+    <Alt>What have all believers been called to experience?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How were they supposed to use the abilities that [God] had given to them?</Original>
+    <Alt>How were they supposed to use the abilities that God had given to them?</Alt>
+    <Alt>How were they supposed to use the abilities that had been given to them?</Alt>
+    <Alt>How were they supposed to use the abilities they had received?</Alt>
+    <Alt>How were they supposed to use the gifts that God had given to them?</Alt>
+    <Alt>How were they supposed to use the gifts that had been given to them?</Alt>
+    <Alt>How were they supposed to use the gifts they had received?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] will punish them like this/that?</Original>
+    <Alt>What is the reason that God will punish them like this?</Alt>
+    <Alt>What is the reason that God will punish them like that?</Alt>
+    <Alt>What is the reason they will be punished like this?</Alt>
+    <Alt>What is the reason they will be punished like that?</Alt>
+    <Alt></Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did John want [God] to do for Gaius?</Original>
+    <Alt>What did John want God to do for Gaius?</Alt>
+    <Alt>What did John want for Gaius?</Alt>
+    <Alt>What blessing did John want for Gaius?</Alt>
+    <Alt>What blessing did John want God to give to Gaius?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What signs did [God] give to show that he authorized the message that the apostles taught?</Original>
+    <Alt>What signs did God give to show that he authorized the message that the apostles taught?</Alt>
+    <Alt>What signs did God to through the apostles to show that he authorized the message they taught?</Alt>
+    <Alt>What signs were done through the apostles?</Alt>
+    <Alt>What signs did the apostles do to show that their message was authroized by God?</Alt>
+    <Alt>What signs did the apostles do to show that their message was from God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Simon do when he saw that [God] gave the Holy Spirit [to the believers] when Peter and John laid their hands on them?</Original>
+    <Alt>What did Simon do when he saw that God gave the Holy Spirit to the believers when Peter and John laid their hands on them?</Alt>
+    <Alt>What did Simon do when he saw that God gave the Holy Spirit when Peter and John laid their hands on the believers?</Alt>
+    <Alt>What did Simon do when he saw that the Holy Spirit was given to the believers when Peter and John laid their hands on them?</Alt>
+    <Alt>What did Simon do when he saw that the Holy Spirit was given when Peter and John laid their hands on the believers?</Alt>
+    <Alt>What did Simon do when he saw that the believers received the Holy Spirit when Peter and John laid their hands on them?</Alt>
+    <Alt></Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What miracle did [God] enable Paul to do in Lystra?</Original>
+    <Alt>What miracle did God enable Paul to do in Lystra?</Alt>
+    <Alt>What miracle was Paul able to do in Lystra?</Alt>
+    <Alt>What miracle did Paul do in Lystra?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What authority did Paul say that Christ has over everything that [God] has created?</Original>
+    <Alt>What authority did Paul say that Christ has over everything that God has created?</Alt>
+    <Alt>What authority did Paul say that Christ has over everything that he has created?</Alt>
+    <Alt>What authority did Paul say that Christ has over everything that has been created?</Alt>
+    <Alt>What authority did Paul say that Christ has over all creation?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What else did Paul pray that [God] would do for the believers?</Original>
+    <Alt>What else did Paul pray that God would do for the believers?</Alt>
+    <Alt>What else did Paul pray would be done for the believers?</Alt>
+    <Alt>What else did Paul pray for the believers?</Alt>
+    <Alt>How else did Paul ask God to help the believers?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What had [God] caused Paul to know?</Original>
+    <Alt>What had God caused Paul to know?</Alt>
+    <Alt>What had God revealed to Paul?</Alt>
+    <Alt>What had been made known to Paul?</Alt>
+    <Alt>What had God made known to Paul?</Alt>
+    <Alt>What did Paul know through a divine revelation?</Alt>
+    <Alt>What did Paul know through a revelation?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How did they realize that [God] had chosen Paul to preach to the Gentiles?</Original>
+    <Alt>How did they realize that God had chosen Paul to preach to the Gentiles?</Alt>
+    <Alt>How did they realize that Paul had been chosen to preach to the Gentiles?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How many years later did [God] give the law to his people?</Original>
+    <Alt>How many years later did God give the law to his people?</Alt>
+    <Alt>How many years later did the law come?</Alt>
+    <Alt>How many years later did God's people receive the law?</Alt>
+    <Alt>How many years later did the Jews receive the law?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Paul say would have been the result if [God] had given a law that could give life?</Original>
+    <Alt>What did Paul say would have been the result if God had given a law that could give life?</Alt>
+    <Alt>What did Paul say would have been the result if a law had been given that could give life?</Alt>
+    <Alt>What did Paul say would have been the result if the law could give life?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What was the reason that [God] did that?</Original>
+    <Alt>What was the reason that God did that?</Alt>
+    <Alt>What was the reason that everyone is shut up under sin?</Alt>
+    <Alt>What was the reason that everyone is under the control of sin?</Alt>
+    <Alt>What was the reason that God shut up everyone under sin?</Alt>
+    <Alt>What was the reason that God used Scripture to shut up everyone under sin?</Alt>
+    <Alt>What was the reason that God used Scripture to bring everyone under the control sin?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Who was [God] speaking to in this scripture?</Original>
+    <Alt>Who was God speaking to in this scripture?</Alt>
+    <Alt>To whom was God speaking in this scripture?</Alt>
+    <Alt>Who was being addressed in this scripture?</Alt>
+    <Alt>Who was being spoken to in this scripture?</Alt>
+    <Alt>To whom was this scripture spoken?</Alt>
+    <Alt>To whom was this scripture directed?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How does [God] make them righteous?</Original>
+    <Alt>How does God make them righteous?</Alt>
+    <Alt>How does God make people righteous?</Alt>
+    <Alt>How will God make us righteous?</Alt>
+    <Alt>How are they made righteous?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] considered Abraham righteous?</Original>
+    <Alt>What is the reason that God considered Abraham righteous?</Alt>
+    <Alt>What is the reason that Abraham was considered righteous?</Alt>
+    <Alt>Why did God consider Abraham righteous?</Alt>
+    <Alt>Why was Abraham considered righteous?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What is the reason that [God] called Abraham his friend?</Original>
+    <Alt>What is the reason that God called Abraham his friend?</Alt>
+    <Alt>What is the reason that Abraham was called God's friend?</Alt>
+    <Alt>What is the reason that Abraham was called a friend of God?</Alt>
+    <Alt>Why did God call Abraham his friend?</Alt>
+    <Alt>Why was Abraham called God's friend?</Alt>
+    <Alt>Why was Abraham called a friend of God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What good thing did Rahab do so that [God] considered her a righteous person?</Original>
+    <Alt>What good thing did Rahab do so that God considered her a righteous person?</Alt>
+    <Alt>What good thing did Rahab do so that God considered her righteous?</Alt>
+    <Alt>What good thing did Rahab do so that she was considered a righteous person?</Alt>
+    <Alt>What good thing did Rahab do to be considered a righteous person?</Alt>
+    <Alt>What good thing did Rahab do to be considered righteous?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>After stating the fact that [God] is the only one who can save and destroy them, what did James tell them?</Original>
+    <Alt>After stating the fact that God is the only one who can save and destroy them, what did James tell them?</Alt>
+    <Alt>After stating that God is the only one who can save and destroy them, what did James tell them?</Alt>
+    <Alt>After stating that their is only one who can save and destroy, what did James tell them?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>When will [God] judge all people?</Original>
+    <Alt>When will God judge all people?</Alt>
+    <Alt>When will Christ judge all people?</Alt>
+    <Alt>When will all people be judged?</Alt>
+    <Alt>When is judgment going to occur?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What else will [God] do for the sick person?</Original>
+    <Alt>What else will God do for the sick person?</Alt>
+    <Alt>What else will the Lord do for the sick person?</Alt>
+    <Alt>What else will be done for the sick person?</Alt>
+    <Alt>What else will the sick person receive?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Whom did he [God] call gods?</Original>
+    <Alt>Whom did he call gods?</Alt>
+    <Alt>Whom did God call gods?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Jesus tell them that [someone] had written in their law?</Original>
+    <Alt>What did Jesus tell them that someone had written in their law?</Alt>
+    <Alt>What did Jesus tell them had been written in their law?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did his disciples remember after [God] glorified Jesus [when Jesus was resurrected by God and had returned to heaven]?</Original>
+    <Alt>What did his disciples remember when Jesus was resurrected by God and had returned to heaven?</Alt>
+    <Alt>What did his disciples remember after God glorified Jesus?</Alt>
+    <Alt>What did his disciples remember after Jesus was glorified and had returned to heaven?</Alt>
+    <Alt>What did his disciples remember after Jesus was glorified?</Alt>
+    <Alt>What did his disciples remember when Jesus had risen from the dead and returned to heaven?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did those people do that caused [God] to punish them?</Original>
+    <Alt>What did those people do that caused God to punish them?</Alt>
+    <Alt>What did those people do that caused them to be punished?</Alt>
+    <Alt>What did those people do to earn punishment?</Alt>
+    <Alt>What did those people do that caused them to undergo punishment?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How did [God] punish those people for the sinful acts they committed?</Original>
+    <Alt>How did [God] punish those people for the sinful acts they committed?</Alt>
+    <Alt>How were those people punished for the sinful acts they committed?</Alt>
+    <Alt>What punishment did those people receive for the sinful acts they committed?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Jude say that [God] is able to do for them?</Original>
+    <Alt>What did Jude say that God is able to do for them?</Alt>
+    <Alt>What did Jude say that God is able to do for you?</Alt>
+    <Alt>What did Jude say that God is able to do for us?</Alt>
+    <Alt>What did Jude say that God is able to do for Christians?</Alt>
+    <Alt>What is God is able to do for them?</Alt>
+    <Alt>What is God is able to do for you?</Alt>
+    <Alt>What is God is able to do for us?</Alt>
+    <Alt>What is God is able to do for Christians?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How would [God] respond to whatever Peter prohibited or permitted on earth?</Original>
+    <Alt>How would God respond to whatever Peter prohibited or permitted on earth?</Alt>
+    <Alt>What would happen in response to Peter prohibiting or permitting something on earth?</Alt>
+    <Alt>What would be the result of Peter prohibiting or permitting something on earth?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How would [God] respond to whatever the disciples prohibited or permitted on earth?</Original>
+    <Alt>How would God respond to whatever the disciples prohibited or permitted on earth?</Alt>
+    <Alt>What would happen in response to the disciples prohibiting or permitting something on earth?</Alt>
+    <Alt>What would be the result of the disciples prohibiting or permitting something on earth?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What will [God] do to the person who exalts himself?</Original>
+    <Alt>What will God do to the person who exalts himself?</Alt>
+    <Alt>What will happen to the person who exalts himself?</Alt>
+    <Alt>What will be done to the person who exalts himself?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What will [God] do to the person who humbles himself?</Original>
+    <Alt>What will God do to the person who humbles himself?</Alt>
+    <Alt>What will happen to the person who humbles himself?</Alt>
+    <Alt>What will be done to the person who humbles himself?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did the people whom [God] had raised to life do after [God] had raised Jesus to life?</Original>
+    <Alt>What did the people whom God had raised to life do after God had raised Jesus to life?</Alt>
+    <Alt>What did the people who had been had raised to life do after Jesus had been raised to life?</Alt>
+    <Alt>What did the people whom God had raised to life do after Jesus' resurrection?</Alt>
+    <Alt>What did the saints whom God had raised to life do after God had raised Jesus to life?</Alt>
+    <Alt>What did the saints who had been had raised to life do after Jesus had been raised to life?</Alt>
+    <Alt>What did the saints whom God had raised to life do after Jesus' resurrection?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>How did [God] consider Paul, after Paul had done all that the [Jewish] laws required him to do?</Original>
+    <Alt>How did God consider Paul, after Paul had done all that the Jewish laws required him to do?</Alt>
+    <Alt>How did God consider Paul, after Paul had done all that the Law required him to do?</Alt>
+    <Alt>What was the source of Paul's righteousness?</Alt>
+    <Alt>What was the basis of Paul's righteousness?</Alt>
+    <Alt>How did Paul think God would evaluate him?</Alt>
+    <Alt>How did Paul think God would evaluate him after Paul had done all that the Law required him to do?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Where did Paul say [God] had written the names of all those fellow-workers?</Original>
+    <Alt>Where did Paul say God had written the names of all those fellow-workers?</Alt>
+    <Alt>Where did Paul say the names of all those fellow-workers had been written?</Alt>
+    <Alt>Where did Paul say the names of all those fellow-workers were written?</Alt>
+    <Alt>Where did Paul say God had written the names of all his fellow-workers?</Alt>
+    <Alt>Where did Paul say the names of all his fellow-workers had been written?</Alt>
+    <Alt>Where did Paul say the names of all his fellow-workers were written?</Alt>
   </Alternative>
 </QuestionAlternativeOverrides>
