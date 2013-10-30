@@ -355,14 +355,23 @@
 		<Alt>What was the reason that God sent the spirit of his son into their hearts?</Alt>
 		<Alt>What was the reason that God sent the spirit of his son into their lives?</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>What does the author say about this expectation/hope they have? (or, What does it say about an anchor?)</Original>
-		<Alt>What does the author say about this expectation they have?</Alt>
-		<Alt>What does the author say about this hope they have?</Alt>
-		<Alt>What does it say about an anchor?</Alt>
-		<Alt>What does the author say about this expectation they have? (What does it say about an anchor?)</Alt>
-		<Alt>What does the author say about this hope they have? (What does it say about an anchor?)</Alt>
-	</Alternative>
+  <Alternative>
+    <Original>What does the author say about this expectation/hope they have? // What does it say about an anchor?</Original>
+    <Alt>What does the author say about this expectation they have?</Alt>
+    <Alt>What does the author say about this hope they have?</Alt>
+    <Alt>What does it say about an anchor?</Alt>
+    <Alt>What does the author say about this expectation they have? (What does it say about an anchor?)</Alt>
+    <Alt>What does the author say about this hope they have? (What does it say about an anchor?)</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What was the place of worship/sanctuary/tabernacle like? // What does these verses tell us about the place of worship/sanctuary/tabernacle?</Original>
+    <Alt>What was the place of worship like?</Alt>
+    <Alt>What was the sanctuary like?</Alt>
+    <Alt>What was the tabernacle like?</Alt>
+    <Alt>What does these verses tell us about the place of worship?</Alt>
+    <Alt>What does these verses tell us about the sanctuary?</Alt>
+    <Alt>What does these verses tell us about the tabernacle?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>What were they doing that made Paul believe that they were becoming slaves of those things/worshipping false gods/following false teachings again?</Original>
 		<Alt>What were they doing that made Paul believe that they were becoming slaves of those things again?</Alt>
@@ -1555,11 +1564,6 @@
 		<Alt>What does it say about the Son here?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>It says God called his Son, "Lord." Why do you think the writer told us that? (or, What does that teach/show us?)</Original>
-		<Alt>It says God called his Son, "Lord." Why do you think the writer told us that? (or, What does that show us?)</Alt>
-		<Alt>It says God called his Son, "Lord." Why do you think the writer told us that? (or, What does that teach us?)</Alt>
-	</Alternative>
-	<Alternative>
 		<Original>How did they confirm it/prove it to be true? How did people know that what they said was true?</Original>
 		<Alt>How did they confirm it to be true? How did people know that what they said was true?</Alt>
 		<Alt>How did they prove it to be true? How did people know that what they said was true?</Alt>
@@ -1574,11 +1578,18 @@
 		<Alt>The author reminds them that they have been chosen for God. Why do you think he does that here? (Optional question, few readers can answer.)</Alt>
 		<Alt>The author reminds them that they have been set apart for God. Why do you think he does that here? (Optional question, few readers can answer.)</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>The author tells them to be careful/to watch. What are they to watch for? (or, The part before talked about the Israelite ancestors. Why do you think he was talking about them?) (or, What does this part have to do with what he just said about the ancestors?)</Original>
-		<Alt>The author tells them to be careful. What are they to watch for? (or, The part before talked about the Israelite ancestors. Why do you think he was talking about them?) (or, What does this part have to do with what he just said about the ancestors?)</Alt>
-		<Alt>The author tells them to watch. What are they to watch for? (or, The part before talked about the Israelite ancestors. Why do you think he was talking about them?) (or, What does this part have to do with what he just said about the ancestors?)</Alt>
-	</Alternative>
+  <Alternative>
+    <Original>The author tells them to be careful/to watch. What are they to watch for? // The part before talked about the Israelite ancestors. Why do you think he was talking about them? // What does this part have to do with what he just said about the ancestors?</Original>
+    <Alt>The author tells them to be careful. What are they to watch for?</Alt>
+    <Alt>The author tells them to watch. What are they to watch for?</Alt>
+    <Alt>The part before talked about the Israelite ancestors. Why do you think he was talking about them?</Alt>
+    <Alt>What does this part have to do with what he just said about the ancestors?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>It says in verse 12 that they are not to turn from the "living God." What does that mean? // Why do you think he said "living God" instead of just "God?"</Original>
+    <Alt>It says in verse 12 that they are not to turn from the "living God." What does that mean?</Alt>
+    <Alt>It says in verse 12 that they are not to turn from the "living God." Why do you think he said "living God" instead of just "God?"</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>Why is the author telling them what David said? or What do these words of David tell/teach them about the rest God gives his people?</Original>
 		<Alt>Why is the author telling them what David said? or What do these words of David teach them about the rest God gives his people?</Alt>
@@ -1590,14 +1601,24 @@
 		<Alt>It says God made him a priest  like Melchizedek. What do you think that means?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>Why is the author telling us about a field/ground?</Original>
-		<Alt>Why is the author telling us about a field?</Alt>
-		<Alt>Why is the author telling us about ground?</Alt>
-	</Alternative>
+    <Original>What does this say about God? // What does God do with a field/ground which produces well?</Original>
+    <Alt>What does this say about God?</Alt>
+    <Alt>What does God do with a field which produces well?</Alt>
+    <Alt>What does God do with ground which produces well?</Alt>
+    <Alt>What does God do with a field which produces a good harvest?</Alt>
+    <Alt>What does God do with ground which produces a good harvest?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Why is the author telling us about a field/ground?</Original>
+    <Alt>Why is the author telling us about a field?</Alt>
+    <Alt>Why is the author telling us about ground?</Alt>
+  </Alternative>
 	<Alternative>
-		<Original>Why? (or, the translator may need to ask what each part of the metaphor represents and "What does God do with a field/ground which produces well?")</Original>
-		<Alt>Why? (or, the translator may need to ask what each part of the metaphor represents and "What does God do with a field which produces well?")</Alt>
-		<Alt>Why? (or, the translator may need to ask what each part of the metaphor represents and "What does God do with ground which produces well?")</Alt>
+		<Original>Why? // What does each part of the metaphor represent? // What does the ground/field represent? What does the rain represent? What does the useful vegetation represent? What do the thorns and thistles represent? What does burning represent?</Original>
+    <Alt>Why?</Alt>
+    <Alt>What does each part of the metaphor represent?</Alt>
+    <Alt>What does the ground represent? What does the rain represent? What does the useful vegetation represent? What do the thorns and thistles represent? What does burning represent?</Alt>
+    <Alt>What does the field represent? What does the rain represent? What does the useful vegetation represent? What do the thorns and thistles represent? What does burning represent?</Alt>
 	</Alternative>
 	<Alternative>
 		<Original>What else? or How/Why did he become a priest then?</Original>
@@ -1605,10 +1626,15 @@
 		<Alt>What else? or Why did he become a priest then?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>What else does it say about a way to come to God/be made acceptable to God?</Original>
-		<Alt>What else does it say about a way to come to God?</Alt>
-		<Alt>What else does it say about a way to be made acceptable to God?</Alt>
-	</Alternative>
+    <Original>What else does it say about a way to come to God/be made acceptable to God?</Original>
+    <Alt>What else does it say about a way to come to God?</Alt>
+    <Alt>What else does it say about a way to be made acceptable to God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What else does he say about making/how he made the vow?</Original>
+    <Alt>What else does he say about making the vow?</Alt>
+    <Alt>What else does he say about how he made the vow?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>What kind of system/what way do the earthly priests offer sacrifices?</Original>
 		<Alt>According to what kind of system do the earthly priests offer sacrifices?</Alt>
@@ -3281,5 +3307,22 @@
     <Alt>Where did Paul say God had written the names of all his fellow-workers?</Alt>
     <Alt>Where did Paul say the names of all his fellow-workers had been written?</Alt>
     <Alt>Where did Paul say the names of all his fellow-workers were written?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What does this say about God/the Son?</Original>
+    <Alt>What does this say about God?</Alt>
+    <Alt>What does this say about the Son?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>It says God called his Son, "Lord." Why do you think the writer told us that? // What does that teach/show us?</Original>
+    <Alt>It says God called his Son, "Lord." Why do you think the writer told us that?</Alt>
+    <Alt>It says God called his Son, "Lord." What does that teach us?</Alt>
+    <Alt>It says God called his Son, "Lord." What does that show us?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did the master/king/Jesus say that the people were to learn from the way that the king treated the servants in the parable?</Original>
+    <Alt>What did the master say that the people were to learn from the way that the king treated the servants in the parable?</Alt>
+    <Alt>What did the king say that the people were to learn from the way that the king treated the servants in the parable?</Alt>
+    <Alt>What did Jesus say that the people were to learn from the way that the king treated the servants in the parable?</Alt>
   </Alternative>
 </QuestionAlternativeOverrides>

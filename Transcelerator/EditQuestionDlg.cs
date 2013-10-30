@@ -71,7 +71,9 @@ namespace SIL.Transcelerator
 
 		private void m_rdoAlternative_CheckedChanged(object sender, EventArgs e)
 		{
-			m_txtModified.Text = ((RadioButton)sender).Text;
+			var btn = ((RadioButton) sender);
+			if (btn.Checked)
+				m_txtModified.Text = btn.Text;
 		}
 
 		private void btnReset_Click(object sender, EventArgs e)
