@@ -32,10 +32,68 @@ namespace SIL.Transcelerator
             base.Setup();
 	        DummyKeyTermRenderingInfo.s_ktRenderings = m_dummyKtRenderings;
 	        TranslatablePhrase.s_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
-        }
+		}
 
-        #region AppliesToReference tests
-        [Test]
+		#region Constructor tests
+		[Test]
+		public void Constructor_NonModifiedPhrase_ModifiedPhraseNotSet()
+		{
+			var qk = new Question();
+			qk.Text = "What doe\u0301s the fox say?";
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
+			Assert.IsNull(phrase.ModifiedPhrase);
+			Assert.IsFalse(phrase.IsExcludedOrModified);
+		}
+
+		[Test]
+		public void Constructor_ModifiedPhrase_ModifiedPhraseSet()
+		{
+			var qk = new Question();
+			qk.Text = "What doe\u0301s the fox say?";
+			qk.ModifiedPhrase = "Does the\u0301 fox say anything?";
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			Assert.AreEqual("Does th\u00e9 fox say anything?", phrase.ModifiedPhrase);
+			Assert.IsTrue(phrase.IsExcludedOrModified);
+			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
+		}
+
+		[Test]
+		public void Constructor_UserAddedPhraseWithEnglishVersion_OriginalSetToGuid()
+		{
+			var qk = new Question();
+			qk.IsUserAdded = true;
+			qk.Text = null;
+			qk.ModifiedPhrase = "What's up with the\u0301 fox?";
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.ModifiedPhrase);
+			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.PhraseInUse);
+			Assert.IsTrue(phrase.IsUserAdded);
+			Assert.IsFalse(phrase.IsExcludedOrModified);
+			Assert.IsTrue(phrase.OriginalPhrase.StartsWith(Question.kGuidPrefix));
+			Assert.AreEqual(TypeOfPhrase.Question, phrase.TypeOfPhrase);
+		}
+
+		[Test]
+		public void Constructor_UserAddedPhraseWithNoEnglishVersion_OriginalSetToEmpty()
+		{
+			var qk = new Question();
+			qk.IsUserAdded = true;
+			qk.Text = null;
+			var id = qk.Text;
+			Assert.IsTrue(id.StartsWith(Question.kGuidPrefix));
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			Assert.AreEqual(string.Empty, phrase.PhraseInUse);
+			Assert.IsTrue(phrase.IsUserAdded);
+			Assert.IsFalse(phrase.IsExcludedOrModified);
+			Assert.AreEqual(string.Empty, phrase.OriginalPhrase);
+			Assert.AreEqual(TypeOfPhrase.NoEnglishVersion, phrase.TypeOfPhrase);
+			Assert.AreEqual(id, phrase.QuestionInfo.Text);
+		}
+		#endregion
+
+		#region AppliesToReference tests
+		[Test]
         public void AppliesToReference_CategoryName_ReturnsFalse()
         {
             m_sections.Items[0].Categories[0].Type = "Overview";

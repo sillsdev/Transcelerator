@@ -394,6 +394,7 @@ namespace SIL.Transcelerator
             // On Windows XP, TXL comes up underneath Paratext. See if this fixes it:
             TopMost = true;
             TopMost = false;
+			Application.AddMessageFilter(this);
         }
 
 		/// ------------------------------------------------------------------------------------
@@ -423,6 +424,8 @@ namespace SIL.Transcelerator
 			}
             if (!e.Cancel)
                 Properties.Settings.Default.Save();
+
+			Application.RemoveMessageFilter(this);
 
 			base.OnClosing(e);
 		}
@@ -1891,7 +1894,6 @@ namespace SIL.Transcelerator
 			TextControl.DragOver += TextControl_Drag;
 			TextControl.GiveFeedback += TextControl_GiveFeedback;
 			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
-			Application.AddMessageFilter(this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1906,7 +1908,6 @@ namespace SIL.Transcelerator
 			{
 				m_lastTranslationSelectionState = new SubstringDescriptor(TextControl);
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
-				Application.RemoveMessageFilter(this);
 				TextControl.DragEnter -= TextControl_Drag;
 				TextControl.DragOver -= TextControl_Drag;
 				TextControl.DragDrop -= TextControl_DragDrop;
@@ -2013,7 +2014,7 @@ namespace SIL.Transcelerator
 	    /// Loads the translations.
 	    /// </summary>
 	    /// ------------------------------------------------------------------------------------
-	    private void LoadTranslations(TxlSplashScreen splashScreen)
+		private void LoadTranslations(IProgressMessage splashScreen)
 	    {
 	        if (splashScreen != null)
 	            splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
@@ -2460,7 +2461,7 @@ namespace SIL.Transcelerator
 				// text from an outside app will not come in as a StringFormat
 				// object and no other control in Transcelerator supports
 				// moving string data.
-				e.Effect = m_fEnableDragDrop ? DragDropEffects.Move : DragDropEffects.None;
+				e.Effect = DragDropEffects.Move;
 			}
 			else if ((e.AllowedEffect & (DragDropEffects.Copy)) > 0 &&
 				(e.Data.GetDataPresent(DataFormats.StringFormat, false) ||
@@ -2478,6 +2479,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		void TextControl_GiveFeedback(object sender, GiveFeedbackEventArgs e)
 		{
+			if (!m_fEnableDragDrop && e.Effect == DragDropEffects.Move)
+			{
+				e.UseDefaultCursors = false;
+			}
 			//var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(MousePosition));
 
 			//if (e.Effect == DragDropEffects.Move && TextControl.SelectionLength > 0 &&
@@ -2501,6 +2506,15 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void TextControl_DragDrop(object sender, DragEventArgs e)
 		{
+			var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(new Point(e.X, e.Y)));
+
+			if (!m_fEnableDragDrop)
+			{
+				TextControl.SelectionStart = ichInsert;
+				TextControl.SelectionLength = 0;
+				return;
+			}
+
 			bool fMove = e.Effect == DragDropEffects.Move;
 
 			if ((fMove || e.Effect == DragDropEffects.Copy) &&
@@ -2510,7 +2524,6 @@ namespace SIL.Transcelerator
 			{
 				string text = ((string)e.Data.GetData(DataFormats.StringFormat));
 
-				var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(new Point(e.X, e.Y)));
 				if (fMove && TextControl.SelectionLength > 0 &&
 					ichInsert >= TextControl.SelectionStart &&
 					ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)

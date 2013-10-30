@@ -22,7 +22,7 @@ namespace SIL.Transcelerator
 	/// Transcelerator Splash Screen
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class TxlSplashScreen : IDisposable
+	public class TxlSplashScreen : IProgressMessage, IDisposable
 	{
 		#region Data members
 		private delegate void SetStringPropDelegate(string value);

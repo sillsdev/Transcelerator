@@ -53,11 +53,16 @@ namespace SIL.Transcelerator
 		/// a phrase within a particular category and reference).</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(QuestionKey questionInfo, int category, int seqNumber)
-			: this(questionInfo.PhraseInUse)
+			: this(questionInfo.Text,
+			questionInfo is Question ? ((Question)questionInfo).ModifiedPhrase : null)
 		{
 			m_questionInfo = questionInfo;
 			m_category = category;
 			m_seqNumber = seqNumber;
+			// The following is normally done by the ModifiedPhrase setter, but there's a
+			// chicken-and-egg problem when constructing this, so we need to do it here.
+			if (IsUserAdded && m_sModifiedPhrase != null)
+				m_questionInfo.Text = m_sModifiedPhrase;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -66,12 +71,29 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <param name="phrase">The original phrase.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(string phrase)
+		public TranslatablePhrase(string phrase) : this(phrase, null)
 		{
-			m_sOrigPhrase = phrase.Normalize(NormalizationForm.FormC);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
+		/// </summary>
+		/// <param name="originalPhrase">The original phrase. (Possibly a user-added phrase, in
+		/// which case it will be a GUID, prefaced by Question.kGuidPrefix) </param>
+		/// <param name="modifiedPhrase">The modified phrase.</param>
+		/// ------------------------------------------------------------------------------------
+		public TranslatablePhrase(string originalPhrase, string modifiedPhrase)
+		{
+			m_sOrigPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
+			if (!string.IsNullOrEmpty(modifiedPhrase))
+			{
+				m_sModifiedPhrase = modifiedPhrase.Normalize(NormalizationForm.FormC);
+
+			}
 			if (!String.IsNullOrEmpty(m_sOrigPhrase))
 			{
-				switch (m_sOrigPhrase[m_sOrigPhrase.Length - 1])
+				switch (PhraseInUse[PhraseInUse.Length - 1])
 				{
 					case '?': m_type = TypeOfPhrase.Question; break;
 					case '.': m_type = TypeOfPhrase.StatementOrImperative; break;
