@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Serialization;
 using SIL.Utils;
@@ -21,6 +22,7 @@ namespace SIL.Transcelerator
     {
         TranslatablePart,
         KeyTerm,
+		Number,
     }
 
 	/// ----------------------------------------------------------------------------------------
@@ -34,6 +36,7 @@ namespace SIL.Transcelerator
 	    #region Data members
 	    private string m_text;
 	    private List<Word> m_words;
+		private readonly int m_value;
 	    private List<Question> m_owners;
 	    #endregion
 
@@ -49,17 +52,28 @@ namespace SIL.Transcelerator
         {
             get
             {
-                if (m_text == null)
-                    m_text = m_words.ToString(" ");
-                return m_text;
+	            if (m_text == null && Type != PartType.Number)
+			        m_text = m_words.ToString(" ");
+	            return m_text;
             }
             set // Intended only for XML deserialization (but also tested in unit tests)
             {
-                if (m_words != null)
+				if (Type == PartType.Number)
+					throw new InvalidOperationException("Can't set Text for numeric part.");
+				if (m_words != null)
                     throw new InvalidOperationException("Can't set Text if Words has already been set.");
-                m_text = value;
+				m_text = value;
             }
         }
+
+		/// ----------------------------------------------------------------------------------------
+		/// <summary>String of words (lowercase, space-separated) that comprise the part</summary>
+		/// ----------------------------------------------------------------------------------------
+		[XmlText]
+		public int NumericValue
+		{
+			get { return m_value; }
+		}
 
         /// ----------------------------------------------------------------------------------------
         /// <summary>List of Words</summary>
@@ -69,7 +83,7 @@ namespace SIL.Transcelerator
         {
             get
             {
-                if (m_words == null)
+                if (m_words == null && Type != PartType.Number)
                 {
                     string[] words = m_text.Split(' ');
                     m_words = new List<Word>(words.Length);
@@ -80,9 +94,11 @@ namespace SIL.Transcelerator
             }
 			set // Intended only for XML deserialization (but also tested in unit tests)
             {
-                if (m_text != null)
+				if (Type == PartType.Number)
+					throw new InvalidOperationException("Can't set Words for numeric part.");
+				if (m_text != null)
                     throw new InvalidOperationException("Can't set Words if Text has already been set.");
-                m_words = value;
+				m_words = value;
             }
         }
 
@@ -128,7 +144,18 @@ namespace SIL.Transcelerator
         {
             m_text = match.TermId;
             Type = PartType.KeyTerm;
-        }
+		}
+
+		/// ----------------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor for a translatable part
+		/// </summary>
+		/// ----------------------------------------------------------------------------------------
+		public ParsedPart(int numericValue)
+		{
+			m_value = numericValue;
+			Type = PartType.Number;
+		}
 	    #endregion
 
 	    #region Public methods
@@ -139,7 +166,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public override string ToString()
 		{
-			return Type + ": " + Words;
+			return Type + ": " + (Type == PartType.Number ? m_value.ToString(CultureInfo.InvariantCulture) : Words.ToString());
 		}
 
         /// ------------------------------------------------------------------------------------

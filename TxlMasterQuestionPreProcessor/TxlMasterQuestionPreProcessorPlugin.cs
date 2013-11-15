@@ -102,7 +102,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 		private void InitializeErrorHandling()
 		{
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = "tom_bogle@sil.org";
+			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
 			ErrorReport.AddStandardProperties();
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
 			ExceptionHandler.Init(new WinFormsExceptionHandler());

@@ -38,7 +38,7 @@ namespace SIL.Transcelerator
 		internal readonly QuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
-		private bool m_allTermsMatch;
+		private bool m_allTermsAndNumbersMatch;
 		internal static IPhraseTranslationHelper s_helper;
 		#endregion
 
@@ -302,7 +302,7 @@ namespace SIL.Transcelerator
 				if (m_fHasUserTranslation)
 					return m_sTranslation;
 				if (!string.IsNullOrEmpty(m_sTranslation))
-					return String.Format(m_sTranslation, KeyTermRenderings);
+					return String.Format(m_sTranslation, KeyTermRenderings.Union(NumberRenderings).ToArray());
 				return s_helper.InitialPunctuationForType(TypeOfPhrase) +
 					m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this)) +
 					s_helper.FinalPunctuationForType(TypeOfPhrase);
@@ -355,7 +355,7 @@ namespace SIL.Transcelerator
 								m_sTranslation = similarPhrase.Translation;
 								return;
 							}
-							if (similarPhrase.m_allTermsMatch)
+							if (similarPhrase.m_allTermsAndNumbersMatch)
 							{
 								SetProvisionalTranslation(similarPhrase.GetTranslationTemplate());
 								return;
@@ -369,15 +369,16 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a value indicating whether the user-supplied translation contains a known
-		/// rendering for each of the key terms in the original phrase.
+		/// rendering for each of the key terms in the original phrase and equivalent numeric
+		/// representation for any numbers expressed as digits.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool AllTermsMatch
+		public bool AllTermsAndNumbersMatch
 		{
 			get 
 			{
 				Debug.Assert(m_fHasUserTranslation);
-				return m_allTermsMatch;
+				return m_allTermsAndNumbersMatch;
 			}
 		}
 
@@ -419,14 +420,33 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public object[] KeyTermRenderings
 		{
-			get
-			{
-				object[] retArray = new object[m_parts.OfType<KeyTerm>().Count()];
-				int i = 0;
-				foreach (KeyTerm kt in m_parts.OfType<KeyTerm>())
-					retArray[i++] = kt.GetBestRenderingInContext(this);
-				return retArray;
-			}
+			get { return GetRenderingsOfType<KeyTerm>(); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an an array of the numbers formatted appropriately for inserting into a
+		/// tranlsations, ordered by their occurrence in the phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public object[] NumberRenderings
+		{
+			get { return GetRenderingsOfType<Number>(); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an an array of the numbers formatted appropriately for inserting into a
+		/// tranlsations, ordered by their occurrence in the phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private object[] GetRenderingsOfType<T>() where T : IPhrasePart
+		{
+			object[] retArray = new object[m_parts.OfType<T>().Count()];
+			int i = 0;
+			foreach (T p in m_parts.OfType<T>())
+				retArray[i++] = p.GetBestRenderingInContext(this);
+			return retArray;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -625,16 +645,16 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the translation template with placeholders for each of the key terms for which
-		/// a matching rendering is found in the translation. As a side-effect,this also sets
+		/// a matching rendering is found in the translation. As a side-effect, this also sets
 		/// m_allTermsMatch.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal string GetTranslationTemplate()
 		{
 			Debug.Assert(m_fHasUserTranslation);
-			int iKeyTerm = 0;
+			int iSubstitutionParam = 0;
 			string translation = Translation;
-			m_allTermsMatch = true;
+			m_allTermsAndNumbersMatch = true;
 			foreach (KeyTerm term in m_parts.OfType<KeyTerm>())
 			{
 				int ich = -1;
@@ -644,12 +664,55 @@ namespace SIL.Transcelerator
 					if (ich >= 0)
 					{
 						translation = translation.Remove(ich, ktTrans.Length);
-						translation = translation.Insert(ich, "{" + iKeyTerm++ + "}");
+						translation = translation.Insert(ich, "{" + iSubstitutionParam++ + "}");
 						break;
 					}
 				}
 				if (ich == -1)
-					m_allTermsMatch = false;
+					m_allTermsAndNumbersMatch = false;
+			}
+
+			foreach (Number number in m_parts.OfType<Number>())
+			{
+				string sNbr = number.NumericValue.ToString("d");
+				int iNbr = 0;
+				int ich = -1;
+				for (int iTrans = 0; iTrans < translation.Length; iTrans++)
+				{
+					char t = translation[iTrans];
+					if (char.IsDigit(t) &&
+						char.GetNumericValue(sNbr[iNbr]).Equals(char.GetNumericValue(t)))
+					{
+						if (ich < 0)
+							ich = iTrans; // Found possible start of the number we're seeking.
+						iNbr++;
+						if (iNbr == sNbr.Length)
+						{
+							if (iTrans + 1 < translation.Length && char.IsDigit(translation[iTrans + 1]))
+							{
+								// Number in the translation has more (unaccounted for) digits - not a match
+								ich = -1;
+								iNbr = 0;
+							}
+							else
+							{
+								int len = iTrans - ich + 1;
+								number.Translation = translation.Substring(ich, len);
+								translation = translation.Remove(ich, len);
+								translation = translation.Insert(ich, "{" + iSubstitutionParam++ + "}");
+								break;
+							}
+						}
+					}
+					else if (ich > -1 && !char.IsPunctuation(t) && !char.IsWhiteSpace(t))
+					{
+						// Not a complete match. Start over.
+						ich = -1;
+						iNbr = 0;
+					}
+				}
+				if (iNbr != sNbr.Length)
+					m_allTermsAndNumbersMatch = false;
 			}
 			return translation;
 		}
@@ -822,7 +885,7 @@ namespace SIL.Transcelerator
 			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormC);
 			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
-				m_allTermsMatch = false; // This will usually get updated in ProcessTranslation
+				m_allTermsAndNumbersMatch = false; // This will usually get updated in ProcessTranslation
 				s_helper.ProcessTranslation(this);
 			}
 		}

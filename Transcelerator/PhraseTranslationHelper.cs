@@ -585,11 +585,11 @@ namespace SIL.Transcelerator
 			{
 				if (similarPhrase.PhraseInUse == tp.PhraseInUse)
 					similarPhrase.Translation = tp.Translation;
-				else if (tp.AllTermsMatch)
+				else if (tp.AllTermsAndNumbersMatch)
 					similarPhrase.SetProvisionalTranslation(translation);
 			}
 
-			if (tp.AllTermsMatch)
+			if (tp.AllTermsAndNumbersMatch)
 			{
 				if (tpParts.Count == 1)
 				{
