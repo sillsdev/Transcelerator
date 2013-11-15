@@ -525,6 +525,14 @@
   <KeyTermRule id="(Most) Holy Place" rule="Exclude">
     <Alternate name="Most Holy Place"/>
   </KeyTermRule>
+  <KeyTermRule id="synagogue or Christian assembly place" rule="Exclude">
+    <Alternate name="synagogue"/>
+    <Alternate name="synagogues"/>
+    <Alternate name="congregation"/>
+  </KeyTermRule>
+  <KeyTermRule id="synagogue ruler">
+    <Alternate name="ruler of the synagogue"/>
+  </KeyTermRule>
   <KeyTermRule id="be (or show oneself) just, in the right" rule="Exclude"/>
   <KeyTermRule id="glory; splendor">
     <Alternate name="greatness"/>
