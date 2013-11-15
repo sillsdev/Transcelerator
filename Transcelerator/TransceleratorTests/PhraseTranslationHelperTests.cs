@@ -58,35 +58,45 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets a list of ParsedParts based on a string array representing key terms and parts
-        /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
+        /// to dictionaries used by GetParsedQuestions. Note that strings in the parts array will
         /// be treated as translatable parts unless prefixed with "kt:", in which case they
         /// will be treated as key terms (corresponding key terms must be added by calling
-        /// AddMockedKeyTerm.
+        /// AddMockedKeyTerm). Integers will be treated as numeric parts.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected List<ParsedPart> GetParsedParts(string[] parts)
+        protected List<ParsedPart> GetParsedParts(object[] parts)
         {
             List<ParsedPart> parsedParts = new List<ParsedPart>();
-            foreach (string part in parts)
+            foreach (object part in parts)
             {
-                ParsedPart parsedPart;
-                if (part.StartsWith("kt:"))
-                {
-                    string sWords = part.Substring(3);
-                    KeyTermMatchSurrogate kt;
-                    if (!m_keyTermsDictionary.TryGetValue(sWords, out kt))
-                        m_keyTermsDictionary[sWords] = kt = new KeyTermMatchSurrogate(sWords, new string(sWords.Reverse().ToArray()));
-                    parsedPart = new ParsedPart(kt);
-                }
-                else
-                {
-                    if (!m_translatablePartsDictionary.TryGetValue(part, out parsedPart))
-                    {
-                        m_translatablePartsDictionary[part] = parsedPart = new ParsedPart(part.Split(new[] {' '},
-                             StringSplitOptions.RemoveEmptyEntries).Select(w => (Word) w));
-                    }
-                }
-                parsedParts.Add(parsedPart);
+				ParsedPart parsedPart;
+
+	            if (part is int)
+	            {
+		            parsedPart = new ParsedPart((int) part);
+	            }
+	            else
+	            {
+		            var sPart = (string) part;
+					if (sPart.StartsWith("kt:"))
+		            {
+						string sWords = sPart.Substring(3);
+			            KeyTermMatchSurrogate kt;
+			            if (!m_keyTermsDictionary.TryGetValue(sWords, out kt))
+				            m_keyTermsDictionary[sWords] =
+					            kt = new KeyTermMatchSurrogate(sWords, new string(sWords.Reverse().ToArray()));
+			            parsedPart = new ParsedPart(kt);
+		            }
+		            else
+		            {
+						if (!m_translatablePartsDictionary.TryGetValue(sPart, out parsedPart))
+			            {
+							m_translatablePartsDictionary[sPart] = parsedPart = new ParsedPart(sPart.Split(new[] { ' ' },
+					            StringSplitOptions.RemoveEmptyEntries).Select(w => (Word) w));
+			            }
+		            }
+	            }
+	            parsedParts.Add(parsedPart);
             }
             return parsedParts;
         }
@@ -1735,35 +1745,258 @@ namespace SIL.Transcelerator
             phrase6.Translation = "BG LP Yuxelopitmyfor DW MR Pablo";
 
             Assert.AreEqual("Entonces Isaac", phrase4.Translation);
-        }
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Tests setting the translation for a group of phrases such that the only common
-        /// character for a part they have in common is a punctuation character.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        [Test]
-        public void SetTranslation_DoNotTreatNormalLeadingPuncAsOpeningQuestionMark()
-        {
-            AddMockedKeyTerm("Isaiah", "Isai\u0301as");
-            AddMockedKeyTerm("Paul", "Pablo");
-            AddMockedKeyTerm("Silas", "Silas");
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for a group of phrases such that the only common
+		/// character for a part they have in common is a punctuation character.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_DoNotTreatNormalLeadingPuncAsOpeningQuestionMark()
+		{
+			AddMockedKeyTerm("Isaiah", "Isai\u0301as");
+			AddMockedKeyTerm("Paul", "Pablo");
+			AddMockedKeyTerm("Silas", "Silas");
 
-            var cat = m_sections.Items[0].Categories[0];
-            Question q1 = AddTestQuestion(cat, "What did Paul and Silas do in jail?", "A", 1, 1, "what", "did", "kt:paul", "and", "kt:silas", "do in jail");
-            Question q2 = AddTestQuestion(cat, "Were Isaiah and Paul prophets?", "A", 1, 1, "were", "kt:isaiah", "and", "kt:paul", "prophets");
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "What did Paul and Silas do in jail?", "A", 1, 1, "what", "did", "kt:paul", "and", "kt:silas", "do in jail");
+			Question q2 = AddTestQuestion(cat, "Were Isaiah and Paul prophets?", "A", 1, 1, "were", "kt:isaiah", "and", "kt:paul", "prophets");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
 
-            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
-            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
 
-            phrase1.Translation = "*\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
-            Assert.AreEqual("Isai\u0301as Pablo?".Normalize(NormalizationForm.FormC), phrase2.Translation);
-        }
+			phrase1.Translation = "*\u00BFQue\u0301 hicieron Pablo y Silas en la carcel?";
+			Assert.AreEqual("Isai\u0301as Pablo?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for a group of phrases such that the only common
+		/// character for a part they have in common is a punctuation character.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[Ignore("Maybe this is okay, after all.")]
+		public void SetTranslation_DoNotUseNumbersAsGuessedTranslations()
+		{
+			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+			AddMockedKeyTerm("Paul", "Pablo");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "Was Paul one of Jesus' twelve disciples?", "A", 1, 1, "was", "kt:paul", "one", "of", "kt:jesus", "twelve disciples");
+			Question q2 = AddTestQuestion(cat, "How far did the twelve disciples of Jesus go?", "A", 1, 1, "how", " far did the", "twelve disciples", "of", "kt:jesus", "go");
+			Question q3 = AddTestQuestion(cat, "Tell one way Paul helped Jesus.", "A", 1, 1, "tell", "one", "way", "kt:paul", "helped", "kt:jesus");
+			Question q4 = AddTestQuestion(cat, "Were the twelve disciples of Jesus in one room?", "A", 1, 1, "were", "the", "twelve disciples", "of", "kt:jesus", "in", "one", "room");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+			TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+
+			phrase1.Translation = "\u00BFEra Pablo 1 de los 12 disci\u0301pulos de Jesu\u0301s?";
+			phrase2.Translation = "\u00BFCuanta distancia caminaron los 12 disci\u0301pulos de Jesu\u0301s?";
+			phrase3.Translation = "Cuenta 1 manera en que Pablo le ayudo\u0301 a Jesu\u0301s?";
+			Assert.AreEqual("\u00BFdisci\u0301pulos de Jesu\u0301s?".Normalize(NormalizationForm.FormC), phrase4.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for a phrase with a pattern of parts, terms and
+		/// numbers that matches another phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_GuessAtTranslationForSimilarPartWithNumbers()
+		{
+			AddMockedKeyTerm("Benjamin", "Benjami\u0301n");
+			AddMockedKeyTerm("Judah", "Juda\u0301");
+			AddMockedKeyTerm("talent", "talento");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "The 4000 men of Benjamin donated 2000 talents of gold.", "A", 1, 1, "the", 4000,
+				"men of", "kt:benjamin", "donated", 2000, "kt:talent", "of gold");
+			Question q2 = AddTestQuestion(cat, "The 2000 men of Judah donated 1000 talents of gold.", "A", 1, 1, "the", 2000,
+				"men of", "kt:judah", "donated", 1000, "kt:talent", "of gold");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+			phrase1.Translation = "De los hombres de Benjami\u0301n, 2 000 talentos de oro, donado por sus 4 000 hombres.";
+			Assert.AreEqual("De los hombres de Juda\u0301, 1 000 talentos de oro, donado por sus 2 000 hombres.".Normalize(NormalizationForm.FormC),
+				phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests setting the translation for a phrase with a pattern of parts, terms and
+		/// numbers that matches another phrase. In this case the user-supplied translation
+		/// has an error in that it uses the incorrect number, so the guess translation is
+		/// only based on the parts and not the (bogus) template.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_IncorrectNumberPreventsTemplateBasedGuessing()
+		{
+			AddMockedKeyTerm("Benjamin", "Benjami\u0301n");
+			AddMockedKeyTerm("Judah", "Juda\u0301");
+			AddMockedKeyTerm("talent", "talento");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "The 4000 men of Benjamin donated 2000 talents of gold.", "A", 1, 1, "the", 4000,
+				"men of", "kt:benjamin", "donated", 2000, "kt:talent", "of gold");
+			Question q2 = AddTestQuestion(cat, "The 2000 men of Judah donated 1000 talents of gold.", "A", 1, 1, "the", 2000,
+				"men of", "kt:judah", "donated", 1000, "kt:talent", "of gold");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+			phrase1.Translation = "Los 40.000 hombres de Benjami\u0301n donaron 2.000 talentos de oro.";
+			Assert.AreEqual("2.000 Juda\u0301 1.000 talento.".Normalize(NormalizationForm.FormC),
+				phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the guessed translation for a phrases that have numerals include those
+		/// numerals.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SetTranslation_NoUserTranslations_GuessedTranslationsIncludeNumbers()
+		{
+			//This just sets the statics in the Number class to a known setting for a predictable test result. 
+			Number n = new Number(200000);
+			n.Translation = "200,000";
+
+			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+			AddMockedKeyTerm("Paul", "Pablo");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "Was Paul one of Jesus' 12 disciples?", "A", 1, 1, "was", "kt:paul", "one", "of", "kt:jesus", 12, "disciples");
+			Question q2 = AddTestQuestion(cat, "Who sealed the 144,000?", "A", 1, 1, "who", " sealed the", 144000);
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+			Assert.AreEqual("Pablo Jesu\u0301s 12".Normalize(NormalizationForm.FormC), phrase1.Translation);
+			Assert.AreEqual("144,000".Normalize(NormalizationForm.FormC), phrase2.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the guessed translation for a phrases that have numerals include those
+		/// numerals, formatted according to the pattern suggested by existing user
+		/// translation(s).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void
+			SetTranslation_UserTranslationsIncludeNumbers_GuessedTranslationsFormatNumbersBasedOnFromattingInUserTranslations()
+		{
+			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
+			AddMockedKeyTerm("Paul", "Pablo");
+			AddMockedKeyTerm("Jew", "judio");
+			AddMockedKeyTerm("Gentile", "gentil");
+			AddMockedKeyTerm("Egypt", "Egipto");
+			AddMockedKeyTerm("David", "David");
+			AddMockedKeyTerm("Canaan", "Canaa\u0301n");
+			AddMockedKeyTerm("Gideon", "Gedeo\u0301n");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "Were the 3000 new church members Jews or Gentiles?", "A", 1, 1, "were the",
+				3000, "new church members", "kt:jew", "or", "kt:gentile");
+			Question q2 = AddTestQuestion(cat, "Who sealed the 144,000?", "A", 1, 1, "who", " sealed the", 144000);
+			Question q3 = AddTestQuestion(cat, "Did David really slay more than 10,000 men?", "A", 1, 1, "did", "kt:david",
+				"really slay more than", 10000, "men");
+			Question q4 = AddTestQuestion(cat, "Of the 657,000 Jews who left Egypt, how many entered Canaan?", "A", 1, 1,
+				"of the", 657000, "kt:jew", "who left", "kt:egypt", "how many", "entered", "kt:canaan");
+			Question q5 = AddTestQuestion(cat, "Was Paul one of Jesus' 12 disciples?", "A", 1, 1, "was", "kt:paul",
+				"one", "of", "kt:jesus", 12, "disciples");
+			Question q6 = AddTestQuestion(cat, "Was Gideon happy to have only 300 soldiers left?", "A", 1, 1, "was", "kt:gideon",
+				"happy to have only", 300, "soldiers left");
+			Question q7 = AddTestQuestion(cat, "Should 3,500 have a comma?", "A", 1, 1, "should", 3500, "have a comma");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+			TranslatablePhrase phrase4 = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+			TranslatablePhrase phrase5 = pth.GetPhrase(q5.ScriptureReference, q5.Text);
+			TranslatablePhrase phrase6 = pth.GetPhrase(q6.ScriptureReference, q6.Text);
+			TranslatablePhrase phrase7 = pth.GetPhrase(q7.ScriptureReference, q7.Text);
+
+			phrase2.Translation = "\u00BFQuie\u0301n sello\u0301 a los 1.44.000?";
+
+			Assert.AreEqual("\u00BF3.000 judio gentil?".Normalize(NormalizationForm.FormC), phrase1.Translation);
+			Assert.AreEqual("\u00BFDavid 10.000?".Normalize(NormalizationForm.FormC), phrase3.Translation);
+			Assert.AreEqual("\u00BF6.57.000 judio Egipto Canaa\u0301n?".Normalize(NormalizationForm.FormC), phrase4.Translation);
+			Assert.AreEqual("\u00BFPablo Jesu\u0301s 12?".Normalize(NormalizationForm.FormC), phrase5.Translation);
+			Assert.AreEqual("\u00BFGedeo\u0301n 300?".Normalize(NormalizationForm.FormC), phrase6.Translation);
+			Assert.AreEqual("\u00BF3.500?".Normalize(NormalizationForm.FormC), phrase7.Translation);
+
+			phrase1.Translation = "\u00BF3000 judio gentil?";
+			Assert.AreEqual("\u00BF3500?".Normalize(NormalizationForm.FormC), phrase7.Translation);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that the guessed translation for a phrases that have numerals include those
+		/// numerals using the range of script (non Arabic-Indic) digits suggested by existing
+		/// user translation(s).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void
+			SetTranslation_UserTranslationsIncludeScriptDigit_GuessedTranslationsUseCorrectRangeOfScriptDigits()
+		{
+			//Number n = new Number(200000);
+			//n.Translation
+			AddMockedKeyTerm("Jew", "judio");
+			AddMockedKeyTerm("Egypt", "Egipto");
+			AddMockedKeyTerm("Canaan", "Canaa\u0301n");
+
+			var cat = m_sections.Items[0].Categories[0];
+			Question q1 = AddTestQuestion(cat, "Of the 657,000 Jews who left Egypt, how many entered Canaan?", "A", 1, 1,
+				"of the", 657000, "kt:jew", "who left", "kt:egypt", "how many", "entered", "kt:canaan");
+			Question q2 = AddTestQuestion(cat, "Who sealed the 144,000?", "A", 1, 1, "who", " sealed the", 144000);
+
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+
+			phrase2.Translation = "\u00BFQuie\u0301n sello\u0301 a los \u0967\u096A\u096A\u060C\u0966\u0966\u0966?";
+
+			Assert.AreEqual("\u00BF\u096C\u096B\u096D\u060C\u0966\u0966\u0966 judio Egipto Canaa\u0301n?".Normalize(NormalizationForm.FormC), phrase1.Translation);
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -2647,7 +2880,7 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         private Question AddTestQuestion(Category cat, string text, string sRef,
-            int startRef, int endRef, params string[] parts)
+            int startRef, int endRef, params object[] parts)
         {
             return AddTestQuestion(cat, false, text, sRef, startRef, endRef, parts);
         }
@@ -2662,7 +2895,7 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         private Question AddTestQuestion(Category cat, bool excluded, string text, string sRef,
-            int startRef, int endRef, params string[] parts)
+            int startRef, int endRef, params object[] parts)
         {
             var q = new TestQ(text, sRef, startRef, endRef, excluded ? null : GetParsedParts(parts));
             q.IsExcluded = excluded;

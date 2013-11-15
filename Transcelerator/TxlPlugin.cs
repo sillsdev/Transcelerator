@@ -212,7 +212,7 @@ namespace SIL.Transcelerator
 		private void InitializeErrorHandling()
 		{
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = "tom_bogle@sil.org";
+			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
 			ErrorReport.AddStandardProperties();
 			// The version that gets added to the report by default is for the entry assembly, which is
 			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very

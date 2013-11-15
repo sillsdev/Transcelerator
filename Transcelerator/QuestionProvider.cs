@@ -257,10 +257,14 @@ namespace SIL.Transcelerator
 					    {
 					        foreach (ParsedPart part in q.ParsedParts)
 					        {
+						        IPhrasePart newPart;
 					            if (part.Type == PartType.TranslatablePart)
-					                phrase.m_parts.Add(GetOrCreatePart(part.Words, phrase, false));
+					                newPart = GetOrCreatePart(part.Words, phrase, false);
+					            else if (part.Type == PartType.KeyTerm)
+					                newPart = FindKeyTerm(part.Words);
 					            else
-					                phrase.m_parts.Add(FindKeyTerm(part.Words));
+									newPart = new Number(part.NumericValue);
+								phrase.m_parts.Add(newPart);
 					        }
 					    }
 					    yield return phrase;

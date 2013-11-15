@@ -57,6 +57,16 @@ namespace SIL.Transcelerator
 		{
 			get { return s_words.Keys; }
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether this word is actually a number (sequence of digits).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool IsNumber
+		{
+			get { return char.IsDigit(Text[0]); }
+		}
 		#endregion
 
 		#region Public methods

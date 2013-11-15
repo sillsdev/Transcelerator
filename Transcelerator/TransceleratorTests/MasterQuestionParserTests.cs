@@ -322,19 +322,10 @@ namespace SIL.Transcelerator
 		[Test]
 		public void GetResult_PossessiveFormsOfKeyTerms_StemmingResultsInAppropriateMatches()
 		{
-			//m_keyTermRules = new KeyTermRules();
-			//m_keyTermRules.Items = new List<KeyTermRule>();
-			//KeyTermRule rule = new KeyTermRule();
-			//rule.id = "believer";
-			//rule.Rule = KeyTermRule.RuleType.PreventStemming;
-			//m_keyTermRules.Items.Add(rule);
-
 			AddMockedKeyTerm("apostle");
 			AddMockedKeyTerm("Luke");
 			AddMockedKeyTerm("believer");
 			AddMockedKeyTerm("believe");
-
-			//m_keyTermRules.Initialize();
 
 			var qs = GenerateSimpleSectionWithSingleCategory(3);
 			var cat = qs.Items[0].Categories[0];
@@ -482,6 +473,44 @@ namespace SIL.Transcelerator
 				"what",
 				"is",
 				"that dog");
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests enumerating questions with numbers.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_IncludesDigits_NumericPartsParsedCorrectly()
+		{
+			AddMockedKeyTerm("christian");
+			AddMockedKeyTerm("jesus");
+			AddMockedKeyTerm("jesus christ");
+
+			var qs = GenerateQuestions(
+				"Why did 11,000 people die?",
+				"Were the 144.000 Christians or Jews?",
+				"What did they do with Jesus' 12 baskets of leftover food?",
+				"What does Jesus say in verses 4-6?");
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs, new List<string>(), m_dummyKtList, m_keyTermRules, null, null);
+			ParsedQuestions pq = qp.Result;
+			Assert.AreEqual(2, pq.KeyTerms.Length);
+			Assert.AreEqual(8, pq.TranslatableParts.Length);
+
+			int i = 0;
+			var questions = pq.Sections.Items[0].Categories[0].Questions;
+			VerifyParts(questions[i++], "Why did 11,000 people die?",
+				"why did", 11000, "people die");
+
+			VerifyParts(questions[i++], "Were the 144.000 Christians or Jews?",
+				"were the", 144000, new KeyTermPart("christian"), "or jews");
+
+			VerifyParts(questions[i++], "What did they do with Jesus' 12 baskets of leftover food?",
+				"what did they do with", new KeyTermPart("jesus"), 12, "baskets of leftover food");
+
+			VerifyParts(questions[i++], "What does Jesus say in verses 4-6?",
+				"what does", new KeyTermPart("jesus"), "say in verses", 4, 6);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2636,8 +2665,13 @@ namespace SIL.Transcelerator
 			for (int pp = 0; pp < parts.Length && pp < q.ParsedParts.Count; pp++)
 			{
 				object part = parts[pp];
-				Assert.AreEqual(part.ToString(), q.ParsedParts[pp].Text);
-				Assert.AreEqual(part is KeyTermPart ? PartType.KeyTerm : PartType.TranslatablePart, q.ParsedParts[pp].Type,
+				if (part is int)
+					Assert.AreEqual(part, q.ParsedParts[pp].NumericValue);
+				else
+					Assert.AreEqual(part.ToString(), q.ParsedParts[pp].Text);
+				Assert.AreEqual(part is KeyTermPart ? PartType.KeyTerm :
+					(part is int ? PartType.Number : PartType.TranslatablePart),
+					q.ParsedParts[pp].Type,
 					"Part " + q.ParsedParts[pp].Text + "(" + pp + ") has wrong type.");
 			}
 			Assert.AreEqual(parts.Length, q.ParsedParts.Count);

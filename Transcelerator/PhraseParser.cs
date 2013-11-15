@@ -72,14 +72,31 @@ namespace SIL.Transcelerator
 		{
 			List<Word> words = new List<Word>();
 			StringBuilder wordBldr = new StringBuilder();
+			bool processingNumber = false;
 			foreach (char ch in phrase)
 			{
 				if (Char.IsLetter(ch) || ch == '\'' || ch == '-')
+				{
+					if (processingNumber)
+					{
+						words.Add(wordBldr.ToString());
+						wordBldr.Length = 0;
+						processingNumber = false;
+						if (ch == '\'' || ch == '-')
+							continue;
+					}
 					wordBldr.Append(ch);
-				else if (wordBldr.Length > 0)
+				}
+				else if (Char.IsDigit(ch))
+				{
+					wordBldr.Append(ch);
+					processingNumber = true;
+				}
+				else if (wordBldr.Length > 0 && (!processingNumber || (ch != ',' && ch != '.')))
 				{
 					words.Add(wordBldr.ToString());
 					wordBldr.Length = 0;
+					processingNumber = false;
 				}
 			}
             if (wordBldr.Length > 0)
@@ -128,17 +145,27 @@ namespace SIL.Transcelerator
 
 			for (; m_iNextWord < m_words.Count; )
 			{
-			    bestKeyTerm = FindBestKeyTerm();
+				bestKeyTerm = FindBestKeyTerm();
 				if (bestKeyTerm == null)
-					m_iNextWord++;
+				{
+					if (m_words[m_iNextWord].IsNumber)
+					{
+						if (m_iNextWord > minUnhandled)
+							yield return YieldTranslatablePart(m_words.Skip(minUnhandled).Take(m_iNextWord - minUnhandled), m_phrase);
+						yield return new ParsedPart(Int32.Parse(m_words[m_iNextWord].Text));
+						m_iStartMatch = minUnhandled = ++m_iNextWord;
+					}
+					else
+						m_iNextWord++;
+				}
 				else
 				{
 					// We've found the best key term we're going to find.
 					int keyTermWordCount = bestKeyTerm.WordCount;
 					if (m_iStartMatch > minUnhandled)
 						yield return YieldTranslatablePart(m_words.Skip(minUnhandled).Take(m_iStartMatch - minUnhandled), m_phrase);
-                    bestKeyTerm.MarkInUse();
-                    yield return new ParsedPart(bestKeyTerm);
+					bestKeyTerm.MarkInUse();
+					yield return new ParsedPart(bestKeyTerm);
 					m_iStartMatch = m_iNextWord = minUnhandled = m_iStartMatch + keyTermWordCount;
 				}
 			}
