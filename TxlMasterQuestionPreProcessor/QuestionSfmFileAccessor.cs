@@ -126,6 +126,9 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				}
 				else if (sLine.StartsWith(s_kAnswerMarker))
 				{
+					if (currQuestion == null)
+						Debug.Fail("Answer \"" + sLine + "\" does not have a corresponding question. (Probably \\tqref line is misplaced.)");
+
 					string currAnswer = sLine.Substring(kAMarkerLen).Trim();
                     if (!currCat.IsOverview)
 					{
