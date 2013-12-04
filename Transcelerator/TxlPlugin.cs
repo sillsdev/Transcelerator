@@ -24,7 +24,7 @@ using Palaso.UI.WindowsForms.Keyboarding;
 namespace SIL.Transcelerator
 {
 	[AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
-		Version = "1.0", Publisher = "SIL International")]
+		Version = "1.1", Publisher = "SIL International")]
 	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
 	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
 	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
