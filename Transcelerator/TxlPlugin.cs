@@ -20,6 +20,7 @@ using Palaso.Reporting;
 using Palaso.UI.WindowsForms.Reporting;
 using SILUBS.SharedScrUtils;
 using Palaso.UI.WindowsForms.Keyboarding;
+using System.AddIn.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -103,8 +104,12 @@ namespace SIL.Transcelerator
 #if DEBUG
 				MessageBox.Show("Attach debugger now (if you want to)", pluginName);
 #endif
+				// On Linux this current thread is the mainUI thread.
+				SynchronizationContext current = SynchronizationContext.Current;
+				
 				ptHost.WriteLineToLog(this, "Starting " + pluginName);
 
+				// This is NOT the mainUIThread on Linux.
 				Thread mainUIThread = new Thread(() =>
 				{
 					InitializeErrorHandling();
@@ -114,8 +119,14 @@ namespace SIL.Transcelerator
 					UNSQuestionsDialog formToShow;
 					lock (this)
 					{
-						splashScreen = new TxlSplashScreen();
-					    splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+						// On windows this plugin uses 
+						if (Platform.IsWindows)
+							current = SynchronizationContext.Current;
+
+						current.Send(x => {
+							splashScreen = new TxlSplashScreen();
+					    	splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
+						}, null);
 						splashScreen.Message = string.Format(
 						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
@@ -146,12 +157,19 @@ namespace SIL.Transcelerator
                             endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
                         }
 
-						Action<bool> activateKeyboard = vern =>
-						{
-							string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
-							if (!string.IsNullOrEmpty(keyboard))
-								KeyboardController.ActivateKeyboard(keyboard);
-						};
+						Action<bool> activateKeyboard;
+						if (Platform.IsWindows)
+							activateKeyboard = vern =>
+							{
+								
+								{
+									string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
+									if (!string.IsNullOrEmpty(keyboard))
+										KeyboardController.ActivateKeyboard(keyboard);
+								}
+							};
+						else
+							activateKeyboard = vern => {};
 
                         var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, projectName, fileId),
                             (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader),
@@ -180,9 +198,14 @@ namespace SIL.Transcelerator
 						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);
 					    splashScreen = null;
 					}
-					formToShow.ShowDialog();
-                    ptHost.WriteLineToLog(this, "Closing " + pluginName);
-					Environment.Exit(0);
+					
+					current.Send(x => {
+						formToShow.ShowDialog();
+						ptHost.WriteLineToLog(this, "Closing " + pluginName);
+						Environment.Exit(0);
+					}, null);
+					
+					
 				});
 				mainUIThread.Name = pluginName;
 				mainUIThread.IsBackground = false;

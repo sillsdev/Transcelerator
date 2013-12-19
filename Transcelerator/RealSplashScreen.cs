@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
+using System.AddIn.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -54,7 +55,8 @@ namespace SIL.Transcelerator
 			//
 			InitializeComponent();
             AccessibleName = GetType().Name;
-            Opacity = 0;
+			// X ReparentNotify event causes _NET_WM_WINDOW_OPACITY to be applied on the wrong window.
+            Opacity = Platform.IsWindows ?  0 : 1;
 		}
 
 		/// <summary>
@@ -66,13 +68,6 @@ namespace SIL.Transcelerator
 		{
 			if (IsDisposed)
 				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
-
-#if __MonoCS__
-			// Note: mono can only create a winform on the main thread.
-			// So this ensures the progress bar gets painted when modified.
-			if (IsHandleCreated)
-				Application.DoEvents();
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -227,6 +222,10 @@ namespace SIL.Transcelerator
 			if (Visible)
 			{
 				m_waitHandle.Set();
+				
+				// On Linux we don't bother with fading in.
+				if (Platform.IsLinux)
+					return;
 				m_timer = new System.Threading.Timer(UpdateDisplayCallback, null, 0, 50);
 			}
 		}
@@ -314,11 +313,7 @@ namespace SIL.Transcelerator
 				double currentOpacity = Opacity;
 				if (currentOpacity < 1.0)
 				{
-#if !__MonoCS__
 					Opacity = currentOpacity + 0.05;
-#else
-					Opacity = currentOpacity + 0.025; // looks nicer on mono/linux
-#endif
 					currentOpacity = Opacity;
 					if (currentOpacity == 1.0)
 					{

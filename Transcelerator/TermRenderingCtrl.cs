@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.AddIn.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -120,8 +121,11 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public int NaturalHeight
 		{
-			get { return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
-				(Height - m_lbRenderings.ClientRectangle.Height); }
+			get { 
+				// This linuxFudge was needed to fix display issue with the Renderings panel
+				int linuxFudge = Platform.IsLinux ? 4 : 0;
+				return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +	(Height - m_lbRenderings.ClientRectangle.Height - linuxFudge); 
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Utils;
 
 namespace SilUtils.Controls
 {
@@ -189,7 +190,7 @@ namespace SilUtils.Controls
 		/// ------------------------------------------------------------------------------------
 		protected override void OnOpening(System.ComponentModel.CancelEventArgs e)
 		{
-			Opacity = 0;
+			Opacity = Platform.IsWindows ? 1 : 0;
 			
 			base.OnOpening(e);
 

@@ -26,6 +26,7 @@ using AddInSideViews;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
 using SILUBS.SharedScrUtils;
+using System.AddIn.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -246,7 +247,8 @@ namespace SIL.Transcelerator
 		#region Constructors
 	    static UNSQuestionsDialog()
 	    {
-             s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+			// Changed from CommonApplicationData as that is never user writable on Linux.
+             s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                  "SIL"), "Transcelerator");
              if (!Directory.Exists(s_programDataFolder))
                  Directory.CreateDirectory(s_programDataFolder);
@@ -362,10 +364,18 @@ namespace SIL.Transcelerator
 			if (fVernIsRtoL)
 				m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
-			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
-				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
-			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
+			if (Platform.IsWindows)
+			{
+				dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
+					(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
+			}
+			else
+			{
+				// TODO: handle this better.
+				m_normalRowHeight = dataGridUns.RowTemplate.MinimumHeight = 50;
+			}
 
+			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 	        KeyTerm.FileAccessor = m_fileAccessor;
 
 			LoadTranslations(splashScreen);
@@ -1627,7 +1637,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_RowLeave(object sender, DataGridViewCellEventArgs e)
 		{
-			dataGridUns.Rows[e.RowIndex].Height = m_normalRowHeight;
+			// TODO: is checking m_normalRowHeight doesn't exceed dataGridUns.RowTemplate.MinimumHeight still needed?
+			dataGridUns.Rows[e.RowIndex].Height = Math.Max(m_normalRowHeight, dataGridUns.RowTemplate.MinimumHeight);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2054,7 +2065,13 @@ namespace SIL.Transcelerator
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
                 m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
 	        {
-	            parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
+
+				// If DeserializeFromFile produces an error we want to know about it.
+				// ENHANCE: fallback to non cached logic.
+				Exception exception;
+	            parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename, out exception);
+				if ( exception != null)
+					throw exception;
 	        }
 	        else
 	        {
@@ -2214,12 +2231,17 @@ namespace SIL.Transcelerator
 				return;
 			int colWidth = (m_biblicalTermsPane.ClientSize.Width) / columnsToFit;
 			SizeType type = SizeType.Percent;
-			if (colWidth < m_biblicalTermsPane.Controls[0].MinimumSize.Width)
+			// TODO: is m_biblicalTermsPane.Controls.Count check still needed?
+			if (m_biblicalTermsPane.Controls.Count > 0 && colWidth < m_biblicalTermsPane.Controls[0].MinimumSize.Width)
 			{
 				type = SizeType.AutoSize;
 				colWidth = m_biblicalTermsPane.Controls[0].MinimumSize.Width;
 			}
-			m_biblicalTermsPane.ColumnStyles.Clear();
+			// TODO: handle this better.
+			try
+			{
+				m_biblicalTermsPane.ColumnStyles.Clear();
+			}catch(Exception) {}
 			for (int iCol = 0; iCol < columnsToFit; iCol++)
 			{
 				m_biblicalTermsPane.ColumnStyles.Add(new ColumnStyle(
