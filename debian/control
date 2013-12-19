@@ -1,0 +1,14 @@
+Source: transcelerator-7.4
+Section: x11
+Priority: extra
+Maintainer: Expebition <expebition@gmail.com>
+Standards-Version: 3.9.2
+
+Package: transcelerator-7.4
+Section: x11
+Priority: extra
+Architecture: all
+Depends: paratext-7.4
+Homepage: https://bitbucket.org/paratext/transcelerator
+Description: Transcelerator is a Paratext plugin that facilitates translation of comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation
+	Transcelerator is a Paratext plugin that facilitates translation of comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation. It helps to semi-automate the process of translating the questions by taking advantage of the previous work done in assigning vernacular equivalents for biblical terms (especially proper names). It then makes it possible to generate a configurable script that can be printed in order to conduct a comprehension check.Transcelerator is a Paratext plugin that facilitates translation of comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation. It helps to semi-automate the process of translating the questions by taking advantage of the previous work done in assigning vernacular equivalents for biblical terms (especially proper names). It then makes it possible to generate a configurable script that can be printed in order to conduct a comprehension check.
