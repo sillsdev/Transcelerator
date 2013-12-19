@@ -52,7 +52,8 @@ namespace SIL.Transcelerator
         {
             get
             {
-	            if (m_text == null && Type != PartType.Number)
+				// On mono this was being called when m_words was null.
+	            if (m_text == null && Type != PartType.Number && m_words != null)
 			        m_text = m_words.ToString(" ");
 	            return m_text;
             }

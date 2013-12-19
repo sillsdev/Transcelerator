@@ -115,6 +115,7 @@
     <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
     <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
     <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+    <Compile Include="Platform.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConfirmFileOverwriteDlg.resx">
