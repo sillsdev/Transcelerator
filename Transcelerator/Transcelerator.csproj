@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -80,7 +80,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+      <HintPath>\usr\lib\Paratext\System.AddIn.dll</HintPath>
     </Reference>
     <Reference Include="System.AddIn.Contract">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -98,6 +98,12 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="AddInViews">
+      <HintPath>\usr\lib\Paratext\Pipeline\AddInViews\AddInViews.dll</HintPath>
+    </Reference>
+    <Reference Include="AddInSideAdapters">
+      <HintPath>\usr\lib\Paratext\Pipeline\AddInSideAdapters\AddInSideAdapters.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddRenderingDlg.cs">
