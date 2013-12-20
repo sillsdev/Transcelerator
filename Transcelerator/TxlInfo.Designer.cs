@@ -53,7 +53,7 @@ namespace SIL.Transcelerator
 			lblProductName.AutoSize = true;
 			lblProductName.BackColor = System.Drawing.Color.Transparent;
 			this.tableLayoutPanel.SetColumnSpan(lblProductName, 2);
-			lblProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			lblProductName.Font = new System.Drawing.Font("Doulos SIL", 25.0F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			lblProductName.ForeColor = System.Drawing.Color.Black;
 			lblProductName.Location = new System.Drawing.Point(386, 0);
 			lblProductName.Name = "lblProductName";
