@@ -106,7 +106,20 @@ namespace SIL.Transcelerator
 #endif
 				// On Linux this current thread is the mainUI thread.
 				SynchronizationContext current = SynchronizationContext.Current;
-				
+
+				// Due to a current design #fail in how AddInProcess.exe was implemented,
+				// there is a delay between between .net remoting starting up and AddInProcess starting its
+				// winforms message pump.
+				// TODO: either start .net remoting after Message pump has started or refactor the message pump 
+				// out of AddInProcess.exe
+				while(current == null)
+				{
+					Control c = new Control();
+					c.CreateControl();
+					Application.DoEvents();
+					current = SynchronizationContext.Current;
+				}
+
 				ptHost.WriteLineToLog(this, "Starting " + pluginName);
 
 				// This is NOT the mainUIThread on Linux.
@@ -119,7 +132,7 @@ namespace SIL.Transcelerator
 					UNSQuestionsDialog formToShow;
 					lock (this)
 					{
-						// On windows this plugin uses 
+						// On windows this plugin uses this thread as is UI thread
 						if (Platform.IsWindows)
 							current = SynchronizationContext.Current;
 
