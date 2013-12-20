@@ -10,6 +10,7 @@
 // File: HelpAboutDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System.Windows.Forms;
+using System.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -34,7 +35,7 @@ namespace SIL.Transcelerator
 		protected override void OnHandleCreated(System.EventArgs e)
 		{
 			base.OnHandleCreated(e);
-			m_txlInfo.ShowCreditsAndLicense = true;
+			m_txlInfo.ShowCreditsAndLicense = Platform.IsWindows;
 		}
 	}
 }
