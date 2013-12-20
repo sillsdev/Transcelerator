@@ -386,6 +386,23 @@ namespace SIL.Transcelerator
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
+
+			// Preload the first 20 rows so when the form is shown it doesn't hang while first loading.
+			if (Platform.IsLinux)
+			{				
+				// Ensure the first 20 rows values are pre fetched.
+				for(int i  = 0; i < 20 && i < dataGridUns.Rows.Count; i++)
+				{
+					if (splashScreen != null)
+					splashScreen.Message = String.Format("PreLoading Rows {0}", i);
+					
+					for(int j = 0; j< dataGridUns.Rows[i].Cells.Count; j++)
+					{						
+						var val = dataGridUns.Rows[i].Cells[j].Value;
+					}
+				}
+			}
+			
 			splashScreen.Close();
 		}
 		#endregion
