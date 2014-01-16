@@ -246,7 +246,25 @@ namespace SIL.Transcelerator
 		#region Constructors
 	    static UNSQuestionsDialog()
 	    {
-             s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+		    try
+		    {
+				var deprecatedProgramDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+					"SIL"), "Transcelerator");
+			    if (Directory.Exists(deprecatedProgramDataFolder))
+			    {
+				    var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlCore.questionsFilename);
+					if (File.Exists(cachedQuestionsFilename))
+						File.Delete(cachedQuestionsFilename);
+					Directory.Delete(deprecatedProgramDataFolder);
+				}
+		    }
+		    catch (Exception)
+		    {
+				// This was just a clean-up step from a possible previous version of Transcelerator, so if something goes
+				// wrong, ignore it.
+		    }
+			
+			s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                  "SIL"), "Transcelerator");
              if (!Directory.Exists(s_programDataFolder))
                  Directory.CreateDirectory(s_programDataFolder);
