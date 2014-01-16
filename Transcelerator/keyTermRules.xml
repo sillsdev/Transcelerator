@@ -276,6 +276,16 @@
     <Alternate name="just" matchForRefOnly="true"/>
     <Alternate name="righteous person"/>
   </KeyTermRule>
+  <KeyTermRule id="Ben-hadad">
+    <Alternate name="Benhadad"/>
+  </KeyTermRule>
+  <KeyTermRule id="decree">
+    <Alternate name="decree"/>
+    <Alternate name="decrees"/>
+    <Alternate name="statute"/>
+    <Alternate name="statutes"/>
+  </KeyTermRule>
+  <KeyTermRule id="cross" rule="MatchForRefOnly"/>
   <KeyTermRule id="deserved; just" rule="MatchForRefOnly"/>
   <KeyTermRule id="determine; decide" rule="Exclude"/>
   <KeyTermRule id="judge; be judged; sue; decide; esteem; be considered" rule="Exclude">

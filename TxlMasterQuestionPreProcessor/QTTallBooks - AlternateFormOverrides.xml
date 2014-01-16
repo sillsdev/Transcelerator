@@ -1867,10 +1867,16 @@
 		<Alt>Who did the woman say was blessed?</Alt>
 		<Alt>Who did the woman say was truly happy?</Alt>
 	</Alternative>
+  <Alternative>
+    <Original>Who did Jesus say were even more blessed/happier than his mother?</Original>
+    <Alt>Who did Jesus say were even more blessed than his mother?</Alt>
+    <Alt>Who did Jesus say were even happier than his mother?</Alt>
+  </Alternative>
 	<Alternative>
-		<Original>Who did Jesus say were even more blessed/happier than his mother?</Original>
-		<Alt>Who did Jesus say were even more blessed than his mother?</Alt>
-		<Alt>Who did Jesus say were even happier than his mother?</Alt>
+		<Original>What was Josiah's response to the word of the Lord/(words of the) book of the law?</Original>
+    <Alt>What was Josiah's response to the word of the Lord?</Alt>
+    <Alt>What was Josiah's response to the words of the book of the law?</Alt>
+    <Alt>What was Josiah's response to the book of the law?</Alt>
 	</Alternative>
 	<Alternative>
 		<Original>In verse 39 Jesus said that the Pharisees' (centers of emotions, thoughts or belief) were very greedy/full of greedy actions. What does he say that they should do to show that they were clean inside (that is, they were free from sin)?</Original>
