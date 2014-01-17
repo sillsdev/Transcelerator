@@ -148,9 +148,14 @@ namespace SIL.Transcelerator
 
 						Action<bool> activateKeyboard = vern =>
 						{
-							string keyboard = host.GetProjectKeyboard(vern ? projectName : null);
-							if (!string.IsNullOrEmpty(keyboard))
-								KeyboardController.ActivateKeyboard(keyboard);
+							if (vern)
+							{
+								string keyboard = host.GetProjectKeyboard(projectName);
+								if (!string.IsNullOrEmpty(keyboard))
+									KeyboardController.ActivateKeyboard(keyboard);
+							}
+							else
+								KeyboardController.DeactivateKeyboard();
 						};
 
                         var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, projectName, fileId),
