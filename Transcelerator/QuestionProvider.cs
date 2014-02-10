@@ -140,6 +140,9 @@ namespace SIL.Transcelerator
 	    /// ------------------------------------------------------------------------------------
 	    private void PopulateKeyTermsTable(IEnumerable<KeyTermMatchSurrogate> keyTermSurrogates)
 	    {
+			if (keyTermSurrogates == null)
+				return;
+
             foreach (KeyTermMatchSurrogate surrogate in keyTermSurrogates)
             {
                 Word firstWord = Word.FirstWord(surrogate.TermId);
