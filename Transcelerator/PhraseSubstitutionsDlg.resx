@@ -667,8 +667,44 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
+  <metadata name="colMatch.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="colReplacement.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="colIsRegEx.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="colMatchCase.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="colPreviewResult.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="m_dataGridView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="m_dataGridView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 180</value>
+  </data>
+  <data name="m_dataGridView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>744, 207</value>
+  </data>
+  <data name="m_dataGridView.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Name" xml:space="preserve">
+    <value>m_dataGridView</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_dataGridView.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <metadata name="colMatch.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -729,27 +765,6 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   </data>
   <data name="colPreviewResult.MinimumWidth" type="System.Int32, mscorlib">
     <value>100</value>
-  </data>
-  <data name="m_dataGridView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 180</value>
-  </data>
-  <data name="m_dataGridView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>744, 207</value>
-  </data>
-  <data name="m_dataGridView.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;m_dataGridView.Name" xml:space="preserve">
-    <value>m_dataGridView</value>
-  </data>
-  <data name="&gt;&gt;m_dataGridView.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_dataGridView.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;m_dataGridView.ZOrder" xml:space="preserve">
-    <value>4</value>
   </data>
   <data name="m_regexMatchHelper.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -872,7 +887,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>17, 17</value>
   </metadata>
   <metadata name="toolStripUpDownButtons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>114, 17</value>
+    <value>0, 0</value>
   </metadata>
   <data name="toolStripUpDownButtons.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -880,35 +895,11 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   <data name="toolStripUpDownButtons.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="toolStripUpDownButtons.Location" type="System.Drawing.Point, System.Drawing">
-    <value>759, 220</value>
-  </data>
-  <data name="toolStripUpDownButtons.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 48</value>
-  </data>
-  <data name="toolStripUpDownButtons.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="toolStripUpDownButtons.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
-  <data name="&gt;&gt;toolStripUpDownButtons.Name" xml:space="preserve">
-    <value>toolStripUpDownButtons</value>
-  </data>
-  <data name="&gt;&gt;toolStripUpDownButtons.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripUpDownButtons.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;toolStripUpDownButtons.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="btnUp.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
     <value>Magenta</value>
   </data>
   <data name="btnUp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 20</value>
+    <value>30, 20</value>
   </data>
   <data name="btnUp.Text" xml:space="preserve">
     <value>Up</value>
@@ -928,6 +919,30 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   <data name="btnDown.ToolTipText" xml:space="preserve">
     <value>Move Down</value>
   </data>
+  <data name="toolStripUpDownButtons.Location" type="System.Drawing.Point, System.Drawing">
+    <value>759, 220</value>
+  </data>
+  <data name="toolStripUpDownButtons.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 67</value>
+  </data>
+  <data name="toolStripUpDownButtons.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="toolStripUpDownButtons.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStripUpDownButtons.Name" xml:space="preserve">
+    <value>toolStripUpDownButtons</value>
+  </data>
+  <data name="&gt;&gt;toolStripUpDownButtons.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripUpDownButtons.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;toolStripUpDownButtons.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -937,29 +952,8 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>786, 438</value>
   </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Question Adjustments</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
-    <value>toolTip1</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnUp.Name" xml:space="preserve">
-    <value>btnUp</value>
-  </data>
-  <data name="&gt;&gt;btnUp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnDown.Name" xml:space="preserve">
-    <value>btnDown</value>
-  </data>
-  <data name="&gt;&gt;btnDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;colMatch.Name" xml:space="preserve">
     <value>colMatch</value>
@@ -990,6 +984,24 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   </data>
   <data name="&gt;&gt;colPreviewResult.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
+    <value>toolTip1</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnUp.Name" xml:space="preserve">
+    <value>btnUp</value>
+  </data>
+  <data name="&gt;&gt;btnUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDown.Name" xml:space="preserve">
+    <value>btnDown</value>
+  </data>
+  <data name="&gt;&gt;btnDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>PhraseSubstitutionsDlg</value>

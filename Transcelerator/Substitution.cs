@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2014, SIL International.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -31,7 +31,6 @@ namespace SIL.Transcelerator
 		private string m_matchingPattern;
 		private bool m_isRegex;
 		private bool m_matchCase;
-		private bool m_isValid = true;
 		#endregion
 
 		#region Public (XML) properties
@@ -131,26 +130,33 @@ namespace SIL.Transcelerator
 			{
 				if (m_regEx == null)
 				{
-					string pattern = MatchingPattern.Normalize(NormalizationForm.FormC);
-					if (!IsRegex)
-						pattern = Regex.Escape(pattern);
-					RegexOptions options = RegexOptions.Compiled | RegexOptions.CultureInvariant;
-					if (!MatchCase)
-						options |= RegexOptions.IgnoreCase;
-					try
+					if (string.IsNullOrEmpty(MatchingPattern))
 					{
-						m_regEx = new Regex(pattern, options);
-						m_isValid = true;
-					}
-					catch(ArgumentException ex)
-					{
-						if (!IsRegex)
-							throw; // Not sure what else to do - hopefully this can't happen.
-
-						ErrorMessage = ex.Message;
-						//System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
-						//MessageBox.Show(ErrorMessage, resources.GetString("$this.Text"));
 						m_regEx = new Regex(string.Empty);
+						ErrorMessage = "Nothing to match.";
+					}
+					else
+					{
+						string pattern = MatchingPattern.Normalize(NormalizationForm.FormC);
+						if (!IsRegex)
+							pattern = Regex.Escape(pattern);
+						RegexOptions options = RegexOptions.Compiled | RegexOptions.CultureInvariant;
+						if (!MatchCase)
+							options |= RegexOptions.IgnoreCase;
+						try
+						{
+							m_regEx = new Regex(pattern, options);
+						}
+						catch (ArgumentException ex)
+						{
+							if (!IsRegex)
+								throw; // Not sure what else to do - hopefully this can't happen.
+
+							ErrorMessage = ex.Message;
+							//System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
+							//MessageBox.Show(ErrorMessage, resources.GetString("$this.Text"));
+							m_regEx = new Regex(string.Empty);
+						}
 					}
 				}
 				return m_regEx;
@@ -171,13 +177,16 @@ namespace SIL.Transcelerator
 			}
 		}
 
+		/// ------------------------------------------------------------------------------------
 		internal bool Valid
 		{
-			get
-			{
-				m_isValid &= RegEx.ToString().Length > 0;
-				return m_isValid;
-			}
+			get { return RegEx.ToString().Length > 0; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		internal static bool IsNullOrEmpty(Substitution sub)
+		{
+			return sub == null || (string.IsNullOrEmpty(sub.MatchingPattern) && string.IsNullOrEmpty(sub.Replacement));
 		}
 
 		internal string ErrorMessage { get; private set; }

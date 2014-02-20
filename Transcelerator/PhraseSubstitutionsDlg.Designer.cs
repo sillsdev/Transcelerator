@@ -63,8 +63,8 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.Label label2;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 			System.Windows.Forms.Label label4;
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.m_numTimesToMatch = new System.Windows.Forms.NumericUpDown();
 			this.m_btnMatchSingleWord = new System.Windows.Forms.Button();
 			this.m_txtMatchPrefix = new System.Windows.Forms.TextBox();
@@ -73,6 +73,11 @@ namespace SIL.Transcelerator
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGridView = new System.Windows.Forms.DataGridView();
+			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.m_regexMatchHelper = new System.Windows.Forms.Panel();
 			this.m_grpPreview = new System.Windows.Forms.GroupBox();
 			this.m_cboPreviewQuestion = new System.Windows.Forms.ComboBox();
@@ -81,11 +86,6 @@ namespace SIL.Transcelerator
 			this.toolStripUpDownButtons = new System.Windows.Forms.ToolStrip();
 			this.btnUp = new System.Windows.Forms.ToolStripButton();
 			this.btnDown = new System.Windows.Forms.ToolStripButton();
-			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			label1 = new System.Windows.Forms.Label();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			label3 = new System.Windows.Forms.Label();
@@ -224,6 +224,46 @@ namespace SIL.Transcelerator
 			this.m_dataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_CellEndEdit);
 			this.m_dataGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.m_dataGridView_EditingControlShowing);
 			// 
+			// colMatch
+			// 
+			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			resources.ApplyResources(this.colMatch, "colMatch");
+			this.colMatch.Name = "colMatch";
+			this.colMatch.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colReplacement
+			// 
+			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.colReplacement, "colReplacement");
+			this.colReplacement.Name = "colReplacement";
+			this.colReplacement.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colIsRegEx
+			// 
+			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle3;
+			resources.ApplyResources(this.colIsRegEx, "colIsRegEx");
+			this.colIsRegEx.Name = "colIsRegEx";
+			// 
+			// colMatchCase
+			// 
+			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle4;
+			resources.ApplyResources(this.colMatchCase, "colMatchCase");
+			this.colMatchCase.Name = "colMatchCase";
+			// 
+			// colPreviewResult
+			// 
+			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.colPreviewResult, "colPreviewResult");
+			this.colPreviewResult.Name = "colPreviewResult";
+			this.colPreviewResult.ReadOnly = true;
+			this.colPreviewResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
 			// m_regexMatchHelper
 			// 
 			this.m_regexMatchHelper.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
@@ -283,43 +323,6 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnDown, "btnDown");
 			this.btnDown.Name = "btnDown";
 			this.btnDown.Click += new System.EventHandler(this.btnDown_Click);
-			// 
-			// colMatch
-			// 
-			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			resources.ApplyResources(this.colMatch, "colMatch");
-			this.colMatch.Name = "colMatch";
-			// 
-			// colReplacement
-			// 
-			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.colReplacement, "colReplacement");
-			this.colReplacement.Name = "colReplacement";
-			// 
-			// colIsRegEx
-			// 
-			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle7.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle7;
-			resources.ApplyResources(this.colIsRegEx, "colIsRegEx");
-			this.colIsRegEx.Name = "colIsRegEx";
-			// 
-			// colMatchCase
-			// 
-			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle8.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle8;
-			resources.ApplyResources(this.colMatchCase, "colMatchCase");
-			this.colMatchCase.Name = "colMatchCase";
-			// 
-			// colPreviewResult
-			// 
-			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.colPreviewResult, "colPreviewResult");
-			this.colPreviewResult.Name = "colPreviewResult";
-			this.colPreviewResult.ReadOnly = true;
 			// 
 			// PhraseSubstitutionsDlg
 			// 

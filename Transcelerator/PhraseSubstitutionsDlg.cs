@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2014, SIL International.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -86,7 +86,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				return m_dataGridView.Rows.Cast<DataGridViewRow>().Select(row =>
-					GetSubstitutionForRow(row)).Where(sub => sub != null);
+					GetSubstitutionForRow(row)).Where(sub => !Substitution.IsNullOrEmpty(sub));
 			}
 		}
 
@@ -334,7 +334,7 @@ namespace SIL.Transcelerator
 		private void m_dataGridView_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			btnUp.Enabled = e.RowIndex > 0;
-			btnDown.Enabled = e.RowIndex < m_dataGridView.RowCount - 1;
+			btnDown.Enabled = e.RowIndex < m_dataGridView.RowCount - 2; // Need to subtract one for the "New" row
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -358,6 +358,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
 		{
+			if (e.RowIndex < 0)
+				return;
 			UpdatePreview();
 		}
 
@@ -469,23 +471,28 @@ namespace SIL.Transcelerator
 						: row.Cells[colReplacement.Index].Value as String;
 					sub = GetSubstitutionForRow(match, replacement, row);
 				}
-				if (sub != null)
+				if (sub.Valid)
 				{
-					if (sub.Valid)
+					string sResult = sub.RegEx.Replace(sample, sub.RegExReplacementString);
+					if (sResult == sample)
 					{
-						string sResult = sub.RegEx.Replace(sample, sub.RegExReplacementString);
-						if (sResult == sample)
-						{
-							row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
-							row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Goldenrod;
-							row.Cells[colPreviewResult.Index].Value = Properties.Resources.kstidRuleDidNotChangeResult;
-						}
-						else
-						{
-							row.Cells[colPreviewResult.Index].Style = null;
-							row.Cells[colPreviewResult.Index].Value = sResult;
-							sample = sResult;
-						}
+						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
+						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Goldenrod;
+						row.Cells[colPreviewResult.Index].Value = Properties.Resources.kstidRuleDidNotChangeResult;
+					}
+					else
+					{
+						row.Cells[colPreviewResult.Index].Style = null;
+						row.Cells[colPreviewResult.Index].Value = sResult;
+						sample = sResult;
+					}
+				}
+				else
+				{
+					if (index == m_dataGridView.RowCount - 1 && string.IsNullOrEmpty(sub.MatchingPattern))
+					{
+						// Don't display error message in the "New" row.
+						row.Cells[colPreviewResult.Index].Value = string.Empty;
 					}
 					else
 					{
@@ -493,10 +500,6 @@ namespace SIL.Transcelerator
 						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Red;
 						row.Cells[colPreviewResult.Index].Value = sub.ErrorMessage;
 					}
-				}
-				else
-				{
-					row.Cells[colPreviewResult.Index].Value = string.Empty;
 				}
 			}
 		}
@@ -770,8 +773,6 @@ namespace SIL.Transcelerator
 		private Substitution GetSubstitutionForRow(string matchingPattern, string replacement,
 			DataGridViewRow row)
 		{
-			if (matchingPattern == null)
-				return null;
 			bool matchCase = (bool)(row.Cells[colMatchCase.Index].Value ?? false);
 			return new Substitution(matchingPattern, replacement, IsRegEx(row), matchCase);
 		}
