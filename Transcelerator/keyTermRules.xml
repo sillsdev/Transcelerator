@@ -114,11 +114,17 @@
   <KeyTermRule id="passing; discerning; distinguishing" rule="Exclude">
     <Alternate name="discernment"/>
   </KeyTermRule>
-  <KeyTermRule id="traditionally: Almighty One; better: All-sufficient One (= the One every good and perfect gift comes from)" rule="Exclude">
+  <KeyTermRule id="almighty one; all-sufficient one" rule="Exclude">
     <Alternate name="almighty"/>
   </KeyTermRule>
+  <KeyTermRule id="conjurer">
+    <Alternate name="magician"/>
+    <Alternate name="magicians"/>
+    <Alternate name="soothsayer"/>
+    <Alternate name="soothsayers"/>
+  </KeyTermRule>
   <KeyTermRule id="something that has been devoted to idols and so made unclean" rule="Exclude" />
-  <KeyTermRule id="be, become guilty; to be held guilty, suffer punishment; declare guilty" rule="Exclude">
+  <KeyTermRule id="to be guilty; to be held guilty, suffer punishment; declare guilty" rule="Exclude">
 	  <Alternate name="is guilty"/>
 	  <Alternate name="was guilty"/>
 	  <Alternate name="were guilty"/>
@@ -327,6 +333,24 @@
     <Alternate name="violently"/>
     <Alternate name="strong"/>
   </KeyTermRule>
+  <KeyTermRule id="leader, chief">
+    <Alternate name="chief prince"/>
+  </KeyTermRule>
+  <KeyTermRule id="sacrificial meat">
+    <Alternate name="food/meat offered to them"/>
+    <Alternate name="food offered to them"/>
+    <Alternate name="meat offered to them"/>
+    <Alternate name="food that had been offered to idols"/>
+    <Alternate name="food that had been sacrificed to idols"/>
+    <Alternate name="meat that had been offered to idols"/>
+    <Alternate name="meat that had been sacrificed to idols"/>
+    <Alternate name="food offered to idols"/>
+    <Alternate name="food to an idol"/>
+    <Alternate name="meat offered to idols"/>
+    <Alternate name="meat that is sacrificed to fetishes"/>
+    <Alternate name="meat that has been sacrificed to fetishes"/>
+    <Alternate name="food that was sacrificed to fetishes"/>
+  </KeyTermRule>
   <KeyTermRule id="stick; rod">
     <Alternate name="walking stick"/>
     <Alternate name="scepter"/>
@@ -368,7 +392,7 @@
     <Alternate name="disgusting revolting nauseating"/>
     <Alternate name="shameful forbidden"/>
   </KeyTermRule>
-  <KeyTermRule id="lean on; trust; have confidence" rule="Exclude">
+  <KeyTermRule id="lean on; to trust; have confidence" rule="Exclude">
     <Alternate name="to trust"/>
     <Alternate name="trust"/>
     <Alternate name="trusts"/>
@@ -389,13 +413,89 @@
   <KeyTermRule id="intact state; unconcern, ease; prosperity; welfare, condition; peace; friendship; peace, salvation" rule="Exclude">
     <Alternate name="peace"/>
   </KeyTermRule>
+  <KeyTermRule id="tent; tabernacle tent" rule="Exclude">
+    <Alternate name="tent"/>
+    <Alternate name="tabernacle"/>
+  </KeyTermRule>
+  <KeyTermRule id="tent of meeting;" rule="Exclude">
+    <Alternate name="tent of meeting"/>
+    <Alternate name="tabernacle"/>
+  </KeyTermRule>
+  <KeyTermRule id="mark, seal" rule="Exclude">
+    <Alternate name="mark" matchForRefOnly="true"/>
+    <Alternate name="marks" matchForRefOnly="true"/>
+    <Alternate name="seal"/>
+    <Alternate name="seals"/>
+  </KeyTermRule>
+  <KeyTermRule id="miraculous sign; miracle">
+    <Alternate name="sign"/>
+    <Alternate name="signs"/>
+  </KeyTermRule>
+  <KeyTermRule id="cedar tree">
+    <Alternate name="cedar"/>
+  </KeyTermRule>
+  <KeyTermRule id="offering made by fire" rule="Exclude">
+    <Alternate name="burnt offering"/>
+    <Alternate name="burnt offerings"/>
+  </KeyTermRule>
+  <KeyTermRule id="sign, standard, banner" rule="Exclude">
+    <Alternate name="sign"/>
+    <Alternate name="signs"/>
+    <Alternate name="banner"/>
+    <Alternate name="banners"/>
+  </KeyTermRule>
+  <KeyTermRule id="to pledge, promise" rule="Exclude">
+    <Alternate name="bind"/>
+  </KeyTermRule>
+  <KeyTermRule id="covenant box" rule="Exclude">
+    <Alternate name="ark" matchForRefOnly="true"/>
+    <Alternate name="ark of the covenant"/>
+  </KeyTermRule>
   <KeyTermRule id="step; flight of steps; stairs" rule="Exclude"/>
-  <KeyTermRule id="be firm, well-established; hence: to be (or consider) loyal, steadfast, reliable, trustworthy" rule="Exclude">
+  <KeyTermRule id="Niphal: be firm, well-established; be loyal, steadfast, reliable, trustworthy" rule="Exclude">
     <Alternate name="firm"/>
     <Alternate name="loyal"/>
     <Alternate name="to believe"/>
     <Alternate name="believe"/>
     <Alternate name="believed"/>
+  </KeyTermRule>
+  <KeyTermRule id="Hiphil: believe in, trust" rule="Exclude">
+    <Alternate name="believe"/>
+    <Alternate name="believed"/>
+    <Alternate name="believes"/>
+    <Alternate name="believing"/>
+    <Alternate name="believe in"/>
+    <Alternate name="believed in"/>
+    <Alternate name="believes in"/>
+    <Alternate name="believing in"/>
+    <Alternate name="trust"/>
+    <Alternate name="trusted"/>
+    <Alternate name="trusts"/>
+    <Alternate name="trusting"/>
+    <Alternate name="trust in"/>
+    <Alternate name="trusted in"/>
+    <Alternate name="trusts in"/>
+    <Alternate name="trusting in"/>
+  </KeyTermRule>
+  <KeyTermRule id="believe; entrust; be entrusted with" rule="Exclude">
+    <Alternate name="believe"/>
+    <Alternate name="believed"/>
+    <Alternate name="believes"/>
+    <Alternate name="believing"/>
+    <Alternate name="believer"/>
+    <Alternate name="believers"/>
+    <Alternate name="believe in"/>
+    <Alternate name="believed in"/>
+    <Alternate name="believes in"/>
+    <Alternate name="believing in"/>
+    <Alternate name="trust"/>
+    <Alternate name="trusted"/>
+    <Alternate name="trusts"/>
+    <Alternate name="trusting"/>
+    <Alternate name="trust in"/>
+    <Alternate name="trusted in"/>
+    <Alternate name="trusts in"/>
+    <Alternate name="trusting in"/>
   </KeyTermRule>
   <KeyTermRule id="((literally:)|(hence:)) (?&lt;term&gt;[^;]+)(; )?" regex="true"/>
   <KeyTermRule id="Israelite">
