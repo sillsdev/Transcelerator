@@ -708,6 +708,16 @@
   <KeyTermRule id="heavenly (one; place; things)" rule="Exclude">
     <Alternate name="heavenly"/>
   </KeyTermRule>
+  <KeyTermRule id="host of heaven = sun, moon, and stars" rule="Exclude">
+    <Alternate name="sun moon and stars"/>
+    <Alternate name="sky moon and stars"/>
+    <Alternate name="host of heaven"/>
+  </KeyTermRule>
+  <KeyTermRule id="heavenly (one; place; things)" rule="Exclude">
+    <Alternate name="heavenly"/>
+  </KeyTermRule>
+  <KeyTermRule id="yoke" rule="MatchForRefOnly"/>
+  <KeyTermRule id="yoke; oppression; bondage" rule="MatchForRefOnly"/>
   <KeyTermRule id="name; person, people; category of, being of the type that..." rule="Exclude">
     <Alternate name="name"/>
     <Alternate name="names"/>
