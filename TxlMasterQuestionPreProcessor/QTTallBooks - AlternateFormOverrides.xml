@@ -9,17 +9,29 @@
 		<Alt>Where was Paul when he wrote this letter?</Alt>
 		<Alt>Where was Paul when he was writing this letter?</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>What is the reason that there is no real value in people carefully obeying/for people to carefully obey such rules?</Original>
-		<Alt>What is the reason that there is no real value in people carefully obeying such rules?</Alt>
-		<Alt>What is the reason that there is no real value for people to carefully obey such rules?</Alt>
-	</Alternative>
-	<Alternative>
-		<Original>What does Christ do for the body/the church/the believers?</Original>
-		<Alt>What does Christ do for the body?</Alt>
-		<Alt>What does Christ do for the church?</Alt>
-		<Alt>What does Christ do for the believers?</Alt>
-	</Alternative>
+  <Alternative>
+    <Original>What is the reason that there is no real value in people carefully obeying/for people to carefully obey such rules?</Original>
+    <Alt>What is the reason that there is no real value in people carefully obeying such rules?</Alt>
+    <Alt>What is the reason that there is no real value for people to carefully obey such rules?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Whom did [the angels] throw into the lake of fire?</Original>
+    <Alt>Whom did the angels throw into the lake of fire?</Alt>
+    <Alt>Who was thrown into the lake of fire?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What does Christ do for the body/the church/the believers?</Original>
+    <Alt>What does Christ do for the body?</Alt>
+    <Alt>What does Christ do for the church?</Alt>
+    <Alt>What does Christ do for the believers?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>Who did Jesus say/imply would give us what is good/what we need, if we ask?</Original>
+    <Alt>Who did Jesus say would give us what is good if we ask?</Alt>
+    <Alt>Who did Jesus imply would give us what we need, if we ask?</Alt>
+    <Alt>Who did Jesus say would give us what is good if we ask?</Alt>
+    <Alt>Who did Jesus imply would give us what we need, if we ask?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>What did the prophets write about Jesus/the Messiah long ago?</Original>
 		<Alt>What did the prophets write about Jesus long ago?</Alt>
@@ -1152,9 +1164,9 @@
 		<Alt>How did they know that Peter and the other apostles were not making up stories when they told them about the might of the Lord Jesus Christ and of his return?</Alt>
 	</Alternative>
 	<Alternative>
-		<Original>Who did those people/the Pharisees not know?</Original>
-		<Alt>Who did those people not know?</Alt>
-		<Alt>Who did the Pharisees not know?</Alt>
+		<Original>Whom did those people/the Pharisees not know?</Original>
+		<Alt>Whom did those people not know?</Alt>
+		<Alt>Whom did the Pharisees not know?</Alt>
 	</Alternative>
 	<Alternative>
 		<Original>What could they do so that God forgave their sins/they would not die in their sins?</Original>
@@ -2759,16 +2771,87 @@
 		<Alt>How much food remained?</Alt>
 		<Alt>How much food was left over?</Alt>
 	</Alternative>
-	<Alternative>
-		<Original>What could Peter do with the keys to/authority over the kingdom of heaven?</Original>
-		<Alt>What could Peter do with the keys to the kingdom of heaven?</Alt>
-		<Alt>What could Peter do with the authority over the kingdom of heaven?</Alt>
-	</Alternative>
-	<Alternative>
-		<Original>The translator may need to have each doctrine read and ask what the reader understands by what is said there. An unbeliever especially will not fully understand these doctrines, but the surface meaning should be clear. At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
-		<Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
-		<Alt>Do you have any other comments to make about the passage just checked?</Alt>
-	</Alternative>
+  <Alternative>
+    <Original>What could Peter do with the keys to/authority over the kingdom of heaven?</Original>
+    <Alt>What could Peter do with the keys to the kingdom of heaven?</Alt>
+    <Alt>What could Peter do with the authority over the kingdom of heaven?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What happened when a corpse/dead man was thrown/cast into the tomb/sepulcher/grave of Elisha?</Original>
+    <Alt>What happened when a corpse was thrown into the tomb of Elisha?</Alt>
+    <Alt>What happened when a corpse was thrown into the sepulcher of Elisha?</Alt>
+    <Alt>What happened when a corpse was thrown into the grave of Elisha?</Alt>
+    <Alt>What happened when a dead man was thrown into the tomb of Elisha?</Alt>
+    <Alt>What happened when a dead man was thrown into the sepulcher of Elisha?</Alt>
+    <Alt>What happened when a dead man was thrown into the grave of Elisha?</Alt>
+    <Alt>What happened when a corpse was cast into the tomb of Elisha?</Alt>
+    <Alt>What happened when a corpse was cast into the sepulcher of Elisha?</Alt>
+    <Alt>What happened when a corpse was cast into the grave of Elisha?</Alt>
+    <Alt>What happened when a dead man was cast into the tomb of Elisha?</Alt>
+    <Alt>What happened when a dead man was cast into the sepulcher of Elisha?</Alt>
+    <Alt>What happened when a dead man was cast into the grave of Elisha?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Elisha do to his yoke/pair of oxen and plow/plowing equipment?</Original>
+    <Alt>What did Elisha do to his pair of oxen and plow?</Alt>
+    <Alt>What did Elisha do to his pair of oxen and plowing equipment?</Alt>
+    <Alt>What did Elisha do to his yoke of oxen and plow?</Alt>
+    <Alt>What did Elisha do to his yoke of oxen and plowing equipment?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Jehoash do with [all the] things/offerings that had been dedicated [to the Lord] by previous kings of Judah/his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Original>
+    <Alt>What did Jehoash do with things that had been dedicated by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with things that had been dedicated to the Lord by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated to the Lord by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated to the Lord by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated to the Lord by previous kings of Judah?</Alt>
+    <Alt>What did Jehoash do with things that had been dedicated by his predecessors?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated by his predecessors?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated by his predecessors?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated by his predecessors?</Alt>
+    <Alt>What did Jehoash do with things that had been dedicated to the Lord by his predecessors?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated to the Lord by his predecessors?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated to the Lord by his predecessors?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated to the Lord by his predecessors?</Alt>
+    <Alt>What did Jehoash do with things that had been dedicated by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with things that had been dedicated to the Lord by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with all the things that had been dedicated to the Lord by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with the offerings that had been dedicated to the Lord by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+    <Alt>What did Jehoash do with all the offerings that had been dedicated to the Lord by his predecessors Jehoshaphat, Jehoram, and Ahaziah?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What noise/sound was not heard in the construction of the temple/in the temple during the/its construction?</Original>
+    <Alt>What noise was not heard in the construction of the temple?</Alt>
+    <Alt>What sound was not heard in the construction of the temple?</Alt>
+    <Alt>What noise was not heard in the temple during the construction?</Alt>
+    <Alt>What sound was not heard in the temple during the construction?</Alt>
+    <Alt>What noise was not heard in the temple during its construction?</Alt>
+    <Alt>What sound was not heard in the temple during its construction?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What happened to Jeroboam when he tried to seize the man of God/ordered the man of God to be seized?</Original>
+    <Alt>What happened to Jeroboam when he tried to seize the man of God?</Alt>
+    <Alt>What happened to Jeroboam when he ordered the man of God to be seized?</Alt>
+    <Alt>What happened to Jeroboam when he ordered them to seize the man of God?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did Rehoboam substitute for/make to replace what was/the treasures that were taken from the temple?</Original>
+    <Alt>What did Rehoboam substitute for the treasures that were taken from the temple?</Alt>
+    <Alt>What did Rehoboam make to replace what was taken from the temple?</Alt>
+    <Alt>What did Rehoboam substitute for what was taken from the temple?</Alt>
+    <Alt>What did Rehoboam make to replace the treasures that were taken from the temple?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>The translator may need to have each doctrine read and ask what the reader understands by what is said there. An unbeliever especially will not fully understand these doctrines, but the surface meaning should be clear. At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
+    <Alt>At this point ask the reader if he/she has any further comments to make about the passage just checked.</Alt>
+    <Alt>Do you have any other comments to make about the passage just checked?</Alt>
+  </Alternative>
 	<Alternative>
 		<Original>The translator may need to go back and ask what the reader understands by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age." At this point ask the reader if he/she has any further comments to make about the passage just checked.</Original>
 		<Alt>What do you understand by "they have come to understand God's Message" and "they have received the good things God gives his people" and "experienced the Holy Spirit in their lives" and "seen God using his power as He will in the Coming Age."?</Alt>
