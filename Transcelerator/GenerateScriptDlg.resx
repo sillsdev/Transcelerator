@@ -751,13 +751,13 @@
     <value>3, 52</value>
   </data>
   <data name="m_rdoUseOriginal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 17</value>
+    <value>200, 17</value>
   </data>
   <data name="m_rdoUseOriginal.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
   <data name="m_rdoUseOriginal.Text" xml:space="preserve">
-    <value>&amp;Use the Original Untranslated Question</value>
+    <value>&amp;Use the Original Untranslated Source</value>
   </data>
   <data name="&gt;&gt;m_rdoUseOriginal.Name" xml:space="preserve">
     <value>m_rdoUseOriginal</value>
@@ -852,34 +852,34 @@
   <data name="&gt;&gt;m_chkEnglishAnswers.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="m_chkEnglishQuestions.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_chkSourceQuestions.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="m_chkEnglishQuestions.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_chkSourceQuestions.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="m_chkEnglishQuestions.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_chkSourceQuestions.Location" type="System.Drawing.Point, System.Drawing">
     <value>9, 42</value>
   </data>
-  <data name="m_chkEnglishQuestions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 17</value>
+  <data name="m_chkSourceQuestions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>165, 17</value>
   </data>
-  <data name="m_chkEnglishQuestions.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_chkSourceQuestions.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
-  <data name="m_chkEnglishQuestions.Text" xml:space="preserve">
-    <value>Include English &amp;Questions</value>
+  <data name="m_chkSourceQuestions.Text" xml:space="preserve">
+    <value>Include {0} Source &amp;Questions</value>
   </data>
-  <data name="&gt;&gt;m_chkEnglishQuestions.Name" xml:space="preserve">
-    <value>m_chkEnglishQuestions</value>
+  <data name="&gt;&gt;m_chkSourceQuestions.Name" xml:space="preserve">
+    <value>m_chkSourceQuestions</value>
   </data>
-  <data name="&gt;&gt;m_chkEnglishQuestions.Type" xml:space="preserve">
+  <data name="&gt;&gt;m_chkSourceQuestions.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_chkEnglishQuestions.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_chkSourceQuestions.Parent" xml:space="preserve">
     <value>groupBox3</value>
   </data>
-  <data name="&gt;&gt;m_chkEnglishQuestions.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_chkSourceQuestions.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
   <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
@@ -1090,7 +1090,7 @@
     <value>4</value>
   </data>
   <data name="m_lblEnglishQuestionColor.Text" xml:space="preserve">
-    <value>English Question Text Color</value>
+    <value>Source Question Text Color</value>
   </data>
   <data name="&gt;&gt;m_lblEnglishQuestionColor.Name" xml:space="preserve">
     <value>m_lblEnglishQuestionColor</value>

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2011' to='2013 company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.   
+// <copyright from='2011' to='2014 company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -10,17 +10,16 @@
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Utils;
@@ -38,8 +37,11 @@ namespace SIL.Transcelerator
 	public partial class UNSQuestionsDialog : Form, IMessageFilter
 	{
 		#region Member Data
+		private const string kDefaultUiLocale = "en";
 		private readonly string m_projectName;
-	    private readonly Func<IEnumerable<IKeyTerm>> m_getKeyTerms;
+		private string m_uiLocale;
+		private CultureInfo m_uiCulture;
+	    private readonly Func<string, IEnumerable<IKeyTerm>> m_getKeyTerms;
 	    private readonly Font m_vernFont;
 		private readonly string m_vernIcuLocale;
 		private readonly bool m_fVernIsRtoL;
@@ -62,8 +64,10 @@ namespace SIL.Transcelerator
         private IDictionary<string, string> m_sectionHeadText;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
-        private static readonly string s_programDataFolder;
-        private readonly string m_parsedQuestionsFilename;
+		private string m_localizedQuestionsFilename;
+		private static readonly string s_programDataFolder;
+		private static string s_controlFilesFolder;
+        private string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private List<Substitution> m_phraseSubstitutions;
 		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
@@ -241,63 +245,80 @@ namespace SIL.Transcelerator
                     new KeyValuePair<string, string>(sectionRef, m_sectionHeadText[sectionRef]));
             }
         }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the name of the folder where the master question file and the default (English)
+		/// control files are.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+        private string DefaultControlFileFolder
+		{
+			get
+			{
+				return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+			}
+		}
 		#endregion
 
 		#region Constructors
-	    static UNSQuestionsDialog()
-	    {
-		    try
-		    {
-				var deprecatedProgramDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-					"SIL"), "Transcelerator");
-			    if (Directory.Exists(deprecatedProgramDataFolder))
-			    {
-				    var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlCore.questionsFilename);
+		static UNSQuestionsDialog()
+		{
+			try
+			{
+				var deprecatedProgramDataFolder =
+					Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+						"SIL"), "Transcelerator");
+				if (Directory.Exists(deprecatedProgramDataFolder))
+				{
+					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlCore.questionsFilename);
 					if (File.Exists(cachedQuestionsFilename))
 						File.Delete(cachedQuestionsFilename);
 					Directory.Delete(deprecatedProgramDataFolder);
 				}
-		    }
-		    catch (Exception)
-		    {
+			}
+			catch (Exception)
+			{
 				// This was just a clean-up step from a possible previous version of Transcelerator, so if something goes
 				// wrong, ignore it.
-		    }
-			
-			s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                 "SIL"), "Transcelerator");
-             if (!Directory.Exists(s_programDataFolder))
-                 Directory.CreateDirectory(s_programDataFolder);
-	    }
+			}
 
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
-	    /// </summary>
-	    /// <param name="splashScreen">The splash screen (can be null)</param>
-	    /// <param name="projectName">Name of the project.</param>
-	    /// <param name="getKeyTerms">Function to get collection of key terms.</param>
-	    /// <param name="getTermRenderings">Function to get renderings for given key term.</param>
-	    /// <param name="vernFont">The vernacular font.</param>
-	    /// <param name="vernIcuLocale">The vernacular icu locale.</param>
-	    /// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
-	    /// <param name="datafileProxy">helper object to store and retrieve data.</param>
-	    /// <param name="scrExtractor">The Scripture extractor (can be null).</param>
-        /// <param name="getCss">Function to retrieve the project's USFX cascading style sheet</param>
-	    /// <param name="appName">Name of the calling application</param>
-	    /// <param name="englishVersification">The versification typically used in English Bibles</param>
-	    /// <param name="projectVersification">The versification of the external project (to
-	    /// be used for passing references to the scrExtractor).</param>
-	    /// <param name="startRef">The starting Scripture reference to filter on</param>
-	    /// <param name="endRef">The ending Scripture reference to filter on</param>
+			s_programDataFolder =
+				Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+					"SIL"), "Transcelerator");
+			if (!Directory.Exists(s_programDataFolder))
+				Directory.CreateDirectory(s_programDataFolder);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
+		/// </summary>
+		/// <param name="splashScreen">The splash screen (can be null)</param>
+		/// <param name="projectName">Name of the project.</param>
+		/// <param name="uiLocale">The ID of the user-interface locale</param>
+		/// <param name="getKeyTerms">Function to get collection of key terms.</param>
+		/// <param name="getTermRenderings">Function to get renderings for given key term.</param>
+		/// <param name="vernFont">The vernacular font.</param>
+		/// <param name="vernIcuLocale">The vernacular icu locale.</param>
+		/// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
+		/// <param name="datafileProxy">helper object to store and retrieve data.</param>
+		/// <param name="scrExtractor">The Scripture extractor (can be null).</param>
+		/// <param name="getCss">Function to retrieve the project's USFX cascading style sheet</param>
+		/// <param name="appName">Name of the calling application</param>
+		/// <param name="englishVersification">The versification typically used in English Bibles</param>
+		/// <param name="projectVersification">The versification of the external project (to
+		/// be used for passing references to the scrExtractor).</param>
+		/// <param name="startRef">The starting Scripture reference to filter on</param>
+		/// <param name="endRef">The ending Scripture reference to filter on</param>
 		/// <param name="currRef">The current reference in the calling application</param>
-	    /// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
-	    /// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
-	    /// <param name="lookupTermDelegate">The lookup term delegate.</param>
+		/// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
+		/// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
+		/// <param name="lookupTermDelegate">The lookup term delegate.</param>
 		/// <param name="fEnableDragDrop">Allow drag-drop editing (moving text within a translation)</param>
-	    /// ------------------------------------------------------------------------------------
-	    public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
+		/// ------------------------------------------------------------------------------------
+		public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName, string uiLocale,
+            Func<string, IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
             Font vernFont, string vernIcuLocale, bool fVernIsRtoL, DataFileAccessor datafileProxy,
             IScrExtractor scrExtractor, Func<string> getCss, string appName, IScrVers englishVersification,
             IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
@@ -323,6 +344,8 @@ namespace SIL.Transcelerator
             if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
 				throw new ArgumentException("startRef must be before endRef");
 			m_projectName = projectName;
+			MigrateDefaultParsedQuestionsToEnglish();
+		    SetUILocale(uiLocale);
 	        m_getKeyTerms = getKeyTerms;
 	        KeyTerm.GetTermRenderings = getTermRenderings;
 	        m_vernFont = vernFont;
@@ -342,11 +365,9 @@ namespace SIL.Transcelerator
 		    TermRenderingCtrl.s_AppName = appName;
            
             m_startRef = startRef;
-            m_endRef = endRef;                
-            
-            m_masterQuestionsFilename = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                TxlCore.questionsFilename);
-	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, TxlCore.questionsFilename);
+            m_endRef = endRef;
+
+			m_masterQuestionsFilename = Path.Combine(DefaultControlFileFolder, TxlCore.questionsFilename);
 
 			ClearBiblicalTermsPane();
 
@@ -395,6 +416,41 @@ namespace SIL.Transcelerator
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
 			splashScreen.Close();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		private void MigrateDefaultParsedQuestionsToEnglish()
+		{
+			var oldDefaultParsedQuestionsFilename = Path.Combine(s_programDataFolder, TxlCore.questionsFilename);
+			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder,
+					string.Format(TxlCore.questionsFilenameTemplate, kDefaultUiLocale));
+			if (File.Exists(oldDefaultParsedQuestionsFilename))
+				File.Move(oldDefaultParsedQuestionsFilename, m_parsedQuestionsFilename);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		private void SetUILocale(string uiLocale)
+		{
+			s_controlFilesFolder = DefaultControlFileFolder;
+			m_uiLocale = kDefaultUiLocale;
+			m_localizedQuestionsFilename = null;
+
+			m_uiCulture = CultureInfo.GetCultureInfo(uiLocale);
+			m_colSource.HeaderText = string.Format(m_colSource.HeaderText, m_uiCulture.NativeName);
+
+			if (!string.IsNullOrEmpty(uiLocale))
+			{
+				var localizationFolder = Path.Combine(s_controlFilesFolder, uiLocale);
+				if (File.Exists(Path.Combine(localizationFolder, TxlCore.questionsFilename)))
+				{
+					s_controlFilesFolder = localizationFolder;
+					m_uiLocale = uiLocale;
+					PhraseParser.IcuLocale = m_uiLocale;
+					m_localizedQuestionsFilename = Path.Combine(s_controlFilesFolder, TxlCore.questionsFilename);
+					m_parsedQuestionsFilename = Path.Combine(s_programDataFolder,
+						string.Format(TxlCore.questionsFilenameTemplate, m_uiLocale));
+				}
+			}
 		}
 		#endregion
 
@@ -1051,7 +1107,7 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder))
+				m_uiCulture.NativeName, defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder))
             {
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
@@ -1191,7 +1247,7 @@ namespace SIL.Transcelerator
                                 (phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
 
                             sw.WriteLine("<div class=\"extras\" lang=\"en\">");
-                            if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+                            if (dlg.m_chkSourceQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
                                 sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseToDisplayInUI.Normalize(NormalizationForm.FormC) + "</p>");
                             Question answersAndComments = phrase.QuestionInfo;
                             if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
@@ -2044,15 +2100,16 @@ namespace SIL.Transcelerator
 				return;
 			}
 
-		    string installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+		    FileInfo finfoLocalizedQuestions = (m_localizedQuestionsFilename == null) ?
+				finfoMasterQuestions : new FileInfo(m_localizedQuestionsFilename);
 
-	        string keyTermRulesFilename = Path.Combine(installDir, "keyTermRules.xml");
+	        string keyTermRulesFilename = Path.Combine(s_controlFilesFolder, "keyTermRules.xml");
 
             FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
             if (!finfoKtRules.Exists)
                 MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
 
-			string questionWordsFilename = Path.Combine(installDir, TxlCore.questionWordsFilename);
+			string questionWordsFilename = Path.Combine(s_controlFilesFolder, TxlCore.questionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
@@ -2065,7 +2122,8 @@ namespace SIL.Transcelerator
             Exception e;
 	        ParsedQuestions parsedQuestions;
 	        if (finfoParsedQuestions.Exists &&
-                finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+				finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+				finfoLocalizedQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
 				finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
 				(!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
 				(!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
@@ -2100,8 +2158,11 @@ namespace SIL.Transcelerator
 
 		        LoadPhraseSubstitutionsIfNeeded();
 
-                MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename, questionWords.Items,
-                    m_getKeyTerms(), rules, customizations, m_phraseSubstitutions);
+		        var localizedQuestions = m_localizedQuestionsFilename == null ? null :
+			        XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(m_localizedQuestionsFilename);
+
+				MasterQuestionParser parser = new MasterQuestionParser(m_masterQuestionsFilename, localizedQuestions, questionWords.Items,
+                    m_getKeyTerms(m_uiLocale), rules, customizations, m_phraseSubstitutions);
 	            parsedQuestions = parser.Result;
 	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
 	        }

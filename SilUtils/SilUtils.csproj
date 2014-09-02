@@ -92,7 +92,6 @@
     <Compile Include="CustomDropDown.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PorterStemmer.cs" />
     <Compile Include="ScreenUtils.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="PathwayUtils.cs" />
