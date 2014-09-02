@@ -74,6 +74,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\dotnet\KeymanLink.dll</HintPath>
     </Reference>
+    <Reference Include="L10NSharp, Version=2.0.5196.24814, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\l10nsharp\output\Debug\L10NSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Palaso, Version=1.9.366.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\dotnet\Palaso.dll</HintPath>
@@ -339,6 +343,10 @@
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Stemmers\StemmersNet\StemmersNet.csproj">
+      <Project>{8F8C88DD-F172-4964-A49C-976437C7B538}</Project>
+      <Name>StemmersNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TxlCore\TxlCore.csproj">
       <Project>{140A72D9-B0B3-4E19-AA3B-0127C3014D39}</Project>
       <Name>TxlCore</Name>
@@ -348,7 +356,13 @@
     <None Include="CreditsAndLicense.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Content Include="TxlQuestionWords.xml">
+    <Content Include="es\keyTermRules.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="es\TxlQuestions.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="es\TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="keyTermRules.xml">
@@ -374,6 +388,7 @@
     <Content Include="TxlQuestions.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TxlQuestionWords.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -385,8 +400,10 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
+xcopy $(TargetDir)es\*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName)\es /y /i
 IF "$(ConfigurationName)" == "Release" (
 xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i
+xcopy $(TargetDir)es\*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)\es" /y /i
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>

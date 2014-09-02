@@ -35,7 +35,8 @@ namespace SIL.Transcelerator
         static List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
 
 	    private QuestionSections m_sections;
-	    private readonly IEnumerable<PhraseCustomization> m_customizations;
+		private readonly IEnumerable<XmlTranslation> m_localizations;
+		private readonly IEnumerable<PhraseCustomization> m_customizations;
         private readonly Dictionary<Regex, string> m_phraseSubstitutions;
         /// <summary>A lookup table of the last word of all known English key terms to the
 		/// actual key term objects.</summary>
@@ -69,26 +70,43 @@ namespace SIL.Transcelerator
         /// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(string filename, IEnumerable<string> questionWords,
-            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
-            IEnumerable<PhraseCustomization> customizations,
+        public MasterQuestionParser(string filename, IEnumerable<XmlTranslation> localizations,
+			IEnumerable<string> questionWords, IEnumerable<IKeyTerm> keyTerms,
+			KeyTermRules keyTermRules, IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
             this(XmlSerializationHelper.DeserializeFromFile<QuestionSections>(filename),
-            questionWords, keyTerms, keyTermRules, customizations, phraseSubstitutions)
+				localizations, questionWords, keyTerms, keyTermRules, customizations,
+				phraseSubstitutions)
         {
-        }
-        
-        /// ------------------------------------------------------------------------------------
+		}
+
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
+		public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
+			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<PhraseCustomization> customizations,
+			IEnumerable<Substitution> phraseSubstitutions) :
+			this(sections, null, questionWords, keyTerms, keyTermRules, customizations,
+				phraseSubstitutions)
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public MasterQuestionParser(QuestionSections sections,
+			IEnumerable<XmlTranslation> localizations, IEnumerable<string> questionWords,
             IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
             m_sections = sections;
+	        m_localizations = localizations;
 	        m_questionWords = questionWords;
 	        if (questionWords != null)
 	        {
@@ -234,7 +252,7 @@ namespace SIL.Transcelerator
         private IEnumerable<Question> GetCustomizations(Question q, Category category, int index)
         {
             Question added = null;
-            var list = m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)).ToList();
+          //  var list = m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)).ToList();
             foreach (PhraseCustomization customization in m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)))
             {
                 switch (customization.Type)
@@ -279,7 +297,13 @@ namespace SIL.Transcelerator
                         break;
                 }
             }
-            yield return q;
+	        if (m_localizations != null)
+	        {
+		        var localizedVersion = m_localizations.FirstOrDefault(l => q.Matches(l.Reference, l.PhraseKey));
+		        if (localizedVersion != null)
+			        q.ModifiedPhrase = localizedVersion.Translation;
+	        }
+	        yield return q;
             if (added != null)
             {
                 foreach (Question tpAdded in GetCustomizations(added, category, index + 1))
@@ -321,9 +345,9 @@ namespace SIL.Transcelerator
                         }
                         if (m_customizations != null)
                         {
-                            foreach (Question inserted in GetCustomizations(q, category, iQuestion))
+                            foreach (Question customQuestion in GetCustomizations(q, category, iQuestion))
                             {
-                                yield return inserted;
+                                yield return customQuestion;
                                 iQuestion++;
                             }
                         }

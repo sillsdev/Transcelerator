@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCoreTests", "TxlCore\ClassLibrary1\TxlCoreTests.csproj", "{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StemmersNet", "Stemmers\StemmersNet\StemmersNet.csproj", "{8F8C88DD-F172-4964-A49C-976437C7B538}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StemmersNextTests", "Stemmers\StemmersNextTests\StemmersNextTests.csproj", "{BB25B5E5-481B-48E6-9541-501A28197671}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,14 @@ Global
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F8C88DD-F172-4964-A49C-976437C7B538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F8C88DD-F172-4964-A49C-976437C7B538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F8C88DD-F172-4964-A49C-976437C7B538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F8C88DD-F172-4964-A49C-976437C7B538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB25B5E5-481B-48E6-9541-501A28197671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB25B5E5-481B-48E6-9541-501A28197671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB25B5E5-481B-48E6-9541-501A28197671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB25B5E5-481B-48E6-9541-501A28197671}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

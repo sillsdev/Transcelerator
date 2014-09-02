@@ -52,12 +52,13 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
-            string defaultFolder, IEnumerable<int> canonicalBookIds,
+            string sourceLanguageName, string defaultFolder, IEnumerable<int> canonicalBookIds,
             IEnumerable<KeyValuePair<string, string>> sections)
 		{
 		    m_scrExtractor = scrExtractor;
 		    InitializeComponent();
-			m_chkEnglishQuestions.Tag = btnChooseEnglishQuestionColor;
+			m_chkSourceQuestions.Text = string.Format(m_chkSourceQuestions.Text, sourceLanguageName);
+			m_chkSourceQuestions.Tag = btnChooseEnglishQuestionColor;
 			m_chkEnglishAnswers.Tag = btnChooseEnglishAnswerColor;
 			m_chkIncludeComments.Tag = btnChooserCommentColor;
 			btnChooseQuestionGroupHeadingsColor.Tag = m_lblQuestionGroupHeadingsColor;
@@ -93,7 +94,7 @@ namespace SIL.Transcelerator
 			}
 
 			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
-			m_chkEnglishQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
+			m_chkSourceQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
 			m_chkEnglishAnswers.Checked = Properties.Settings.Default.GenerateTemplateEnglishAnswers;
 			m_chkIncludeComments.Checked = Properties.Settings.Default.GenerateTemplateIncludeComments;
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
@@ -387,7 +388,7 @@ namespace SIL.Transcelerator
             }
 
             Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
-            Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkEnglishQuestions.Checked;
+            Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkSourceQuestions.Checked;
             Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkEnglishAnswers.Checked;
             Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeComments.Checked;
             Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;

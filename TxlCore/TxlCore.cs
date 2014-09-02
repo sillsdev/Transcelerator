@@ -15,6 +15,7 @@ namespace SIL.Transcelerator
     {
         public const string englishVersificationName = "English";
 		public const string questionsFilename = "TxlQuestions.xml";
+		public const string questionsFilenameTemplate = "TxlQuestions.{0}.xml";
 		public const string questionWordsFilename = "TxlQuestionWords.xml";
 
       	/// ------------------------------------------------------------------------------------

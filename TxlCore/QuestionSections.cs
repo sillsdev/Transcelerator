@@ -68,7 +68,7 @@ namespace SIL.Transcelerator
 		public string Type { get; set; }
 
 	    private List<Question> m_questions;
-		[XmlElement]
+		[XmlElement("Question")]
         public List<Question> Questions { get { return m_questions ?? (m_questions = new List<Question>()); } }
 	}
 	#endregion

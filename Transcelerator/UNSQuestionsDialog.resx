@@ -149,13 +149,13 @@
   <data name="m_colReference.Width" type="System.Int32, mscorlib">
     <value>82</value>
   </data>
-  <metadata name="m_colEnglish.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="m_colSource.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
-  <data name="m_colEnglish.HeaderText" xml:space="preserve">
-    <value>English Question</value>
+  <data name="m_colSource.HeaderText" xml:space="preserve">
+    <value>{0} Source</value>
   </data>
-  <data name="m_colEnglish.MinimumWidth" type="System.Int32, mscorlib">
+  <data name="m_colSource.MinimumWidth" type="System.Int32, mscorlib">
     <value>100</value>
   </data>
   <metadata name="m_colTranslation.UserAddedColumn" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -7182,36 +7182,6 @@
   <data name="&gt;&gt;mnuViewAnswers.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;m_colReference.Name" xml:space="preserve">
-    <value>m_colReference</value>
-  </data>
-  <data name="&gt;&gt;m_colReference.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_colEnglish.Name" xml:space="preserve">
-    <value>m_colEnglish</value>
-  </data>
-  <data name="&gt;&gt;m_colEnglish.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_colTranslation.Name" xml:space="preserve">
-    <value>m_colTranslation</value>
-  </data>
-  <data name="&gt;&gt;m_colTranslation.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_colUserTranslated.Name" xml:space="preserve">
-    <value>m_colUserTranslated</value>
-  </data>
-  <data name="&gt;&gt;m_colUserTranslated.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_colDebugInfo.Name" xml:space="preserve">
-    <value>m_colDebugInfo</value>
-  </data>
-  <data name="&gt;&gt;m_colDebugInfo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;cutToolStripMenuItem.Name" xml:space="preserve">
     <value>cutToolStripMenuItem</value>
   </data>
@@ -7541,6 +7511,36 @@
   </data>
   <data name="&gt;&gt;lblRemainingWork.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_colReference.Name" xml:space="preserve">
+    <value>m_colReference</value>
+  </data>
+  <data name="&gt;&gt;m_colReference.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_colSource.Name" xml:space="preserve">
+    <value>m_colSource</value>
+  </data>
+  <data name="&gt;&gt;m_colSource.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_colTranslation.Name" xml:space="preserve">
+    <value>m_colTranslation</value>
+  </data>
+  <data name="&gt;&gt;m_colTranslation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_colUserTranslated.Name" xml:space="preserve">
+    <value>m_colUserTranslated</value>
+  </data>
+  <data name="&gt;&gt;m_colUserTranslated.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_colDebugInfo.Name" xml:space="preserve">
+    <value>m_colDebugInfo</value>
+  </data>
+  <data name="&gt;&gt;m_colDebugInfo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>UNSQuestionsDialog</value>

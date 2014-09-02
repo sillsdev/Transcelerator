@@ -11,12 +11,10 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using SIL.Utils;
+using SIL.Stemmers;
 
 namespace SIL.Transcelerator
 {
@@ -36,7 +34,17 @@ namespace SIL.Transcelerator
 		private int m_iStartMatch;
 		private int m_iNextWord;
 		private List<KeyTermMatch> m_matches;
-		private static PorterStemmer s_stemmer = new PorterStemmer();
+		private static IStemmer s_stemmer = StemmerFactory.GetStemmer("en");
+
+		/// ------------------------------------------------------------------------------------
+		static internal string IcuLocale
+		{
+			set
+			{
+				if (s_stemmer == null || s_stemmer.GetIcuLocale() != value)
+					s_stemmer = StemmerFactory.GetStemmer(value);
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -202,7 +210,7 @@ namespace SIL.Transcelerator
                 if (m_matches == null || m_matches.All(m => m.WordCount > 1))
                 {
 	                var baseWord = nextWord.Text;
-					Word stem = s_stemmer.stemTerm(baseWord);
+					Word stem = s_stemmer.Stem(baseWord);
 
                     while (stem.Text != baseWord)
                     {
@@ -216,7 +224,7 @@ namespace SIL.Transcelerator
                                 m_matches.AddRange(matches);
                         }
 	                    baseWord = stem.Text;
-						stem = s_stemmer.stemTerm(baseWord);
+						stem = s_stemmer.Stem(baseWord);
                     }
                     if (m_matches == null || m_matches.Count == 0)
                     {
