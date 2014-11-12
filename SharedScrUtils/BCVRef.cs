@@ -1241,7 +1241,7 @@ namespace SILUBS.SharedScrUtils
 			else
 			{
 				// have to check *second* character because first character in a book code
-				//can be a number; e.g. 2JN
+				// can be a number; e.g. 2JN
 				if (sFirstRef.Length < 3 || !Char.IsLetter(sFirstRef[1]))
 				{
 					if (bcvRefStart.Book != bcvRefEnd.Book)
@@ -1265,7 +1265,11 @@ namespace SILUBS.SharedScrUtils
 			string sEndRef = pieces[1];
 			int bbcccvvvEnd = bcvRefEnd.BBCCCVVV;
 
-			if (Int32.TryParse(sEndRef, out intVal))
+			// The following handles the simple case of a verse number AND the more complex case of a verse
+			// number followed by a sub-verse segment letter.
+			if (Int32.TryParse(sEndRef, out intVal) ||
+				(sEndRef.Length >= 2 && sEndRef.Length <= 4 && Char.IsLetter(sEndRef[sEndRef.Length - 1]) &&
+				Int32.TryParse(sEndRef.Remove(sEndRef.Length - 1), out intVal)))
 			{
 				if (intVal > 176)
 				{

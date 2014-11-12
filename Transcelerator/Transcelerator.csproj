@@ -68,12 +68,13 @@
       <HintPath>..\..\Paratext\Paratext\bin\Debug\Pipeline\AddInViews\AddInViews.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Analytics.NET">
+    <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Analytics.2.0.0\lib\Analytics.NET.dll</HintPath>
     </Reference>
     <Reference Include="DesktopAnalytics, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\dotnet\DesktopAnalytics.dll</HintPath>
+      <HintPath>..\packages\DesktopAnalytics.1.1.4\lib\net40\DesktopAnalytics.dll</HintPath>
     </Reference>
     <Reference Include="Keyman7Interop, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -378,7 +379,6 @@
     <None Include="Properties\Arrow-Down-icon.png" />
     <None Include="Properties\Arrow-Up-icon.png" />
     <None Include="Properties\20130910100219692_easyicon_net_16.png" />
-    <None Include="Properties\SILLogo.ico" />
     <None Include="Properties\FWSILLogoColor2005.bmp" />
     <None Include="Properties\Arrow-Left-icon.png" />
     <None Include="Properties\Arrow-Right-icon.png" />
