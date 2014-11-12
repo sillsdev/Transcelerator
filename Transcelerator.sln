@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcelerator", "Transcelerator\Transcelerator.csproj", "{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedScrControls", "SharedScrControls\SharedScrControls.csproj", "{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}"

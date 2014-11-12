@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.   
+// <copyright from='2013' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
+using DesktopAnalytics;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.Reporting;
 using SILUBS.SharedScrUtils;
@@ -98,6 +99,8 @@ namespace SIL.Transcelerator
 
 			try
 			{
+				Application.EnableVisualStyles();
+
 				host = ptHost;
 				projectName = activeProjectName;
 #if DEBUG
@@ -185,8 +188,28 @@ namespace SIL.Transcelerator
 						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);
 					    splashScreen = null;
 					}
-					formToShow.ShowDialog();
-                    ptHost.WriteLineToLog(this, "Closing " + pluginName);
+
+#if DEBUG
+                    // Always track if this is a debug build, but track to a different segment.io project
+                    const bool allowTracking = true;
+                    const string key = "0mtsix4obm";
+#else
+                    // If this is a release build, then allow an environment variable to be set to false
+                    // so that testers aren't generating false analytics
+				//	MessageBox.Show(Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+                    string feedbackSetting = Environment.GetEnvironmentVariable("FEEDBACK");
+
+                    var allowTracking = string.IsNullOrEmpty(feedbackSetting) || feedbackSetting.ToLower() == "yes" || feedbackSetting.ToLower() == "true";
+
+                    const string key = "3iuv313n8t";
+#endif
+					using (new Analytics(key, GetuserInfo(), allowTracking))
+					{
+						Analytics.Track("Startup");
+						formToShow.ShowDialog();
+					}
+					ptHost.WriteLineToLog(this, "Closing " + pluginName);
 					Environment.Exit(0);
 				});
 				mainUIThread.Name = pluginName;
@@ -201,6 +224,24 @@ namespace SIL.Transcelerator
 				MessageBox.Show("Error occurred attempting to start Transcelerator: " + e.Message);
 				throw;
 			}
+		}
+
+		private UserInfo GetuserInfo()
+		{
+			string lastName = host.UserName;
+			string firstName = null;
+			if (lastName != null)
+			{
+				var split = lastName.LastIndexOf(" ", StringComparison.Ordinal);
+				if (split > 0)
+				{
+					firstName = lastName.Substring(0, split);
+					lastName = lastName.Substring(split + 1);
+				}
+			}
+			//return new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = LocalizationManager.UILanguageId, Email = emailAddress };
+			// TODO: Enhance plugin API to get access to e-mail address
+			return new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = "en"};
 		}
 
 		private void InvokeOnUiThread(Action action)

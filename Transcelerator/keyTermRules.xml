@@ -100,7 +100,7 @@
   <KeyTermRule id="serve">
 	  <Alternate name="serves"/>
   </KeyTermRule>
-  <KeyTermRule id="have; show; receive mercy" rule="Exclude">
+  <KeyTermRule id="have, show, or receive mercy" rule="Exclude">
     <Alternate name="have mercy"/>
     <Alternate name="show mercy"/>
     <Alternate name="receive mercy"/>
@@ -417,7 +417,7 @@
     <Alternate name="tent"/>
     <Alternate name="tabernacle"/>
   </KeyTermRule>
-  <KeyTermRule id="tent of meeting;" rule="Exclude">
+  <KeyTermRule id="tent; tabernacle tent" rule="Exclude">
     <Alternate name="tent of meeting"/>
     <Alternate name="tabernacle"/>
   </KeyTermRule>
@@ -532,9 +532,8 @@
   <KeyTermRule id="be; become a disciple; make disciples" rule="Exclude"/>
   <KeyTermRule id="skin; hide" rule="Exclude"/>
   <KeyTermRule id="skin (of grape)" rule="MatchForRefOnly"/>
-  <KeyTermRule id="infectious skin disease; person suffering from an infectious skin disease" rule="Exclude">
+  <KeyTermRule id="leprosy">
     <Alternate name="bad skin disease"/>
-    <Alternate name="leprosy"/>
     <Alternate name="leper"/>
   </KeyTermRule>
   <KeyTermRule id="fasting; fast" rule="Exclude">

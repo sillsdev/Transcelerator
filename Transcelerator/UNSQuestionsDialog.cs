@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2011' to='2013 company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.   
+// <copyright from='2011' to='2014 company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -10,7 +10,6 @@
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -63,6 +62,7 @@ namespace SIL.Transcelerator
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
+		private static Regex s_regexGlossaryEntry;
         private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private List<Substitution> m_phraseSubstitutions;
@@ -1271,7 +1271,11 @@ namespace SIL.Transcelerator
 			extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
 			extractedScr.Replace("/para", "/DIV");
 			extractedScr.Replace(" />", "></DIV>");
-			return extractedScr.ToString();
+
+			if (s_regexGlossaryEntry == null)
+				s_regexGlossaryEntry = new Regex("\\<char style=\"w\"\\>(?<surfaceFormOfGlossaryWord>[^|]*)\\|[^<]*\\</char\\>", RegexOptions.Compiled);
+
+			return s_regexGlossaryEntry.Replace(extractedScr.ToString(), "${surfaceFormOfGlossaryWord}");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1583,6 +1587,7 @@ namespace SIL.Transcelerator
 				}
 
 				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
+				dataGridUns.CurrentCell = null;
 				dataGridUns.RowCount = 0;
 				LoadTranslations(null);
 				ApplyFilter();
@@ -1594,7 +1599,18 @@ namespace SIL.Transcelerator
 					if (iRow < 0)
 						iRow = fallBackRow;
 					if (iRow < dataGridUns.Rows.Count)
-						dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+					{
+						try
+						{
+							dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+						}
+						catch (InvalidOperationException e)
+						{
+							Debug.Fail("Got the ever-elusive InvalidOperationException: " + e.Message);
+							
+							// What to do? Ignore?
+						}
+					}
 				}
 			}
 		}
