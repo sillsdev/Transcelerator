@@ -10,6 +10,7 @@
 // File: PhraseSubstitutionsDlgTests.cs
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -70,6 +71,7 @@ namespace SIL.Transcelerator
 	[TestFixture]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - m_dlg gets disposed in Teardown(); m_textBox is a reference")]
+	[RequiresSTA]
 	public class PhraseSubstitutionsDlgTests
 	{
 		#region Data Members

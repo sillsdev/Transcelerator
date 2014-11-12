@@ -8,3 +8,4 @@ Output/*
 Installer/output/*
 Transcelerator/output/*
 TxlMasterQuestionPreProcessor/QTTallBooks.xml
+packages/*

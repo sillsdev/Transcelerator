@@ -223,17 +223,19 @@ namespace SIL.Transcelerator
 		private static void SetFormat(char exampleDigit, string groupingPunctuation,
 			IEnumerable<int> digitGroups, bool fNoGroupPunctForShortNumbers)
 		{
-			char sZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
-			if (sZero.ToString() != s_numberFormatInfo.NativeDigits[0] ||
+			char nativeZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
+			if (nativeZero.ToString(CultureInfo.InvariantCulture) != s_numberFormatInfo.NativeDigits[0] ||
 				groupingPunctuation != s_numberFormatInfo.NumberGroupSeparator ||
 				s_fNoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
-				(!s_numberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups) &&
-				true))
+				(!s_numberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups)))
 			{
 				s_numberFormatInfo = new NumberFormatInfo();
 				s_numberFormatInfo.DigitSubstitution = DigitShapes.NativeNational;
+				var nativeDigits = new string[10];
 				for (int i = 0; i <= 9; i++)
-					s_numberFormatInfo.NativeDigits[i] = ((char) (sZero + i)).ToString();
+					nativeDigits[i] = ((char) (nativeZero + i)).ToString(CultureInfo.InvariantCulture);
+
+				s_numberFormatInfo.NativeDigits = nativeDigits;
 
 				s_numberFormatInfo.NumberGroupSeparator = groupingPunctuation;
 

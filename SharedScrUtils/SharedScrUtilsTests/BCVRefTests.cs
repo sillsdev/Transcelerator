@@ -1190,6 +1190,22 @@ namespace SILUBS.SharedScrUtils
 			BCVRef bcvRefEnd = new BCVRef();
 			Assert.IsFalse(BCVRef.ParseRefRange("MRK 2:5-MRK 1:2", ref bcvRefStart, ref bcvRefEnd));
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the BCVRef.ParseRefRange method when given a verse range that includes a sub-
+		/// verse letter.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void ParseRefRange_NormalReferenceRange_SubVerseLetter()
+		{
+			BCVRef bcvRefStart = new BCVRef();
+			BCVRef bcvRefEnd = new BCVRef();
+			Assert.IsTrue(BCVRef.ParseRefRange("LUK 9.37-43a", ref bcvRefStart, ref bcvRefEnd, true));
+			Assert.AreEqual(new BCVRef(42, 9, 37), bcvRefStart);
+			Assert.AreEqual(new BCVRef(42, 9, 43), bcvRefEnd);
+		}
 	}
 	#endregion
 }

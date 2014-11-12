@@ -166,6 +166,7 @@ namespace SIL.Transcelerator
     #endregion
 
     [TestFixture]
+	[RequiresSTA]
 	public class PhraseTranslationHelperTests : PhraseTranslationTestBase
     {
         #region List sorting tests
@@ -1971,8 +1972,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		public void
-			SetTranslation_UserTranslationsIncludeScriptDigit_GuessedTranslationsUseCorrectRangeOfScriptDigits()
+		public void SetTranslation_UserTranslationsIncludeScriptDigit_GuessedTranslationsUseCorrectRangeOfScriptDigits()
 		{
 			//Number n = new Number(200000);
 			//n.Translation
