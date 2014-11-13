@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
-<?define Property_ProductVersion = "1.1.5175" ?>
+<?define Property_ProductVersion = "1.1.5430" ?>
 
 <!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
@@ -93,6 +93,15 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	    <Component Guid="{D3C63576-5988-4f10-9BBC-73605E9B95E9}">
 		    <File Name="SharedScrControls.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SharedScrControls.dll" />
 	    </Component>
+	    <Component Guid="{352892BC-8904-4760-8E61-FC26C2865827}">
+		    <File Name="Analytics.NET.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Analytics.NET.dll" />
+	    </Component>
+	    <Component Guid="{E015C97A-B102-4C98-8D2A-57CB09D3B2D1}">
+		    <File Name="DesktopAnalytics.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\DesktopAnalytics.dll" />
+	    </Component>
+	    <Component Guid="{F173527F-7D86-4586-ADE0-7310681ECADD}">
+		    <File Name="Newtonsoft.Json.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Newtonsoft.Json.dll" />
+	    </Component>
 	    <Component Guid="{9FDCE013-5249-4D5E-857D-AFFD9C28DBA6}">
 		    <File Name="TxlCore.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlCore.dll" />
 	    </Component>
@@ -141,6 +150,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <Component Guid="{C8A6EE73-5613-49B6-A656-1C030DC81E49}">
         <File Name="CreditsAndLicense.htm" KeyPath="yes" Source="..\Transcelerator\bin\Release\CreditsAndLicense.htm" />
       </Component>
+      <Component Id="Transcelerator.dll.config" Guid="{203E0DA1-9EF1-43C0-9E3B-756566BECA56}">
+        <File Id="Transcelerator.dll.config" Name="Transcelerator.dll.config" KeyPath="yes" Source="..\Transcelerator\bin\Release\Transcelerator.dll.config" />
+      </Component>
 	</DirectoryRef>
 	
 	<Feature Id="PluginFeature" Level="1" Title="Plugin for Paratext">
@@ -150,6 +162,9 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
     <ComponentRef Id="TxlQuestionWords.xml"/>
     <ComponentRef Id="TxlQuestions.xml"/>
 	  <ComponentRef Id="SharedScrControls.dll"/>
+	  <ComponentRef Id="Analytics.NET.dll"/>
+	  <ComponentRef Id="DesktopAnalytics.dll"/>
+	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="TxlCore.dll"/>
     <ComponentRef Id="SharedScrUtils.dll"/>
     <ComponentRef Id="SilUtils.dll"/>
@@ -166,6 +181,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 	  <ComponentRef Id="Icon"/>
     <ComponentRef Id="CreditsAndLicense.htm"/>
+    <ComponentRef Id="Transcelerator.dll.config"/>
   </Feature>
 	
 	<CustomAction Id="SetUpdatePluginStore" Property="UpdatePluginStore" Value="&quot;[PARATEXT7]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check"/>
