@@ -196,8 +196,6 @@ namespace SIL.Transcelerator
 #else
                     // If this is a release build, then allow an environment variable to be set to false
                     // so that testers aren't generating false analytics
-				//	MessageBox.Show(Assembly.GetExecutingAssembly().GetName().Version.ToString());
-
                     string feedbackSetting = Environment.GetEnvironmentVariable("FEEDBACK");
 
                     var allowTracking = string.IsNullOrEmpty(feedbackSetting) || feedbackSetting.ToLower() == "yes" || feedbackSetting.ToLower() == "true";
@@ -206,7 +204,8 @@ namespace SIL.Transcelerator
 #endif
 					using (new Analytics(key, GetuserInfo(), allowTracking))
 					{
-						Analytics.Track("Startup");
+						Analytics.Track("Startup", new Dictionary<string, string>
+						{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
 						formToShow.ShowDialog();
 					}
 					ptHost.WriteLineToLog(this, "Closing " + pluginName);
