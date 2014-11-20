@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2003' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.   
+// <copyright from='2003' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,8 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
 
 using NUnit.Framework;
-using SILUBS.SharedScrUtils;
-using Rhino.Mocks;
+using SIL.ScriptureUtils;
 
 namespace SILUBS.SharedScrControls
 {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using SIL.ScriptureUtils;
 using SIL.Transcelerator;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.TxlMasterQuestionPreProcessor
 {

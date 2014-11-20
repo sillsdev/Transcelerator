@@ -22,9 +22,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
+using SIL.ScriptureUtils;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
-using SILUBS.SharedScrUtils;
 
 namespace SIL.Transcelerator
 {

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.
+// <copyright from='2011' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using SIL.ScriptureUtils;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -867,7 +868,7 @@ namespace SIL.Transcelerator
         /// Gets whether this phrase/question applies to the given Scripture reference.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public bool AppliesToReference(SILUBS.SharedScrUtils.BCVRef reference)
+        public bool AppliesToReference(BCVRef reference)
         {
             return !IsCategoryName && reference >= StartRef && reference <= EndRef;
         }

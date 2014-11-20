@@ -111,6 +111,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Rhino\Rhino.Mocks.dll</HintPath>
     </Reference>
+    <Reference Include="SIL.ScriptureUtils, Version=7.3.0.28253, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.ScriptureUtilsTests">
+      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtilsTests.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -157,14 +164,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtils.csproj">
-      <Project>{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}</Project>
-      <Name>SharedScrUtils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj">
-      <Project>{4528287F-BA86-49D8-AFBB-1250A60CE7EA}</Project>
-      <Name>SharedScrUtilsTests</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SharedScrControls.csproj">
       <Project>{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}</Project>
       <Name>SharedScrControls</Name>

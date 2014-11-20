@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2007' to='2011' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2014, SIL International.
+// <copyright from='2007' to='2014' company='SIL International'>
+//		Copyright (c) 2014, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,7 +13,7 @@ using System;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-using SILUBS.SharedScrUtils;
+using SIL.ScriptureUtils;
 
 namespace SILUBS.SharedScrControls
 {
