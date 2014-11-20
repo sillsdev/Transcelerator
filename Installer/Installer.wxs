@@ -48,16 +48,16 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
                       Key="SOFTWARE\ScrChecks\1.0\Program_Files_Directory_Ptw7"
                       Type="directory" />
     </Property>
-    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4.100.19 or later.">
+    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
         <![CDATA[Installed OR PARATEXT7]]>
     </Condition>
         
     <Property Id="PARATEXT7VERSION">
         <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT7]">
-          <FileSearch Name="Paratext.exe" MinVersion="7.4.100.19"/>
+          <FileSearch Name="Paratext.exe" MinVersion="7.5.100.0"/>
         </DirectorySearch>
     </Property>
-    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.4.100.19 or later.">
+    <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
       <![CDATA[Installed OR PARATEXT7VERSION]]>
     </Condition>
 

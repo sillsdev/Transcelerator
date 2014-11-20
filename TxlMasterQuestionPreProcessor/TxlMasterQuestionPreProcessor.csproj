@@ -37,6 +37,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AddInViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -51,6 +52,9 @@
     <Reference Include="PalasoUIWindowsForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\dotnet\PalasoUIWindowsForms.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.ScriptureUtils">
+      <HintPath>..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn">
@@ -86,10 +90,6 @@
     <Compile Include="TxlMasterQuestionPreProcessorPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SharedScrUtils\SharedScrUtils.csproj">
-      <Project>{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}</Project>
-      <Name>SharedScrUtils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>

@@ -19,8 +19,8 @@ using AddInSideViews;
 using DesktopAnalytics;
 using Palaso.Reporting;
 using Palaso.UI.WindowsForms.Reporting;
-using SILUBS.SharedScrUtils;
 using Palaso.UI.WindowsForms.Keyboarding;
+using SIL.ScriptureUtils;
 
 namespace SIL.Transcelerator
 {

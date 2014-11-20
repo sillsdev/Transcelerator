@@ -20,8 +20,8 @@ using System.Media;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Windows.Forms.VisualStyles;
+using SIL.ScriptureUtils;
 using SIL.Utils;
-using SILUBS.SharedScrUtils;
 
 namespace SILUBS.SharedScrControls
 {

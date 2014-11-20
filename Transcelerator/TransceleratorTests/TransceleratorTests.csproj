@@ -60,6 +60,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AddInViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -73,6 +74,12 @@
     <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Rhino\Rhino.Mocks.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.ScriptureUtils">
+      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.ScriptureUtilsTests">
+      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtilsTests.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -127,14 +134,6 @@
     <ProjectReference Include="..\..\SharedScrControls\SharedScrControls.csproj">
       <Project>{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}</Project>
       <Name>SharedScrControls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtils.csproj">
-      <Project>{F71BA7B9-D9DC-4F8C-A307-87B503D0E05B}</Project>
-      <Name>SharedScrUtils</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\SharedScrUtils\SharedScrUtilsTests\SharedScrUtilsTests.csproj">
-      <Project>{4528287F-BA86-49D8-AFBB-1250A60CE7EA}</Project>
-      <Name>SharedScrUtilsTests</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>

@@ -1,5 +1,5 @@
 ﻿using AddInSideViews;
-using SILUBS.SharedScrUtils;
+using SIL.ScriptureUtils;
 
 namespace SIL.Transcelerator
 {
