@@ -64,10 +64,8 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AddInViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Paratext\Paratext\bin\Debug\Pipeline\AddInViews\AddInViews.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="AddInViews">
+      <HintPath>..\lib\dotnet\AddInViews.dll</HintPath>
     </Reference>
     <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
