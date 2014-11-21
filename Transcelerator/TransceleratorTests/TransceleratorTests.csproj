@@ -65,7 +65,7 @@
   <ItemGroup>
     <Reference Include="AddInViews, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Paratext\Paratext\bin\Debug\Pipeline\AddInViews\AddInViews.dll</HintPath>
+      <HintPath>..\..\lib\dotnet\AddInViews.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
