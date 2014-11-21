@@ -13,3 +13,4 @@ Transcelerator/QTTGenerate/Questions from Ramesh/QTTLUKGondi.zip
 lib/dotnet/*.dll
 lib/dotnet/*.pdb
 build/Palaso.BuildTasks.dll
+.nuget/NuGet.exe
