@@ -78,8 +78,8 @@
     <Reference Include="SIL.ScriptureUtils">
       <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.ScriptureUtilsTests">
-      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtilsTests.dll</HintPath>
+    <Reference Include="SIL.ScriptureUtils.Tests">
+      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.Tests.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

@@ -397,9 +397,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
-IF "$(ConfigurationName)" == "Release" (
-xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i
-)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
