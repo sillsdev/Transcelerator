@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
@@ -164,10 +165,16 @@ namespace SIL.Transcelerator
 										Keyboard.Controller.GetKeyboard(keyboard).Activate();
 
 								}
-								catch (Exception e)
+								catch (ApplicationException e)
 								{
-									//Debug.Fail(e.Message);
-									//throw;
+									// For some reason, the very first time this gets called it throws a COM exception, wrapped as
+									// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
+									// calls work with no exception. Paratext seems to make this same call without any exceptions. The
+									// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
+									// in PalasoUIWindowsForms that throws the COM exception says that an E_FAIL is an unspecified error,
+									// so that's fairly helpful.
+									if (!(e.InnerException is COMException))
+										throw;
 								}
 							}
 							else
