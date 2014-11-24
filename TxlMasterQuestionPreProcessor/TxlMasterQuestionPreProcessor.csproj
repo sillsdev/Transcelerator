@@ -39,9 +39,19 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - Copy To Paratext|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AddInViews">
       <HintPath>..\lib\dotnet\AddInViews.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -117,6 +127,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i</PostBuildEvent>
+    <PostBuildEvent>IF "$(ConfigurationName)" == "Debug - Copy To Paratext" (
+xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
