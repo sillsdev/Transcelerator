@@ -31,7 +31,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// Build number updates daily. Revision Number is random (see http://msdn.microsoft.com/en-us/library/system.reflection.assemblyversionattribute.aspx)
-[assembly: AssemblyVersion("1.1.*")]
+// These version numbers are ignored. See build.proj file and counter on
+// TeamCity configuration for actuall version numbers. 
+[assembly: AssemblyVersion("1.1.0.0")]
 
 [assembly: InternalsVisibleTo("TransceleratorTests")]

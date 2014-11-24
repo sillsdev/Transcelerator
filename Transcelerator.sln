@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcess
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCoreTests", "TxlCore\ClassLibrary1\TxlCoreTests.csproj", "{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyResultsToParatext", "CopyResultsToParatext\CopyResultsToParatext.csproj", "{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - Copy To Paratext|Any CPU = Debug - Copy To Paratext|Any CPU
@@ -33,12 +31,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug - Copy To Paratext|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug - Copy To Paratext|Any CPU
 		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release - Copy to Paratext|Any CPU.ActiveCfg = Release|Any CPU
-		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release - Copy to Paratext|Any CPU.Build.0 = Release|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release - Copy to Paratext|Any CPU.ActiveCfg = Release - Copy to Paratext|Any CPU
+		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release - Copy to Paratext|Any CPU.Build.0 = Release - Copy to Paratext|Any CPU
 		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
@@ -81,8 +79,8 @@ Global
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy to Paratext|Any CPU.Build.0 = Release|Any CPU
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
-		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug - Copy To Paratext|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug - Copy To Paratext|Any CPU
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy to Paratext|Any CPU.ActiveCfg = Release|Any CPU
@@ -113,12 +111,6 @@ Global
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release - Copy to Paratext|Any CPU.Build.0 = Release|Any CPU
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Release - Copy to Paratext|Any CPU.ActiveCfg = Release|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Release - Copy to Paratext|Any CPU.Build.0 = Release|Any CPU
-		{4CB89E36-BA11-4F8A-9A55-6DA962DAEEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

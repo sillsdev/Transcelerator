@@ -11,6 +11,7 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -18,8 +19,9 @@ using System.Windows.Forms;
 using AddInSideViews;
 using DesktopAnalytics;
 using Palaso.Reporting;
-using Palaso.UI.WindowsForms.Reporting;
 using Palaso.UI.WindowsForms.Keyboarding;
+using Palaso.UI.WindowsForms.Reporting;
+using Palaso.WritingSystems;
 using SIL.ScriptureUtils;
 
 namespace SIL.Transcelerator
@@ -149,16 +151,27 @@ namespace SIL.Transcelerator
                             endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
                         }
 
+						KeyboardController.Initialize();
+
 						Action<bool> activateKeyboard = vern =>
 						{
 							if (vern)
 							{
-								string keyboard = host.GetProjectKeyboard(projectName);
-								if (!string.IsNullOrEmpty(keyboard))
-									KeyboardController.ActivateKeyboard(keyboard);
+								try
+								{
+									string keyboard = host.GetProjectKeyboard(projectName);
+									if (!string.IsNullOrEmpty(keyboard))
+										Keyboard.Controller.GetKeyboard(keyboard).Activate();
+
+								}
+								catch (Exception e)
+								{
+									//Debug.Fail(e.Message);
+									//throw;
+								}
 							}
 							else
-								KeyboardController.DeactivateKeyboard();
+								Keyboard.Controller.ActivateDefaultKeyboard();
 						};
 
                         var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, projectName, fileId),

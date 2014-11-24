@@ -41,6 +41,7 @@
   <ItemGroup>
     <Reference Include="AddInViews">
       <HintPath>..\lib\dotnet\AddInViews.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SIL.ScriptureUtils">
       <HintPath>..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
