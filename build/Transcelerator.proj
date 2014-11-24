@@ -57,7 +57,7 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
-		<CreateItem Include="$(RootDir)/Transcelerator/bin/$(Configuration)/*Tests.dll">
+		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 		<NUnitTeamCity
