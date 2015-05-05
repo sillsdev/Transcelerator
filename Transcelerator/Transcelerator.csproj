@@ -118,8 +118,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\dotnet\PalasoUIWindowsForms.dll</HintPath>
     </Reference>
-    <Reference Include="SharedScrControls">
-      <HintPath>..\output\Debug\SharedScrControls.dll</HintPath>
+    <Reference Include="SIL.ScriptureControls">
+      <HintPath>..\lib\dotnet\SIL.ScriptureControls.dll</HintPath>
     </Reference>
     <Reference Include="SIL.ScriptureUtils">
       <HintPath>..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>

@@ -23,9 +23,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
 using Palaso.Xml;
+using SIL.ScriptureControls;
 using SIL.ScriptureUtils;
 using SIL.Utils;
-using SILUBS.SharedScrControls;
 using Palaso.UI.WindowsForms.FileDialogExtender;
 
 namespace SIL.Transcelerator
