@@ -99,41 +99,6 @@ namespace SIL.Utils
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a localized name for the given identification string. If the ID string has
-		/// spaces in it, replace them with underscores for lookup. If the string is not found,
-		/// the idString is returned.
-		/// </summary>
-		/// <param name="rm">The resource manager where we will attempt to lookup the value for
-		/// the idString.</param>
-		/// <param name="kstid">the localization key (which may contain spaces).</param>
-		/// <returns>the value looked up with the idString in the given resource manager,
-		/// or the idString if no localized name is found for the current interface locale</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string GetUiString(ResourceManager rm, string kstid)
-		{
-			if (rm == null)
-				return kstid;
-			try
-			{
-				StringBuilder bldr = new StringBuilder(kstid.Length);
-
-				// Since the resource keys can't contain these, we replace them
-				// with underscores. This list is not likely to be comprehensive.
-				foreach (char c in kstid)
-				{
-					bldr.Append(" ;:.,=+|/~?%@#$!^&*\'\"\\[]{}()<>-".IndexOf(c) >= 0 ? '_' : c);
-				}
-
-				return rm.GetString(bldr.ToString()) ?? kstid;
-			}
-			catch
-			{
-				return kstid;
-			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Produce a version of the given name that can be used as a file name. This is done
 		/// by replacing characters that the current OS does not allow with underscores '_'.
 		/// </summary>
@@ -209,42 +174,6 @@ namespace SIL.Utils
 			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Makes a new stream and fill it in with data from a string
-		/// </summary>
-		/// <param name="source">The source string.</param>
-		/// <returns>the new stream</returns>
-		/// ------------------------------------------------------------------------------------
-		public static MemoryStream MakeStreamFromString(string source)
-		{
-			byte[] buffer = new byte[source.Length * 2];
-			int index = 0;
-			foreach (char ch in source)
-			{
-				buffer[index++] = (byte)(ch & 0xff);
-				buffer[index++] = (byte)((int)ch >> 8);
-			}
-			MemoryStream stream = new MemoryStream(buffer);
-			return stream;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Reads a string value from a binary reader
-		/// </summary>
-		/// <param name="reader">The reader to read from</param>
-		/// <param name="length">The length of the string</param>
-		/// <returns>the string</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string ReadString(BinaryReader reader, int length)
-		{
-			StringBuilder bldr = new StringBuilder();
-
-			while (length-- > 0)
-				bldr.Append((char)reader.ReadInt16());
-			return bldr.ToString();
-		}
 		/// <summary>
 		/// Remove all whitespace from a string.
 		/// </summary>
@@ -262,40 +191,6 @@ namespace SIL.Utils
 					sb.Append(c);
 			}
 			return sb.ToString();
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Parse the string into a integer, assuming base 10 notation.  This is similar to the
-		/// C function of the same name, but without the base argument.  It also doesn't handle
-		/// negative numbers.
-		/// </summary>
-		/// <param name="data"></param>
-		/// <param name="sRemainder"></param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static int strtol(string data, out string sRemainder)
-		{
-			int nVal = 0;
-			if (!String.IsNullOrEmpty(data))
-			{
-				char[] rgch = data.ToCharArray();
-				for (int i = 0; i < rgch.Length; ++i)
-				{
-					if (Char.IsDigit(rgch[i]))
-					{
-						nVal = nVal * 10 + (int)Char.GetNumericValue(rgch[i]);
-					}
-
-					else
-					{
-						sRemainder = data.Substring(i);
-						return nVal;
-					}
-				}
-			}
-			sRemainder = String.Empty;
-			return nVal;
 		}
 
 		/// ------------------------------------------------------------------------------------
