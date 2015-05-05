@@ -78,7 +78,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ComponentsExtensionMethods.cs" />
     <Compile Include="ConfirmFileOverwriteDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,11 +85,6 @@
       <DependentUpon>ConfirmFileOverwriteDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="ReadonlyDictionary.cs" />
-    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FileDialogStrings.resx</DependentUpon>
-    </Compile>
     <Compile Include="CustomDropDown.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -100,34 +94,11 @@
     <Compile Include="StringUtils.cs" />
     <Compile Include="TextBoxExtensions.cs" />
     <Compile Include="WaitCursor.cs" />
-    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
-    <Compile Include="FileDialog\Manager.cs" />
-    <Compile Include="FileDialog\FileDialogAdapter.cs" />
-    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
-    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
     <Compile Include="ScrTextSerializationHelper.cs" />
-    <None Include="FileDialog\readme.txt" />
-    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
-    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
-    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
-    <Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
-    <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
-    <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
-    <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
-    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
-    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConfirmFileOverwriteDlg.resx">
       <DependentUpon>ConfirmFileOverwriteDlg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
