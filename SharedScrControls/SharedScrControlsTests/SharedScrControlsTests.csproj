@@ -25,7 +25,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>SIL.FieldWorks.Common.Controls.FwControls</RootNamespace>
+    <RootNamespace>SharedScrControlsTests</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -114,10 +114,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.ScriptureUtils.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\dotnet\SIL.ScriptureUtils.Tests.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -145,6 +141,9 @@
     <Compile Include="ScrPassageControlTests.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="TestScrVers.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -162,12 +161,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharedScrControls.csproj">
-      <Project>{6CA85A3E-4AB3-4BBC-861F-0C68F018868B}</Project>
-      <Name>SharedScrControls</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

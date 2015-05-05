@@ -16,9 +16,8 @@ using System.Linq;
 using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
+using Palaso.UI.WindowsForms;
 using Rhino.Mocks;
-using SIL.ScriptureUtils;
-using SIL.Utils;
 
 namespace SIL.Transcelerator
 {

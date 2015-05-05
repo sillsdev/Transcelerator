@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
+using Palaso.Xml;
 using SIL.Utils;
 using System;
 

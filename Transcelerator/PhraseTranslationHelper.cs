@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
+using Palaso.Xml;
 using SIL.ScriptureUtils;
 using SIL.Utils;
 using System;
@@ -310,7 +311,7 @@ namespace SIL.Transcelerator
 			{
 				m_fileAccessor = value;
 				m_termRenderingSelectionRules =
-                    XmlSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
+					ScrTextSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.TermRenderingSelectionRules), true);
 			}
 		}

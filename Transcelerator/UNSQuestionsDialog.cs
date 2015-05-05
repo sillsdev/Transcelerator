@@ -22,9 +22,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
+using Palaso.Xml;
 using SIL.ScriptureUtils;
 using SIL.Utils;
 using SILUBS.SharedScrControls;
+using Palaso.UI.WindowsForms.FileDialogExtender;
 
 namespace SIL.Transcelerator
 {
@@ -2162,7 +2164,7 @@ namespace SIL.Transcelerator
 	    {
             if (m_phraseSubstitutions != null)
                 return;
-            m_phraseSubstitutions = XmlSerializationHelper.LoadOrCreateListFromString<Substitution>(
+			m_phraseSubstitutions = ScrTextSerializationHelper.LoadOrCreateListFromString<Substitution>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true);
 	    }
 
@@ -2437,7 +2439,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg == (int) Win32.WinMsgs.WM_LBUTTONDOWN &&
+			if (m.Msg == (int)Msg.WM_LBUTTONDOWN &&
 				IsPointInSelectedTextInTranslationEditingControl(MousePosition))
 			{
 				// We support both move and copy, but we don't need to handle the result because

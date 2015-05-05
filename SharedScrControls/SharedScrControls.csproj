@@ -95,7 +95,9 @@
     <Compile Include="ScrPassageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ScrPassageDropDown.cs" />
+    <Compile Include="ScrPassageDropDown.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -1,16 +1,25 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+//
+// File: ScrTextSerializationHelper.cs
+// --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.Diagnostics;
 using System.Xml;
 using System.Reflection;
 
 namespace SIL.Utils
 {
-	public static class XmlSerializationHelper
+	public static class ScrTextSerializationHelper
 	{
 		#region XmlScrTextReader class
 		/// ------------------------------------------------------------------------------------
@@ -117,117 +126,6 @@ namespace SIL.Utils
 		#region Methods for XML serializing and deserializing data
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Serializes an object to an XML string.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string SerializeToString<T>(T data)
-		{
-			try
-			{
-				StringBuilder output = new StringBuilder();
-				using (StringWriter writer = new StringWriter(output))
-				{
-					XmlSerializerNamespaces nameSpace = new XmlSerializerNamespaces();
-					nameSpace.Add(string.Empty, string.Empty);
-					XmlSerializer serializer = new XmlSerializer(typeof(T));
-					serializer.Serialize(writer, data, nameSpace);
-					writer.Close();
-				}
-
-				return (output.Length == 0 ? null : output.ToString());
-			}
-			catch (Exception e)
-			{
-				Debug.Fail(e.Message);
-			}
-
-			return null;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Serializes an object to the specified file.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool SerializeToFile<T>(string filename, T data)
-		{
-			try
-			{
-				using (TextWriter writer = new StreamWriter(filename))
-				{
-					XmlSerializerNamespaces nameSpace = new XmlSerializerNamespaces();
-					nameSpace.Add(string.Empty, string.Empty);
-					XmlSerializer serializer = new XmlSerializer(typeof(T));
-					serializer.Serialize(writer, data, nameSpace);
-					writer.Close();
-					return true;
-				}
-			}
-			catch (Exception e)
-			{
-				Debug.Fail(e.Message);
-			}
-
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Serializes the specified data to a string and writes that XML using the specified
-		/// writer. Since strings in .Net are UTF16, the serialized XML data string is, of
-		/// course, UTF16. Before the string is written it is converted to UTF8. So the
-		/// assumption is the writer is expecting UTF8 data.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static bool SerializeDataAndWriteAsNode<T>(XmlWriter writer, T data)
-		{
-			string xmlData = SerializeToString(data);
-
-			using (var stringReader = new StringReader(xmlData))
-			using (XmlReader reader = XmlReader.Create(stringReader))
-			{
-				// Read past declaration and whitespace.
-				while (reader.NodeType != XmlNodeType.Element && reader.Read())
-					;
-
-				if (!reader.EOF)
-				{
-					xmlData = reader.ReadOuterXml();
-					if (xmlData.Length > 0)
-						writer.WriteRaw(Environment.NewLine + xmlData + Environment.NewLine);
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified string to an object of the specified type.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromString<T>(string input) where T : class
-		{
-			Exception e;
-			return (DeserializeFromString<T>(input, out e));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified string to an object of the specified type.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromString<T>(string input, bool fKeepWhitespaceInElements)
-			where T : class
-		{
-			Exception e;
-			return (DeserializeFromString<T>(input, fKeepWhitespaceInElements, out e));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Deserializes XML from the specified string to an object of the specified type.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -258,85 +156,6 @@ namespace SIL.Utils
 
 				using (XmlScrTextReader reader = new XmlScrTextReader(
 					new StringReader(input), fKeepWhitespaceInElements))
-				{
-					data = DeserializeInternal<T>(reader);
-				}
-			}
-			catch (Exception outEx)
-			{
-				e = outEx;
-			}
-
-			return data;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified file to an object of the specified type.
-		/// </summary>
-		/// <typeparam name="T">The object type</typeparam>
-		/// <param name="filename">The filename from which to load</param>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromFile<T>(string filename) where T : class
-		{
-			Exception e;
-			return DeserializeFromFile<T>(filename, false, out e);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified file to an object of the specified type.
-		/// </summary>
-		/// <typeparam name="T">The object type</typeparam>
-		/// <param name="filename">The filename from which to load</param>
-		/// <param name="fKeepWhitespaceInElements">if set to <c>true</c>, the reader
-		/// will preserve and return elements that contain only whitespace, otherwise
-		/// these elements will be ignored during a deserialization.</param>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromFile<T>(string filename, bool fKeepWhitespaceInElements)
-			where T : class
-		{
-			Exception e;
-			return DeserializeFromFile<T>(filename, fKeepWhitespaceInElements, out e);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified file to an object of the specified type.
-		/// </summary>
-		/// <typeparam name="T">The object type</typeparam>
-		/// <param name="filename">The filename from which to load</param>
-		/// <param name="e">The exception generated during the deserialization.</param>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromFile<T>(string filename, out Exception e) where T : class
-		{
-			return DeserializeFromFile<T>(filename, false, out e);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Deserializes XML from the specified file to an object of the specified type.
-		/// </summary>
-		/// <typeparam name="T">The object type</typeparam>
-		/// <param name="filename">The filename from which to load</param>
-		/// <param name="fKeepWhitespaceInElements">if set to <c>true</c>, the reader
-		/// will preserve and return elements that contain only whitespace, otherwise
-		/// these elements will be ignored during a deserialization.</param>
-		/// <param name="e">The exception generated during the deserialization.</param>
-		/// ------------------------------------------------------------------------------------
-		public static T DeserializeFromFile<T>(string filename, bool fKeepWhitespaceInElements, 
-			out Exception e) where T : class
-		{
-			T data = null;
-			e = null;
-
-			try
-			{
-				if (!File.Exists(filename))
-					return null;
-
-				using (XmlScrTextReader reader = new XmlScrTextReader(
-					filename, fKeepWhitespaceInElements))
 				{
 					data = DeserializeInternal<T>(reader);
 				}
@@ -396,26 +215,6 @@ namespace SIL.Utils
 				}
 			}
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads a list of objects of the specified type by deserializing from the given file.
-		/// If the file does not exist or an error occurs during deserialization, a new list is
-		/// created.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static List<T> LoadOrCreateList<T>(string filename, bool reportErrorToUser)
-		{
-			List<T> list = null;
-			if (File.Exists(filename))
-			{
-				Exception e;
-				list = DeserializeFromFile<List<T>>(filename, out e);
-				if (e != null && reportErrorToUser)
-					MessageBox.Show(e.ToString());
-			}
-			return list ?? new List<T>();
-        }
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
