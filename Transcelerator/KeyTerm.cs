@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Palaso.Xml;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -58,7 +59,7 @@ namespace SIL.Transcelerator
             set
             {
                 m_fileAccessor = value;
-                m_keyTermRenderingInfo = XmlSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
+				m_keyTermRenderingInfo = ScrTextSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
             }
         }

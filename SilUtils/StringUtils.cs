@@ -11,7 +11,6 @@
 // --------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -29,56 +28,9 @@ namespace SIL.Utils
 	{
 		/// <summary>Character is interpreted as object</summary>
 		public const char kChObject = '\uFFFC';
-		/// <summary>Character is a hard line break</summary>
-		public const char kChHardLB = '\u2028';
 
-		/// <summary>Character is interpreted as object</summary>
-		public static readonly char kchReplacement = '\uFFFD';
 		/// <summary>String is interpreted as object</summary>
 		public static readonly string kszObject = "\uFFFC";
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Changes new lines to be a more commonly accepted new line ('\n').
-		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <returns>The string with all of the new lines normalized</returns>
-		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification="Replacing/normalizing newlines")]
-		public static string NormalizeNewLines(string text)
-		{
-			return text.Replace("\r\n", "\n");
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Determines whether all the charcters in the specificed text are whitespace.
-		/// </summary>
-		/// <param name="text">The text.</param>
-		/// <returns>
-		/// 	<c>true</c> if the all the characters in text is whitespace; otherwise, <c>false</c>.
-		/// </returns>
-		/// ------------------------------------------------------------------------------------
-		public static bool IsWhite(string text)
-		{
-			return text.All(ch => char.IsWhiteSpace(ch));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Return the full 32-bit character starting at position ich in st
-		/// </summary>
-		/// <param name="st">The string.</param>
-		/// <param name="ich">The character position.</param>
-		/// <returns></returns>
-		/// ------------------------------------------------------------------------------------
-		public static int FullCharAt(string st, int ich)
-		{
-			if (Surrogates.IsLeadSurrogate(st[ich]))
-				return Surrogates.Int32FromSurrogates(st[ich], st[ich + 1]);
-			return Convert.ToInt32(st[ich]);
-		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -344,94 +296,6 @@ namespace SIL.Utils
 			}
 			sRemainder = String.Empty;
 			return nVal;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Returns a string of codepoints for the characters in the specified string.
-		/// </summary>
-		/// <param name="chrs">The string of characters.</param>
-		/// <returns>A comma separated string of U+XXXX numbers.</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string CharacterCodepoints(this string chrs)
-		{
-			return chrs.ToString(", ", GetUnicodeValueString);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a formatted string for the specified character in the form people like to look
-		/// at Unicode codepoints (e.g. "U+0305").
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetUnicodeValueString(char chr)
-		{
-			return GetUnicodeValueString((int)chr);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a formatted string for the specified integer in the form people like to look
-		/// at Unicode codepoints (e.g. "U+0305").
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static string GetUnicodeValueString(int codepoint)
-		{
-			return String.Format("U+{0:X4}", codepoint);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Compare two strings. Return -1 if they are equal, otherwise, indicate the index
-		/// of the first differing character. (If they are equal to the length of the shorter,
-		/// return the length of the shorter.)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static int FirstDiff(string first, string second)
-		{
-			int lenFirst = 0;
-			if (first != null)
-				lenFirst = first.Length;
-			int lenSecond = 0;
-			if (second != null)
-				lenSecond = second.Length;
-			int lenBoth = Math.Min(lenFirst, lenSecond);
-			for (int ich = 0; ich < lenBoth; ich++)
-				if (first[ich] != second[ich])
-					return ich;
-			// equal as far as len.
-			if (lenFirst != lenSecond)
-				return lenBoth;
-			return -1;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Compare two strings. Return -1 if they are equal, otherwise, indicate the number of
-		/// characters at the ends of the two strings that are equal. (If they are equal to the length of the shorter,
-		/// return the difference between the lengths.)
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public static int LastDiff(string first, string second)
-		{
-			int lenFirst = 0;
-			if (first != null)
-				lenFirst = first.Length;
-			int lenSecond = 0;
-			if (second != null)
-				lenSecond = second.Length;
-			int diffLen = lenFirst - lenSecond;
-			// how much first is longer; what to add to position in first for corresponding in second.
-			int ichEnd = Math.Max(diffLen, 0);
-			// part of first before part to compare, if any.
-			for (int ich = lenFirst - 1; ich >= ichEnd; ich--)
-				if (first[ich] != second[ich - diffLen])
-					return lenFirst - ich - 1;
-			// equal for min length.
-			if (lenFirst == lenSecond)
-				return -1;
-			// equal.
-			return Math.Min(lenFirst, lenSecond);
 		}
 
 		/// ------------------------------------------------------------------------------------

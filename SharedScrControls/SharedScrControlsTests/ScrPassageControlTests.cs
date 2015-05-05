@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.   
-// <copyright from='2003' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.   
+// <copyright from='2003' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -12,11 +12,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
-
 using NUnit.Framework;
 using SIL.ScriptureUtils;
+using SILUBS.SharedScrControls;
 
-namespace SILUBS.SharedScrControls
+namespace SharedScrControlsTests
 {
 	#region Dummy test classes for accessing protected properties/methods
 	/// ----------------------------------------------------------------------------------------

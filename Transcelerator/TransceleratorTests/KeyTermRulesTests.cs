@@ -13,6 +13,7 @@ using System.Linq;
 using AddInSideViews;
 using NUnit.Framework;
 using System;
+using Palaso.Xml;
 using Rhino.Mocks;
 using SIL.Utils;
 
