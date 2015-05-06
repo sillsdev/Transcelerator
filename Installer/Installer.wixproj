@@ -58,7 +58,7 @@
     <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\Transcelerator\output\installer\</OutputPath>
+    <OutputPath>..\output\installer\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
