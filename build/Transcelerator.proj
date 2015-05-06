@@ -29,13 +29,16 @@
 	<Message Text="BuildHash: $(BuildHash)" Importance="high"/>
 
 	<!-- Mimicking Bloom's strategy of updating the version number here (not on TeamCity, not in the assemblies). -->
-	<CreateProperty Value="0.0.$(BuildCounter)">
+	<CreateProperty Value="1.1.$(BuildCounter)">
 		<Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 	<CreateProperty Value="$(Version).$(BuildHash)">
 		<Output PropertyName="FullVersion" TaskParameter="Value"/>
 	</CreateProperty>
-	<CreateProperty Value="TransceleratorInstaller.$(Version).$(Label).msi">
+	<CreateProperty Value="TransceleratorInstaller.$(Version).msi" Condition=" '$(Label)' == '' ">
+		<Output PropertyName="InstallerFileName" TaskParameter="Value"/>
+	</CreateProperty>
+	<CreateProperty Value="TransceleratorInstaller.$(Version).$(Label).msi" Condition=" '$(Label)' != '' ">
 		<Output PropertyName="InstallerFileName" TaskParameter="Value"/>
 	</CreateProperty>
 	<Message Text="Version: $(Version)" Importance="high"/>
