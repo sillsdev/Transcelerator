@@ -5,7 +5,7 @@
     <ProductVersion>1.0</ProductVersion>
     <ProjectGuid>{4D7BC38F-7C37-4531-AD8B-1156C83680A4}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>TransceleratorInstaller.1.1.5430</OutputName>
+    <OutputName>TransceleratorInstaller</OutputName>
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
