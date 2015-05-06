@@ -54,11 +54,8 @@
     <VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>..\output\installer\</OutputPath>
+    <IntermediateOutputPath>output\wixobj\release</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
