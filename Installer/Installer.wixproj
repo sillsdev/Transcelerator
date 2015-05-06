@@ -9,7 +9,7 @@
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\Transcelerator\output\installer\</OutputPath>
+    <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
     <AllowIdenticalRows>False</AllowIdenticalRows>
