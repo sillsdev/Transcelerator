@@ -1,35 +1,31 @@
-﻿## 1.1 19 September 2014
-* Added capability to produce phrase-level Audacity Label Files for Scripture App Builder.
-* Fixed bug for breaking first-level quotes into separate blocks.
-* It is now possible to specify additional characters that HearThis will use to break text into blocks.
-* Handling of vertical bar in a \w field.
+﻿## 1.1.5430 19 November 2014
+* Updated key term rules based on changes to biblical terms list included with Paratext 7.5.
 
-## 1.0 19 August 2014
-* When you start HearThis, it now attempts to go back to where you were last working (instead of the beginning of Genesis).
-* Expanded script support by adding all known sentence-ending punctuation. When replacing chevrons with quotes, HearThis now uses the quotation mark system from Paratext settings.
-* Added option to allow automatic breaking of quotations into separate blocks to facilitate simple multi-voice recording scenario.
-* Added option to generate Audacity Label Files for use with Scripture App Builder and Audacity.
-* Use Paratext project versification information.
-* Added a way to skip a block and indicate that it would not be recorded.
-* Made it possible to indicate types of paragraphs that should always be omitted.
-* Enabled stopping playback of recordings
-* Numerous user-interface improvements and bug fixes
+## 1.1.5175 3 March 2014
+* Updates/corrections to questions, mostly related to content for 1 and 2 Kings.
 
-### How to participate
-1. Set up a headset microphone and (probably) an external A/D USB converter.  
-        Reportedly some laptops can do an OK recording job right out of the microphone 
-        jack, so if you can't locate an external convert, please do some experimenting 
-        anyways.</p>
-2. Install Paratext, and get a project with some translated scripture on it.  
-        If you want to just use English, that's fine too. Currently SayMore hides most 
-        resource texts, but you are allowed to choose "GNTUK" if you have that resource 
-        installed.</p>
-3. Either try it yourself, or if possible, get a non-technical native speaker to 
-record for a while in his/her own language. Teach them to find a text, record 
-each script item, check their recording, and re-record as necessary. After they 
-get the basics, please teach them to use the keyboard, not the mouse (which is 
-inefficient for such a repetitive task). Please take note of their reading 
-fluency; a large proportion of the intended audience will struggle to read 
-naturally, and that's why the interface is designed to make it easy to listen 
-and re-record, as many times as necessary.  So it would help to hear 
-results from people with a range of reading abilities.
+## 1.1.5164 20 February 2014
+* Fixed some crashing bugs in the Phrase Substitution dialog box and improved error reporting. Removed ability to sort on columns in that dialog box since rows are ordered.
+* Updated key term rules based on changes to biblical terms list included with Paratext.
+
+## 1.1.5154 10 February 2014
+* Prevent crash when Paratext fails to load key terms.
+* Updated key term rules based on changes to biblical terms list included with Paratext.
+
+## 1.1.5149 5 February 2014
+* First publicly promoted (stable) version of Transcelerator.
+* Transcelerator's automatic keyboard switching now works correctly with Keyman.
+* Transcelerator now includes questions for all the Old Testament books. Though they are not as thorough as the questions for Genesis and the New Testament and were not written explicitly for the purpose of comprehension checking, they may serve as a helpful starting place. We would welcome any contributions of additional questions.
+
+## 1.1.5070 4 December 2013
+* Lots of improvements to questions and various bug fixes.
+
+## 1.0.1 9 April 2013
+* Remember user settings
+* Lots of other changes to tweak settings for Paratext and improve interaction with Paratext.
+* Enabled keyboard switching.
+* Added Psalms and Proverbs to master questions list.
+
+## 1.0.0 28 March 2013
+* First release of Transcelerator as a Paratext plugin.
+
