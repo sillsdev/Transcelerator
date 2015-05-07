@@ -73,13 +73,13 @@
 
     <!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
     <Copy SourceFiles ="$(RootDir)\Installer\DownloadPointers.htm"
-           DestinationFolder ="$(RootDir)\output\Installer"/>
+           DestinationFolder ="$(RootDir)\output\installer"/>
     <Copy SourceFiles ="$(RootDir)\Installer\appcast.xml"
         DestinationFolder ="$(RootDir)\output\installer"/> 
     
     <!-- replace some parts of the file with the version number & date -->
     
-    <FileUpdate File="$(RootDir)\output\Installer\DownloadPointers.htm"
+    <FileUpdate File="$(RootDir)\output\installer\DownloadPointers.htm"
                  DatePlaceholder='RELEASE_DATE'
                 Regex='VERSION_NUMBER'
                  ReplacementText ="$(Version)" />
