@@ -15,11 +15,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Palaso.Xml;
-using SIL.ScriptureUtils;
 using SIL.Transcelerator;
-using SIL.Utils;
 using System.Linq;
+using SIL.Scripture;
+using SIL.Xml;
 
 namespace SIL.TxlMasterQuestionPreProcessor
 {

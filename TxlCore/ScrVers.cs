@@ -1,5 +1,14 @@
-﻿using AddInSideViews;
-using SIL.ScriptureUtils;
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2014' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright> 
+#endregion
+// ---------------------------------------------------------------------------------------------
+using AddInSideViews;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {

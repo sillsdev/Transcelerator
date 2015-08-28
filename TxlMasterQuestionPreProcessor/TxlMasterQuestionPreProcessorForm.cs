@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using SIL.ScriptureUtils;
+using SIL.Scripture;
 using SIL.Transcelerator;
 using SIL.Utils;
 
