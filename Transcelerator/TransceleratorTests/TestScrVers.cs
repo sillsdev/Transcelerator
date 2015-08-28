@@ -10,7 +10,7 @@
 // File: TestScrVers.cs
 // --------------------------------------------------------------------------------------------
 using Rhino.Mocks;
-using SIL.ScriptureUtils;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {

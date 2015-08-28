@@ -90,12 +90,6 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <Component Guid="{E0A7B9CE-FAC2-4726-9305-9FD3B0501699}">
         <File Name="TxlQuestionWords.xml" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlQuestionWords.xml" />
       </Component>
-      <Component Guid="{AE788DAF-A607-42AB-AF68-52A4EF70EE19}">
-        <File Name="SIL.ScriptureUtils.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.ScriptureUtils.dll" />
-      </Component>
-      <Component Guid="{10CFCA04-0BD0-4BF3-96DD-258215396D5A}">
-        <File Name="SIL.ScriptureControls.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.ScriptureControls.dll" />
-      </Component>
 	    <Component Guid="{352892BC-8904-4760-8E61-FC26C2865827}">
 		    <File Name="Analytics.NET.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Analytics.NET.dll" />
 	    </Component>
@@ -111,13 +105,31 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
       <Component Guid="{ECA02522-194A-4694-B90B-C760595D24C5}">
         <File Name="SilUtils.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SilUtils.dll" />
       </Component>
-	    <Component Guid="{B3823867-B6D4-48b1-B73E-6D1C5B868B9C}">
-		    <File Name="Palaso.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Palaso.dll" />
-	    </Component>
-	    <Component Guid="{0FF64E02-71A7-4791-90E5-646AF7AC88CA}">
-		    <File Name="PalasoUIWindowsForms.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\PalasoUIWindowsForms.dll" />
-	    </Component>
-      <Component Guid="{98D718FC-99AF-4AEF-BE0D-9D24F69B5DA7}">
+      <Component Guid="{1A126530-7E7F-4169-96E4-00900BA09864}">
+        <File Name="SIL.WritingSystems.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.WritingSystems.dll" />
+        <File Name="SIL.WritingSystems.pdb" Source="..\Transcelerator\bin\Release\SIL.WritingSystems.pdb" />
+      </Component>
+      <Component Guid="{22416287-2AA6-469C-8240-2B5DB18C984E}">
+        <File Name="SIL.Windows.Forms.Keyboarding.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.Keyboarding.dll" />
+        <File Name="SIL.Windows.Forms.Keyboarding.pdb" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.Keyboarding.pdb" />
+      </Component>
+      <Component Guid="{C0CFE633-A73C-4344-99B8-7A6A13F45B58}">
+        <File Name="SIL.Windows.Forms.Scripture.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.Scripture.dll" />
+        <File Name="SIL.Windows.Forms.Scripture.pdb" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.Scripture.pdb" />
+      </Component>
+      <Component Guid="{6FF0AF28-DF6E-49FD-AB94-3A782C24D8D4}">
+        <File Name="SIL.Scripture.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.Scripture.dll" />
+        <File Name="SIL.Scripture.pdb" Source="..\Transcelerator\bin\Release\SIL.Scripture.pdb" />
+      </Component>
+      <Component Guid="{FF6542DE-FFE1-4BF6-ABAB-CF21BD3318F3}">
+        <File Name="SIL.Windows.Forms.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.dll" />
+        <File Name="SIL.Windows.Forms.pdb" Source="..\Transcelerator\bin\Release\SIL.Windows.Forms.pdb" />
+      </Component>
+      <Component Guid="{6E7C6D97-830E-4FDA-AC27-70951793A4B1}">
+        <File Name="SIL.Core.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.Core.dll" />
+        <File Name="SIL.Core.pdb" Source="..\Transcelerator\bin\Release\SIL.Core.pdb" />
+      </Component>
+	    <Component Guid="{98D718FC-99AF-4AEF-BE0D-9D24F69B5DA7}">
         <File Name="Keyman7Interop.dll" KeyPath="yes" Source="..\Transcelerator\bin\Release\Keyman7Interop.dll" />
       </Component>
       <Component Guid="{EE7BDDBE-F456-4257-A5C6-F2B3C1B79097}">
@@ -126,25 +138,13 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
 	    <Component Guid="{5D7D6D47-0C76-4CCB-B81A-923A90EC7AB3}">
 		    <File Name="Transcelerator.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\Transcelerator.pdb" />
 	    </Component>
-	    <Component Guid="{63512278-87DB-439B-A1F8-173E54986561}">
-		    <File Name="SIL.ScriptureControls.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.ScriptureControls.pdb" />
-	    </Component>
 	    <Component Guid="{F289E8D6-42EC-4D72-8C0D-4347E17497F8}">
 		    <File Name="TxlCore.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\TxlCore.pdb" />
 	    </Component>
-	    <Component Guid="{5982E04E-79A2-4DB8-9598-93BD7AEC9981}">
-		    <File Name="SIL.ScriptureUtils.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SIL.ScriptureUtils.pdb" />
-	    </Component>
 	    <Component Guid="{D381546C-F766-4532-B23C-FB8B55320A6D}">
 		    <File Name="SilUtils.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\SilUtils.pdb" />
-	    </Component>
-	    <Component Guid="{7D68C67E-F306-44A3-9F16-5D4F95AF34B0}">
-		    <File Name="Palaso.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\Palaso.pdb" />
-	    </Component>
-	    <Component Guid="{74F3CC00-E6D4-43FA-A9A9-5970DD3F28B6}">
-		    <File Name="PalasoUIWindowsForms.pdb" KeyPath="yes" Source="..\Transcelerator\bin\Release\PalasoUIWindowsForms.pdb" />
-	    </Component>
-	    <Component Guid="{32B95588-AEDD-43A3-AB4A-B4ECF3ADC49E}">
+	    </Component>	    
+      <Component Guid="{32B95588-AEDD-43A3-AB4A-B4ECF3ADC49E}">
 		    <File Id="Icon" Name="TXL no TXL.ico" KeyPath="yes" Source="..\Transcelerator\bin\Release\TXL no TXL.ico" />
 	    </Component>
       <Component Guid="{C8A6EE73-5613-49B6-A656-1C030DC81E49}">
@@ -161,24 +161,22 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
     <ComponentRef Id="keyTermRules.xsd"/>
     <ComponentRef Id="TxlQuestionWords.xml"/>
     <ComponentRef Id="TxlQuestions.xml"/>
-	  <ComponentRef Id="SIL.ScriptureControls.dll"/>
 	  <ComponentRef Id="Analytics.NET.dll"/>
 	  <ComponentRef Id="DesktopAnalytics.dll"/>
 	  <ComponentRef Id="Newtonsoft.Json.dll"/>
 	  <ComponentRef Id="TxlCore.dll"/>
-    <ComponentRef Id="SIL.ScriptureUtils.dll"/>
     <ComponentRef Id="SilUtils.dll"/>
-    <ComponentRef Id="Palaso.dll"/>
-    <ComponentRef Id="PalasoUIWindowsForms.dll"/>
+    <ComponentRef Id="SIL.WritingSystems.dll"/>
+    <ComponentRef Id="SIL.Windows.Forms.Keyboarding.dll"/>
+    <ComponentRef Id="SIL.Windows.Forms.Scripture.dll"/>
+    <ComponentRef Id="SIL.Scripture.dll"/>
+    <ComponentRef Id="SIL.Windows.Forms.dll"/>
+    <ComponentRef Id="SIL.Core.dll"/>
     <ComponentRef Id="Keyman7Interop.dll"/>
     <ComponentRef Id="KeymanLink.dll"/>
 	  <ComponentRef Id ="Transcelerator.pdb"/>
-	  <ComponentRef Id="SIL.ScriptureControls.pdb"/>
 	  <ComponentRef Id="TxlCore.pdb"/>
-	  <ComponentRef Id="SIL.ScriptureUtils.pdb"/>
 	  <ComponentRef Id="SilUtils.pdb"/>
-	  <ComponentRef Id="Palaso.pdb"/>
-	  <ComponentRef Id="PalasoUIWindowsForms.pdb"/>
 	  <ComponentRef Id="Icon"/>
     <ComponentRef Id="CreditsAndLicense.htm"/>
     <ComponentRef Id="Transcelerator.dll.config"/>

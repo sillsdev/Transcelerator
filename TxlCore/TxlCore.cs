@@ -1,13 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.
-// <copyright from='2013' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2013' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // ---------------------------------------------------------------------------------------------
-using SIL.ScriptureUtils;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {

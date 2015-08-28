@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -16,8 +16,8 @@ using System.Linq;
 using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
-using Palaso.UI.WindowsForms;
 using Rhino.Mocks;
+using SIL.Windows.Forms;
 
 namespace SIL.Transcelerator
 {

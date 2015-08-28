@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.   
-// <copyright from='2013' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.   
+// <copyright from='2013' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,7 +11,6 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -19,11 +18,11 @@ using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
 using DesktopAnalytics;
-using Palaso.Reporting;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Reporting;
-using Palaso.WritingSystems;
-using SIL.ScriptureUtils;
+using SIL.Keyboarding;
+using SIL.Reporting;
+using SIL.Scripture;
+using SIL.Windows.Forms.Keyboarding;
+using SIL.Windows.Forms.Reporting;
 
 namespace SIL.Transcelerator
 {

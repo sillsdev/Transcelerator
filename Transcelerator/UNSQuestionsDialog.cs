@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.   
-// <copyright from='2011' to='2014 company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.   
+// <copyright from='2011' to='2015 company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -22,11 +22,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
-using Palaso.Xml;
-using SIL.ScriptureControls;
-using SIL.ScriptureUtils;
+using SIL.Scripture;
+using SIL.Windows.Forms.Scripture;
 using SIL.Utils;
-using Palaso.UI.WindowsForms.FileDialogExtender;
+using SIL.Windows.Forms.FileDialogExtender;
+using SIL.Xml;
 
 namespace SIL.Transcelerator
 {

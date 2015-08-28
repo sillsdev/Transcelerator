@@ -80,14 +80,19 @@ mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.dll ../lib/dotnet/Palaso.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/Palaso.pdb ../lib/dotnet/Palaso.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/PalasoUIWindowsForms.dll ../lib/dotnet/PalasoUIWindowsForms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/PalasoUIWindowsForms.pdb ../lib/dotnet/PalasoUIWindowsForms.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/SIL.ScriptureUtils.dll ../lib/dotnet/SIL.ScriptureUtils.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/SIL.ScriptureUtils.pdb ../lib/dotnet/SIL.ScriptureUtils.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/SIL.ScriptureUtils.Tests.dll ../lib/dotnet/SIL.ScriptureUtils.Tests.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt223/latest.lastSuccessful/SIL.ScriptureUtils.Tests.pdb ../lib/dotnet/SIL.ScriptureUtils.Tests.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.dll ../lib/dotnet/SIL.Scripture.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.pdb ../lib/dotnet/SIL.Scripture.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Keyboarding.dll ../lib/dotnet/SIL.Windows.Forms.Keyboarding.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Keyboarding.pdb ../lib/dotnet/SIL.Windows.Forms.Keyboarding.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Scripture.dll ../lib/dotnet/SIL.Windows.Forms.Scripture.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Scripture.pdb ../lib/dotnet/SIL.Windows.Forms.Scripture.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.dll ../lib/dotnet/SIL.WritingSystems.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.pdb ../lib/dotnet/SIL.WritingSystems.pdb
 # End of script
