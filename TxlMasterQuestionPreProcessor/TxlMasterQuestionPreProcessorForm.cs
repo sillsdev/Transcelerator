@@ -20,7 +20,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
             m_masterVersification = englishVersification;
 
             txtSfmQuestionFile.Text = @"c:\Projects\Transcelerator\TxlMasterQuestionPreProcessor\QTTallBooks.sfm";
-            txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlCore.questionsFilename);
+            txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlCore.kQuestionsFilename);
         }
 
         private void btnGenerateMasterQuestionFile_Click(object sender, EventArgs e)

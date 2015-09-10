@@ -13,9 +13,9 @@ namespace SIL.Transcelerator
 {
     public static class TxlCore
     {
-        public const string englishVersificationName = "English";
-		public const string questionsFilename = "TxlQuestions.xml";
-		public const string questionWordsFilename = "TxlQuestionWords.xml";
+        public const string kEnglishVersificationName = "English";
+		public const string kQuestionsFilename = "TxlQuestions.xml";
+		public const string kQuestionWordsFilename = "TxlQuestionWords.xml";
 
       	/// ------------------------------------------------------------------------------------
 		/// <summary>

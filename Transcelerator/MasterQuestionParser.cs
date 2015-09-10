@@ -33,9 +33,9 @@ namespace SIL.Transcelerator
 	{
 	    #region Data members
         // TODO: Don't hard-code this. Should be read from language-specific file along with leading question words.
-        static List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
+        public static readonly List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
 
-	    private QuestionSections m_sections;
+	    private readonly QuestionSections m_sections;
 	    private readonly IEnumerable<PhraseCustomization> m_customizations;
         private readonly Dictionary<Regex, string> m_phraseSubstitutions;
         /// <summary>A lookup table of the last word of all known English key terms to the
@@ -78,10 +78,24 @@ namespace SIL.Transcelerator
             questionWords, keyTerms, keyTermRules, customizations, phraseSubstitutions)
         {
         }
-        
-        /// ------------------------------------------------------------------------------------
+
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
+		/// Initializes a new instance of the <see cref="MasterQuestionParser"/> class. This
+		/// version is useful when you just need a parser to use for ad-hoc questions, since
+		/// it does not take an initial collection of sections with questions to be parsed.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public MasterQuestionParser(IEnumerable<string> questionWords,
+			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<Substitution> phraseSubstitutions) : this(default(QuestionSections), questionWords,
+			keyTerms, keyTermRules, null, phraseSubstitutions)
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
@@ -128,16 +142,11 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private void Parse()
 	    {
+			if (m_partsTable.Any())
+				throw new InvalidOperationException("Parse called more than once.");
+
 	        foreach (Question question in GetQuestions())
-	        {
-	            if (question.IsParsable)
-	            {
-	                PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
-                        m_questionWordsLookupTable, question, GetOrCreatePart);
-	                foreach (ParsedPart part in parser.Parse())
-	                    question.ParsedParts.Add(part);
-	            }
-	        }
+	            ParseQuestion(question);
 
 	        for (int wordCount = m_partsTable.Keys.Max(); wordCount > 0; wordCount--)
 	        {
@@ -200,7 +209,17 @@ namespace SIL.Transcelerator
 	        }
 	    }
 
-	    #endregion
+		public void ParseQuestion(Question question)
+		{
+			if (question.IsParsable)
+			{
+				PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
+					m_questionWordsLookupTable, question, GetOrCreatePart);
+				foreach (ParsedPart part in parser.Parse())
+					question.ParsedParts.Add(part);
+			}
+		}
+		#endregion
 
         #region Public properties
 	    public ParsedQuestions Result
