@@ -135,16 +135,27 @@ namespace SIL.Transcelerator
 		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(Question baseQuestion, string newQuestion, string answer)
+		public Question(Question baseQuestion, string newQuestion, string answer) :
+			this(baseQuestion.ScriptureReference, baseQuestion.StartRef, 
+			baseQuestion.EndRef, newQuestion, answer)
 		{
-			ScriptureReference = baseQuestion.ScriptureReference;
-			StartRef = baseQuestion.StartRef;
-			EndRef = baseQuestion.EndRef;
-            IsUserAdded = true;
-            Text = newQuestion;
+		}
+
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor to make a new (user-added) Question.
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion, string answer)
+		{
+			ScriptureReference = scrRefAsString;
+			StartRef = startRef;
+			EndRef = endRef;
+			IsUserAdded = true;
+			Text = newQuestion;
 
 			if (!string.IsNullOrEmpty(answer))
-				Answers = new [] { answer };
+				Answers = new[] { answer };
 		}
 	}
 	#endregion

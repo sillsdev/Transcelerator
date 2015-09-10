@@ -35,7 +35,7 @@ namespace SIL.Transcelerator
 
 		#region Data members
 		private readonly List<TranslatablePhrase> m_phrases = new List<TranslatablePhrase>();
-		private readonly List<Part> m_allParts;
+		private readonly PhrasePartManager m_phrasePartManager;
 		private List<TranslatablePhrase> m_filteredPhrases;
 		private readonly Dictionary<int, TranslatablePhrase> m_categories = new Dictionary<int, TranslatablePhrase>(2);
 		private readonly Dictionary<TypeOfPhrase, string> m_initialPunct = new Dictionary<TypeOfPhrase, string>();
@@ -81,7 +81,7 @@ namespace SIL.Transcelerator
 		public PhraseTranslationHelper(QuestionProvider qp)
 		{
 			TranslatablePhrase.s_helper = this;
-		    m_allParts = qp.AllTranslatableParts.ToList();
+			m_phrasePartManager = qp.PhrasePartManager;
 
 			foreach (TranslatablePhrase phrase in qp.Where(p => !string.IsNullOrEmpty(p.PhraseToDisplayInUI)))
 			{
@@ -245,6 +245,27 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets all the questions/phrases for the given reference and category, in sequence
+		/// order.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetMatchingPhrases(string reference, int category)
+		{
+			bool foundFirstMatch = false;
+			foreach (var phrase in UnfilteredPhrases)
+			{
+				if (phrase.PhraseKey.ScriptureReference == reference && phrase.Category == category)
+				{
+					foundFirstMatch = true;
+					yield return phrase;
+				}
+				else if (foundFirstMatch)
+					break;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the phrases (filtered and sorted).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -349,6 +370,20 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets (UI-compatible) category names in order by ID (overview = 0, etc.)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<string> AllCategories
+		{
+			get
+			{
+				for (int i = 0; i < m_categories.Count; i++)
+					yield return GetCategoryName(i);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Get the translatable phrase at the specified <paramref name="index"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -403,6 +438,23 @@ namespace SIL.Transcelerator
 				phrase.MatchesKeyTermFilter(ktFilter) &&
 				filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
 				(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+		}
+
+		public TranslatablePhrase AddQuestion(Question question, int category, int seqNumber, MasterQuestionParser parser)
+		{
+			// Advance sequence numbers of any other questions in this category for this reference that
+			// have a sequence number >= the new one.
+			var phrasesToAdvance = m_phrases.Where(p => p.Reference == question.ScriptureReference && p.SequenceNumber >= seqNumber).ToArray();
+			foreach (var phrase in phrasesToAdvance)
+				phrase.IncrementSequenceNumber();
+			var newPhrase = new TranslatablePhrase(question, category, seqNumber);
+			m_phrases.Add(newPhrase);
+			if (m_filteredPhrases != m_phrases)
+				m_filteredPhrases.Add(newPhrase);
+			parser.ParseQuestion(question);
+			m_phrasePartManager.InitializePhraseParts(newPhrase);
+			m_listSorted = false;
+			return newPhrase;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -812,14 +864,13 @@ namespace SIL.Transcelerator
 			string p;
 			return m_finalPunct.TryGetValue(type, out p) ? p : string.Empty;
 		}
-		#endregion
 
 		internal void ProcessAllTranslations()
 		{
 			if (!m_justGettingStarted)
 				throw new InvalidOperationException("This method should only be called once, after all the saved translations have been loaded.");
 
-			foreach (Part part in m_allParts)
+			foreach (Part part in m_phrasePartManager.AllTranslatableParts)
 			{
 				if (part.OwningPhrases.Where(p => p.HasUserTranslation).Skip(1).Any()) // Must have at least 2 phrases with translations
 					RecalculatePartTranslation(part);
@@ -827,6 +878,7 @@ namespace SIL.Transcelerator
 
 			m_justGettingStarted = false;
 		}
+		#endregion
 	}
 
     public interface IPhraseTranslationHelper

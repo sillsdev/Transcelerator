@@ -124,7 +124,7 @@ namespace SIL.Transcelerator
 						splashScreen.Message = string.Format(
 						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
-						int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
+						int currRef = host.GetCurrentRef(TxlCore.kEnglishVersificationName);
 						BCVRef startRef = new BCVRef(currRef);
 						BCVRef endRef = new BCVRef(currRef);
 					    bool useSavedRefRange = false;
@@ -147,8 +147,8 @@ namespace SIL.Transcelerator
                         {
                             startRef.Chapter = 1;
                             startRef.Verse = 1;
-                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
-                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.kEnglishVersificationName);
+                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.kEnglishVersificationName);
                         }
 
 						KeyboardController.Initialize();
@@ -198,10 +198,11 @@ namespace SIL.Transcelerator
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
                             host.GetProjectFont(projectName),
-						    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
+						    host.GetProjectLanguageId(projectName, "generate templates"),
+							host.GetProjectSetting(projectName, "Language"), host.GetProjectRtoL(projectName),
 						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX),
                             () => host.GetCssStylesheet(projectName), host.ApplicationName,
-                            new ScrVers(host, TxlCore.englishVersificationName),
+                            new ScrVers(host, TxlCore.kEnglishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
 						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);

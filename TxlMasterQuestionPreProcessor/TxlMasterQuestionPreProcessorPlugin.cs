@@ -62,7 +62,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 					lock (this)
 					{
 						formToShow = unsMainWindow = new TxlMasterQuestionPreProcessorForm(
-						    new ScrVers(host, TxlCore.englishVersificationName));
+						    new ScrVers(host, TxlCore.kEnglishVersificationName));
 					}
 					formToShow.ShowDialog();
 					

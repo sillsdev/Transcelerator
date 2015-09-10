@@ -103,6 +103,16 @@ namespace SIL.Transcelerator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Arrow_Down_icon24x24 {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Down_icon24x24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Arrow_Left_icon {
             get {
                 object obj = ResourceManager.GetObject("Arrow_Left_icon", resourceCulture);
@@ -133,9 +143,29 @@ namespace SIL.Transcelerator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Arrow_Up_icon24x24 {
+            get {
+                object obj = ResourceManager.GetObject("Arrow_Up_icon24x24", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap check_circle {
             get {
                 object obj = ResourceManager.GetObject("check_circle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap control_right {
+            get {
+                object obj = ResourceManager.GetObject("control_right", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -156,16 +186,6 @@ namespace SIL.Transcelerator.Properties {
         internal static System.Drawing.Bitmap Filtered {
             get {
                 object obj = ResourceManager.GetObject("Filtered", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap FWSILLogoColor2005 {
-            get {
-                object obj = ResourceManager.GetObject("FWSILLogoColor2005", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -302,6 +322,15 @@ namespace SIL.Transcelerator.Properties {
         internal static string kstidNewSelectionRuleNameTemplate {
             get {
                 return ResourceManager.GetString("kstidNewSelectionRuleNameTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There are no existing {0} questions for {1}..
+        /// </summary>
+        internal static string kstidNoExistingQuestions {
+            get {
+                return ResourceManager.GetString("kstidNoExistingQuestions", resourceCulture);
             }
         }
         
@@ -510,6 +539,16 @@ namespace SIL.Transcelerator.Properties {
         internal static System.Drawing.Bitmap Refresh {
             get {
                 object obj = ResourceManager.GetObject("Refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SILLogoBlue132x184 {
+            get {
+                object obj = ResourceManager.GetObject("SILLogoBlue132x184", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

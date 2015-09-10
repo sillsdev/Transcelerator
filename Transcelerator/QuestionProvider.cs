@@ -28,10 +28,7 @@ namespace SIL.Transcelerator
     {
         #region Data members
         private QuestionSections m_sections;
-        private readonly Dictionary<Word, List<KeyTerm>> m_keyTermsTable = new Dictionary<Word, List<KeyTerm>>();
-        /// <summary>A double lookup table of all parts in all phrases managed by this class.
-        /// For improved performance, outer lookup is by wordcount.</summary>
-        private readonly SortedDictionary<int, Dictionary<Word, List<Part>>> m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
+        private readonly PhrasePartManager m_manager;
         private SortedDictionary<int, string> m_sectionRefs;
         private IDictionary<string, string> m_sectionHeads;
 		private int[] m_availableBookIds;
@@ -41,31 +38,45 @@ namespace SIL.Transcelerator
         #region Constructors
         /// ------------------------------------------------------------------------------------
 	    /// <summary>
-	    /// Initializes a new instance of the <see cref="QuestionProvider"/> class.
+	    /// Initializes a new instance of the <see cref="QuestionProvider"/> class. This version
+	    /// is only for testing.
 	    /// </summary>
 	    /// <param name="sections">Class representing the questions, organized by Scripture
 	    /// section and category.</param>
 	    /// <param name="keyTerms">(optional) key terms</param>
 	    /// ------------------------------------------------------------------------------------
-	    public QuestionProvider(QuestionSections sections, IEnumerable<KeyTermMatchSurrogate> keyTerms)
+	    internal QuestionProvider(QuestionSections sections, IEnumerable<KeyTermMatchSurrogate> keyTerms)
 		{
 			m_sections = sections;
-            if (keyTerms != null)
-                PopulateKeyTermsTable(keyTerms);
+            m_manager = new PhrasePartManager(new string[0], keyTerms);
         }
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuestionProvider"/> class.
-        /// </summary>
-        /// <param name="parsedQuestions">The parsed questions object.</param>
-        /// ------------------------------------------------------------------------------------
-        public QuestionProvider(ParsedQuestions parsedQuestions)
-        {
-            m_sections = parsedQuestions.Sections;
-            PopulateKeyTermsTable(parsedQuestions.KeyTerms);
-            PopulatePartsTable(parsedQuestions.TranslatableParts);
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="QuestionProvider"/> class. This version
+		/// is only for testing.
+		/// </summary>
+		/// <param name="parsedQuestions">The parsed questions object.</param>
+		/// ------------------------------------------------------------------------------------
+		internal QuestionProvider(ParsedQuestions parsedQuestions)
+		{
+			m_sections = parsedQuestions.Sections;
+			m_manager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="QuestionProvider"/> class.
+		/// </summary>
+		/// <param name="parsedQuestions">The parsed questions object.</param>
+		/// <param name="manager">The PhrasePartManager that keeps track of all known key terms
+		/// and all translatable parts in the project.</param>
+		/// ------------------------------------------------------------------------------------
+		public QuestionProvider(ParsedQuestions parsedQuestions, PhrasePartManager manager)
+		{
+			m_sections = parsedQuestions.Sections;
+			m_manager = manager;
+		}
         #endregion
 
         #region Public Properties
@@ -120,105 +131,13 @@ namespace SIL.Transcelerator
 			}
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Enumerates the full (unique) list of all translatable parts
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public IEnumerable<Part> AllTranslatableParts
-	    {
-            get { return m_partsTable.Values.SelectMany(thing => thing.Values.SelectMany(parts => parts)); }
-	    }
+		public PhrasePartManager PhrasePartManager
+		{
+			get { return m_manager; }
+		}
 	    #endregion
 
 		#region Private helper methods
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Populates the key terms table. This method assumes that the incoming surrogates are
-	    /// unique.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
-	    private void PopulateKeyTermsTable(IEnumerable<KeyTermMatchSurrogate> keyTermSurrogates)
-	    {
-			if (keyTermSurrogates == null)
-				return;
-
-            foreach (KeyTermMatchSurrogate surrogate in keyTermSurrogates)
-            {
-                Word firstWord = Word.FirstWord(surrogate.TermId);
-                List<KeyTerm> termsStartingWithSameFirstWord;
-	            if (!m_keyTermsTable.TryGetValue(firstWord, out termsStartingWithSameFirstWord))
-	                m_keyTermsTable[firstWord] = termsStartingWithSameFirstWord = new List<KeyTerm>();
-
-	            termsStartingWithSameFirstWord.Add(new KeyTerm(surrogate));
-	        }
-	    }
-
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Populates the key terms table. This method assumes that the incoming surrogates are
-	    /// unique.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
-	    private void PopulatePartsTable(IEnumerable<string> translatableParts)
-	    {
-	        foreach (string part in translatableParts)
-	            CreatePart(part);
-	    }
-
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Creates a part for the given sub-phrase.
-	    /// </summary>
-	    /// <param name="phrase">The phrase containing the space-delimited words of the part
-	    /// (assumed to be lowercase and free of punctuation).</param>
-	    /// ------------------------------------------------------------------------------------
-	    private void CreatePart(string phrase)
-	    {
-            GetOrCreatePart(phrase.Split(new[] { ' ' },
-                StringSplitOptions.RemoveEmptyEntries).Select(w => (Word)w).ToList(),
-                null, true);
-	    }
-
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Gets or creates a part matching the given sub-phrase.
-	    /// </summary>
-	    /// <param name="words">The words of the part.</param>
-	    /// <param name="owningPhraseOfPart">(optional) The owning phrase of the part to find or
-	    /// create.</param>
-	    /// <param name="unconditionallyCreate">Caller can pass true for added efficiency if it
-	    /// knows for sure that the part doesn't already exist in the table.</param>
-	    /// ------------------------------------------------------------------------------------
-	    private Part GetOrCreatePart(List<Word> words, TranslatablePhrase owningPhraseOfPart,
-            bool unconditionallyCreate)
-        {
-            Dictionary<Word, List<Part>> partsDictionary;
-            List<Part> parts = null;
-            Part part = null;
-            if (m_partsTable.TryGetValue(words.Count(), out partsDictionary))
-            {
-                if (partsDictionary.TryGetValue(words.First(), out parts) && !unconditionallyCreate)
-                    part = parts.FirstOrDefault(x => x.Words.SequenceEqual(words));
-            }
-            else
-                m_partsTable[words.Count()] = partsDictionary = new Dictionary<Word, List<Part>>();
-
-            if (parts == null)
-                partsDictionary[words.First()] = parts = new List<Part>();
-
-            if (part == null)
-            {
-                part = new Part(words);
-                parts.Add(part);
-            }
-
-            if (owningPhraseOfPart != null)
-                part.AddOwningPhrase(owningPhraseOfPart);
-
-            return part;
-        }
-
 	    /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets the questions/phrases
@@ -228,11 +147,15 @@ namespace SIL.Transcelerator
 		{
 			HashSet<string> processedCategories = new HashSet<string>();
 	        TranslatablePhrase phrase;
+		    int categoryType;
 			foreach (Section section in m_sections.Items)
 			{
 				for (int iCat = 0; iCat < section.Categories.Length; iCat++)
 				{
 					Category category = section.Categories[iCat];
+					categoryType = iCat;
+					if (iCat == 0 && !category.IsOverview) // 0 is reserved for "overview", so we can't use that for non-overview categories.
+						categoryType++;
 
 				    if (category.Type != null)
 				    {
@@ -240,7 +163,7 @@ namespace SIL.Transcelerator
 				        if (!processedCategories.Contains(lcCategory))
 				        {
 				            phrase = new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, processedCategories.Count);
-                            phrase.m_parts.Add(GetOrCreatePart(PhraseParser.GetWordsInString(lcCategory), phrase, false));
+                            phrase.m_parts.Add(m_manager.GetOrCreatePart(PhraseParser.GetWordsInString(lcCategory), phrase, false));
 				            yield return phrase;
 				            processedCategories.Add(lcCategory);
 				        }
@@ -255,36 +178,29 @@ namespace SIL.Transcelerator
 							q.StartRef = section.StartRef;
 							q.EndRef = section.EndRef;
 						}
-						phrase = new TranslatablePhrase(q, iCat, iQuestion + 1);
+						phrase = new TranslatablePhrase(q, categoryType, iQuestion + 1);
 					    if (!phrase.IsExcluded)
-					    {
-					        foreach (ParsedPart part in q.ParsedParts)
-					        {
-						        IPhrasePart newPart;
-					            if (part.Type == PartType.TranslatablePart)
-					                newPart = GetOrCreatePart(part.Words, phrase, false);
-					            else if (part.Type == PartType.KeyTerm)
-					                newPart = FindKeyTerm(part.Words);
-					            else
-									newPart = new Number(part.NumericValue);
-								phrase.m_parts.Add(newPart);
-					        }
-					    }
+					        InitializePhraseParts(phrase);
 					    yield return phrase;
 					}
 				}
 			}
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Finds the key term which matches the given list of words (assumed to exist)
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private IPhrasePart FindKeyTerm(List<Word> words)
-        {
-            return (m_keyTermsTable[words[0]]).First(kt => kt.Words.SequenceEqual(words));
-        }
+		public void InitializePhraseParts(TranslatablePhrase phrase)
+		{
+			foreach (ParsedPart part in phrase.QuestionInfo.ParsedParts)
+			{
+				IPhrasePart newPart;
+				if (part.Type == PartType.TranslatablePart)
+					newPart = m_manager.GetOrCreatePart(part.Words, phrase, false);
+				else if (part.Type == PartType.KeyTerm)
+					newPart = m_manager.FindKeyTerm(part.Words);
+				else
+					newPart = new Number(part.NumericValue);
+				phrase.m_parts.Add(newPart);
+			}
+		}
 	    #endregion
 
 		#region Implementation of IEnumerable<TranslatablePhrase>
