@@ -325,7 +325,7 @@ namespace SIL.Transcelerator
 			{
 				if (IsExcluded)
 					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
-				m_fHasUserTranslation = !string.IsNullOrEmpty(value);
+				SetHasUserTranslationInternal(!string.IsNullOrEmpty(value));
 				SetTranslationInternal(value);
 			}
 		}
@@ -338,7 +338,21 @@ namespace SIL.Transcelerator
 		internal void SetProvisionalTranslation(string value)
 		{
 			m_sTranslation = value;
-			m_fHasUserTranslation = false;
+			SetHasUserTranslationInternal(false);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the flag indicating whether the translation represents a user translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void SetHasUserTranslationInternal(bool value)
+		{
+			if (m_fHasUserTranslation != value)
+			{
+				m_fHasUserTranslation = value;
+				s_helper.ProcessChangeInUserTranslationState();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
