@@ -34,8 +34,8 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 // This assembly was originally pulled in from FW 7.3, but it has been modified (mostly
 // to strip out unneeded things) considerably since then.
-[assembly: AssemblyFileVersion("1.1.0.0")]
-[assembly: AssemblyInformationalVersionAttribute("1.1.0")]
-[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("1.2.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
 
 [assembly: InternalsVisibleTo("SilUtilsTests")]

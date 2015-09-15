@@ -65,6 +65,7 @@ namespace SIL.Transcelerator
 			this.m_dataGridViewExistingQuestions = new System.Windows.Forms.DataGridView();
 			this.colQuestion = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colExcluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.m_lblSelectLocation = new System.Windows.Forms.Label();
 			this.m_txtVernacularQuestion = new System.Windows.Forms.TextBox();
 			this.m_insertionPointArrow = new System.Windows.Forms.PictureBox();
@@ -194,7 +195,8 @@ namespace SIL.Transcelerator
 			this.m_dataGridViewExistingQuestions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.m_dataGridViewExistingQuestions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colQuestion,
-            this.colTranslation});
+            this.colTranslation,
+            this.colExcluded});
 			this.m_tableLayoutPanel.SetColumnSpan(this.m_dataGridViewExistingQuestions, 2);
 			this.m_dataGridViewExistingQuestions.MultiSelect = false;
 			this.m_dataGridViewExistingQuestions.Name = "m_dataGridViewExistingQuestions";
@@ -212,6 +214,7 @@ namespace SIL.Transcelerator
 			// 
 			this.colQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.colQuestion.DataPropertyName = "PhraseToDisplayInUI";
+			this.colQuestion.FillWeight = 200F;
 			resources.ApplyResources(this.colQuestion, "colQuestion");
 			this.colQuestion.Name = "colQuestion";
 			this.colQuestion.ReadOnly = true;
@@ -225,6 +228,14 @@ namespace SIL.Transcelerator
 			this.colTranslation.Name = "colTranslation";
 			this.colTranslation.ReadOnly = true;
 			this.colTranslation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colExcluded
+			// 
+			this.colExcluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.colExcluded.DataPropertyName = "IsExcluded";
+			resources.ApplyResources(this.colExcluded, "colExcluded");
+			this.colExcluded.Name = "colExcluded";
+			this.colExcluded.ReadOnly = true;
 			// 
 			// m_lblSelectLocation
 			// 
@@ -354,11 +365,12 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Panel m_pnlArrow;
 		private System.Windows.Forms.Label m_lblVernacularQuestion;
 		private System.Windows.Forms.ComboBox m_cboCategory;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
 		private System.Windows.Forms.Panel m_pnlUpDownArrows;
 		private System.Windows.Forms.Button m_btnUp;
 		private System.Windows.Forms.Button m_btnDown;
 		private System.Windows.Forms.Label m_lblVernacularQuestionIsOptional;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
 	}
 }

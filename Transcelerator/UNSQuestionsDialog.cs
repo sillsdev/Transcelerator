@@ -805,11 +805,11 @@ namespace SIL.Transcelerator
 		{
 			switch (iClickedCol)
 			{
-				case 0: m_helper.Sort(PhraseTranslationHelper.SortBy.Reference, sortAscending); break;
-				case 1: m_helper.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, sortAscending); break;
-				case 2: m_helper.Sort(PhraseTranslationHelper.SortBy.Translation, sortAscending); break;
-				case 3: m_helper.Sort(PhraseTranslationHelper.SortBy.Status, sortAscending); break;
-				case 4: m_helper.Sort(PhraseTranslationHelper.SortBy.Default, sortAscending); break;
+				case 0: m_helper.Sort(PhrasesSortedBy.Reference, sortAscending); break;
+				case 1: m_helper.Sort(PhrasesSortedBy.EnglishPhrase, sortAscending); break;
+				case 2: m_helper.Sort(PhrasesSortedBy.Translation, sortAscending); break;
+				case 3: m_helper.Sort(PhrasesSortedBy.Status, sortAscending); break;
+				case 4: m_helper.Sort(PhrasesSortedBy.Default, sortAscending); break;
 			}
 		}
 
@@ -1729,7 +1729,11 @@ namespace SIL.Transcelerator
 				return;
 
 			CurrentPhrase.IsExcluded = (sender == mnuExcludeQuestion);
-			Reload(true);
+			Save(true, true);
+			var addressToSelect = dataGridUns.CurrentCellAddress;
+			ApplyFilter();
+			dataGridUns.RowCount = m_helper.Phrases.Count();
+			dataGridUns.CurrentCell = dataGridUns.Rows[addressToSelect.Y].Cells[addressToSelect.X];
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1747,8 +1751,14 @@ namespace SIL.Transcelerator
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
-					phrase.ModifiedPhrase = dlg.ModifiedPhrase;
-					Reload(true);
+					int currentCol = dataGridUns.CurrentCellAddress.X;
+					if (m_parser == null)
+						m_parser = new MasterQuestionParser(GetQuestionWords(), m_getKeyTerms(), GetKeyTermRules(), PhraseSubstitutions);
+					m_helper.ModifyQuestion(phrase, dlg.ModifiedPhrase, m_parser);
+					Save(true, true);
+					int row = m_helper.FindPhrase(phrase.QuestionInfo);
+					dataGridUns.CurrentCell = dataGridUns.Rows[row].Cells[currentCol];
+					dataGridUns.InvalidateRow(row);
 				}
 			}
 		}
@@ -1764,7 +1774,7 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard(false);
 			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_helper, m_availableBookIds))
+			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_masterVersification, m_helper, m_availableBookIds))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -1776,11 +1786,9 @@ namespace SIL.Transcelerator
 					if (basePhrase == null)
 					{
 						var startRef = dlg.StartReference;
-						var endRef = startRef;
-						endRef.Verse = dlg.EndVerse;
-						startRef = new BCVRef(m_masterVersification.ChangeVersification(startRef, m_projectVersification));
-						endRef = new BCVRef(m_masterVersification.ChangeVersification(endRef, m_projectVersification));
-						newQuestion = new Question(dlg.Reference, startRef.BBCCCVVV, endRef.BBCCCVVV, dlg.EnglishQuestion, dlg.Answer);
+						var endRef = dlg.EndReference;
+						newQuestion = new Question(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"),
+							startRef.BBCCCVVV, endRef.BBCCCVVV, dlg.EnglishQuestion, dlg.Answer);
 					}
 					else
 					{
@@ -1793,13 +1801,15 @@ namespace SIL.Transcelerator
 					}
 
 					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.Category, dlg.SequenceNumber, m_parser);
+					if (basePhrase == null)
+						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
+
 					Save(true, true);
 					dataGridUns.RowCount = m_helper.Phrases.Count();
-					if (sender == mnuAddQuestion)
-						dataGridUns.CurrentCell = dataGridUns.Rows[dataGridUns.CurrentCellAddress.Y + 1].Cells[dataGridUns.CurrentCellAddress.X];
 					if (dlg.Translation != string.Empty)
 						newPhrase.Translation = dlg.Translation;
 					dataGridUns.CurrentCell = dataGridUns.Rows[m_helper.FindPhrase(newPhrase.QuestionInfo)].Cells[m_colTranslation.Index];
+					UpdateCountsAndFilterStatus();
 				}
 			}
 		}
@@ -1819,8 +1829,8 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
-			if (m_helper[e.RowIndex].IsExcluded)
-				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightCoral;
+			dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = (m_helper[e.RowIndex].IsExcluded) ?
+				Color.LightCoral : dataGridUns.DefaultCellStyle.BackColor;
 		}
 
 		private void dataGridUns_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)

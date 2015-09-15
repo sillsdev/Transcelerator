@@ -219,6 +219,21 @@ namespace SIL.Transcelerator
 					question.ParsedParts.Add(part);
 			}
 		}
+
+		public bool ParseNewOrModifiedQuestion(Question question, Action<KeyTermMatch> processKeyTermMatch)
+		{
+			if (question.IsParsable)
+			{
+				PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
+					m_questionWordsLookupTable, question, GetOrCreatePart);
+				foreach (ParsedPart part in parser.Parse())
+					question.ParsedParts.Add(part);
+				foreach (var match in parser.KeyTermsUsedForPhrase)
+					processKeyTermMatch(match);
+				return true;
+			}
+			return false;
+		}
 		#endregion
 
         #region Public properties
@@ -479,5 +494,52 @@ namespace SIL.Transcelerator
 			return null;
 		}
 		#endregion
+
+		public bool ReparseModifiedQuestion(Question question, Action<KeyTermMatch> processKeyTermMatch)
+		{
+			var previousParts = new List<ParsedPart>(question.ParsedParts);
+			question.ParsedParts.Clear();
+			if (!ParseNewOrModifiedQuestion(question, processKeyTermMatch))
+			{
+				question.ParsedParts.AddRange(previousParts);
+				return false;
+			}
+			var newParts = new List<ParsedPart>(question.ParsedParts);
+			question.ParsedParts.Clear();
+
+			foreach (var newPart in newParts)
+			{
+				if (newPart.Type != PartType.TranslatablePart)
+					question.ParsedParts.Add(newPart);
+				else
+				{
+					int iStartOfUnmatchedWordInPart = 0;
+					for (int iWordInNewPart = 0; iWordInNewPart < newPart.Words.Count;)
+					{
+						var matchingPrevPart = previousParts.FirstOrDefault(pp => pp.Type == PartType.TranslatablePart &&
+							newPart.Words.Skip(iWordInNewPart).Take(pp.Words.Count).SequenceEqual(pp.Words));
+						if (matchingPrevPart != null)
+						{
+							if (iWordInNewPart > iStartOfUnmatchedWordInPart)
+							{
+								question.ParsedParts.Add(new ParsedPart(newPart.Words
+									.Skip(iStartOfUnmatchedWordInPart)
+									.Take(iWordInNewPart - iStartOfUnmatchedWordInPart)));	
+							}
+							question.ParsedParts.Add(matchingPrevPart);
+							iWordInNewPart += matchingPrevPart.Words.Count;
+							iStartOfUnmatchedWordInPart = iWordInNewPart;
+						}
+						else
+							 iWordInNewPart++;
+					}
+					if (newPart.Words.Count > iStartOfUnmatchedWordInPart)
+					{
+						question.ParsedParts.Add(new ParsedPart(newPart.Words.Skip(iStartOfUnmatchedWordInPart).Take(newPart.Words.Count - iStartOfUnmatchedWordInPart)));
+					}
+				}
+			}
+			return true;
+		}
 	}
 }
