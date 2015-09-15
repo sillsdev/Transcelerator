@@ -58,6 +58,7 @@ namespace SIL.Transcelerator
 		private bool m_listSortedAscending = true;
 		/// <summary>Indicates whether the filtered list's sorting has been done</summary>
 		private bool m_listSorted = false;
+		private bool m_sortIsDirty = false;
 
 		private const int kAscending = 1;
 		private const int kDescending = -1;
@@ -100,6 +101,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public void Sort(PhrasesSortedBy by, bool ascending)
 		{
+			if (m_sortIsDirty)
+				m_listSorted = false;
+
 			if (m_listSortCriterion != by)
 			{
 				m_listSortCriterion = by;
@@ -281,6 +285,7 @@ namespace SIL.Transcelerator
 				{
 					SortList(m_filteredPhrases, m_listSortCriterion, m_listSortedAscending);
 					m_listSorted = true;
+					m_sortIsDirty = false;
 				}
 				return m_filteredPhrases;
 			}
@@ -616,6 +621,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		void IPhraseTranslationHelper.ProcessTranslation(TranslatablePhrase tp)
 		{
+			if (m_listSortCriterion == PhrasesSortedBy.Translation)
+				m_sortIsDirty = true;
+
 			string initialPunct, finalPunct;
 
 			StringBuilder bldr = new StringBuilder();
@@ -693,6 +701,17 @@ namespace SIL.Transcelerator
 
 			if (TranslationsChanged != null)
 				TranslationsChanged();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// If list is sorted by status, note that it is no longer sorted correctly.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void ProcessChangeInUserTranslationState()
+		{
+			if (m_listSortCriterion == PhrasesSortedBy.Status)
+				m_sortIsDirty = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -886,7 +905,6 @@ namespace SIL.Transcelerator
 
 			m_justGettingStarted = false;
 		}
-		#endregion
 
 		internal void AttachNewQuestionToAdjacentPhrase(TranslatablePhrase newPhrase)
 		{
@@ -919,6 +937,7 @@ namespace SIL.Transcelerator
 					phraseBefore.AddedPhraseAfter = newPhrase.QuestionInfo;
 			}
 		}
+		#endregion
 	}
 
     public interface IPhraseTranslationHelper
@@ -929,6 +948,8 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         void ProcessTranslation(TranslatablePhrase tp);
+
+		void ProcessChangeInUserTranslationState();
 
         string InitialPunctuationForType(TypeOfPhrase type);
 
