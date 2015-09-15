@@ -78,17 +78,25 @@ namespace SIL.Transcelerator
 				return;
 
             foreach (KeyTermMatchSurrogate surrogate in keyTermSurrogates)
-            {
-                Word firstWord = Word.FirstWord(surrogate.TermId);
-                List<KeyTerm> termsStartingWithSameFirstWord;
-	            if (!m_keyTermsTable.TryGetValue(firstWord, out termsStartingWithSameFirstWord))
-	                m_keyTermsTable[firstWord] = termsStartingWithSameFirstWord = new List<KeyTerm>();
-
-	            termsStartingWithSameFirstWord.Add(new KeyTerm(surrogate));
-	        }
+                AddKeyTermMatch(surrogate);
 	    }
 
-	    /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds the given match to the existing key terms table if it is nopt already present.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal void AddKeyTermMatch(KeyTermMatchSurrogate matchSuurrogate)
+		{
+			Word firstWord = Word.FirstWord(matchSuurrogate.TermId);
+			List<KeyTerm> termsStartingWithSameFirstWord;
+			if (!m_keyTermsTable.TryGetValue(firstWord, out termsStartingWithSameFirstWord))
+				m_keyTermsTable[firstWord] = termsStartingWithSameFirstWord = new List<KeyTerm>();
+
+			termsStartingWithSameFirstWord.Add(new KeyTerm(matchSuurrogate));
+		}
+
+		/// ------------------------------------------------------------------------------------
 	    /// <summary>
 	    /// Populates the key terms table. This method assumes that the incoming surrogates are
 	    /// unique.

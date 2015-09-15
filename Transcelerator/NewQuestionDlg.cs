@@ -25,7 +25,8 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	internal partial class NewQuestionDlg : Form
 	{
-		private readonly IScrVers m_versification;
+		private readonly IScrVers m_projectVersification;
+		private readonly IScrVers m_masterVersification;
 		private readonly string m_vernLanguage;
 		private readonly PhraseTranslationHelper m_ptHelper;
 		private int m_previouslySelectedRow = -1;
@@ -51,7 +52,7 @@ namespace SIL.Transcelerator
 			get { return m_txtVernacularQuestion.Text;  }
 		}
 
-		public string Reference
+		private string ReferenceInProjectVersification
 		{
 			get
 			{
@@ -62,17 +63,39 @@ namespace SIL.Transcelerator
 			}
 		}
 
+		/// <summary>
+		/// Starting reference (in master versification)
+		/// </summary>
 		public BCVRef StartReference
 		{
-			get { return m_scrPsgReference.ScReference; }
+			get { return new BCVRef(m_masterVersification.ChangeVersification(m_scrPsgReference.ScReference, m_projectVersification)); }
 		}
 
+		/// <summary>
+		/// Ending reference (in master versification)
+		/// </summary>
+		public BCVRef EndReference
+		{
+			get
+			{
+				var endRef = m_scrPsgReference.ScReference;
+				endRef.Verse = EndVerse;
+				return new BCVRef(m_masterVersification.ChangeVersification(endRef, m_projectVersification));
+			}
+		}
+
+		/// <summary>
+		/// Starting verse number (in project versification - i.e., matches what the user sees)
+		/// </summary>
 		private int StartVerse
 		{
-			get { return StartReference.Verse; }
+			get { return m_scrPsgReference.ScReference.Verse; }
 		}
 
-		public int EndVerse
+		/// <summary>
+		/// Ending verse number (in project versification - i.e., matches what the user sees)
+		/// </summary>
+		private int EndVerse
 		{
 			get
 			{
@@ -80,7 +103,7 @@ namespace SIL.Transcelerator
 					return StartVerse;
 				return m_cboEndVerse.SelectedIndex - 1 + StartVerse;
 			}
-			private set
+			set
 			{
 				var index = value + 1 - StartVerse;
 				if (index >= m_cboEndVerse.Items.Count || index < 0)
@@ -151,20 +174,23 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:NewQuestionDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage, IScrVers versification, PhraseTranslationHelper pth,
+		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage, IScrVers projectVersification, IScrVers masterVersification, PhraseTranslationHelper pth,
 			int[] canonicalBookIds)
 		{
 			var baseQuestion = basePhrase.QuestionInfo;
 			m_vernLanguage = vernLanguage;
-			m_versification = versification;
+			m_projectVersification = projectVersification;
+			m_masterVersification = masterVersification;
 			m_ptHelper = pth;
 			InitializeComponent();
 
 			HandleStringsLocalized();
 
-			m_scrPsgReference.Initialize(new BCVRef(baseQuestion.StartRef), versification, canonicalBookIds);
+			var startref = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
+			m_scrPsgReference.Initialize(new BCVRef(startref), m_projectVersification, canonicalBookIds);
 			m_existingStartRef = m_scrPsgReference.ScReference;
-			m_existingEndVerse = BCVRef.GetVerseFromBcv(baseQuestion.EndRef);
+			var endref = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
+			m_existingEndVerse = BCVRef.GetVerseFromBcv(endref);
 			PopulateEndRefComboBox();
 
 			PopulateCategoryComboBox();
@@ -209,7 +235,7 @@ namespace SIL.Transcelerator
 		private void UpdateDisplay()
 		{
 			var fmt = (m_dataGridViewExistingQuestions.RowCount > 0) ? m_locationFormat : Properties.Resources.kstidNoExistingQuestions;
-			m_lblSelectLocation.Text = String.Format(fmt, m_cboCategory.SelectedItem, Reference);
+			m_lblSelectLocation.Text = String.Format(fmt, m_cboCategory.SelectedItem, ReferenceInProjectVersification);
 		}
 
 		private void PopulateEndRefComboBox()
@@ -218,7 +244,7 @@ namespace SIL.Transcelerator
 				(m_cboEndVerse.Items.Count == 0 && m_existingEndVerse == StartVerse);
 			m_cboEndVerse.Items.Clear();
 			m_cboEndVerse.Items.Add(String.Empty);
-			for (int i = StartVerse; i <= m_versification.GetLastVerse(m_scrPsgReference.ScReference.Book, m_scrPsgReference.ScReference.Chapter); i++)
+			for (int i = StartVerse; i <= m_projectVersification.GetLastVerse(m_scrPsgReference.ScReference.Book, m_scrPsgReference.ScReference.Chapter); i++)
 				m_cboEndVerse.Items.Add(i.ToString());
 
 			if (noEndRef)
@@ -302,8 +328,12 @@ namespace SIL.Transcelerator
 		private void PopulateMatchingQuestionsGrid()
 		{
 			m_ignoreRowChange = true;
-			m_dataGridViewExistingQuestions.DataSource =
-				new SortableBindingList<TranslatablePhrase>(m_ptHelper.GetMatchingPhrases(Reference, Category).ToList());
+			var matches = m_ptHelper.GetMatchingPhrases(StartReference, EndReference, Category).ToList();
+			m_dataGridViewExistingQuestions.DataSource = new SortableBindingList<TranslatablePhrase>(matches);
+
+			// Seems like colExcluded.Visible = ... should be sufficient, but apparently when using data binding,
+			// the original columns only serve as a template for the actual columns.
+			m_dataGridViewExistingQuestions.Columns.OfType<DataGridViewColumn>().Single(c => c.Name == colExcluded.Name).Visible = (matches.Any(p => p.IsExcluded));
 
 			int newHeight = (m_dataGridViewExistingQuestions.RowCount > 0) ?
 				m_dataGridViewExistingQuestions.ColumnHeadersHeight + m_dataGridViewExistingQuestions.Rows[0].Height * Math.Min(4, m_dataGridViewExistingQuestions.RowCount) :

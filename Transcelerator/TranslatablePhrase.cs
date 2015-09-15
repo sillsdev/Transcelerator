@@ -219,8 +219,7 @@ namespace SIL.Transcelerator
 			internal set
 			{
 				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormC);
-				if (IsUserAdded)
-					QuestionInfo.Text = value;
+				QuestionInfo.Text = value;
 			}
 		}
 
@@ -248,7 +247,6 @@ namespace SIL.Transcelerator
 		/// translation).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
 		public bool IsExcluded
 		{
 			get
@@ -484,7 +482,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public object[] KeyTermRenderings
+		public string[] KeyTermRenderings
 		{
 			get { return GetRenderingsOfType<KeyTerm>(); }
 		}
@@ -496,20 +494,20 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public object[] NumberRenderings
+		private string[] NumberRenderings
 		{
 			get { return GetRenderingsOfType<Number>(); }
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the numbers formatted appropriately for inserting into a
+		/// Gets an an array of the parts formatted appropriately for inserting into a
 		/// tranlsations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private object[] GetRenderingsOfType<T>() where T : IPhrasePart
+		private string[] GetRenderingsOfType<T>() where T : IPhrasePart
 		{
-			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this)).Cast<object>().ToArray();
+			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this)).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------

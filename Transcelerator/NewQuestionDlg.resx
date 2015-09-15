@@ -157,7 +157,7 @@
     <value>44, 17</value>
   </data>
   <data name="m_lblVernacularQuestionIsOptional.TabIndex" type="System.Int32, mscorlib">
-    <value>26</value>
+    <value>7</value>
   </data>
   <data name="m_lblVernacularQuestionIsOptional.Text" xml:space="preserve">
     <value>optional</value>
@@ -217,7 +217,7 @@
     <value>17, 106</value>
   </data>
   <data name="m_pnlArrow.TabIndex" type="System.Int32, mscorlib">
-    <value>23</value>
+    <value>10</value>
   </data>
   <data name="&gt;&gt;m_pnlArrow.Name" xml:space="preserve">
     <value>m_pnlArrow</value>
@@ -247,7 +247,7 @@
     <value>80, 27</value>
   </data>
   <data name="m_lblVernacularQuestion.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
+    <value>2</value>
   </data>
   <data name="m_lblVernacularQuestion.Text" xml:space="preserve">
     <value>Question in {0}:</value>
@@ -277,7 +277,7 @@
     <value>253, 17</value>
   </data>
   <data name="m_lblSelectLocation.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
+    <value>9</value>
   </data>
   <data name="m_lblSelectLocation.Text" xml:space="preserve">
     <value>Select location in list of existing {0} questions for {1}.</value>
@@ -307,7 +307,7 @@
     <value>479, 47</value>
   </data>
   <data name="m_txtVernacularQuestion.TabIndex" type="System.Int32, mscorlib">
-    <value>19</value>
+    <value>3</value>
   </data>
   <data name="&gt;&gt;m_txtVernacularQuestion.Name" xml:space="preserve">
     <value>m_txtVernacularQuestion</value>
@@ -336,6 +336,18 @@
   <data name="colTranslation.HeaderText" xml:space="preserve">
     <value>Translation</value>
   </data>
+  <metadata name="colExcluded.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="colExcluded.HeaderText" xml:space="preserve">
+    <value>Excluded</value>
+  </data>
+  <data name="colExcluded.MinimumWidth" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="colExcluded.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="m_dataGridViewExistingQuestions.Location" type="System.Drawing.Point, System.Drawing">
     <value>56, 17</value>
   </data>
@@ -352,7 +364,7 @@
     <value>429, 98</value>
   </data>
   <data name="m_dataGridViewExistingQuestions.TabIndex" type="System.Int32, mscorlib">
-    <value>17</value>
+    <value>11</value>
   </data>
   <data name="&gt;&gt;m_dataGridViewExistingQuestions.Name" xml:space="preserve">
     <value>m_dataGridViewExistingQuestions</value>
@@ -382,7 +394,7 @@
     <value>334, 23</value>
   </data>
   <data name="m_chkNoEnglish.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+    <value>6</value>
   </data>
   <data name="m_chkNoEnglish.Text" xml:space="preserve">
     <value>I just want to add a question without providing an English version.</value>
@@ -439,7 +451,7 @@
     <value>479, 27</value>
   </data>
   <data name="m_txtAnswer.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
+    <value>5</value>
   </data>
   <data name="&gt;&gt;m_txtAnswer.Name" xml:space="preserve">
     <value>m_txtAnswer</value>
@@ -475,7 +487,7 @@
     <value>45, 27</value>
   </data>
   <data name="m_lblAnswer.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
+    <value>4</value>
   </data>
   <data name="m_lblAnswer.Text" xml:space="preserve">
     <value>Answer:</value>
@@ -601,7 +613,7 @@
     <value>44, 17</value>
   </data>
   <data name="m_lblAnswerIsOptional.TabIndex" type="System.Int32, mscorlib">
-    <value>25</value>
+    <value>8</value>
   </data>
   <data name="m_lblAnswerIsOptional.Text" xml:space="preserve">
     <value>optional</value>
@@ -628,7 +640,7 @@
     <value>485, 345</value>
   </data>
   <data name="m_tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
+    <value>0</value>
   </data>
   <data name="&gt;&gt;m_tableLayoutPanel.Name" xml:space="preserve">
     <value>m_tableLayoutPanel</value>
@@ -658,7 +670,7 @@
     <value>100, 27</value>
   </data>
   <data name="m_lblEnglishQuestion.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+    <value>0</value>
   </data>
   <data name="m_lblEnglishQuestion.Text" xml:space="preserve">
     <value>Question in English:</value>
@@ -691,7 +703,7 @@
     <value>52, 13</value>
   </data>
   <data name="m_lblCategory.TabIndex" type="System.Int32, mscorlib">
-    <value>23</value>
+    <value>7</value>
   </data>
   <data name="m_lblCategory.Text" xml:space="preserve">
     <value>Category:</value>
@@ -718,7 +730,7 @@
     <value>105, 13</value>
   </data>
   <data name="lblReference.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>3</value>
   </data>
   <data name="lblReference.Text" xml:space="preserve">
     <value>Scripture Reference:</value>
@@ -772,7 +784,7 @@
     <value>75, 23</value>
   </data>
   <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+    <value>1</value>
   </data>
   <data name="btnOk.Text" xml:space="preserve">
     <value>OK</value>
@@ -799,7 +811,7 @@
     <value>75, 23</value>
   </data>
   <data name="btnCancel.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
+    <value>2</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Cancel</value>
@@ -829,7 +841,7 @@
     <value>110, 20</value>
   </data>
   <data name="m_scrPsgReference.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
+    <value>4</value>
   </data>
   <data name="&gt;&gt;m_scrPsgReference.Name" xml:space="preserve">
     <value>m_scrPsgReference</value>
@@ -853,7 +865,7 @@
     <value>62, 21</value>
   </data>
   <data name="m_cboEndVerse.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
+    <value>6</value>
   </data>
   <data name="&gt;&gt;m_cboEndVerse.Name" xml:space="preserve">
     <value>m_cboEndVerse</value>
@@ -880,7 +892,7 @@
     <value>59, 13</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
+    <value>5</value>
   </data>
   <data name="label3.Text" xml:space="preserve">
     <value>End Verse:</value>
@@ -904,7 +916,7 @@
     <value>110, 21</value>
   </data>
   <data name="m_cboCategory.TabIndex" type="System.Int32, mscorlib">
-    <value>24</value>
+    <value>8</value>
   </data>
   <data name="&gt;&gt;m_cboCategory.Name" xml:space="preserve">
     <value>m_cboCategory</value>
@@ -947,6 +959,12 @@
   </data>
   <data name="&gt;&gt;colTranslation.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colExcluded.Name" xml:space="preserve">
+    <value>colExcluded</value>
+  </data>
+  <data name="&gt;&gt;colExcluded.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewCheckBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>NewQuestionDlg</value>

@@ -22,6 +22,17 @@ using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
+	#region SortBy enumeration
+	public enum PhrasesSortedBy
+	{
+		Default,
+		Reference,
+		EnglishPhrase,
+		Translation,
+		Status,
+	}
+	#endregion
+
 	/// --------------------------------------------------------------------------------------------
 	/// <summary>
 	/// 
@@ -43,24 +54,13 @@ namespace SIL.Transcelerator
 		private bool m_justGettingStarted = true;
 		private DataFileAccessor m_fileAccessor;
 		private List<RenderingSelectionRule> m_termRenderingSelectionRules;
-		private SortBy m_listSortCriterion = SortBy.Default;
+		private PhrasesSortedBy m_listSortCriterion = PhrasesSortedBy.Default;
 		private bool m_listSortedAscending = true;
 		/// <summary>Indicates whether the filtered list's sorting has been done</summary>
 		private bool m_listSorted = false;
 
 		private const int kAscending = 1;
 		private const int kDescending = -1;
-		#endregion
-
-		#region SortBy enumeration
-		public enum SortBy
-		{
-			Default,
-			Reference,
-			EnglishPhrase,
-			Translation,
-			Status,
-		}
 		#endregion
 
 		#region KeyTermFilterType enumeration
@@ -98,7 +98,7 @@ namespace SIL.Transcelerator
 		/// Sorts the list of phrases in the specified way.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Sort(SortBy by, bool ascending)
+		public void Sort(PhrasesSortedBy by, bool ascending)
 		{
 			if (m_listSortCriterion != by)
 			{
@@ -120,9 +120,9 @@ namespace SIL.Transcelerator
 		/// Sorts the specified list of phrases in the specified way.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void SortList(List<TranslatablePhrase> phrases, SortBy by, bool ascending)
+		private static void SortList(List<TranslatablePhrase> phrases, PhrasesSortedBy by, bool ascending)
 		{
-			if (by == SortBy.Default)
+			if (by == PhrasesSortedBy.Default)
 			{
 				phrases.Sort();
 				if (!ascending)
@@ -134,16 +134,16 @@ namespace SIL.Transcelerator
 			int direction = ascending ? kAscending : kDescending;
 			switch (by)
 			{
-				case SortBy.Reference:
+				case PhrasesSortedBy.Reference:
 					how = PhraseReferenceComparison(direction);
 					break;
-				case SortBy.EnglishPhrase:
+				case PhrasesSortedBy.EnglishPhrase:
 					how = (a, b) => a.PhraseInUse.CompareTo(b.PhraseInUse) * direction;
 					break;
-				case SortBy.Translation:
+				case PhrasesSortedBy.Translation:
 					how = (a, b) => a.Translation.CompareTo(b.Translation) * direction;
 					break;
-				case SortBy.Status:
+				case PhrasesSortedBy.Status:
 					how = (a, b) => a.HasUserTranslation.CompareTo(b.HasUserTranslation) * direction;
 					break;
 				default:
@@ -154,23 +154,25 @@ namespace SIL.Transcelerator
 
 		private static Comparison<TranslatablePhrase> PhraseReferenceComparison(int direction)
 		{
-			return (a, b) =>
+			return (a, b) => ComparePhraseReferences(a, b, direction);
+		}
+
+		static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
+		{
+			int val = a.StartRef.CompareTo(b.StartRef);
+			if (val == 0)
 			{
-				int val = a.StartRef.CompareTo(b.StartRef);
+				val = a.Category.CompareTo(b.Category);
 				if (val == 0)
 				{
-					val = a.Category.CompareTo(b.Category);
+					val = a.EndRef.CompareTo(b.EndRef);
 					if (val == 0)
 					{
-						val = a.EndRef.CompareTo(b.EndRef);
-						if (val == 0)
-						{
-							val = a.SequenceNumber.CompareTo(b.SequenceNumber);
-						}
+						val = a.SequenceNumber.CompareTo(b.SequenceNumber);
 					}
 				}
-				return val * direction;
-			};
+			}
+			return val * direction;
 		}
 		#endregion
 
@@ -249,19 +251,11 @@ namespace SIL.Transcelerator
 		/// order.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<TranslatablePhrase> GetMatchingPhrases(string reference, int category)
+		public List<TranslatablePhrase> GetMatchingPhrases(int startRef, int endRef, int category)
 		{
-			bool foundFirstMatch = false;
-			foreach (var phrase in UnfilteredPhrases)
-			{
-				if (phrase.PhraseKey.ScriptureReference == reference && phrase.Category == category)
-				{
-					foundFirstMatch = true;
-					yield return phrase;
-				}
-				else if (foundFirstMatch)
-					break;
-			}
+			var list = m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef && p.Category == category).ToList();
+			SortList(list, PhrasesSortedBy.Reference, true);
+			return list;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -451,10 +445,24 @@ namespace SIL.Transcelerator
 			m_phrases.Add(newPhrase);
 			if (m_filteredPhrases != m_phrases)
 				m_filteredPhrases.Add(newPhrase);
-			parser.ParseQuestion(question);
-			m_phrasePartManager.InitializePhraseParts(newPhrase);
+			if (parser.ParseNewOrModifiedQuestion(question, keyTermMatch => m_phrasePartManager.AddKeyTermMatch(keyTermMatch)))
+				m_phrasePartManager.InitializePhraseParts(newPhrase);
 			m_listSorted = false;
 			return newPhrase;
+		}
+
+		public void ModifyQuestion(TranslatablePhrase phrase, string modifiedPhrase, MasterQuestionParser parser)
+		{
+			phrase.ModifiedPhrase = modifiedPhrase;
+			if (parser.ReparseModifiedQuestion(phrase.QuestionInfo, keyTermMatch => m_phrasePartManager.AddKeyTermMatch(keyTermMatch)))
+			{
+				phrase.m_parts.Clear();
+				m_phrasePartManager.InitializePhraseParts(phrase);
+			}
+			if (phrase.HasUserTranslation)
+				((IPhraseTranslationHelper)this).ProcessTranslation(phrase);
+			if (m_listSortCriterion != PhrasesSortedBy.Reference)
+				m_listSorted = false;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -879,6 +887,38 @@ namespace SIL.Transcelerator
 			m_justGettingStarted = false;
 		}
 		#endregion
+
+		internal void AttachNewQuestionToAdjacentPhrase(TranslatablePhrase newPhrase)
+		{
+			TranslatablePhrase phraseBefore = null, phraseAfter = null;
+			foreach (var tp in m_phrases)
+			{
+				var result = ComparePhraseReferences(tp, newPhrase);
+				if (result < 0)
+				{
+					if (phraseBefore == null || ComparePhraseReferences(phraseBefore, tp) < 0)
+						phraseBefore = tp;
+				}
+				else
+				{
+					Debug.Assert(result != 0);
+					if (phraseAfter == null || ComparePhraseReferences(tp, phraseAfter) < 0)
+						phraseAfter = tp;
+				}
+			}
+			if (phraseAfter == null)
+			{
+				Debug.Assert(phraseBefore != null);
+				phraseBefore.AddedPhraseAfter = newPhrase.QuestionInfo;
+			}
+			else
+			{
+				if (phraseBefore == null || newPhrase.StartRef - phraseBefore.StartRef > phraseAfter.StartRef - newPhrase.EndRef)
+					phraseAfter.InsertedPhraseBefore = newPhrase.QuestionInfo;
+				else
+					phraseBefore.AddedPhraseAfter = newPhrase.QuestionInfo;
+			}
+		}
 	}
 
     public interface IPhraseTranslationHelper
