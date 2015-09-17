@@ -95,7 +95,7 @@ namespace SIL.Transcelerator
 			// m_lblAnswer
 			// 
 			resources.ApplyResources(m_lblAnswer, "m_lblAnswer");
-			this.m_tableLayoutPanel.SetColumnSpan(m_lblAnswer, 3);
+			this.m_tableLayoutPanel.SetColumnSpan(m_lblAnswer, 4);
 			m_lblAnswer.Name = "m_lblAnswer";
 			// 
 			// m_lblCategory
@@ -118,7 +118,7 @@ namespace SIL.Transcelerator
 			// m_lblVernacularQuestion
 			// 
 			resources.ApplyResources(this.m_lblVernacularQuestion, "m_lblVernacularQuestion");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblVernacularQuestion, 3);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblVernacularQuestion, 4);
 			this.m_lblVernacularQuestion.Name = "m_lblVernacularQuestion";
 			// 
 			// lblReference
@@ -129,7 +129,7 @@ namespace SIL.Transcelerator
 			// m_txtEnglishQuestion
 			// 
 			resources.ApplyResources(this.m_txtEnglishQuestion, "m_txtEnglishQuestion");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtEnglishQuestion, 4);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtEnglishQuestion, 5);
 			this.m_txtEnglishQuestion.Name = "m_txtEnglishQuestion";
 			this.m_txtEnglishQuestion.TextChanged += new System.EventHandler(this.HandleQuestionTextChanged);
 			// 
@@ -155,6 +155,7 @@ namespace SIL.Transcelerator
 			// m_chkNoEnglish
 			// 
 			resources.ApplyResources(this.m_chkNoEnglish, "m_chkNoEnglish");
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_chkNoEnglish, 2);
 			this.m_chkNoEnglish.Name = "m_chkNoEnglish";
 			this.m_chkNoEnglish.UseVisualStyleBackColor = true;
 			this.m_chkNoEnglish.CheckedChanged += new System.EventHandler(this.chkNoEnglish_CheckedChanged);
@@ -162,7 +163,7 @@ namespace SIL.Transcelerator
 			// m_txtAnswer
 			// 
 			resources.ApplyResources(this.m_txtAnswer, "m_txtAnswer");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtAnswer, 4);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtAnswer, 5);
 			this.m_txtAnswer.Name = "m_txtAnswer";
 			// 
 			// m_scrPsgReference
@@ -197,7 +198,7 @@ namespace SIL.Transcelerator
             this.colQuestion,
             this.colTranslation,
             this.colExcluded});
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_dataGridViewExistingQuestions, 2);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_dataGridViewExistingQuestions, 3);
 			this.m_dataGridViewExistingQuestions.MultiSelect = false;
 			this.m_dataGridViewExistingQuestions.Name = "m_dataGridViewExistingQuestions";
 			this.m_dataGridViewExistingQuestions.ReadOnly = true;
@@ -240,15 +241,17 @@ namespace SIL.Transcelerator
 			// m_lblSelectLocation
 			// 
 			resources.ApplyResources(this.m_lblSelectLocation, "m_lblSelectLocation");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblSelectLocation, 4);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblSelectLocation, 5);
 			this.m_lblSelectLocation.Name = "m_lblSelectLocation";
 			// 
 			// m_txtVernacularQuestion
 			// 
 			resources.ApplyResources(this.m_txtVernacularQuestion, "m_txtVernacularQuestion");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtVernacularQuestion, 4);
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_txtVernacularQuestion, 5);
 			this.m_txtVernacularQuestion.Name = "m_txtVernacularQuestion";
 			this.m_txtVernacularQuestion.TextChanged += new System.EventHandler(this.HandleQuestionTextChanged);
+			this.m_txtVernacularQuestion.Enter += new System.EventHandler(this.m_txtVernacularQuestion_Enter);
+			this.m_txtVernacularQuestion.Leave += new System.EventHandler(this.m_txtVernacularQuestion_Leave);
 			// 
 			// m_insertionPointArrow
 			// 
@@ -260,7 +263,6 @@ namespace SIL.Transcelerator
 			// m_tableLayoutPanel
 			// 
 			resources.ApplyResources(this.m_tableLayoutPanel, "m_tableLayoutPanel");
-			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestionIsOptional, 3, 4);
 			this.m_tableLayoutPanel.Controls.Add(m_lblEnglishQuestion, 0, 2);
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlArrow, 1, 1);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestion, 0, 4);
@@ -272,7 +274,8 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtAnswer, 0, 7);
 			this.m_tableLayoutPanel.Controls.Add(m_lblAnswer, 0, 6);
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlUpDownArrows, 0, 1);
-			this.m_tableLayoutPanel.Controls.Add(m_lblAnswerIsOptional, 3, 6);
+			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestionIsOptional, 4, 4);
+			this.m_tableLayoutPanel.Controls.Add(m_lblAnswerIsOptional, 4, 6);
 			this.m_tableLayoutPanel.Name = "m_tableLayoutPanel";
 			// 
 			// m_pnlArrow

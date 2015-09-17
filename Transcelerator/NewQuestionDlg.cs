@@ -35,6 +35,7 @@ namespace SIL.Transcelerator
 		private BCVRef m_existingStartRef;
 		private int m_existingEndVerse;
 		private int m_insertionLocation;
+		private Action<bool> m_changeKeyboard;
 
 		#region Properties
 		public string EnglishQuestion
@@ -175,13 +176,14 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage, IScrVers projectVersification, IScrVers masterVersification, PhraseTranslationHelper pth,
-			int[] canonicalBookIds)
+			int[] canonicalBookIds, Action<bool> changeKeyboard)
 		{
 			var baseQuestion = basePhrase.QuestionInfo;
 			m_vernLanguage = vernLanguage;
 			m_projectVersification = projectVersification;
 			m_masterVersification = masterVersification;
 			m_ptHelper = pth;
+			m_changeKeyboard = changeKeyboard;
 			InitializeComponent();
 
 			HandleStringsLocalized();
@@ -369,6 +371,16 @@ namespace SIL.Transcelerator
 		private void m_dataGridViewExistingQuestions_Scroll(object sender, ScrollEventArgs e)
 		{
 			SetArrowPosition();
+		}
+
+		private void m_txtVernacularQuestion_Enter(object sender, EventArgs e)
+		{
+			m_changeKeyboard(true);
+		}
+
+		private void m_txtVernacularQuestion_Leave(object sender, EventArgs e)
+		{
+			m_changeKeyboard(false);
 		}
 	}
 }

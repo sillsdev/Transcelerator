@@ -1774,7 +1774,7 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard(false);
 			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_masterVersification, m_helper, m_availableBookIds))
+			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

@@ -132,47 +132,7 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_tableLayoutPanel.ColumnCount" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="m_lblVernacularQuestionIsOptional.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt, style=Italic</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.Location" type="System.Drawing.Point, System.Drawing">
-    <value>438, 215</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 0, 4</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 17</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="m_lblVernacularQuestionIsOptional.Text" xml:space="preserve">
-    <value>optional</value>
-  </data>
-  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Name" xml:space="preserve">
-    <value>m_lblVernacularQuestionIsOptional</value>
-  </data>
-  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Parent" xml:space="preserve">
-    <value>m_tableLayoutPanel</value>
-  </data>
-  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>5</value>
   </data>
   <data name="m_pnlArrow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left</value>
@@ -180,6 +140,7 @@
   <data name="m_insertionPointArrow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_insertionPointArrow.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 8</value>
   </data>
@@ -229,7 +190,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_pnlArrow.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="m_lblVernacularQuestion.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -238,7 +199,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_lblVernacularQuestion.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 205</value>
+    <value>3, 213</value>
   </data>
   <data name="m_lblVernacularQuestion.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 10, 0, 4</value>
@@ -262,7 +223,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_lblVernacularQuestion.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="m_lblSelectLocation.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -292,19 +253,22 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_lblSelectLocation.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="m_txtVernacularQuestion.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_txtVernacularQuestion.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 235</value>
+    <value>3, 243</value>
+  </data>
+  <data name="m_txtVernacularQuestion.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
   </data>
   <data name="m_txtVernacularQuestion.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_txtVernacularQuestion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>479, 47</value>
+    <value>485, 55</value>
   </data>
   <data name="m_txtVernacularQuestion.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -319,7 +283,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_txtVernacularQuestion.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="m_dataGridViewExistingQuestions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -361,7 +325,7 @@
     <value>Vertical</value>
   </data>
   <data name="m_dataGridViewExistingQuestions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>429, 98</value>
+    <value>435, 98</value>
   </data>
   <data name="m_dataGridViewExistingQuestions.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -376,7 +340,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_dataGridViewExistingQuestions.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>5</value>
   </data>
   <data name="m_chkNoEnglish.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Right</value>
@@ -385,7 +349,7 @@
     <value>True</value>
   </data>
   <data name="m_chkNoEnglish.Location" type="System.Drawing.Point, System.Drawing">
-    <value>148, 126</value>
+    <value>154, 126</value>
   </data>
   <data name="m_chkNoEnglish.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 6, 0, 0</value>
@@ -409,7 +373,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_chkNoEnglish.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="m_txtEnglishQuestion.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -417,11 +381,14 @@
   <data name="m_txtEnglishQuestion.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 155</value>
   </data>
+  <data name="m_txtEnglishQuestion.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
+  </data>
   <data name="m_txtEnglishQuestion.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_txtEnglishQuestion.Size" type="System.Drawing.Size, System.Drawing">
-    <value>479, 47</value>
+    <value>485, 55</value>
   </data>
   <data name="m_txtEnglishQuestion.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -436,19 +403,22 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_txtEnglishQuestion.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
   </data>
   <data name="m_txtAnswer.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="m_txtAnswer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 315</value>
+    <value>3, 331</value>
+  </data>
+  <data name="m_txtAnswer.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>40, 20</value>
   </data>
   <data name="m_txtAnswer.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="m_txtAnswer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>479, 27</value>
+    <value>485, 33</value>
   </data>
   <data name="m_txtAnswer.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -463,7 +433,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_txtAnswer.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
   <metadata name="m_lblAnswer.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -478,7 +448,7 @@
     <value>NoControl</value>
   </data>
   <data name="m_lblAnswer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 285</value>
+    <value>3, 301</value>
   </data>
   <data name="m_lblAnswer.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 10, 0, 4</value>
@@ -502,7 +472,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_lblAnswer.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="m_pnlUpDownArrows.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
@@ -589,6 +559,45 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_pnlUpDownArrows.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 8.25pt, style=Italic</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Location" type="System.Drawing.Point, System.Drawing">
+    <value>444, 223</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 0, 0, 4</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 17</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="m_lblVernacularQuestionIsOptional.Text" xml:space="preserve">
+    <value>optional</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Name" xml:space="preserve">
+    <value>m_lblVernacularQuestionIsOptional</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.Parent" xml:space="preserve">
+    <value>m_tableLayoutPanel</value>
+  </data>
+  <data name="&gt;&gt;m_lblVernacularQuestionIsOptional.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
   <metadata name="m_lblAnswerIsOptional.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -604,7 +613,7 @@
     <value>Microsoft Sans Serif, 8.25pt, style=Italic</value>
   </data>
   <data name="m_lblAnswerIsOptional.Location" type="System.Drawing.Point, System.Drawing">
-    <value>438, 295</value>
+    <value>444, 311</value>
   </data>
   <data name="m_lblAnswerIsOptional.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 0, 0, 4</value>
@@ -631,13 +640,13 @@
     <value>12</value>
   </data>
   <data name="m_tableLayoutPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 96</value>
+    <value>15, 79</value>
   </data>
   <data name="m_tableLayoutPanel.RowCount" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="m_tableLayoutPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>485, 345</value>
+    <value>491, 367</value>
   </data>
   <data name="m_tableLayoutPanel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -655,7 +664,7 @@
     <value>2</value>
   </data>
   <data name="m_tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblVernacularQuestionIsOptional" Row="4" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="m_lblEnglishQuestion" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="m_pnlArrow" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_lblVernacularQuestion" Row="4" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="m_lblSelectLocation" Row="0" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_txtVernacularQuestion" Row="5" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_dataGridViewExistingQuestions" Row="1" RowSpan="1" Column="2" ColumnSpan="2" /&gt;&lt;Control Name="m_chkNoEnglish" Row="2" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="m_txtEnglishQuestion" Row="3" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_txtAnswer" Row="7" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_lblAnswer" Row="6" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="m_pnlUpDownArrows" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAnswerIsOptional" Row="6" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,Percent,100,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,23.07692" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_lblEnglishQuestion" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="m_pnlArrow" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_lblVernacularQuestion" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_lblSelectLocation" Row="0" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_txtVernacularQuestion" Row="5" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_dataGridViewExistingQuestions" Row="1" RowSpan="1" Column="2" ColumnSpan="3" /&gt;&lt;Control Name="m_chkNoEnglish" Row="2" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;Control Name="m_txtEnglishQuestion" Row="3" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_txtAnswer" Row="7" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_lblAnswer" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_pnlUpDownArrows" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lblVernacularQuestionIsOptional" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAnswerIsOptional" Row="6" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,Percent,100,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,23.07692" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="m_lblEnglishQuestion.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -685,7 +694,7 @@
     <value>m_tableLayoutPanel</value>
   </data>
   <data name="&gt;&gt;m_lblEnglishQuestion.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <metadata name="m_lblCategory.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -778,7 +787,7 @@
     <value>False</value>
   </data>
   <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
-    <value>178, 456</value>
+    <value>181, 464</value>
   </data>
   <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -805,7 +814,7 @@
     <value>Bottom</value>
   </data>
   <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 456</value>
+    <value>262, 464</value>
   </data>
   <data name="btnCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -937,10 +946,10 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>512, 491</value>
+    <value>518, 499</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>490, 437</value>
+    <value>490, 482</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
