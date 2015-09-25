@@ -1,4 +1,10 @@
-﻿## 1.1.5430 19 November 2014
+﻿## 1.2.1 15 September 2015
+* Improved ability to add, modify, and exclude questions, including the capability of adding questions for verses that do not have any existing questions. These kinds of changes no longer require an immediate restart of Transcelerator to load and process each change, so the performance is now much better!
+
+## 1.1.5439 15 September 2015
+* Fixed installer problems.
+
+## 1.1.5430 19 November 2014
 * Updated key term rules based on changes to biblical terms list included with Paratext 7.5.
 
 ## 1.1.5175 3 March 2014
