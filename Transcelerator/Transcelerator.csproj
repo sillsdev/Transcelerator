@@ -76,7 +76,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release - Copy to Paratext|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Copy To Paratext|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -85,6 +85,42 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug - Copy To Paratext|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release - Copy To Paratext|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AddInViews">
@@ -110,19 +146,23 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Palaso, Version=1.9.366.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\dotnet\Palaso.dll</HintPath>
+    <Reference Include="SIL.Core">
+      <HintPath>..\lib\dotnet\SIL.Core.dll</HintPath>
     </Reference>
-    <Reference Include="PalasoUIWindowsForms, Version=1.9.366.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\dotnet\PalasoUIWindowsForms.dll</HintPath>
+    <Reference Include="SIL.Scripture">
+      <HintPath>..\lib\dotnet\SIL.Scripture.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.ScriptureControls">
-      <HintPath>..\lib\dotnet\SIL.ScriptureControls.dll</HintPath>
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\lib\dotnet\SIL.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="SIL.ScriptureUtils">
-      <HintPath>..\lib\dotnet\SIL.ScriptureUtils.dll</HintPath>
+    <Reference Include="SIL.Windows.Forms.Keyboarding">
+      <HintPath>..\lib\dotnet\SIL.Windows.Forms.Keyboarding.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.Scripture">
+      <HintPath>..\lib\dotnet\SIL.Windows.Forms.Scripture.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems">
+      <HintPath>..\lib\dotnet\SIL.WritingSystems.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AddIn">
@@ -168,6 +208,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PhrasePartManager.cs" />
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -381,6 +422,10 @@
     <None Include="CreditsAndLicense.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Properties\control_right.png" />
+    <None Include="Properties\SILLogoBlue132x184.png" />
+    <None Include="Properties\Arrow-Down-icon24x24.png" />
+    <None Include="Properties\Arrow-Up-icon24x24.png" />
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -398,7 +443,6 @@
     <None Include="Properties\Arrow-Down-icon.png" />
     <None Include="Properties\Arrow-Up-icon.png" />
     <None Include="Properties\20130910100219692_easyicon_net_16.png" />
-    <None Include="Properties\FWSILLogoColor2005.bmp" />
     <None Include="Properties\Arrow-Left-icon.png" />
     <None Include="Properties\Arrow-Right-icon.png" />
     <Content Include="TXL no TXL.ico">

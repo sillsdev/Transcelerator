@@ -5,11 +5,11 @@
     <ProductVersion>1.0</ProductVersion>
     <ProjectGuid>{4D7BC38F-7C37-4531-AD8B-1156C83680A4}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>TransceleratorInstaller.1.1.5430</OutputName>
+    <OutputName>TransceleratorInstaller</OutputName>
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\Transcelerator\output\installer\</OutputPath>
+    <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
     <AllowIdenticalRows>False</AllowIdenticalRows>
@@ -54,11 +54,8 @@
     <VerboseOutput>False</VerboseOutput>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
-    <IntermediateOutputPath>obj\Release\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\Transcelerator\output\installer\</OutputPath>
+    <OutputPath>..\output\installer\</OutputPath>
+    <IntermediateOutputPath>output\wixobj\release</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />

@@ -47,9 +47,9 @@ namespace SIL.Transcelerator
 			// 
 			// lblProductName
 			// 
-			lblProductName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			lblProductName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			lblProductName.AutoSize = true;
 			lblProductName.BackColor = System.Drawing.Color.Transparent;
 			this.tableLayoutPanel.SetColumnSpan(lblProductName, 2);
@@ -66,9 +66,9 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblAppVersion
 			// 
-			this.m_lblAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_lblAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_lblAppVersion.AutoSize = true;
 			this.m_lblAppVersion.BackColor = System.Drawing.Color.Transparent;
 			this.tableLayoutPanel.SetColumnSpan(this.m_lblAppVersion, 2);
@@ -83,17 +83,17 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblCopyright
 			// 
-			this.m_lblCopyright.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_lblCopyright.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_lblCopyright.AutoSize = true;
 			this.m_lblCopyright.BackColor = System.Drawing.Color.Transparent;
 			this.m_lblCopyright.ForeColor = System.Drawing.Color.Black;
 			this.m_lblCopyright.Location = new System.Drawing.Point(386, 105);
 			this.m_lblCopyright.Name = "m_lblCopyright";
-			this.m_lblCopyright.Size = new System.Drawing.Size(183, 109);
+			this.m_lblCopyright.Size = new System.Drawing.Size(183, 132);
 			this.m_lblCopyright.TabIndex = 20;
-			this.m_lblCopyright.Text = "(C) 2011-2013, SIL International.";
+			this.m_lblCopyright.Text = "(C) 2011-2015, SIL International.";
 			this.m_lblCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_picLogo
@@ -130,17 +130,18 @@ namespace SIL.Transcelerator
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this.tableLayoutPanel.Size = new System.Drawing.Size(671, 368);
 			this.tableLayoutPanel.TabIndex = 27;
 			// 
 			// pictLogo
 			// 
 			this.pictLogo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.pictLogo.Image = global::SIL.Transcelerator.Properties.Resources.FWSILLogoColor2005;
-			this.pictLogo.InitialImage = global::SIL.Transcelerator.Properties.Resources.FWSILLogoColor2005;
+			this.pictLogo.Image = global::SIL.Transcelerator.Properties.Resources.SILLogoBlue132x184;
+			this.pictLogo.InitialImage = global::SIL.Transcelerator.Properties.Resources.SILLogoBlue132x184;
 			this.pictLogo.Location = new System.Drawing.Point(575, 108);
 			this.pictLogo.Name = "pictLogo";
-			this.pictLogo.Size = new System.Drawing.Size(93, 103);
+			this.pictLogo.Size = new System.Drawing.Size(93, 126);
 			this.pictLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.pictLogo.TabIndex = 27;
 			this.pictLogo.TabStop = false;
@@ -160,14 +161,14 @@ namespace SIL.Transcelerator
 			// 
 			// panelBrowser
 			// 
-			this.panelBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.panelBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel.SetColumnSpan(this.panelBrowser, 2);
-			this.panelBrowser.Location = new System.Drawing.Point(386, 223);
+			this.panelBrowser.Location = new System.Drawing.Point(386, 246);
 			this.panelBrowser.Margin = new System.Windows.Forms.Padding(3, 9, 3, 3);
 			this.panelBrowser.Name = "panelBrowser";
-			this.panelBrowser.Size = new System.Drawing.Size(282, 142);
+			this.panelBrowser.Size = new System.Drawing.Size(282, 119);
 			this.panelBrowser.TabIndex = 29;
 			// 
 			// TxlInfo

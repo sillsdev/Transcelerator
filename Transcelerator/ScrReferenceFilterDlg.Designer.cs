@@ -46,8 +46,8 @@ namespace SIL.Transcelerator
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.scrPsgFrom = new SIL.ScriptureControls.ScrPassageControl();
-			this.scrPsgTo = new SIL.ScriptureControls.ScrPassageControl();
+			this.scrPsgFrom = new SIL.Windows.Forms.Scripture.ScrPassageControl();
+			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.btnClearFilter = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
@@ -82,7 +82,7 @@ namespace SIL.Transcelerator
 			this.scrPsgFrom.ErrorCaption = "From Reference";
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Reference = "GEN 1:1";
-			this.scrPsgFrom.PassageChanged += new SIL.ScriptureControls.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
+			this.scrPsgFrom.PassageChanged += new SIL.Windows.Forms.Scripture.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
 			// 
 			// scrPsgTo
 			// 
@@ -91,7 +91,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.scrPsgTo, "scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Reference = "REV 22:21";
-			this.scrPsgTo.PassageChanged += new SIL.ScriptureControls.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
+			this.scrPsgTo.PassageChanged += new SIL.Windows.Forms.Scripture.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
 			// 
 			// btnClearFilter
 			// 
@@ -130,8 +130,8 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private SIL.ScriptureControls.ScrPassageControl scrPsgFrom;
-		private SIL.ScriptureControls.ScrPassageControl scrPsgTo;
+		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgFrom;
+		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgTo;
 		private System.Windows.Forms.Button btnClearFilter;
 	}
 }

@@ -387,7 +387,7 @@ namespace SIL.Transcelerator
 
 			TranslatablePhrase phrase = phrases[0];
 			Assert.AreEqual("Who wrote this book?", phrase.PhraseInUse);
-			Assert.AreEqual(0, phrase.Category);
+			Assert.AreEqual(1, phrase.Category);
 			Assert.AreEqual("ROM 1.1-17", phrase.Reference);
 			Assert.AreEqual(45001001, phrase.StartRef);
 			Assert.AreEqual(45001017, phrase.EndRef);

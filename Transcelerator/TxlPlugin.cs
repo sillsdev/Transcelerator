@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.   
-// <copyright from='2013' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.   
+// <copyright from='2013' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,7 +11,6 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -19,16 +18,16 @@ using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
 using DesktopAnalytics;
-using Palaso.Reporting;
-using Palaso.UI.WindowsForms.Keyboarding;
-using Palaso.UI.WindowsForms.Reporting;
-using Palaso.WritingSystems;
-using SIL.ScriptureUtils;
+using SIL.Keyboarding;
+using SIL.Reporting;
+using SIL.Scripture;
+using SIL.Windows.Forms.Keyboarding;
+using SIL.Windows.Forms.Reporting;
 
 namespace SIL.Transcelerator
 {
 	[AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
-		Version = "1.1", Publisher = "SIL International")]
+		Version = "1.2", Publisher = "SIL International")]
 	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
 	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
 	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
@@ -125,7 +124,7 @@ namespace SIL.Transcelerator
 						splashScreen.Message = string.Format(
 						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
 
-						int currRef = host.GetCurrentRef(TxlCore.englishVersificationName);
+						int currRef = host.GetCurrentRef(TxlCore.kEnglishVersificationName);
 						BCVRef startRef = new BCVRef(currRef);
 						BCVRef endRef = new BCVRef(currRef);
 					    bool useSavedRefRange = false;
@@ -148,8 +147,8 @@ namespace SIL.Transcelerator
                         {
                             startRef.Chapter = 1;
                             startRef.Verse = 1;
-                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.englishVersificationName);
-                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.englishVersificationName);
+                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.kEnglishVersificationName);
+                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.kEnglishVersificationName);
                         }
 
 						KeyboardController.Initialize();
@@ -199,10 +198,11 @@ namespace SIL.Transcelerator
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
                             host.GetProjectFont(projectName),
-						    host.GetProjectLanguageId(projectName, "generate templates"), host.GetProjectRtoL(projectName),
+						    host.GetProjectLanguageId(projectName, "generate templates"),
+							host.GetProjectSetting(projectName, "Language"), host.GetProjectRtoL(projectName),
 						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX),
                             () => host.GetCssStylesheet(projectName), host.ApplicationName,
-                            new ScrVers(host, TxlCore.englishVersificationName),
+                            new ScrVers(host, TxlCore.kEnglishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
 						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);

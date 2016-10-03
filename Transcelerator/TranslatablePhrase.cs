@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,10 +11,11 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using SIL.ScriptureUtils;
+using SIL.Scripture;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -35,7 +36,7 @@ namespace SIL.Transcelerator
 		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
-		private readonly int m_seqNumber;
+		private int m_seqNumber;
 		internal readonly QuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
@@ -115,6 +116,7 @@ namespace SIL.Transcelerator
 		/// Gets the category of this phrase (used to group phrases having the same reference).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public int Category
 		{
 			get { return m_category; }
@@ -126,7 +128,8 @@ namespace SIL.Transcelerator
         /// question/phrase.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public bool IsDetail
+		[Browsable(false)]
+		public bool IsDetail
         {
             get { return m_category > 0; }
         }
@@ -137,7 +140,8 @@ namespace SIL.Transcelerator
         /// question/phrase.)
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public bool IsCategoryName
+		[Browsable(false)]
+		public bool IsCategoryName
         {
             get { return m_category < 0; }
         }
@@ -147,6 +151,7 @@ namespace SIL.Transcelerator
 		/// Gets the "reference" that tells what this phrase pertains to.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public string Reference
 		{
 			get { return (m_questionInfo == null) ? null : m_questionInfo.ScriptureReference; }
@@ -157,6 +162,7 @@ namespace SIL.Transcelerator
 		/// Gets the original phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		internal string OriginalPhrase
 		{
 			get { return m_sOrigPhrase; }
@@ -164,10 +170,11 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the phrase to use for processing & comparison purposes (either the original\
+		/// Gets the phrase to use for processing & comparison purposes (either the original
 		/// phrase or a modified form of it).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public string PhraseInUse
 		{
 			get { return m_sModifiedPhrase ?? m_sOrigPhrase; }
@@ -194,6 +201,7 @@ namespace SIL.Transcelerator
 		/// Gets the key to use when saving or attempting to look up a specific translation.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public QuestionKey PhraseKey
 		{
 			get { return m_questionInfo; }
@@ -204,14 +212,14 @@ namespace SIL.Transcelerator
 		/// Gets or sets a modified version of the phrase to use in place of the original.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public string ModifiedPhrase
 		{
 			get { return m_sModifiedPhrase; }
 			internal set
 			{
 				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormC);
-				if (IsUserAdded)
-					QuestionInfo.Text = value;
+				QuestionInfo.Text = value;
 			}
 		}
 
@@ -221,6 +229,7 @@ namespace SIL.Transcelerator
 		/// the list (when sorted in text order).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		internal Question InsertedPhraseBefore { get; set; }
 
 		/// ------------------------------------------------------------------------------------
@@ -229,6 +238,7 @@ namespace SIL.Transcelerator
 		/// the list (when sorted in text order).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		internal Question AddedPhraseAfter { get; set; }
 
 		/// ------------------------------------------------------------------------------------
@@ -252,6 +262,7 @@ namespace SIL.Transcelerator
 		/// Gets a value indicating whether this instance is excluded or customized.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		internal bool IsExcludedOrModified
 		{
             get { return (IsExcluded || (m_sModifiedPhrase != null && !IsUserAdded)); }
@@ -262,6 +273,7 @@ namespace SIL.Transcelerator
 		/// Gets a value indicating whether this instance is user-supplied.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		internal bool IsUserAdded
 		{
 			get
@@ -276,6 +288,7 @@ namespace SIL.Transcelerator
 		/// Gets the user translation with any initial and final punctuation removed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public string UserTransSansOuterPunctuation
 		{
 			get
@@ -312,7 +325,7 @@ namespace SIL.Transcelerator
 			{
 				if (IsExcluded)
 					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
-				m_fHasUserTranslation = !string.IsNullOrEmpty(value);
+				SetHasUserTranslationInternal(!string.IsNullOrEmpty(value));
 				SetTranslationInternal(value);
 			}
 		}
@@ -325,7 +338,21 @@ namespace SIL.Transcelerator
 		internal void SetProvisionalTranslation(string value)
 		{
 			m_sTranslation = value;
-			m_fHasUserTranslation = false;
+			SetHasUserTranslationInternal(false);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the flag indicating whether the translation represents a user translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void SetHasUserTranslationInternal(bool value)
+		{
+			if (m_fHasUserTranslation != value)
+			{
+				m_fHasUserTranslation = value;
+				s_helper.ProcessChangeInUserTranslationState();
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -334,6 +361,7 @@ namespace SIL.Transcelerator
 		/// supplied by the user).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public bool HasUserTranslation
 		{
 			get { return m_fHasUserTranslation; }
@@ -374,6 +402,7 @@ namespace SIL.Transcelerator
 		/// representation for any numbers expressed as digits.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public bool AllTermsAndNumbersMatch
 		{
 			get 
@@ -385,10 +414,56 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a string that shows the phrase broken into parts (for debugging purposes).
+		/// Gets a string that attempts to show the parts or matching pattern that were used to
+		/// arrive at the translation (for debugging purposes).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Parts
+		[Browsable(false)]
+		public string DebugInfo
+		{
+			get
+			{
+				var sb = new StringBuilder(PatternBasedDebugInfo);
+				if (sb.Length > 0)
+					sb.Append("  ---  ");
+				sb.Append(PartsBasedDebugInfo);
+				return sb.ToString();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a string that attempts to show how the matching pattern would be used to
+		/// arrive at the translation (for debugging purposes). Note: If this returns a
+		/// non-empty string, then the Translation being shown is actually based on this
+		/// pattern.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public string PatternBasedDebugInfo
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(m_sTranslation) && m_sTranslation.Contains("{0}"))
+				{
+					var parameters = GetValuesForPartsOfType<KeyTerm>(t => "(" + t.DebugInfo + ")")
+						.Union(GetValuesForPartsOfType<Number>(n => "#" + n.DebugInfo)).Cast<object>().ToArray();
+					return String.Format(m_sTranslation, parameters);
+				}
+				return String.Empty;
+			}
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a string that attempts to show how the parts would be used to generate the
+		/// translation (for debugging purposes). Note: If PatternBasedDebugInfo returns a non-
+		/// empty string, the generated Translation being show is based on the pattern, not on
+		/// the translations of the parts.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public string PartsBasedDebugInfo
 		{
 			get
 			{
@@ -408,6 +483,7 @@ namespace SIL.Transcelerator
 		/// trailing punctuation).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public IEnumerable<Part> TranslatableParts
 		{
 			get { return m_parts.OfType<Part>(); }
@@ -419,7 +495,8 @@ namespace SIL.Transcelerator
 		/// occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public object[] KeyTermRenderings
+		[Browsable(false)]
+		public string[] KeyTermRenderings
 		{
 			get { return GetRenderingsOfType<KeyTerm>(); }
 		}
@@ -430,9 +507,21 @@ namespace SIL.Transcelerator
 		/// tranlsations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public object[] NumberRenderings
+		[Browsable(false)]
+		private string[] NumberRenderings
 		{
 			get { return GetRenderingsOfType<Number>(); }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an an array of the parts formatted appropriately for inserting into a
+		/// tranlsations, ordered by their occurrence in the phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private string[] GetRenderingsOfType<T>() where T : IPhrasePart
+		{
+			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this)).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -441,13 +530,9 @@ namespace SIL.Transcelerator
 		/// tranlsations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private object[] GetRenderingsOfType<T>() where T : IPhrasePart
+		private IEnumerable<string> GetValuesForPartsOfType<T>(Func<T, string> selector) where T : IPhrasePart
 		{
-			object[] retArray = new object[m_parts.OfType<T>().Count()];
-			int i = 0;
-			foreach (T p in m_parts.OfType<T>())
-				retArray[i++] = p.GetBestRenderingInContext(this);
-			return retArray;
+			return m_parts.OfType<T>().Select(selector);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -455,6 +540,7 @@ namespace SIL.Transcelerator
 		/// Gets a numeric representation of the start reference in the form BBBCCCVVV.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public int StartRef
 		{
 			get { return (m_questionInfo == null) ? -1 : m_questionInfo.StartRef; }
@@ -465,6 +551,7 @@ namespace SIL.Transcelerator
 		/// Gets a numeric representation of the end reference in the form BBBCCCVVV.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public int EndRef
 		{
 			get { return (m_questionInfo == null) ? -1 : m_questionInfo.EndRef; }
@@ -476,9 +563,20 @@ namespace SIL.Transcelerator
 		/// given category and for a particular reference).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public int SequenceNumber
 		{
 			get { return m_seqNumber; }
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Increments the sequence number of this phrase/question to allow for an inserted one.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public void IncrementSequenceNumber()
+		{
+			m_seqNumber++;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -487,6 +585,7 @@ namespace SIL.Transcelerator
 		/// English name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public string CategoryName
 		{
 			get { return s_helper.GetCategoryName(Category); }
@@ -498,16 +597,19 @@ namespace SIL.Transcelerator
 		/// it.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public Question QuestionInfo
 		{
 			get { return m_questionInfo as Question; }
 		}
 
+		[Browsable(false)]
 		public TypeOfPhrase TypeOfPhrase
 		{
 			get { return (IsUserAdded && m_sModifiedPhrase == string.Empty) ? TypeOfPhrase.NoEnglishVersion : m_type; }
 		}
 
+		[Browsable(false)]
 		public IEnumerable<string> AlternateForms
 		{
 			get
@@ -548,6 +650,7 @@ namespace SIL.Transcelerator
 		/// Get the part at the specified <paramref name="index"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
 		public IPhrasePart this[int index]
 		{
 			get { return m_parts[index]; }

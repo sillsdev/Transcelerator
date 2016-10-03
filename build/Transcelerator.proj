@@ -29,13 +29,16 @@
 	<Message Text="BuildHash: $(BuildHash)" Importance="high"/>
 
 	<!-- Mimicking Bloom's strategy of updating the version number here (not on TeamCity, not in the assemblies). -->
-	<CreateProperty Value="0.0.$(BuildCounter)">
+	<CreateProperty Value="1.2.$(BuildCounter)">
 		<Output PropertyName="Version" TaskParameter="Value"/>
 	</CreateProperty>
 	<CreateProperty Value="$(Version).$(BuildHash)">
 		<Output PropertyName="FullVersion" TaskParameter="Value"/>
 	</CreateProperty>
-	<CreateProperty Value="TransceleratorInstaller.$(Version).$(Label).msi">
+	<CreateProperty Value="TransceleratorInstaller.$(Version).msi" Condition=" '$(Label)' == '' ">
+		<Output PropertyName="InstallerFileName" TaskParameter="Value"/>
+	</CreateProperty>
+	<CreateProperty Value="TransceleratorInstaller.$(Version).$(Label).msi" Condition=" '$(Label)' != '' ">
 		<Output PropertyName="InstallerFileName" TaskParameter="Value"/>
 	</CreateProperty>
 	<Message Text="Version: $(Version)" Importance="high"/>
@@ -65,6 +68,27 @@
 			ExcludeCategory="SkipOnTeamCity"
 			NUnitVersion="NUnit-2.5.5" />
 	</Target>
+
+	<Target Name="MakeDownloadPointers" DependsOnTargets="VersionNumbers" >
+
+    <!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
+    <Copy SourceFiles ="$(RootDir)\Installer\DownloadPointers.htm"
+           DestinationFolder ="$(RootDir)\output\installer"/>
+    <Copy SourceFiles ="$(RootDir)\Installer\appcast.xml"
+        DestinationFolder ="$(RootDir)\output\installer"/> 
+    
+    <!-- replace some parts of the file with the version number & date -->
+    
+    <FileUpdate File="$(RootDir)\output\installer\DownloadPointers.htm"
+                 DatePlaceholder='RELEASE_DATE'
+                Regex='VERSION_NUMBER'
+                 ReplacementText ="$(Version)" />
+
+    <FileUpdate File="$(RootDir)\output\installer\appcast.xml"
+                   DatePlaceholder='RELEASE_DATE'
+                  Regex='VERSION_NUMBER'
+                   ReplacementText ="$(Version)" />
+    </Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
 

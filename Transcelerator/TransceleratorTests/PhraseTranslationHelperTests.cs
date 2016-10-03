@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.   
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2011' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -17,8 +17,8 @@ using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.ScriptureUtils;
-using SIL.Utils;
+using SIL.Extensions;
+using SIL.Windows.Forms;
 
 namespace SIL.Transcelerator
 {
@@ -53,6 +53,8 @@ namespace SIL.Transcelerator
             m_keyTermsDictionary = new Dictionary<string, KeyTermMatchSurrogate>();
             m_translatablePartsDictionary = new Dictionary<string, ParsedPart>();
         }
+
+		public IEnumerable<IKeyTerm> KeyTerms { get { return m_dummyKtList; } } 
 
         #region Helper methods
         /// ------------------------------------------------------------------------------------
@@ -233,7 +235,7 @@ namespace SIL.Transcelerator
             var qp = new QuestionProvider(GetParsedQuestions());
             PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, true);
+            pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
             Assert.AreEqual("D", pth[0].Reference);
             Assert.AreEqual("C", pth[1].Reference);
@@ -242,7 +244,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual("F", pth[4].Reference);
             Assert.AreEqual("A", pth[5].Reference);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.EnglishPhrase, false);
+            pth.Sort(PhrasesSortedBy.EnglishPhrase, false);
 
             Assert.AreEqual("A", pth[0].Reference);
             Assert.AreEqual("F", pth[1].Reference);
@@ -271,7 +273,7 @@ namespace SIL.Transcelerator
             var qp = new QuestionProvider(GetParsedQuestions());
             PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
 
             Assert.AreEqual("A", pth[0].Reference);
             Assert.AreEqual("B", pth[1].Reference);
@@ -280,7 +282,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual("E", pth[4].Reference);
             Assert.AreEqual("F", pth[5].Reference);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, false);
+            pth.Sort(PhrasesSortedBy.Reference, false);
 
             Assert.AreEqual("F", pth[0].Reference);
             Assert.AreEqual("E", pth[1].Reference);
@@ -302,6 +304,7 @@ namespace SIL.Transcelerator
             section.Categories = new Category[2];
 
             var cat = m_sections.Items[0].Categories[0] = new Category();
+	        cat.IsOverview = true;
             AddTestQuestion(cat, "What is the meaning of life?", "A-D", 1, 4);
             AddTestQuestion(cat, "Why is there evil?", "E-G", 5, 6);
             AddTestQuestion(cat, "Why am I here?", "A-D", 1, 4);
@@ -319,7 +322,7 @@ namespace SIL.Transcelerator
             var qp = new QuestionProvider(GetParsedQuestions());
             PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
 
             Assert.AreEqual("What is the meaning of life?", pth[0].PhraseInUse);
             Assert.AreEqual("A-D", pth[0].Reference);
@@ -348,7 +351,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual("E-G", pth[10].Reference);
             Assert.AreEqual(1, pth[10].Category);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, false);
+            pth.Sort(PhrasesSortedBy.Reference, false);
 
             Assert.AreEqual("E-G", pth[0].Reference);
             Assert.AreEqual(1, pth[0].Category);
@@ -397,7 +400,7 @@ namespace SIL.Transcelerator
             pth[pth.FindPhrase(q5)].Translation = "e";
             pth[pth.FindPhrase(q6)].Translation = "E";
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Translation, true);
+            pth.Sort(PhrasesSortedBy.Translation, true);
 
             Assert.AreEqual(q3, pth[0].QuestionInfo);
             Assert.AreEqual(q2, pth[1].QuestionInfo);
@@ -406,7 +409,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(q6, pth[4].QuestionInfo);
             Assert.AreEqual(q1, pth[5].QuestionInfo);
 
-            pth.Sort(PhraseTranslationHelper.SortBy.Translation, false);
+            pth.Sort(PhrasesSortedBy.Translation, false);
 
             Assert.AreEqual(q1, pth[0].QuestionInfo);
             Assert.AreEqual(q6, pth[1].QuestionInfo);
@@ -538,7 +541,7 @@ namespace SIL.Transcelerator
 
             pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
             Assert.AreEqual(5, pth.Phrases.Count(), "Wrong number of phrases in helper");
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
 
             Assert.AreEqual("A", pth[0].Reference);
             Assert.AreEqual("B", pth[1].Reference);
@@ -642,7 +645,7 @@ namespace SIL.Transcelerator
 
             pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
                 ((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
             Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
             Assert.AreEqual("B", pth[0].Reference);
             Assert.AreEqual("D", pth[1].Reference);
@@ -685,7 +688,7 @@ namespace SIL.Transcelerator
 
             pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
                 ((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
             Assert.AreEqual(1, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
             Assert.AreEqual("What is Paul asking me to say with respect to that dog?", pth[0].PhraseInUse);
 
@@ -728,7 +731,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
             Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             Assert.AreEqual("B", pth[0].Reference);
@@ -768,7 +771,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithRenderings, null, false);
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
             Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             Assert.AreEqual("C", pth[0].Reference);
@@ -815,7 +818,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
             Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             Assert.AreEqual("A", pth[0].Reference);
@@ -931,7 +934,7 @@ namespace SIL.Transcelerator
 
             pth.Filter("is", false, PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings, null, false);
             Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
-            pth.Sort(PhraseTranslationHelper.SortBy.Reference, true);
+            pth.Sort(PhrasesSortedBy.Reference, true);
 
             Assert.AreEqual("A", pth[0].Reference);
             Assert.AreEqual("B", pth[1].Reference);
@@ -939,8 +942,480 @@ namespace SIL.Transcelerator
         }
         #endregion
 
-        #region Translation tests
-        /// ------------------------------------------------------------------------------------
+		#region GetMatchingPhrases Tests
+		[Test]
+		public void GetMatchingPhrases_NoMatches_ReturnsNoResults()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			Assert.IsFalse(pth.GetMatchingPhrases(4, 6, 1).Any());
+		}
+
+		[Test]
+		[TestCase(PhrasesSortedBy.Reference, true)]
+		[TestCase(PhrasesSortedBy.Reference, false)]
+		[TestCase(PhrasesSortedBy.Default, true)]
+		[TestCase(PhrasesSortedBy.EnglishPhrase, false)]
+		public void GetMatchingPhrases_TwoMatches_ReturnsInProperSequenceOrder(PhrasesSortedBy listSortedBy, bool ascending)
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			pth.Sort(listSortedBy, ascending);
+
+			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			Assert.AreEqual(2, matches.Count);
+			Assert.AreEqual("Q1", matches[0].PhraseInUse);
+			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+		}
+
+		[Test]
+		public void GetMatchingPhrases_ExcludedQuestion_ResultIncludesExcludedQuestion()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			pth[0].IsExcluded = true;
+
+			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			Assert.AreEqual(2, matches.Count);
+			Assert.AreEqual("Q1", matches[0].PhraseInUse);
+			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+		}
+		#endregion
+
+		#region AddQuestion Tests
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests adding a totally unique question (no words corresponding to existing parts)
+		/// to a PhraseTranslationHelper with no filter set and sorted by reference.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddQuestion_NoFilterSet_SortedByReference_NoKeyTerms_OneNewPart_NewPhraseWithOneNewPartAdded()
+		{
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("say", null);
+
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "A", 1, 1,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "B", 2, 2, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "B", 2, 2,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "B", 2, 2,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
+			AddTestQuestion(cat, "What is that dog?", "B", 2, 2, "what is" /* 3 */, "that dog" /* 4 */);
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			pth.Sort(PhrasesSortedBy.Reference, true);
+			var originalCount = pth.UnfilteredPhraseCount;
+
+			var basedOnQuestion = pth[3];
+			var sequenceNumberOfQuestionBeforeNewQuestion = basedOnQuestion.SequenceNumber;
+			var textOfQuestionBeforeNewQuestion = basedOnQuestion.QuestionInfo.Text;
+			var textOfQuestionFollowingNewQuestion = pth[4].QuestionInfo.Text;
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Wherefore cometh thou?", "I'm just bored, I guess."),
+				1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
+
+			Assert.AreEqual("Wherefore cometh thou?", newPhrase.QuestionInfo.Text);
+			Assert.AreEqual(basedOnQuestion, pth[3], "Based on question should still be in same position in list.");
+			Assert.AreEqual(textOfQuestionBeforeNewQuestion, basedOnQuestion.QuestionInfo.Text);
+			Assert.AreEqual(sequenceNumberOfQuestionBeforeNewQuestion, basedOnQuestion.SequenceNumber, "For a new question added after based-on question, sequence number of based-on question should not change.");
+			Assert.AreEqual(newPhrase, pth[4]);
+			Assert.AreEqual(sequenceNumberOfQuestionBeforeNewQuestion + 1, newPhrase.SequenceNumber);
+			Assert.AreEqual(textOfQuestionFollowingNewQuestion, pth[5].QuestionInfo.Text);
+			Assert.AreEqual(newPhrase.SequenceNumber + 1, pth[5].SequenceNumber);
+			Assert.AreEqual(newPhrase.SequenceNumber + 2, pth[6].SequenceNumber);
+			Assert.AreEqual(originalCount + 1, pth.UnfilteredPhraseCount);
+			Assert.AreEqual(originalCount + 1, pth.FilteredPhraseCount);
+
+			for (int i = 0; i < pth.FilteredPhraseCount; i++)
+				Assert.IsTrue(pth.UnfilteredPhrases.Contains(pth[i]));
+
+			var onlyPart = newPhrase.TranslatableParts.Single();
+			Assert.AreEqual(0, newPhrase.KeyTermRenderings.Length);
+			Assert.AreEqual("wherefore cometh thou", onlyPart.Text);
+			Assert.AreEqual(newPhrase, onlyPart.OwningPhrases.Single());
+		}
+		
+		/// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests adding a question with some words already identified as existing parts and
+	    /// key terms to a PhraseTranslationHelper with no filter set and default sorting.
+	    /// </summary>
+	    /// ------------------------------------------------------------------------------------
+	    [Test]
+		public void AddQuestion_Insert_NoFilterSet_DefaultSorting_ExistingKeyTermsAndsParts_NewPhraseAdded()
+	    {
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("say", null);
+
+			var cat = m_sections.Items[0].Categories[0];
+			var otherQuestions = new List<Question>(6);
+			otherQuestions.Add(AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul"));
+			otherQuestions.Add(AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */));
+			otherQuestions.Add(AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */));
+			otherQuestions.Add(AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today"));
+			otherQuestions.Add(AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish"));
+			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var originalCount = pth.UnfilteredPhraseCount;
+
+			var basedOnQuestion = pth[3];
+			var sequenceNumberOfNewQuestion = basedOnQuestion.SequenceNumber;
+			otherQuestions.Remove(basedOnQuestion.QuestionInfo);
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "What is Paul saying?", null),
+				1, sequenceNumberOfNewQuestion, mp);
+
+			Assert.AreEqual("What is Paul saying?", newPhrase.QuestionInfo.Text);
+			Assert.AreEqual(newPhrase.SequenceNumber + 1, basedOnQuestion.SequenceNumber);
+			Assert.AreEqual(sequenceNumberOfNewQuestion, newPhrase.SequenceNumber);
+			Assert.AreEqual(originalCount + 1, pth.UnfilteredPhraseCount);
+			Assert.AreEqual(originalCount + 1, pth.FilteredPhraseCount);
+
+			foreach (var tp in pth.Phrases)
+			{
+				Assert.IsTrue(pth.UnfilteredPhrases.Contains(tp));
+				if (otherQuestions.Contains(tp.QuestionInfo))
+					Assert.AreEqual(tp.Reference[0] - 'A' + 1, tp.SequenceNumber);
+			}
+			for (int i = 0; i < pth.FilteredPhraseCount; i++)
+				Assert.IsTrue(pth.UnfilteredPhrases.Contains(pth[i]));
+
+			var translatableParts = newPhrase.TranslatableParts.ToList();
+			Assert.AreEqual(2, translatableParts.Count);
+			Assert.AreEqual(2, newPhrase.KeyTermRenderings.Length);
+			Assert.AreEqual("what", translatableParts[0].Text);
+			Assert.AreEqual("is", translatableParts[1].Text);
+			Assert.AreEqual(newPhrase, translatableParts[0].OwningPhrases.Single());
+			Assert.AreEqual(newPhrase, translatableParts[1].OwningPhrases.Single());
+	    }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests adding a question with some words already identified as existing parts and
+		/// key terms to a PhraseTranslationHelper with no filter set and default sorting.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddQuestion_Insert_FilterSet_SortedByQuestion_ExistingMultiwordParts_NewPhraseAdded()
+		{
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("say", null);
+
+			var cat = m_sections.Items[0].Categories[0];
+			var otherQuestions = new List<Question>(6);
+			otherQuestions.Add(AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul"));
+			otherQuestions.Add(AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */));
+			otherQuestions.Add(AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */));
+			otherQuestions.Add(AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today"));
+			otherQuestions.Add(AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish"));
+			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			pth.Filter("this", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
+			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
+
+			var originalCount = pth.UnfilteredPhraseCount;
+
+			var basedOnQuestion = pth.Phrases.Last();
+			var sequenceNumberOfNewQuestion = basedOnQuestion.SequenceNumber;
+			otherQuestions.Remove(basedOnQuestion.QuestionInfo);
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Explain this with respect to that.", null),
+				1, sequenceNumberOfNewQuestion, mp);
+
+			Assert.AreEqual("Explain this with respect to that.", newPhrase.QuestionInfo.Text);
+			Assert.AreEqual(newPhrase, pth[0]);
+			Assert.AreEqual(newPhrase.SequenceNumber + 1, basedOnQuestion.SequenceNumber);
+			Assert.AreEqual(sequenceNumberOfNewQuestion, newPhrase.SequenceNumber);
+			Assert.AreEqual(originalCount + 1, pth.UnfilteredPhraseCount);
+			Assert.AreEqual(3, pth.FilteredPhraseCount);
+
+			foreach (var tp in pth.Phrases)
+			{
+				Assert.IsTrue(pth.UnfilteredPhrases.Contains(tp));
+				if (otherQuestions.Contains(tp.QuestionInfo))
+					Assert.AreEqual(tp.Reference[0] - 'A' + 1, tp.SequenceNumber);
+			}
+			for (int i = 0; i < pth.FilteredPhraseCount; i++)
+				Assert.IsTrue(pth.UnfilteredPhrases.Contains(pth[i]));
+
+			var translatableParts = newPhrase.TranslatableParts.ToList();
+			Assert.AreEqual(1, translatableParts.Count);
+			Assert.AreEqual("explain this with respect to that", translatableParts[0].Text);
+			Assert.AreEqual(newPhrase, translatableParts[0].OwningPhrases.Single());
+			// TODO: The following would be preferable, but it is fairly tricky to implement.
+			// See commented out code in PhrasePartManager
+			//Assert.AreEqual(3, translatableParts.Count);
+			//Assert.AreEqual("explain this", translatableParts[0].Text);
+			//Assert.AreEqual("with respect to", translatableParts[1].Text);
+			//Assert.AreEqual("that", translatableParts[2].Text);
+			//Assert.AreEqual(newPhrase, translatableParts[0].OwningPhrases.Single());
+			//Assert.AreEqual(newPhrase, translatableParts[1].OwningPhrases.Single());
+			//Assert.AreEqual(newPhrase, translatableParts[2].OwningPhrases.Single());
+		}
+	    #endregion
+
+		#region AttachNewQuestionToAdjacentPhrase Tests
+		[Test]
+		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsFirstInList_AttachedAsInsertBefore()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var newQuestion = new Question("GEN 1:1", 1, 1, "Why is this the first question?", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
+
+			var q1 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
+			Assert.AreEqual("Q1", q1.PhraseInUse);
+			Assert.AreEqual(q1.InsertedPhraseBefore, newQuestion);
+			Assert.IsTrue(pth.Phrases.All(p => p.AddedPhraseAfter == null));
+		}
+
+		[Test]
+		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsLastInList_AttachedAsAddedAfter()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var newQuestion = new Question("REV 20:10-12", 66020010, 66020012, "Why is this the last question?", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
+
+			var q3 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
+			Assert.AreEqual("Q3", q3.PhraseInUse);
+			Assert.AreEqual(q3.AddedPhraseAfter, newQuestion);
+			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
+		}
+
+		[Test]
+		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsPreceedingQuestion_AttachedAsAddedAfter()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var newQuestion = new Question("MAT 6:4", 40006004, 40006004, "Please explain.", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
+
+			var q2 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
+			Assert.AreEqual("Q2", q2.PhraseInUse);
+			Assert.AreEqual(q2.AddedPhraseAfter, newQuestion);
+			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
+		}
+
+		[Test]
+		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsFollowingQuestion_AttachedAsInsertBefore()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var newQuestion = new Question("MAT 6:1", 40006001, 40006001, "How does this chapter start?", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
+
+			var q2 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
+			Assert.AreEqual("Q2", q2.PhraseInUse);
+			Assert.AreEqual(q2.InsertedPhraseBefore, newQuestion);
+			Assert.IsTrue(pth.Phrases.All(p => p.AddedPhraseAfter == null));
+		}
+		#endregion
+
+		#region ModifyQuestion Tests
+		[Test]
+		public void ModifyQuestion_CapitalizationAndPunctuationOnlyChange_PartsAndKeyTermsSequencesUnchanged()
+		{
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("say", null);
+
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			var questionToModify = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
+			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
+			var originalTranslatablePartsSequence = phraseToModify.TranslatableParts.ToList();
+			var originalKeyTermsSequence = phraseToModify.KeyTermRenderings;
+
+			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			pth.ModifyQuestion(phraseToModify, "That dog wishes this Paul, and what is say radish?", mp);
+
+			Assert.AreEqual("That dog wishes this Paul, and what is say radish?", phraseToModify.PhraseInUse);
+			Assert.AreEqual(phraseToModify, pth[2]);
+
+			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
+			Assert.IsTrue(phraseToModify.KeyTermRenderings.SequenceEqual(originalKeyTermsSequence));
+		}
+
+		[Test]
+		public void ModifyQuestion_OnlyKeyTermsChanges_PartsSequenceUnchanged()
+		{
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("fur");
+			AddMockedKeyTerm("say", null);
+			AddMockedKeyTerm("radish");
+
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			var questionToModify = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "kt:radish");
+			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
+			var originalTranslatablePartsSequence = phraseToModify.TranslatableParts.ToList();
+
+			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			pth.ModifyQuestion(phraseToModify, "that dog fur wishes this have and what is say radishes", mp);
+
+			Assert.AreEqual("that dog fur wishes this have and what is say radishes", phraseToModify.PhraseInUse);
+			Assert.AreEqual(phraseToModify, pth[2]);
+
+			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
+			var keyTerms = phraseToModify.KeyTermRenderings;
+			Assert.AreEqual(4, keyTerms.Length);
+			Assert.AreEqual("FUR", keyTerms[0]);
+			Assert.AreEqual("HAVE", keyTerms[1]);
+			Assert.AreEqual(String.Empty, keyTerms[2]);
+			Assert.AreEqual("RADISH", keyTerms[3]);
+		}
+
+		[Test]
+		public void ModifyQuestion_KeyTermsAndLastPartUnchanged_PartsSequenceChanged()
+		{
+			AddMockedKeyTerm("God");
+			AddMockedKeyTerm("Paul");
+			AddMockedKeyTerm("have");
+			AddMockedKeyTerm("say", null);
+
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			var questionToModify = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
+			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
+
+			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
+
+			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			pth.ModifyQuestion(phraseToModify, "What did that dog wish Paul would say to the radish?", mp);
+
+			Assert.AreEqual("What did that dog wish Paul would say to the radish?", phraseToModify.QuestionInfo.Text);
+			Assert.AreEqual(phraseToModify, pth[3]);
+
+			var translatableParts = phraseToModify.TranslatableParts.ToList();
+			Assert.AreEqual(7, translatableParts.Count);
+			int i = 0;
+			Assert.AreEqual("what", translatableParts[i++].Text);
+			Assert.AreEqual("did", translatableParts[i++].Text);
+			Assert.AreEqual("that dog", translatableParts[i++].Text);
+			Assert.AreEqual("wish", translatableParts[i++].Text);
+			Assert.AreEqual("would", translatableParts[i++].Text);
+			Assert.AreEqual("to the", translatableParts[i++].Text);
+			Assert.AreEqual("radish", translatableParts[i].Text);
+		}
+		#endregion
+
+		#region Translation tests
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Tests setting the translation to null for a phrase.
         /// </summary>
@@ -2381,7 +2856,7 @@ namespace SIL.Transcelerator
             m_dummyKtRenderings["laeh"].Insert(0, "curara\u0301");
 
             Dictionary<Word, List<KeyTerm>> keyTermsTable =
-                (Dictionary<Word, List<KeyTerm>>)ReflectionHelper.GetField(qp, "m_keyTermsTable");
+                (Dictionary<Word, List<KeyTerm>>)ReflectionHelper.GetField(qp.PhrasePartManager, "m_keyTermsTable");
             keyTermsTable["heal"].First().LoadRenderings();
 
             Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
