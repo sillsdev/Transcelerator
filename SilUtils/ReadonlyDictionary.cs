@@ -25,12 +25,6 @@ namespace SIL.Utils
         IEnumerable<TKey> Keys { get; }
     }
 
-	/// ----------------------------------------------------------------------------------------
-	/// <summary>
-	/// This provides a string enumeration for subkeys for SIL software that is used from FieldWorks
-	/// of HKCU\Software\SIL.
-	/// </summary>
-	/// ----------------------------------------------------------------------------------------
     public class ReadonlyDictionary<TKey, TValue> : IReadonlyDictionary<TKey, TValue>
 	{
 	    protected readonly IDictionary<TKey, TValue> m_dictionary;

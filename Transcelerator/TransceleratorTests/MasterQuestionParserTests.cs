@@ -27,14 +27,13 @@ namespace SIL.Transcelerator
 	{
 		private List<IKeyTerm> m_dummyKtList;
 		private KeyTermRules m_keyTermRules;
-		private List<string> m_questionWords;
-			
+		internal static List<string> s_questionWords = new List<string>(new[] { "who", "what", "when", "why", "how", "where", "which", "how many", "how much", "how long", "how old" });
+
 		[SetUp]
 		public void Setup()
 		{
 			m_dummyKtList = new List<IKeyTerm>();
 			m_keyTermRules = null;
-			m_questionWords = new List<string>(new [] { "who", "what", "when", "why", "how", "where", "which", "how many", "how much", "how long", "how old" });
 		}
 
 		#region Parsing tests
@@ -89,7 +88,7 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("Jesus");
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
-				m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+				s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 
 			ParsedQuestions pq = qp.Result;
 			VerifyQuestionSections(pq);
@@ -214,7 +213,7 @@ namespace SIL.Transcelerator
 			q9.StartRef = 9;
 			q9.EndRef = 9;
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, null, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, null, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(2, pq.KeyTerms.Length);
 			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "isaac"));
@@ -345,7 +344,7 @@ namespace SIL.Transcelerator
 			q3.StartRef = 3;
 			q3.EndRef = 3;
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "apostle"));
@@ -420,7 +419,7 @@ namespace SIL.Transcelerator
 			q6.StartRef = 6;
 			q6.EndRef = 6;
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 			Assert.IsTrue(pq.KeyTerms.Any(kt => kt.TermId == "god"));
@@ -579,7 +578,7 @@ namespace SIL.Transcelerator
 			q3.StartRef = 3;
 			q3.EndRef = 3;
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(0, pq.KeyTerms.Length);
 			Assert.AreEqual(3, pq.TranslatableParts.Length);
@@ -736,7 +735,7 @@ namespace SIL.Transcelerator
 			cat.Questions[i++].Text = "What do you think it means to bless someone? ";
 			cat.Questions[i++].Text = "What means of support do disciples have?";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(0, pq.KeyTerms.Length);
 			Assert.AreEqual(7, pq.TranslatableParts.Length);
@@ -896,7 +895,7 @@ namespace SIL.Transcelerator
 			cat.Questions[i++].Text = "Do you think God could forgive someone who sins?";
 			cat.Questions[i].Text = "What do you think it means to serve two masters?";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(9, pq.KeyTerms.Length);
 			Assert.AreEqual(13, pq.Sections.Items[0].Categories[0].Questions.Count);
@@ -1021,7 +1020,7 @@ namespace SIL.Transcelerator
 			cat.Questions[i++].Text = "what do you think it means to bless someone?";
 			cat.Questions[i].Text = "Did Mary do the right thing?";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, substitutions);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(6, pq.KeyTerms.Length, "Only the key terms actually used should be counted. (The two John's get combined into a single match.)");
 			Assert.AreEqual(10, pq.TranslatableParts.Length);
@@ -1168,7 +1167,7 @@ namespace SIL.Transcelerator
 			cat.Questions[i++].Text = "How much did it cost?";
 			cat.Questions[i++].Text = "How many frogs are there?";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(4, pq.Sections.Items[0].Categories[0].Questions.Count);
 
@@ -1384,7 +1383,7 @@ namespace SIL.Transcelerator
 			q.EndRef = 2;
 			q.ScriptureReference = "B";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 
@@ -1526,7 +1525,7 @@ namespace SIL.Transcelerator
 				q.ScriptureReference = ((char)('A' + iQ)).ToString();
 			}
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 
@@ -1619,7 +1618,7 @@ namespace SIL.Transcelerator
 			q.EndRef = 6;
 			q.ScriptureReference = "E-F";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 
@@ -1713,7 +1712,7 @@ namespace SIL.Transcelerator
 			q.EndRef = 6;
 			q.ScriptureReference = "E-F";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(3, pq.KeyTerms.Length);
 
@@ -1811,7 +1810,7 @@ namespace SIL.Transcelerator
 			q.StartRef = 1;
 			q.EndRef = 2;
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null, null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(7, pq.KeyTerms.Length);
 
@@ -2268,7 +2267,7 @@ namespace SIL.Transcelerator
 			q.EndRef = 44001006;
 			q.Text = "Base question";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, null, null, customizations, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			List<Question> questions = pq.Sections.Items[0].Categories[0].Questions;
@@ -2342,7 +2341,7 @@ namespace SIL.Transcelerator
 			q.EndRef = 44001006;
 			q.Text = "Base question";
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, null, null, customizations, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			List<Question> questions = pq.Sections.Items[0].Categories[0].Questions;
@@ -2409,7 +2408,7 @@ namespace SIL.Transcelerator
 			q.Text = "What question did the apostles ask Jesus about his kingdom?";
 			q.Answers = new[] { "Stuff." };
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, null, null, customizations, null);
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
 			List<Question> questions = pq.Sections.Items[0].Categories[0].Questions;
@@ -2531,7 +2530,7 @@ namespace SIL.Transcelerator
 		{
 			var qs = GenerateQuestions(questions);
 
-			MasterQuestionParser qp = new MasterQuestionParser(qs, m_questionWords, m_dummyKtList, m_keyTermRules, null,
+			MasterQuestionParser qp = new MasterQuestionParser(qs, s_questionWords, m_dummyKtList, m_keyTermRules, null,
 				null);
 			ParsedQuestions pq = qp.Result;
 			Assert.AreEqual(questions.Length, pq.Sections.Items[0].Categories[0].Questions.Count);
@@ -2568,6 +2567,7 @@ namespace SIL.Transcelerator
 			{
 				s.Categories[iC] = new Category();
 				s.Categories[iC].Type = "Overview";
+				s.Categories[iC].IsOverview = true;
 				for (int i = 0; i < cOverviewQuestions; i++)
 					s.Categories[iC].Questions.Add(new Question());
 				iC++;

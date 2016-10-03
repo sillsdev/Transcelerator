@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2013' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -10,11 +10,8 @@
 // File: KeyTermRulesTests.cs
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
-using AddInSideViews;
 using NUnit.Framework;
-using System;
-using Rhino.Mocks;
-using SIL.Utils;
+using SIL.Xml;
 
 namespace SIL.Transcelerator
 {

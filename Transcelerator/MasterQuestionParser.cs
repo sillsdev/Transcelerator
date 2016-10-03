@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2015, SIL International.
+// <copyright from='2013' to='2015' company='SIL International'>
+//		Copyright (c) 2015, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,10 +13,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Utils;
 using System;
+using System.Windows.Forms;
+using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
@@ -32,9 +33,9 @@ namespace SIL.Transcelerator
 	{
 	    #region Data members
         // TODO: Don't hard-code this. Should be read from language-specific file along with leading question words.
-        static List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
+        public static readonly List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
 
-	    private QuestionSections m_sections;
+	    private readonly QuestionSections m_sections;
 	    private readonly IEnumerable<PhraseCustomization> m_customizations;
         private readonly Dictionary<Regex, string> m_phraseSubstitutions;
         /// <summary>A lookup table of the last word of all known English key terms to the
@@ -77,10 +78,24 @@ namespace SIL.Transcelerator
             questionWords, keyTerms, keyTermRules, customizations, phraseSubstitutions)
         {
         }
-        
-        /// ------------------------------------------------------------------------------------
+
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
+		/// Initializes a new instance of the <see cref="MasterQuestionParser"/> class. This
+		/// version is useful when you just need a parser to use for ad-hoc questions, since
+		/// it does not take an initial collection of sections with questions to be parsed.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public MasterQuestionParser(IEnumerable<string> questionWords,
+			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<Substitution> phraseSubstitutions) : this(default(QuestionSections), questionWords,
+			keyTerms, keyTermRules, null, phraseSubstitutions)
+		{
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
@@ -127,16 +142,11 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private void Parse()
 	    {
+			if (m_partsTable.Any())
+				throw new InvalidOperationException("Parse called more than once.");
+
 	        foreach (Question question in GetQuestions())
-	        {
-	            if (question.IsParsable)
-	            {
-	                PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
-                        m_questionWordsLookupTable, question, GetOrCreatePart);
-	                foreach (ParsedPart part in parser.Parse())
-	                    question.ParsedParts.Add(part);
-	            }
-	        }
+	            ParseQuestion(question);
 
 	        for (int wordCount = m_partsTable.Keys.Max(); wordCount > 0; wordCount--)
 	        {
@@ -199,7 +209,32 @@ namespace SIL.Transcelerator
 	        }
 	    }
 
-	    #endregion
+		public void ParseQuestion(Question question)
+		{
+			if (question.IsParsable)
+			{
+				PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
+					m_questionWordsLookupTable, question, GetOrCreatePart);
+				foreach (ParsedPart part in parser.Parse())
+					question.ParsedParts.Add(part);
+			}
+		}
+
+		public bool ParseNewOrModifiedQuestion(Question question, Action<KeyTermMatch> processKeyTermMatch)
+		{
+			if (question.IsParsable)
+			{
+				PhraseParser parser = new PhraseParser(m_keyTermsTable, m_phraseSubstitutions,
+					m_questionWordsLookupTable, question, GetOrCreatePart);
+				foreach (ParsedPart part in parser.Parse())
+					question.ParsedParts.Add(part);
+				foreach (var match in parser.KeyTermsUsedForPhrase)
+					processKeyTermMatch(match);
+				return true;
+			}
+			return false;
+		}
+		#endregion
 
         #region Public properties
 	    public ParsedQuestions Result
@@ -459,5 +494,52 @@ namespace SIL.Transcelerator
 			return null;
 		}
 		#endregion
+
+		public bool ReparseModifiedQuestion(Question question, Action<KeyTermMatch> processKeyTermMatch)
+		{
+			var previousParts = new List<ParsedPart>(question.ParsedParts);
+			question.ParsedParts.Clear();
+			if (!ParseNewOrModifiedQuestion(question, processKeyTermMatch))
+			{
+				question.ParsedParts.AddRange(previousParts);
+				return false;
+			}
+			var newParts = new List<ParsedPart>(question.ParsedParts);
+			question.ParsedParts.Clear();
+
+			foreach (var newPart in newParts)
+			{
+				if (newPart.Type != PartType.TranslatablePart)
+					question.ParsedParts.Add(newPart);
+				else
+				{
+					int iStartOfUnmatchedWordInPart = 0;
+					for (int iWordInNewPart = 0; iWordInNewPart < newPart.Words.Count;)
+					{
+						var matchingPrevPart = previousParts.FirstOrDefault(pp => pp.Type == PartType.TranslatablePart &&
+							newPart.Words.Skip(iWordInNewPart).Take(pp.Words.Count).SequenceEqual(pp.Words));
+						if (matchingPrevPart != null)
+						{
+							if (iWordInNewPart > iStartOfUnmatchedWordInPart)
+							{
+								question.ParsedParts.Add(new ParsedPart(newPart.Words
+									.Skip(iStartOfUnmatchedWordInPart)
+									.Take(iWordInNewPart - iStartOfUnmatchedWordInPart)));	
+							}
+							question.ParsedParts.Add(matchingPrevPart);
+							iWordInNewPart += matchingPrevPart.Words.Count;
+							iStartOfUnmatchedWordInPart = iWordInNewPart;
+						}
+						else
+							 iWordInNewPart++;
+					}
+					if (newPart.Words.Count > iStartOfUnmatchedWordInPart)
+					{
+						question.ParsedParts.Add(new ParsedPart(newPart.Words.Skip(iStartOfUnmatchedWordInPart).Take(newPart.Words.Count - iStartOfUnmatchedWordInPart)));
+					}
+				}
+			}
+			return true;
+		}
 	}
 }

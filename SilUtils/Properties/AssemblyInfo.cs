@@ -32,8 +32,10 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("7.3.0.41100")]
-[assembly: AssemblyInformationalVersionAttribute("7.3.0")]
-[assembly: AssemblyVersion("7.3.0.*")]
+// This assembly was originally pulled in from FW 7.3, but it has been modified (mostly
+// to strip out unneeded things) considerably since then.
+[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("1.2.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
 
 [assembly: InternalsVisibleTo("SilUtilsTests")]
