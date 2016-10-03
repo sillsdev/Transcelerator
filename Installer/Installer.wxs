@@ -9,7 +9,7 @@
 <!--Don't even think of EVER changing this, despite the counter-intuitive name. What it is: "a shared identifier that represents multiple versions of an application" -->
 <?define Property_UpgradeCode = "{6CA771D3-AA98-4cab-8616-2777C8EEA23D}" ?>
 
-<!-- good intro to the component vs. file thing, and why each file here is a separate component:
+<!-- good intro to the component vs. file thing, and why each file here is a separate component (except I've combined some PDB files with their DLLs):
 http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
@@ -48,8 +48,26 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
                       Key="SOFTWARE\ScrChecks\1.0\Program_Files_Directory_Ptw7"
                       Type="directory" />
     </Property>
+    <Property Id="PARATEXT7TEST" Secure="yes">
+      <RegistrySearch Id="Paratext7Test"
+                      Root="HKLM"
+                      Key="SOFTWARE\ScrChecks\1.0\Test_Program_Files_Directory_Ptw7"
+                      Type="directory" />
+    </Property>
+    <Property Id="PARATEXT8" Secure="yes">
+      <RegistrySearch Id="Paratext8"
+                      Root="HKLM"
+                      Key="SOFTWARE\ScrChecks\1.0\Program_Files_Directory_Ptw8"
+                      Type="directory" />
+    </Property>
+    <Property Id="PARATEXT8TEST" Secure="yes">
+      <RegistrySearch Id="Paratext8Test"
+                      Root="HKLM"
+                      Key="SOFTWARE\ScrChecks\1.0\Test_Program_Files_Directory_Ptw8"
+                      Type="directory" />
+    </Property>
     <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
-        <![CDATA[Installed OR PARATEXT7]]>
+        <![CDATA[Installed OR PARATEXT7 OR PARATEXT7TEST OR PARATEXT8 OR PARATEXT8TEST]]>
     </Condition>
         
     <Property Id="PARATEXT7VERSION">
@@ -58,7 +76,7 @@ are trying to support, you're better off using non-advertised shortcuts. "-->
         </DirectorySearch>
     </Property>
     <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
-      <![CDATA[Installed OR PARATEXT7VERSION]]>
+      <![CDATA[Installed OR PARATEXT7VERSION OR PARATEXT7TEST OR PARATEXT8 OR PARATEXT8TEST]]>
     </Condition>
 
     <!--because of bug, this needs to be 1 -->
