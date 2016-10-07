@@ -57,6 +57,9 @@
     <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\release</IntermediateOutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <SuppressIces>ICE30</SuppressIces>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
   </ItemGroup>
