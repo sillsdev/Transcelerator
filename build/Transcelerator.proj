@@ -94,9 +94,9 @@
 
 		<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
 		<Copy SourceFiles ="$(RootDir)\installer\template.download_info"
-			DestinationFiles ="$(RootDir)\output\installer\TransceleratorInstaller.$(Version).download_info"/>
+			DestinationFiles ="$(RootDir)\output\installer\transceleratorinstaller_$(Version)_windows.download_info"/>
 
-		<FileUpdate File="$(RootDir)\output\installer\TransceleratorInstaller.$(Version).download_info"
+		<FileUpdate File="$(RootDir)\output\installer\transceleratorinstaller_$(Version)_windows.download_info"
 			DatePlaceHolder='_DATE_'
 			DateFormat='yyyy-MM-dd'
 			Regex='_VERSION_'
