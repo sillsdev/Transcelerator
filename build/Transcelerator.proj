@@ -68,19 +68,6 @@
 			ExcludeCategory="SkipOnTeamCity"
 			NUnitVersion="NUnit-2.5.5" />
 	</Target>
-    
-    <!-- replace some parts of the file with the version number & date -->
-    
-    <FileUpdate File="$(RootDir)\output\installer\DownloadPointers.htm"
-                 DatePlaceholder='RELEASE_DATE'
-                Regex='VERSION_NUMBER'
-                 ReplacementText ="$(Version)" />
-
-    <FileUpdate File="$(RootDir)\output\installer\appcast.xml"
-                   DatePlaceholder='RELEASE_DATE'
-                  Regex='VERSION_NUMBER'
-                   ReplacementText ="$(Version)" />
-    </Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
 
