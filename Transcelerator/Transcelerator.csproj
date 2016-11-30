@@ -139,8 +139,8 @@
       <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DesktopAnalytics, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DesktopAnalytics.1.2.3\lib\net40\DesktopAnalytics.dll</HintPath>
+    <Reference Include="DesktopAnalytics, Version=1.2.4.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DesktopAnalytics.1.2.4.3\lib\net40\DesktopAnalytics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Keyman7Interop, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">

@@ -248,10 +248,12 @@ namespace SIL.Transcelerator
 		private UserInfo GetuserInfo()
 		{
 			string lastName = host.UserName;
-			string firstName = null;
+			string firstName = "";
 			if (lastName != null)
 			{
 				var split = lastName.LastIndexOf(" ", StringComparison.Ordinal);
+				if (split <= 0)
+					split = lastName.LastIndexOf("_", StringComparison.Ordinal);
 				if (split > 0)
 				{
 					firstName = lastName.Substring(0, split);
