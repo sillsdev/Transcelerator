@@ -17,6 +17,7 @@ using AddInSideViews;
 using SIL.Utils;
 using System;
 using System.Windows.Forms;
+using SIL.Scripture;
 using SIL.Xml;
 
 namespace SIL.Transcelerator
@@ -36,7 +37,7 @@ namespace SIL.Transcelerator
         public static readonly List<Word> prepositionsAndArticles = new List<Word>(new Word[] { "in", "of", "the", "a", "an", "for", "by", "through", "on", "about", "to" });
 
 	    private readonly QuestionSections m_sections;
-	    private readonly IEnumerable<PhraseCustomization> m_customizations;
+	    private readonly List<PhraseCustomization> m_customizations;
         private readonly Dictionary<Regex, string> m_phraseSubstitutions;
         /// <summary>A lookup table of the last word of all known English key terms to the
 		/// actual key term objects.</summary>
@@ -118,7 +119,7 @@ namespace SIL.Transcelerator
 			        listOfQuestionsForCount.Add(listOfWordsInQuestion);
 		        }
 	        }
-	        m_customizations = customizations;
+	        m_customizations = customizations?.ToList();
             if (keyTerms != null)
             {
                 m_keyTermsTable = new Dictionary<Word, List<KeyTermMatch>>(keyTerms.Count());
@@ -263,14 +264,92 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets (possibly modified form of) the given phrase along with any inserted (before)
-        /// or added (after) phrases. 
+        /// or added (after) phrases. Also note any "Deletions" (i.e., exclusions).
         /// </summary>
         /// ------------------------------------------------------------------------------------
         private IEnumerable<Question> GetCustomizations(Question q, Category category, int index)
         {
             Question added = null;
-            var list = m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)).ToList();
-            foreach (PhraseCustomization customization in m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)))
+            var list = new List<PhraseCustomization>();
+	        var book = BCVRef.GetBookFromBcv(q.StartRef);
+	        int mismatchedCustomizationToRemove = -1;
+			for (int i = 0; i < m_customizations.Count; i++)
+            {
+                var customization = m_customizations[i];
+				if (book != customization.ScrStartReference.Book)
+					continue;
+                if ((customization.Type == PhraseCustomization.CustomizationType.AdditionAfter || customization.Type == PhraseCustomization.CustomizationType.InsertionBefore) &&
+                    customization.ScrStartReference <= q.StartRef && customization.ScrEndReference > q.EndRef)
+                {
+					if (!list.Any(c => c.Type == PhraseCustomization.CustomizationType.InsertionBefore))
+					{
+						mismatchedCustomizationToRemove = i;
+						list.Insert(0, customization);
+					}
+					else if (mismatchedCustomizationToRemove >= 0)
+					{
+						var existingInsertion = list[0];
+						// The existing insertion is also a mismatch. Should this one go ahead of it? 
+						if (existingInsertion.ScrStartReference > customization.ScrStartReference ||
+							(existingInsertion.Reference == customization.Reference && existingInsertion.ModifiedPhrase == customization.OriginalPhrase))
+						{
+							list[0] = customization;
+							mismatchedCustomizationToRemove = i;
+						}
+
+      //              m_customizations.RemoveAt(i);
+      //              if (customization.ScrStartReference == customization.ScrEndReference)
+      //                  list.Add(customization);
+      //              else
+      //              {
+						//if (list.Any(c => c.Type == ))
+      //                  // "Range" questions should be treated as coming before all single-verse questions.
+      //                  // They may not be in the original list in the correct order, so we need to find correct
+      //                  // place to insert.
+      //                  int ipc = 0;
+      //                  for (; ipc < list.Count; ipc++)
+      //                  {
+      //                      if (list[ipc].ScrStartReference < customization.ScrStartReference)
+      //                          continue;
+
+      //                      if (list[ipc].ScrStartReference == list[ipc].ScrEndReference ||
+      //                          customization.ScrEndReference < list[ipc].ScrEndReference)
+      //                      {
+      //                          list.Insert(ipc, customization);
+      //                          break;
+      //                      }
+      //                  }
+      //                  if (ipc == list.Count)
+      //                      list.Add(customization);
+                    }
+                }
+                else if (q.Matches(customization.Reference, customization.OriginalPhrase))
+                {
+					if (mismatchedCustomizationToRemove >= 0)
+					{
+						// We found a "real" insertion before. Any prceeding ones will have to go before THAT one instead.
+						list[0] = customization;
+						mismatchedCustomizationToRemove = -1;
+					}
+					else
+		                list.Add(customization);
+                    m_customizations.RemoveAt(i--);
+                }
+            }
+			if (mismatchedCustomizationToRemove >= 0)
+			{
+				// If we found an added question that didn't match the current question but needs to go before it,
+				// it is guaranteed to be the first one in the list and it must be treated as an insertion.
+				m_customizations.RemoveAt(mismatchedCustomizationToRemove);
+				list[0].Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			}
+            //var list = m_customizations.Where(c => c.ScrStartReference <= q.StartRef).OrderBy(pc => pc.ScrEndReference).ToList();
+            //foreach (var customization in m_customizations.Where(c => q.Matches(c.Reference, c.OriginalPhrase)))
+            //{
+            //    list.Add(customization);
+            //    m_handledCustomizations.Add(customization);
+            //}
+            foreach (var customization in list)
             {
                 switch (customization.Type)
                 {
@@ -286,6 +365,7 @@ namespace SIL.Transcelerator
                                 customization.ModifiedPhrase + "'.");
                         }
                         q.ModifiedPhrase = customization.ModifiedPhrase;
+						// TODO: Support modifications (and additions?) of answers (and notes?) also.
                         break;
                     case PhraseCustomization.CustomizationType.InsertionBefore:
                         if (q.InsertedQuestionBefore != null)
@@ -294,7 +374,8 @@ namespace SIL.Transcelerator
                                 "' already has a question/phrase inserted before it: '" + q.InsertedQuestionBefore + "'. Value of subsequent insertion attempt was: '" +
                                 customization.ModifiedPhrase + "'.");
                         }
-                        q.InsertedQuestionBefore = new Question(q, customization.ModifiedPhrase, customization.Answer);
+                        q.InsertedQuestionBefore = new Question(customization.Reference, customization.ScrStartReference, customization.ScrEndReference,
+                            customization.ModifiedPhrase, customization.Answer);
                         category.Questions.Insert(index, q.InsertedQuestionBefore);
                         foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, category, index))
                         {
@@ -309,7 +390,8 @@ namespace SIL.Transcelerator
                                 "' already has a question/phrase added after it: '" + q.AddedQuestionAfter + "'. Value of of subsequent addition attempt was: '" +
                                 customization.ModifiedPhrase + "'.");
                         }
-                        added = q.AddedQuestionAfter = new Question(q, customization.ModifiedPhrase, customization.Answer);
+                        added = q.AddedQuestionAfter = new Question(customization.Reference, customization.ScrStartReference, customization.ScrEndReference,
+                            customization.ModifiedPhrase, customization.Answer);
                         category.Questions.Insert(index + 1, q.AddedQuestionAfter);
                         break;
                 }
@@ -356,9 +438,9 @@ namespace SIL.Transcelerator
                         }
                         if (m_customizations != null)
                         {
-                            foreach (Question inserted in GetCustomizations(q, category, iQuestion))
+                            foreach (Question question in GetCustomizations(q, category, iQuestion))
                             {
-                                yield return inserted;
+                                yield return question;
                                 iQuestion++;
                             }
                         }
