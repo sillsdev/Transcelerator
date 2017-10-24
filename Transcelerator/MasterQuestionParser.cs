@@ -301,8 +301,7 @@ namespace SIL.Transcelerator
 					    var existingInsertion = list[0];
 					    // The existing insertion is also a mismatch. Should this one go ahead of it? 
 					    if (existingInsertion.ScrStartReference > customization.ScrStartReference ||
-						    (existingInsertion.Reference == customization.Reference && existingInsertion.ModifiedPhrase == customization.OriginalPhrase &&
-							customization.Type == PhraseCustomization.CustomizationType.InsertionBefore))
+						    (existingInsertion.Reference == customization.Reference && existingInsertion.ModifiedPhrase == customization.OriginalPhrase))
 					    {
 						    list[0] = customization;
 						    mismatchedCustomizationToRemove = i;
@@ -311,9 +310,8 @@ namespace SIL.Transcelerator
 			    }
 			    else if (q.Matches(customization.Reference, customization.OriginalPhrase))
 			    {
-				    int deletionsRemoved = list.RemoveAll(c => c.Type == PhraseCustomization.CustomizationType.Deletion);
-					// Check for duplicate
-					if (q.PhraseInUse == customization.ModifiedPhrase && customization.Type != PhraseCustomization.CustomizationType.Deletion && customization.OriginalPhrase == customization.ModifiedPhrase)
+				    // Check for duplicate
+				    if (q.PhraseInUse == customization.ModifiedPhrase && customization.Type != PhraseCustomization.CustomizationType.Deletion)
 				    {
 					    // Compare answers. If one is a substring of the other, keep the superstring version
 					    // Otherwise, add another answer. Or maybe check for deletions and disregard...?
@@ -332,7 +330,7 @@ namespace SIL.Transcelerator
 							    q.Answers = answers.ToArray();
 						    }
 					    }
-					    deletionsToIgnore += 1 - deletionsRemoved;
+					    deletionsToIgnore += 1 - list.RemoveAll(c => c.Type == PhraseCustomization.CustomizationType.Deletion);
 				    }
 				    else if (customization.Type == PhraseCustomization.CustomizationType.Deletion && deletionsToIgnore > 0)
 				    {
@@ -346,9 +344,7 @@ namespace SIL.Transcelerator
 						    list[0] = customization;
 						    mismatchedCustomizationToRemove = -1;
 					    }
-					    else if (customization.Type == PhraseCustomization.CustomizationType.Deletion && list.Any(c => c.Type == PhraseCustomization.CustomizationType.Deletion))
-						    continue; // Can't delete the same thing twice. This will presumably exclude another copy of it.
-						else
+					    else
 						    list.Add(customization);
 				    }
 				    customizations.RemoveAt(i--);
@@ -428,7 +424,7 @@ namespace SIL.Transcelerator
 	        {
 				if (q.InsertedQuestionBefore != null && q.ScriptureReference != q.InsertedQuestionBefore.ScriptureReference)
 				{
-					foreach (Question tpAdded in GetCustomizations(q.InsertedQuestionBefore, category, index, customizations, q.StartRef))
+					foreach (Question tpAdded in GetCustomizations(q, category, index, customizations, q.StartRef))
 					{
 						yield return tpAdded;
 						index++;
