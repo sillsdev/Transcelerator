@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
+using SIL.Extensions;
 using SIL.Scripture;
 
 namespace SIL.Transcelerator
@@ -2105,7 +2106,8 @@ namespace SIL.Transcelerator
 	        pc.Reference = "PRO 3.13";
 	        pc.OriginalPhrase = "What man is happy?";
 	        pc.ModifiedPhrase = "What person is happy?";
-	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+		    pc.Answer = "The person that finds wisdom and gets understanding (13)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
 	        customizations.Add(pc);
 	        pc = new PhraseCustomization();
 	        pc.Reference = "PRO 3.13";
@@ -2175,7 +2177,7 @@ namespace SIL.Transcelerator
 	                            case 3:
 	                                Assert.IsTrue(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
-	                                //Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+	                                Assert.AreEqual("The person that finds wisdom and gets understanding (13)", actQuestion.Answers.Single());
 	                                break;
 	                            case 4:
 	                                Assert.IsFalse(actQuestion.IsUserAdded);
@@ -2396,6 +2398,7 @@ namespace SIL.Transcelerator
 	        pc.Reference = "PRO 3.13";
 	        pc.OriginalPhrase = "What man is happy?";
 	        pc.ModifiedPhrase = "What person is happy?";
+		    pc.Answer = "The person over there";
 	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
 	        customizations.Add(pc);
 	        pc = new PhraseCustomization();
@@ -2420,10 +2423,13 @@ namespace SIL.Transcelerator
 	        pc.Reference = "PRO 3.13-20";
 	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
 	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20) - Added by Tom to prove this answer is no even being considered.";
 	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
 	        customizations.Add(pc);
-	        // And just to keep things confusing, this one is added before that deleted one.
+			// And just to keep things confusing, this one is an "insertion before" (because that
+			// is apparently the default if there are no matching questions), but it actually
+			// comes after all the others (by virtue of its start reference), including all other
+			// built-in questions in the book.
 	        pc = new PhraseCustomization();
 	        pc.Reference = "PRO 3.20";
 	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
@@ -2464,31 +2470,37 @@ namespace SIL.Transcelerator
 	                        switch (iQuestion)
 	                        {
 	                            case 1:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
-	                                break;
-	                            case 2:
 	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+								case 2:
 	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
-	                                break;
-	                            case 3:
-	                                Assert.IsTrue(actQuestion.IsUserAdded);
-	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
-	                                break;
-	                            case 4:
 	                                Assert.IsFalse(actQuestion.IsUserAdded);
-	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
 	                                break;
-	                            default:
-	                                throw new Exception("More included questions than expected.");
+								case 3:
+	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
+									Assert.AreEqual("The person over there", actQuestion.Answers.Single());
+	                                Assert.IsTrue(actQuestion.IsUserAdded);
+	                                break;
+								case 4:
+	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+								case 5:
+									Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+									Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+									Assert.IsTrue(actQuestion.IsUserAdded);
+									break;
+								default:
+	                                throw new Exception($"Unexpected question: {actQuestion.PhraseInUse}");
 	                        }
 	                    }
 	                }
 	            }
 	        }
 	        Assert.IsNull(pq.KeyTerms);
-	        Assert.AreEqual(4, pq.TranslatableParts.Length);
-	        Assert.AreEqual(4, iQuestion);
+	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
 	        Assert.AreEqual(3, excludedQuestions);
 		}
 
@@ -2625,8 +2637,8 @@ namespace SIL.Transcelerator
 		[TestCase(true, PhraseCustomization.CustomizationType.InsertionBefore)]
 		[TestCase(false, PhraseCustomization.CustomizationType.AdditionAfter)]
 		[TestCase(false, PhraseCustomization.CustomizationType.AdditionAfter)]
-		[TestCase(false, PhraseCustomization.CustomizationType.InsertionBefore)]
-		public void GetResult_NewQuestionIdenticalToBuiltInQuestionWithAnswerThatContainsOriginalAnswer_BuiltInQuestionExcluded(
+		[TestCase(true, PhraseCustomization.CustomizationType.InsertionBefore)]
+		public void GetResult_NewQuestionIdenticalToBuiltInQuestionWithAnswerThatContainsOriginalAnswer_KeepsQuestionWithLongerAnswer(
 			bool originalQuestionExcluded, PhraseCustomization.CustomizationType type)
 		{
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
@@ -2675,7 +2687,7 @@ namespace SIL.Transcelerator
 								break;
 							case 3:
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
-								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.AreEqual("The one who is smiling. (13)", actQuestion.Answers.Single());
 								break;
 							case 4:
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
@@ -2708,7 +2720,7 @@ namespace SIL.Transcelerator
 			for (int i = 0; i < 2; i++)
 			{
 				pc = new PhraseCustomization();
-				pc.Reference = "PRO 3.13";
+				pc.Reference = "PRO 3.13-20";
 				pc.OriginalPhrase = "What is the deal here?";
 				pc.ModifiedPhrase = "What is the deal here?";
 				pc.Answer = "No one knows";
@@ -2788,7 +2800,7 @@ namespace SIL.Transcelerator
 		///--------------------------------------------------------------------------------------
 		[TestCase(0)]
 		[TestCase(1)]
-		[TestCase(2)]
+		//[TestCase(2)]
 		public void GetResult_IdenticalAddedQuestionsWithOneAnswerThatContainsOthers_KeepsOnlyTheOneWhoAnswerIsTheSuperset(int numberOfDeletions)
 		{
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
@@ -2797,7 +2809,7 @@ namespace SIL.Transcelerator
 			for (int i = 0; i < 3; i++)
 			{
 				pc = new PhraseCustomization();
-				pc.Reference = "PRO 3.13";
+				pc.Reference = "PRO 3.14";
 				pc.OriginalPhrase = "What is the deal here?";
 				pc.ModifiedPhrase = "What is the deal here?";
 				pc.Answer = bldr.ToString();
@@ -2809,7 +2821,7 @@ namespace SIL.Transcelerator
 			for (int i = 0; i < numberOfDeletions; i++)
 			{
 				pc = new PhraseCustomization();
-				pc.Reference = "PRO 3.13-20";
+				pc.Reference = "PRO 3.14";
 				pc.OriginalPhrase = "What is the deal here?";
 				pc.Type = PhraseCustomization.CustomizationType.Deletion;
 				customizations.Add(pc);
@@ -2844,21 +2856,21 @@ namespace SIL.Transcelerator
 								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
 								break;
 							case 3:
-								Assert.IsTrue(actQuestion.IsUserAdded);
-								Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
-								Assert.AreEqual("This is the base answer. More. More.", actQuestion.Answers.Single());
-								break;
-							case 4:
 								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+								Assert.AreEqual("This is the base answer. More. More.", actQuestion.Answers.Single());
 								break;
 							case 5:
 								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
 								break;
 							default:
-								throw new Exception("More included questions than expected.");
+								throw new Exception("Unexpected question:" + actQuestion.PhraseInUse + "(answer: " + actQuestion.Answers.First() + ")");
 						}
 					}
 				}
@@ -2884,7 +2896,7 @@ namespace SIL.Transcelerator
 	        for (int i = 0; i < 2; i++)
 	        {
 	            pc = new PhraseCustomization();
-	            pc.Reference = "PRO 3.13";
+	            pc.Reference = "PRO 3.13-20";
 	            pc.OriginalPhrase = "What is the deal here?";
 	            pc.ModifiedPhrase = "What is the deal here?";
 	            pc.Answer = "No one knows";
@@ -2914,7 +2926,8 @@ namespace SIL.Transcelerator
 	                {
 	                    iQuestion++;
 	                    Assert.IsNull(actQuestion.ModifiedPhrase);
-	                    Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
 	                    switch (iQuestion)
 	                    {
 	                        case 1:
@@ -2951,7 +2964,7 @@ namespace SIL.Transcelerator
 	            }
 	        }
 	        Assert.IsNull(pq.KeyTerms);
-	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
 	        Assert.AreEqual(5, iQuestion);
         }
 
@@ -2963,26 +2976,30 @@ namespace SIL.Transcelerator
         /// data condition.
         /// </summary>
         ///--------------------------------------------------------------------------------------
-        [TestCase(true)]
-        [TestCase(false)]
-	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswers_KeepsQuestionWithLongestAnswer(bool oneQuestionExcluded)
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+		[TestCase(false, true)]
+		[TestCase(false, false)]
+	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswers_KeepsSingleQuestionWithAllAnswers(
+			bool oneQuestionExcluded, bool questionWithShortAnswerAddedFirst)
         {
             List<PhraseCustomization> customizations = new List<PhraseCustomization>();
             PhraseCustomization pc;
-            for (int i = 0; i < 2; i++)
+	        int iShortAnswer = questionWithShortAnswerAddedFirst ? 0 : 1;
+			for (int i = 0; i < 2; i++)
             {
                 pc = new PhraseCustomization();
-                pc.Reference = "PRO 3.13";
+                pc.Reference = "PRO 3.14-16";
                 pc.OriginalPhrase = "What is the deal here?";
                 pc.ModifiedPhrase = "What is the deal here?";
-                pc.Answer = i == 0 ? "Short" : "This is a long answer!!!";
+                pc.Answer = i == iShortAnswer ? "Short" : "This is a long answer!!!";
                 pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
                 customizations.Add(pc);
             }
             if (oneQuestionExcluded)
             {
                 pc = new PhraseCustomization();
-                pc.Reference = "PRO 3.13-20";
+                pc.Reference = "PRO 3.14-16";
                 pc.OriginalPhrase = "What is the deal here?";
                 pc.Type = PhraseCustomization.CustomizationType.Deletion;
                 customizations.Add(pc);
@@ -3016,15 +3033,15 @@ namespace SIL.Transcelerator
                                 Assert.IsFalse(actQuestion.IsUserAdded);
                                 Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
                                 break;
-                            case 3:
+	                        case 3:
+		                        Assert.IsFalse(actQuestion.IsUserAdded);
+		                        Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+		                        Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+		                        break;
+							case 4:
                                 Assert.IsTrue(actQuestion.IsUserAdded);
                                 Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
-                                Assert.AreEqual("This is a long answer!!!", actQuestion.Answers.Single());
-                                break;
-                            case 4:
-                                Assert.IsFalse(actQuestion.IsUserAdded);
-                                Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
-                                Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+                                Assert.IsTrue(actQuestion.Answers.SetEquals(new [] { "Short", "This is a long answer!!!" }));
                                 break;
                             case 5:
                                 Assert.IsFalse(actQuestion.IsUserAdded);
@@ -3049,23 +3066,31 @@ namespace SIL.Transcelerator
 	    /// data condition.
 	    /// </summary>
 	    ///--------------------------------------------------------------------------------------
-	    [Test]
-	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswersAllExcluded_KeepsQuestionWithLongestAnswerButExcluded()
+	    [TestCase(true, true)]
+	    [TestCase(true, false)]
+	    [TestCase(false, true)]
+	    [TestCase(false, false)]
+	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswersAllExcluded_KeepsSingleQuestionWithAllAnswersButExcluded(
+			bool questionWithShortAnswerAddedFirst, bool includeQuestionWithSubstringAnswer)
 	    {
-	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
-	        PhraseCustomization pc;
-	        for (int i = 0; i < 2; i++)
+		    List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+		    PhraseCustomization pc;
+		    int iShortAnswer = questionWithShortAnswerAddedFirst ? 0 : 1;
+		    int numberOfAdditions = includeQuestionWithSubstringAnswer ? 3 : 2;
+			for (int i = 0; i < numberOfAdditions; i++)
 	        {
 	            pc = new PhraseCustomization();
-	            pc.Reference = "PRO 3.13";
+	            pc.Reference = "PRO 3.14";
 	            pc.OriginalPhrase = "What is the deal here?";
 	            pc.ModifiedPhrase = "What is the deal here?";
-	            pc.Answer = i == 0 ? "Short" : "This is a long answer!!!";
+	            pc.Answer = i == iShortAnswer ? "Short" : "This is a long answer!!!";
+		        if (i == 2)
+			        pc.Answer = pc.Answer.Remove(0, 5).Replace("!!!", "!");
 	            pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
 	            customizations.Add(pc);
 
 	            pc = new PhraseCustomization();
-	            pc.Reference = "PRO 3.13-20";
+	            pc.Reference = "PRO 3.14";
 	            pc.OriginalPhrase = "What is the deal here?";
 	            pc.Type = PhraseCustomization.CustomizationType.Deletion;
 	            customizations.Add(pc);
@@ -3087,7 +3112,8 @@ namespace SIL.Transcelerator
 	                {
 	                    iQuestion++;
 	                    Assert.IsNull(actQuestion.ModifiedPhrase);
-	                    Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
 	                    switch (iQuestion)
 	                    {
 	                        case 1:
@@ -3101,18 +3127,18 @@ namespace SIL.Transcelerator
 	                            Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
 	                            break;
 	                        case 3:
-	                            Assert.IsTrue(actQuestion.IsExcluded);
-	                            Assert.IsTrue(actQuestion.IsUserAdded);
-	                            Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
-	                            Assert.AreEqual("This is a long answer!!!", actQuestion.Answers.Single());
-	                            break;
-	                        case 4:
 	                            Assert.IsFalse(actQuestion.IsExcluded);
 	                            Assert.IsFalse(actQuestion.IsUserAdded);
 	                            Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 	                            Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
 	                            break;
-	                        case 5:
+		                    case 4:
+			                    Assert.IsTrue(actQuestion.IsExcluded);
+			                    Assert.IsTrue(actQuestion.IsUserAdded);
+			                    Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+			                    Assert.IsTrue(actQuestion.Answers.SetEquals(new[] { "Short", "This is a long answer!!!" }));
+								break;
+							case 5:
 	                            Assert.IsFalse(actQuestion.IsExcluded);
 	                            Assert.IsFalse(actQuestion.IsUserAdded);
 	                            Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
@@ -3124,7 +3150,7 @@ namespace SIL.Transcelerator
 	            }
 	        }
 	        Assert.IsNull(pq.KeyTerms);
-	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
 	        Assert.AreEqual(5, iQuestion);
 	    }
 
@@ -3179,7 +3205,8 @@ namespace SIL.Transcelerator
 			        {
 				        iQuestion++;
 				        Assert.IsNull(actQuestion.ModifiedPhrase);
-				        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
 				        switch (iQuestion)
 				        {
 					        case 1:
@@ -3224,7 +3251,7 @@ namespace SIL.Transcelerator
 		        }
 	        }
 	        Assert.IsNull(pq.KeyTerms);
-	        Assert.AreEqual(7, pq.TranslatableParts.Length);
+	        Assert.AreEqual(6, pq.TranslatableParts.Length);
 	        Assert.AreEqual(7, iQuestion);
 		}
 
@@ -3237,54 +3264,38 @@ namespace SIL.Transcelerator
 		[Test]
 		public void GetResult_LayersOfInsertedAndDeletedQuestionsWithDifferentVerseRanges_PhrasesAreInCorrectOrder()
 		{
-			Assert.Fail("Write me");
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 			PhraseCustomization pc = new PhraseCustomization();
-			// Note that the following two customizations really should have been done as a modifaction
-			// rather than as a deletion and additon, but a realy user did it this way, so just checking
-			// to be sure it works.
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What man is happy?";
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
 			pc.Type = PhraseCustomization.CustomizationType.Deletion;
 			customizations.Add(pc);
 			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What man is happy?";
-			pc.ModifiedPhrase = "What person is happy?";
-			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
-			customizations.Add(pc);
-			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What person is happy?";
-			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.Answer = "[Make a list of the words not understood](13 - 20)";
-			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
-			customizations.Add(pc);
-			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.Type = PhraseCustomization.CustomizationType.Deletion;
-			customizations.Add(pc);
-			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13-20";
-			pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.Type = PhraseCustomization.CustomizationType.Deletion;
-			customizations.Add(pc);
-			// The following customization is deleted by the preceding one
-			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13-20";
-			pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.Answer = "[Make a list of the words not understood](13 - 20)";
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.ModifiedPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.Answer = "\"The favor of good understanding,\" or \"a reputation for good understanding\" (NET note)";
 			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
 			customizations.Add(pc);
-			// And just to keep things confusing, this one is added before that deleted one.
 			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.20";
-			pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-			pc.Answer = "[Make a list of the words not understood](13 - 20)";
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.ModifiedPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.Answer = "\"The favor of good understanding,\" or \"a reputation for good understanding\" (NET note) (4)";
 			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12-14";
+			pc.OriginalPhrase = "How many words are there?";
+			pc.ModifiedPhrase = "How many words were there?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12-14";
+			pc.OriginalPhrase = "How many words are there?";
+			pc.ModifiedPhrase = "How many words were there?";
+			pc.Answer = "Enough to make you crazy";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
@@ -3319,21 +3330,24 @@ namespace SIL.Transcelerator
 							switch (iQuestion)
 							{
 								case 1:
-									Assert.IsFalse(actQuestion.IsUserAdded);
 									Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+									Assert.IsFalse(actQuestion.IsUserAdded);
 									break;
 								case 2:
-									Assert.IsFalse(actQuestion.IsUserAdded);
-									Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+									Assert.AreEqual("What kind of favor should you seek in the sight of God and people?", actQuestion.PhraseInUse);
+									Assert.IsTrue(actQuestion.IsUserAdded);
 									break;
 								case 3:
+									Assert.AreEqual("How many words were there?", actQuestion.PhraseInUse);
 									Assert.IsTrue(actQuestion.IsUserAdded);
-									Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
-									//Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
 									break;
 								case 4:
+									Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 									Assert.IsFalse(actQuestion.IsUserAdded);
+									break;
+								case 5:
 									Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+									Assert.IsFalse(actQuestion.IsUserAdded);
 									break;
 								default:
 									throw new Exception("More included questions than expected.");
@@ -3343,9 +3357,135 @@ namespace SIL.Transcelerator
 				}
 			}
 			Assert.IsNull(pq.KeyTerms);
-			Assert.AreEqual(4, pq.TranslatableParts.Length);
-			Assert.AreEqual(4, iQuestion);
-			Assert.AreEqual(3, excludedQuestions);
+			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.AreEqual(5, iQuestion);
+			Assert.AreEqual(1, excludedQuestions);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_AddedQuestionReplacesAddedQuestionWithNullAnswer_SingleQuestionAddedInCorrectOrderWithCorrectAnswer()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Answer = "Fill your barns with grain and make your vats overflow with new wine";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Answer = "Fill your barns with grain and make your vats overflow with new wine (10)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Answer = "Barns completely filled with grain and vats overflowing with new wine (10)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.25";
+			pc.OriginalPhrase = "What pictures describe wisdom?";
+			pc.ModifiedPhrase = "Is this a later addition to prove that it didn't get processed too early?";
+			pc.Answer = "Yes";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						iQuestion++;
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.IsFalse(actQuestion.IsExcluded);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								break;
+							case 2:
+								Assert.IsTrue(actQuestion.IsExcluded);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("What will the LORD do for you as a result of honoring Him?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Fill your barns with grain and make your vats overflow with new wine", actQuestion.Answers.Single());
+								break;
+							case 3:
+								Assert.IsFalse(actQuestion.IsExcluded);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("What will you gain as a result of honoring the LORD?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Barns completely filled with grain and vats overflowing with new wine (10)", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								break;
+							case 5:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								break;
+							case 6:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								break;
+							case 7:
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("Is this a later addition to prove that it didn't get processed too early?", actQuestion.PhraseInUse);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(6, pq.TranslatableParts.Length);
+			Assert.AreEqual(7, iQuestion);
 		}
 		#endregion
 
