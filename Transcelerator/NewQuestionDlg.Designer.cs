@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2012' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2017, SIL International.
+// <copyright from='2012' to='2017' company='SIL International'>
+//		Copyright (c) 2017, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -75,6 +75,8 @@ namespace SIL.Transcelerator
 			this.m_btnDown = new System.Windows.Forms.Button();
 			this.m_btnUp = new System.Windows.Forms.Button();
 			this.m_cboCategory = new System.Windows.Forms.ComboBox();
+			this.m_pnlEnglishQuestionControls = new System.Windows.Forms.TableLayoutPanel();
+			this.m_lblIdenticalQuestion = new System.Windows.Forms.Label();
 			m_lblEnglishQuestion = new System.Windows.Forms.Label();
 			m_lblAnswer = new System.Windows.Forms.Label();
 			m_lblCategory = new System.Windows.Forms.Label();
@@ -84,6 +86,7 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.SuspendLayout();
 			this.m_pnlArrow.SuspendLayout();
 			this.m_pnlUpDownArrows.SuspendLayout();
+			this.m_pnlEnglishQuestionControls.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_lblEnglishQuestion
@@ -155,7 +158,6 @@ namespace SIL.Transcelerator
 			// m_chkNoEnglish
 			// 
 			resources.ApplyResources(this.m_chkNoEnglish, "m_chkNoEnglish");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_chkNoEnglish, 2);
 			this.m_chkNoEnglish.Name = "m_chkNoEnglish";
 			this.m_chkNoEnglish.UseVisualStyleBackColor = true;
 			this.m_chkNoEnglish.CheckedChanged += new System.EventHandler(this.chkNoEnglish_CheckedChanged);
@@ -263,13 +265,13 @@ namespace SIL.Transcelerator
 			// m_tableLayoutPanel
 			// 
 			resources.ApplyResources(this.m_tableLayoutPanel, "m_tableLayoutPanel");
+			this.m_tableLayoutPanel.Controls.Add(this.m_pnlEnglishQuestionControls, 3, 2);
 			this.m_tableLayoutPanel.Controls.Add(m_lblEnglishQuestion, 0, 2);
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlArrow, 1, 1);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestion, 0, 4);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblSelectLocation, 0, 0);
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtVernacularQuestion, 0, 5);
 			this.m_tableLayoutPanel.Controls.Add(this.m_dataGridViewExistingQuestions, 2, 1);
-			this.m_tableLayoutPanel.Controls.Add(this.m_chkNoEnglish, 3, 2);
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtEnglishQuestion, 0, 3);
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtAnswer, 0, 7);
 			this.m_tableLayoutPanel.Controls.Add(m_lblAnswer, 0, 6);
@@ -315,6 +317,20 @@ namespace SIL.Transcelerator
 			this.m_cboCategory.Name = "m_cboCategory";
 			this.m_cboCategory.SelectedIndexChanged += new System.EventHandler(this.HandleCategoryChanged);
 			// 
+			// m_pnlEnglishQuestionControls
+			// 
+			resources.ApplyResources(this.m_pnlEnglishQuestionControls, "m_pnlEnglishQuestionControls");
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_pnlEnglishQuestionControls, 2);
+			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_chkNoEnglish, 0, 0);
+			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_lblIdenticalQuestion, 0, 1);
+			this.m_pnlEnglishQuestionControls.Name = "m_pnlEnglishQuestionControls";
+			// 
+			// m_lblIdenticalQuestion
+			// 
+			resources.ApplyResources(this.m_lblIdenticalQuestion, "m_lblIdenticalQuestion");
+			this.m_lblIdenticalQuestion.ForeColor = System.Drawing.Color.Red;
+			this.m_lblIdenticalQuestion.Name = "m_lblIdenticalQuestion";
+			// 
 			// NewQuestionDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -343,6 +359,8 @@ namespace SIL.Transcelerator
 			this.m_pnlArrow.ResumeLayout(false);
 			this.m_pnlUpDownArrows.ResumeLayout(false);
 			this.m_pnlUpDownArrows.PerformLayout();
+			this.m_pnlEnglishQuestionControls.ResumeLayout(false);
+			this.m_pnlEnglishQuestionControls.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -375,5 +393,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
+		private System.Windows.Forms.TableLayoutPanel m_pnlEnglishQuestionControls;
+		private System.Windows.Forms.Label m_lblIdenticalQuestion;
 	}
 }

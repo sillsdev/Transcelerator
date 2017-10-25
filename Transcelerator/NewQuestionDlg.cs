@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2012' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.
+#region // Copyright (c) 2017, SIL International.
+// <copyright from='2012' to='2017' company='SIL International'>
+//		Copyright (c) 2017, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -275,7 +275,24 @@ namespace SIL.Transcelerator
 
 		private void SetButtonState()
 		{
-			btnOk.Enabled = (m_txtEnglishQuestion.Text.Length > 0 || (m_chkNoEnglish.Checked && m_txtVernacularQuestion.Text.Length > 0));
+			if (m_txtEnglishQuestion.Text.Length > 0)
+			{
+				btnOk.Enabled = true;
+				foreach (DataGridViewRow row in m_dataGridViewExistingQuestions.Rows)
+				{
+					if (m_txtEnglishQuestion.Text == row.Cells[colQuestion.Index].Value as string)
+					{
+						btnOk.Enabled = false;
+						m_chkNoEnglish.Visible = false;
+						m_lblIdenticalQuestion.Visible = true;
+						return;
+					}
+				}
+			}
+			else
+				btnOk.Enabled = m_chkNoEnglish.Checked && m_txtVernacularQuestion.Text.Length > 0;
+			m_lblIdenticalQuestion.Visible = false;
+			m_chkNoEnglish.Visible = true;
 		}
 
 		private void HandleUpArrowClick(object sender, EventArgs e)
