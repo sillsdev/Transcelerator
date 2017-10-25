@@ -56,6 +56,8 @@ namespace SIL.Transcelerator
 	        }
 	    }
 
+		public QuestionKey Key => new CustomQuestionKey(this);
+
         private void SetBcvRefs()
         {
             m_scrStartReference = new BCVRef();
@@ -133,6 +135,25 @@ namespace SIL.Transcelerator
 			if (addedPhrase.Answers != null && addedPhrase.Answers.Length == 1)
 				Answer = addedPhrase.Answers[0];
 			Type = type;
+		}
+	}
+	#endregion
+
+	#region CustomQuestionKey
+	internal class CustomQuestionKey : QuestionKey
+	{
+		private readonly int m_startRef;
+		private readonly int m_endRef;
+
+		public override string ScriptureReference { get; set; }
+		public override int StartRef { get; set; }
+		public override int EndRef { get; set; }
+		internal CustomQuestionKey(PhraseCustomization pc)
+		{
+			Text = pc.OriginalPhrase;
+			ScriptureReference = pc.Reference;
+			StartRef = pc.ScrStartReference;
+			EndRef = pc.ScrEndReference;
 		}
 	}
 	#endregion
