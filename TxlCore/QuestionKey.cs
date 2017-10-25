@@ -86,6 +86,12 @@ namespace SIL.Transcelerator
 			return EndRef.CompareTo(other.EndRef);
 		}
 
+		public bool IsAtOrBeforeReference(QuestionKey keyToUseForReference, bool inclusive)
+		{
+			var compareResult = CompareRefs(keyToUseForReference);
+			return inclusive ? compareResult <= 0 : compareResult < 0;
+		}
+
 		public int CompareTo(object obj)
 		{
 			var refsComparison = CompareRefs(obj);

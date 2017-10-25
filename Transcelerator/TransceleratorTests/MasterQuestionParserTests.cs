@@ -2648,27 +2648,19 @@ namespace SIL.Transcelerator
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void GetResult_BuiltInQuestionReplacedAndBothVersionsDeleted_BothQuestionsExcluded)
+		public void GetResult_NonMatchingDeletionsOrModifications_Ignored()
 		{
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 			PhraseCustomization pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What man is happy?";
-			pc.ModifiedPhrase = "What dude is happy?";
+			pc.Reference = "PRO 3.9";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
 			pc.Type = PhraseCustomization.CustomizationType.Deletion;
 			customizations.Add(pc);
 			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What man is happy?";
-			pc.ModifiedPhrase = "What dude is happy?";
-			pc.Answer = "New answer";
-			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
-			customizations.Add(pc);
-			pc = new PhraseCustomization();
-			pc.Reference = "PRO 3.13";
-			pc.OriginalPhrase = "What man is happy?";
-			pc.ModifiedPhrase = "What dude is happy?";
-			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			pc.Reference = "PRO 3.20";
+			pc.OriginalPhrase = "Why doesn't this question exist?";
+			pc.ModifiedPhrase = "Why should it?";
+			pc.Type = PhraseCustomization.CustomizationType.Modification;
 			customizations.Add(pc);
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
 				new List<string>(), null, null, customizations, null);
@@ -2686,13 +2678,8 @@ namespace SIL.Transcelerator
 					foreach (Question actQuestion in actCategory.Questions)
 					{
 						Assert.IsNull(actQuestion.ModifiedPhrase);
-
-						if (actQuestion.IsExcluded)
-						{
-							Assert.IsTrue(originalQuestionExcluded && sameAnswer);
-							Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
-							continue;
-						}
+						Assert.IsFalse(actQuestion.IsExcluded);
+						Assert.IsFalse(actQuestion.IsUserAdded);
 						iQuestion++;
 						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
 						switch (iQuestion)
@@ -2707,8 +2694,6 @@ namespace SIL.Transcelerator
 								break;
 							case 3:
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
-								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
-								Assert.AreEqual(originalQuestionExcluded && sameAnswer, actQuestion.IsUserAdded);
 								break;
 							case 4:
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);

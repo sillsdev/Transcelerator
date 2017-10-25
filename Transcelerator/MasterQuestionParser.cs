@@ -45,6 +45,8 @@ namespace SIL.Transcelerator
 
 			private string ModifiedPhrase => Modification?.ModifiedPhrase;
 
+			public bool IsAdditionOrInsertion => AdditionsAndInsertions.Any();
+
 			public Customizations()
 			{
 				AdditionsAndInsertions = new List<PhraseCustomization>();
@@ -232,6 +234,12 @@ namespace SIL.Transcelerator
 				AdditionsAndInsertions.RemoveAt(iAdditionToRemove);
 				if (!String.IsNullOrWhiteSpace(answer) && !AllAnswers.Any(a => a.Contains(answer)) && !AdditionsAndInsertions.Where(b => b.Answer != null).Any(c => c.Answer.Contains(answer)))
 					AllAnswers.Add(answer);
+			}
+
+			public bool IsInsertionAtOrBeforeReference(QuestionKey keyToUseForReference, bool inclusive)
+			{
+				var addition = AdditionsAndInsertions.FirstOrDefault();
+				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive);
 			}
 
 			public Question CreateQuestion(QuestionKey keyToUseForReference)
@@ -533,12 +541,14 @@ namespace SIL.Transcelerator
 			}
 			if (q.InsertedQuestionBefore == null)
 			{
-				Func<int, bool> insertable = processAllAdditionsForRef ? (Func < int, bool> )(compare => compare <= 0) : compare => compare < 0;
-				var insertionForPreviousReference = customizations.LastOrDefault(c => insertable(c.Key.CompareRefs(q)) && customizations.All(other => other.Value == c.Value || !other.Key.Matches(c.Key)));
+				var insertionForPreviousReference = customizations.LastOrDefault(c => c.Value.IsInsertionAtOrBeforeReference(q, processAllAdditionsForRef) &&
+					customizations.All(other => other.Value == c.Value || !other.Key.Matches(c.Key)));
 				var key = insertionForPreviousReference.Key;
 				if (key == null)
 				{
-					Debug.Assert(!customizations.Any(c => c.Key.CompareRefs(q) < 0));
+					Debug.Assert(!customizations.Any(c => c.Value.IsInsertionAtOrBeforeReference(q, processAllAdditionsForRef)));
+					// Clean up any preceding deletions/modifications that didn't match anything
+					customizations.RemoveAll(c => c.Key.IsAtOrBeforeReference(q, processAllAdditionsForRef));
 				}
 				else
 				{
@@ -794,9 +804,9 @@ namespace SIL.Transcelerator
 				Debug.Assert(lastQuestionInBook != null && iQuestion > 0 && category != null,
 					$"Book {BCVRef.NumberToBookCode(bookNum)} has no built-in questions - cannot process customizations!");
 
-				while (customizations.Any())
+				while (customizations.Any(c => c.Value.IsAdditionOrInsertion))
 				{
-					var insertionForPreviousReference = customizations.FirstOrDefault(c => customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key)));
+					var insertionForPreviousReference = customizations.FirstOrDefault(c => c.Value.IsAdditionOrInsertion && customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key)));
 					var key = insertionForPreviousReference.Key;
 					if (key == null)
 					{
