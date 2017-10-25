@@ -2686,18 +2686,15 @@ namespace SIL.Transcelerator
 						{
 							case 1:
 								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 2:
 								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 3:
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 								break;
 							case 4:
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							default:
 								throw new Exception("More included questions than expected.");
@@ -2708,6 +2705,111 @@ namespace SIL.Transcelerator
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(4, pq.TranslatableParts.Length);
 			Assert.AreEqual(4, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetResult_AddedQuestionForVerseWithNoExistingQuestionsHasDependentAddedQuestion_PhrasesAreInCorrectOrder(
+			bool includeExtraAdditionAndDeletion)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc;
+			if (includeExtraAdditionAndDeletion)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.12";
+				pc.OriginalPhrase = "To what can we compare the LORD's treatment of those he loves?";
+				pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.12";
+				pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+				pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+				pc.Answer = "A father who disciplines the son in whom he delights (12)";
+				pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+				customizations.Add(pc);
+			}
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12";
+			pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+			pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+			pc.Answer = "Like a father who disciplines his dear and accepted son (12)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12";
+			pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+			pc.Answer = "[Make a list of the words not understood] (7-12)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.IsFalse(actQuestion.IsExcluded);
+						iQuestion++;
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("How does the LORD treat the one He loves?", actQuestion.PhraseInUse);
+								if (includeExtraAdditionAndDeletion)
+									Assert.IsTrue(actQuestion.Answers.SequenceEqual(new [] { "Like a father who disciplines his dear and accepted son (12)",
+										"A father who disciplines the son in whom he delights (12)"}));
+								else
+									Assert.AreEqual("Like a father who disciplines his dear and accepted son (12)", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+								Assert.AreEqual("[Make a list of the words not understood] (7-12)", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 5:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 6:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(6, pq.TranslatableParts.Length);
+			Assert.AreEqual(6, iQuestion);
 		}
 
 		///--------------------------------------------------------------------------------------
