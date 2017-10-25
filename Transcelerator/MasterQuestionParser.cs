@@ -80,13 +80,22 @@ namespace SIL.Transcelerator
 				}
 			}
 
+			private void SetExcludedAndModified(Question question)
+			{
+				question.IsExcluded = Deletions.SingleOrDefault() != null;
+				Deletions.Clear();
+				if (ModifiedPhrase != null)
+				{
+					question.ModifiedPhrase = ModifiedPhrase;
+					Modification = null;
+				}
+			}
+
 			public void ApplyToQuestion(Question question)
 			{
 				ResolveDeletionsAndAdditions();
 
-				question.IsExcluded = Deletions.SingleOrDefault() != null;
-				if (ModifiedPhrase != null)
-					question.ModifiedPhrase = ModifiedPhrase;
+				SetExcludedAndModified(question);
 
 				if (AdditionsAndInsertions.Count == 1 && AdditionsAndInsertions[0].OriginalPhrase == AdditionsAndInsertions[0].ModifiedPhrase && AdditionsAndInsertions[0].OriginalPhrase == question.PhraseInUse)
 				{
@@ -205,22 +214,36 @@ namespace SIL.Transcelerator
 				}
 				else if (Deletions.Count <= 1)
 				{
-					while (AdditionsAndInsertions.Count > 1)
-						RemoveAddition(0);
+					// REVIEW: We're assuming that the first (remaining) addition is the "base" one (i.e., any other non-duplicates will
+					// be hanging off of it as an insertion or addition). If this is not true, we'll need to look through the list to find
+					// the first one whose OriginalPhrase is not the ModifiedPhrase of any other addition/insertion in the list.
+					var baseAddition = AdditionsAndInsertions[0].ModifiedPhrase;
+					var i = 0;
+					while (i + 1 < AdditionsAndInsertions.Count)
+					{
+						// We assume that earlier ones in the list are older versions whose answers are less likely to be the most desirable
+						// one, so we delete ealier ones first so that the last one survives (and its answer will be inserted first in the
+						// list. Sadly, this is probably the best we can do.
+						var iNewBase = AdditionsAndInsertions.FindIndex(i + 1, a => a.ModifiedPhrase == baseAddition);
+						if (iNewBase < 0)
+							break;
+						RemoveAddition(i);
+						i = iNewBase;
+					}
 				}
 				else
 					return;
 
 				if (AllAnswers.Any())
 				{
-					var bestAnswer = AdditionsAndInsertions.Single().Answer;
+					var bestAnswer = AdditionsAndInsertions.First().Answer;
 					if (!String.IsNullOrWhiteSpace(bestAnswer) && !AllAnswers.Any(a => a.Contains(bestAnswer)))
 					{
 						AllAnswers.Insert(0, bestAnswer);
 					}
 					else if (AllAnswers.Count == 1)
 					{
-						AdditionsAndInsertions.Single().Answer = AllAnswers[0];
+						AdditionsAndInsertions.First().Answer = AllAnswers[0];
 						AllAnswers = null;
 					}
 				}
@@ -242,25 +265,24 @@ namespace SIL.Transcelerator
 				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive);
 			}
 
-			public Question CreateQuestion(QuestionKey keyToUseForReference)
+			public Question PopQuestion(QuestionKey keyToUseForReference)
 			{
 				ResolveDeletionsAndAdditions();
 
 				PhraseCustomization questionToInsert;
 				try
 				{
-					questionToInsert = AdditionsAndInsertions.Single();
+					questionToInsert = AdditionsAndInsertions.First();
 				}
 				catch (Exception e)
 				{
-					Debug.Fail("Customization that is not tied to any other question must have exactly one insertion or addition! " + e.Message);
-					// In release mode, fall back to using the first one. If there isn't one, we're toast.
-					questionToInsert = AdditionsAndInsertions.First();
+					throw new InvalidOperationException("PopQuestion should only be called for a customization that is not tied to any other question and has " +
+						"at least one insertion or addition.", e);
 				}
-				AdditionsAndInsertions.Clear();
+				AdditionsAndInsertions.RemoveAt(0);
 				var newQ = new Question(keyToUseForReference.ScriptureReference, keyToUseForReference.StartRef, keyToUseForReference.EndRef,
 					questionToInsert.ModifiedPhrase ?? questionToInsert.OriginalPhrase, questionToInsert.Answer);
-				ApplyToQuestion(newQ);
+				SetExcludedAndModified(newQ);
 				if (AllAnswers != null && AllAnswers.Any()) // Note: If there are any, there are at least 2
 					newQ.Answers = AllAnswers.ToArray();
 				return newQ;
@@ -371,8 +393,6 @@ namespace SIL.Transcelerator
 					}
 					customizationsForKey.Add(customization);
 				}
-				//foreach (var cu in m_customizations.Values.SelectMany(c => c.Values))
-				//	cu.ResolveDeletionsAndAdditions();
 			}
 			if (keyTerms != null)
             {
@@ -552,9 +572,11 @@ namespace SIL.Transcelerator
 				}
 				else
 				{
-					var newQ = q.InsertedQuestionBefore = insertionForPreviousReference.Value.CreateQuestion(key);
+					var newQ = q.InsertedQuestionBefore = insertionForPreviousReference.Value.PopQuestion(key);
 					category.Questions.Insert(index, newQ);
-					customizations.Remove(key);
+					// We now want to remove this, but only if it doesn't have additional pending insertions or deletions hanging off it.
+					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
+						customizations.Remove(key);
 					foreach (Question customQuestion in GetCustomizations(newQ, category, index, customizations, true))
 					{
 						yield return customQuestion;
@@ -574,159 +596,6 @@ namespace SIL.Transcelerator
 			        index++;
 		        }
 	        }
-
-			//         var list = new List<PhraseCustomization>();
-			//int mismatchedCustomizationToRemove = -1;
-			//   int deletionsToIgnore = 0;
-			//   for (int i = 0; i < customizations.Count; i++)
-			//   {
-			//    var customization = customizations[i];
-			//    if ((customization.Type == PhraseCustomization.CustomizationType.AdditionAfter || customization.Type == PhraseCustomization.CustomizationType.InsertionBefore) &&
-			//	    (customization.ScrStartReference < q.StartRef || (customization.ScrStartReference == q.StartRef && customization.ScrEndReference > q.EndRef)))
-			//    {
-			//	    if (mismatchedCustomizationToRemove == -1 && !list.Any(c => c.Type == PhraseCustomization.CustomizationType.InsertionBefore))
-			//	    {
-			//		    mismatchedCustomizationToRemove = i;
-			//		    list.Insert(0, customization);
-			//	    }
-			//	    else if (mismatchedCustomizationToRemove >= 0)
-			//	    {
-			//		    var existingInsertion = list[0];
-			//		    // The existing insertion is also a mismatch. Should this one go ahead of it? 
-			//		    if (existingInsertion.ScrStartReference > customization.ScrStartReference ||
-			//			    (existingInsertion.Reference == customization.Reference && existingInsertion.ModifiedPhrase == customization.OriginalPhrase))
-			//		    {
-			//			    list[0] = customization;
-			//			    mismatchedCustomizationToRemove = i;
-			//		    }
-			//	    }
-			//    }
-			//    else if (q.Matches(customization.Reference, customization.OriginalPhrase))
-			//    {
-			//	    // Check for duplicate
-			//	    if (q.PhraseInUse == customization.ModifiedPhrase && customization.Type != PhraseCustomization.CustomizationType.Deletion)
-			//	    {
-			//		    // Compare answers. If one is a substring of the other, keep the superstring version
-			//		    // Otherwise, add another answer. Or maybe check for deletions and disregard...?
-			//		    if (customization.Answer != null && (q.Answers == null || !q.Answers.Any(a => a.Contains(customization.Answer))))
-			//		    {
-			//			    int iAnswerWhichIsContainedByCustomizedAnswer = q.Answers?.IndexOf(a => customization.Answer.Contains(a)) ?? -1;
-			//			    if (iAnswerWhichIsContainedByCustomizedAnswer >= 0)
-			//			    {
-			//					Debug.Assert(q.Answers != null); // This satisfies resharper and hopefully clarifies the intention of the above code.
-			//				    q.Answers[iAnswerWhichIsContainedByCustomizedAnswer] = customization.Answer;
-			//			    }
-			//			    else
-			//			    {
-			//				    var answers = q.Answers?.ToList() ?? new List<string>();
-			//				    answers.Add(customization.Answer);
-			//				    q.Answers = answers.ToArray();
-			//			    }
-			//		    }
-			//		    deletionsToIgnore += 1 - list.RemoveAll(c => c.Type == PhraseCustomization.CustomizationType.Deletion);
-			//	    }
-			//	    else if (customization.Type == PhraseCustomization.CustomizationType.Deletion && deletionsToIgnore > 0)
-			//	    {
-			//		    deletionsToIgnore--;
-			//	    }
-			//	    else
-			//	    {
-			//		    if (mismatchedCustomizationToRemove >= 0 && customization.Type == PhraseCustomization.CustomizationType.InsertionBefore)
-			//		    {
-			//			    // We found a "real" insertion before. Any prceeding ones will have to go before THAT one instead.
-			//			    list[0] = customization;
-			//			    mismatchedCustomizationToRemove = -1;
-			//		    }
-			//		    else
-			//			    list.Add(customization);
-			//	    }
-			//	    customizations.RemoveAt(i--);
-			//    }
-			//    else if ((customization.Type == PhraseCustomization.CustomizationType.AdditionAfter || customization.Type == PhraseCustomization.CustomizationType.InsertionBefore) &&
-			//	    customization.ScrStartReference < processAllAdditionsBeforeRef)
-			//    {
-			//	    customizations.RemoveAt(i);
-			//	    q.AddedQuestionAfter = new Question(customization.Reference, customization.ScrStartReference, customization.ScrEndReference,
-			//		    customization.ModifiedPhrase, customization.Answer);
-			//	    category.Questions.Insert(index, q.AddedQuestionAfter);
-			//	    foreach (Question customQuestion in GetCustomizations(q.AddedQuestionAfter, category, index, customizations))
-			//	    {
-			//		    yield return customQuestion;
-			//		    index++;
-			//	    }
-			//    }
-			//}
-			//   if (mismatchedCustomizationToRemove >= 0)
-			//   {
-			//    // If we found an added question that didn't match the current question but needs to go before it,
-			//    // it is guaranteed to be the first one in the list and it must be treated as an insertion, unless we're
-			//    // processing trailing additions
-			//    customizations.RemoveAt(mismatchedCustomizationToRemove);
-			//	list[0].Type = processAllAdditionsBeforeRef > 0 ? PhraseCustomization.CustomizationType.AdditionAfter :
-			//		PhraseCustomization.CustomizationType.InsertionBefore;
-			//   }
-
-			//      foreach (var customization in list)
-			//         {
-			//             switch (customization.Type)
-			//             {
-
-			//              case PhraseCustomization.CustomizationType.Deletion:
-			//                  q.IsExcluded = true;
-			//                  break;
-			//              case PhraseCustomization.CustomizationType.Modification:
-			//                  q.ModifiedPhrase = customization.ModifiedPhrase;
-			//// TODO: Support modifications (and additions?) of answers (and notes?) also.
-			//                  break;
-			//              case PhraseCustomization.CustomizationType.InsertionBefore:
-			//                  if (q.InsertedQuestionBefore != null)
-			//                  {
-			//                      throw new InvalidOperationException("Only one question/phrase is permitted to be inserted. Question/phrase '" + q.Text +
-			//                          "' already has a question/phrase inserted before it: '" + q.InsertedQuestionBefore + "'. Value of subsequent insertion attempt was: '" +
-			//                          customization.ModifiedPhrase + "'.");
-			//                  }
-			//                  q.InsertedQuestionBefore = new Question(customization.Reference, customization.ScrStartReference, customization.ScrEndReference,
-			//                      customization.ModifiedPhrase, customization.Answer);
-			//                  category.Questions.Insert(index, q.InsertedQuestionBefore);
-			//                  foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, category, index, customizations))
-			//                  {
-			//                      yield return customQuestion;
-			//                      index++;
-			//                  }
-			//                  break;
-			//case PhraseCustomization.CustomizationType.AdditionAfter:
-			//    if (q.AddedQuestionAfter != null)
-			//    {
-			//        throw new InvalidOperationException("Only one question/phrase is permitted to be added. Question/phrase '" + q.Text +
-			//            "' already has a question/phrase added after it: '" + q.AddedQuestionAfter + "'. Value of of subsequent addition attempt was: '" +
-			//            customization.ModifiedPhrase + "'.");
-			//    }
-			//    q.AddedQuestionAfter = new Question(customization.Reference, customization.ScrStartReference, customization.ScrEndReference,
-			//        customization.ModifiedPhrase, customization.Answer);
-			//    category.Questions.Insert(index + (processAllAdditionsBeforeRef > 0 ? 0 : 1), q.AddedQuestionAfter);
-			//    break;
-			//    }
-			//}
-			//     if (processAllAdditionsBeforeRef == 0)
-			//     {
-			//if (q.InsertedQuestionBefore != null && q.ScriptureReference != q.InsertedQuestionBefore.ScriptureReference)
-			//{
-			//	foreach (Question tpAdded in GetCustomizations(q, category, index, customizations, q.StartRef))
-			//	{
-			//		yield return tpAdded;
-			//		index++;
-			//	}
-			//}
-			//      yield return q;
-			//     }
-			//     if (processAllAdditionsBeforeRef == 0 && q.AddedQuestionAfter != null)
-			//        {
-			//         foreach (Question tpAdded in GetCustomizations(q.AddedQuestionAfter, category, index + 1, customizations))
-			//         {
-			//          yield return tpAdded;
-			//          index++;
-			//         }
-			//        }
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -814,8 +683,9 @@ namespace SIL.Transcelerator
 						break;
 					}
 
-					var newQ = lastQuestionInBook.AddedQuestionAfter = insertionForPreviousReference.Value.CreateQuestion(key);
-					customizations.Remove(key);
+					var newQ = lastQuestionInBook.AddedQuestionAfter = insertionForPreviousReference.Value.PopQuestion(key);
+					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
+						customizations.Remove(key);
 					category.Questions.Add(newQ);
 					foreach (Question question in GetCustomizations(newQ, category, iQuestion, customizations))
 					{
