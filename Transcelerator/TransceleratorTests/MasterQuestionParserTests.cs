@@ -2045,8 +2045,12 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(7, pq.TranslatableParts.Length);
 	    }
 
-        #region TXL-187: Custom questions added for a verse (range) that does not correspond to any existing question do not get loaded
-        private static QuestionSections GenerateProverbsQuestionSections()
+		#region TXL-187: Custom questions added for a verse (range) that does not correspond to any existing question do not get loaded
+		// Essentially, the tests in this region are primarily testing certain parts of the logic in MasterQuestionParser.GetCustomizations,
+		// Customizations.ResolveDeletionsAndAdditions, and MasterQuestionParser.GetTrailingCustomizations (and the logic in GetQuestions
+		// that calls that method).
+
+		private static QuestionSections GenerateProverbsQuestionSections()
 	    {
 	        QuestionSections qs = new QuestionSections();
 	        qs.Items = new Section[1];
@@ -2258,26 +2262,26 @@ namespace SIL.Transcelerator
 	                        switch (iQuestion)
 	                        {
 	                            case 1:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
 	                                break;
 	                            case 2:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
 	                                break;
 	                            case 3:
-	                                Assert.IsTrue(actQuestion.IsUserAdded);
-	                                Assert.AreEqual("PRO 3.13-20", actQuestion.ScriptureReference);
 	                                Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
 	                                Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+		                            Assert.IsTrue(actQuestion.IsUserAdded);
+		                            Assert.AreEqual("PRO 3.13-20", actQuestion.ScriptureReference);
 	                                break;
 	                            case 4:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
 	                                break;
                                 case 5:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                break;
 	                            default:
 	                                throw new Exception("More included questions than expected.");
@@ -2557,8 +2561,8 @@ namespace SIL.Transcelerator
 		///--------------------------------------------------------------------------------------
 		[TestCase(true, true, PhraseCustomization.CustomizationType.InsertionBefore)]
 	    [TestCase(true, true, PhraseCustomization.CustomizationType.AdditionAfter)]
-        [TestCase(false, true, PhraseCustomization.CustomizationType.AdditionAfter)]
-        [TestCase(false, true, PhraseCustomization.CustomizationType.InsertionBefore)]
+        [TestCase(false, true, PhraseCustomization.CustomizationType.AdditionAfter)]   // Not sure these two cases make sense. Why would you ever replace
+        [TestCase(false, true, PhraseCustomization.CustomizationType.InsertionBefore)] // and existing question with an identical one w/o an answer?
 	    [TestCase(true, false, PhraseCustomization.CustomizationType.InsertionBefore)]
 	    [TestCase(true, false, PhraseCustomization.CustomizationType.AdditionAfter)]
 	    [TestCase(false, false, PhraseCustomization.CustomizationType.AdditionAfter)]
@@ -2597,25 +2601,34 @@ namespace SIL.Transcelerator
 	            {
 	                foreach (Question actQuestion in actCategory.Questions)
 	                {
-	                    iQuestion++;
-	                    Assert.IsFalse(actQuestion.IsExcluded);
-	                    Assert.IsNull(actQuestion.ModifiedPhrase);
-	                    Assert.IsFalse(actQuestion.IsUserAdded);
+		                Assert.IsNull(actQuestion.ModifiedPhrase);
+
+		                if (actQuestion.IsExcluded)
+		                {
+			                Assert.IsTrue(originalQuestionExcluded && sameAnswer);
+	                        Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+							continue;
+						}
+						iQuestion++;
 	                    Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
 	                    switch (iQuestion)
 	                    {
 	                        case 1:
 	                            Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+		                        Assert.IsFalse(actQuestion.IsUserAdded);
 	                            break;
 	                        case 2:
 	                            Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 	                            break;
 	                        case 3:
 	                            Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 	                            Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.AreEqual(originalQuestionExcluded && sameAnswer, actQuestion.IsUserAdded);
 	                            break;
 	                        case 4:
 	                            Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 	                            break;
 	                        default:
 	                            throw new Exception("More included questions than expected.");
@@ -2626,6 +2639,90 @@ namespace SIL.Transcelerator
 	        Assert.IsNull(pq.KeyTerms);
 	        Assert.AreEqual(4, pq.TranslatableParts.Length);
 	        Assert.AreEqual(4, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_BuiltInQuestionReplacedAndBothVersionsDeleted_BothQuestionsExcluded)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What dude is happy?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What dude is happy?";
+			pc.Answer = "New answer";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What dude is happy?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+
+						if (actQuestion.IsExcluded)
+						{
+							Assert.IsTrue(originalQuestionExcluded && sameAnswer);
+							Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+							continue;
+						}
+						iQuestion++;
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.AreEqual(originalQuestionExcluded && sameAnswer, actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(4, pq.TranslatableParts.Length);
+			Assert.AreEqual(4, iQuestion);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -2672,25 +2769,32 @@ namespace SIL.Transcelerator
 				{
 					foreach (Question actQuestion in actCategory.Questions)
 					{
-						iQuestion++;
-						Assert.IsFalse(actQuestion.IsExcluded);
 						Assert.IsNull(actQuestion.ModifiedPhrase);
-						Assert.IsFalse(actQuestion.IsUserAdded);
+						if (actQuestion.IsExcluded)
+						{
+							Assert.IsTrue(originalQuestionExcluded);
+							continue;
+						}
 						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						iQuestion++;
 						switch (iQuestion)
 						{
 							case 1:
 								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 2:
 								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 3:
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 								Assert.AreEqual("The one who is smiling. (13)", actQuestion.Answers.Single());
+								Assert.AreEqual(originalQuestionExcluded, actQuestion.IsUserAdded);
 								break;
 							case 4:
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							default:
 								throw new Exception("More included questions than expected.");
@@ -2848,26 +2952,26 @@ namespace SIL.Transcelerator
 						switch (iQuestion)
 						{
 							case 1:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 2:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 3:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
 								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 4:
-								Assert.IsTrue(actQuestion.IsUserAdded);
 								Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
 								Assert.AreEqual("This is the base answer. More. More.", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
 								break;
 							case 5:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							default:
 								throw new Exception("Unexpected question:" + actQuestion.PhraseInUse + "(answer: " + actQuestion.Answers.First() + ")");
@@ -3445,37 +3549,37 @@ namespace SIL.Transcelerator
 						switch (iQuestion)
 						{
 							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
 								Assert.IsFalse(actQuestion.IsExcluded);
 								Assert.IsFalse(actQuestion.IsUserAdded);
-								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
 								break;
 							case 2:
+								Assert.AreEqual("What will the LORD do for you as a result of honoring Him?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Fill your barns with grain and make your vats overflow with new wine (10)", actQuestion.Answers.Single());
 								Assert.IsTrue(actQuestion.IsExcluded);
 								Assert.IsTrue(actQuestion.IsUserAdded);
-								Assert.AreEqual("What will the LORD do for you as a result of honoring Him?", actQuestion.PhraseInUse);
-								Assert.AreEqual("Fill your barns with grain and make your vats overflow with new wine", actQuestion.Answers.Single());
 								break;
 							case 3:
-								Assert.IsFalse(actQuestion.IsExcluded);
-								Assert.IsTrue(actQuestion.IsUserAdded);
 								Assert.AreEqual("What will you gain as a result of honoring the LORD?", actQuestion.PhraseInUse);
 								Assert.AreEqual("Barns completely filled with grain and vats overflowing with new wine (10)", actQuestion.Answers.Single());
+								Assert.IsFalse(actQuestion.IsExcluded);
+								Assert.IsTrue(actQuestion.IsUserAdded);
 								break;
 							case 4:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 5:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 6:
-								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								break;
 							case 7:
-								Assert.IsTrue(actQuestion.IsUserAdded);
 								Assert.AreEqual("Is this a later addition to prove that it didn't get processed too early?", actQuestion.PhraseInUse);
+								Assert.IsTrue(actQuestion.IsUserAdded);
 								break;
 							default:
 								throw new Exception("More included questions than expected.");
