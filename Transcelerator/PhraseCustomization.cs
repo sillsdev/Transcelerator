@@ -10,6 +10,7 @@
 // File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
 using System.Xml.Serialization;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {
@@ -22,22 +23,54 @@ namespace SIL.Transcelerator
 	[XmlType("PhraseCustomization")]
 	public class PhraseCustomization
 	{
-		#region CustomizationType enumeration
-		public enum CustomizationType
+	    private BCVRef m_scrStartReference;
+	    private BCVRef m_scrEndReference;
+
+        #region CustomizationType enumeration
+        public enum CustomizationType
 		{
 			Modification,
 			Deletion,
 			InsertionBefore,
 			AdditionAfter,
 		}
-		#endregion
+        #endregion
 
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets or sets the reference.
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		[XmlAttribute("ref")]
+	    public BCVRef ScrStartReference
+	    {
+	        get
+	        {
+	            if (m_scrStartReference == null)
+	                SetBcvRefs();
+	            return m_scrStartReference;
+	        }
+	    }
+
+	    public BCVRef ScrEndReference
+	    {
+	        get
+	        {
+	            if (m_scrEndReference == null)
+	                SetBcvRefs();
+                return m_scrEndReference;
+	        }
+	    }
+
+		public QuestionKey Key => new CustomQuestionKey(this);
+
+        private void SetBcvRefs()
+        {
+            m_scrStartReference = new BCVRef();
+            m_scrEndReference = new BCVRef();
+            BCVRef.ParseRefRange(Reference, ref m_scrStartReference, ref m_scrEndReference);
+        }
+
+        /// --------------------------------------------------------------------------------
+        /// <summary>
+        /// Gets or sets the reference.
+        /// </summary>
+        /// --------------------------------------------------------------------------------
+        [XmlAttribute("ref")]
 		public string Reference { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
@@ -64,22 +97,22 @@ namespace SIL.Transcelerator
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute("type")]
 		public CustomizationType Type { get; set; }
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlTranslation"/> class, needed
-		/// for XML serialization.
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		public PhraseCustomization()
+        /// --------------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PhraseCustomization"/> class, needed
+        /// for XML serialization.
+        /// </summary>
+        /// --------------------------------------------------------------------------------
+        public PhraseCustomization()
 		{
 		}
 
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlTranslation"/> class.
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		public PhraseCustomization(TranslatablePhrase tp)
+        /// --------------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PhraseCustomization"/> class.
+        /// </summary>
+        /// --------------------------------------------------------------------------------
+        public PhraseCustomization(TranslatablePhrase tp)
 		{
 			Reference = tp.Reference;
 			OriginalPhrase = tp.OriginalPhrase;
@@ -87,13 +120,13 @@ namespace SIL.Transcelerator
 			Type = tp.IsExcluded ? CustomizationType.Deletion : CustomizationType.Modification;
 		}
 
-		/// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XmlTranslation"/> class for an
-		/// insertion or addition.
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		public PhraseCustomization(string basePhrase, Question addedPhrase,
+        /// --------------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PhraseCustomization"/> class for an
+        /// insertion or addition.
+        /// </summary>
+        /// --------------------------------------------------------------------------------
+        public PhraseCustomization(string basePhrase, Question addedPhrase,
 			CustomizationType type)
 		{
 			Reference = addedPhrase.ScriptureReference;
@@ -102,6 +135,25 @@ namespace SIL.Transcelerator
 			if (addedPhrase.Answers != null && addedPhrase.Answers.Length == 1)
 				Answer = addedPhrase.Answers[0];
 			Type = type;
+		}
+	}
+	#endregion
+
+	#region CustomQuestionKey
+	internal class CustomQuestionKey : QuestionKey
+	{
+		private readonly int m_startRef;
+		private readonly int m_endRef;
+
+		public override string ScriptureReference { get; set; }
+		public override int StartRef { get; set; }
+		public override int EndRef { get; set; }
+		internal CustomQuestionKey(PhraseCustomization pc)
+		{
+			Text = pc.OriginalPhrase;
+			ScriptureReference = pc.Reference;
+			StartRef = pc.ScrStartReference;
+			EndRef = pc.ScrEndReference;
 		}
 	}
 	#endregion

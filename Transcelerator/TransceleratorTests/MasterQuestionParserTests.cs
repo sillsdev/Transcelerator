@@ -12,8 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
+using SIL.Extensions;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {
@@ -2040,7 +2043,1642 @@ namespace SIL.Transcelerator
 			}
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(7, pq.TranslatableParts.Length);
+	    }
+
+		#region TXL-187: Custom questions added for a verse (range) that does not correspond to any existing question do not get loaded
+		// Essentially, the tests in this region are primarily testing certain parts of the logic in MasterQuestionParser.GetCustomizations,
+		// Customizations.ResolveDeletionsAndAdditions, and MasterQuestionParser.GetTrailingCustomizations (and the logic in GetQuestions
+		// that calls that method).
+
+		private static QuestionSections GenerateProverbsQuestionSections()
+	    {
+	        QuestionSections qs = new QuestionSections();
+	        qs.Items = new Section[1];
+	        int iS = 0;
+	        qs.Items[iS] = CreateSection("PRO 3.1-35", "Proverbs 3:1-35 The Rewards of Wisdom.", 20003001,
+	            20003035, 1, 3);
+	        int iC = 0;
+	        Question q = qs.Items[iS].Categories[iC].Questions[0];
+	        q.Text = "What is wisdom?";
+	        q.Answers = new[] { "Smartness on steroids" };
+
+	        iC = 1;
+	        int iQ = 0;
+	        q = qs.Items[iS].Categories[iC].Questions[iQ];
+	        q.StartRef = 20003012;
+	        q.EndRef = 20003014;
+	        q.ScriptureReference = "PRO 3.12-14";
+	        q.Text = "How many words are there?";
+	        q.Answers = new[] { "A bunch" };
+
+	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
+	        q.StartRef = 20003013;
+	        q.EndRef = 20003013;
+	        q.ScriptureReference = "PRO 3.13";
+	        q.Text = "What man is happy?";
+	        q.Answers = new[] { "The one who is smiling" };
+
+	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
+	        q.StartRef = 20003015;
+	        q.EndRef = 20003016;
+	        q.ScriptureReference = "PRO 3.15-16";
+	        q.Text = "What pictures describe wisdom?";
+	        q.Answers = new[] { "Jewels, life, riches, etc." };
+
+	        return qs;
+	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests that user questions are properly added/inserted into the correct location when
+	    /// they are for a verse (or range) that does not match any existing question.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_SomeAddedQuestionsReplaceQuestionsWithDifferentVerseRangeButAreAlsoDeleted_PhrasesAreInCorrectOrderWithNoAdditions()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        // Note that the following two customizations really should have been done as a modifaction
+	        // rather than as a deletion and additon, but a realy user did it this way, so just checking
+	        // to be sure it works.
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.ModifiedPhrase = "What person is happy?";
+		    pc.Answer = "The person that finds wisdom and gets understanding (13)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What person is happy?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        // The following customization is deleted by the preceding one
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int excludedQuestions = 0;
+	        int iQuestion = 0;
+
+	        for (int iS = 0; iS < sections.Length; iS++)
+	        {
+	            Section actSection = sections[iS];
+	            for (int iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                Category actCategory = actSection.Categories[iC];
+	                for (int iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    Question actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+	                                break;
+	                            case 2:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+	                                break;
+	                            case 3:
+	                                Assert.IsTrue(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
+	                                Assert.AreEqual("The person that finds wisdom and gets understanding (13)", actQuestion.Answers.Single());
+	                                break;
+	                            case 4:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
+	        Assert.AreEqual(4, iQuestion);
+	        Assert.AreEqual(3, excludedQuestions);
+	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests that user questions are properly added/inserted into the correct location when
+	    /// they are for a verse (or range) that does not match any existing question.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_AddedQuestionReplacesQuestionWithDifferentVerseRange_PhrasesAreInCorrectOrder()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int excludedQuestions = 0;
+	        int iQuestion = 0;
+
+	        for (int iS = 0; iS < sections.Length; iS++)
+	        {
+	            Section actSection = sections[iS];
+	            for (int iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                Category actCategory = actSection.Categories[iC];
+	                for (int iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    Question actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+	                            case 2:
+	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+	                            case 3:
+	                                Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+	                                Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+		                            Assert.IsTrue(actQuestion.IsUserAdded);
+		                            Assert.AreEqual("PRO 3.13-20", actQuestion.ScriptureReference);
+	                                break;
+	                            case 4:
+	                                Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+                                case 5:
+	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
+	        Assert.AreEqual(1, excludedQuestions);
+	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests that user questions are properly added/inserted into the correct location when
+	    /// they are for a verse (or range) that does not match any existing question.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_InsertedQuestionWithVerseRangeThatDoesNotMatchxistingQuestion_InsertedPhraseIncludedInCorrectPlace()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int excludedQuestions = 0;
+	        int iQuestion = 0;
+
+	        for (int iS = 0; iS < sections.Length; iS++)
+	        {
+	            Section actSection = sections[iS];
+	            for (int iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                Category actCategory = actSection.Categories[iC];
+	                for (int iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    Question actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+	                                break;
+	                            case 2:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+	                                break;
+	                            case 3:
+	                                Assert.IsTrue(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("PRO 3.13-20", actQuestion.ScriptureReference);
+	                                Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+	                                Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+	                                break;
+	                            case 4:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+	                                break;
+	                            case 5:
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
+	        Assert.AreEqual(0, excludedQuestions);
+	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests that user questions are properly added/inserted into the correct location when
+	    /// they are for a verse (or range) that does not match any existing question.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_AddedQuestionWithDifferentSingleVerseReplacesDeletedQuestionWithDifferentVerseRange_PhrasesAreInCorrectOrder()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        // Note that the following two customizations really should have been done as a modifaction
+	        // rather than as a deletion and additon, but a realy user did it this way, so just checking
+	        // to be sure it works.
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.ModifiedPhrase = "What person is happy?";
+		    pc.Answer = "The person over there";
+	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What person is happy?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+	        // The following customization is deleted by the preceding one
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13-20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20) - Added by Tom to prove this answer is no even being considered.";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+			// And just to keep things confusing, this one is an "insertion before" (because that
+			// is apparently the default if there are no matching questions), but it actually
+			// comes after all the others (by virtue of its start reference), including all other
+			// built-in questions in the book.
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.20";
+	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int excludedQuestions = 0;
+	        int iQuestion = 0;
+
+	        for (int iS = 0; iS < sections.Length; iS++)
+	        {
+	            Section actSection = sections[iS];
+	            for (int iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                Category actCategory = actSection.Categories[iC];
+	                for (int iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    Question actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+								case 2:
+	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+								case 3:
+	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
+									Assert.AreEqual("The person over there", actQuestion.Answers.Single());
+	                                Assert.IsTrue(actQuestion.IsUserAdded);
+	                                break;
+								case 4:
+	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                break;
+								case 5:
+									Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+									Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+									Assert.IsTrue(actQuestion.IsUserAdded);
+									break;
+								default:
+	                                throw new Exception($"Unexpected question: {actQuestion.PhraseInUse}");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(5, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
+	        Assert.AreEqual(3, excludedQuestions);
 		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_NewQuestionsWithDifferentVerses_PhrasesNotAttachedToQuestionsForDifferentBook()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 1.13";
+			pc.OriginalPhrase = "What does a person gain by wisdom?";
+			pc.ModifiedPhrase = "What does a person gain by wisdom?";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13-20";
+			pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			VerifyQuestionSections(pq);
+
+			Section[] sections = pq.Sections.Items;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.IsFalse(actQuestion.IsUserAdded);
+					}
+				}
+			}
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true, true, PhraseCustomization.CustomizationType.InsertionBefore)]
+	    [TestCase(true, true, PhraseCustomization.CustomizationType.AdditionAfter)]
+        [TestCase(false, true, PhraseCustomization.CustomizationType.AdditionAfter)]   // Not sure these two cases make sense. Why would you ever replace
+        [TestCase(false, true, PhraseCustomization.CustomizationType.InsertionBefore)] // and existing question with an identical one w/o an answer?
+	    [TestCase(true, false, PhraseCustomization.CustomizationType.InsertionBefore)]
+	    [TestCase(true, false, PhraseCustomization.CustomizationType.AdditionAfter)]
+	    [TestCase(false, false, PhraseCustomization.CustomizationType.AdditionAfter)]
+	    [TestCase(false, false, PhraseCustomization.CustomizationType.InsertionBefore)]
+	    public void GetResult_NewQuestionIdenticalToBuiltInQuestionWithSameAnswerOrNoAnswer_KeepsBuiltInQuestion(
+	        bool sameAnswer, bool originalQuestionExcluded, PhraseCustomization.CustomizationType type)
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        if (originalQuestionExcluded)
+	        {
+	            pc.Reference = "PRO 3.13";
+	            pc.OriginalPhrase = "What man is happy?";
+	            pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	            customizations.Add(pc);
+	        }
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.13";
+	        pc.OriginalPhrase = "What man is happy?";
+	        pc.ModifiedPhrase = "What man is happy?";
+	        pc.Answer = sameAnswer ? "The one who is smiling" : "";
+            pc.Type = type;
+	        customizations.Add(pc);
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int iQuestion = 0;
+
+	        foreach (Section actSection in sections)
+	        {
+	            foreach (Category actCategory in actSection.Categories)
+	            {
+	                foreach (Question actQuestion in actCategory.Questions)
+	                {
+		                Assert.IsNull(actQuestion.ModifiedPhrase);
+
+		                if (actQuestion.IsExcluded)
+		                {
+			                Assert.IsTrue(originalQuestionExcluded && sameAnswer);
+	                        Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+							continue;
+						}
+						iQuestion++;
+	                    Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                    switch (iQuestion)
+	                    {
+	                        case 1:
+	                            Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+		                        Assert.IsFalse(actQuestion.IsUserAdded);
+	                            break;
+	                        case 2:
+	                            Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+	                            break;
+	                        case 3:
+	                            Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+	                            Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.AreEqual(originalQuestionExcluded && sameAnswer, actQuestion.IsUserAdded);
+	                            break;
+	                        case 4:
+	                            Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+	                            break;
+	                        default:
+	                            throw new Exception("More included questions than expected.");
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
+	        Assert.AreEqual(4, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_NonMatchingDeletionsOrModifications_Ignored()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.9";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.20";
+			pc.OriginalPhrase = "Why doesn't this question exist?";
+			pc.ModifiedPhrase = "Why should it?";
+			pc.Type = PhraseCustomization.CustomizationType.Modification;
+			customizations.Add(pc);
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.IsFalse(actQuestion.IsExcluded);
+						Assert.IsFalse(actQuestion.IsUserAdded);
+						iQuestion++;
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								break;
+							case 3:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								break;
+							case 4:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(4, pq.TranslatableParts.Length);
+			Assert.AreEqual(4, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetResult_AddedQuestionForVerseWithNoExistingQuestionsHasDependentAddedQuestion_PhrasesAreInCorrectOrder(
+			bool includeExtraAdditionAndDeletion)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc;
+			if (includeExtraAdditionAndDeletion)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.12";
+				pc.OriginalPhrase = "To what can we compare the LORD's treatment of those he loves?";
+				pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.12";
+				pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+				pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+				pc.Answer = "A father who disciplines the son in whom he delights (12)";
+				pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+				customizations.Add(pc);
+			}
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12";
+			pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+			pc.ModifiedPhrase = "How does the LORD treat the one He loves?";
+			pc.Answer = "Like a father who disciplines his dear and accepted son (12)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12";
+			pc.OriginalPhrase = "How does the LORD treat the one He loves?";
+			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+			pc.Answer = "[Make a list of the words not understood] (7-12)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.IsFalse(actQuestion.IsExcluded);
+						iQuestion++;
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("How does the LORD treat the one He loves?", actQuestion.PhraseInUse);
+								if (includeExtraAdditionAndDeletion)
+									Assert.IsTrue(actQuestion.Answers.SequenceEqual(new [] { "Like a father who disciplines his dear and accepted son (12)",
+										"A father who disciplines the son in whom he delights (12)"}));
+								else
+									Assert.AreEqual("Like a father who disciplines his dear and accepted son (12)", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+								Assert.AreEqual("[Make a list of the words not understood] (7-12)", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 5:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 6:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(6, pq.TranslatableParts.Length);
+			Assert.AreEqual(6, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true, PhraseCustomization.CustomizationType.InsertionBefore)]
+		[TestCase(false, PhraseCustomization.CustomizationType.AdditionAfter)]
+		[TestCase(false, PhraseCustomization.CustomizationType.AdditionAfter)]
+		[TestCase(true, PhraseCustomization.CustomizationType.InsertionBefore)]
+		public void GetResult_NewQuestionIdenticalToBuiltInQuestionWithAnswerThatContainsOriginalAnswer_KeepsQuestionWithLongerAnswer(
+			bool originalQuestionExcluded, PhraseCustomization.CustomizationType type)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			if (originalQuestionExcluded)
+			{
+				pc.Reference = "PRO 3.13";
+				pc.OriginalPhrase = "What man is happy?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+			}
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What man is happy?";
+			pc.Answer = "The one who is smiling. (13)";
+			pc.Type = type;
+			customizations.Add(pc);
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (actQuestion.IsExcluded)
+						{
+							Assert.IsTrue(originalQuestionExcluded);
+							continue;
+						}
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						iQuestion++;
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.AreEqual("The one who is smiling. (13)", actQuestion.Answers.Single());
+								Assert.AreEqual(originalQuestionExcluded, actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(4, pq.TranslatableParts.Length);
+			Assert.AreEqual(4, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetResult_IdenticalAddedQuestionsWithSameAnswers_KeepsOnlyOne(bool oneQuestionExcluded)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc;
+			for (int i = 0; i < 2; i++)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.13-20";
+				pc.OriginalPhrase = "What is the deal here?";
+				pc.ModifiedPhrase = "What is the deal here?";
+				pc.Answer = "No one knows";
+				// This matches what I saw in real user data, but it probably doesn't matter.
+				pc.Type = i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter;
+				customizations.Add(pc);
+			}
+			if (oneQuestionExcluded)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.13-20";
+				pc.OriginalPhrase = "What is the deal here?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+			}
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						iQuestion++;
+						Assert.IsFalse(actQuestion.IsExcluded);
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								break;
+							case 2:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								break;
+							case 3:
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+								Assert.AreEqual("No one knows", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								break;
+							case 5:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.AreEqual(5, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(0)]
+		[TestCase(1)]
+		//[TestCase(2)]
+		public void GetResult_IdenticalAddedQuestionsWithOneAnswerThatContainsOthers_KeepsOnlyTheOneWhoAnswerIsTheSuperset(int numberOfDeletions)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc;
+			StringBuilder bldr = new StringBuilder("This is the base answer.");
+			for (int i = 0; i < 3; i++)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.14";
+				pc.OriginalPhrase = "What is the deal here?";
+				pc.ModifiedPhrase = "What is the deal here?";
+				pc.Answer = bldr.ToString();
+				bldr.Append(" More.");
+				// This matches what I saw in real user data, but it probably doesn't matter.
+				pc.Type = i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter;
+				customizations.Add(pc);
+			}
+			for (int i = 0; i < numberOfDeletions; i++)
+			{
+				pc = new PhraseCustomization();
+				pc.Reference = "PRO 3.14";
+				pc.OriginalPhrase = "What is the deal here?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+			}
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						iQuestion++;
+						Assert.IsFalse(actQuestion.IsExcluded);
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+								Assert.AreEqual("This is the base answer. More. More.", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 5:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("Unexpected question:" + actQuestion.PhraseInUse + "(answer: " + actQuestion.Answers.First() + ")");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.AreEqual(5, iQuestion);
+		}
+
+	    ///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+		/// data condition.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+	    public void GetResult_IdenticalAddedQuestionsAllExcluded_KeepsOnlyOneButExcludesIt()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc;
+	        for (int i = 0; i < 2; i++)
+	        {
+	            pc = new PhraseCustomization();
+	            pc.Reference = "PRO 3.13-20";
+	            pc.OriginalPhrase = "What is the deal here?";
+	            pc.ModifiedPhrase = "What is the deal here?";
+	            pc.Answer = "No one knows";
+	            pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	            customizations.Add(pc);
+
+	            pc = new PhraseCustomization();
+	            pc.Reference = "PRO 3.13-20";
+	            pc.OriginalPhrase = "What is the deal here?";
+	            pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	            customizations.Add(pc);
+	        }
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int iQuestion = 0;
+
+	        foreach (Section actSection in sections)
+	        {
+	            foreach (Category actCategory in actSection.Categories)
+	            {
+	                foreach (Question actQuestion in actCategory.Questions)
+	                {
+	                    iQuestion++;
+	                    Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                    switch (iQuestion)
+	                    {
+	                        case 1:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+	                            break;
+	                        case 2:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+	                            break;
+                            case 3:
+                                Assert.IsTrue(actQuestion.IsExcluded);
+                                Assert.IsTrue(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+	                            Assert.AreEqual("No one knows", actQuestion.Answers.Single());
+                                break;
+                            case 4:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+	                            Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+	                            break;
+	                        case 5:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                            break;
+	                        default:
+	                            throw new Exception("More included questions than expected.");
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
+        }
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that user questions are properly added/inserted into the correct location when
+        /// they are for a verse (or range) that does not match any existing question.
+        /// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+        /// data condition.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+		[TestCase(false, true)]
+		[TestCase(false, false)]
+	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswers_KeepsSingleQuestionWithAllAnswers(
+			bool oneQuestionExcluded, bool questionWithShortAnswerAddedFirst)
+        {
+            List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+            PhraseCustomization pc;
+	        int iShortAnswer = questionWithShortAnswerAddedFirst ? 0 : 1;
+			for (int i = 0; i < 2; i++)
+            {
+                pc = new PhraseCustomization();
+                pc.Reference = "PRO 3.14-16";
+                pc.OriginalPhrase = "What is the deal here?";
+                pc.ModifiedPhrase = "What is the deal here?";
+                pc.Answer = i == iShortAnswer ? "Short" : "This is a long answer!!!";
+                pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+                customizations.Add(pc);
+            }
+            if (oneQuestionExcluded)
+            {
+                pc = new PhraseCustomization();
+                pc.Reference = "PRO 3.14-16";
+                pc.OriginalPhrase = "What is the deal here?";
+                pc.Type = PhraseCustomization.CustomizationType.Deletion;
+                customizations.Add(pc);
+            }
+            MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+                new List<string>(), null, null, customizations, null);
+
+            ParsedQuestions pq = qp.Result;
+
+            Section[] sections = pq.Sections.Items;
+
+            int iQuestion = 0;
+
+            foreach (Section actSection in sections)
+            {
+                foreach (Category actCategory in actSection.Categories)
+                {
+                    foreach (Question actQuestion in actCategory.Questions)
+                    {
+                        iQuestion++;
+                        Assert.IsFalse(actQuestion.IsExcluded);
+                        Assert.IsNull(actQuestion.ModifiedPhrase);
+                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+                        switch (iQuestion)
+                        {
+                            case 1:
+                                Assert.IsFalse(actQuestion.IsUserAdded);
+                                Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+                                break;
+                            case 2:
+                                Assert.IsFalse(actQuestion.IsUserAdded);
+                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+                                break;
+	                        case 3:
+		                        Assert.IsFalse(actQuestion.IsUserAdded);
+		                        Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+		                        Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+		                        break;
+							case 4:
+                                Assert.IsTrue(actQuestion.IsUserAdded);
+                                Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+                                Assert.IsTrue(actQuestion.Answers.SetEquals(new [] { "Short", "This is a long answer!!!" }));
+                                break;
+                            case 5:
+                                Assert.IsFalse(actQuestion.IsUserAdded);
+                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+                                break;
+                            default:
+                                throw new Exception("More included questions than expected.");
+                        }
+                    }
+                }
+            }
+            Assert.IsNull(pq.KeyTerms);
+            Assert.AreEqual(5, pq.TranslatableParts.Length);
+            Assert.AreEqual(5, iQuestion);
+        }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests that user questions are properly added/inserted into the correct location when
+	    /// they are for a verse (or range) that does not match any existing question.
+	    /// UI no longer permits this, but it used to, so we need to be sure we handle this bogus
+	    /// data condition.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [TestCase(true, true)]
+	    [TestCase(true, false)]
+	    [TestCase(false, true)]
+	    [TestCase(false, false)]
+	    public void GetResult_IdenticalAddedQuestionsWithDifferentAnswersAllExcluded_KeepsSingleQuestionWithAllAnswersButExcluded(
+			bool questionWithShortAnswerAddedFirst, bool includeQuestionWithSubstringAnswer)
+	    {
+		    List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+		    PhraseCustomization pc;
+		    int iShortAnswer = questionWithShortAnswerAddedFirst ? 0 : 1;
+		    int numberOfAdditions = includeQuestionWithSubstringAnswer ? 3 : 2;
+			for (int i = 0; i < numberOfAdditions; i++)
+	        {
+	            pc = new PhraseCustomization();
+	            pc.Reference = "PRO 3.14";
+	            pc.OriginalPhrase = "What is the deal here?";
+	            pc.ModifiedPhrase = "What is the deal here?";
+	            pc.Answer = i == iShortAnswer ? "Short" : "This is a long answer!!!";
+		        if (i == 2)
+			        pc.Answer = pc.Answer.Remove(0, 5).Replace("!!!", "!");
+	            pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	            customizations.Add(pc);
+
+	            pc = new PhraseCustomization();
+	            pc.Reference = "PRO 3.14";
+	            pc.OriginalPhrase = "What is the deal here?";
+	            pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	            customizations.Add(pc);
+	        }
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int iQuestion = 0;
+
+	        foreach (Section actSection in sections)
+	        {
+	            foreach (Category actCategory in actSection.Categories)
+	            {
+	                foreach (Question actQuestion in actCategory.Questions)
+	                {
+	                    iQuestion++;
+	                    Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                    switch (iQuestion)
+	                    {
+	                        case 1:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+	                            break;
+	                        case 2:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+	                            break;
+	                        case 3:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+	                            Assert.AreEqual("The one who is smiling", actQuestion.Answers.Single());
+	                            break;
+		                    case 4:
+			                    Assert.IsTrue(actQuestion.IsExcluded);
+			                    Assert.IsTrue(actQuestion.IsUserAdded);
+			                    Assert.AreEqual("What is the deal here?", actQuestion.PhraseInUse);
+			                    Assert.IsTrue(actQuestion.Answers.SetEquals(new[] { "Short", "This is a long answer!!!" }));
+								break;
+							case 5:
+	                            Assert.IsFalse(actQuestion.IsExcluded);
+	                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                            Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+	                            break;
+	                        default:
+	                            throw new Exception("More included questions than expected.");
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(4, pq.TranslatableParts.Length);
+	        Assert.AreEqual(5, iQuestion);
+	    }
+
+        ///--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests that user questions are properly added/inserted into the correct location when
+        /// they are for a verse (or range) that does not match any existing question.
+        /// </summary>
+        ///--------------------------------------------------------------------------------------
+        [Test]
+	    public void GetResult_AddedQuestionsWithDifferentVerseRangesFollowingLastBuiltInQuestionInBook_AddedQuestionsIncludedAtEnd()
+	    {
+	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+	        PhraseCustomization pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.16-20";
+	        pc.OriginalPhrase = "Is this a question?";
+	        pc.ModifiedPhrase = "Is this a question?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.16";
+	        pc.OriginalPhrase = "Is this a question?";
+	        pc.ModifiedPhrase = "Will this be in the right order?";
+	        pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.16";
+	        pc.OriginalPhrase = "Will this be in the right order?";
+	        pc.ModifiedPhrase = "Will this be second to last?";
+	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        customizations.Add(pc);
+	        pc = new PhraseCustomization();
+	        pc.Reference = "PRO 3.16";
+	        pc.OriginalPhrase = "Will this be second to last?";
+	        pc.Type = PhraseCustomization.CustomizationType.Deletion;
+	        customizations.Add(pc);
+
+	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+	            new List<string>(), null, null, customizations, null);
+
+	        ParsedQuestions pq = qp.Result;
+
+	        Section[] sections = pq.Sections.Items;
+
+	        int iQuestion = 0;
+
+	        foreach (Section actSection in sections)
+	        {
+		        foreach (Category actCategory in actSection.Categories)
+		        {
+			        foreach (Question actQuestion in actCategory.Questions)
+			        {
+				        iQuestion++;
+				        Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+				        switch (iQuestion)
+				        {
+					        case 1:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsFalse(actQuestion.IsUserAdded);
+						        Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+						        break;
+					        case 2:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsFalse(actQuestion.IsUserAdded);
+						        Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+						        break;
+					        case 3:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsFalse(actQuestion.IsUserAdded);
+						        Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+						        break;
+					        case 4:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsFalse(actQuestion.IsUserAdded);
+						        Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+						        break;
+					        case 5:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsTrue(actQuestion.IsUserAdded);
+						        Assert.AreEqual("Is this a question?", actQuestion.PhraseInUse);
+						        break;
+					        case 6:
+						        Assert.IsTrue(actQuestion.IsExcluded);
+						        Assert.IsTrue(actQuestion.IsUserAdded);
+						        Assert.AreEqual("Will this be second to last?", actQuestion.PhraseInUse);
+						        break;
+					        case 7:
+						        Assert.IsFalse(actQuestion.IsExcluded);
+						        Assert.IsTrue(actQuestion.IsUserAdded);
+						        Assert.AreEqual("Will this be in the right order?", actQuestion.PhraseInUse);
+						        break;
+							default:
+						        throw new Exception("More included questions than expected.");
+				        }
+			        }
+		        }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(6, pq.TranslatableParts.Length);
+	        Assert.AreEqual(7, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_LayersOfInsertedAndDeletedQuestionsWithDifferentVerseRanges_PhrasesAreInCorrectOrder()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.ModifiedPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.Answer = "\"The favor of good understanding,\" or \"a reputation for good understanding\" (NET note)";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.4";
+			pc.OriginalPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.ModifiedPhrase = "What kind of favor should you seek in the sight of God and people?";
+			pc.Answer = "\"The favor of good understanding,\" or \"a reputation for good understanding\" (NET note) (4)";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12-14";
+			pc.OriginalPhrase = "How many words are there?";
+			pc.ModifiedPhrase = "How many words were there?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.12-14";
+			pc.OriginalPhrase = "How many words are there?";
+			pc.ModifiedPhrase = "How many words were there?";
+			pc.Answer = "Enough to make you crazy";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int excludedQuestions = 0;
+			int iQuestion = 0;
+
+			for (int iS = 0; iS < sections.Length; iS++)
+			{
+				Section actSection = sections[iS];
+				for (int iC = 0; iC < actSection.Categories.Length; iC++)
+				{
+					Category actCategory = actSection.Categories[iC];
+					for (int iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+					{
+						Question actQuestion = actCategory.Questions[iQ];
+
+						if (actQuestion.IsExcluded)
+						{
+							excludedQuestions++;
+						}
+						else
+						{
+							iQuestion++;
+							Assert.IsNull(actQuestion.ModifiedPhrase);
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+							switch (iQuestion)
+							{
+								case 1:
+									Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+									Assert.IsFalse(actQuestion.IsUserAdded);
+									break;
+								case 2:
+									Assert.AreEqual("What kind of favor should you seek in the sight of God and people?", actQuestion.PhraseInUse);
+									Assert.IsTrue(actQuestion.IsUserAdded);
+									break;
+								case 3:
+									Assert.AreEqual("How many words were there?", actQuestion.PhraseInUse);
+									Assert.IsTrue(actQuestion.IsUserAdded);
+									break;
+								case 4:
+									Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+									Assert.IsFalse(actQuestion.IsUserAdded);
+									break;
+								case 5:
+									Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+									Assert.IsFalse(actQuestion.IsUserAdded);
+									break;
+								default:
+									throw new Exception("More included questions than expected.");
+							}
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.AreEqual(5, iQuestion);
+			Assert.AreEqual(1, excludedQuestions);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that user questions are properly added/inserted into the correct location when
+		/// they are for a verse (or range) that does not match any existing question.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_AddedQuestionReplacesAddedQuestionWithNullAnswer_SingleQuestionAddedInCorrectOrderWithCorrectAnswer()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Answer = "Fill your barns with grain and make your vats overflow with new wine";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Answer = "Fill your barns with grain and make your vats overflow with new wine (10)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will the LORD do for you as a result of honoring Him?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.10";
+			pc.OriginalPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.ModifiedPhrase = "What will you gain as a result of honoring the LORD?";
+			pc.Answer = "Barns completely filled with grain and vats overflowing with new wine (10)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.25";
+			pc.OriginalPhrase = "What pictures describe wisdom?";
+			pc.ModifiedPhrase = "Is this a later addition to prove that it didn't get processed too early?";
+			pc.Answer = "Yes";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						iQuestion++;
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						if (!actQuestion.IsExcluded)
+							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsExcluded);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("What will the LORD do for you as a result of honoring Him?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Fill your barns with grain and make your vats overflow with new wine (10)", actQuestion.Answers.Single());
+								Assert.IsTrue(actQuestion.IsExcluded);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 3:
+								Assert.AreEqual("What will you gain as a result of honoring the LORD?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Barns completely filled with grain and vats overflowing with new wine (10)", actQuestion.Answers.Single());
+								Assert.IsFalse(actQuestion.IsExcluded);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 4:
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 5:
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 6:
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 7:
+								Assert.AreEqual("Is this a later addition to prove that it didn't get processed too early?", actQuestion.PhraseInUse);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(6, pq.TranslatableParts.Length);
+			Assert.AreEqual(7, iQuestion);
+		}
+		#endregion
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
