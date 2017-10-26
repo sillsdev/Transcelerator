@@ -368,6 +368,7 @@ namespace SIL.Transcelerator
 				(m_dataGridViewExistingQuestions.RowCount > 0);
 
 			UpdateDisplay();
+			SetButtonState();
 		}
 		#endregion
 
