@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2017, SIL International.
+// <copyright from='2011' to='2017' company='SIL International'>
+//		Copyright (c) 2017, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -58,6 +58,7 @@ namespace SIL.Transcelerator
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnReset = new System.Windows.Forms.Button();
+			this.m_lblQuestionAlreadyExists = new System.Windows.Forms.Label();
 			label1 = new System.Windows.Forms.Label();
 			label2 = new System.Windows.Forms.Label();
 			label3 = new System.Windows.Forms.Label();
@@ -144,12 +145,19 @@ namespace SIL.Transcelerator
 			this.btnReset.UseVisualStyleBackColor = true;
 			this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
 			// 
+			// m_lblQuestionAlreadyExists
+			// 
+			resources.ApplyResources(this.m_lblQuestionAlreadyExists, "m_lblQuestionAlreadyExists");
+			this.m_lblQuestionAlreadyExists.ForeColor = System.Drawing.Color.Red;
+			this.m_lblQuestionAlreadyExists.Name = "m_lblQuestionAlreadyExists";
+			// 
 			// EditQuestionDlg
 			// 
 			this.AcceptButton = this.btnOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
+			this.Controls.Add(this.m_lblQuestionAlreadyExists);
 			this.Controls.Add(this.btnReset);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
@@ -181,5 +189,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Button btnCancel;
 		private System.Windows.Forms.Button btnReset;
 		private System.Windows.Forms.FlowLayoutPanel m_pnlAlternatives;
+		private System.Windows.Forms.Label m_lblQuestionAlreadyExists;
 	}
 }

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.   
-// <copyright from='2011' to='2015 company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2017, SIL International.   
+// <copyright from='2011' to='2017 company='SIL International'>
+//		Copyright (c) 2017, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -1747,7 +1747,7 @@ namespace SIL.Transcelerator
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard(false);
-			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase))
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase, m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef, phrase.Category).Where(p => p != phrase).Select(p => p.PhraseInUse).ToList()))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
