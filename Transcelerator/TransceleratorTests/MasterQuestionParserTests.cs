@@ -2050,13 +2050,13 @@ namespace SIL.Transcelerator
 		// Customizations.ResolveDeletionsAndAdditions, and MasterQuestionParser.GetTrailingCustomizations (and the logic in GetQuestions
 		// that calls that method).
 
-		private static QuestionSections GenerateProverbsQuestionSections()
+		private static QuestionSections GenerateProverbsQuestionSections(bool includeBeneficialQuestionAt313_14 = false)
 	    {
 	        QuestionSections qs = new QuestionSections();
 	        qs.Items = new Section[1];
 	        int iS = 0;
 	        qs.Items[iS] = CreateSection("PRO 3.1-35", "Proverbs 3:1-35 The Rewards of Wisdom.", 20003001,
-	            20003035, 1, 3);
+	            20003035, 1, includeBeneficialQuestionAt313_14 ? 4 : 3);
 	        int iC = 0;
 	        Question q = qs.Items[iS].Categories[iC].Questions[0];
 	        q.Text = "What is wisdom?";
@@ -2077,6 +2077,16 @@ namespace SIL.Transcelerator
 	        q.ScriptureReference = "PRO 3.13";
 	        q.Text = "What man is happy?";
 	        q.Answers = new[] { "The one who is smiling" };
+
+			if (includeBeneficialQuestionAt313_14)
+			{
+				q = qs.Items[iS].Categories[iC].Questions[++iQ];
+				q.StartRef = 20003013;
+				q.EndRef = 20003014;
+				q.ScriptureReference = "PRO 3.13-14";
+				q.Text = "What is much more beneficial than gold or silver?";
+				q.Answers = new[] { "Wisdom, understanding (13-14)" };
+			}
 
 	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
 	        q.StartRef = 20003015;
@@ -3688,7 +3698,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		public void GetResult_AddedQuestionIsInMasterList_AdditionIgnored()
+		public void GetResult_AddedQuestionsNowInMasterList_AdditionsIgnored()
 		{
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 			PhraseCustomization pc = new PhraseCustomization();
@@ -3718,8 +3728,15 @@ namespace SIL.Transcelerator
 			pc.Answer = "[Make a list of the words not understood](13 - 20)";
 			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
 			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13-14";
+			pc.OriginalPhrase = "What is much more beneficial than gold or silver?";
+			pc.ModifiedPhrase = "What is much more beneficial than gold or silver?";
+			pc.Answer = "Wisdom, understanding (13-14)";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
 
-			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(true),
 				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
@@ -3760,6 +3777,11 @@ namespace SIL.Transcelerator
 								break;
 							case 5:
 								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is much more beneficial than gold or silver?", actQuestion.PhraseInUse);
+								Assert.AreEqual("Wisdom, understanding (13-14)", actQuestion.Answers.Single());
+								break;
+							case 6:
+								Assert.IsFalse(actQuestion.IsUserAdded);
 								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
 								break;
 							default:
@@ -3769,8 +3791,8 @@ namespace SIL.Transcelerator
 				}
 			}
 			Assert.IsNull(pq.KeyTerms);
-			Assert.AreEqual(5, pq.TranslatableParts.Length);
-			Assert.AreEqual(5, iQuestion);
+			Assert.AreEqual(6, pq.TranslatableParts.Length);
+			Assert.AreEqual(6, iQuestion);
 		}
 
 		///--------------------------------------------------------------------------------------
