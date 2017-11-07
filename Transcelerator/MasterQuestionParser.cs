@@ -261,10 +261,11 @@ namespace SIL.Transcelerator
 					AllAnswers.Add(answer);
 			}
 
-			public bool IsInsertionAtOrBeforeReference(QuestionKey keyToUseForReference, bool inclusive)
+			public bool IsInsertionAtOrBeforeReference(QuestionKey keyToUseForReference, IEnumerable<Question> existingQuestionsInCategory, bool inclusive)
 			{
 				var addition = AdditionsAndInsertions.FirstOrDefault();
-				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive);
+				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive) &&
+					!existingQuestionsInCategory.Any(q => q.Matches(addition.Key));
 			}
 
 			public Question PopQuestion(QuestionKey keyToUseForReference)
@@ -563,12 +564,12 @@ namespace SIL.Transcelerator
 			}
 			if (q.InsertedQuestionBefore == null)
 			{
-				var insertionForPreviousReference = customizations.LastOrDefault(c => c.Value.IsInsertionAtOrBeforeReference(q, processAllAdditionsForRef) &&
+				var insertionForPreviousReference = customizations.LastOrDefault(c => c.Value.IsInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef) &&
 					customizations.All(other => other.Value == c.Value || !other.Key.Matches(c.Key)));
 				var key = insertionForPreviousReference.Key;
 				if (key == null)
 				{
-					Debug.Assert(!customizations.Any(c => c.Value.IsInsertionAtOrBeforeReference(q, processAllAdditionsForRef)));
+					Debug.Assert(!customizations.Any(c => c.Value.IsInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef)));
 					// Clean up any preceding deletions/modifications that didn't match anything
 					customizations.RemoveAll(c => c.Key.IsAtOrBeforeReference(q, processAllAdditionsForRef));
 				}

@@ -219,7 +219,7 @@ namespace SIL.Transcelerator
 						try
 						{
 							phrase = m_phrases.SingleOrDefault(x => (x.PhraseKey.ScriptureReference.StartsWith(reference)) &&
-								x.PhraseKey.Text == englishPhrase && !x.IsExcluded);
+								x.PhraseInUse == englishPhrase && !x.IsExcluded);
 						}
 						catch (InvalidOperationException)
 						{
