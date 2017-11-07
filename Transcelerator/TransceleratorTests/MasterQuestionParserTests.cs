@@ -3682,6 +3682,99 @@ namespace SIL.Transcelerator
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
+		/// TXL-188: Tests that if a user-added question has been added to the master list of
+		/// questions, it will be ignored and not cause the program to crash or skip other
+		/// added questions which hang off of it.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void GetResult_AddedQuestionIsInMasterList_AdditionIgnored()
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What shows that a man might have been happy?";
+			pc.ModifiedPhrase = "What man is happy?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What man is happy?";
+			pc.Answer = "Sorry, but this answer gets ignored.";
+			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "What man is happy?";
+			pc.Answer = "I guess we'll use this one.";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "PRO 3.13";
+			pc.OriginalPhrase = "What man is happy?";
+			pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
+			pc.Answer = "[Make a list of the words not understood](13 - 20)";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						Assert.IsFalse(actQuestion.IsExcluded);
+						iQuestion++;
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What is wisdom?", actQuestion.PhraseInUse);
+								break;
+							case 2:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
+								break;
+							case 3:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
+								Assert.AreEqual("I guess we'll use this one.", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
+								Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+								break;
+							case 5:
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.AreEqual(5, iQuestion);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
 		/// Tests that questions are properly ordered when the user has added some and then
 		/// added some more to those.
 		/// </summary>

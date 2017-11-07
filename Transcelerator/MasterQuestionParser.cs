@@ -97,9 +97,11 @@ namespace SIL.Transcelerator
 
 				SetExcludedAndModified(question);
 
-				if (AdditionsAndInsertions.Count == 1 && AdditionsAndInsertions[0].OriginalPhrase == AdditionsAndInsertions[0].ModifiedPhrase && AdditionsAndInsertions[0].OriginalPhrase == question.PhraseInUse)
+				var duplicate = AdditionsAndInsertions.SingleOrDefault(q => q.OriginalPhrase == q.ModifiedPhrase && q.OriginalPhrase == question.PhraseInUse);
+
+				if (duplicate != null)
 				{
-					var newAnswer = AdditionsAndInsertions[0].Answer;
+					var newAnswer = duplicate.Answer;
 					if (newAnswer.Length == 0)
 						newAnswer = null;
 					// Adding an exactly identical question.
@@ -122,7 +124,7 @@ namespace SIL.Transcelerator
 							else
 								question.Answers[0] = newAnswer;
 						}
-						AdditionsAndInsertions.Clear();
+						AdditionsAndInsertions.Remove(duplicate);
 					}
 				}
 				// TODO: Support adding (not just replacing) answers?
