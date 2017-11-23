@@ -45,8 +45,14 @@
     <Alternate name="statement"/>
     <Alternate name="statements"/>
   </KeyTermRule>
-  <KeyTermRule name ="abba; father" matchForRefOnly="true"/>
-  <KeyTermRule name ="teaching; tradition" matchForRefOnly="true"/>
+  <KeyTermRule id ="abba; father">
+    <Alternate name="abba" matchForRefOnly="true"/>
+    <Alternate name="father" matchForRefOnly="true"/>
+  </KeyTermRule>
+  <KeyTermRule id ="teaching; tradition">
+    <Alternate name="teaching" matchForRefOnly="true"/>
+    <Alternate name="tradition" matchForRefOnly="true"/>
+  </KeyTermRule>
   <KeyTermRule id="bless, praise">
     <Alternate name="blesses"/>
     <Alternate name="blessed"/>
@@ -722,5 +728,11 @@
     <Alternate name="names"/>
     <Alternate name="named"/>
     <Alternate name="called"/>
+  </KeyTermRule>
+
+  <!-- New Terms in P8 -->
+  <KeyTermRule id ="female fallow deer, doe">
+    <Alternate name="doe"/>
+    <Alternate name="does" matchForRefOnly="true"/>
   </KeyTermRule>
 </KeyTermRules>

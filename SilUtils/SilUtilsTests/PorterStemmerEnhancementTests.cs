@@ -76,7 +76,11 @@ namespace SIL.Utils
             Assert.AreEqual("bare", s_stemmer.stemTerm("bare"));
             Assert.AreEqual("there", s_stemmer.stemTerm("there"));
             Assert.AreEqual("bye", s_stemmer.stemTerm("bye"));
-            Assert.AreEqual("lie", s_stemmer.stemTerm("lie"));
+	        Assert.AreEqual("lie", s_stemmer.stemTerm("lie"));
+	        Assert.AreEqual("doe", s_stemmer.stemTerm("doe"));
+			// The stem of "does" could be either "do" or "doe". Although "do" is the more likely one,
+			// it is better to have it stem to "doe" because we will never have "do" as a ley term. 
+	        //Assert.AreEqual("do", s_stemmer.stemTerm("does"));
 		}
 
 		/// ------------------------------------------------------------------------------------
