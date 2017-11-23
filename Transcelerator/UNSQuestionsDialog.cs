@@ -256,10 +256,11 @@ namespace SIL.Transcelerator
 		#region Constructors
 	    static UNSQuestionsDialog()
 	    {
-		    try
-		    {
-				var deprecatedProgramDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-					"SIL"), "Transcelerator");
+
+		    // On Windows, CommonApplicationData is actually the preferred location for this because it is not user-specific, but we do it this way to make it work on Linux.
+			try
+			{
+				var deprecatedProgramDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Transcelerator");
 			    if (Directory.Exists(deprecatedProgramDataFolder))
 			    {
 				    var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlCore.kQuestionsFilename);
@@ -274,8 +275,7 @@ namespace SIL.Transcelerator
 				// wrong, ignore it.
 		    }
 			
-			s_programDataFolder = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                 "SIL"), "Transcelerator");
+			s_programDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SIL", "Transcelerator");
              if (!Directory.Exists(s_programDataFolder))
                  Directory.CreateDirectory(s_programDataFolder);
 	    }
@@ -358,7 +358,7 @@ namespace SIL.Transcelerator
 		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
             
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
-	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, TxlCore.kQuestionsFilename);
+	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
 
 			ClearBiblicalTermsPane();
 
@@ -2151,6 +2151,7 @@ namespace SIL.Transcelerator
 		        m_parser = new MasterQuestionParser(m_masterQuestionsFilename, GetQuestionWords(),
                     m_getKeyTerms(), GetKeyTermRules(keyTermRulesFilename), customizations, PhraseSubstitutions);
 	            parsedQuestions = m_parser.Result;
+		        Directory.CreateDirectory(Path.GetDirectoryName(m_parsedQuestionsFilename));
 	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
 	        }
 
