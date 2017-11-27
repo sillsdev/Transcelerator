@@ -3698,4 +3698,10 @@
     <Alt>Where do the righteous run for safety?</Alt>
     <Alt>Where do the righteous go for safety?</Alt>
   </Alternative>
+  <Alternative>
+    <Original>Do you think this person speaks like this very often?</Original>
+    <Alt>Do you think this person speaks like this very often?</Alt>
+    <Alt>Do you think he/she speaks like this very often?</Alt>
+    <Alt>Do you think he speaks like this very often?</Alt>
+  </Alternative>
 </QuestionAlternativeOverrides>
