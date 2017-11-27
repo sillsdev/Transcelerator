@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcelerator", "Transcelerator\Transcelerator.csproj", "{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessorTests", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessorTests\TxlMasterQuestionPreProcessorTests.csproj", "{6DE38973-4256-4AD7-A48F-56675CA826E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCoreTests", "TxlCore\TxlCoreTests\TxlCoreTests.csproj", "{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomInstallerActions", "Installer\CustomInstallerActions\CustomInstallerActions.csproj", "{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,14 @@ Global
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release - Copy To Paratext|x86.Build.0 = Release|x86
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x86.ActiveCfg = Release|x86
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x86.Build.0 = Release|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|x86.ActiveCfg = Debug|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|x86.Build.0 = Debug|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug|x86.ActiveCfg = Debug|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug|x86.Build.0 = Debug|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release - Copy To Paratext|x86.ActiveCfg = Release|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release - Copy To Paratext|x86.Build.0 = Release|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release|x86.ActiveCfg = Release|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

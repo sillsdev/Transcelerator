@@ -80,6 +80,16 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
     <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
       <![CDATA[Installed OR PARATEXT75100ORGREATER OR PARATEXT7TEST OR PARATEXT8 OR PARATEXT8TEST]]>
     </Condition>
+    
+    <Binary Id="CustomInstallerActions.CA.dll" 
+            SourceFile="CustomInstallerActions/bin/Release/CustomInstallerActions.CA.dll" />
+    
+    <CustomAction Id="RemoveAllTransceleratorUserCacheFiles"
+                  Return="asyncWait"
+                  Execute="deferred"
+                  Impersonate="no"
+                  BinaryKey="CustomInstallerActions.CA.dll"
+                  DllEntry="RemoveAllTransceleratorUserCacheFiles"  />
 
     <!--because of bug, this needs to be 1 -->
     <Property Id ="ALLUSERS">1</Property>
@@ -108,7 +118,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Directory>
       </Directory>
     </Directory>
-
+    
     <ComponentGroup Id="COMPONENTSFORP7PLUGIN" Directory="INSTALLDIR7" Source="..\Transcelerator\bin\Release">
       <Component Guid="{AC56B7F3-C820-43f3-A47D-E30B01BB4FC6}">
         <File Id="Transcelerator.dll_P7" ShortName="k6nusfqn.dll" KeyPath="yes" Name="Transcelerator.dll" />
@@ -464,6 +474,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	  <CustomAction Id="UpdatePluginStore_P8Test" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no" Execute="deferred" Return="check"/>
 
 	  <InstallExecuteSequence>
+	    <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
+      
 	    <!--<RemoveExistingProducts After="InstallFinalize" />-->
 	    <Custom Action="UpdatePluginStore_P7" Before="InstallFinalize">
 	      <![CDATA[&PluginFeature_P7=3]]>
