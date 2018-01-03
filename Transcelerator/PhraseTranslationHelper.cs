@@ -313,13 +313,74 @@ namespace SIL.Transcelerator
 		/// Gets the complete list of phrases sorted by reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal IEnumerable<TranslatablePhrase> UnfilteredPhrases
+		internal IReadOnlyList<TranslatablePhrase> UnfilteredPhrases
 		{
 			get
 			{
 				List<TranslatablePhrase> temp = m_phrases.GetRange(0, m_phrases.Count);
 				temp.Sort(PhraseReferenceComparison(kAscending));
 				return temp;
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the list of customized (added, inserted, modiefied, deleted) phrases, sorted by
+		/// reference (and insertion order).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal List<PhraseCustomization> CustomizedPhrases
+		{
+			get
+			{
+				List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+				var allPhrases = UnfilteredPhrases;
+				for (var i = 0; i < allPhrases.Count; i++)
+				{
+					TranslatablePhrase translatablePhrase = allPhrases[i];
+					if (translatablePhrase.IsExcludedOrModified)
+						customizations.Add(new PhraseCustomization(translatablePhrase));
+					if (translatablePhrase.InsertedPhraseBefore != null)
+					{
+						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+							translatablePhrase.InsertedPhraseBefore,
+							PhraseCustomization.CustomizationType.InsertionBefore));
+					}
+					if (translatablePhrase.IsUserAdded)
+					{
+						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
+							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
+						{
+							if (i > 0 && allPhrases[i - 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
+							{
+								customizations.Add(new PhraseCustomization(allPhrases[i - 1].OriginalPhrase,
+									translatablePhrase.QuestionInfo,
+									PhraseCustomization.CustomizationType.AdditionAfter));
+							}
+							else if (i < allPhrases.Count - 1 && allPhrases[i + 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
+							{
+								customizations.Add(new PhraseCustomization(allPhrases[i + 1].OriginalPhrase,
+									translatablePhrase.QuestionInfo,
+									PhraseCustomization.CustomizationType.InsertionBefore));
+							}
+							else
+							{
+								// This is a question whose reference does not match eaither of the surrounding questions, so its Type is
+								// really arbitrary.
+								customizations.Add(new PhraseCustomization(translatablePhrase.OriginalPhrase,
+									translatablePhrase.QuestionInfo,
+									i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter));
+							}
+						}
+					}
+					if (translatablePhrase.AddedPhraseAfter != null)
+					{
+						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
+							translatablePhrase.AddedPhraseAfter,
+							PhraseCustomization.CustomizationType.AdditionAfter));
+					}
+				}
+				return customizations;
 			}
 		}
 
@@ -909,7 +970,7 @@ namespace SIL.Transcelerator
 		internal void AttachNewQuestionToAdjacentPhrase(TranslatablePhrase newPhrase)
 		{
 			TranslatablePhrase phraseBefore = null, phraseAfter = null;
-			foreach (var tp in m_phrases)
+			foreach (var tp in m_phrases.Where(p => p != newPhrase))
 			{
 				var result = ComparePhraseReferences(tp, newPhrase);
 				if (result < 0)
