@@ -1003,24 +1003,7 @@ namespace SIL.Transcelerator
 
 			if (fSaveCustomizations)
 			{
-				List<PhraseCustomization> customizations = new List<PhraseCustomization>();
-				foreach (TranslatablePhrase translatablePhrase in m_helper.UnfilteredPhrases)
-				{
-					if (translatablePhrase.IsExcludedOrModified)
-						customizations.Add(new PhraseCustomization(translatablePhrase));
-					if (translatablePhrase.InsertedPhraseBefore != null)
-					{
-						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
-							translatablePhrase.InsertedPhraseBefore,
-							PhraseCustomization.CustomizationType.InsertionBefore));
-					}
-					if (translatablePhrase.AddedPhraseAfter != null)
-					{
-						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
-							translatablePhrase.AddedPhraseAfter,
-							PhraseCustomization.CustomizationType.AdditionAfter));
-					}
-				}
+				List<PhraseCustomization> customizations = m_helper.CustomizedPhrases;
 
 				if (customizations.Count > 0 || m_fileAccessor.Exists(DataFileAccessor.DataFileId.QuestionCustomizations))
 				{
@@ -1804,10 +1787,12 @@ namespace SIL.Transcelerator
 					if (basePhrase == null)
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
-					Save(true, true);
-					dataGridUns.RowCount = m_helper.Phrases.Count();
 					if (dlg.Translation != string.Empty)
 						newPhrase.Translation = dlg.Translation;
+
+					Save(true, true);
+					dataGridUns.RowCount = m_helper.Phrases.Count();
+					
 					dataGridUns.CurrentCell = dataGridUns.Rows[m_helper.FindPhrase(newPhrase.QuestionInfo)].Cells[m_colTranslation.Index];
 					UpdateCountsAndFilterStatus();
 				}

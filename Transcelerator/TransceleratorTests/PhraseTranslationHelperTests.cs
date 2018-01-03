@@ -998,6 +998,174 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
+		#region CustomizedPhrases tests
+		[Test]
+	    public void CustomizedPhrases_NoCustomizations_EmptyList()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
+		    AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2);
+
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			Assert.AreEqual(0, pth.CustomizedPhrases.Count);
+		}
+
+	    [Test]
+	    public void CustomizedPhrases_ModifiedAndDeletedQuestions_ModificationsAndDeletionsInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "Question 1?", "A", 1, 1);
+		    var q = AddTestQuestion(cat, "Question 2? (deleted)", "B", 2, 2);
+		    q.IsExcluded = true;
+		    AddTestQuestion(cat, "Question 3?", "B", 2, 2);
+		    q = AddTestQuestion(cat, "Question 4?", "C", 3, 3);
+		    q.ModifiedPhrase = "Question 4? (modified)";
+		    q = AddTestQuestion(cat, "Question 5?", "C", 3, 3);
+		    q.ModifiedPhrase = "Question 5? (modified)";
+		    q = AddTestQuestion(cat, "Question 6? (deleted)", "D", 4, 4);
+		    q.IsExcluded = true;
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+			Assert.AreEqual(4, customizations.Count);
+		    int i = 0;
+		    Assert.AreEqual("Question 2? (deleted)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Deletion, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 4?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 4? (modified)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Modification, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 5?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 5? (modified)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Modification, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 6? (deleted)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Deletion, customizations[i].Type);
+		}
+
+	    [Test]
+	    public void CustomizedPhrases_NewlyInsertedAndAddedQuestions_NewQuestionsAreInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "Question 1? (replaced)", "A", 1, 1);
+			AddTestQuestion(cat, "Question 4?", "C", 3, 3);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			pth.Sort(PhrasesSortedBy.Reference, true);
+			var qBase1 = pth[0];
+			Assert.AreEqual("Question 1? (replaced)", qBase1.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+		    qBase1.IsExcluded = true;
+			var addedQuestion = new Question(qBase1.QuestionInfo, "Question 2? (added)", "Yes");
+		    pth.AddQuestion(addedQuestion, 1, qBase1.SequenceNumber + 1, mp);
+		    qBase1.AddedPhraseAfter = addedQuestion;
+
+		    var qBase4 = pth[2];
+		    Assert.AreEqual("Question 4?", qBase4.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+		    addedQuestion = new Question(qBase4.QuestionInfo, "Question 3? (inserted)", "No");
+		    pth.AddQuestion(addedQuestion, 1, 2, mp);
+		    qBase4.InsertedPhraseBefore = addedQuestion;
+
+			var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(3, customizations.Count);
+		    int i = 0;
+		    Assert.AreEqual("Question 1? (replaced)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Deletion, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 1? (replaced)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 2? (added)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("Yes", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 4?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 3? (inserted)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+		}
+
+	    [Test]
+	    public void CustomizedPhrases_PreviouslyInsertedAndAddedQuestionsMatchSurroundingAdjacentRefs_AddedQuestionsAreInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    var qBase1 = AddTestQuestion(cat, "Question 1? (replaced)", "A", 1, 1);
+		    qBase1.IsExcluded = true;
+		    var qAdded = AddTestQuestion(cat, "Question 2? (added)", "A", 1, 1);
+		    qAdded.IsUserAdded = true;
+		    qAdded.Answers = new[] { "Yes" };
+		    qBase1.AddedQuestionAfter = qAdded; // This will be ignored.
+		    var qInserted = AddTestQuestion(cat, "Question 3? (inserted)", "B", 2, 2);
+		    qInserted.IsUserAdded = true;
+		    qInserted.Answers = new[] { "No" };
+		    var qBase4 = AddTestQuestion(cat, "Question 4?", "B", 2, 2);
+		    qBase4.InsertedQuestionBefore = qInserted; // This will be ignored.
+
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
+		    Assert.AreEqual(3, customizations.Count);
+		    int i = 0;
+		    Assert.AreEqual("Question 1? (replaced)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Deletion, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 1? (replaced)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 2? (added)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("Yes", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 4?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 3? (inserted)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+	    }
+
+		[Test]
+	    public void CustomizedPhrases_PreviouslyInsertedAndAddedQuestionsForDifferentRefs_AddedQuestionsAreInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    var q = AddTestQuestion(cat, "Question 1? (inserted)", "A", 1, 1);
+		    q.IsUserAdded = true;
+		    q.Answers = new[] {"Yes"};
+			AddTestQuestion(cat, "Question 2?", "B", 2, 2);
+			q = AddTestQuestion(cat, "Question 3? (added)", "C", 3, 3);
+		    q.IsUserAdded = true;
+		    q.Answers = new[] { "No" };
+		    q = AddTestQuestion(cat, "Question 4? (added)", "D", 4, 4);
+		    q.IsUserAdded = true;
+		    q.Answers = new[] { "Maybe" };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
+		    Assert.AreEqual(3, customizations.Count);
+			int i = 0;
+		    Assert.AreEqual("Question 1? (inserted)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Yes", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type, "This is really arbitrary");
+		    i++;
+		    Assert.AreEqual("Question 3? (added)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("No", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
+		    i++;
+		    Assert.AreEqual("Question 4? (added)", customizations[i].OriginalPhrase);
+		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Maybe", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
+		}
+		#endregion
+
 		#region AddQuestion Tests
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
