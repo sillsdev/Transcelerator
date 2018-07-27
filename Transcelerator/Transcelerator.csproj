@@ -303,7 +303,6 @@
     <Compile Include="PhraseTranslationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TranslatablePhrase.cs" />
-    <Compile Include="XmlTranslation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddRenderingDlg.resx">

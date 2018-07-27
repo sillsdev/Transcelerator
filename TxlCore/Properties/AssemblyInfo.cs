@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Common core library for Transcelerator and TxlMasterQuestionPreProcessor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("Transcelerato")]
-[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
+[assembly: AssemblyProduct("Transcelerator Core")]
+[assembly: AssemblyCopyright("Copyright © 2018 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,3 +34,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+[assembly: InternalsVisibleTo("TxlCoreTests")]

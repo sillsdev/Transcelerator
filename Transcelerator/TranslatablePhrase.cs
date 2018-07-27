@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2018, SIL International.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -28,7 +28,7 @@ namespace SIL.Transcelerator
 		NoEnglishVersion,
 	}
 
-	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>
+	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>, ITranslatablePhrase
 	{
 		#region Data Members
 		private readonly string m_sOrigPhrase;

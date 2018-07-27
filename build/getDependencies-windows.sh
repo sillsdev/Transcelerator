@@ -30,10 +30,10 @@ where_curl=$(type -P curl)
 where_wget=$(type -P wget)
 if [ "$where_curl" != "" ]
 then
-copy_curl $1 $2
+copy_curl "$1" "$2"
 elif [ "$where_wget" != "" ]
 then
-copy_wget $1 $2
+copy_wget "$1" "$2"
 else
 echo "Missing curl or wget"
 exit 1
@@ -45,18 +45,22 @@ copy_curl() {
 echo "curl: $2 <= $1"
 if [ -e "$2" ] && [ "$force" != "1" ]
 then
-curl -# -L -z $2 -o $2 $1
+curl -# -L -z "$2" -o "$2" "$1"
 else
-curl -# -L -o $2 $1
+curl -# -L -o "$2" "$1"
 fi
 }
 
 copy_wget() {
 echo "wget: $2 <= $1"
-f=$(basename $2)
-d=$(dirname $2)
-cd $d
-wget -q -L -N $1
+f1=$(basename $1)
+f2=$(basename $2)
+cd $(dirname $2)
+wget -q -L -N "$1"
+# wget has no true equivalent of curl's -o option.
+# Different versions of wget handle (or not) % escaping differently.
+# A URL query is the only reason why $f1 and $f2 should differ.
+if [ "$f1" != "$f2" ]; then mv $f2\?* $f2; fi
 cd -
 }
 
@@ -67,32 +71,34 @@ cd -
 # URL: http://build.palaso.org/viewType.html?buildTypeId=bt432
 # VCS: https://bitbucket.org/paratext/transcelerator [default]
 # dependencies:
-# [0] build: palaso-win32-master Continuous (bt223)
+# [0] build: palaso-win32-libpalaso-4.1-nostrongname Continuous (Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous)
 #     project: libpalaso
-#     URL: http://build.palaso.org/viewType.html?buildTypeId=bt223
+#     URL: http://build.palaso.org/viewType.html?buildTypeId=Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous
 #     clean: false
 #     revision: latest.lastSuccessful
-#     paths: {"Palaso.BuildTasks.dll"=>"build/", "L10NSharp.dll"=>"lib/dotnet", "Palaso.dll"=>"lib/dotnet", "Palaso.pdb"=>"lib/dotnet", "PalasoUIWindowsForms.dll"=>"lib/dotnet", "PalasoUIWindowsForms.pdb"=>"lib/dotnet", "SIL.ScriptureUtils.dll"=>"lib/dotnet", "SIL.ScriptureUtils.pdb"=>"lib/dotnet", "SIL.ScriptureUtils.Tests.dll"=>"lib/dotnet", "SIL.ScriptureUtils.Tests.pdb"=>"lib/dotnet"}
-#     VCS: https://github.com/sillsdev/libpalaso.git [master]
+#     paths: {"Palaso.BuildTasks.dll"=>"build/", "L10NSharp.dll"=>"lib/dotnet", "L10NSharp.pdb"=>"lib/dotnet", "SIL.Core.dll"=>"lib/dotnet", "SIL.Core.pdb"=>"lib/dotnet", "SIL.IO.dll"=>"lib/dotnet", "SIL.Windows.Forms.dll"=>"lib/dotnet", "SIL.Windows.Forms.pdb"=>"lib/dotnet", "SIL.Scripture.dll"=>"lib/dotnet", "SIL.Scripture.pdb"=>"lib/dotnet", "SIL.Windows.Forms.Keyboarding.dll"=>"lib/dotnet", "SIL.Windows.Forms.Keyboarding.pdb"=>"lib/dotnet", "SIL.Windows.Forms.Scripture.dll"=>"lib/dotnet", "SIL.Windows.Forms.Scripture.pdb"=>"lib/dotnet", "SIL.WritingSystems.dll"=>"lib/dotnet", "SIL.WritingSystems.pdb"=>"lib/dotnet", "SIL.TestUtilities.dll"=>"lib/dotnet"}
+#     VCS: https://github.com/sillsdev/libpalaso.git [libpalaso-4.1]
 
 # make sure output directories exist
 mkdir -p ../build/
 mkdir -p ../lib/dotnet
 
 # download artifact dependencies
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.dll ../lib/dotnet/SIL.Scripture.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Scripture.pdb ../lib/dotnet/SIL.Scripture.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Keyboarding.dll ../lib/dotnet/SIL.Windows.Forms.Keyboarding.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Keyboarding.pdb ../lib/dotnet/SIL.Windows.Forms.Keyboarding.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Scripture.dll ../lib/dotnet/SIL.Windows.Forms.Scripture.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.Windows.Forms.Scripture.pdb ../lib/dotnet/SIL.Windows.Forms.Scripture.pdb
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.dll ../lib/dotnet/SIL.WritingSystems.dll
-copy_auto http://build.palaso.org/guestAuth/repository/download/bt440/latest.lastSuccessful/NoStrongname/Release/SIL.WritingSystems.pdb ../lib/dotnet/SIL.WritingSystems.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/Palaso.BuildTasks.dll ../build/Palaso.BuildTasks.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/L10NSharp.dll ../lib/dotnet/L10NSharp.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/L10NSharp.pdb ../lib/dotnet/L10NSharp.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Core.dll ../lib/dotnet/SIL.Core.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Core.pdb ../lib/dotnet/SIL.Core.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.IO.dll ../lib/dotnet/SIL.IO.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.dll ../lib/dotnet/SIL.Windows.Forms.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.pdb ../lib/dotnet/SIL.Windows.Forms.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Scripture.dll ../lib/dotnet/SIL.Scripture.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Scripture.pdb ../lib/dotnet/SIL.Scripture.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.Keyboarding.dll ../lib/dotnet/SIL.Windows.Forms.Keyboarding.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.Keyboarding.pdb ../lib/dotnet/SIL.Windows.Forms.Keyboarding.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.Scripture.dll ../lib/dotnet/SIL.Windows.Forms.Scripture.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.Windows.Forms.Scripture.pdb ../lib/dotnet/SIL.Windows.Forms.Scripture.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.WritingSystems.dll ../lib/dotnet/SIL.WritingSystems.dll
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.WritingSystems.pdb ../lib/dotnet/SIL.WritingSystems.pdb
+copy_auto http://build.palaso.org/guestAuth/repository/download/Libpalaso_PalasoWin32libpalaso41nostrongnameContinuous/latest.lastSuccessful/SIL.TestUtilities.dll ../lib/dotnet/SIL.TestUtilities.dll
 # End of script
