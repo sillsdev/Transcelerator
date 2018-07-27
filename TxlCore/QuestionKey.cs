@@ -76,14 +76,20 @@ namespace SIL.Transcelerator
 			var other = obj as QuestionKey;
 			if (other == null)
 				throw new ArgumentException(nameof(obj), $"Attempt to compare question key ({this}) to an unexpected object ({obj}).");
-			var startRefComparison = StartRef.CompareTo(other.StartRef);
+			
+			return CompareRefs(other.StartRef, other.EndRef);
+		}
+
+		public int CompareRefs(int startRef, int endRef)
+		{
+			var startRefComparison = StartRef.CompareTo(startRef);
 			if (startRefComparison != 0)
 				return startRefComparison;
 			if (EndRef == StartRef)
-				return other.EndRef == other.StartRef ? 0 : 1; // A key that represents a range always sorts before one that represents a single verse.
-			if (other.EndRef == other.StartRef)
+				return endRef == startRef ? 0 : 1; // A key that represents a range always sorts before one that represents a single verse.
+			if (endRef == startRef)
 				return -1;
-			return EndRef.CompareTo(other.EndRef);
+			return EndRef.CompareTo(endRef);
 		}
 
 		public bool IsAtOrBeforeReference(QuestionKey keyToUseForReference, bool inclusive)
