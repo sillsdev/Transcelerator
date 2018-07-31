@@ -15,3 +15,5 @@ lib/dotnet/*.pdb
 build/Palaso.BuildTasks.dll
 .nuget/NuGet.exe
 output/*
+*.lnk
+.vs/*
