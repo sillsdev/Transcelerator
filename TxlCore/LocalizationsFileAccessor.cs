@@ -89,6 +89,15 @@ namespace SIL.Transcelerator
 							q.EndRef = section.EndRef;
 						}
 						AddLocalizationEntry(q, LocalizableStringType.Question, Translation(q));
+						if (q.AlternateForms != null)
+						{
+							var alt = new Question(q, q.Text, null); // Make a copy so we don't alter the underyling question.
+							foreach (var altForm in q.AlternateForms)
+							{
+								alt.ModifiedPhrase = altForm;
+								AddLocalizationEntry(alt, LocalizableStringType.Question, Translation(alt));
+							}
+						}
 						if (q.Answers != null)
 						{
 							foreach (var answer in q.Answers)
@@ -129,16 +138,54 @@ namespace SIL.Transcelerator
 		internal void AddLocalizationEntry(QuestionKey key, LocalizableStringType type, string localizedString = null)
 		{
 			var localizableStringInfo = GetLocalizableStringInfo(key);
-			var localization = localizableStringInfo?.Localization;
-			if (localization == null)
+			Localization localization = null;
+			if (localizableStringInfo == null)
 			{
 				localization = new Localization();
-				m_dataDictionary.Add(key.PhraseInUse, new LocalizableString {English = key.PhraseInUse, Type = type, Localization = localization });
+				localizableStringInfo = new LocalizableString {English = key.Text, Type = type, Localization = localization };
+				if (key.PhraseInUse != key.Text)
+				{
+					localizableStringInfo.Alternates = new List<LocalizableStringForm> {
+						new LocalizableStringForm {English = key.PhraseInUse, Localization = localization}};
+				}
+				m_dataDictionary.Add(key.Text, localizableStringInfo);
 			}
 			else
 			{
 				if (localizableStringInfo.Type != type)
 					localizableStringInfo.Type = LocalizableStringType.Undefined;
+
+				if (key.PhraseInUse == key.Text)
+				{
+					localization = localizableStringInfo.Localization;
+				}
+				else if (key.Text == localizableStringInfo.English)
+				{
+					localization = new Localization();
+					if (localizableStringInfo.Alternates == null)
+					{
+						localizableStringInfo.Alternates = new List<LocalizableStringForm> {new LocalizableStringForm {English = key.PhraseInUse, Localization = localization}};
+					}
+					else
+					{
+						var matchingAlt = localizableStringInfo.Alternates.SingleOrDefault(a => a.English == key.PhraseInUse);
+						if (matchingAlt == null)
+						{
+							localizableStringInfo.Alternates.Add(new LocalizableStringForm { English = key.PhraseInUse, Localization = localization });
+						}
+						else
+						{
+							localization = matchingAlt.Localization;
+						}
+					}
+				}
+				else
+				{
+					// This is not really an alternate form of the existing string we found. Rather it is one where the alternate form itself
+					// happened to be an exact match on the unmodified string from (presumably) some other location. So just treat it as another
+					// occurrence.
+					localization = localizableStringInfo.Localization;
+				}
 			}
 
 			if ((localization.Text != localizedString && localizedString != null) || localization.Text == null)
@@ -169,24 +216,19 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		internal Localization GetLocalizationEntry(QuestionKey key)
-		{
-			return GetLocalizableStringInfo(key)?.Localization;
-		}
-
 		internal LocalizableString GetLocalizableStringInfo(QuestionKey key)
 		{
-			return m_dataDictionary.TryGetValue(key.PhraseInUse, out LocalizableString value) ?
-				value : null;
+			LocalizableString value;
+			if (m_dataDictionary.TryGetValue(key.Text, out value))
+				return value;
+			if (key.PhraseInUse != key.Text && m_dataDictionary.TryGetValue(key.PhraseInUse, out value))
+				return value;
+			return m_dataDictionary.Values.FirstOrDefault(v => v.Alternates?.Any(a => a.English == key.PhraseInUse) ?? false);
 		}
 
-		public string GetLocalizedString(QuestionKey key)
+		public string GetLocalizedString(QuestionKey key, bool failoverToEnglish = true)
 		{
-			var existingLocalization = GetLocalizationEntry(key);
-			if (existingLocalization?.Text == null)
-				return key.PhraseInUse;
-
-			return existingLocalization?.GetMatchingOverrideIfAny(key)?.LocalizedString ?? existingLocalization.Text;
+			return GetLocalizableStringInfo(key)?.GetLocalizedString(key) ?? (failoverToEnglish ? key.PhraseInUse : null);
 		}
 	}
 }
