@@ -736,11 +736,11 @@ namespace SIL.Transcelerator
 			m_pnlAnswersAndComments.Visible = ShowAnswersAndComments;
 		}
 
-		private string GetLocalizedDataString(IQuestionKey key, string english = null)
+		private string GetLocalizedDataString(IQuestionKey key, LocalizableStringType type, string english = null)
 		{
 			if (m_dataLocalizer == null)
 				return english;
-			return m_dataLocalizer.GetLocalizedString(new UIDataString(key, english, LocalizableStringType.Question));
+			return m_dataLocalizer.GetLocalizedString(new UIDataString(key, english, type));
 		}
 
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
@@ -749,7 +749,11 @@ namespace SIL.Transcelerator
 			switch (e.ColumnIndex)
 			{
 				case 0: e.Value = tp.Reference; break;
-				case 1: e.Value = GetLocalizedDataString(tp.PhraseKey, tp.PhraseInUse); break;
+				case 1:
+					e.Value = GetLocalizedDataString(tp.PhraseKey,
+						tp.IsCategoryName ? LocalizableStringType.Category : LocalizableStringType.Question,
+						tp.PhraseInUse);
+					break;
 				case 2: e.Value = tp.Translation; break;
 				case 3: e.Value = tp.HasUserTranslation; break;
 				case 4: e.Value = tp.DebugInfo; break;
@@ -2471,39 +2475,40 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void LoadAnswerAndComment(int rowIndex)
 		{
-			Question answersAndComments = m_helper[rowIndex].QuestionInfo;
-			if (answersAndComments == null || ((answersAndComments.Answers == null || answersAndComments.Answers.Length == 0) &&
-				(answersAndComments.Notes == null || answersAndComments.Notes.Length == 0)))
+			var question = m_helper[rowIndex].QuestionInfo;
+			if (question?.Answers?.Length == 0 && question.Notes?.Length == 0)
 			{
 				m_lblAnswerLabel.Visible = m_lblAnswers.Visible = false;
 				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
 				return;
 			}
-			PopulateAnswerOrCommentLabel(answersAndComments.Answers, m_lblAnswerLabel,
-				m_lblAnswers, Properties.Resources.kstidAnswersLabel);
-			PopulateAnswerOrCommentLabel(answersAndComments.Notes, m_lblCommentLabel,
-				m_lblComments, Properties.Resources.kstidCommentsLabel);
+			PopulateAnswerOrCommentLabel(question, q => q?.Answers?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Answer, d)),
+				m_lblAnswerLabel, m_lblAnswers, Properties.Resources.kstidAnswersLabel);
+			PopulateAnswerOrCommentLabel(question, q => q?.Notes?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Note, d)),
+				m_lblCommentLabel, m_lblComments, Properties.Resources.kstidCommentsLabel);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populates the answer or comment label.
 		/// </summary>
-		/// <param name="details">The list of answers or comments.</param>
+		/// <param name="question">The question whose answers or comments are to be used.</param>
+		/// <param name="getDetails">A function to retrieve the desired data.</param>
 		/// <param name="label">The label that has the "Answer:" or "Comment:" label.</param>
 		/// <param name="contents">The label that is to be populated with the actual answer(s)
 		/// or comment(s).</param>
 		/// <param name="sLabelMultiple">The text to use for <see cref="label"/> if there are
 		/// multiple answers/comments.</param>
 		/// ------------------------------------------------------------------------------------
-		private static void PopulateAnswerOrCommentLabel(IEnumerable<string> details,
+		private void PopulateAnswerOrCommentLabel(Question question, Func<Question, IEnumerable<string>> getDetails,
 			Label label, Label contents, string sLabelMultiple)
 		{
+			var details = getDetails(question)?.ToArray();
 			label.Visible = contents.Visible = details != null;
-			if (label.Visible)
+			if (details != null)
 			{
 				label.Show();
-				label.Text = (details.Count() == 1) ? (string)label.Tag : sLabelMultiple;
+				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
 				contents.Text = details.ToString(Environment.NewLine + "\t");
 			}
 		}
