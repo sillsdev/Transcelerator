@@ -31,13 +31,10 @@ namespace SIL.Transcelerator
 	public sealed class TranslatablePhrase : IComparable<TranslatablePhrase>, ITranslatablePhrase
 	{
 		#region Data Members
-		private readonly string m_sOrigPhrase;
 		private string m_sModifiedPhrase;
-		private readonly int m_category;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
-		private int m_seqNumber;
-		internal readonly QuestionKey m_questionInfo;
+		internal readonly IQuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsAndNumbersMatch;
@@ -54,17 +51,20 @@ namespace SIL.Transcelerator
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular category and reference).</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(QuestionKey questionInfo, int category, int seqNumber)
-			: this(questionInfo.Text,
-			questionInfo is Question ? ((Question)questionInfo).ModifiedPhrase : null)
+		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber)
+			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
-			m_category = category;
-			m_seqNumber = seqNumber;
+			Category = category;
+			SequenceNumber = seqNumber;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
 			// chicken-and-egg problem when constructing this, so we need to do it here.
 			if (IsUserAdded && m_sModifiedPhrase != null)
-				m_questionInfo.Text = m_sModifiedPhrase;
+			{
+				// This cast is entirely safe. Note above that for m_sModifiedPhrase to be non-null,
+				// the questionInfo object
+				((Question)questionInfo).Text = m_sModifiedPhrase;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -87,13 +87,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(string originalPhrase, string modifiedPhrase)
 		{
-			m_sOrigPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
+			OriginalPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
 			if (!string.IsNullOrEmpty(modifiedPhrase))
 			{
 				m_sModifiedPhrase = modifiedPhrase.Normalize(NormalizationForm.FormC);
 
 			}
-			if (!String.IsNullOrEmpty(m_sOrigPhrase))
+			if (!String.IsNullOrEmpty(OriginalPhrase))
 			{
 				switch (PhraseInUse[PhraseInUse.Length - 1])
 				{
@@ -101,9 +101,9 @@ namespace SIL.Transcelerator
 					case '.': m_type = TypeOfPhrase.StatementOrImperative; break;
 					default: m_type = TypeOfPhrase.Unknown; break;
 				}
-				if (m_type == TypeOfPhrase.Unknown && m_sOrigPhrase.StartsWith(Question.kGuidPrefix))
+				if (m_type == TypeOfPhrase.Unknown && OriginalPhrase.StartsWith(Question.kGuidPrefix))
 				{
-					m_sOrigPhrase = string.Empty;
+					OriginalPhrase = string.Empty;
 					m_type = TypeOfPhrase.NoEnglishVersion;
 				}
 			}
@@ -117,34 +117,25 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int Category
-		{
-			get { return m_category; }
-        }
+		public int Category { get; }
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets whether this is a Detail (as oppposed to Overview or category name)
         /// question/phrase.
         /// </summary>
         /// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public bool IsDetail
-        {
-            get { return m_category > 0; }
-        }
+		public bool IsDetail => Category > 0;
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets whether this is a category name (as oppposed to a Detail or Overview
         /// question/phrase.)
         /// </summary>
         /// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public bool IsCategoryName
-        {
-            get { return m_category < 0; }
-        }
+		public bool IsCategoryName => Category < 0;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -152,10 +143,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string Reference
-		{
-			get { return (m_questionInfo == null) ? null : m_questionInfo.ScriptureReference; }
-		}
+		public string Reference => m_questionInfo?.ScriptureReference;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -163,10 +151,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		internal string OriginalPhrase
-		{
-			get { return m_sOrigPhrase; }
-		}
+		internal string OriginalPhrase { get; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -175,10 +160,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string PhraseInUse
-		{
-			get { return m_sModifiedPhrase ?? m_sOrigPhrase; }
-		}
+		public string PhraseInUse => m_sModifiedPhrase ?? OriginalPhrase;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -192,7 +174,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				return (m_type == TypeOfPhrase.NoEnglishVersion) ? Properties.Resources.kstidUserAddedEmptyPhrase :
-					m_sModifiedPhrase ?? m_sOrigPhrase;
+					m_sModifiedPhrase ?? OriginalPhrase;
 			}
 		}
 
@@ -202,10 +184,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public QuestionKey PhraseKey
-		{
-			get { return m_questionInfo; }
-		}
+		public IQuestionKey PhraseKey => m_questionInfo;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -215,7 +194,7 @@ namespace SIL.Transcelerator
 		[Browsable(false)]
 		public string ModifiedPhrase
 		{
-			get { return m_sModifiedPhrase; }
+			get => m_sModifiedPhrase;
 			internal set
 			{
 				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormC);
@@ -249,12 +228,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public bool IsExcluded
 		{
-			get
-			{
-			    Question q = m_questionInfo as Question;
-			    return q != null && q.IsExcluded;
-			}
-			internal set { ((Question)m_questionInfo).IsExcluded = value; }
+			get => m_questionInfo is Question q && q.IsExcluded;
+			internal set => ((Question)m_questionInfo).IsExcluded = value;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -263,10 +238,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		internal bool IsExcludedOrModified
-		{
-            get { return (IsExcluded || (m_sModifiedPhrase != null && !IsUserAdded)); }
-		}
+		internal bool IsExcludedOrModified => (IsExcluded || (m_sModifiedPhrase != null && !IsUserAdded));
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -274,14 +246,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		internal bool IsUserAdded
-		{
-			get
-			{
-			    Question q = m_questionInfo as Question;
-				return q != null && q.IsUserAdded;
-			}
-		}
+		internal bool IsUserAdded => m_questionInfo is Question q && q.IsUserAdded;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -364,7 +329,7 @@ namespace SIL.Transcelerator
 		[Browsable(false)]
 		public bool HasUserTranslation
 		{
-			get { return m_fHasUserTranslation; }
+			get => m_fHasUserTranslation;
 			set
 			{
 				if (value)
@@ -484,10 +449,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public IEnumerable<Part> TranslatableParts
-		{
-			get { return m_parts.OfType<Part>(); }
-		}
+		public IEnumerable<Part> TranslatableParts => m_parts.OfType<Part>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -496,10 +458,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string[] KeyTermRenderings
-		{
-			get { return GetRenderingsOfType<KeyTerm>(); }
-		}
+		public string[] KeyTermRenderings => GetRenderingsOfType<KeyTerm>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -508,10 +467,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		private string[] NumberRenderings
-		{
-			get { return GetRenderingsOfType<Number>(); }
-		}
+		private string[] NumberRenderings => GetRenderingsOfType<Number>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -541,10 +497,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int StartRef
-		{
-			get { return (m_questionInfo == null) ? -1 : m_questionInfo.StartRef; }
-		}
+		public int StartRef => m_questionInfo?.StartRef ?? -1;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -552,10 +505,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int EndRef
-		{
-			get { return (m_questionInfo == null) ? -1 : m_questionInfo.EndRef; }
-		}
+		public int EndRef => m_questionInfo?.EndRef ?? -1;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -564,10 +514,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int SequenceNumber
-		{
-			get { return m_seqNumber; }
-		}
+		public int SequenceNumber { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -576,7 +523,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public void IncrementSequenceNumber()
 		{
-			m_seqNumber++;
+			SequenceNumber++;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -586,10 +533,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string CategoryName
-		{
-			get { return s_helper.GetCategoryName(Category); }
-		}
+		public string CategoryName => s_helper.GetCategoryName(Category);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -598,28 +542,14 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public Question QuestionInfo
-		{
-			get { return m_questionInfo as Question; }
-		}
+		public Question QuestionInfo => m_questionInfo as Question;
 
 		[Browsable(false)]
-		public TypeOfPhrase TypeOfPhrase
-		{
-			get { return (IsUserAdded && m_sModifiedPhrase == string.Empty) ? TypeOfPhrase.NoEnglishVersion : m_type; }
-		}
+		public TypeOfPhrase TypeOfPhrase => (IsUserAdded && m_sModifiedPhrase == string.Empty) ? TypeOfPhrase.NoEnglishVersion : m_type;
 
 		[Browsable(false)]
-		public IEnumerable<string> AlternateForms
-		{
-			get
-			{
-				var qi = QuestionInfo;
-				if (qi != null)
-                    return qi.AlternateForms;
-				return null;
-			}
-		}
+		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternateForms;
+
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)
@@ -651,10 +581,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public IPhrasePart this[int index]
-		{
-			get { return m_parts[index]; }
-		}
+		public IPhrasePart this[int index] => m_parts[index];
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -986,7 +913,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void SetTranslationInternal(string value)
 		{
-			m_sTranslation = (value == null) ? null : value.Normalize(NormalizationForm.FormC);
+			m_sTranslation = value?.Normalize(NormalizationForm.FormC);
 			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
 				m_allTermsAndNumbersMatch = false; // This will usually get updated in ProcessTranslation

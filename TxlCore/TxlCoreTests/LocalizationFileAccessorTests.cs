@@ -615,9 +615,9 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private IEnumerable<QuestionKey> VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs)
+		private IEnumerable<IQuestionKey> VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs)
 		{
-			QuestionKey key = new SimpleQuestionKey("Overview");
+			IQuestionKey key = new SimpleQuestionKey("Overview");
 			var info = sut.GetLocalizableStringInfo(key);
 			Assert.AreEqual(LocalizableStringType.Category, info.Type);
 			if (info.Localization.Text != key.PhraseInUse)

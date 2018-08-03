@@ -60,7 +60,7 @@ namespace SIL.Transcelerator
 		// distinguish between a true localization and an English string copied over into the localized
 		// text field. But this should be extraordinarily unlikely for any string that actually has
 		// alternate forms.
-		public bool HasBeenLocalized(QuestionKey key) => English != Localization.GetLocalizedString(key);
+		public bool HasBeenLocalized(IQuestionKey key) => English != Localization.GetLocalizedString(key);
 	}
 	#endregion
 
@@ -79,7 +79,7 @@ namespace SIL.Transcelerator
 		[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Alt", typeof(LocalizableStringForm), IsNullable = true)]
 		public List<LocalizableStringForm> Alternates { get; set; }
 
-		internal String GetLocalizedString(QuestionKey key)
+		internal String GetLocalizedString(IQuestionKey key)
 		{
 			if (Localization?.Text == null)
 				return null;
@@ -130,12 +130,12 @@ namespace SIL.Transcelerator
 		[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Occurrence", typeof(Occurrence), IsNullable = false)]
 		public List<Occurrence> Occurrences { get; set; }
 
-		internal Occurrence GetMatchingOverrideIfAny(QuestionKey key)
+		internal Occurrence GetMatchingOverrideIfAny(IQuestionKey key)
 		{
 			return Occurrences?.SingleOrDefault(o => key.CompareRefs(o.StartRef, o.EndRef) == 0);
 		}
 		
-		internal string GetLocalizedString(QuestionKey key)
+		internal string GetLocalizedString(IQuestionKey key)
 		{
 			return GetMatchingOverrideIfAny(key)?.LocalizedString ?? Text;
 		}

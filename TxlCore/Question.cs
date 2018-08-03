@@ -55,10 +55,7 @@ namespace SIL.Transcelerator
         [XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
         public override string Text
 		{
-			get
-            {
-                return m_text; // Note: this is not base.m_text
-            }
+			get => m_text; // Note: this is not base.m_text
 			set
 			{
 			    if (String.IsNullOrEmpty(value))
@@ -84,9 +81,9 @@ namespace SIL.Transcelerator
 
         protected List<ParsedPart> m_parsedParts;
         [XmlElement]
-        public List<ParsedPart> ParsedParts { get { return m_parsedParts ?? (m_parsedParts = new List<ParsedPart>()); } }
+        public List<ParsedPart> ParsedParts => m_parsedParts ?? (m_parsedParts = new List<ParsedPart>());
 
-        [XmlIgnore]
+		[XmlIgnore]
         public Question InsertedQuestionBefore { get; set; }
 
         [XmlIgnore]
@@ -100,27 +97,18 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// ------------------------------------------------------------------------------------
 	    [XmlIgnore]
-	    public bool IsParsable
-	    {
-            get
-            {
-                return !IsExcluded && !string.IsNullOrEmpty(m_text) && !m_text.StartsWith(kGuidPrefix);
-            }
-	    }
+	    public bool IsParsable => !IsExcluded && !string.IsNullOrEmpty(m_text) && !m_text.StartsWith(kGuidPrefix);
 
-	    /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets the question/phrase to use for processing & comparison purposes (either the
         /// original text or a modified form of it).
         /// </summary>
         /// ------------------------------------------------------------------------------------
         [XmlIgnore]
-        public override string PhraseInUse
-        {
-            get { return IsExcluded ? Text : (ModifiedPhrase ?? Text); }
-        }
+        public override string PhraseInUse => IsExcluded ? Text : (ModifiedPhrase ?? Text);
 
-        /// --------------------------------------------------------------------------------
+		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Question"/> class, needed
 		/// for XML serialization.
@@ -140,19 +128,26 @@ namespace SIL.Transcelerator
 			baseQuestion.EndRef, newQuestion, answer)
 		{
 		}
+		
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor to make a new Question "from scratch".
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion) :
+			base(newQuestion, scrRefAsString, startRef, endRef)
+		{
+		}
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion, string answer)
+		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion, string answer) :
+			base(newQuestion, scrRefAsString, startRef, endRef)
 		{
-			ScriptureReference = scrRefAsString;
-			StartRef = startRef;
-			EndRef = endRef;
 			IsUserAdded = true;
-			Text = newQuestion;
 
 			if (!string.IsNullOrEmpty(answer))
 				Answers = new[] { answer };
