@@ -54,7 +54,9 @@ namespace SIL.Transcelerator
 		[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Category", typeof(Category), IsNullable = false)]
 		public Category[] Categories { get; set; }
 	}
+	#endregion
 
+	#region class Category
 	[Serializable]
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]

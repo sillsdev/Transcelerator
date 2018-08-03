@@ -261,14 +261,14 @@ namespace SIL.Transcelerator
 					AllAnswers.Add(answer);
 			}
 
-			public bool IsInsertionAtOrBeforeReference(QuestionKey keyToUseForReference, IEnumerable<Question> existingQuestionsInCategory, bool inclusive)
+			public bool IsInsertionAtOrBeforeReference(IQuestionKey keyToUseForReference, IEnumerable<Question> existingQuestionsInCategory, bool inclusive)
 			{
 				var addition = AdditionsAndInsertions.FirstOrDefault();
 				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive) &&
 					!existingQuestionsInCategory.Any(q => q.Matches(addition.Key));
 			}
 
-			public Question PopQuestion(QuestionKey keyToUseForReference)
+			public Question PopQuestion(IQuestionKey keyToUseForReference)
 			{
 				ResolveDeletionsAndAdditions();
 
