@@ -135,6 +135,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       <Component Guid="{E0A7B9CE-FAC2-4726-9305-9FD3B0501699}">
         <File Id="TxlQuestionWords.xml_P7" ShortName="zk1ka5xk.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
       </Component>
+      <Component Guid="{BB25F95D-1BF5-4D43-9F39-E18840AE2300}">
+        <File Id="LocalizedPhrases-es.xml_P7" ShortName="6i9lrqdm.xml" KeyPath="yes" Name="LocalizedPhrases-es.xml" />
+      </Component>
       <Component Guid="{352892BC-8904-4760-8E61-FC26C2865827}">
         <File Id="Analytics.NET.dll_P7" ShortName="wzi8aqe7.dll" KeyPath="yes" Name="Analytics.NET.dll" />
       </Component>
@@ -215,6 +218,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
       <Component Guid="{44eae9ce-57b3-48e8-9790-8a4824468472}">
         <File Id="TxlQuestionWords.xml_P7Test" ShortName="4m95zkrf.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
+      </Component>
+      <Component Guid="{95DF5937-A811-4493-96B1-2076CE3AE609}">
+        <File Id="LocalizedPhrases-es.xml_P7Test" ShortName="ejoysqre.xml" KeyPath="yes" Name="LocalizedPhrases-es.xml" />
       </Component>
       <Component Guid="{1c250d8a-b1be-4a69-9205-13dbc232010f}">
         <File Id="Analytics.NET.dll_P7Test" ShortName="pt3ei4z5.dll" KeyPath="yes" Name="Analytics.NET.dll" />
@@ -297,6 +303,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       <Component Guid="{fc7b1474-f88a-46b7-9953-1894f9c00923}">
         <File Id="TxlQuestionWords.xml_P8" ShortName="yd6ebdz3.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
       </Component>
+      <Component Guid="{D724075D-0BF1-4EE9-9328-88F4A3DFB648}">
+        <File Id="LocalizedPhrases-es.xml_P8" ShortName="64emy0yg.xml" KeyPath="yes" Name="LocalizedPhrases-es.xml" />
+      </Component>
       <Component Guid="{524b2f76-d358-42a3-b32b-90f5f5410300}">
         <File Id="Analytics.NET.dll_P8" ShortName="k2rh61ic.dll" KeyPath="yes" Name="Analytics.NET.dll" />
       </Component>
@@ -377,6 +386,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
       <Component Guid="{9f22feff-d35a-47c9-876b-af6760c27690}">
         <File Id="TxlQuestionWords.xml_P8Test" ShortName="lab9u8fk.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
+      </Component>
+      <Component Guid="{C6370F82-F337-4718-9262-B99B62419DF1}">
+        <File Id="LocalizedPhrases-es.xml_P8Test" ShortName="dwf68pwf.xml" KeyPath="yes" Name="LocalizedPhrases-es.xml" />
       </Component>
       <Component Guid="{dc8c9640-b274-4b73-9f71-2dda293ddea5}">
         <File Id="Analytics.NET.dll_P8Test" ShortName="y47plibz.dll" KeyPath="yes" Name="Analytics.NET.dll" />
