@@ -66,8 +66,8 @@ namespace SIL.Transcelerator
 
 		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null)
 		{
-			QuestionKey key;
-			string Translation(QuestionKey k) => existingTxlTranslations == null ? null : LookupTranslation(existingTxlTranslations, k);
+			IQuestionKey key;
+			string Translation(IQuestionKey k) => existingTxlTranslations == null ? null : LookupTranslation(existingTxlTranslations, k);
 			foreach (var section in questions.Items)
 			{
 				key = new Question(section.ScriptureReference, section.StartRef, section.EndRef, section.Heading, null);
@@ -119,7 +119,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		string LookupTranslation(List<XmlTranslation> translations, QuestionKey key)
+		string LookupTranslation(List<XmlTranslation> translations, IQuestionKey key)
 		{
 			XmlTranslation firstMatchOnPhrase = null;
 			foreach (var translation in translations)
@@ -135,10 +135,10 @@ namespace SIL.Transcelerator
 			return firstMatchOnPhrase?.Translation;
 		}
 
-		internal void AddLocalizationEntry(QuestionKey key, LocalizableStringType type, string localizedString = null)
+		internal void AddLocalizationEntry(IQuestionKey key, LocalizableStringType type, string localizedString = null)
 		{
 			var localizableStringInfo = GetLocalizableStringInfo(key);
-			Localization localization = null;
+			Localization localization;
 			if (localizableStringInfo == null)
 			{
 				localization = new Localization();
@@ -216,7 +216,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		internal LocalizableString GetLocalizableStringInfo(QuestionKey key)
+		internal LocalizableString GetLocalizableStringInfo(IQuestionKey key)
 		{
 			LocalizableString value;
 			if (m_dataDictionary.TryGetValue(key.Text, out value))
@@ -226,7 +226,7 @@ namespace SIL.Transcelerator
 			return m_dataDictionary.Values.FirstOrDefault(v => v.Alternates?.Any(a => a.English == key.PhraseInUse) ?? false);
 		}
 
-		public string GetLocalizedString(QuestionKey key, bool failoverToEnglish = true)
+		public string GetLocalizedString(IQuestionKey key, bool failoverToEnglish = true)
 		{
 			return GetLocalizableStringInfo(key)?.GetLocalizedString(key) ?? (failoverToEnglish ? key.PhraseInUse : null);
 		}

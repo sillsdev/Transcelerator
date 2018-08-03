@@ -98,6 +98,7 @@
     <Compile Include="Question.cs" />
     <Compile Include="QuestionKey.cs" />
     <Compile Include="QuestionSections.cs" />
+    <Compile Include="UIDataString.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="XmlTranslation.cs" />
   </ItemGroup>

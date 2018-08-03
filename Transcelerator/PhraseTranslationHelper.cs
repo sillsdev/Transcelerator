@@ -238,15 +238,9 @@ namespace SIL.Transcelerator
 		/// given key.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int FindPhrase(QuestionKey phraseKey)
+		public int FindPhrase(IQuestionKey phraseKey)
 		{
-			for (int i = 0; i < FilteredSortedPhrases.Count; i++)
-			{
-				TranslatablePhrase phrase = FilteredSortedPhrases[i];
-				if (phrase.PhraseKey.Matches(phraseKey))
-					return i;
-			}
-			return -1;
+			return FilteredSortedPhrases.FindIndex(p => p.PhraseKey.Matches(phraseKey));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -267,10 +261,7 @@ namespace SIL.Transcelerator
 		/// Gets the phrases (filtered and sorted).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<TranslatablePhrase> Phrases
-		{
-			get { return FilteredSortedPhrases; }
-		}
+		public IEnumerable<TranslatablePhrase> Phrases => FilteredSortedPhrases;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -298,13 +289,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public List<RenderingSelectionRule> TermRenderingSelectionRules
 		{
-			get { return m_termRenderingSelectionRules; }
+			get => m_termRenderingSelectionRules;
 			internal set
 			{
 				m_termRenderingSelectionRules = value;
-				if (m_fileAccessor != null)
-					m_fileAccessor.Write(DataFileAccessor.DataFileId.TermRenderingSelectionRules,
-                        XmlSerializationHelper.SerializeToString(m_termRenderingSelectionRules));
+				m_fileAccessor?.Write(DataFileAccessor.DataFileId.TermRenderingSelectionRules,
+					XmlSerializationHelper.SerializeToString(m_termRenderingSelectionRules));
 			}
 		}
 
@@ -325,7 +315,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the list of customized (added, inserted, modiefied, deleted) phrases, sorted by
+		/// Gets the list of customized (added, inserted, modified, deleted) phrases, sorted by
 		/// reference (and insertion order).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

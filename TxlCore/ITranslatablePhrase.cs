@@ -14,7 +14,7 @@ namespace SIL.Transcelerator
 {
 	public interface ITranslatablePhrase
 	{
-		QuestionKey PhraseKey { get; }
+		IQuestionKey PhraseKey { get; }
 		string Translation { get; }
 	}
 }
