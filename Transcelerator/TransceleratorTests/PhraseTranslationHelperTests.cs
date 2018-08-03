@@ -3561,12 +3561,9 @@ namespace SIL.Transcelerator
 		/// Constructor
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TestQ(string text, string sRef, int startRef, int endRef, List<ParsedPart> parts)
+		public TestQ(string text, string sRef, int startRef, int endRef, List<ParsedPart> parts) :
+			base(sRef, startRef, endRef, text)
 		{
-			Text = text;
-			ScriptureReference = sRef;
-			StartRef = startRef;
-			EndRef = endRef;
 		    m_parsedParts = parts;
 		}
 		#endregion

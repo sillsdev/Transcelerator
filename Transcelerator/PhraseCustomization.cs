@@ -142,9 +142,6 @@ namespace SIL.Transcelerator
 	#region CustomQuestionKey
 	internal class CustomQuestionKey : QuestionKey
 	{
-		private readonly int m_startRef;
-		private readonly int m_endRef;
-
 		public override string ScriptureReference { get; set; }
 		public override int StartRef { get; set; }
 		public override int EndRef { get; set; }

@@ -27,7 +27,7 @@ using SIL.Windows.Forms.Reporting;
 namespace SIL.Transcelerator
 {
 	[AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
-		Version = "1.2", Publisher = "SIL International")]
+		Version = "1.3", Publisher = "SIL International")]
 	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
 	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
 	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
@@ -194,6 +194,16 @@ namespace SIL.Transcelerator
 						catch (Exception)
 						{
 						}
+						string preferredUiLocale = "en";
+						try
+						{
+							preferredUiLocale = host.GetApplicationSetting("InterfaceLanguageId");
+							if (String.IsNullOrWhiteSpace(preferredUiLocale))
+								preferredUiLocale = "en";
+						}
+						catch (Exception)
+						{
+						}
 						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
@@ -205,7 +215,7 @@ namespace SIL.Transcelerator
                             new ScrVers(host, TxlCore.kEnglishVersificationName),
 						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
 						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
-						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop);
+						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop, preferredUiLocale);
 					    splashScreen = null;
 					}
 

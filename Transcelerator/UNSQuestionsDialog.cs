@@ -54,6 +54,7 @@ namespace SIL.Transcelerator
 	    private readonly Action m_helpDelegate;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
+		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
@@ -306,6 +307,8 @@ namespace SIL.Transcelerator
 		/// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
 		/// <param name="lookupTermDelegate">The lookup term delegate.</param>
 		/// <param name="fEnableDragDrop">Allow drag-drop editing (moving text within a translation)</param>
+		/// <param name="preferredUiLocale">THE BCP-47 locale identifier to use for the user
+		/// interface (including localized questions, answers, etc.)</param>
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
             Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
@@ -313,7 +316,7 @@ namespace SIL.Transcelerator
             IScrExtractor scrExtractor, Func<string> getCss, string appName, IScrVers englishVersification,
             IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
             Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
-            Action<IList<string>> lookupTermDelegate, bool fEnableDragDrop)
+            Action<IList<string>> lookupTermDelegate, bool fEnableDragDrop, string preferredUiLocale)
 		{
             if (splashScreen == null)
             {
@@ -346,7 +349,8 @@ namespace SIL.Transcelerator
 	        m_getTermOccurrences = getTermOccurrences;
 	        m_lookupTermDelegate = lookupTermDelegate;
 		    m_fEnableDragDrop = fEnableDragDrop;
-		    m_scrExtractor = scrExtractor;
+
+			m_scrExtractor = scrExtractor;
 	        m_getCss = getCss;
 	        m_appName = appName;
             m_masterVersification = englishVersification;
@@ -359,6 +363,13 @@ namespace SIL.Transcelerator
             
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
+
+			if (preferredUiLocale != "en")
+			{
+				m_dataLocalizer = new LocalizationsFileAccessor(m_installDir, preferredUiLocale);
+				if (!m_dataLocalizer.Exists)
+					m_dataLocalizer = null;
+			}
 
 			ClearBiblicalTermsPane();
 
@@ -725,15 +736,27 @@ namespace SIL.Transcelerator
 			m_pnlAnswersAndComments.Visible = ShowAnswersAndComments;
 		}
 
+		private string GetLocalizedDataString(IQuestionKey key, LocalizableStringType type, string english = null)
+		{
+			if (m_dataLocalizer == null)
+				return english;
+			return m_dataLocalizer.GetLocalizedString(new UIDataString(key, english, type));
+		}
+
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
+			var tp = m_helper[e.RowIndex];
 			switch (e.ColumnIndex)
 			{
-				case 0: e.Value = m_helper[e.RowIndex].Reference; break;
-				case 1: e.Value = m_helper[e.RowIndex].PhraseToDisplayInUI; break;
-				case 2: e.Value = m_helper[e.RowIndex].Translation; break;
-				case 3: e.Value = m_helper[e.RowIndex].HasUserTranslation; break;
-				case 4: e.Value = m_helper[e.RowIndex].DebugInfo; break;
+				case 0: e.Value = tp.Reference; break;
+				case 1:
+					e.Value = GetLocalizedDataString(tp.PhraseKey,
+						tp.IsCategoryName ? LocalizableStringType.Category : LocalizableStringType.Question,
+						tp.PhraseInUse);
+					break;
+				case 2: e.Value = tp.Translation; break;
+				case 3: e.Value = tp.HasUserTranslation; break;
+				case 4: e.Value = tp.DebugInfo; break;
 			}
 		}
 
@@ -1559,7 +1582,7 @@ namespace SIL.Transcelerator
 		/// <param name="fallBackRow">the index of the row to select if a question witht the
 		/// given key cannot be found.</param>
 		/// ------------------------------------------------------------------------------------
-		private void Reload(bool fForceSave, QuestionKey key, int fallBackRow)
+		private void Reload(bool fForceSave, IQuestionKey key, int fallBackRow)
 		{
 			using (new WaitCursor(this))
 			{
@@ -2452,39 +2475,40 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void LoadAnswerAndComment(int rowIndex)
 		{
-			Question answersAndComments = m_helper[rowIndex].QuestionInfo;
-			if (answersAndComments == null || ((answersAndComments.Answers == null || answersAndComments.Answers.Length == 0) &&
-				(answersAndComments.Notes == null || answersAndComments.Notes.Length == 0)))
+			var question = m_helper[rowIndex].QuestionInfo;
+			if (question?.Answers?.Length == 0 && question.Notes?.Length == 0)
 			{
 				m_lblAnswerLabel.Visible = m_lblAnswers.Visible = false;
 				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
 				return;
 			}
-			PopulateAnswerOrCommentLabel(answersAndComments.Answers, m_lblAnswerLabel,
-				m_lblAnswers, Properties.Resources.kstidAnswersLabel);
-			PopulateAnswerOrCommentLabel(answersAndComments.Notes, m_lblCommentLabel,
-				m_lblComments, Properties.Resources.kstidCommentsLabel);
+			PopulateAnswerOrCommentLabel(question, q => q?.Answers?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Answer, d)),
+				m_lblAnswerLabel, m_lblAnswers, Properties.Resources.kstidAnswersLabel);
+			PopulateAnswerOrCommentLabel(question, q => q?.Notes?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Note, d)),
+				m_lblCommentLabel, m_lblComments, Properties.Resources.kstidCommentsLabel);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Populates the answer or comment label.
 		/// </summary>
-		/// <param name="details">The list of answers or comments.</param>
+		/// <param name="question">The question whose answers or comments are to be used.</param>
+		/// <param name="getDetails">A function to retrieve the desired data.</param>
 		/// <param name="label">The label that has the "Answer:" or "Comment:" label.</param>
 		/// <param name="contents">The label that is to be populated with the actual answer(s)
 		/// or comment(s).</param>
 		/// <param name="sLabelMultiple">The text to use for <see cref="label"/> if there are
 		/// multiple answers/comments.</param>
 		/// ------------------------------------------------------------------------------------
-		private static void PopulateAnswerOrCommentLabel(IEnumerable<string> details,
+		private void PopulateAnswerOrCommentLabel(Question question, Func<Question, IEnumerable<string>> getDetails,
 			Label label, Label contents, string sLabelMultiple)
 		{
+			var details = getDetails(question)?.ToArray();
 			label.Visible = contents.Visible = details != null;
-			if (label.Visible)
+			if (details != null)
 			{
 				label.Show();
-				label.Text = (details.Count() == 1) ? (string)label.Tag : sLabelMultiple;
+				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
 				contents.Text = details.ToString(Environment.NewLine + "\t");
 			}
 		}

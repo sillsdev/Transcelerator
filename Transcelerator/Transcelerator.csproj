@@ -303,7 +303,6 @@
     <Compile Include="PhraseTranslationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TranslatablePhrase.cs" />
-    <Compile Include="XmlTranslation.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AddRenderingDlg.resx">
@@ -435,6 +434,9 @@
     <None Include="Properties\SILLogoBlue132x184.png" />
     <None Include="Properties\Arrow-Down-icon24x24.png" />
     <None Include="Properties\Arrow-Up-icon24x24.png" />
+    <Content Include="LocalizedPhrases-es.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
