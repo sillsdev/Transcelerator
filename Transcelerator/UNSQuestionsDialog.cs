@@ -1739,6 +1739,8 @@ namespace SIL.Transcelerator
 			var addressToSelect = dataGridUns.CurrentCellAddress;
 			ApplyFilter();
 			dataGridUns.RowCount = m_helper.Phrases.Count();
+			if (dataGridUns.RowCount == addressToSelect.Y)
+				addressToSelect.Y--;
 			dataGridUns.CurrentCell = dataGridUns.Rows[addressToSelect.Y].Cells[addressToSelect.X];
 		}
 
