@@ -70,14 +70,19 @@ namespace SIL.Transcelerator
 	[XmlType(AnonymousType = true)]
 	public class LocalizableString : LocalizableStringForm
 	{
+
 		// The type is currently just informative. It's not used for anything functional, but it
 		// could be helpful in prioritizing strings for localization
 		[XmlAttribute]
 		[DefaultValue(LocalizableStringType.Undefined)]
 		public LocalizableStringType Type { get; set; }
 
-		[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Alt", typeof(LocalizableStringForm), IsNullable = true)]
+		[XmlArray(Form = XmlSchemaForm.Unqualified, IsNullable = true), XmlArrayItem("Alt", typeof(LocalizableStringForm))]
 		public List<LocalizableStringForm> Alternates { get; set; }
+
+		// See http://www.xiirus.net/articles/article-avoid-serialization-of-empty-arraylist-or-collection-6wm4e.aspx
+		[XmlIgnore]
+		public bool AlternatesSpecified => Alternates?.Count > 0;
 
 		internal String GetLocalizedString(IQuestionKey key)
 		{

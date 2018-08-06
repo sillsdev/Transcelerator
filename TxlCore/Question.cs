@@ -46,10 +46,19 @@ namespace SIL.Transcelerator
         [XmlAttribute("exclude")]
         public bool IsExcluded { get; set; }
 
-        [XmlAttribute("user")]
-        public bool IsUserAdded { get; set; }
+		[XmlAttribute("user")]
+		public bool IsUserAdded
+		{
+			get => m_isUserAdded;
+			set
+			{
+				if (!value && m_isUserAdded)
+					throw new InvalidOperationException("An existing user-added question cannot be set back to a factory question. This setter is only designed to support deserialization and should not be used outside of this class or in tests.");
+				m_isUserAdded = value;
+			}
+		}
 
-        [XmlAttribute("modified")]
+		[XmlAttribute("modified")]
         public string ModifiedPhrase { get; set; }
 
         [XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
@@ -58,9 +67,16 @@ namespace SIL.Transcelerator
 			get => m_text; // Note: this is not base.m_text
 			set
 			{
-			    if (String.IsNullOrEmpty(value))
+			    if (String.IsNullOrWhiteSpace(value))
 			    {
-                    if (IsUserAdded)
+				    if (m_text == null)
+				    {
+					    // This is getting set for the very first time, presumably in the constructor.
+						// This is only allowed in constructors that will be setting IsUserAdded to
+						// true anyway.
+					    IsUserAdded = true;
+				    }
+				    if (IsUserAdded)
 			            m_text = kGuidPrefix + Guid.NewGuid();
                     else
                         throw new ArgumentException("Factory-supplied questions must not be empty.");
@@ -80,7 +96,9 @@ namespace SIL.Transcelerator
         public string[] AlternateForms { get; set; }
 
         protected List<ParsedPart> m_parsedParts;
-        [XmlElement]
+		private bool m_isUserAdded;
+
+		[XmlElement]
         public List<ParsedPart> ParsedParts => m_parsedParts ?? (m_parsedParts = new List<ParsedPart>());
 
 		[XmlIgnore]
@@ -131,12 +149,14 @@ namespace SIL.Transcelerator
 		
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Constructor to make a new Question "from scratch".
+		/// Constructor to make a new Question "from scratch" (used only in tests)
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion) :
+		protected Question(string scrRefAsString, int startRef, int endRef, string newQuestion) :
 			base(newQuestion, scrRefAsString, startRef, endRef)
 		{
+			if (IsUserAdded)
+				throw new InvalidOperationException("This constructor is only for use in tests and is not intended for creating user-added questions.");
 		}
 
 		/// --------------------------------------------------------------------------------

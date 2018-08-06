@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2014' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2018, SIL International.
+// <copyright from='2014' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,29 +14,60 @@ namespace SIL.Transcelerator
 {
     public class ScrVers : IScrVers
     {
-        private readonly IHost host;
-        private readonly string versificationName;
+        private readonly IHost m_host;
 
         public ScrVers(IHost host, string versificationName)
         {
-            this.host = host;
-            this.versificationName = versificationName;
+            m_host = host;
+            Name = versificationName;
         }
 
-        public int GetLastChapter(int bookNum)
+	    public int GetLastBook()
+	    {
+		    return Canon.LastBook;
+	    }
+
+	    public int GetLastChapter(int bookNum)
         {
-            return host.GetLastChapter(bookNum, versificationName);
+            return m_host.GetLastChapter(bookNum, Name);
         }
 
         public int GetLastVerse(int bookNum, int chapterNum)
         {
-            return host.GetLastVerse(bookNum, chapterNum, versificationName);
+            return m_host.GetLastVerse(bookNum, chapterNum, Name);
         }
 
         public int ChangeVersification(int reference, IScrVers scrVersSource)
         {
             return this == scrVersSource ? reference :
-                host.ChangeVersification(reference, ((ScrVers)scrVersSource).versificationName, versificationName);
+                m_host.ChangeVersification(reference, ((ScrVers)scrVersSource).Name, Name);
         }
+
+	    public bool IsExcluded(int bbbcccvvv)
+	    {
+		    throw new System.NotImplementedException();
+	    }
+
+	    public VerseRef FirstIncludedVerse(int bookNum, int chapterNum)
+	    {
+		    throw new System.NotImplementedException();
+	    }
+
+	    public string[] VerseSegments(int bbbcccvvv)
+	    {
+		    throw new System.NotImplementedException();
+	    }
+
+	    public void ChangeVersification(VerseRef reference)
+	    {
+		    throw new System.NotImplementedException();
+	    }
+
+	    public bool ChangeVersificationWithRanges(VerseRef reference)
+	    {
+		    throw new System.NotImplementedException();
+	    }
+
+	    public string Name { get; }
     }
 }

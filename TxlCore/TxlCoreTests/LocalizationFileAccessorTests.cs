@@ -423,6 +423,45 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_MasterFileHasBlanks_BlanksAreEliminated()
+		{
+			QuestionSections qs = new QuestionSections();
+			qs.Items = new Section[1];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("PRO 3.1-35", "Proverbs 3:1-35 The Rewards of Wisdom.", 20003001, 20003035, 1, 3);
+			int iC = 0;
+			Question q = qs.Items[iS].Categories[iC].Questions[0];
+			q.Text = "What is wisdom?";
+			q.Answers = new[] { "Smartness on steroids", "" };
+			q.AlternateForms = new[] { "", null, "How would you define wisdom?" };
+
+			iC = 1;
+			int iQ = 0;
+			q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.StartRef = 20003012;
+			q.EndRef = 20003014;
+			q.ScriptureReference = "PRO 3.12-14";
+			q.Text = "How many words are there?";
+			q.Answers = new[] { null, "A bunch" };
+			q.Notes = new[] { "Exact answer is: Five", null };
+
+			var sut = new LocalizationsFileAccessor();
+			sut.GenerateOrUpdateFromMasterQuestions(qs);
+			IQuestionKey key = new UIDataString(qs.Items[0].Categories[0].Questions[0], "Smartness on steroids", LocalizableStringType.Answer);
+			Assert.AreEqual("Smartness on steroids", sut.GetLocalizableStringInfo(key).GetLocalizedString(key));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(key, "", LocalizableStringType.Answer)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(key, null, LocalizableStringType.Answer)));
+			key = new UIDataString(qs.Items[0].Categories[0].Questions[0], "How would you define wisdom?", LocalizableStringType.Question);
+			Assert.AreEqual("How would you define wisdom?", sut.GetLocalizableStringInfo(key).GetLocalizedString(key));
+			key = new UIDataString(qs.Items[0].Categories[1].Questions[0], "A bunch", LocalizableStringType.Answer);
+			Assert.AreEqual("A bunch", sut.GetLocalizableStringInfo(key).GetLocalizedString(key));
+			key = new UIDataString(key, "Exact answer is: Five", LocalizableStringType.Note);
+			Assert.AreEqual("Exact answer is: Five", sut.GetLocalizableStringInfo(key).GetLocalizedString(key));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(key, "", LocalizableStringType.Note)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(key, null, LocalizableStringType.Note)));
+		}
+
+		[Test]
 		public void SaveAndLoad_NoAlternates_NoLoss()
 		{
 			using (var folder = new TemporaryFolder("SaveAndLoad_NoAlternates_NoLoss"))
