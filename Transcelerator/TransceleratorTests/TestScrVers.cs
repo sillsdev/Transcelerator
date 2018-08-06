@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2013' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2018, SIL International.
+// <copyright from='2013' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -40,6 +40,11 @@ namespace SIL.Transcelerator
 			m_vers.Stub(v => v.GetLastVerse(66, 1)).Return(20);
 		}
 
+		public int GetLastBook()
+		{
+			return Canon.LastBook;
+		}
+
 		public int GetLastChapter(int bookNum)
 		{
 			return m_vers.GetLastChapter(bookNum);
@@ -54,5 +59,32 @@ namespace SIL.Transcelerator
 		{
 			return m_vers.ChangeVersification(reference, scrVersSource);
 		}
+
+		public bool IsExcluded(int bbbcccvvv)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public VerseRef FirstIncludedVerse(int bookNum, int chapterNum)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public string[] VerseSegments(int bbbcccvvv)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void ChangeVersification(VerseRef reference)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public bool ChangeVersificationWithRanges(VerseRef reference)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public string Name => "Test versification thingy";
 	}
 }

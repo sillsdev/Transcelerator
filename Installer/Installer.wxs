@@ -180,6 +180,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	    <Component Guid="{98D718FC-99AF-4AEF-BE0D-9D24F69B5DA7}">
         <File Id="Keyman7Interop.dll_P7" ShortName="ie4zttme.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
       </Component>
+	    <Component Guid="{EEAD8314-BF44-4CE2-9EDE-78551B1BFF14}">
+        <File Id="Keyman10Interop.dll_P7" ShortName="gsu9gkpc.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
+      </Component>
       <Component Guid="{EE7BDDBE-F456-4257-A5C6-F2B3C1B79097}">
         <File Id="KeymanLink.dll_P7" ShortName="egs9radi.dll" KeyPath="yes" Name="KeymanLink.dll" />
       </Component>
@@ -263,6 +266,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
 	    <Component Guid="{5942686e-bb3a-468e-92c0-84a2de6dd86d}">
         <File Id="Keyman7Interop.dll_P7Test" ShortName="5qlbklph.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
+      </Component>
+	    <Component Guid="{BA0FDFA3-8486-4D95-BF41-20DFD020D671}">
+        <File Id="Keyman10Interop.dll_P7" ShortName="95jisujd.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
       </Component>
       <Component Guid="{70991ee9-5087-4a60-8973-9f1858aed379}">
         <File Id="KeymanLink.dll_P7Test" ShortName="w9zjyl63.dll" KeyPath="yes" Name="KeymanLink.dll" />
@@ -348,6 +354,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	    <Component Guid="{deb9c275-7425-4b06-a1ea-6c93ab1d4404}">
         <File Id="Keyman7Interop.dll_P8" ShortName="0n2q2w3k.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
       </Component>
+	    <Component Guid="{9F15C26D-18CA-4C54-A2E3-4BA3B3D3C15C}">
+        <File Id="Keyman10Interop.dll_P7" ShortName="x2zh399x.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
+      </Component>
       <Component Guid="{620c6217-5618-4aeb-b13b-15f15b8906d0}">
         <File Id="KeymanLink.dll_P8" ShortName="ysg24p4b.dll" KeyPath="yes" Name="KeymanLink.dll" />
       </Component>
@@ -431,6 +440,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
 	    <Component Guid="{971d56c8-1076-4a7d-8a59-7b0233ffbd18}">
         <File Id="Keyman7Interop.dll_P8Test" ShortName="2pkf5jyr.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
+      </Component>
+	    <Component Guid="{24788FDE-C09D-4D34-8AB0-CBA404A3BC08}">
+        <File Id="Keyman10Interop.dll_P7" ShortName="2okx6fi7.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
       </Component>
       <Component Guid="{393ba377-9ec7-4e9a-b565-325c20aae579}">
         <File Id="KeymanLink.dll_P8Test" ShortName="4pzbv61m.dll" KeyPath="yes" Name="KeymanLink.dll" />

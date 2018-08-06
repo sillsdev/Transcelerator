@@ -80,7 +80,7 @@ namespace SIL.Transcelerator
 						AddLocalizationEntry(key, LocalizableStringType.Category, Translation(key));
 					}
 
-					foreach (Question q in category.Questions)
+					foreach (Question q in category.Questions.Where(q => !String.IsNullOrWhiteSpace(q.Text)))
 					{
 						if (q.ScriptureReference == null)
 						{
@@ -92,7 +92,7 @@ namespace SIL.Transcelerator
 						if (q.AlternateForms != null)
 						{
 							var alt = new Question(q, q.Text, null); // Make a copy so we don't alter the underyling question.
-							foreach (var altForm in q.AlternateForms)
+							foreach (var altForm in q.AlternateForms.Where(a => !String.IsNullOrWhiteSpace(a)))
 							{
 								alt.ModifiedPhrase = altForm;
 								AddLocalizationEntry(alt, LocalizableStringType.Question, Translation(alt));
@@ -100,17 +100,17 @@ namespace SIL.Transcelerator
 						}
 						if (q.Answers != null)
 						{
-							foreach (var answer in q.Answers)
+							foreach (var answer in q.Answers.Where(a => !string.IsNullOrWhiteSpace(a)))
 							{
-								key = new Question(q, answer, null);
+								key = new UIDataString(q, answer, LocalizableStringType.Answer);
 								AddLocalizationEntry(key, LocalizableStringType.Answer, Translation(key));
 							}
 						}
 						if (q.Notes != null)
 						{
-							foreach (var comment in q.Notes)
+							foreach (var comment in q.Notes.Where(n => !string.IsNullOrWhiteSpace(n)))
 							{
-								key = new Question(q, comment, null);
+								key = new UIDataString(q, comment, LocalizableStringType.Note);
 								AddLocalizationEntry(key, LocalizableStringType.Note, Translation(key));
 							}
 						}
@@ -137,6 +137,8 @@ namespace SIL.Transcelerator
 
 		internal void AddLocalizationEntry(IQuestionKey key, LocalizableStringType type, string localizedString = null)
 		{
+			if (String.IsNullOrWhiteSpace(key?.Text))
+				throw new ArgumentException("Invalid key!", nameof(key));
 			var localizableStringInfo = GetLocalizableStringInfo(key);
 			Localization localization;
 			if (localizableStringInfo == null)
@@ -218,6 +220,8 @@ namespace SIL.Transcelerator
 
 		internal LocalizableString GetLocalizableStringInfo(IQuestionKey key)
 		{
+			if (String.IsNullOrWhiteSpace(key?.Text))
+				return null;
 			LocalizableString value;
 			if (m_dataDictionary.TryGetValue(key.Text, out value))
 				return value;

@@ -602,12 +602,12 @@ namespace SIL.Transcelerator
 		}
 
 		///--------------------------------------------------------------------------------------
-        /// <summary>
-        /// Tests parsing of detail questions whose answers contain 2 or more comma-sparated
-        /// verse numbers and ranges in parentheses.
-        /// </summary>
-        ///--------------------------------------------------------------------------------------
-        [Test]
+		/// <summary>
+		/// Tests parsing of detail questions whose answers contain 2 or more comma-sparated
+		/// verse numbers and ranges in parentheses.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
         public void ParseBasicQuestions_InterpretVerseNumbersInAnswers_CommaDelimitedSetAndMultipleAnswers()
         {
             QuestionSections sections = QuestionSfmFileAccessor.Generate(new[] {
@@ -806,6 +806,66 @@ namespace SIL.Transcelerator
 
 			Assert.AreEqual("Who was born in Bethlehem?", question.Text);
 			Assert.AreEqual("Jesus", question.Answers[0]);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests parsing of questions with answers or notes that don't contain any text.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void Generate_EmptyAnswersOrNotes_BlanksAnswersAndNotesGetSkipped()
+		{
+			QuestionSections sections = QuestionSfmFileAccessor.Generate(new[]
+			{
+				@"\rf Genesis 20:1-18 Abraham and Sarah deceived King Abimelech at Gerar.",
+				@"\oh Overview",
+				@"\tqref GEN 20.1-18",
+				@"\bttq This is an overview question, isn't it?",
+				@"\tqe Blah blah blah",
+				@"\tqe",
+				@"\tqe I guess so.",
+				@"\dh Details",
+				@"\tqref GEN 20.1-3",
+				@"\bttq What did King Abimelech do?",
+				@"\tqe He had someone bring Sarah to him at his palace.",
+				@"\tqe ",
+				@"\tqe He tried to make Sarah one of his concubines.",
+				@"\tqe -OR-",
+				@"\tqe He wanted to have sex with Sarah without giving her inheritence rights.",
+				@"\an This is a",
+				@"\an ",
+				@"\an very nice comment",
+			}, null);
+
+			Assert.AreEqual(1, sections.Items.Length);
+
+			Section section = sections.Items[0];
+			Assert.AreEqual("Genesis 20:1-18 Abraham and Sarah deceived King Abimelech at Gerar.", section.Heading);
+			Assert.AreEqual("GEN 20.1-18", section.ScriptureReference);
+			Assert.AreEqual(2, section.Categories.Length);
+			Category category = section.Categories[0];
+			Assert.AreEqual("Overview", category.Type);
+			Assert.AreEqual(1, category.Questions.Count);
+			Question question = category.Questions[0];
+			Assert.AreEqual(2, question.Answers.Length);
+			Assert.AreEqual("Blah blah blah", question.Answers[0]);
+			Assert.AreEqual("I guess so.", question.Answers[1]);
+			category = section.Categories[1];
+			Assert.AreEqual("Details", category.Type);
+			Assert.AreEqual(1, category.Questions.Count);
+			question = category.Questions[0];
+			Assert.AreEqual("GEN 20.1-3", question.ScriptureReference);
+			Assert.AreEqual(001020001, question.StartRef);
+			Assert.AreEqual(001020003, question.EndRef);
+			Assert.AreEqual(4, question.Answers.Length);
+			Assert.AreEqual("He had someone bring Sarah to him at his palace.", question.Answers[0]);
+			Assert.AreEqual("He tried to make Sarah one of his concubines.", question.Answers[1]);
+			Assert.AreEqual("-OR-", question.Answers[2]);
+			Assert.AreEqual("He wanted to have sex with Sarah without giving her inheritence rights.", question.Answers[3]);
+			Assert.AreEqual(2, question.Notes.Length);
+			Assert.AreEqual("This is a", question.Notes[0]);
+			Assert.AreEqual("very nice comment", question.Notes[1]);
 		}
 
 		///--------------------------------------------------------------------------------------

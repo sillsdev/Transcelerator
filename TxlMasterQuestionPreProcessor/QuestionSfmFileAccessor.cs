@@ -130,113 +130,32 @@ namespace SIL.TxlMasterQuestionPreProcessor
 						Debug.Fail("Answer \"" + sLine + "\" does not have a corresponding question. (Probably \\tqref line is misplaced.)");
 
 					string currAnswer = sLine.Substring(kAMarkerLen).Trim();
-                    if (!currCat.IsOverview)
+					if (!String.IsNullOrEmpty(currAnswer))
 					{
-						Match match = regexVerseNum.Match(currAnswer);
-                        if (match.Success)
-						{
-                            string sChapter = match.Result("${chapter}");
-                            int chapter = string.IsNullOrEmpty(sChapter) ? 0 : Int32.Parse(sChapter);
-							int startVerse = Int32.Parse(match.Result("${startVerse}"));
-							string sEndVerse = match.Result("${endVerse}");
-							int endVerse = string.IsNullOrEmpty(sEndVerse) ? startVerse : Int32.Parse(sEndVerse);
-                            while ((match = match.NextMatch()).Success)
-                            {
-                                sEndVerse = match.Result("${endVerse}");
-                                endVerse = string.IsNullOrEmpty(sEndVerse) ?
-                                    Int32.Parse(match.Result("${startVerse}")) : Int32.Parse(sEndVerse);
+						if (!currCat.IsOverview)
+							AdjustDetailQuestionRefBasedOnAnswer(regexVerseNum, currAnswer, currSection, currQuestion, ref currQuestionRefBasedOnAnswer);
+						string[] source = currQuestion.Answers;
+						currQuestion.Answers = new string[cAnswers + 1];
+						if (source != null)
+							Array.Copy(source, currQuestion.Answers, cAnswers);
 
-								// Answer might have multiple parts, not ordered according to verse ref.
-	                            if (endVerse < startVerse)
-	                            {
-		                            var temp = startVerse;
-		                            startVerse = endVerse;
-		                            endVerse = temp;
-	                            }
-                            }
-
-							BCVRef bcvStart = new BCVRef(currSection.StartRef);
-							BCVRef bcvEnd = new BCVRef(currSection.EndRef);
-                            // if reference in the answer is not in range for the current section, disregard it.
-						    bool inSectionRange = true;
-                            if (chapter == 0)
-                                inSectionRange = (bcvStart.Chapter == bcvEnd.Chapter - 1) || (startVerse >= bcvStart.Verse && endVerse <= bcvEnd.Verse);
-                            else
-                            {
-                                if ((chapter < bcvStart.Chapter || chapter > bcvEnd.Chapter) ||
-                                   (chapter == bcvStart.Chapter && startVerse < bcvStart.Verse) ||
-                                   (chapter == bcvEnd.Chapter && startVerse > bcvEnd.Verse))
-                                    inSectionRange = false;
-                            }
-                            if (inSectionRange)
-                            {
-                                if (currQuestion.StartRef <= 0)
-                                {
-                                    bcvStart.Verse = startVerse;
-                                    bcvEnd.Verse = endVerse;
-                                }
-                                else
-                                {
-                                    bcvStart = new BCVRef(currQuestion.StartRef);
-                                    bcvEnd = new BCVRef(currQuestion.EndRef);
-                                    if (chapter > 0)
-                                    {
-                                        bcvStart.Chapter = bcvEnd.Chapter = chapter;
-                                    }
-                                    if (bcvStart.Chapter == bcvEnd.Chapter - 1 && bcvStart.Verse > bcvEnd.Verse)
-                                    {
-                                        if (startVerse >= bcvStart.Verse && endVerse > bcvEnd.Verse)
-                                        {
-                                            // Question applies to a verse found wholly in the first chapter of the range
-                                            bcvStart.Verse = startVerse;
-                                            bcvEnd.Chapter = bcvStart.Chapter;
-                                            bcvEnd.Verse = endVerse;
-                                        }
-										else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
-										{
-											bcvStart.Verse = startVerse;
-											bcvStart.Chapter = bcvEnd.Chapter;
-											bcvEnd.Verse = endVerse;
-										}
-                                    }
-                                    else if (bcvStart.Chapter == bcvEnd.Chapter)
-                                    {
-										// If the current ref is based on (a previous) answer, we only want to
-										// expand the reference range, not contract it. If it's based on the
-										// section, then we want to set it to exactly what's specifiedf in the
-										// answer.
-										if (!currQuestionRefBasedOnAnswer || startVerse < bcvStart.Verse)
-                                            bcvStart.Verse = startVerse;
-										if (!currQuestionRefBasedOnAnswer || endVerse > bcvEnd.Verse || chapter > 0)
-                                            bcvEnd.Verse = endVerse;
-                                    }
-                                }
-
-                                currQuestion.StartRef = bcvStart.BBCCCVVV;
-                                currQuestion.EndRef = bcvEnd.BBCCCVVV;
-                                currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
-                                    currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
-	                            currQuestionRefBasedOnAnswer = true;
-                            }
-						}
+						currQuestion.Answers[cAnswers++] = currAnswer;
 					}
-					string[] source = currQuestion.Answers;
-					currQuestion.Answers = new string[cAnswers + 1];
-					if (source != null)
-						Array.Copy(source, currQuestion.Answers, cAnswers);
-
-					currQuestion.Answers[cAnswers++] = currAnswer;
 				}
 				else if (sLine.StartsWith(s_kCommentMarker))
 				{
 					if (currQuestion != null)
 					{
-						string[] source = currQuestion.Notes;
-						currQuestion.Notes = new string[cComments + 1];
-						if (source != null)
-							Array.Copy(source, currQuestion.Notes, cComments);
+						var note = sLine.Substring(kCommentMarkerLen).Trim();
+						if (!String.IsNullOrWhiteSpace(note))
+						{
+							string[] source = currQuestion.Notes;
+							currQuestion.Notes = new string[cComments + 1];
+							if (source != null)
+								Array.Copy(source, currQuestion.Notes, cComments);
 
-						currQuestion.Notes[cComments++] = sLine.Substring(kCommentMarkerLen).Trim();
+							currQuestion.Notes[cComments++] = note;
+						}
 					}
 				}
 				else
@@ -313,6 +232,97 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			questionSections.Items = sections.ToArray();
 			GenerateAlternateForms(questionSections, alternatives);
 			return questionSections;
+		}
+
+		private static void AdjustDetailQuestionRefBasedOnAnswer(Regex regexVerseNum, string currAnswer, Section currSection, Question currQuestion, ref bool currQuestionRefBasedOnAnswer)
+		{
+			Match match = regexVerseNum.Match(currAnswer);
+			if (match.Success)
+			{
+				string sChapter = match.Result("${chapter}");
+				int chapter = string.IsNullOrEmpty(sChapter) ? 0 : Int32.Parse(sChapter);
+				int startVerse = Int32.Parse(match.Result("${startVerse}"));
+				string sEndVerse = match.Result("${endVerse}");
+				int endVerse = string.IsNullOrEmpty(sEndVerse) ? startVerse : Int32.Parse(sEndVerse);
+				while ((match = match.NextMatch()).Success)
+				{
+					sEndVerse = match.Result("${endVerse}");
+					endVerse = string.IsNullOrEmpty(sEndVerse) ?
+						Int32.Parse(match.Result("${startVerse}")) : Int32.Parse(sEndVerse);
+
+					// Answer might have multiple parts, not ordered according to verse ref.
+					if (endVerse < startVerse)
+					{
+						var temp = startVerse;
+						startVerse = endVerse;
+						endVerse = temp;
+					}
+				}
+
+				BCVRef bcvStart = new BCVRef(currSection.StartRef);
+				BCVRef bcvEnd = new BCVRef(currSection.EndRef);
+				// if reference in the answer is not in range for the current section, disregard it.
+				bool inSectionRange = true;
+				if (chapter == 0)
+					inSectionRange = (bcvStart.Chapter == bcvEnd.Chapter - 1) || (startVerse >= bcvStart.Verse && endVerse <= bcvEnd.Verse);
+				else
+				{
+					if ((chapter < bcvStart.Chapter || chapter > bcvEnd.Chapter) ||
+						(chapter == bcvStart.Chapter && startVerse < bcvStart.Verse) ||
+						(chapter == bcvEnd.Chapter && startVerse > bcvEnd.Verse))
+						inSectionRange = false;
+				}
+				if (inSectionRange)
+				{
+					if (currQuestion.StartRef <= 0)
+					{
+						bcvStart.Verse = startVerse;
+						bcvEnd.Verse = endVerse;
+					}
+					else
+					{
+						bcvStart = new BCVRef(currQuestion.StartRef);
+						bcvEnd = new BCVRef(currQuestion.EndRef);
+						if (chapter > 0)
+						{
+							bcvStart.Chapter = bcvEnd.Chapter = chapter;
+						}
+						if (bcvStart.Chapter == bcvEnd.Chapter - 1 && bcvStart.Verse > bcvEnd.Verse)
+						{
+							if (startVerse >= bcvStart.Verse && endVerse > bcvEnd.Verse)
+							{
+								// Question applies to a verse found wholly in the first chapter of the range
+								bcvStart.Verse = startVerse;
+								bcvEnd.Chapter = bcvStart.Chapter;
+								bcvEnd.Verse = endVerse;
+							}
+							else if (startVerse < bcvStart.Verse && endVerse <= bcvEnd.Verse)
+							{
+								bcvStart.Verse = startVerse;
+								bcvStart.Chapter = bcvEnd.Chapter;
+								bcvEnd.Verse = endVerse;
+							}
+						}
+						else if (bcvStart.Chapter == bcvEnd.Chapter)
+						{
+							// If the current ref is based on (a previous) answer, we only want to
+							// expand the reference range, not contract it. If it's based on the
+							// section, then we want to set it to exactly what's specifiedf in the
+							// answer.
+							if (!currQuestionRefBasedOnAnswer || startVerse < bcvStart.Verse)
+								bcvStart.Verse = startVerse;
+							if (!currQuestionRefBasedOnAnswer || endVerse > bcvEnd.Verse || chapter > 0)
+								bcvEnd.Verse = endVerse;
+						}
+					}
+
+					currQuestion.StartRef = bcvStart.BBCCCVVV;
+					currQuestion.EndRef = bcvEnd.BBCCCVVV;
+					currQuestion.ScriptureReference = BCVRef.MakeReferenceString(
+						currSection.ScriptureReference.Substring(0, 3), bcvStart, bcvEnd, ".", "-");
+					currQuestionRefBasedOnAnswer = true;
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
