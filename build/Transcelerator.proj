@@ -1,7 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<RootDir>$(teamcity_build_checkoutDir)</RootDir>
-		<BuildTasksDll>$(RootDir)/packages/SIL.BuildTasks.2.1.0/tools/SIL.BuildTasks.dll</BuildTasksDir>
+		<BuildTasksDll>$(RootDir)/packages/SIL.BuildTasks.2.1.0/tools/SIL.BuildTasks.dll</BuildTasksDll>
 		<Solution>Transcelerator.sln</Solution>
 		<ApplicationName>Transcelerator</ApplicationName>
 		<Configuration>Release</Configuration>
