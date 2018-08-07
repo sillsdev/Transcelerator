@@ -48,7 +48,7 @@
 	<Message Text="FullVersion: $(FullVersion)" Importance="high"/>
 	</Target>
 	
-	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
+	<Target Name="RestoreBuildTasks">
     <Message Text="RestartBuild=$(RestartBuild)"/>
     <Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.1.0 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
