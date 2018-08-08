@@ -446,7 +446,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Filters the list of translatable phrases.
 		/// </summary>
-		/// <param name="partMatchString">String to filter "translatable" parts (not key term
+		/// <param name="partMatchString">String to filter (localized) question text (not key term
 		/// parts).</param>
 		/// <param name="wholeWordMatch">If set to <c>true</c> the match string will only match
 		/// complete words.</param>
@@ -455,9 +455,12 @@ namespace SIL.Transcelerator
 		/// and string representation of reference).</param>
 		/// <param name="fShowExcludedQuestions">if set to <c>true</c> show excluded questions.
 		/// </param>
+		/// <param name="getLocalizedPhraseInUse">Function for getting the localized version of a
+		/// question's PhraseInUse</param>
 		/// ------------------------------------------------------------------------------------
 		public void Filter(string partMatchString, bool wholeWordMatch, KeyTermFilterType ktFilter,
-			Func<int, int, string, bool> refFilter, bool fShowExcludedQuestions)
+			Func<int, int, string, bool> refFilter, bool fShowExcludedQuestions,
+			Func<TranslatablePhrase, string> getLocalizedPhraseInUse = null)
 		{
 			Func<int, int, string, bool> filterByRef = refFilter ?? new Func<int, int, string, bool>((start, end, sref) => true);
 			
@@ -484,10 +487,24 @@ namespace SIL.Transcelerator
 				partMatchString = @"\b" + partMatchString + @"\b";
 			Regex regexFilter = new Regex(partMatchString,
 				RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-			m_filteredPhrases = m_phrases.Where(phrase => regexFilter.IsMatch(phrase.PhraseInUse) &&
-				phrase.MatchesKeyTermFilter(ktFilter) &&
-				filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
-				(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+			// We probably don't want the extra overhead of a do-nothing localization lookup if we're
+			// doing English, so we do the check for a null localization lookup function.
+			if (getLocalizedPhraseInUse == null)
+			{
+				m_filteredPhrases = m_phrases.Where(phrase =>
+					regexFilter.IsMatch(phrase.PhraseInUse) &&
+					phrase.MatchesKeyTermFilter(ktFilter) &&
+					filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
+					(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+			}
+			else
+			{
+				m_filteredPhrases = m_phrases.Where(phrase =>
+					regexFilter.IsMatch(getLocalizedPhraseInUse(phrase)) &&
+					phrase.MatchesKeyTermFilter(ktFilter) &&
+					filterByRef(phrase.StartRef, phrase.EndRef, phrase.Reference) &&
+					(fShowExcludedQuestions || !phrase.IsExcluded)).ToList();
+			}
 		}
 
 		public TranslatablePhrase AddQuestion(Question question, int category, int seqNumber, MasterQuestionParser parser)

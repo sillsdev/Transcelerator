@@ -547,15 +547,64 @@ namespace SIL.Transcelerator
             Assert.AreEqual("D", pth[2].Reference);
             Assert.AreEqual("E", pth[3].Reference);
             Assert.AreEqual("F", pth[4].Reference);
-        }
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Tests filtering phrases textually using a string that would result in a bogus
-        /// regular expression if not properly escaped.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        [Test]
+	    /// ------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// Tests filtering localized phrases textually
+	    /// </summary>
+	    /// ------------------------------------------------------------------------------------
+	    [TestCase("Paul", false)]
+	    [TestCase("Pablo", true)]
+		public void GetPhrasesFilteredTextually_Localized(string filterPhrase, bool useLocalization)
+	    {
+		    AddMockedKeyTerm("God");
+		    AddMockedKeyTerm("Paul");
+		    AddMockedKeyTerm("have");
+		    AddMockedKeyTerm("say");
+
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+			    "this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+		    AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+			    "what is" /* 2 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+		    AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+		    AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+			    "is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+		    AddTestQuestion(cat, "that dog wishes this Paul and say radish", "E", 5, 5,
+			    "that dog" /* 4 */, "wishes this", "kt:paul", "and", "kt:say", "radish");
+		    AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 2 */, "that dog" /* 4 */);
+
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    Func<TranslatablePhrase, string> localizer = tp =>
+		    {
+			    var s = tp.PhraseInUse;
+			    if (useLocalization)
+				    s = s.Replace("Paul", "Pablo");
+			    return s;
+		    };
+
+		    Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+
+		    pth.Filter(filterPhrase, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false, localizer);
+		    Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
+		    pth.Sort(PhrasesSortedBy.Reference, true);
+
+		    Assert.AreEqual("A", pth[0].Reference);
+		    Assert.AreEqual("B", pth[1].Reference);
+		    Assert.AreEqual("D", pth[2].Reference);
+		    Assert.AreEqual("E", pth[3].Reference);
+	    }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests filtering phrases textually using a string that would result in a bogus
+		/// regular expression if not properly escaped.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
         public void GetPhrasesFilteredTextually_PreventBogusRegExCrash()
         {
             AddMockedKeyTerm("God");

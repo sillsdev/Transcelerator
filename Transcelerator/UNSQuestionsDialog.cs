@@ -26,6 +26,7 @@ using SIL.Scripture;
 using SIL.Windows.Forms.Scripture;
 using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
+using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace SIL.Transcelerator
@@ -54,7 +55,7 @@ namespace SIL.Transcelerator
 	    private readonly Action m_helpDelegate;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
-		private readonly LocalizationsFileAccessor m_dataLocalizer;
+		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
@@ -364,12 +365,10 @@ namespace SIL.Transcelerator
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
 
-			if (preferredUiLocale != "en")
-			{
-				m_dataLocalizer = new LocalizationsFileAccessor(m_installDir, preferredUiLocale);
-				if (!m_dataLocalizer.Exists)
-					m_dataLocalizer = null;
-			}
+			if (!String.IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
+				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
+			AddAvailableLocalizationsToMenu(preferredUiLocale);
+			SetLocalizer(preferredUiLocale);
 
 			ClearBiblicalTermsPane();
 
@@ -419,9 +418,85 @@ namespace SIL.Transcelerator
 
 			splashScreen.Close();
 		}
-		#endregion
 
-		#region Events
+		private void AddAvailableLocalizationsToMenu(string preferredLocale)
+		{
+			// All the commented-out code here is the "right" way to do this, but it requires adding ICU
+			// to Transcelerator, which seems more bloat than is needed unless/until we really start seeing
+			// a demand for ad-hoc localizations.
+#if UseGlobalWritingSystemRepo
+			Sldr.Initialize();
+			try
+			{
+				var repo = GlobalWritingSystemRepository.Initialize();
+#endif
+				var locales = new List<Tuple<string, string>>();
+				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
+				{
+					string languageName;
+#if UseGlobalWritingSystemRepo
+					if (repo.TryGet(locale, out WritingSystemDefinition wsDef))
+					{
+						languageName = wsDef.Language.Name;
+					}
+					else
+#endif
+						switch (locale)
+						{
+							case "es": languageName = "español"; break;
+							case "fr": languageName = "français"; break;
+							case "en-GB": languageName = "British English"; break;
+							case "en-US":
+							case "en":
+								throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
+							default: languageName = locale; break;
+						}
+					locales.Add(new Tuple<string, string>(languageName, locale));
+				}
+		
+				locales = locales.OrderBy(l => l.Item1).ToList();
+				var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
+				foreach (var availableLocalization in locales)
+				{
+					var subItem = new ToolStripMenuItem(availableLocalization.Item1)
+					{
+						Tag = availableLocalization.Item2,
+						Name = availableLocalization.Item2 + menuItemNameSuffix
+					};
+					displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
+					if (availableLocalization.Item2 == preferredLocale)
+					{
+						en_ToolStripMenuItem.Checked = false;
+						subItem.Checked = true;
+					}
+					subItem.Click += HandleDisplayLanguageSelected;
+				}
+#if UseGlobalWritingSystemRepo
+			}
+			finally
+			{
+				Sldr.Cleanup();
+			}
+#endif
+		}
+
+		private void SetLocalizer(string preferredUiLocale)
+		{
+			if (preferredUiLocale == "en" || preferredUiLocale == "en-US")
+			{
+				m_dataLocalizer = null;
+			}
+			else
+			{
+				m_dataLocalizer = new LocalizationsFileAccessor(m_installDir, preferredUiLocale);
+				if (!m_dataLocalizer.Exists)
+					m_dataLocalizer = null;
+			}
+		}
+
+#endregion
+
+#region Events
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Raises the <see cref="E:System.Windows.Forms.Form.Shown"/> event.
@@ -743,6 +818,13 @@ namespace SIL.Transcelerator
 			return m_dataLocalizer.GetLocalizedString(new UIDataString(key, english, type));
 		}
 
+		private string GetLocalizedDataString(TranslatablePhrase tp)
+		{
+			return GetLocalizedDataString(tp.PhraseKey,
+				tp.IsCategoryName ? LocalizableStringType.Category : LocalizableStringType.Question,
+				tp.PhraseInUse);
+		}
+
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
 			var tp = m_helper[e.RowIndex];
@@ -750,9 +832,7 @@ namespace SIL.Transcelerator
 			{
 				case 0: e.Value = tp.Reference; break;
 				case 1:
-					e.Value = GetLocalizedDataString(tp.PhraseKey,
-						tp.IsCategoryName ? LocalizableStringType.Category : LocalizableStringType.Question,
-						tp.PhraseInUse);
+					e.Value = GetLocalizedDataString(tp);
 					break;
 				case 2: e.Value = tp.Translation; break;
 				case 3: e.Value = tp.HasUserTranslation; break;
@@ -906,12 +986,13 @@ namespace SIL.Transcelerator
 			m_biblicalTermsPane.Hide();
             dataGridUns.RowEnter -= dataGridUns_RowEnter;
 
-			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter, mnuViewExcludedQuestions.Checked);
+			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter,
+				mnuViewExcludedQuestions.Checked, m_dataLocalizer == null ? null : (Func<TranslatablePhrase, string>)GetLocalizedDataString);
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 
             dataGridUns.RowEnter += dataGridUns_RowEnter;
 
-            int currentRow = dataGridUns.CurrentCell == null ? -1 : dataGridUns.CurrentCell.RowIndex;
+            int currentRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
 			if (m_currentPhrase != null)
 			{
 				for (int i = 0; i < dataGridUns.Rows.Count; i++)
@@ -929,8 +1010,15 @@ namespace SIL.Transcelerator
 				}
 			}
 
-            if (dataGridUns.CurrentCell != null && currentRow == dataGridUns.CurrentCell.RowIndex)
-                dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
+			if (dataGridUns.CurrentCell == null)
+			{
+				if (m_pnlAnswersAndComments.Visible)
+					m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
+			}
+			else if (currentRow == dataGridUns.CurrentCell.RowIndex)
+			{
+				dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
+			}
 
 			UpdateCountsAndFilterStatus();
 		}
@@ -1938,10 +2026,11 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the VisibleChanged event of the m_pnlAnswersAndComments control.
+		/// Handles the VisibleChanged event of the m_pnlAnswersAndComments control. Also used
+		/// to re-populate controls when Display language changes.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void m_pnlAnswersAndComments_VisibleChanged(object sender, EventArgs e)
+		private void LoadAnswersAndCommentsIfShowing(object sender, EventArgs e)
 		{
 			if (m_pnlAnswersAndComments.Visible && dataGridUns.CurrentRow != null)
 				LoadAnswerAndComment(dataGridUns.CurrentRow.Index);
@@ -2080,9 +2169,30 @@ namespace SIL.Transcelerator
 				dlg.ShowDialog();
 			}
 		}
-		#endregion
 
-		#region Private helper methods
+		private void HandleDisplayLanguageSelected(object sender, EventArgs e)
+		{
+			var clickedMenu = (ToolStripMenuItem)sender;
+			if (clickedMenu.Checked)
+				return;
+			clickedMenu.Checked = true;
+			foreach (ToolStripMenuItem subMenu in displayLanguageToolStripMenuItem.DropDownItems)
+			{
+				if (subMenu != clickedMenu)
+					subMenu.Checked = false;
+			}
+			var localeId = (string)clickedMenu.Tag;
+			SetLocalizer(localeId);
+			Properties.Settings.Default.OverrideDisplayLanguage = localeId;
+			if (txtFilterByPart.Text.Trim().Length > 0)
+				ApplyFilter();
+			else
+				dataGridUns.Invalidate();
+			LoadAnswersAndCommentsIfShowing(null, null);
+		}
+#endregion
+
+#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the Scripture reference of the row corresponding to the given index.
@@ -2478,15 +2588,9 @@ namespace SIL.Transcelerator
 		private void LoadAnswerAndComment(int rowIndex)
 		{
 			var question = m_helper[rowIndex].QuestionInfo;
-			if (question?.Answers?.Length == 0 && question.Notes?.Length == 0)
-			{
-				m_lblAnswerLabel.Visible = m_lblAnswers.Visible = false;
-				m_lblCommentLabel.Visible = m_lblComments.Visible = false;
-				return;
-			}
-			PopulateAnswerOrCommentLabel(question, q => q?.Answers?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Answer, d)),
+			PopulateAnswerOrCommentLabel(question, question?.Answers, LocalizableStringType.Answer,
 				m_lblAnswerLabel, m_lblAnswers, Properties.Resources.kstidAnswersLabel);
-			PopulateAnswerOrCommentLabel(question, q => q?.Notes?.Select(d => GetLocalizedDataString(q, LocalizableStringType.Note, d)),
+			PopulateAnswerOrCommentLabel(question, question?.Notes, LocalizableStringType.Note,
 				m_lblCommentLabel, m_lblComments, Properties.Resources.kstidCommentsLabel);
 		}
 
@@ -2495,28 +2599,29 @@ namespace SIL.Transcelerator
 		/// Populates the answer or comment label.
 		/// </summary>
 		/// <param name="question">The question whose answers or comments are to be used.</param>
-		/// <param name="getDetails">A function to retrieve the desired data.</param>
+		/// <param name="details">The answers/comments data.</param>
+		/// <param name="type">The type (Answer/Notes) of stuff (used for getting localization)</param>
 		/// <param name="label">The label that has the "Answer:" or "Comment:" label.</param>
 		/// <param name="contents">The label that is to be populated with the actual answer(s)
 		/// or comment(s).</param>
 		/// <param name="sLabelMultiple">The text to use for <see cref="label"/> if there are
 		/// multiple answers/comments.</param>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateAnswerOrCommentLabel(Question question, Func<Question, IEnumerable<string>> getDetails,
+		private void PopulateAnswerOrCommentLabel(Question question, string[] details, LocalizableStringType type,
 			Label label, Label contents, string sLabelMultiple)
 		{
-			var details = getDetails(question)?.ToArray();
-			label.Visible = contents.Visible = details != null;
-			if (details != null)
+			label.Visible = contents.Visible = details?.Length > 0;
+			if (label.Visible)
 			{
-				label.Show();
+				var loc = details?.Select(d => GetLocalizedDataString(question, type, d));
+				label.Show(); // Is this needed?
 				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
-				contents.Text = details.ToString(Environment.NewLine + "\t");
+				contents.Text = loc.ToString(Environment.NewLine + "\t");
 			}
 		}
-		#endregion
+#endregion
 
-		#region Drag-drop stuff
+#region Drag-drop stuff
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Catch a left-mouse down in selected text when translation is being edited to
@@ -2682,11 +2787,11 @@ namespace SIL.Transcelerator
 				}
 			}
 		}
-		#endregion
+#endregion
 	}
-	#endregion
+#endregion
 
-	#region class SubstringDescriptor
+#region class SubstringDescriptor
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Simple class to allow methods to pass an offset and a length in order to descibe a
@@ -2726,5 +2831,5 @@ namespace SIL.Transcelerator
 			Length = textBoxCtrl.SelectionLength;
 		}
 	}
-	#endregion
+#endregion
 }

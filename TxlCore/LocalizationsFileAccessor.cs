@@ -22,6 +22,8 @@ namespace SIL.Transcelerator
 		private readonly Dictionary<string, LocalizableString> m_dataDictionary;
 		private string DirectoryName { get; }
 		private string Locale { get; }
+		private const string klocaleFilenamePrefix = "LocalizedPhrases-";
+		private const string kLocaleFilenameExtension = ".xml";
 
 		public LocalizationsFileAccessor(string directory, string locale)
 		{
@@ -45,7 +47,24 @@ namespace SIL.Transcelerator
 			m_dataDictionary = new Dictionary<string, LocalizableString>();
 		}
 
-		public string FileName => Path.Combine(DirectoryName, $"LocalizedPhrases-{Locale}.xml");
+		public static IEnumerable<string> GetAvailableLocales(string directory)
+		{
+			try
+			{
+				DirectoryInfo dirInfo = new DirectoryInfo(directory);
+				return dirInfo.GetFiles($"{klocaleFilenamePrefix}*{kLocaleFilenameExtension}")
+					.Select(fi => fi.Name)
+					.Select(n => n.Substring(klocaleFilenamePrefix.Length))
+					.Select(l => l.Substring(0, l.Length - kLocaleFilenameExtension.Length));
+			}
+			catch (Exception)
+			{
+				// Bad path or something
+				return new string[0];
+			}
+		}
+
+		public string FileName => Path.Combine(DirectoryName, $"{klocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
 		public FileInfo FileInfo => new FileInfo(FileName);
 		public bool Exists => FileInfo.Exists;
 
