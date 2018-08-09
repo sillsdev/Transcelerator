@@ -71,11 +71,15 @@
 		<CallTarget Targets="BuildInternal" Condition="!$(RestartBuild)" />
 	</Target>
 
+	<ItemGroup>
+		<Configurations Include="Debug;Release"/>
+	</ItemGroup>
+
 	<Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
 
 	<MSBuild Projects="$(RootDir)/$(Solution)"
 			 Targets="Rebuild"
-			 Properties="Configuration=$(Configuration)" />
+			 Properties="Configuration=%(Configurations.Identity)" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build">
