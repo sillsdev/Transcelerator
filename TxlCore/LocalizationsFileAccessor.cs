@@ -11,17 +11,19 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using SIL.Xml;
 
-namespace SIL.Transcelerator
+namespace SIL.Transcelerator.Localization
 {
 	public class LocalizationsFileAccessor
 	{
-		private readonly Dictionary<string, LocalizableString> m_dataDictionary;
+		private Localizations m_xliffRoot;
+		protected FileBody Localizations { get; private set; } // Exposed for sake of subclass used in unit tests
 		private string DirectoryName { get; }
-		private string Locale { get; }
+		public string Locale { get; }
 		private const string klocaleFilenamePrefix = "LocalizedPhrases-";
 		private const string kLocaleFilenameExtension = ".xml";
 
@@ -34,17 +36,25 @@ namespace SIL.Transcelerator
 			if (Exists)
 			{
 				var localizations = XmlSerializationHelper.DeserializeFromFile<Localizations>(FileName);
-				m_dataDictionary = localizations.Items.ToDictionary(l => l.English, l => l);
+				if (!localizations.IsValid(out string error))
+					throw new DataException(error);
 			}
 			else
 			{
-				m_dataDictionary = new Dictionary<string, LocalizableString>();
+				InitializeLocalizations();
 			}
 		}
 
 		internal LocalizationsFileAccessor()
 		{
-			m_dataDictionary = new Dictionary<string, LocalizableString>();
+			InitializeLocalizations();
+		}
+
+		private void InitializeLocalizations()
+		{
+			m_xliffRoot = new Localizations();
+			m_xliffRoot.Initialize();
+			Localizations = m_xliffRoot.File.Body;
 		}
 
 		public static IEnumerable<string> GetAvailableLocales(string directory)
@@ -79,24 +89,78 @@ namespace SIL.Transcelerator
 
 		internal void Save()
 		{
-			var localizations = new Localizations { Items = m_dataDictionary.Values.ToArray() };
-			XmlSerializationHelper.SerializeToFile(FileName, localizations);
+			XmlSerializationHelper.SerializeToFile(FileName, m_xliffRoot);
 		}
 
 		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null)
 		{
-			IQuestionKey key;
-			string Translation(IQuestionKey k) => existingTxlTranslations == null ? null : LookupTranslation(existingTxlTranslations, k);
+			// Note: there are two possible sources for existing localized translations of strings: either a Transcelerator project
+			// (the list passed into this method), or the content read from a previous version of the file represented by this accessor.
+			var existingLocalizations = m_xliffRoot.File.Body;
+			existingLocalizations.DeleteGroupsWithoutLocalizations();
+			if (existingLocalizations.Groups == null)
+				existingLocalizations = null;
+
+			InitializeLocalizations();
+
+			Action<Group, UIDataString> AddTranslationUnit;
+			if (existingTxlTranslations == null)
+			{
+				if (existingLocalizations == null)
+					AddTranslationUnit = (group, data) => group.AddTranslationUnit(data);
+				else
+				{
+					AddTranslationUnit = (group, data) =>
+					{
+						var tu = existingLocalizations.GetStringLocalization(data);
+						if (tu == null)
+							group.AddTranslationUnit(data);
+						else
+							group.TranslationUnits.Add(tu);
+					};
+				}
+			}
+			else
+			{
+				if (existingLocalizations == null)
+				{
+					AddTranslationUnit = (group, data) =>
+					{
+						group.AddTranslationUnit(data, LookupTranslation(existingTxlTranslations, data));
+					};
+				}
+				else
+				{
+					AddTranslationUnit = (group, data) =>
+					{
+						var tu = existingLocalizations.GetStringLocalization(data);
+						if (tu == null)
+							group.AddTranslationUnit(data, LookupTranslation(existingTxlTranslations, data));
+						else
+							group.TranslationUnits.Add(tu);
+					};
+				}
+			}
+
+			UIDataString key;
 			foreach (var section in questions.Items)
 			{
-				key = new Question(section.ScriptureReference, section.StartRef, section.EndRef, section.Heading, null);
-				AddLocalizationEntry(key, LocalizableStringType.SectionHeading, Translation(key));
+				var sectionGroup = new Group {Id = $"{FileBody.kSectionIdPrefix}{section.ScriptureReference}"};
+				Localizations.Groups.Add(sectionGroup);
+				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference,
+					section.StartRef, section.EndRef);
+				AddTranslationUnit(sectionGroup, key);
+				
 				foreach (Category category in section.Categories)
 				{
+					var categoryGroup = sectionGroup.AddSubGroup(category.Type);
 					if (category.Type != null)
 					{
-						key = new SimpleQuestionKey(category.Type);
-						AddLocalizationEntry(key, LocalizableStringType.Category, Translation(key));
+						if (!Localizations.Categories.TranslationUnits.Any(tu => tu.Id == category.Type))
+						{
+							key = new UIDataString(category.Type, LocalizableStringType.Category);
+							AddTranslationUnit(Localizations.Categories, key);
+						}
 					}
 
 					foreach (Question q in category.Questions.Where(q => !String.IsNullOrWhiteSpace(q.Text)))
@@ -107,30 +171,35 @@ namespace SIL.Transcelerator
 							q.StartRef = section.StartRef;
 							q.EndRef = section.EndRef;
 						}
-						AddLocalizationEntry(q, LocalizableStringType.Question, Translation(q));
+						var questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
+						AddTranslationUnit(questionGroup, new UIDataString(q, LocalizableStringType.Question));
+
 						if (q.AlternateForms != null)
 						{
-							var alt = new Question(q, q.Text, null); // Make a copy so we don't alter the underyling question.
+							var alternatesGroup = questionGroup.AddSubGroup(FileBody.kAlternatesGroupId);
 							foreach (var altForm in q.AlternateForms.Where(a => !String.IsNullOrWhiteSpace(a)))
 							{
-								alt.ModifiedPhrase = altForm;
-								AddLocalizationEntry(alt, LocalizableStringType.Question, Translation(alt));
+								key = new UIDataString(q, LocalizableStringType.Alternate, altForm);
+								AddTranslationUnit(alternatesGroup, key);
 							}
 						}
 						if (q.Answers != null)
 						{
+							var answersGroup = questionGroup.AddSubGroup(FileBody.kAnswersGroupId);
 							foreach (var answer in q.Answers.Where(a => !string.IsNullOrWhiteSpace(a)))
 							{
-								key = new UIDataString(q, answer, LocalizableStringType.Answer);
-								AddLocalizationEntry(key, LocalizableStringType.Answer, Translation(key));
+								key = new UIDataString(q, LocalizableStringType.Answer, answer);
+								AddTranslationUnit(answersGroup, key);
 							}
 						}
 						if (q.Notes != null)
 						{
+							var notesGroup = questionGroup.AddSubGroup(FileBody.kNotesGroupId);
+
 							foreach (var comment in q.Notes.Where(n => !string.IsNullOrWhiteSpace(n)))
 							{
-								key = new UIDataString(q, comment, LocalizableStringType.Note);
-								AddLocalizationEntry(key, LocalizableStringType.Note, Translation(key));
+								key = new UIDataString(q, LocalizableStringType.Note, comment);
+								AddTranslationUnit(notesGroup, key);
 							}
 						}
 					}
@@ -138,12 +207,12 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		string LookupTranslation(List<XmlTranslation> translations, IQuestionKey key)
+		string LookupTranslation(List<XmlTranslation> translations, UIDataString key)
 		{
 			XmlTranslation firstMatchOnPhrase = null;
 			foreach (var translation in translations)
 			{
-				if (translation.PhraseKey == key.PhraseInUse)
+				if (translation.PhraseKey == key.SourceUIString)
 				{
 					if (translation.Reference == key.ScriptureReference)
 						return translation.Translation;
@@ -154,104 +223,21 @@ namespace SIL.Transcelerator
 			return firstMatchOnPhrase?.Translation;
 		}
 
-		internal void AddLocalizationEntry(IQuestionKey key, LocalizableStringType type, string localizedString = null)
+		internal string GetLocalizedString(UIDataString key, bool failoverToEnglish = true)
 		{
-			if (String.IsNullOrWhiteSpace(key?.Text))
-				throw new ArgumentException("Invalid key!", nameof(key));
-			var localizableStringInfo = GetLocalizableStringInfo(key);
-			Localization localization;
-			if (localizableStringInfo == null)
-			{
-				localization = new Localization();
-				localizableStringInfo = new LocalizableString {English = key.Text, Type = type, Localization = localization };
-				if (key.PhraseInUse != key.Text)
-				{
-					localizableStringInfo.Alternates = new List<LocalizableStringForm> {
-						new LocalizableStringForm {English = key.PhraseInUse, Localization = localization}};
-				}
-				m_dataDictionary.Add(key.Text, localizableStringInfo);
-			}
-			else
-			{
-				if (localizableStringInfo.Type != type)
-					localizableStringInfo.Type = LocalizableStringType.Undefined;
-
-				if (key.PhraseInUse == key.Text)
-				{
-					localization = localizableStringInfo.Localization;
-				}
-				else if (key.Text == localizableStringInfo.English)
-				{
-					localization = new Localization();
-					if (localizableStringInfo.Alternates == null)
-					{
-						localizableStringInfo.Alternates = new List<LocalizableStringForm> {new LocalizableStringForm {English = key.PhraseInUse, Localization = localization}};
-					}
-					else
-					{
-						var matchingAlt = localizableStringInfo.Alternates.SingleOrDefault(a => a.English == key.PhraseInUse);
-						if (matchingAlt == null)
-						{
-							localizableStringInfo.Alternates.Add(new LocalizableStringForm { English = key.PhraseInUse, Localization = localization });
-						}
-						else
-						{
-							localization = matchingAlt.Localization;
-						}
-					}
-				}
-				else
-				{
-					// This is not really an alternate form of the existing string we found. Rather it is one where the alternate form itself
-					// happened to be an exact match on the unmodified string from (presumably) some other location. So just treat it as another
-					// occurrence.
-					localization = localizableStringInfo.Localization;
-				}
-			}
-
-			if ((localization.Text != localizedString && localizedString != null) || localization.Text == null)
-			{
-				// We need to force every entry in the output to have a "real" string, because this is
-				// what the localizers will actually localize.
-				if (localizedString == null)
-					localizedString = key.PhraseInUse;
-
-				Occurrence existingOverride = null;
-				if (localization.Occurrences == null)
-				{
-					localization.Occurrences = new List<Occurrence>();
-				}
-				else
-				{
-					existingOverride = localization.GetMatchingOverrideIfAny(key);
-				}
-				if (existingOverride == null)
-				{
-					localization.Occurrences.Add(new Occurrence
-						{StartRef = key.StartRef, EndRef = key.EndRef, LocalizedString = localizedString});
-				}
-				else
-				{
-					existingOverride.LocalizedString = localizedString;
-				}
-			}
+			return TryGetLocalizedString(key, out string localized) ? localized : (failoverToEnglish ? key.SourceUIString : null);
 		}
 
-		internal LocalizableString GetLocalizableStringInfo(IQuestionKey key)
+		public bool TryGetLocalizedString(UIDataString key, out string localized)
 		{
-			if (String.IsNullOrWhiteSpace(key?.Text))
-				return null;
-			LocalizableString value;
-			if (m_dataDictionary.TryGetValue(key.Text, out value))
-				return value;
-			if (key.PhraseInUse != key.Text && m_dataDictionary.TryGetValue(key.PhraseInUse, out value))
-				return value;
-			return m_dataDictionary.Values.FirstOrDefault(v => v.Alternates?.Any(a => a.English == key.PhraseInUse) ?? false);
-		}
-
-		public string GetLocalizedString(IQuestionKey key, bool failoverToEnglish = true)
-		{
-			return GetLocalizableStringInfo(key)?.GetLocalizedString(key) ?? (failoverToEnglish ? key.PhraseInUse : null);
+			var info = Localizations.GetStringLocalization(key, true);
+			if (info != null && info.Target.IsLocalized)
+			{
+				localized = info.Target.Text;
+				return true;
+			}
+			localized = key.SourceUIString;
+			return false;
 		}
 	}
 }

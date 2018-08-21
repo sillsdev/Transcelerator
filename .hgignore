@@ -17,3 +17,4 @@ build/SIL.BuildTasks.dll
 output/*
 *.lnk
 .vs/*
+XLIFF/*

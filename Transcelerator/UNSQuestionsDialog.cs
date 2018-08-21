@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.   
-// <copyright from='2011' to='2017 company='SIL International'>
-//		Copyright (c) 2017, SIL International.   
+#region // Copyright (c) 2018, SIL International.   
+// <copyright from='2011' to='2018 company='SIL International'>
+//		Copyright (c) 2018, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -26,7 +26,6 @@ using SIL.Scripture;
 using SIL.Windows.Forms.Scripture;
 using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
-using SIL.WritingSystems;
 using SIL.Xml;
 
 namespace SIL.Transcelerator
@@ -55,7 +54,7 @@ namespace SIL.Transcelerator
 	    private readonly Action m_helpDelegate;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
-		private LocalizationsFileAccessor m_dataLocalizer;
+		private DataLocalizer m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
@@ -106,6 +105,8 @@ namespace SIL.Transcelerator
 			get { return m_maximumHeightOfKeyTermsPane; }
 			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
 		}
+
+		private List<Tuple<string, string>> AvailableLocales { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -367,6 +368,8 @@ namespace SIL.Transcelerator
 
 			if (!String.IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
+
+			PopulateAvailableLocales();
 			AddAvailableLocalizationsToMenu(preferredUiLocale);
 			SetLocalizer(preferredUiLocale);
 
@@ -419,8 +422,10 @@ namespace SIL.Transcelerator
 			splashScreen.Close();
 		}
 
-		private void AddAvailableLocalizationsToMenu(string preferredLocale)
+		private void PopulateAvailableLocales()
 		{
+			var locales = new List<Tuple<string, string>>();
+
 			// All the commented-out code here is the "right" way to do this, but it requires adding ICU
 			// to Transcelerator, which seems more bloat than is needed unless/until we really start seeing
 			// a demand for ad-hoc localizations.
@@ -430,10 +435,9 @@ namespace SIL.Transcelerator
 			{
 				var repo = GlobalWritingSystemRepository.Initialize();
 #endif
-				var locales = new List<Tuple<string, string>>();
-				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
-				{
-					string languageName;
+			foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
+			{
+				string languageName;
 #if UseGlobalWritingSystemRepo
 					if (repo.TryGet(locale, out WritingSystemDefinition wsDef))
 					{
@@ -441,36 +445,18 @@ namespace SIL.Transcelerator
 					}
 					else
 #endif
-						switch (locale)
-						{
-							case "es": languageName = "español"; break;
-							case "fr": languageName = "français"; break;
-							case "en-GB": languageName = "British English"; break;
-							case "en-US":
-							case "en":
-								throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
-							default: languageName = locale; break;
-						}
-					locales.Add(new Tuple<string, string>(languageName, locale));
-				}
-		
-				locales = locales.OrderBy(l => l.Item1).ToList();
-				var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
-				foreach (var availableLocalization in locales)
+				switch (locale)
 				{
-					var subItem = new ToolStripMenuItem(availableLocalization.Item1)
-					{
-						Tag = availableLocalization.Item2,
-						Name = availableLocalization.Item2 + menuItemNameSuffix
-					};
-					displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
-					if (availableLocalization.Item2 == preferredLocale)
-					{
-						en_ToolStripMenuItem.Checked = false;
-						subItem.Checked = true;
-					}
-					subItem.Click += HandleDisplayLanguageSelected;
+					case "es": languageName = "español"; break;
+					case "fr": languageName = "français"; break;
+					case "en-GB": languageName = "British English"; break;
+					case "en-US":
+					case "en":
+						throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
+					default: languageName = locale; break;
 				}
+				locales.Add(new Tuple<string, string>(languageName, locale));
+			}
 #if UseGlobalWritingSystemRepo
 			}
 			finally
@@ -478,33 +464,57 @@ namespace SIL.Transcelerator
 				Sldr.Cleanup();
 			}
 #endif
+			AvailableLocales = locales.OrderBy(l => l.Item1).ToList();
+		}
+
+		private void AddAvailableLocalizationsToMenu(string preferredLocale)
+		{
+			var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
+			foreach (var availableLocalization in AvailableLocales)
+			{
+				var subItem = new ToolStripMenuItem(availableLocalization.Item1)
+				{
+					Tag = availableLocalization.Item2,
+					Name = availableLocalization.Item2 + menuItemNameSuffix
+				};
+				displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
+				if (availableLocalization.Item2 == preferredLocale)
+				{
+					en_ToolStripMenuItem.Checked = false;
+					subItem.Checked = true;
+				}
+				subItem.Click += HandleDisplayLanguageSelected;
+			}
 		}
 
 		private void SetLocalizer(string preferredUiLocale)
 		{
-			if (preferredUiLocale == "en" || preferredUiLocale == "en-US")
-			{
-				m_dataLocalizer = null;
-			}
-			else
-			{
-				m_dataLocalizer = new LocalizationsFileAccessor(m_installDir, preferredUiLocale);
-				if (!m_dataLocalizer.Exists)
-					m_dataLocalizer = null;
-			}
+			m_dataLocalizer = GetDataLocalizer(preferredUiLocale);
 		}
 
-#endregion
+		private DataLocalizer GetDataLocalizer(string localeId)
+		{
+			if (localeId == "en" || localeId == "en-US" || String.IsNullOrWhiteSpace(localeId))
+				return null;
 
-#region Events
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Raises the <see cref="E:System.Windows.Forms.Form.Shown"/> event.
-        /// </summary>
-        /// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data.
-        /// </param>
-        /// ------------------------------------------------------------------------------------
-        protected override void OnShown(EventArgs e)
+			if (m_dataLocalizer?.Locale == localeId)
+				return m_dataLocalizer;
+
+			var localizationsFileAccessor = new LocalizationsFileAccessor(m_installDir, localeId);
+			return localizationsFileAccessor.Exists ? new DataLocalizer(localizationsFileAccessor) : null;
+		}
+
+		#endregion
+
+		#region Events
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Form.Shown"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="T:System.EventArgs"/> that contains the event data.
+		/// </param>
+		/// ------------------------------------------------------------------------------------
+		protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
             // On Windows XP, TXL comes up underneath Paratext. See if this fixes it:
@@ -778,8 +788,7 @@ namespace SIL.Transcelerator
 
 		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
 		{
-			if (m_selectKeyboard != null)
-				m_selectKeyboard(InTranslationCell);
+			m_selectKeyboard?.Invoke(InTranslationCell);
 		}
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -811,20 +820,6 @@ namespace SIL.Transcelerator
 			m_pnlAnswersAndComments.Visible = ShowAnswersAndComments;
 		}
 
-		private string GetLocalizedDataString(IQuestionKey key, LocalizableStringType type, string english = null)
-		{
-			if (m_dataLocalizer == null)
-				return english;
-			return m_dataLocalizer.GetLocalizedString(new UIDataString(key, english, type));
-		}
-
-		private string GetLocalizedDataString(TranslatablePhrase tp)
-		{
-			return GetLocalizedDataString(tp.PhraseKey,
-				tp.IsCategoryName ? LocalizableStringType.Category : LocalizableStringType.Question,
-				tp.PhraseInUse);
-		}
-
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
 			var tp = m_helper[e.RowIndex];
@@ -832,7 +827,7 @@ namespace SIL.Transcelerator
 			{
 				case 0: e.Value = tp.Reference; break;
 				case 1:
-					e.Value = GetLocalizedDataString(tp);
+					e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedDataString(tp);
 					break;
 				case 2: e.Value = tp.Translation; break;
 				case 3: e.Value = tp.HasUserTranslation; break;
@@ -987,7 +982,8 @@ namespace SIL.Transcelerator
             dataGridUns.RowEnter -= dataGridUns_RowEnter;
 
 			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter,
-				mnuViewExcludedQuestions.Checked, m_dataLocalizer == null ? null : (Func<TranslatablePhrase, string>)GetLocalizedDataString);
+				mnuViewExcludedQuestions.Checked, m_dataLocalizer == null ? null :
+				(Func<TranslatablePhrase, string>)(tp => m_dataLocalizer.GetLocalizedDataString(tp)));
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 
             dataGridUns.RowEnter += dataGridUns_RowEnter;
@@ -1157,27 +1153,23 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder))
+                defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder, AvailableLocales))
             {
-                if (dlg.ShowDialog() == DialogResult.OK)
+	            dlg.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
+
+				if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     Func<int, int, bool> InRange;
                     if (dlg.m_rdoWholeBook.Checked)
                     {
                         int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
-                        InRange = (bcvStart, bcvEnd) =>
-                        {
-                            return BCVRef.GetBookFromBcv(bcvStart) == bookNum;
-                        };
+                        InRange = (bcvStart, bcvEnd) => BCVRef.GetBookFromBcv(bcvStart) == bookNum;
                     }
                     else
                     {
                         BCVRef startRef = dlg.VerseRangeStartRef;
                         BCVRef endRef = dlg.VerseRangeEndRef;
-                        InRange = (bcvStart, bcvEnd) =>
-                        {
-                            return bcvStart >= startRef && bcvEnd <= endRef;
-                        };
+                        InRange = (bcvStart, bcvEnd) => bcvStart >= startRef && bcvEnd <= endRef;
                     }
 
                     List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
@@ -1197,7 +1189,7 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<html>");
                         sw.WriteLine("<head>");
                         sw.WriteLine("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"/>");
-                        sw.WriteLine("<title>" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</title>");
+                        sw.WriteLine("<title>" + dlg.NormalizedTitle + "</title>");
                         if (!dlg.m_rdoEmbedStyleInfo.Checked)
                         {
                             sw.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href= \"" + dlg.CssFile + "\"/>");
@@ -1231,7 +1223,7 @@ namespace SIL.Transcelerator
                         sw.WriteLine("</style>");
                         sw.WriteLine("</head>");
                         sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
-                        sw.WriteLine("<h1 lang=\"en\">" + dlg.m_txtTitle.Text.Normalize(NormalizationForm.FormC) + "</h1>");
+                        sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
                         int prevSectionStartRef = -1, prevSectionEndRef = -1;
                         string prevQuestionRef = null;
@@ -1239,6 +1231,8 @@ namespace SIL.Transcelerator
 
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
                         {
+	                        var questionKey = phrase.PhraseKey;
+	                        string lang;
                             if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
                             {
                                 if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
@@ -1253,13 +1247,15 @@ namespace SIL.Transcelerator
 
                             if (pendingSectionHead != null)
                             {
-                                sw.WriteLine("<h2 lang=\"en\">" + pendingSectionHead.Normalize(NormalizationForm.FormC) + "</h2>");
+								pendingSectionHead = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Category, pendingSectionHead, out lang);
+                                sw.WriteLine($"<h2 lang=\"{lang}\">{pendingSectionHead}</h2>");
                                 pendingSectionHead = null;
                             }
 
                             if (phrase.Category != prevCategory)
                             {
-                                sw.WriteLine("<h3>" + phrase.CategoryName.Normalize(NormalizationForm.FormC) + "</h3>");
+	                            var lwcCategoryName = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Category, phrase.CategoryName, out lang);
+								sw.WriteLine($"<h3 lang=\"{lang}\">{lwcCategoryName}</h3>");
                                 prevCategory = phrase.Category;
                             }
 
@@ -1296,19 +1292,31 @@ namespace SIL.Transcelerator
                             sw.WriteLine("<p class=\"question\">" +
                                 (phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
 
-                            sw.WriteLine("<div class=\"extras\" lang=\"en\">");
-                            if (dlg.m_chkEnglishQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-                                sw.WriteLine("<p class=\"questionbt\">" + phrase.PhraseToDisplayInUI.Normalize(NormalizationForm.FormC) + "</p>");
-                            Question answersAndComments = phrase.QuestionInfo;
-                            if (dlg.m_chkEnglishAnswers.Checked && answersAndComments.Answers != null)
+                            sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
+	                        if (dlg.m_chkIncludeLWCQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+	                        {
+		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Question, phrase.PhraseToDisplayInUI, out lang);
+								var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+								sw.WriteLine($"<p class=\"questionbt\"{langSpec}>{lwcQuestion}</p>");
+	                        }
+	                        Question answersAndComments = phrase.QuestionInfo;
+                            if (dlg.m_chkIncludeLWCAnswers.Checked && answersAndComments.Answers != null)
                             {
-                                foreach (string answer in answersAndComments.Answers)
-                                    sw.WriteLine("<p class=\"answer\">" + answer.Normalize(NormalizationForm.FormC) + "</p>");
+	                            foreach (var answer in answersAndComments.Answers)
+	                            {
+		                            var lwcAnswer = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Answer, answer, out lang);
+		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+									sw.WriteLine($"<p class=\"answer\"{langSpec}>{lwcAnswer}</p>");
+	                            }
                             }
-                            if (dlg.m_chkIncludeComments.Checked && answersAndComments.Notes != null)
+                            if (dlg.m_chkIncludeLWCComments.Checked && answersAndComments.Notes != null)
                             {
-                                foreach (string comment in answersAndComments.Notes)
-                                    sw.WriteLine("<p class=\"comment\">" + comment.Normalize(NormalizationForm.FormC) + "</p>");
+	                            foreach (var comment in answersAndComments.Notes)
+	                            {
+		                            var lwcComment = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Note, comment, out lang);
+		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+		                            sw.WriteLine($"<p class=\"comment\"{langSpec}>{lwcComment}</p>");
+	                            }
                             }
                             sw.WriteLine("</div>");
                         }
@@ -2613,7 +2621,7 @@ namespace SIL.Transcelerator
 			label.Visible = contents.Visible = details?.Length > 0;
 			if (label.Visible)
 			{
-				var loc = details?.Select(d => GetLocalizedDataString(question, type, d));
+				var loc = m_dataLocalizer == null ? details : details?.Select(d => m_dataLocalizer.GetLocalizedDataString(question, type, d, out string notUsed));
 				label.Show(); // Is this needed?
 				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
 				contents.Text = loc.ToString(Environment.NewLine + "\t");
