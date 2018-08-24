@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IRefRange.cs" />
     <Compile Include="ITranslatablePhrase.cs" />
     <Compile Include="LocalizationsFileAccessor.cs" />
     <Compile Include="Localizations.cs" />

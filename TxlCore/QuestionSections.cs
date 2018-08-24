@@ -37,7 +37,7 @@ namespace SIL.Transcelerator
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
-	public class Section
+	public class Section : IRefRange
 	{
 		[XmlAttribute("heading")]
 		public string Heading { get; set; }

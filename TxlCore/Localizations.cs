@@ -180,14 +180,19 @@ namespace SIL.Transcelerator.Localization
 		public void Initialize()
 		{
 			Groups = new List<Group> {new Group { Id = "Categories" }};
+			Categories.TranslationUnits = new List<TranslationUnit>();
 		}
 
 		public Group Categories => Groups.First(g => g.Id == "Categories");
 
-		//internal String GetLocalizedString(IQuestionKey key)
-		//{
-		//	return GetStringLocalization(key)?.Text;
-		//}
+		internal static string GetSectionId(IRefRange refs)
+		{
+			var bcvStart = new BCVRef(refs.StartRef);
+			var bcvEnd = new BCVRef(refs.EndRef);
+			Debug.Assert(bcvStart.Book == bcvEnd.Book);
+			Debug.Assert(bcvStart.Chapter == bcvEnd.Chapter, "I think sections will always be within a single chapter. If not, we need to rethink.");
+			return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}-{bcvEnd.Verse}";
+		}
 
 		internal TranslationUnit GetStringLocalization(UIDataString key, bool useAnyAlternate = false)
 		{
@@ -198,10 +203,13 @@ namespace SIL.Transcelerator.Localization
 			if (key.Type == LocalizableStringType.Category)
 				transUnit = Categories.GetTranslationUnitIfLocalized(key);
 			else if (key.Type == LocalizableStringType.SectionHeading)
-				transUnit = Groups.FirstOrDefault(g => g.Id == $"{kSectionIdPrefix}{key.ScriptureReference}")?.TranslationUnits.Single();
+			{
+				transUnit = Groups.FirstOrDefault(g => g.Id == GetSectionId(key))?.TranslationUnits?.Single();
+				return (transUnit != null && transUnit.Target.IsLocalized) ? transUnit : null;
+			}
 			else
 			{
-				Group question = FindQuestion(key);
+				Group question = FindQuestionGroup(key);
 				if (question == null)
 					return null;
 				switch (key.Type)
@@ -212,11 +220,11 @@ namespace SIL.Transcelerator.Localization
 						{
 							if (transUnit.Target.IsLocalized)
 								return transUnit;
-							return question.SubGroups.SingleOrDefault(g => g.Id == kAlternatesGroupId)?.TranslationUnits.FirstOrDefault(tu => tu.Target.IsLocalized);
+							return question.GetQuestionSubGroup(LocalizableStringType.Alternate)?.TranslationUnits.FirstOrDefault(tu => tu.Target.IsLocalized);
 						}
 						break;
 					case LocalizableStringType.Alternate:
-						var alternates = question.SubGroups.SingleOrDefault(g => g.Id == kAlternatesGroupId);
+						var alternates = question.GetQuestionSubGroup(LocalizableStringType.Alternate);
 						transUnit = alternates?.GetTranslationUnitIfLocalized(key);
 						if (useAnyAlternate)
 						{
@@ -228,32 +236,34 @@ namespace SIL.Transcelerator.Localization
 						}
 						break;
 					case LocalizableStringType.Answer:
-						transUnit = question.SubGroups.SingleOrDefault(g => g.Id == kAnswersGroupId)?.GetTranslationUnitIfLocalized(key);
-						break;
 					case LocalizableStringType.Note:
-						transUnit = question.SubGroups.SingleOrDefault(g => g.Id == kNotesGroupId)?.GetTranslationUnitIfLocalized(key);
+						transUnit = question.GetQuestionSubGroup(key.Type)?.GetTranslationUnitIfLocalized(key);
 						break;
 				}
 			}
 
 			return transUnit;
-
-			//if (m_dataDictionary.TryGetValue(key.Text, out value))
-			//	return value;
-			//if (key.PhraseInUse != key.Text && m_dataDictionary.TryGetValue(key.PhraseInUse, out value))
-			//	return value;
 		}
 
-		internal Group FindQuestion(UIDataString data)
+		internal Group FindQuestionGroup(UIDataString data)
 		{
-			// REVIEW: This probably needs to be optimized.
-			foreach (var sectionGroup in Groups.Where(g => g.Id.StartsWith(kSectionIdPrefix)))
+			return FindSectionForQuestion(data)?.FindQuestionGroup(data.Question);
+		}
+
+		internal Group FindSectionForQuestion(UIDataString key)
+		{
+			var bcvQStart = new BCVRef(key.StartRef);
+			var sectionIdPrefix = kSectionIdPrefix + bcvQStart.BookAndChapterContextPrefix();
+			foreach (var sectionGroup in Groups.Where(g => g.Id.StartsWith(sectionIdPrefix)))
 			{
-				foreach (var questionGroup in sectionGroup.SubGroups.SelectMany(g => g.SubGroups))
-				{
-					if (questionGroup.TranslationUnits.Single().English == data.Question)
-						return questionGroup;
-				}
+				var sub = sectionGroup.Id.Substring(sectionIdPrefix.Length);
+				var verses = sub.Split('-');
+				Debug.Assert(verses.Length == 2);
+				int sectionVerseStart = Int32.Parse(verses[0]);
+				int sectionVerseEnd = Int32.Parse(verses[1]);
+
+				if (sectionVerseStart <= bcvQStart.Verse && sectionVerseEnd >= bcvQStart.Verse)
+					return sectionGroup;
 			}
 			return null;
 		}
@@ -286,7 +296,6 @@ namespace SIL.Transcelerator.Localization
 
 	#region Group
 	[Serializable]
-	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	public class Group
 	{
@@ -333,6 +342,24 @@ namespace SIL.Transcelerator.Localization
 			return true;
 		}
 
+		internal Group GetQuestionSubGroup(LocalizableStringType type)
+		{
+			if (!Id.StartsWith(FileBody.kQuestionIdPrefix))
+				throw new InvalidOperationException("GetQuestionSubGroup should only be called on a question group.");
+
+			switch (type)
+			{
+				case LocalizableStringType.Alternate:
+					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kAlternatesGroupId);
+				case LocalizableStringType.Answer:
+					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kAnswersGroupId);
+				case LocalizableStringType.Note:
+					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kNotesGroupId);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(type), "GetQuestionSubGroup is for getting Alternates, Answers, or Notes.");
+			}
+		}
+
 		internal TranslationUnit GetTranslationUnitIfLocalized(UIDataString key)
 		{
 			return TranslationUnits.FirstOrDefault(tu => tu.English == key.SourceUIString && tu.Target.IsLocalized);
@@ -353,9 +380,8 @@ namespace SIL.Transcelerator.Localization
 			}
 			else
 			{
-				BCVRef bcv = new BCVRef(data.StartRef);
-				string bookId = BCVRef.NumberToBookCode(bcv.Book);
-				var contextPrefix = $"!{bookId}!{bcv.Chapter}~{bcv.Verse}#";
+				var bcv = new BCVRef(data.StartRef);
+				var contextPrefix = $"{bcv.BookAndChapterContextPrefix()}{bcv.Verse}#";
 				if (data.Type == LocalizableStringType.SectionHeading)
 				{
 					appendSequenceNumber = false;
@@ -390,6 +416,14 @@ namespace SIL.Transcelerator.Localization
 			var newSubGroup = new Group { Id = id};
 			SubGroups.Add(newSubGroup);
 			return newSubGroup;
+		}
+
+		internal Group FindQuestionGroup(string question)
+		{
+			if (!Id.StartsWith(FileBody.kSectionIdPrefix))
+				throw new InvalidOperationException("FindQuestionGroup should only be called on a section group.");
+
+			return SubGroups.SelectMany(g => g.SubGroups).FirstOrDefault(qGrp => qGrp.TranslationUnits.Single().English == question);
 		}
 	}
 	#endregion
@@ -589,7 +623,7 @@ namespace SIL.Transcelerator.Localization
 	//}
 	//#endregion
 
-	internal static class LocalizableStringTypeExtensions
+	internal static class LocalizationsExtensions
 	{
 		internal static string IdLetter(this LocalizableStringType type)
 		{
@@ -619,6 +653,11 @@ namespace SIL.Transcelerator.Localization
 				default:
 					throw new ArgumentOutOfRangeException(nameof(letter), "Unexpected Id letter does not correspond to a known localizable string type.");
 			}
+		}
+
+		internal static string BookAndChapterContextPrefix(this BCVRef bcvStart)
+		{
+			return $"!{BCVRef.NumberToBookCode(bcvStart.Book)}!{bcvStart.Chapter}~";
 		}
 	}
 }
