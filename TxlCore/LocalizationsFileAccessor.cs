@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using SIL.Scripture;
 using SIL.Xml;
 
 namespace SIL.Transcelerator.Localization
@@ -145,7 +146,8 @@ namespace SIL.Transcelerator.Localization
 			UIDataString key;
 			foreach (var section in questions.Items)
 			{
-				var sectionGroup = new Group {Id = $"{FileBody.kSectionIdPrefix}{section.ScriptureReference}"};
+				var bcvStart = new BCVRef(section.StartRef);
+				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
 				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference,
 					section.StartRef, section.EndRef);

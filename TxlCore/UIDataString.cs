@@ -14,7 +14,7 @@ using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
-	public class UIDataString
+	public class UIDataString : IRefRange
 	{
 		public UIDataString(IQuestionKey baseQuestionKey, LocalizableStringType type, string uiString = null)
 		{
@@ -44,11 +44,18 @@ namespace SIL.Transcelerator
 			EndRef = endRef;
 			SourceUIString = uiString ?? throw new ArgumentNullException(nameof(uiString));
 			Type = type;
-			if (Type == LocalizableStringType.Question || Type == LocalizableStringType.Alternate || Type == LocalizableStringType.Answer || Type == LocalizableStringType.Note)
+			switch (Type)
 			{
-				if (String.IsNullOrWhiteSpace(question))
-					throw new ArgumentNullException(nameof(question), "Question is only optional for categories and section headings.");
-				Question = question;
+				case LocalizableStringType.Question:
+					Question = uiString;
+					break;
+				case LocalizableStringType.Alternate:
+				case LocalizableStringType.Answer:
+				case LocalizableStringType.Note:
+					if (String.IsNullOrWhiteSpace(question))
+						throw new ArgumentNullException(nameof(question), "Question is required for UI strings that are associated with a specific question.");
+					Question = question;
+					break;
 			}
 		}
 
