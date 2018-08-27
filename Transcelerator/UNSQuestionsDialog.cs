@@ -23,10 +23,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 using SIL.Windows.Forms.Scripture;
 using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
 using SIL.Xml;
+using File = System.IO.File;
 
 namespace SIL.Transcelerator
 {
