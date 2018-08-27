@@ -162,7 +162,6 @@ namespace SIL.Transcelerator.Localization
 			UIDataString key;
 			foreach (var section in questions.Items)
 			{
-				var bcvStart = new BCVRef(section.StartRef);
 				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
 				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference,

@@ -97,8 +97,6 @@ namespace SIL.Transcelerator.Localization
 
 		internal TranslationUnit GetLocalizableStringInfo(UIDataString key)
 		{
-			if (key.Type == LocalizableStringType.Question || key.Type == LocalizableStringType.Alternate)
-				key.UseAnyAlternate = false;
 			var info = Localizations.GetStringLocalization(key);
 			if (info == null || !info.Target.IsLocalized)
 				return null;

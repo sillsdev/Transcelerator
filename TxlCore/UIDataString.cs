@@ -30,7 +30,10 @@ namespace SIL.Transcelerator
 				case LocalizableStringType.Category:
 					throw new InvalidOperationException("This is not the constructor to use for this type of string.");
 				case LocalizableStringType.Question:
-					SourceUIString = String.IsNullOrWhiteSpace(baseQuestionKey.Text) ? uiString : baseQuestionKey.Text;
+					m_useAnyAlternate = true;
+					SourceUIString = baseQuestionKey.PhraseInUse;
+					if (uiString != null && uiString != SourceUIString)
+						throw new ArgumentException("It is invalid to create a UIDataString from a Question using a form other than that represented by the question. Perhaps the intention was to get an alternate form instead.");
 					break;
 				default:
 					SourceUIString = uiString ?? throw new ArgumentNullException(nameof(uiString));
@@ -41,6 +44,8 @@ namespace SIL.Transcelerator
 
 		public UIDataString(string uiString, LocalizableStringType type, string scrRef = null, int startRef = 0, int endRef = 0, string question = null)
 		{
+			if (type != LocalizableStringType.Category && (String.IsNullOrWhiteSpace(scrRef) || startRef <= 0))
+				throw new ArgumentException("Scripture reference must be specified for all types other than categories");
 			ScriptureReference = scrRef;
 			StartRef = startRef;
 			EndRef = endRef;
