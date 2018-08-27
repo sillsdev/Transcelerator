@@ -242,7 +242,7 @@ namespace SIL.Transcelerator.Localization
 			return firstMatchOnPhrase?.Translation;
 		}
 
-		internal string GetLocalizedString(UIDataString key, bool failoverToEnglish = true)
+		public string GetLocalizedString(UIDataString key, bool failoverToEnglish = true)
 		{
 			return TryGetLocalizedString(key, out string localized) ? localized : (failoverToEnglish ? key.SourceUIString : null);
 		}

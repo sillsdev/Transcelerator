@@ -16,7 +16,9 @@ using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using File = System.IO.File;
 
 namespace SIL.Transcelerator
 {
