@@ -95,9 +95,11 @@ namespace SIL.Transcelerator.Localization
 			return questionGroup;
 		}
 
-		internal TranslationUnit GetLocalizableStringInfo(UIDataString key, bool useAnyAlternate = false)
+		internal TranslationUnit GetLocalizableStringInfo(UIDataString key)
 		{
-			var info = Localizations.GetStringLocalization(key, useAnyAlternate);
+			if (key.Type == LocalizableStringType.Question || key.Type == LocalizableStringType.Alternate)
+				key.UseAnyAlternate = false;
+			var info = Localizations.GetStringLocalization(key);
 			if (info == null || !info.Target.IsLocalized)
 				return null;
 			return info;

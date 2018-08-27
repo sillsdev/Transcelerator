@@ -447,9 +447,9 @@ namespace SIL.Transcelerator.Localization
 
 			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
-				new[] { "Overview", "Details", "What is wisdom?", "A gift from God", "A gift from God" }));
+				new[] { "Overview", "Details", "What is wisdom?", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "Detalles", "¿Qué es la sabidurría?", "Un don de Dios", "Un don de Dios" }));
+				new[] { "Resumen", "Detalles", "¿Qué es la sabidurría?", "Un don de Dios" }));
 		}
 
 		[Test]
@@ -476,6 +476,7 @@ namespace SIL.Transcelerator.Localization
 			existingTxlTranslations.RemoveAt(0);
 			existingTxlTranslations.AddRange(new[]
 			{
+				// Any modified TXL translations will be ignored. The XLIFF version "wins".
 				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se defina la sabidurría?"},
 				new XmlTranslation {PhraseKey = "Riches", Reference = "MAT 6.19", Translation = "Riquezas"},
 				new XmlTranslation {PhraseKey = "Details", Translation = "Detalles"},
@@ -488,7 +489,7 @@ namespace SIL.Transcelerator.Localization
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 				new[] { "Overview", "Details", "What is wisdom?", "A gift from God", "Jewels", "Riches", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "Detalles", "¿Cómo se defina la sabidurría?", "Un don de Dios", "Joyas", "Riquezas", "Un regalo de Dios" }));
+				new[] { "Resumen", "Detalles", "¿Qué es la sabidurría?", "Un don de Dios", "Perlas preciosas", "Riquezas", "Un don de Dios" }));
 		}
 
 		[Test]
@@ -581,26 +582,19 @@ namespace SIL.Transcelerator.Localization
 
 				var accessorToLoad = new LocalizationsFileAccessor(folder.Path, "es");
 				var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
-				Assert.AreEqual(11, results.Count);
+				Assert.AreEqual(6, results.Count);
 				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 					new[] { "Overview",
-						"What is wisdom?", "What is wisdom?", "What is wisdom?",
+						"What is wisdom?",
 						"A gift from God",
-						"What man is happy?", "What man is happy?", "What man is happy?", "What man is happy?",
-						"Jewels",
-						"A gift from God" }));
-				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
-					new[] { "Overview",
-						"What is wisdom?", "What is meant by \"wisdom?\"", "How would you define wisdom?",
-						"A gift from God",
-						"What man is happy?", "What person is happy?", "Who is happy?", "What kind of person is blessed?",
+						"What kind of person is blessed?",
 						"Jewels",
 						"A gift from God" }));
 				Assert.IsTrue(results.Select(k => accessorToLoad.GetLocalizedString(k)).SequenceEqual(
 					new[] { "Resumen",
-						"¿Qué es la sabidurría?", "¿Qué es la sabidurría?", "¿Qué es la sabidurría?",
+						"¿Qué es la sabidurría?",
 						"Un don de Dios",
-						"¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?",
+						"¿Qué tipo de persona es bendecida?",
 						"Perlas preciosas",
 						"Un don de Dios" }));
 			}
@@ -730,7 +724,8 @@ namespace SIL.Transcelerator.Localization
 
 			foreach (var section in qs.Items)
 			{
-				localizedString = sut.GetLocalizedString(new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef));
+				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef);
+				localizedString = sut.GetLocalizedString(key);
 				if (localizedString != key.SourceUIString)
 					yield return key;
 

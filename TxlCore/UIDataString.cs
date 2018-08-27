@@ -16,6 +16,8 @@ namespace SIL.Transcelerator
 {
 	public class UIDataString : IRefRange
 	{
+		private bool m_useAnyAlternate;
+
 		public UIDataString(IQuestionKey baseQuestionKey, LocalizableStringType type, string uiString = null)
 		{
 			ScriptureReference = baseQuestionKey.ScriptureReference;
@@ -48,8 +50,11 @@ namespace SIL.Transcelerator
 			{
 				case LocalizableStringType.Question:
 					Question = uiString;
+					m_useAnyAlternate = true;
 					break;
 				case LocalizableStringType.Alternate:
+					m_useAnyAlternate = true;
+					goto case LocalizableStringType.Answer;
 				case LocalizableStringType.Answer:
 				case LocalizableStringType.Note:
 					if (String.IsNullOrWhiteSpace(question))
@@ -65,6 +70,17 @@ namespace SIL.Transcelerator
 		public int StartRef { get; }
 		public int EndRef { get; }
 		public string Question { get; }
+
+		public bool UseAnyAlternate
+		{
+			get => m_useAnyAlternate;
+			set
+			{
+				if (Type != LocalizableStringType.Question && Type != LocalizableStringType.Alternate)
+					throw new InvalidOperationException("Setting UseAnyAlternate to true only makes sense for questions and alternates.");
+				m_useAnyAlternate = value;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
