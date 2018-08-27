@@ -154,283 +154,91 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
 		}
 
-		//[Test]
-		//public void GetLocalizedString_MatchingEntryWithNoLocalization_ReturnsEnglish()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var q = new Question("Gen 1.1", 001001001, 001001001, "Some question", "Mary had a little lamb.");
-		//	sut.AddLocalizationEntry(q, LocalizableStringType.Answer);
-		//	Assert.AreEqual("Mary had a little lamb.", sut.GetLocalizedString(new UIDataString(q, q.Answers.Single(), LocalizableStringType.Answer)));
-		//}
+		[Test]
+		public void GetLocalizableStringInfo_AccessorHasNoEntries_ReturnsNullEntry()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("This is some text for which no localization entry has been added.", LocalizableStringType.Question, "EXO 2.7", 002002007, 002002007)));
+		}
 
-		//[Test]
-		//public void GetLocalizedString_MatchingEntryWithNoOverridesForSpecificReference_ReturnsBaseLocalization()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var q = new Question("Gen 1.1", 001001001, 001001001, "What did he say?", "no answer");
-		//	sut.AddLocalizationEntry(q, LocalizableStringType.Question, "¿Qué dijo?");
-		//	Assert.AreEqual("¿Qué dijo?", sut.GetLocalizedString(new UIDataString(q, q.PhraseInUse, LocalizableStringType.Question)));
-		//}
+		[Test]
+		public void GetLocalizableStringInfo_AddedQuestionMatchesExistingWithDifferentEndRef_GetsExisting()
+		{
+			// I'm not 100% sure this is even possible to set up via TXL's UI.
+			var sut = new TestLocalizationsFileAccessor();
+			sut.AddLocalizationEntry(new UIDataString("Dummy section head", LocalizableStringType.SectionHeading, "GEN 1.1-10", 001001001, 001001010));
+			var unmodifiedKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", null);
+			sut.AddLocalizationEntry(new UIDataString(unmodifiedKey, LocalizableStringType.Question), "¿Qué hizo él?");
+			var altFormKey = new Question("Gen 1.6", 001001006, 001001007, "What did he do?", null) { ModifiedPhrase = "What did he do?" };
+			Assert.AreEqual(sut.GetLocalizableStringInfo(new UIDataString(unmodifiedKey, LocalizableStringType.Question)), 
+				sut.GetLocalizableStringInfo(new UIDataString(altFormKey, LocalizableStringType.Question)));
+		}
 
-		//[TestCase(LocalizableStringType.Answer, "Mary had a little lamb.")]
-		//[TestCase(LocalizableStringType.Question, "Why did he say that?")]
-		//[TestCase(LocalizableStringType.Note, "If respondent is mute, he probably won't answer this question.")]
-		//public void GetLocalizedStringInfo_MatchingEntryWithNoLocalization_ReturnsEnglish(LocalizableStringType type, string english)
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var key = new SimpleQuestionKey(english);
-		//	sut.AddLocalizationEntry(key, type);
-		//	var info = sut.GetLocalizableStringInfo(new UIDataString(key, english, type));
-		//	Assert.AreEqual(english, info.English);
-		//	Assert.AreEqual(type, info.Type);
-		//	Assert.AreEqual(english, info.Target.Text);
-		//}
-
-		//[Test]
-		//public void AddLocalizationEntry_ChangeLocalizationForDefaultLocation_DefaultSavedCorrectly()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	// Note: First one becomes the default (at least for now)
-		//	var defaultKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(defaultKey, LocalizableStringType.Question, "¿Qué hizo Dios?");
-		//	var overrideKeyMat14_1 = new Question("Mat 14.1", 040014001, 040014001, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(overrideKeyMat14_1, LocalizableStringType.Question, "¿Qué hizo Jesús?");
-
-		//	Assert.AreEqual("¿Qué hizo Dios?", sut.GetLocalizedString(defaultKey));
-		//	// Now attempt to change the default.
-		//	sut.AddLocalizationEntry(defaultKey, LocalizableStringType.Question, "¿Qué hizo?");
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(defaultKey));
-		//	Assert.AreEqual("¿Qué hizo Jesús?", sut.GetLocalizedString(overrideKeyMat14_1));
-		//	// Ensure default changed
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(new Question("Mat 14.1-2", 040014001, 040014002, "What did he do?", "Not used in this test")));
-		//}
-
-		//[Test]
-		//public void AddLocalizationEntry_ChangeLocalizationForAlternateForm_NewLocalizationSavedCorrectly()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	// Note: First one becomes the default (at least for now)
-		//	var unmodifiedKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(unmodifiedKey, LocalizableStringType.Question, "¿Qué hizo él?");
-		//	var altFormKey = new Question(unmodifiedKey, unmodifiedKey.Text, null) { ModifiedPhrase = "What was the action he preformed?" };
-		//	sut.AddLocalizationEntry(altFormKey, LocalizableStringType.Question, "¿Qué acción realizó?");
-
-		//	Assert.AreEqual("¿Qué hizo él?", sut.GetLocalizedString(unmodifiedKey));
-		//	Assert.AreEqual("¿Qué acción realizó?", sut.GetLocalizedString(altFormKey));
-		//	// Now attempt to change the alternate form localization.
-		//	sut.AddLocalizationEntry(altFormKey, LocalizableStringType.Question, "¿Qué acción realizó él?");
-		//	Assert.AreEqual("¿Qué hizo él?", sut.GetLocalizedString(unmodifiedKey));
-		//	Assert.AreEqual("¿Qué acción realizó él?", sut.GetLocalizedString(altFormKey));
-		//	// Now attempt to change the base form localization.
-		//	sut.AddLocalizationEntry(unmodifiedKey, LocalizableStringType.Question, "¿Qué hizo?");
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(unmodifiedKey));
-		//	Assert.AreEqual("¿Qué acción realizó él?", sut.GetLocalizedString(altFormKey));
-		//}
-
-		//[Test]
-		//public void AddLocalizationEntry_ModifiedFormMatchesExisting_NewOccurrenceDoesNotReplaceExistingDefault()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var unmodifiedKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", null);
-		//	sut.AddLocalizationEntry(unmodifiedKey, LocalizableStringType.Question, "¿Qué hizo él?");
-		//	var altFormKey = new Question("Gen 1.20", 001001020, 001001020, "How would you describe what he did?", null) { ModifiedPhrase = "What did he do?" };
-		//	sut.AddLocalizationEntry(altFormKey, LocalizableStringType.Question, "¿Qué hizo?");
-
-		//	Assert.AreEqual("¿Qué hizo él?", sut.GetLocalizedString(unmodifiedKey));
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(altFormKey));
-		//}
-
-		//[Test]
-		//public void AddLocalizationEntry_ModifiedFormDoesNotMatchesExisting_LocalizationAddedToCoverOriginalAndModifiedStrings()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var unmodifiedKey = new Question("Exo 1.21", 002001021, 001001021, "Describe his action.", null);
-		//	var altFormKey = new Question(unmodifiedKey, unmodifiedKey.Text, null) { ModifiedPhrase = "What did he do?" };
-		//	sut.AddLocalizationEntry(altFormKey, LocalizableStringType.Question, "¿Qué hizo?");
-
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(altFormKey));
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(unmodifiedKey));
-		//}
-
-		//[Test]
-		//public void AddLocalizationEntry_SaveSameLocalizationForMultipleLocations_AllVariantsSavedCorrectly()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	// Note: First one becomes the default (at least for now)
-		//	var defaultKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(defaultKey, LocalizableStringType.Question, "¿Qué hizo?");
-		//	var overrideKeyMat14_1 = new Question("Mat 14.1", 040014001, 040014001, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(overrideKeyMat14_1, LocalizableStringType.Question, "¿Qué hizo Jesús?");
-		//	var overrideKeyGen2_3 = new Question("Gen 2.3", 001002003, 001002003, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(overrideKeyGen2_3, LocalizableStringType.Question, "¿Qué hizo?");
-		//	var overrideKeyMat14_3 = new Question("Mat 14.3", 040014003, 040014003, "What did he do?", "Not used in this test");
-		//	sut.AddLocalizationEntry(overrideKeyMat14_3, LocalizableStringType.Question, "¿Qué hizo Jesús?");
-
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(defaultKey));
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(overrideKeyGen2_3));
-		//	Assert.AreEqual("¿Qué hizo Jesús?", sut.GetLocalizedString(overrideKeyMat14_1));
-		//	Assert.AreEqual("¿Qué hizo Jesús?", sut.GetLocalizedString(overrideKeyMat14_3));
-		//	// Ensure First one is the default
-		//	Assert.AreEqual("¿Qué hizo?", sut.GetLocalizedString(new Question("Mat 14.1-2", 040014001, 040014002, "What did he do?", "Not used in this test")));
-		//}
-
-		//[Test]
-		//public void GetLocalizableStringInfo_AccessorHasNoEntries_ReturnsNullEntry()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(new SimpleQuestionKey("This is some text for which no localization entry has been added."), "This is some text for which no localization entry has been added.", LocalizableStringType.Question)));
-		//}
-
-		//[Test]
-		//public void GetLocalizableStringInfo_ModifiedFormMatchesExisting_GetsExisting()
-		//{
-		//	var sut = new TestLocalizationsFileAccessor();
-		//	var unmodifiedKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", null);
-		//	sut.AddLocalizationEntry(unmodifiedKey, LocalizableStringType.Question, "¿Qué hizo él?");
-		//	var altFormKey = new Question("Gen 1.20", 001001020, 001001020, "How would you describe what he did?", null) { ModifiedPhrase = "What did he do?" };
-		//	Assert.AreEqual(sut.GetLocalizableStringInfo(new UIDataString(altFormKey, altFormKey.PhraseInUse, LocalizableStringType.Alternate), true),
-		//		sut.GetLocalizableStringInfo(new UIDataString(unmodifiedKey, unmodifiedKey.Text, LocalizableStringType.Question)));
-		//}
-
-		[TestCase(true)]
-		[TestCase(false)]
-		public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithNoExistingTranslations_AllEntriesCreatedWithoutLocalizations(bool includeAlternates)
+		[TestCase(true, LocalizableStringType.Question)]
+		[TestCase(false, LocalizableStringType.Question)]
+		[TestCase(true, LocalizableStringType.Alternate)]
+		[TestCase(false, LocalizableStringType.Alternate)]
+		public void GetLocalizedString_ModifiedQuestionWithNoExistingTranslationForBaseQuestionOrAlternates_ReturnsModifiedForm(bool callGenerateOrUpdateFromMasterQuestions,
+			LocalizableStringType questionOrAlternate)
 		{
 			var sut = new LocalizationsFileAccessor();
-			var qs = GenerateProverbsQuestionSections(includeAlternates);
-			sut.GenerateOrUpdateFromMasterQuestions(qs);
+			var qs = GenerateProverbsQuestionSections(true);
+			if (callGenerateOrUpdateFromMasterQuestions)
+				sut.GenerateOrUpdateFromMasterQuestions(qs);
+
+			// If the user has customized the question in a way that does not match any of the known alternate forms (for any question)
+			// and none of the alternate forms for the question have been localized, retrieving the localized form will just return the unlocalized
+			// custom phrase in use.
+			var lastQuestion = qs.Items.Last().Categories.Last().Questions.Last();
+			lastQuestion.ModifiedPhrase = "This is also gobbledy-gook, wouldn't you say?";
+			var key = new UIDataString(lastQuestion, questionOrAlternate, lastQuestion.ModifiedPhrase);
+			Assert.AreEqual("This is also gobbledy-gook, wouldn't you say?", sut.GetLocalizedString(key));
+		}
+
+		[Test]
+		public void GetLocalizedString_OnlyAlternateFormsHaveLocalizations_BestLocalizationIsReturnedForEachFormOfQuestion()
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(true);
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se puede definir la sabiduría?"},
+				new XmlTranslation {PhraseKey = "What is meant by \"wisdom?\"", Reference = "PRO 3.1-35", Translation = "¿Qué significa la palabra \"sabiduría?\""},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+
+			// First check that the correct localized form of each alternate is returned.
+			var firstQuestion = qs.Items[0].Categories[0].Questions.First();
+			var key = new UIDataString(firstQuestion, LocalizableStringType.Alternate, "How would you define wisdom?");
+			Assert.AreEqual("¿Cómo se puede definir la sabiduría?", sut.GetLocalizedString(key));
+			key = new UIDataString(firstQuestion, LocalizableStringType.Alternate, "What is meant by \"wisdom?\"");
+			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
+
+			// Next check that the first* localized alternate is returned for the base question (which is not itself localized).
+			// * "first" in the order the alternate occurs in the question, not in the order in the list above.
+			key = new UIDataString(firstQuestion, LocalizableStringType.Question);
+			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
+
+			// Finally check that if the user has customized the question in a way that does not match any of the known forms,
+			// retrieving the localized form will still get the localized form of the first localized alternate.
+			firstQuestion.ModifiedPhrase = "This is pure gobbledy-gook, isn't it?";
+			key = new UIDataString(firstQuestion, LocalizableStringType.Question);
+			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
+			// And for good measure, is UseAnyAlternate is false, then it will just return the unlocalized modified version.
+			key.UseAnyAlternate = false;
+			Assert.AreEqual("This is pure gobbledy-gook, isn't it?", sut.GetLocalizedString(key));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateWhenNoEntriesHaveLocalizations_NoChangesAndNoErrors()
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // Update
 
 			VerifyAllEntriesExistWithNoLocalizedStrings(sut, qs);
 		}
-
-		//[Test]
-		//public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithTxlTranslations_CorrectEntriesHaveLocalizations()
-		//{
-		//	var sut = new LocalizationsFileAccessor();
-		//	var qs = GenerateProverbsQuestionSections();
-		//	var existingTxlTranslations = new List<XmlTranslation>
-		//	{
-		//		new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
-		//		new XmlTranslation {PhraseKey = "Riches", Translation = "Riquezas"},
-		//		new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
-		//		new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
-		//		new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.15-16", Translation = "Un regalo de Dios"},
-		//	};
-		//	sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
-
-		//	var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
-		//	Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
-		//		new[] { "Overview", "What is wisdom?", "A gift from God", "Riches", "A gift from God" }));
-		//	Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-		//		new[] { "Resumen", "¿Qué es la sabidurría?", "Un don de Dios", "Riquezas", "Un regalo de Dios" }));
-		//}
-
-		//[Test]
-		//public void GenerateOrUpdateFromMasterQuestions_OnlyAlternateFormsHaveTxlTranslations_BestLocalizationIsReturnedForEachFormOfQuestion()
-		//{
-		//	var sut = new LocalizationsFileAccessor();
-		//	var qs = GenerateProverbsQuestionSections(true);
-		//	var existingTxlTranslations = new List<XmlTranslation>
-		//	{
-		//		new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se puede definir la sabiduría?"},
-		//		new XmlTranslation {PhraseKey = "What is meant by \"wisdom?\"", Reference = "PRO 3.1-35", Translation = "¿Qué significa la palabra \"sabiduría?\""},
-		//		new XmlTranslation {PhraseKey = "What kind of person is blessed?", Reference = "PRO 3.13", Translation = "¿Qué tipo de persona es bendecida?"},
-		//	};
-		//	sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
-
-		//	var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
-		//	Assert.AreEqual(9, results.Count);
-		//	// The "Text" property is the unmodified original question.
-		//	Assert.IsTrue(results.Select(k => k.Text).SequenceEqual(
-		//		new[] { "What is wisdom?", "What is wisdom?", "What is wisdom?",
-		//			"What man is happy?", "What man is happy?", "What man is happy?", "What man is happy?",
-		//			"What pictures describe wisdom?", "What pictures describe wisdom?" }));
-		//	// The "PhraseInUse" property is the modified (alternate) form of the question.
-		//	Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
-		//		new[] { "What is wisdom?", "What is meant by \"wisdom?\"", "How would you define wisdom?",
-		//			"What man is happy?", "What person is happy?", "Who is happy?", "What kind of person is blessed?",
-		//		"What pictures describe wisdom?", "How would you define wisdom?"}));
-		//	Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-		//		new[] { "¿Qué significa la palabra \"sabiduría?\"", "¿Qué significa la palabra \"sabiduría?\"", "¿Cómo se puede definir la sabiduría?",
-		//			"¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?", "¿Qué tipo de persona es bendecida?",
-		//			"¿Cómo se puede definir la sabiduría?", "¿Cómo se puede definir la sabiduría?"
-		//		}));
-		//	// Finally, check that if the user has customized the question in a way that does not match any of the known alternate forms,
-		//	// retrieving the localized form will still get the localized form of the first localized alternate.
-		//	var firstQuestion = qs.Items[0].Categories[0].Questions.First();
-		//	var key = new Question(firstQuestion, firstQuestion.Text, null) {ModifiedPhrase = "This is pure gobbledy-gook, isn't it?"};
-		//	Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
-		//}
-
-		//[Test]
-		//public void GenerateOrUpdateFromMasterQuestions_TxlTranslationsOfQuestionsAndAlternates_BestLocalizationIsReturnedForEachFormOfQuestion()
-		//{
-		//	var sut = new LocalizationsFileAccessor();
-		//	var qs = GenerateProverbsQuestionSections(true);
-		//	var existingTxlTranslations = new List<XmlTranslation>
-		//	{
-		//		new XmlTranslation {PhraseKey = "Details", Translation = "Detalles"},
-		//		new XmlTranslation {PhraseKey = "How much verbiage exists?", Reference = "PRO 3.12-14", Translation = "¿Cuánta palabraría existe?"}, // Should be ignored
-		//		new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es sabiduría?"},
-		//		new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo definiría usted la palabra \"sabiduría\"?"},
-		//		new XmlTranslation {PhraseKey = "What kind of person is blessed?", Reference = "PRO 3.13", Translation = "¿Qué tipo de persona es bendecida?"},
-		//		new XmlTranslation {PhraseKey = "What person is happy?", Reference = "PRO 3.13", Translation = "¿Qué persona es felíz?"},
-		//	};
-		//	sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
-
-		//	var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
-		//	Assert.AreEqual(10, results.Count);
-		//	// The "Text" property is the unmodified original question.
-		//	Assert.IsTrue(results.Select(k => k.Text).SequenceEqual(
-		//		new[] { "Details",
-		//			"What is wisdom?", "What is wisdom?", "What is wisdom?",
-		//			"What man is happy?", "What man is happy?", "What man is happy?", "What man is happy?",
-		//			"What pictures describe wisdom?", "What pictures describe wisdom?" }));
-		//	// The "PhraseInUse" property is the modified (alternate) form of the question.
-		//	Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
-		//		new[] { "Details",
-		//			"What is wisdom?", "What is meant by \"wisdom?\"", "How would you define wisdom?",
-		//			"What man is happy?", "What person is happy?", "Who is happy?", "What kind of person is blessed?",
-		//			"What pictures describe wisdom?", "How would you define wisdom?"}));
-		//	Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-		//		new[] { "Detalles",
-		//			"¿Qué es sabiduría?", "¿Qué es sabiduría?", "¿Cómo definiría usted la palabra \"sabiduría\"?",
-		//			"¿Qué persona es felíz?", "¿Qué persona es felíz?", "¿Qué persona es felíz?", "¿Qué tipo de persona es bendecida?",
-		//			"¿Cómo definiría usted la palabra \"sabiduría\"?", "¿Cómo definiría usted la palabra \"sabiduría\"?"
-		//		}));
-		//	// Finally, check that the translation of an unknown form passed in as an existing TXL translation was truly ignored.
-		//	var questionAboutWordCount = qs.Items.Last().Categories.Last().Questions[0];
-		//	var key = new Question(questionAboutWordCount, questionAboutWordCount.Text, null) { ModifiedPhrase = "How much verbiage exists?" };
-		//	Assert.AreEqual("How much verbiage exists?", sut.GetLocalizedString(key));
-		//}
-
-		//[TestCase(true)]
-		//[TestCase(false)]
-		//public void GetLocalizedString_ModifiedQuestionWithNoExistingTranslationForBaseQuestionOrAlternates_ReturnsModifiedForm(bool callGenerateOrUpdateFromMasterQuestions)
-		//{
-		//	var sut = new LocalizationsFileAccessor();
-		//	var qs = GenerateProverbsQuestionSections(true);
-		//	if (callGenerateOrUpdateFromMasterQuestions)
-		//		sut.GenerateOrUpdateFromMasterQuestions(qs);
-
-		//	// If the user has customized the question in a way that does not match any of the known alternate forms (for any question)
-		//	// and none of the alternate forms for the question have been localized, retrieving the localized form will just return the unlocalized
-		//	// custom phrase in use.
-		//	var lastQuestion = qs.Items.Last().Categories.Last().Questions.Last();
-		//	var key = new Question(lastQuestion, lastQuestion.Text, null) { ModifiedPhrase = "This is also gobbledy-gook, wouldn't you say?" };
-		//	Assert.AreEqual("This is also gobbledy-gook, wouldn't you say?", sut.GetLocalizedString(key));
-		//}
-
-		//[Test]
-		//public void GenerateOrUpdateFromMasterQuestions_UpdateWhenNoEntriesHaveLocalizations_NoChangesAndNoErrors()
-		//{
-		//	var sut = new LocalizationsFileAccessor();
-		//	var qs = GenerateProverbsQuestionSections();
-		//	sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
-		//	sut.GenerateOrUpdateFromMasterQuestions(qs); // Update
-
-		//	VerifyAllEntriesExistWithNoLocalizedStrings(sut, qs);
-		//}
 
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_UpdateWhenSomeEntriesHaveLocalizations_NoChangesAndNoErrors()
@@ -534,6 +342,103 @@ namespace SIL.Transcelerator.Localization
 			key = new UIDataString(question, LocalizableStringType.Note, "Exact answer is: Five");
 			Assert.AreEqual("Exact answer is: Five", sut.GetTranslationUnit(key).English);
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Note).Count);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithNoExistingTranslations_AllEntriesCreatedWithoutLocalizations(bool includeAlternates)
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(includeAlternates);
+			sut.GenerateOrUpdateFromMasterQuestions(qs);
+
+			VerifyAllEntriesExistWithNoLocalizedStrings(sut, qs);
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithTxlTranslations_CorrectEntriesHaveLocalizations()
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
+				new XmlTranslation {PhraseKey = "Riches", Translation = "Riquezas"},
+				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
+				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
+				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.15-16", Translation = "Un regalo de Dios"},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+
+			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "Overview", "What is wisdom?", "A gift from God", "Riches", "A gift from God" }));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "Resumen", "¿Qué es la sabidurría?", "Un don de Dios", "Riquezas", "Un regalo de Dios" }));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_OnlyAlternateFormsHaveTxlTranslations_StoredLocalizationsAreForAlternates()
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(true);
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se puede definir la sabiduría?"},
+				new XmlTranslation {PhraseKey = "What is meant by \"wisdom?\"", Reference = "PRO 3.1-35", Translation = "¿Qué significa la palabra \"sabiduría?\""},
+				new XmlTranslation {PhraseKey = "What kind of person is blessed?", Reference = "PRO 3.13", Translation = "¿Qué tipo de persona es bendecida?"},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+
+			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.AreEqual(4, results.Count); // One of the alternate forms is used for two different questions.
+			Assert.IsTrue(results.Select(k => k.SourceUIString).All(s => existingTxlTranslations.Select(e => e.PhraseKey).Contains(s)));
+			Assert.IsTrue(results.All(k => k.Type == LocalizableStringType.Alternate));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_TxlTranslationsOfQuestionsAndAlternates_CorrectEntriesHaveLocalizations()
+		{
+			var sut = new LocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(true);
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "Details", Translation = "Detalles"},
+				new XmlTranslation {PhraseKey = "How much verbiage exists?", Reference = "PRO 3.12-14", Translation = "¿Cuánta palabraría existe?"}, // Should be ignored
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es sabiduría?"},
+				new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo definiría usted la palabra \"sabiduría\"?"},
+				new XmlTranslation {PhraseKey = "What kind of person is blessed?", Reference = "PRO 3.13", Translation = "¿Qué tipo de persona es bendecida?"},
+				new XmlTranslation {PhraseKey = "What person is happy?", Reference = "PRO 3.13", Translation = "¿Qué persona es felíz?"},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+
+			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs, true).ToList();
+			Assert.AreEqual(10, results.Count);
+			// The "Question" property is the unmodified original question.
+			Assert.IsTrue(results.Skip(1).Select(k => k.Question).SequenceEqual(
+				new[] { "What is wisdom?", "What is wisdom?", "What is wisdom?",
+					"What man is happy?", "What man is happy?", "What man is happy?", "What man is happy?",
+					"What pictures describe wisdom?", "What pictures describe wisdom?" }));
+			// The "SourceUIString" property is the modified (alternate) form of the question.
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "Details",
+					"What is wisdom?", "What is meant by \"wisdom?\"", "How would you define wisdom?",
+					"What man is happy?", "What person is happy?", "Who is happy?", "What kind of person is blessed?",
+					"What pictures describe wisdom?", "How would you define wisdom?"}));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "Detalles",
+					"¿Qué es sabiduría?", "¿Qué es sabiduría?", "¿Cómo definiría usted la palabra \"sabiduría\"?",
+					"¿Qué persona es felíz?", "¿Qué persona es felíz?", "¿Qué persona es felíz?", "¿Qué tipo de persona es bendecida?",
+					"¿Cómo definiría usted la palabra \"sabiduría\"?", "¿Cómo definiría usted la palabra \"sabiduría\"?"
+				}));
+
+			// Finally, check that the translation of an unknown form passed in as an existing TXL translation was truly ignored.
+			var questionAboutWordCount = qs.Items.Last().Categories.Last().Questions[0];
+			questionAboutWordCount.ModifiedPhrase = "How much verbiage exists?";
+			var key = new UIDataString(questionAboutWordCount, LocalizableStringType.Question);
+			Assert.AreEqual("How much verbiage exists?", sut.GetLocalizedString(key));
+			key = new UIDataString(questionAboutWordCount, LocalizableStringType.Alternate, questionAboutWordCount.ModifiedPhrase);
+			Assert.AreEqual("How much verbiage exists?", sut.GetLocalizedString(key));
 		}
 
 		[Test]
@@ -711,7 +616,7 @@ namespace SIL.Transcelerator.Localization
 			}
 		}
 
-		private IEnumerable<UIDataString> VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs)
+		private IEnumerable<UIDataString> VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs, bool useAnyAlternate = false)
 		{
 			var key = new UIDataString("Overview", LocalizableStringType.Category);
 			var localizedString = sut.GetLocalizedString(key);
@@ -731,7 +636,7 @@ namespace SIL.Transcelerator.Localization
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
-					key = new UIDataString(question, LocalizableStringType.Question);
+					key = new UIDataString(question, LocalizableStringType.Question) {UseAnyAlternate = useAnyAlternate};
 					if (sut.GetLocalizedString(key) != question.PhraseInUse)
 						yield return key;
 
@@ -739,7 +644,8 @@ namespace SIL.Transcelerator.Localization
 					{
 						foreach (var alternateForm in question.AlternateForms)
 						{
-							key = new UIDataString(question, LocalizableStringType.Alternate, alternateForm);
+							key = new UIDataString(question, LocalizableStringType.Alternate, alternateForm)
+								{ UseAnyAlternate = useAnyAlternate };
 							if (sut.GetLocalizedString(key) != key.SourceUIString)
 								yield return key;
 						}

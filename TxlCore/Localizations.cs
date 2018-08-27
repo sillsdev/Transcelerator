@@ -42,7 +42,6 @@ namespace SIL.Transcelerator.Localization
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
-	//[XmlRoot("xliff", Namespace = "urn:oasis:names:tc:xliff:document:1.2", IsNullable = false)]
 	[XmlRoot("xliff", IsNullable = false)]
 	public class Localizations
 	{
@@ -50,7 +49,7 @@ namespace SIL.Transcelerator.Localization
 		public string Version
 		{
 			get => "1.2";
-			set
+			set // Setter only used for deserialization
 			{
 				if (value != null && value != "1.2")
 					throw new XmlException($"Unexpected version number in localization file: {value}");
@@ -154,7 +153,6 @@ namespace SIL.Transcelerator.Localization
 		internal const string kAnswersGroupId = "Answers";
 		internal const string kNotesGroupId = "Notes";
 
-		//[XmlElement(ElementName = "group", Namespace = "urn:oasis:names:tc:xliff:document:1.2")]
 		[XmlElement(ElementName = "group")]
 		public List<Group> Groups { get; set; }
 
@@ -451,8 +449,9 @@ namespace SIL.Transcelerator.Localization
 
 		[XmlElement("note")]
 		public string Context { get; set; }
-
+#if DEBUG
 		public LocalizableStringType Type => Id.Substring(0, 1).GetLocalizableStringType();
+#endif
 	}
 	#endregion
 
@@ -492,142 +491,8 @@ namespace SIL.Transcelerator.Localization
 
 		[XmlText]
 		public string Text { get; set; }
-
-		public string LocalizedString => IsLocalized ? Text : null;
 	}
 	#endregion
-
-	#region AlternateTranslation
-	[XmlRoot(ElementName = "alt-trans")]
-	public class AlternateTranslation
-	{
-		[XmlElement(ElementName = "target")]
-		public string Target { get; set; }
-	}
-	#endregion
-
-	//#region class AlternateForm
-	//[Serializable]
-	//[DesignerCategory("code")]
-	//[XmlType(AnonymousType = true)]
-	//public class LocalizableStringForm
-	//{
-	//	[XmlElement("English")]
-	//	public string English { get; set; }
-
-	//	[XmlElement("Localization")]
-	//	public Localization Localization { get; set; }
-
-	//	// Note: There is always the slight possibility that the actual localization happens to be an
-	//	// exact match on the English (e.g., if locale is a dialect/creole of English or if it is a
-	//	// 1- or 2-word string and just happens to be an exact cognate). In that case, we can't really
-	//	// distinguish between a true localization and an English string copied over into the localized
-	//	// text field. But this should be extraordinarily unlikely for any string that actually has
-	//	// alternate forms.
-	//	public bool HasBeenLocalized(IQuestionKey key) => English != Localization.GetLocalizedString(key);
-	//}
-	//#endregion
-
-	//#region class LocalizableString
-	//[Serializable]
-	//[DesignerCategory("code")]
-	//[XmlType(AnonymousType = true)]
-	//public class LocalizableString : LocalizableStringForm
-	//{
-
-	//	// The type is currently just informative. It's not used for anything functional, but it
-	//	// could be helpful in prioritizing strings for localization
-	//	[XmlAttribute]
-	//	[DefaultValue(LocalizableStringType.Undefined)]
-	//	public LocalizableStringType Type { get; set; }
-
-	//	[XmlArray(Form = XmlSchemaForm.Unqualified, IsNullable = true), XmlArrayItem("Alt", typeof(LocalizableStringForm))]
-	//	public List<LocalizableStringForm> Alternates { get; set; }
-
-	//	// See http://www.xiirus.net/articles/article-avoid-serialization-of-empty-arraylist-or-collection-6wm4e.aspx
-	//	[XmlIgnore]
-	//	public bool AlternatesSpecified => Alternates?.Count > 0;
-
-	//	internal String GetLocalizedString(IQuestionKey key)
-	//	{
-	//		if (Localization?.Text == null)
-	//			return null;
-
-	//		bool foundLocalizedVersion = HasBeenLocalized(key);
-	//		Localization loc = key.PhraseInUse == key.Text || foundLocalizedVersion ? Localization : null;
-	//		if (Alternates!= null && Alternates.Any())
-	//		{
-	//			LocalizableStringForm matchingAlt = null;
-	//			foreach (var alternate in Alternates)
-	//			{
-	//				if (!foundLocalizedVersion && alternate.HasBeenLocalized(key))
-	//				{
-	//					loc = alternate.Localization;
-	//					if (alternate.English == key.PhraseInUse)
-	//						break;
-	//					foundLocalizedVersion = true;
-	//				}
-	//				if (matchingAlt == null && alternate.English == key.PhraseInUse)
-	//				{
-	//					if (alternate.HasBeenLocalized(key))
-	//					{
-	//						loc = alternate.Localization;
-	//						break;
-	//					}
-	//					matchingAlt = alternate;
-	//				}
-	//			}
-	//			// If we didn't find an exact match that was localized, we prefer a localized one over an
-	//			// exact match. But if none of the alternates was localized, then we go with the exact match, if any.
-	//			if (!foundLocalizedVersion && matchingAlt != null)
-	//				loc = matchingAlt.Localization;
-	//		}
-
-	//		return loc?.GetLocalizedString(key);
-	//	}
-	//}
-	//#endregion
-
-	//#region class Category
-	//[Serializable]
-	//[DesignerCategory("code")]
-	//[XmlType(AnonymousType = true)]
-	//public class Localization
-	//{
-	//	public string Text => Occurrences?.FirstOrDefault()?.LocalizedString;
-
-	//	[XmlArray(Form = XmlSchemaForm.Unqualified), XmlArrayItem("Occurrence", typeof(Occurrence), IsNullable = false)]
-	//	public List<Occurrence> Occurrences { get; set; }
-
-	//	internal Occurrence GetMatchingOverrideIfAny(IQuestionKey key)
-	//	{
-	//		return Occurrences?.SingleOrDefault(o => key.CompareRefs(o.StartRef, o.EndRef) == 0);
-	//	}
-
-	//	internal string GetLocalizedString(IQuestionKey key)
-	//	{
-	//		return GetMatchingOverrideIfAny(key)?.LocalizedString ?? Text;
-	//	}
-	//}
-	//#endregion
-
-	//#region class Category
-	//[Serializable]
-	//[DebuggerStepThrough]
-	//[DesignerCategory("code")]
-	//[XmlType(AnonymousType = true)]
-	//public class Occurrence
-	//{
-	//	[XmlAttribute("startref")]
-	//	public int StartRef { get; set; }
-
-	//	[XmlAttribute("endref")]
-	//	public int EndRef { get; set; }
-
-	//	[XmlText]
-	//	public string LocalizedString { get; set; }
-	//}
-	//#endregion
 
 	internal static class LocalizationsExtensions
 	{
@@ -646,6 +511,7 @@ namespace SIL.Transcelerator.Localization
 			}
 		}
 
+#if DEBUG
 		internal static LocalizableStringType GetLocalizableStringType(this string letter)
 		{
 			switch (letter)
@@ -660,6 +526,7 @@ namespace SIL.Transcelerator.Localization
 					throw new ArgumentOutOfRangeException(nameof(letter), "Unexpected Id letter does not correspond to a known localizable string type.");
 			}
 		}
+#endif
 
 		internal static string BookAndChapterContextPrefix(this BCVRef bcvStart)
 		{
