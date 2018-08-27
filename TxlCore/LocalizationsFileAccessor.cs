@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Xml;
+using System.Xml.Serialization;
 using SIL.Scripture;
 using SIL.Xml;
 
@@ -28,6 +30,9 @@ namespace SIL.Transcelerator.Localization
 		private const string klocaleFilenamePrefix = "LocalizedPhrases-";
 		private const string kLocaleFilenameExtension = ".xml";
 
+		private XmlSerializer Serializer => new XmlSerializer(typeof(Localizations),
+			"urn:oasis:names:tc:xliff:document:1.2");
+
 		public LocalizationsFileAccessor(string directory, string locale)
 		{
 			if (!Directory.Exists(directory))
@@ -36,9 +41,19 @@ namespace SIL.Transcelerator.Localization
 			Locale = locale;
 			if (Exists)
 			{
-				var localizations = XmlSerializationHelper.DeserializeFromFile<Localizations>(FileName);
-				if (!localizations.IsValid(out string error))
+				try
+				{
+					using (var reader = new XmlTextReader(new StreamReader(FileName)))
+						m_xliffRoot = (Localizations)Serializer.Deserialize(reader);
+				}
+				catch (Exception ex)
+				{
+					throw new DataException($"File {FileName} could not be deserialized.", ex);
+				}
+
+				if (!m_xliffRoot.IsValid(out string error))
 					throw new DataException(error);
+				Localizations = m_xliffRoot.File.Body;
 			}
 			else
 			{
@@ -90,7 +105,8 @@ namespace SIL.Transcelerator.Localization
 
 		internal void Save()
 		{
-			XmlSerializationHelper.SerializeToFile(FileName, m_xliffRoot);
+			using (var writer = new StreamWriter(FileName))
+				Serializer.Serialize(writer, m_xliffRoot);
 		}
 
 		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null)
@@ -117,7 +133,7 @@ namespace SIL.Transcelerator.Localization
 						if (tu == null)
 							group.AddTranslationUnit(data);
 						else
-							group.TranslationUnits.Add(tu);
+							group.AddTranslationUnit(tu);
 					};
 				}
 			}
@@ -138,7 +154,7 @@ namespace SIL.Transcelerator.Localization
 						if (tu == null)
 							group.AddTranslationUnit(data, LookupTranslation(existingTxlTranslations, data));
 						else
-							group.TranslationUnits.Add(tu);
+							group.AddTranslationUnit(tu);
 					};
 				}
 			}
@@ -174,14 +190,15 @@ namespace SIL.Transcelerator.Localization
 							q.EndRef = section.EndRef;
 						}
 						var questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
-						AddTranslationUnit(questionGroup, new UIDataString(q, LocalizableStringType.Question));
+						key = new UIDataString(q, LocalizableStringType.Question) {UseAnyAlternate = false};
+						AddTranslationUnit(questionGroup, key);
 
 						if (q.AlternateForms != null)
 						{
 							var alternatesGroup = questionGroup.AddSubGroup(FileBody.kAlternatesGroupId);
 							foreach (var altForm in q.AlternateForms.Where(a => !String.IsNullOrWhiteSpace(a)))
 							{
-								key = new UIDataString(q, LocalizableStringType.Alternate, altForm);
+								key = new UIDataString(q, LocalizableStringType.Alternate, altForm) {UseAnyAlternate = false};
 								AddTranslationUnit(alternatesGroup, key);
 							}
 						}
@@ -232,7 +249,7 @@ namespace SIL.Transcelerator.Localization
 
 		public bool TryGetLocalizedString(UIDataString key, out string localized)
 		{
-			var info = Localizations.GetStringLocalization(key, true);
+			var info = Localizations.GetStringLocalization(key);
 			if (info != null && info.Target.IsLocalized)
 			{
 				localized = info.Target.Text;

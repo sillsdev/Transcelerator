@@ -42,7 +42,8 @@ namespace SIL.Transcelerator.Localization
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
-	[XmlRoot("xliff", Namespace = "urn:oasis:names:tc:xliff:document:1.2", IsNullable = false)]
+	//[XmlRoot("xliff", Namespace = "urn:oasis:names:tc:xliff:document:1.2", IsNullable = false)]
+	[XmlRoot("xliff", IsNullable = false)]
 	public class Localizations
 	{
 		[XmlAttribute("version")]
@@ -153,7 +154,8 @@ namespace SIL.Transcelerator.Localization
 		internal const string kAnswersGroupId = "Answers";
 		internal const string kNotesGroupId = "Notes";
 
-		[XmlElement(ElementName = "group", Namespace = "urn:oasis:names:tc:xliff:document:1.2")]
+		//[XmlElement(ElementName = "group", Namespace = "urn:oasis:names:tc:xliff:document:1.2")]
+		[XmlElement(ElementName = "group")]
 		public List<Group> Groups { get; set; }
 
 		public bool IsValid(out string error)
@@ -194,7 +196,7 @@ namespace SIL.Transcelerator.Localization
 			return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}-{bcvEnd.Verse}";
 		}
 
-		internal TranslationUnit GetStringLocalization(UIDataString key, bool useAnyAlternate = false)
+		internal TranslationUnit GetStringLocalization(UIDataString key)
 		{
 			if (String.IsNullOrWhiteSpace(key?.SourceUIString))
 				return null;
@@ -215,10 +217,10 @@ namespace SIL.Transcelerator.Localization
 				switch (key.Type)
 				{
 					case LocalizableStringType.Question:
-						transUnit = question.TranslationUnits.First();
-						if (useAnyAlternate)
+						transUnit = question.TranslationUnits?.FirstOrDefault();
+						if (key.UseAnyAlternate)
 						{
-							if (transUnit.Target.IsLocalized)
+							if (transUnit != null && transUnit.Target.IsLocalized)
 								return transUnit;
 							return question.GetQuestionSubGroup(LocalizableStringType.Alternate)?.TranslationUnits.FirstOrDefault(tu => tu.Target.IsLocalized);
 						}
@@ -226,7 +228,7 @@ namespace SIL.Transcelerator.Localization
 					case LocalizableStringType.Alternate:
 						var alternates = question.GetQuestionSubGroup(LocalizableStringType.Alternate);
 						transUnit = alternates?.GetTranslationUnitIfLocalized(key);
-						if (useAnyAlternate)
+						if (key.UseAnyAlternate)
 						{
 							if (transUnit != null)
 								return transUnit;
@@ -308,7 +310,7 @@ namespace SIL.Transcelerator.Localization
 		[XmlElement(ElementName = "group")]
 		public List<Group> SubGroups { get; set; }
 
-		private int NextSequentialId => TranslationUnits.Count + 1;
+		private int NextSequentialId => TranslationUnits?.Count + 1 ?? 1;
 
 		public bool IsValid(out string error)
 		{
@@ -365,11 +367,15 @@ namespace SIL.Transcelerator.Localization
 			return TranslationUnits.FirstOrDefault(tu => tu.English == key.SourceUIString && tu.Target.IsLocalized);
 		}
 
-		public void AddTranslationUnit(UIDataString data, string translation = null)
+		internal void AddTranslationUnit(TranslationUnit tu)
 		{
 			if (TranslationUnits == null)
 				TranslationUnits = new List<TranslationUnit>();
+			TranslationUnits.Add(tu);
+		}
 
+		public void AddTranslationUnit(UIDataString data, string translation = null)
+		{
 			bool appendSequenceNumber = true;
 			string id = data.Type.IdLetter();
 			string context;
@@ -406,7 +412,7 @@ namespace SIL.Transcelerator.Localization
 			}
 			if (appendSequenceNumber)
 				id += $":{NextSequentialId}";
-			TranslationUnits.Add(new TranslationUnit { Id = id, English = data.SourceUIString, Target = target, Context = context });
+			AddTranslationUnit(new TranslationUnit { Id = id, English = data.SourceUIString, Target = target, Context = context });
 		}
 
 		public Group AddSubGroup(string id)
@@ -423,7 +429,7 @@ namespace SIL.Transcelerator.Localization
 			if (!Id.StartsWith(FileBody.kSectionIdPrefix))
 				throw new InvalidOperationException("FindQuestionGroup should only be called on a section group.");
 
-			return SubGroups.SelectMany(g => g.SubGroups).FirstOrDefault(qGrp => qGrp.TranslationUnits.Single().English == question);
+			return SubGroups.SelectMany(g => g.SubGroups).FirstOrDefault(qGrp => qGrp.Id.EndsWith(question));
 		}
 	}
 	#endregion
