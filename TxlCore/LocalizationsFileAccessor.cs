@@ -16,7 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
-using SIL.Scripture;
 using SIL.Xml;
 
 namespace SIL.Transcelerator.Localization
@@ -28,7 +27,7 @@ namespace SIL.Transcelerator.Localization
 		private string DirectoryName { get; }
 		public string Locale { get; }
 		private const string klocaleFilenamePrefix = "LocalizedPhrases-";
-		private const string kLocaleFilenameExtension = ".xml";
+		private const string kLocaleFilenameExtension = ".xlf";
 
 		private XmlSerializer Serializer => new XmlSerializer(typeof(Localizations),
 			"urn:oasis:names:tc:xliff:document:1.2");
@@ -53,6 +52,10 @@ namespace SIL.Transcelerator.Localization
 
 				if (!m_xliffRoot.IsValid(out string error))
 					throw new DataException(error);
+				if (String.IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage))
+					m_xliffRoot.File.TargetLanguage = locale;
+				else if (m_xliffRoot.File.TargetLanguage != locale)
+					throw new DataException($"The target language ({m_xliffRoot.File.TargetLanguage}) specified in the data does not match the locale indicated by the file name: {FileName}");
 				Localizations = m_xliffRoot.File.Body;
 			}
 			else
@@ -94,22 +97,23 @@ namespace SIL.Transcelerator.Localization
 		public FileInfo FileInfo => new FileInfo(FileName);
 		public bool Exists => FileInfo.Exists;
 
-		public void GenerateOrUpdateFromMasterQuestions(string masterQuestionsFilename, string existingTxlTranslationsFilename = null)
+		public void GenerateOrUpdateFromMasterQuestions(string masterQuestionsFilename, string existingTxlTranslationsFilename = null, bool retainOnlyTranslatedStrings = false)
 		{
 			var questions = XmlSerializationHelper.DeserializeFromFile<QuestionSections>(masterQuestionsFilename);
 			var existingTxlTranslations = (existingTxlTranslationsFilename == null) ? null :
 				XmlSerializationHelper.DeserializeFromFile<List<XmlTranslation>>(existingTxlTranslationsFilename);
-			GenerateOrUpdateFromMasterQuestions(questions, existingTxlTranslations);
+			GenerateOrUpdateFromMasterQuestions(questions, existingTxlTranslations, retainOnlyTranslatedStrings);
 			Save();
 		}
 
 		internal void Save()
 		{
+			m_xliffRoot.File.TargetLanguage = Locale;
 			using (var writer = new StreamWriter(FileName))
 				Serializer.Serialize(writer, m_xliffRoot);
 		}
 
-		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null)
+		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null, bool retainOnlyTranslatedStrings = false)
 		{
 			// Note: there are two possible sources for existing localized translations of strings: either a Transcelerator project
 			// (the list passed into this method), or the content read from a previous version of the file represented by this accessor.
@@ -117,6 +121,9 @@ namespace SIL.Transcelerator.Localization
 			existingLocalizations.DeleteGroupsWithoutLocalizations();
 			if (existingLocalizations.Groups == null)
 				existingLocalizations = null;
+
+			if (existingTxlTranslations == null && retainOnlyTranslatedStrings)
+				return;
 
 			InitializeLocalizations();
 
@@ -173,7 +180,7 @@ namespace SIL.Transcelerator.Localization
 					var categoryGroup = sectionGroup.AddSubGroup(category.Type);
 					if (category.Type != null)
 					{
-						if (!Localizations.Categories.TranslationUnits.Any(tu => tu.Id == category.Type))
+						if (!Localizations.Categories.TranslationUnits.Any(tu => tu.English == category.Type))
 						{
 							key = new UIDataString(category.Type, LocalizableStringType.Category);
 							AddTranslationUnit(Localizations.Categories, key);
@@ -188,9 +195,14 @@ namespace SIL.Transcelerator.Localization
 							q.StartRef = section.StartRef;
 							q.EndRef = section.EndRef;
 						}
-						var questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
-						key = new UIDataString(q, LocalizableStringType.Question) {UseAnyAlternate = false};
-						AddTranslationUnit(questionGroup, key);
+						// The following line handles the unusual case of the same question twice in the same verse.
+						var questionGroup = categoryGroup.SubGroups?.SingleOrDefault(qg => qg.Id == $"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
+						if (questionGroup == null)
+						{
+							questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
+							key = new UIDataString(q, LocalizableStringType.Question) {UseAnyAlternate = false};
+							AddTranslationUnit(questionGroup, key);
+						}
 
 						if (q.AlternateForms != null)
 						{
@@ -203,7 +215,8 @@ namespace SIL.Transcelerator.Localization
 						}
 						if (q.Answers != null)
 						{
-							var answersGroup = questionGroup.AddSubGroup(FileBody.kAnswersGroupId);
+							var answersGroup = questionGroup.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kAnswersGroupId) ??
+								questionGroup.AddSubGroup(FileBody.kAnswersGroupId);
 							foreach (var answer in q.Answers.Where(a => !string.IsNullOrWhiteSpace(a)))
 							{
 								key = new UIDataString(q, LocalizableStringType.Answer, answer);
@@ -223,6 +236,9 @@ namespace SIL.Transcelerator.Localization
 					}
 				}
 			}
+
+			if (retainOnlyTranslatedStrings)
+				Localizations.DeleteGroupsWithoutLocalizations();
 		}
 
 		string LookupTranslation(List<XmlTranslation> translations, UIDataString key)

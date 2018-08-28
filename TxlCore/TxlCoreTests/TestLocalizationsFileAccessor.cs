@@ -28,7 +28,7 @@ namespace SIL.Transcelerator.Localization
 			var type = data.Type;
 			if (type == LocalizableStringType.Category)
 			{
-				existing = Localizations.Categories.TranslationUnits.FirstOrDefault(c => c.Id == data.SourceUIString);
+				existing = Localizations.Categories.TranslationUnits.SingleOrDefault(c => c.Id == data.SourceUIString);
 				if (existing == null)
 				{
 					Localizations.Categories.AddTranslationUnit(data, localizedString);
@@ -95,12 +95,33 @@ namespace SIL.Transcelerator.Localization
 			return questionGroup;
 		}
 
+		internal FileBody LocalizationsAccessor => Localizations;
+
 		internal TranslationUnit GetLocalizableStringInfo(UIDataString key)
 		{
-			var info = Localizations.GetStringLocalization(key);
-			if (info == null || !info.Target.IsLocalized)
+			if (String.IsNullOrWhiteSpace(key?.SourceUIString))
 				return null;
-			return info;
+			
+			if (key.Type == LocalizableStringType.Category)
+				return Localizations.Categories.TranslationUnits.SingleOrDefault(tu => tu.English == key.SourceUIString);
+			if (key.Type == LocalizableStringType.SectionHeading)
+				return Localizations.Groups.SingleOrDefault(g => g.Id == FileBody.GetSectionId(key))?.TranslationUnits?.Single();
+			
+			var question = Localizations.FindQuestionGroup(key);
+			if (question == null)
+				return null;
+			switch (key.Type)
+			{
+				case LocalizableStringType.Question:
+					return question.TranslationUnits?.SingleOrDefault();
+				case LocalizableStringType.Answer:
+				case LocalizableStringType.Note:
+				case LocalizableStringType.Alternate:
+					return question.GetQuestionSubGroup(key.Type)?.
+						TranslationUnits.SingleOrDefault(tu => tu.English == key.SourceUIString);
+				default:
+					throw new Exception("Unhandled type!");
+			}
 		}
 
 		internal TranslationUnit GetTranslationUnit(UIDataString key)

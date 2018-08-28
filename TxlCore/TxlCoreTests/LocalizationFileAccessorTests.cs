@@ -129,11 +129,53 @@ namespace SIL.Transcelerator.Localization
 		}
 
 		[Test]
+		public void GetLocalizedString_MatchingMultiChapterSectionNotLocalized_ReturnsEnglish()
+		{
+			var key = new UIDataString("Rev 9:15-11:5 Crazy stuff that will happen", LocalizableStringType.SectionHeading, "REV 9.15-11.5", 66009015, 66011005);
+			var sut = new TestLocalizationsFileAccessor();
+			sut.AddLocalizationEntry(key);
+			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
+		}
+
+		[Test]
+		public void GetLocalizedString_MatchingSingleVerseSectionNotLocalized_ReturnsEnglish()
+		{
+			var key = new UIDataString("Hebrews 2:10", LocalizableStringType.SectionHeading, "HEB 2.10", 58002010, 58002010);
+			var sut = new TestLocalizationsFileAccessor();
+			sut.AddLocalizationEntry(key);
+			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
+		}
+
+		[Test]
 		public void GetLocalizedString_MatchingQuestionNotLocalized_ReturnsEnglish()
 		{
 			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, "MAT 3.2-3", 40003002, 40003003);
 			var sut = new TestLocalizationsFileAccessor();
 			sut.AddLocalizationEntry(new UIDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, "MAT 3.1-20", 40003001, 40003020));
+
+			sut.AddLocalizationEntry(key);
+
+			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
+		}
+
+		[Test]
+		public void GetLocalizedString_MatchingQuestionInMultiChapterSectionNotLocalized_ReturnsEnglish()
+		{
+			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, "MAT 4.2-3", 40004002, 40004003);
+			var sut = new TestLocalizationsFileAccessor();
+			sut.AddLocalizationEntry(new UIDataString("Matthew 3:21-4:7 Multi-chapter section", LocalizableStringType.SectionHeading, "MAT 3.21-4.7", 40003021, 40004007));
+
+			sut.AddLocalizationEntry(key);
+
+			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
+		}
+
+		[Test]
+		public void GetLocalizedString_MatchingQuestionInSingleVerseSectionNotLocalized_ReturnsEnglish()
+		{
+			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, "HEB 2.10", 58002010, 58002010);
+			var sut = new TestLocalizationsFileAccessor();
+			sut.AddLocalizationEntry(new UIDataString("Hebrews 2:10 Single-verse section", LocalizableStringType.SectionHeading, "HEB 2.10", 58002010, 58002010));
 
 			sut.AddLocalizationEntry(key);
 
@@ -232,12 +274,21 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_UpdateWhenNoEntriesHaveLocalizations_NoChangesAndNoErrors()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // Update
 
 			VerifyAllEntriesExistWithNoLocalizedStrings(sut, qs);
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_NoLocalizationsRetainOnlyTranslatedStrings_NothingLeft()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true);
+			Assert.IsNull(sut.LocalizationsAccessor.Groups);
 		}
 
 		[Test]
@@ -249,15 +300,49 @@ namespace SIL.Transcelerator.Localization
 			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
 			sut.AddLocalizationEntry(new UIDataString("Overview", LocalizableStringType.Category), "Resumen");
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabidurría?");
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
 			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // Update
 
-			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 				new[] { "Overview", "Details", "What is wisdom?", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "Detalles", "¿Qué es la sabidurría?", "Un don de Dios" }));
+				new[] { "Resumen", "Detalles", "¿Qué es la sabiduría?", "Un don de Dios" }));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateWhenSomeEntriesHaveLocalizationsRetainOnlyTranslated_OnlyTranslatedRetained()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(true);
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
+			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
+			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
+			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
+
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "Details", "What is wisdom?", "A gift from God" }));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "Detalles", "¿Qué es la sabiduría?", "Un don de Dios" }));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("Overview", LocalizableStringType.Category)));
+			var section = qs.Items.Single();
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef)));
+			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers.Single())));
+			Assert.IsTrue(detailQuestion.Notes.All(n => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, n)) == null));
+			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, detailQuestion.Notes.Single())));
+			Assert.IsTrue(detailQuestion.AlternateForms.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, a)) == null));
+			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsTrue(detailQuestion.Answers.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, a)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, detailQuestion.AlternateForms.Single())));
 		}
 
 		[Test]
@@ -267,17 +352,17 @@ namespace SIL.Transcelerator.Localization
 			var qs = GenerateProverbsQuestionSections();
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
-				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabiduría?"},
 				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
 				new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.3", Translation = "Perlas preciosas"},
 				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
 			};
 			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
-			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 				new[] { "Overview", "What is wisdom?", "A gift from God", "Jewels", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "¿Qué es la sabidurría?", "Un don de Dios", "Perlas preciosas", "Un don de Dios" }));
+				new[] { "Resumen", "¿Qué es la sabiduría?", "Un don de Dios", "Perlas preciosas", "Un don de Dios" }));
 
 			existingTxlTranslations.RemoveAt(0);
 			existingTxlTranslations.RemoveAt(0);
@@ -285,19 +370,72 @@ namespace SIL.Transcelerator.Localization
 			existingTxlTranslations.AddRange(new[]
 			{
 				// Any modified TXL translations will be ignored. The XLIFF version "wins".
-				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se defina la sabidurría?"},
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se defina la sabiduría?"},
 				new XmlTranslation {PhraseKey = "Riches", Reference = "MAT 6.19", Translation = "Riquezas"},
 				new XmlTranslation {PhraseKey = "Details", Translation = "Detalles"},
 				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.15-16", Translation = "Un regalo de Dios"},
 				new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.6", Translation = "Joyas"},
 			});
-			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations, true);
 
-			results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 				new[] { "Overview", "Details", "What is wisdom?", "A gift from God", "Jewels", "Riches", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "Detalles", "¿Qué es la sabidurría?", "Un don de Dios", "Perlas preciosas", "Riquezas", "Un don de Dios" }));
+				new[] { "Resumen", "Detalles", "¿Qué es la sabiduría?", "Un don de Dios", "Perlas preciosas", "Riquezas", "Un don de Dios" }));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateWithAddedAndModifiedTxlTranslationsRetainOnlyTranslated_OnlyTranslatedRetained()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections(true);
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabiduría?"},
+				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
+				new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.3", Translation = "Perlas preciosas"},
+				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+			existingTxlTranslations.RemoveAt(0);
+			existingTxlTranslations.RemoveAt(0);
+			existingTxlTranslations.RemoveAt(0);
+			existingTxlTranslations.AddRange(new[]
+			{
+				// Any modified TXL translations will be ignored. The XLIFF version "wins".
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se defina la sabiduría?"},
+				new XmlTranslation {PhraseKey = "Riches", Reference = "MAT 6.19", Translation = "Riquezas"},
+				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.15-16", Translation = "Un regalo de Dios"},
+				new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.6", Translation = "Joyas"},
+			});
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations, true);
+
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "Overview", "What is wisdom?", "A gift from God", "Jewels", "Riches", "A gift from God" }));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "Resumen", "¿Qué es la sabiduría?", "Un don de Dios", "Perlas preciosas", "Riquezas", "Un don de Dios" }));
+
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("Details", LocalizableStringType.Category)));
+			var section = qs.Items.Single();
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef)));
+			var overviewQuestion = qs.Items.First().Categories.First().Questions.Single();
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Answer, overviewQuestion.Answers.First())));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Alternate, overviewQuestion.AlternateForms.First())));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Alternate, overviewQuestion.AlternateForms.Last())));
+			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers.Single())));
+			Assert.IsTrue(detailQuestion.Notes.All(n => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, n)) == null));
+			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, detailQuestion.Notes.Single())));
+			Assert.IsTrue(detailQuestion.AlternateForms.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, a)) == null));
+			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers[1])));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, detailQuestion.AlternateForms.Single())));
 		}
 
 		[Test]
@@ -344,11 +482,106 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Note).Count);
 		}
 
+		// Note: If we ever need to translate the two questions differently, we'll need to introduce some additional
+		// component into the ID to distinguish them (or maybe put some special notation, such as [#1] into the source
+		// question itself). That will definitely complicate lookups and display.
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_DuplicateQuestionInVerse_Coalesced()
+		{
+			QuestionSections qs = new QuestionSections();
+			qs.Items = new Section[1];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("HEB 9.16-22", "Hebrews 9:16-22", 58009016, 58009022, 0, 4);
+			int iC = 0;
+			int iQ = 0;
+			var q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.StartRef = 58009021;
+			q.EndRef = 58009022;
+			q.ScriptureReference = "HEB 9.21-22";
+			q.Text = "What else did Moses do?";
+			q.Answers = new[] { "He sprinkled that blood over the tent and the things used for worship there." };
+
+			var q2 = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q2.StartRef = 58009021;
+			q2.EndRef = 58009022;
+			q2.ScriptureReference = "HEB 9.21-22";
+			q2.Text = "Why?";
+			q2.Answers = new[] { "To make them acceptable to God, to remove (people's) sin from it, set them apart for him." };
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 58009021;
+			q.EndRef = 58009022;
+			q.ScriptureReference = "HEB 9.21-22";
+			q.Text = "Why did he do it that way? // What else does it say about sin and blood? // What does it say about how things were made \"clean?\"";
+			q.Answers = new[] { "Almost everything under the Old Agreement was made acceptable to God by sprinkling it with blood." };
+			q.AlternateForms = new[] { "Why did he do it that way?", "What else does it say about sin and blood?", "What does it say about how things were made \"clean?\"" };
+
+			var q4 = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q4.StartRef = 58009021;
+			q4.EndRef = 58009022;
+			q4.ScriptureReference = "HEB 9.21-22";
+			q4.Text = "Why?";
+			q4.Answers = new[] { "Because God cannot forgive sin unless there has been a sacrifice in which blood is shed." };
+
+			var sut = new TestLocalizationsFileAccessor();
+			sut.GenerateOrUpdateFromMasterQuestions(qs);
+			Assert.IsTrue(sut.LocalizationsAccessor.IsValid(out string error), error);
+
+			var keyQ4 = new UIDataString(q4, LocalizableStringType.Question);
+			sut.AddLocalizationEntry(keyQ4, "This one gets clobbered by the next one, right?");
+			var keyQ4A1 = new UIDataString(q4, LocalizableStringType.Answer, q4.Answers.Single());
+			sut.AddLocalizationEntry(keyQ4A1, "Porque Dios no pueded perdonar...");
+			Assert.AreEqual("This one gets clobbered by the next one, right?", sut.GetLocalizedString(keyQ4));
+			var keyQ2 = new UIDataString(q2, LocalizableStringType.Question);
+			var keyQ2A1 = new UIDataString(q2, LocalizableStringType.Answer, q2.Answers.Single());
+			sut.AddLocalizationEntry(keyQ2, "Por que?");
+			sut.AddLocalizationEntry(keyQ2A1, "Para hacerles aceptables...");
+			Assert.AreEqual("Por que?", sut.GetLocalizedString(keyQ2));
+			Assert.AreEqual("Por que?", sut.GetLocalizedString(keyQ4));
+			Assert.AreEqual("Porque Dios no pueded perdonar...", sut.GetLocalizedString(keyQ4A1));
+			Assert.AreEqual("Para hacerles aceptables...", sut.GetLocalizedString(keyQ2A1));
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_MultipleSections_NoDuplicateCategories()
+		{
+			QuestionSections qs = new QuestionSections();
+			qs.Items = new Section[2];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("PRO 3.1-35", "Proverbs 3:1-35 The Rewards of Wisdom.", 20003001, 20003035, 1, 1);
+			int iC = 0;
+			int iQ = 0;
+			Question q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.Text = "What is wisdom?";
+
+			iC = 1;
+			q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.StartRef = 20003012;
+			q.EndRef = 20003014;
+			q.ScriptureReference = "PRO 3.12-14";
+			q.Text = "How many words are there?";
+
+			qs.Items[++iS] = CreateSection("PRO 4.1-15", "Proverbs 4:1-15 More Stuff About Wisdom.", 20004001, 20004015, 1, 1);
+			iC = 0;
+			q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.Text = "Now what?";
+
+			q = qs.Items[iS].Categories[++iC].Questions[iQ];
+			q.StartRef = 20004002;
+			q.EndRef = 20004003;
+			q.ScriptureReference = "PRO 4.2-3";
+			q.Text = "What is the best way to do stuff?";
+
+			var sut = new TestLocalizationsFileAccessor();
+			sut.GenerateOrUpdateFromMasterQuestions(qs);
+			Assert.IsTrue(sut.LocalizationsAccessor.Categories.TranslationUnits.Select(c => c.English).SequenceEqual(new [] {"Overview", "Details"}));
+		}
+
 		[TestCase(true)]
 		[TestCase(false)]
 		public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithNoExistingTranslations_AllEntriesCreatedWithoutLocalizations(bool includeAlternates)
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections(includeAlternates);
 			sut.GenerateOrUpdateFromMasterQuestions(qs);
 
@@ -362,7 +595,7 @@ namespace SIL.Transcelerator.Localization
 			var qs = GenerateProverbsQuestionSections();
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
-				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
+				new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabiduría?"},
 				new XmlTranslation {PhraseKey = "Riches", Translation = "Riquezas"},
 				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
 				new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
@@ -370,11 +603,11 @@ namespace SIL.Transcelerator.Localization
 			};
 			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
 
-			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 				new[] { "Overview", "What is wisdom?", "A gift from God", "Riches", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
-				new[] { "Resumen", "¿Qué es la sabidurría?", "Un don de Dios", "Riquezas", "Un regalo de Dios" }));
+				new[] { "Resumen", "¿Qué es la sabiduría?", "Un don de Dios", "Riquezas", "Un regalo de Dios" }));
 		}
 
 		[Test]
@@ -390,7 +623,7 @@ namespace SIL.Transcelerator.Localization
 			};
 			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
 
-			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs).ToList();
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.AreEqual(4, results.Count); // One of the alternate forms is used for two different questions.
 			Assert.IsTrue(results.Select(k => k.SourceUIString).All(s => existingTxlTranslations.Select(e => e.PhraseKey).Contains(s)));
 			Assert.IsTrue(results.All(k => k.Type == LocalizableStringType.Alternate));
@@ -412,7 +645,7 @@ namespace SIL.Transcelerator.Localization
 			};
 			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
 
-			var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(sut, qs, true).ToList();
+			var results = GetKeysWithLocalizedStrings(sut, qs, true).ToList();
 			Assert.AreEqual(10, results.Count);
 			// The "Question" property is the unmodified original question.
 			Assert.IsTrue(results.Skip(1).Select(k => k.Question).SequenceEqual(
@@ -450,7 +683,7 @@ namespace SIL.Transcelerator.Localization
 				var qs = GenerateProverbsQuestionSections();
 				var existingTxlTranslations = new List<XmlTranslation>
 				{
-					new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
+					new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabiduría?"},
 					new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
 					new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.3", Translation = "Perlas preciosas"},
 					new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
@@ -459,11 +692,11 @@ namespace SIL.Transcelerator.Localization
 				accessorToSave.Save();
 
 				var accessorToLoad = new LocalizationsFileAccessor(folder.Path, "es");
-				var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
+				var results = GetKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
 				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 					new[] { "Overview", "What is wisdom?", "A gift from God", "Jewels", "A gift from God" }));
 				Assert.IsTrue(results.Select(k => accessorToLoad.GetLocalizedString(k)).SequenceEqual(
-					new[] { "Resumen", "¿Qué es la sabidurría?", "Un don de Dios", "Perlas preciosas", "Un don de Dios" }));
+					new[] { "Resumen", "¿Qué es la sabiduría?", "Un don de Dios", "Perlas preciosas", "Un don de Dios" }));
 			}
 		}
 
@@ -476,7 +709,7 @@ namespace SIL.Transcelerator.Localization
 				var qs = GenerateProverbsQuestionSections(true);
 				var existingTxlTranslations = new List<XmlTranslation>
 				{
-					new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabidurría?"},
+					new XmlTranslation {PhraseKey = "What is wisdom?", Reference = "PRO 3.1-35", Translation = "¿Qué es la sabiduría?"},
 					new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
 					new XmlTranslation {PhraseKey = "Jewels", Reference = "REV 14.3", Translation = "Perlas preciosas"},
 					new XmlTranslation {PhraseKey = "A gift from God", Reference = "PRO 3.1-35", Translation = "Un don de Dios"},
@@ -486,7 +719,7 @@ namespace SIL.Transcelerator.Localization
 				accessorToSave.Save();
 
 				var accessorToLoad = new LocalizationsFileAccessor(folder.Path, "es");
-				var results = VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
+				var results = GetKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
 				Assert.AreEqual(6, results.Count);
 				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 					new[] { "Overview",
@@ -497,7 +730,7 @@ namespace SIL.Transcelerator.Localization
 						"A gift from God" }));
 				Assert.IsTrue(results.Select(k => accessorToLoad.GetLocalizedString(k)).SequenceEqual(
 					new[] { "Resumen",
-						"¿Qué es la sabidurría?",
+						"¿Qué es la sabiduría?",
 						"Un don de Dios",
 						"¿Qué tipo de persona es bendecida?",
 						"Perlas preciosas",
@@ -585,20 +818,20 @@ namespace SIL.Transcelerator.Localization
 			return s;
 		}
 
-		private void VerifyAllEntriesExistWithNoLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs)
+		private void VerifyAllEntriesExistWithNoLocalizedStrings(TestLocalizationsFileAccessor sut, QuestionSections qs)
 		{
-			Assert.AreEqual("Overview", sut.GetLocalizedString(new UIDataString("Overview", LocalizableStringType.Category)));
-			Assert.AreEqual("Details", sut.GetLocalizedString(new UIDataString("Details", LocalizableStringType.Category)));
+			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString("Overview", LocalizableStringType.Category)).Target.Status);
+			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString("Details", LocalizableStringType.Category)).Target.Status);
 
 			foreach (var section in qs.Items)
 			{
-				Assert.AreEqual(section.Heading, sut.GetLocalizedString(
-					new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef)));
+				Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(
+					new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference, section.StartRef, section.EndRef)).Target.Status);
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
 					var key = new UIDataString(question, LocalizableStringType.Question);
-					Assert.AreEqual(question.PhraseInUse, sut.GetLocalizedString(key));
+					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(key).Target.Status);
 
 					VerifyNotLocalized(sut, question, question.AlternateForms, LocalizableStringType.Alternate);
 					VerifyNotLocalized(sut, question, question.Answers, LocalizableStringType.Answer);
@@ -607,16 +840,16 @@ namespace SIL.Transcelerator.Localization
 			}
 		}
 
-		private void VerifyNotLocalized(LocalizationsFileAccessor sut, Question question, string[] subStrings, LocalizableStringType type)
+		private void VerifyNotLocalized(TestLocalizationsFileAccessor sut, Question question, string[] subStrings, LocalizableStringType type)
 		{
 			if (subStrings != null)
 			{
 				foreach (var s in subStrings)
-					Assert.AreEqual(s, sut.GetLocalizedString(new UIDataString(question, type, s)));
+					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString(question, type, s)).Target.Status);
 			}
 		}
 
-		private IEnumerable<UIDataString> VerifyAllEntriesExistAndReturnAnyKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs, bool useAnyAlternate = false)
+		private IEnumerable<UIDataString> GetKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs, bool useAnyAlternate = false)
 		{
 			var key = new UIDataString("Overview", LocalizableStringType.Category);
 			var localizedString = sut.GetLocalizedString(key);
