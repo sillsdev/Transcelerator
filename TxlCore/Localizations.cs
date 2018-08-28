@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.Scripture;
@@ -147,6 +149,16 @@ namespace SIL.Transcelerator.Localization
 	[XmlRoot(ElementName = "body")]
 	public class FileBody
 	{
+		private static Regex s_regexMultiChapterSection;
+		private static Regex s_regexSingleChapterSection;
+		private static Regex s_regexSingleVerseSection;
+		static FileBody()
+		{
+			var firstBCVPattern = "^" + kSectionIdPrefix + @"!...!(?<chapterNum>\d+)" + LocalizationsExtensions.kChapterVerseSeparator + @"(?<startVerse>\d+)";
+			s_regexSingleVerseSection = new Regex(firstBCVPattern, RegexOptions.Compiled);
+			s_regexMultiChapterSection = new Regex(firstBCVPattern + LocalizationsExtensions.kRangeCharacter + @"(?<endingChapterNum>\d+)" + LocalizationsExtensions.kChapterVerseSeparator + @"(?<endVerse>\d+)", RegexOptions.Compiled);
+			s_regexSingleChapterSection = new Regex(firstBCVPattern + LocalizationsExtensions.kRangeCharacter + @"(?<endVerse>\d+)", RegexOptions.Compiled);
+		}
 		internal const string kSectionIdPrefix = "S:";
 		internal const string kQuestionIdPrefix = "Q:";
 		internal const string kAlternatesGroupId = "Alternates";
@@ -190,8 +202,13 @@ namespace SIL.Transcelerator.Localization
 			var bcvStart = new BCVRef(refs.StartRef);
 			var bcvEnd = new BCVRef(refs.EndRef);
 			Debug.Assert(bcvStart.Book == bcvEnd.Book);
-			Debug.Assert(bcvStart.Chapter == bcvEnd.Chapter, "I think sections will always be within a single chapter. If not, we need to rethink.");
-			return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}-{bcvEnd.Verse}";
+			if (bcvStart.Chapter == bcvEnd.Chapter)
+			{
+				if (bcvStart.Verse == bcvEnd.Verse)
+					return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}";
+				return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}{LocalizationsExtensions.kRangeCharacter}{bcvEnd.Verse}";
+			}
+			return $"{kSectionIdPrefix}{bcvStart.BookAndChapterContextPrefix()}{bcvStart.Verse}{LocalizationsExtensions.kRangeCharacter}{bcvEnd.Chapter}{LocalizationsExtensions.kChapterVerseSeparator}{bcvEnd.Verse}";
 		}
 
 		internal TranslationUnit GetStringLocalization(UIDataString key)
@@ -253,16 +270,36 @@ namespace SIL.Transcelerator.Localization
 		internal Group FindSectionForQuestion(UIDataString key)
 		{
 			var bcvQStart = new BCVRef(key.StartRef);
-			var sectionIdPrefix = kSectionIdPrefix + bcvQStart.BookAndChapterContextPrefix();
-			foreach (var sectionGroup in Groups.Where(g => g.Id.StartsWith(sectionIdPrefix)))
+			var questionBookContextPrefix = bcvQStart.BookContextPrefix();
+			var requiredBookPrefix = kSectionIdPrefix + questionBookContextPrefix;
+			//Group prevSection = null;
+			foreach (var sectionGroup in Groups.Where(s => s.Id.StartsWith(requiredBookPrefix)))
 			{
-				var sub = sectionGroup.Id.Substring(sectionIdPrefix.Length);
-				var verses = sub.Split('-');
-				Debug.Assert(verses.Length == 2);
-				int sectionVerseStart = Int32.Parse(verses[0]);
-				int sectionVerseEnd = Int32.Parse(verses[1]);
-
-				if (sectionVerseStart <= bcvQStart.Verse && sectionVerseEnd >= bcvQStart.Verse)
+				int endChapter = 0, endVerse = 0;
+				var match = s_regexMultiChapterSection.Match(sectionGroup.Id);
+				if (match.Success)
+				{
+					endChapter = Int32.Parse(match.Result("${endingChapterNum}"));
+					endVerse = Int32.Parse(match.Result("${endVerse}"));
+				}
+				else
+				{
+					match = s_regexSingleChapterSection.Match(sectionGroup.Id);
+					if (match.Success)
+						endVerse = Int32.Parse(match.Result("${endVerse}"));
+					else
+						match = s_regexSingleVerseSection.Match(sectionGroup.Id);
+				}
+				var startChapter = Int32.Parse(match.Result("${chapterNum}"));
+				var startVerse = Int32.Parse(match.Result("${startVerse}"));
+				if (endChapter == 0)
+					endChapter = startChapter;
+				if (endVerse == 0)
+					endVerse = startVerse;
+				// ENHANCE: Cache these
+				var bcvRefSectionStart = new BCVRef(bcvQStart.Book, startChapter, startVerse);
+				var bcvRefSectionEnd = new BCVRef(bcvQStart.Book, endChapter, endVerse);
+				if (bcvRefSectionStart <= bcvQStart || bcvRefSectionEnd >= bcvQStart)
 					return sectionGroup;
 			}
 			return null;
@@ -333,7 +370,7 @@ namespace SIL.Transcelerator.Localization
 						return false;
 				}
 			}
-			if (TranslationUnits.Any(tu => String.IsNullOrEmpty(tu.English)))
+			if (TranslationUnits != null && TranslationUnits.Any(tu => String.IsNullOrEmpty(tu.English)))
 			{
 				error = $"group {Id} contains a translation unit with no source specified.";
 				return false;
@@ -496,6 +533,9 @@ namespace SIL.Transcelerator.Localization
 
 	internal static class LocalizationsExtensions
 	{
+		internal const string kChapterVerseSeparator = "~";
+		internal const string kRangeCharacter = "-";
+
 		internal static string IdLetter(this LocalizableStringType type)
 		{
 			switch (type)
@@ -528,9 +568,14 @@ namespace SIL.Transcelerator.Localization
 		}
 #endif
 
+		internal static string BookContextPrefix(this BCVRef bcvStart)
+		{
+			return $"!{BCVRef.NumberToBookCode(bcvStart.Book)}!";
+		}
+
 		internal static string BookAndChapterContextPrefix(this BCVRef bcvStart)
 		{
-			return $"!{BCVRef.NumberToBookCode(bcvStart.Book)}!{bcvStart.Chapter}~";
+			return $"{bcvStart.BookContextPrefix()}{bcvStart.Chapter}{kChapterVerseSeparator}";
 		}
 	}
 }

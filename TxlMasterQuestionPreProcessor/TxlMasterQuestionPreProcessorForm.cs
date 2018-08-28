@@ -121,7 +121,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				MessageBox.Show($"File {txlLocalizationManager.FileName} already exists and appears to be up-to-date relative to {txtXmlQuestionFile.Text}" +
 					(finfoExistingTxlTranslations == null ? "" : $" and {txtSourceFile.Text}") + ". Do you want to re-generate it anyway?", Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
 			{
-				txlLocalizationManager.GenerateOrUpdateFromMasterQuestions(txtXmlQuestionFile.Text, existingTranslationsFilename);
+				txlLocalizationManager.GenerateOrUpdateFromMasterQuestions(txtXmlQuestionFile.Text, existingTranslationsFilename, m_chkRetainOnlyTranslated.Checked);
 				return txlLocalizationManager.FileName;
 			}
 			return null;
@@ -252,6 +252,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				lblLocale.Enabled = txtLocale.Enabled = false;
 				lblSource.Text = m_sfmSourceLabelText;
 				chkWriteTempFile.Enabled = true;
+				m_chkRetainOnlyTranslated.Visible = false;
 			}
 			else
 			{
@@ -260,6 +261,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				lblLocale.Enabled = txtLocale.Enabled = true;
 				lblSource.Text = "Existing Translations from Transcelerator (optional):";
 				chkWriteTempFile.Enabled = chkWriteTempFile.Checked = false;
+				m_chkRetainOnlyTranslated.Visible = true;
 			}
 		}
 

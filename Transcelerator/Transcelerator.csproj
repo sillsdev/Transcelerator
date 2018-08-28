@@ -369,6 +369,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="LocalizedPhrases-en-GB.xlf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LocalizedPhrases-es.xlf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\check-circle.png" />
   </ItemGroup>
@@ -439,12 +445,6 @@
     <None Include="Properties\SILLogoBlue132x184.png" />
     <None Include="Properties\Arrow-Down-icon24x24.png" />
     <None Include="Properties\Arrow-Up-icon24x24.png" />
-    <Content Include="LocalizedPhrases-en-GB.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="LocalizedPhrases-es.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
