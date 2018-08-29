@@ -94,6 +94,7 @@
     <Compile Include="ParsedQuestions.cs" />
     <Compile Include="KeyTermMatchSurrogate.cs" />
     <Compile Include="ScrVers.cs" />
+    <Compile Include="SectionInfo.cs" />
     <Compile Include="TxlCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Question.cs" />

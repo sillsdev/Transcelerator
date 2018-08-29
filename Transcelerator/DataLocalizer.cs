@@ -19,7 +19,7 @@ namespace SIL.Transcelerator
 			return GetLocalizedDataString(new UIDataString(key, type, english), out localeID);
 		}
 
-		private string GetLocalizedDataString(UIDataString key, out string localeID)
+		public string GetLocalizedDataString(UIDataString key, out string localeID)
 		{
 			localeID = m_dataLocFileAccessor.TryGetLocalizedString(key, out string localized) ? Locale : "en";
 			return localized;

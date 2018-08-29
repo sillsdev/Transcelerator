@@ -10,6 +10,7 @@
 // File: UIDataString.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
@@ -20,7 +21,6 @@ namespace SIL.Transcelerator
 
 		public UIDataString(IQuestionKey baseQuestionKey, LocalizableStringType type, string uiString = null)
 		{
-			ScriptureReference = baseQuestionKey.ScriptureReference;
 			StartRef = baseQuestionKey.StartRef;
 			EndRef = baseQuestionKey.EndRef;
 			Type = type;
@@ -42,11 +42,10 @@ namespace SIL.Transcelerator
 			Question = baseQuestionKey.Text;
 		}
 
-		public UIDataString(string uiString, LocalizableStringType type, string scrRef = null, int startRef = 0, int endRef = 0, string question = null)
+		public UIDataString(string uiString, LocalizableStringType type, int startRef = 0, int endRef = 0, string question = null)
 		{
-			if (type != LocalizableStringType.Category && (String.IsNullOrWhiteSpace(scrRef) || startRef <= 0))
+			if (type != LocalizableStringType.Category && startRef <= 0)
 				throw new ArgumentException("Scripture reference must be specified for all types other than categories");
-			ScriptureReference = scrRef;
 			StartRef = startRef;
 			EndRef = endRef;
 			SourceUIString = uiString ?? throw new ArgumentNullException(nameof(uiString));
@@ -71,7 +70,7 @@ namespace SIL.Transcelerator
 
 		public string SourceUIString { get; }
 		public LocalizableStringType Type { get; }
-		public string ScriptureReference { get; }
+		public string ScriptureReference => BCVRef.MakeReferenceString(StartRef, EndRef, ".", "-");
 		public int StartRef { get; }
 		public int EndRef { get; }
 		public string Question { get; }

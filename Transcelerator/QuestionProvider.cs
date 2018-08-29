@@ -27,10 +27,9 @@ namespace SIL.Transcelerator
 	public class QuestionProvider : IEnumerable<TranslatablePhrase>
     {
         #region Data members
-        private QuestionSections m_sections;
+        private readonly QuestionSections m_sections;
         private readonly PhrasePartManager m_manager;
-        private SortedDictionary<int, string> m_sectionRefs;
-        private IDictionary<string, string> m_sectionHeads;
+        private SortedDictionary<int, SectionInfo> m_sectionInfo;
 		private int[] m_availableBookIds;
 
 	    #endregion
@@ -77,44 +76,28 @@ namespace SIL.Transcelerator
 			m_sections = parsedQuestions.Sections;
 			m_manager = manager;
 		}
-        #endregion
+		#endregion
 
-        #region Public Properties
-        /// --------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets a sorted list of all section references (as strings), that can be used as
-        /// keys to the SectionHeads dictionary.
-        /// </summary>
-        /// --------------------------------------------------------------------------------
-        public IEnumerable<string> SectionReferences
+		#region Public Properties
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets a sorted (canonically) dictionary of all sections keyed by (integer
+		/// representation of) the start reference. (Note that these are not the section
+		/// heads in the vernacular Scripture but rather from the master question file.)
+		/// </summary>
+		/// --------------------------------------------------------------------------------
+		public SortedDictionary<int, SectionInfo> SectionInfo
         {
             get
             {
-                if (m_sectionRefs == null)
+                if (m_sectionInfo == null)
                 {
-                    m_sectionRefs = new SortedDictionary<int, string>(
-                        m_sections.Items.ToDictionary(s => s.StartRef, s => s.ScriptureReference));
+	                m_sectionInfo = new SortedDictionary<int, SectionInfo>(
+                        m_sections.Items.ToDictionary(s => s.StartRef, s => new SectionInfo(s)));
                 }
-                return m_sectionRefs.Values;
+                return m_sectionInfo;
             }
         }
-
-        /// --------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets a dictionary that correlates (textual) Scripture references to
-		/// corresponding section head text (note that these are not the section heads in
-		/// the vernacular Scripture but rather from the master question file).
-		/// </summary>
-		/// --------------------------------------------------------------------------------
-		public IDictionary<string, string> SectionHeads
-		{
-			get
-			{
-				if (m_sectionHeads == null)
-					m_sectionHeads = m_sections.Items.ToDictionary(s => s.ScriptureReference, s => s.Heading);
-				return m_sectionHeads;
-			}
-		}
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>

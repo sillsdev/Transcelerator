@@ -481,6 +481,11 @@
         </group>
       </group>
       <group id="S:!ACT!13~4-12">
+        <trans-unit id="h:!ACT!13~4#Section Heading">
+          <source>Acts 13:4-12 Barnabas and Saul went to Cyprus and preached to people there about the Lord Jesus.</source>
+          <target state="signed-off">Hechos 13:4-12 Bernabé y Saulo fueron a Chipre y predicaron allí a la gente acerca del Señor Jesús.</target>
+          <note>!ACT!13~4#Section Heading</note>
+        </trans-unit>
         <group id="Details">
           <group id="Q:ACT 13.4-12+What do you think a false prophet did?">
             <trans-unit id="q:!ACT!13~4#Question:What do you think a false prophet did?">
@@ -489,15 +494,6 @@
               <note>!ACT!13~4#Question:What do you think a false prophet did?</note>
             </trans-unit>
           </group>
-        </group>
-      </group>
-      <group id="S:!ACT!13~4-12">
-        <trans-unit id="h:!ACT!13~4#Section Heading">
-          <source>Acts 13:4-12 Barnabas and Saul went to Cyprus and preached to people there about the Lord Jesus.</source>
-          <target state="signed-off">Hechos 13:4-12 Bernabé y Saulo fueron a Chipre y predicaron allí a la gente acerca del Señor Jesús.</target>
-          <note>!ACT!13~4#Section Heading</note>
-        </trans-unit>
-		<group id="Details">
           <group id="Q:ACT 13.8+What other name did [people] call Bar-Jesus?">
             <trans-unit id="q:!ACT!13~8#Question:What other name did [people] call Bar-Jesus?">
               <source>What other name did [people] call Bar-Jesus?</source>

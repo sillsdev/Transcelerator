@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
@@ -45,7 +46,7 @@ namespace SIL.Transcelerator
 		#region Data members
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
-		private readonly List<string> m_sectionRefs = new List<string>();
+		private readonly List<SectionInfo> m_sections;
 		private BCVRef m_startRef = new BCVRef();
 		private BCVRef m_endRef = new BCVRef();
         private readonly IScrExtractor m_scrExtractor;
@@ -65,7 +66,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
             string defaultFolder, IEnumerable<int> canonicalBookIds,
-            IEnumerable<KeyValuePair<string, string>> sections,
+            IEnumerable<SectionInfo> sections,
 			IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
 		{
 		    m_scrExtractor = scrExtractor;
@@ -89,7 +90,8 @@ namespace SIL.Transcelerator
             }
 
 			LoadBooks(canonicalBookIds);
-			LoadSectionCombos(sections);
+			m_sections = sections.ToList();
+			LoadSectionCombos();
 			LoadLWCCombo(availableAdditionalLWCs);
 
 			switch ((RangeOption)Properties.Settings.Default.GenerateTemplateRange)
@@ -172,14 +174,13 @@ namespace SIL.Transcelerator
 		/// section heads in the vernacular Scripture but rather from the master question file).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LoadSectionCombos(IEnumerable<KeyValuePair<string, string>> sections)
+		private void LoadSectionCombos()
 		{
-			foreach (KeyValuePair<string, string> sectionInfo in sections)
+			foreach (var sectionInfo in m_sections)
 			{
-				m_sectionRefs.Add(sectionInfo.Key);
-				m_cboSection.Items.Add(sectionInfo.Value);
-				m_cboStartSection.Items.Add(sectionInfo.Value);
-				m_cboEndSection.Items.Add(sectionInfo.Value);
+				m_cboSection.Items.Add(sectionInfo);
+				m_cboStartSection.Items.Add(sectionInfo);
+				m_cboEndSection.Items.Add(sectionInfo);
 			}
 		}
 
@@ -281,10 +282,11 @@ namespace SIL.Transcelerator
 		    UpdateOkButtonEnabledState();
 			if (m_cboSection.SelectedIndex < 0)
 				return;
-			string sRef = m_sectionRefs[m_cboSection.SelectedIndex];
-			BCVRef.ParseRefRange(sRef, ref m_startRef, ref m_endRef);
-			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(sRef), m_sFilenameTemplate);
-			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
+			var info = m_sections[m_cboSection.SelectedIndex];
+			m_startRef = new BCVRef(info.StartRef);
+			m_endRef = new BCVRef(info.EndRef);
+			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(info.Heading), m_sFilenameTemplate);
+			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
 
 	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
@@ -487,9 +489,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0)
 				return false;
-			string sRef = m_sectionRefs[m_cboStartSection.SelectedIndex];
-			BCVRef dummy = new BCVRef();
-			BCVRef.ParseRefRange(sRef, ref m_startRef, ref dummy);
+			m_startRef = m_sections[m_cboStartSection.SelectedIndex].StartRef;
 			return true;
 		}
 
@@ -497,9 +497,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboEndSection.SelectedIndex < 0)
 				return false;
-			string sRef = m_sectionRefs[m_cboEndSection.SelectedIndex];
-			BCVRef dummy = new BCVRef();
-			BCVRef.ParseRefRange(sRef, ref dummy, ref m_endRef);
+			m_endRef = m_sections[m_cboEndSection.SelectedIndex].EndRef;
 			return true;
 		}
 
@@ -513,13 +511,17 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		public string GetLocalizedNormalizedDataString(IQuestionKey key, LocalizableStringType type, string text, out string lang)
+		public string GetLocalizedNormalizedDataString(UIDataString key, out string lang)
 		{
+			string text;
 			if (m_dataLoc == null)
+			{
 				lang = "en";
+				text = key.SourceUIString;
+			}
 			else
 			{
-				text = m_dataLoc.GetLocalizedDataString(key, type, text, out lang);
+				text = m_dataLoc.GetLocalizedDataString(key, out lang);
 			}
 			return text.Normalize(NormalizationForm.FormC);
 		}

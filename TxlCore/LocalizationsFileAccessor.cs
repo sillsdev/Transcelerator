@@ -171,7 +171,7 @@ namespace SIL.Transcelerator.Localization
 			{
 				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
-				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.ScriptureReference,
+				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading,
 					section.StartRef, section.EndRef);
 				AddTranslationUnit(sectionGroup, key);
 				
