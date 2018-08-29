@@ -68,8 +68,7 @@ namespace SIL.Transcelerator
         private readonly IScrVers m_projectVersification;
 	    private BCVRef m_startRef;
         private BCVRef m_endRef;
-        private IEnumerable<string> m_sectionRefs;
-        private IDictionary<string, string> m_sectionHeadText;
+        private SortedDictionary<int, SectionInfo> m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
@@ -243,19 +242,6 @@ namespace SIL.Transcelerator
 			}
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the list of section references and headings in canonical order.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private IEnumerable<KeyValuePair<string, string>> SectionHeadsInCanonicalOrder
-        {
-            get
-            {
-                return m_sectionRefs.Select(sectionRef =>
-                    new KeyValuePair<string, string>(sectionRef, m_sectionHeadText[sectionRef]));
-            }
-        }
 		#endregion
 
 		#region Constructors
@@ -1155,7 +1141,7 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, SectionHeadsInCanonicalOrder, AvailableLocales))
+                defaultFolder, AvailableBookIds, m_sectionInfo.Values, AvailableLocales))
             {
 	            dlg.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
 
@@ -1235,11 +1221,17 @@ namespace SIL.Transcelerator
                         {
 	                        var questionKey = phrase.PhraseKey;
 	                        string lang;
-                            if (phrase.Category == 0 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
+                            if (prevCategory == -1 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
                             {
-                                if (!m_sectionHeadText.TryGetValue(phrase.Reference, out pendingSectionHead))
-                                    pendingSectionHead = phrase.Reference;
-                                prevCategory = -1;
+	                            if (m_sectionInfo.TryGetValue(phrase.StartRef, out SectionInfo info))
+		                            pendingSectionHead = info.Heading;
+	                            else
+	                            {
+		                            pendingSectionHead = m_sectionInfo.Values.FirstOrDefault(
+										s => s.StartRef <= phrase.StartRef && s.EndRef >= phrase.EndRef)?.Heading ??
+										phrase.Reference; // This is a last-ditch fallback - should never happen.
+	                            }
+	                            prevCategory = -1;
                             }
                             prevSectionStartRef = phrase.StartRef;
                             prevSectionEndRef = phrase.EndRef;
@@ -1249,14 +1241,14 @@ namespace SIL.Transcelerator
 
                             if (pendingSectionHead != null)
                             {
-								pendingSectionHead = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Category, pendingSectionHead, out lang);
+								pendingSectionHead = dlg.GetLocalizedNormalizedDataString(new UIDataString(pendingSectionHead, LocalizableStringType.SectionHeading, prevSectionStartRef, prevSectionEndRef), out lang);
                                 sw.WriteLine($"<h2 lang=\"{lang}\">{pendingSectionHead}</h2>");
                                 pendingSectionHead = null;
                             }
 
                             if (phrase.Category != prevCategory)
                             {
-	                            var lwcCategoryName = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Category, phrase.CategoryName, out lang);
+	                            var lwcCategoryName = dlg.GetLocalizedNormalizedDataString(new UIDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 								sw.WriteLine($"<h3 lang=\"{lang}\">{lwcCategoryName}</h3>");
                                 prevCategory = phrase.Category;
                             }
@@ -1291,14 +1283,19 @@ namespace SIL.Transcelerator
                                 prevQuestionRef = phrase.Reference;
                             }
 
-                            sw.WriteLine("<p class=\"question\">" +
-                                (phrase.HasUserTranslation ? phrase.Translation : phrase.PhraseToDisplayInUI).Normalize(NormalizationForm.FormC) + "</p>");
+	                        if (phrase.HasUserTranslation)
+		                        sw.WriteLine("<p class=\"question\">" + phrase.Translation.Normalize(NormalizationForm.FormC) + "</p>");
+	                        else
+	                        {
+		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Question), out lang);
+		                        sw.WriteLine("<p class=\"question\" lang=\"" + lang + "\"> " + lwcQuestion + "</p>");
+	                        }
 
-                            sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
+	                        sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
 	                        if (dlg.m_chkIncludeLWCQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
 	                        {
-		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Question, phrase.PhraseToDisplayInUI, out lang);
-								var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Question), out lang);
+								var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
 								sw.WriteLine($"<p class=\"questionbt\"{langSpec}>{lwcQuestion}</p>");
 	                        }
 	                        Question answersAndComments = phrase.QuestionInfo;
@@ -1306,8 +1303,8 @@ namespace SIL.Transcelerator
                             {
 	                            foreach (var answer in answersAndComments.Answers)
 	                            {
-		                            var lwcAnswer = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Answer, answer, out lang);
-		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+		                            var lwcAnswer = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Answer, answer), out lang);
+		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
 									sw.WriteLine($"<p class=\"answer\"{langSpec}>{lwcAnswer}</p>");
 	                            }
                             }
@@ -1315,8 +1312,8 @@ namespace SIL.Transcelerator
                             {
 	                            foreach (var comment in answersAndComments.Notes)
 	                            {
-		                            var lwcComment = dlg.GetLocalizedNormalizedDataString(questionKey, LocalizableStringType.Note, comment, out lang);
-		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : " lang=\"{lang}\"";
+		                            var lwcComment = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Note, comment), out lang);
+		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
 		                            sw.WriteLine($"<p class=\"comment\"{langSpec}>{lwcComment}</p>");
 	                            }
                             }
@@ -2289,8 +2286,7 @@ namespace SIL.Transcelerator
 	        var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
             m_helper = new PhraseTranslationHelper(qp);
 		    m_helper.FileProxy = m_fileAccessor;
-	        m_sectionRefs = qp.SectionReferences;
-			m_sectionHeadText = qp.SectionHeads;
+	        m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
 		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
 			if (!string.IsNullOrEmpty(translationData))
