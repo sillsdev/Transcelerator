@@ -1213,37 +1213,44 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
                         sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
-                        int prevSectionStartRef = -1, prevSectionEndRef = -1;
+                        SectionInfo section = null;
                         string prevQuestionRef = null;
-                        string pendingSectionHead = null;
+                        bool sectionHeadHasBeenOutput = false;
 
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
                         {
 	                        var questionKey = phrase.PhraseKey;
 	                        string lang;
-                            if (prevCategory == -1 && (phrase.StartRef < prevSectionStartRef || phrase.EndRef > prevSectionEndRef))
+                            if (section == null || phrase.EndRef > section.EndRef)
                             {
-	                            if (m_sectionInfo.TryGetValue(phrase.StartRef, out SectionInfo info))
-		                            pendingSectionHead = info.Heading;
-	                            else
-	                            {
-		                            pendingSectionHead = m_sectionInfo.Values.FirstOrDefault(
-										s => s.StartRef <= phrase.StartRef && s.EndRef >= phrase.EndRef)?.Heading ??
-										phrase.Reference; // This is a last-ditch fallback - should never happen.
-	                            }
-	                            prevCategory = -1;
+	                            if (!m_sectionInfo.TryGetValue(phrase.StartRef, out section))
+									section = m_sectionInfo.Values.FirstOrDefault(s => s.StartRef <= phrase.StartRef && s.EndRef >= phrase.EndRef);
+								if (section != null)
+									sectionHeadHasBeenOutput = false;
+								else
+								{
+									// This is a last-ditch fallback - should never happen.
+									section = null;
+								}
+
+								prevCategory = -1;
                             }
-                            prevSectionStartRef = phrase.StartRef;
-                            prevSectionEndRef = phrase.EndRef;
 
                             if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
                                 continue; // skip this question
 
-                            if (pendingSectionHead != null)
+                            if (!sectionHeadHasBeenOutput)
                             {
-								pendingSectionHead = dlg.GetLocalizedNormalizedDataString(new UIDataString(pendingSectionHead, LocalizableStringType.SectionHeading, prevSectionStartRef, prevSectionEndRef), out lang);
-                                sw.WriteLine($"<h2 lang=\"{lang}\">{pendingSectionHead}</h2>");
-                                pendingSectionHead = null;
+	                            if (section == null)
+	                            {
+		                            sw.WriteLine($"<h2>{phrase.Reference}</h2>");
+								}
+	                            else
+	                            {
+		                            string heading = dlg.GetLocalizedNormalizedDataString(new UIDataString(section), out lang);
+		                            sw.WriteLine($"<h2 lang=\"{lang}\">{heading}</h2>");
+	                            }
+	                            sectionHeadHasBeenOutput = true;
                             }
 
                             if (phrase.Category != prevCategory)

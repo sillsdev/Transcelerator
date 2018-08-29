@@ -42,6 +42,10 @@ namespace SIL.Transcelerator
 			Question = baseQuestionKey.Text;
 		}
 
+		public UIDataString(SectionInfo section) : this(section.Heading, LocalizableStringType.SectionHeading, section.StartRef, section.EndRef)
+		{
+		}
+
 		public UIDataString(string uiString, LocalizableStringType type, int startRef = 0, int endRef = 0, string question = null)
 		{
 			if (type != LocalizableStringType.Category && startRef <= 0)

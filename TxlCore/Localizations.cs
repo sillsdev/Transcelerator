@@ -221,7 +221,7 @@ namespace SIL.Transcelerator.Localization
 				transUnit = Categories?.GetTranslationUnitIfLocalized(key);
 			else if (key.Type == LocalizableStringType.SectionHeading)
 			{
-				transUnit = Groups.FirstOrDefault(g => g.Id == GetSectionId(key))?.TranslationUnits?.Single();
+				transUnit = Groups.FirstOrDefault(g => g.Id == GetSectionId(key))?.TranslationUnits?.SingleOrDefault();
 				return (transUnit != null && transUnit.Target.IsLocalized) ? transUnit : null;
 			}
 			else
