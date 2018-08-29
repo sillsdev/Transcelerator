@@ -292,6 +292,53 @@ namespace SIL.Transcelerator.Localization
 		}
 
 		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNoCategoriesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
+			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
+			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
+
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "What is wisdom?", "A gift from God" }));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "¿Qué es la sabiduría?", "Un don de Dios" }));
+			var onlyQuestionLeftInLocalizations = sut.LocalizationsAccessor.Groups.Single().SubGroups.Single().SubGroups.Single();
+			Assert.AreEqual(1, onlyQuestionLeftInLocalizations.TranslationUnits.Count);
+			Assert.AreEqual("Answers", onlyQuestionLeftInLocalizations.SubGroups.Single().Id);
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateAddTxlTranslationsAndRemoveUntranslatedNodesWhenNoAnswersAlternatesOrNotesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
+			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
+			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
+			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations, true); // Update
+
+			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
+			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
+				new[] { "Overview", "Details", "What is wisdom?" }));
+			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
+				new[] { "Resumen", "Detalles", "¿Qué es la sabiduría?" }));
+
+			Assert.AreEqual(2, sut.LocalizationsAccessor.Groups[0].TranslationUnits.Count);
+			var onlyQuestionLeftInLocalizations = sut.LocalizationsAccessor.Groups[1].SubGroups.Single().SubGroups.Single();
+			Assert.AreEqual("What is wisdom?", onlyQuestionLeftInLocalizations.TranslationUnits.Single().English);
+		}
+
+		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_UpdateWhenSomeEntriesHaveLocalizations_NoChangesAndNoErrors()
 		{
 			var sut = new TestLocalizationsFileAccessor();
