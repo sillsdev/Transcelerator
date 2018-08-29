@@ -195,7 +195,7 @@ namespace SIL.Transcelerator.Localization
 			Categories.TranslationUnits = new List<TranslationUnit>();
 		}
 
-		public Group Categories => Groups.First(g => g.Id == "Categories");
+		public Group Categories => Groups.FirstOrDefault(g => g.Id == "Categories");
 
 		internal static string GetSectionId(IRefRange refs)
 		{
@@ -218,7 +218,7 @@ namespace SIL.Transcelerator.Localization
 
 			TranslationUnit transUnit = null;
 			if (key.Type == LocalizableStringType.Category)
-				transUnit = Categories.GetTranslationUnitIfLocalized(key);
+				transUnit = Categories?.GetTranslationUnitIfLocalized(key);
 			else if (key.Type == LocalizableStringType.SectionHeading)
 			{
 				transUnit = Groups.FirstOrDefault(g => g.Id == GetSectionId(key))?.TranslationUnits?.Single();
@@ -384,6 +384,9 @@ namespace SIL.Transcelerator.Localization
 			if (!Id.StartsWith(FileBody.kQuestionIdPrefix))
 				throw new InvalidOperationException("GetQuestionSubGroup should only be called on a question group.");
 
+			if (SubGroups == null)
+				return null;
+
 			switch (type)
 			{
 				case LocalizableStringType.Alternate:
@@ -411,27 +414,34 @@ namespace SIL.Transcelerator.Localization
 
 		public void AddTranslationUnit(UIDataString data, string translation = null)
 		{
-			bool appendSequenceNumber = true;
-			string id = data.Type.IdLetter();
+			var idPrefix = $"{data.Type.IdLetter()}:";
+			var idSuffix = "";
 			string context;
 
 			if (data.Type == LocalizableStringType.Category)
 			{
 				context = "Category name";
+				idSuffix = data.SourceUIString;
 			}
 			else
 			{
 				var bcv = new BCVRef(data.StartRef);
 				var contextPrefix = $"{bcv.BookAndChapterContextPrefix()}{bcv.Verse}#";
-				if (data.Type == LocalizableStringType.SectionHeading)
+				switch (data.Type)
 				{
-					appendSequenceNumber = false;
-					context = $"{contextPrefix}Section Heading";
-				}
-				else
-				{
-					context = $"{contextPrefix}{data.Type}:{data.Question}";
-					appendSequenceNumber = data.Type != LocalizableStringType.Question;
+					case LocalizableStringType.SectionHeading:
+						context = $"{contextPrefix}Section Heading"; break;
+					case LocalizableStringType.Question:
+						context = $"{contextPrefix}{data.Type}:{data.Question}"; break;
+					case LocalizableStringType.Alternate:
+					case LocalizableStringType.Answer:
+					case LocalizableStringType.Note:
+						// Using a hash code should pretty much guarantee uniqueness and prevent accidental matches
+						// if a subsequent version of the data inserts or removes answers, alternates, or notes.
+						idSuffix = data.SourceUIString.GetHashCode().ToString();
+						goto case LocalizableStringType.Question;
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 			}
 			Localization target = new Localization();
@@ -445,9 +455,7 @@ namespace SIL.Transcelerator.Localization
 				target.Text = translation;
 				target.Status = State.Approved;
 			}
-			if (appendSequenceNumber)
-				id += $":{NextSequentialId}";
-			AddTranslationUnit(new TranslationUnit { Id = id, English = data.SourceUIString, Target = target, Context = context });
+			AddTranslationUnit(new TranslationUnit { Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString, Target = target, Context = context });
 		}
 
 		public Group AddSubGroup(string id)
