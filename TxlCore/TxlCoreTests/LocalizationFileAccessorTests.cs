@@ -159,6 +159,65 @@ namespace SIL.Transcelerator.Localization
 		}
 
 		[Test]
+		public void GetLocalizedString_LocalizedStrings_ReturnsLocalized()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+
+			var sectionKey = new UIDataString("Matthew 3:1-20 Section", LocalizableStringType.SectionHeading, "MAT 3.1-20", 40003001, 40003020);
+			sut.AddLocalizationEntry(sectionKey, "Mateo 3:1-20 Sección");
+			var questionKey1 = new UIDataString("Why is this here?", LocalizableStringType.Question, "MAT 3.2-3", 40003002, 40003003);
+			sut.AddLocalizationEntry(questionKey1, "¿Por qué está aquí esto?");
+			var questionKey2 = new UIDataString("Can we skip this question?", LocalizableStringType.Question, "MAT 3.4", 40003004, 40003004);
+			sut.AddLocalizationEntry(questionKey2, "¿Podríamos saltart esta pregunta?");
+			var answerKey1 = new UIDataString("Because it needs to be.", LocalizableStringType.Question, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(answerKey1, "¡Porque sí!");
+			var answerKey2 = new UIDataString("It's a place-holder.", LocalizableStringType.Question, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(answerKey2, "Solo está ocupando el lugar.");
+			var altKey1 = new UIDataString("What's up with this?", LocalizableStringType.Alternate, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(altKey1, "¿Qué pasa con esto?");
+			var altKey2 = new UIDataString("For what reason is this here?", LocalizableStringType.Alternate, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(altKey2, "¿Por qué razón está aquí esto?");
+			var noteKey1 = new UIDataString("This is a bad question.", LocalizableStringType.Alternate, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(noteKey1, "Esta pregunta no sirve.");
+			var noteKey2 = new UIDataString("See guidelines for writing good questions.", LocalizableStringType.Alternate, "MAT 3.2-3", 40003002, 40003003, "Why is this here?");
+			sut.AddLocalizationEntry(noteKey2, "Vea el guía de como hacer buenas preguntas.");
+
+			Assert.AreEqual("Mateo 3:1-20 Sección", sut.GetLocalizedString(sectionKey));
+			Assert.AreEqual("¿Por qué está aquí esto?", sut.GetLocalizedString(questionKey1));
+			Assert.AreEqual("¿Podríamos saltart esta pregunta?", sut.GetLocalizedString(questionKey2));
+			Assert.AreEqual("¡Porque sí!", sut.GetLocalizedString(answerKey1));
+			Assert.AreEqual("Solo está ocupando el lugar.", sut.GetLocalizedString(answerKey2));
+			Assert.AreEqual("¿Qué pasa con esto?", sut.GetLocalizedString(altKey1));
+			Assert.AreEqual("¿Por qué razón está aquí esto?", sut.GetLocalizedString(altKey2));
+			Assert.AreEqual("Esta pregunta no sirve.", sut.GetLocalizedString(noteKey1));
+			Assert.AreEqual("Vea el guía de como hacer buenas preguntas.", sut.GetLocalizedString(noteKey2));
+		}
+
+		[Test]
+		public void GetLocalizedString_MultipleSections_FindsLocalizedQuestionInCorrectSection()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+
+			var sectionKey1 = new UIDataString("Matthew 3:1-20", LocalizableStringType.SectionHeading, "MAT 3.1-20", 40003001, 40003020);
+			sut.AddLocalizationEntry(sectionKey1);
+			var sectionKey2 = new UIDataString("Matthew 3:21-29", LocalizableStringType.SectionHeading, "MAT 3.21-29", 40003021, 40003029);
+			sut.AddLocalizationEntry(sectionKey2);
+
+			var questionKey1 = new UIDataString("Why is this here?", LocalizableStringType.Question, "MAT 3.2-3", 40003002, 40003003);
+			sut.AddLocalizationEntry(questionKey1, "¿Por qué está aquí esto?");
+
+			var questionKey2 = new UIDataString("Why is this here?", LocalizableStringType.Question, "MAT 3.21", 40003021, 40003021);
+			sut.AddLocalizationEntry(questionKey2, "¿Qué hace esto aquí?");
+
+			var questionKey3 = new UIDataString("Is this unique?", LocalizableStringType.Question, "MAT 3.22-25", 40003022, 40003025);
+			sut.AddLocalizationEntry(questionKey3, "¿Es único esto?");
+
+			Assert.AreEqual("¿Por qué está aquí esto?", sut.GetLocalizedString(questionKey1));
+			Assert.AreEqual("¿Qué hace esto aquí?", sut.GetLocalizedString(questionKey2));
+			Assert.AreEqual("¿Es único esto?", sut.GetLocalizedString(questionKey3));
+		}
+
+		[Test]
 		public void GetLocalizedString_MatchingQuestionInMultiChapterSectionNotLocalized_ReturnsEnglish()
 		{
 			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, "MAT 4.2-3", 40004002, 40004003);

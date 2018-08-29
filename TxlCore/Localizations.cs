@@ -299,7 +299,7 @@ namespace SIL.Transcelerator.Localization
 				// ENHANCE: Cache these
 				var bcvRefSectionStart = new BCVRef(bcvQStart.Book, startChapter, startVerse);
 				var bcvRefSectionEnd = new BCVRef(bcvQStart.Book, endChapter, endVerse);
-				if (bcvRefSectionStart <= bcvQStart || bcvRefSectionEnd >= bcvQStart)
+				if (bcvRefSectionStart <= bcvQStart && bcvRefSectionEnd >= bcvQStart)
 					return sectionGroup;
 			}
 			return null;

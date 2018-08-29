@@ -59,7 +59,7 @@ namespace SIL.Transcelerator.Localization
 						existing = group.TranslationUnits?.FirstOrDefault();
 						break;
 					case LocalizableStringType.Alternate:
-						group = group.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kAlternatesGroupId) ?? group.AddSubGroup(FileBody.kAnswersGroupId);
+						group = group.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kAlternatesGroupId) ?? group.AddSubGroup(FileBody.kAlternatesGroupId);
 						existing = group.TranslationUnits?.FirstOrDefault(a => a.English == data.SourceUIString);
 						break;
 					case LocalizableStringType.Answer:
@@ -67,7 +67,7 @@ namespace SIL.Transcelerator.Localization
 						existing = group.TranslationUnits?.FirstOrDefault(a => a.English == data.SourceUIString);
 						break;
 					case LocalizableStringType.Note:
-						group = group.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kNotesGroupId) ?? group.AddSubGroup(FileBody.kAnswersGroupId);
+						group = group.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kNotesGroupId) ?? group.AddSubGroup(FileBody.kNotesGroupId);
 						existing = group.TranslationUnits?.FirstOrDefault(a => a.English == data.SourceUIString);
 						break;
 					default:
