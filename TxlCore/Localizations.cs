@@ -322,9 +322,17 @@ namespace SIL.Transcelerator.Localization
 					if (!group.SubGroups.Any())
 						group.SubGroups = null;
 				}
-				group.TranslationUnits?.RemoveAll(tu => tu.Target.Status == State.NotLocalized);
-				if (group.TranslationUnits?.Count == 0)
-					group.TranslationUnits = null;
+				if (group.TranslationUnits != null)
+				{
+					// This is pretty annoying: If a file is downloaded from Crowdin, it marks anything that has been
+					// translated but not approved as translated, but anything that has been approved doesn't get
+					// marked with a status. So this is a HACK to put the status back to signed-off/approved.
+					foreach (var tu in group.TranslationUnits.Where(tu => tu.Target.Status == State.NotLocalized && tu.English != tu.Target.Text))
+						tu.Target.Status = State.Approved;
+					group.TranslationUnits.RemoveAll(tu => tu.Target.Status == State.NotLocalized);
+					if (group.TranslationUnits.Count == 0)
+						group.TranslationUnits = null;
+				}
 			}
 			groups.RemoveAll(g => g.SubGroups == null && g.TranslationUnits == null);
 		}
@@ -399,7 +407,7 @@ namespace SIL.Transcelerator.Localization
 			TranslationUnits.Add(tu);
 		}
 
-		public void AddTranslationUnit(UIDataString data, string translation = null)
+		public TranslationUnit AddTranslationUnit(UIDataString data, string translation = null, State status = State.Approved)
 		{
 			var idPrefix = $"{data.Type.IdLetter()}:";
 			var idSuffix = "";
@@ -432,9 +440,9 @@ namespace SIL.Transcelerator.Localization
 							if (translation != null)
 							{
 								existing.Target.Text = translation;
-								existing.Target.Status = State.Approved;
+								existing.Target.Status = status;
 							}
-							return;
+							return existing;
 						}
 						idSuffix = data.SourceUIString.GetHashCode().ToString();
 						goto case LocalizableStringType.Question;
@@ -451,9 +459,11 @@ namespace SIL.Transcelerator.Localization
 			else
 			{
 				target.Text = translation;
-				target.Status = State.Approved;
+				target.Status = status;
 			}
-			AddTranslationUnit(new TranslationUnit { Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString, Target = target, Context = context });
+			var newTu = new TranslationUnit {Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString, Target = target, Context = context};
+			AddTranslationUnit(newTu);
+			return newTu;
 		}
 
 		public Group AddSubGroup(string id)
