@@ -384,20 +384,7 @@ namespace SIL.Transcelerator.Localization
 			if (!Id.StartsWith(FileBody.kQuestionIdPrefix))
 				throw new InvalidOperationException("GetQuestionSubGroup should only be called on a question group.");
 
-			if (SubGroups == null)
-				return null;
-
-			switch (type)
-			{
-				case LocalizableStringType.Alternate:
-					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kAlternatesGroupId);
-				case LocalizableStringType.Answer:
-					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kAnswersGroupId);
-				case LocalizableStringType.Note:
-					return SubGroups.SingleOrDefault(g => g.Id == FileBody.kNotesGroupId);
-				default:
-					throw new ArgumentOutOfRangeException(nameof(type), "GetQuestionSubGroup is for getting Alternates, Answers, or Notes.");
-			}
+			return SubGroups?.SingleOrDefault(g => g.Id == type.SubQuestionGroupId());
 		}
 
 		internal TranslationUnit GetTranslationUnitIfLocalized(UIDataString key)
@@ -436,8 +423,19 @@ namespace SIL.Transcelerator.Localization
 					case LocalizableStringType.Alternate:
 					case LocalizableStringType.Answer:
 					case LocalizableStringType.Note:
+						Debug.Assert(Id == data.Type.SubQuestionGroupId());
 						// Using a hash code should pretty much guarantee uniqueness and prevent accidental matches
 						// if a subsequent version of the data inserts or removes answers, alternates, or notes.
+						var existing = TranslationUnits?.SingleOrDefault(tu => tu.English == data.SourceUIString);
+						if (existing != null)
+						{
+							if (translation != null)
+							{
+								existing.Target.Text = translation;
+								existing.Target.Status = State.Approved;
+							}
+							return;
+						}
 						idSuffix = data.SourceUIString.GetHashCode().ToString();
 						goto case LocalizableStringType.Question;
 					default:
@@ -556,6 +554,18 @@ namespace SIL.Transcelerator.Localization
 				case LocalizableStringType.Note: return "n";
 				default:
 					throw new ArgumentOutOfRangeException(nameof(type), "Unexpected string type.");
+			}
+		}
+
+		internal static string SubQuestionGroupId(this LocalizableStringType type)
+		{
+			switch (type)
+			{
+				case LocalizableStringType.Alternate: return FileBody.kAlternatesGroupId;
+				case LocalizableStringType.Answer: return FileBody.kAnswersGroupId;
+				case LocalizableStringType.Note: return FileBody.kNotesGroupId;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(type), "Unexpected string type. SubQuestionGroupId only intended for sub-Question types.");
 			}
 		}
 

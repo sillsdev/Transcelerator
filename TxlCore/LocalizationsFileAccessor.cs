@@ -113,6 +113,8 @@ namespace SIL.Transcelerator.Localization
 				Serializer.Serialize(writer, m_xliffRoot);
 		}
 
+		private Action<Group, UIDataString> AddTranslationUnit { get; set; }
+
 		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null, bool retainOnlyTranslatedStrings = false)
 		{
 			// Note: there are two possible sources for existing localized translations of strings: either a Transcelerator project
@@ -127,7 +129,6 @@ namespace SIL.Transcelerator.Localization
 
 			InitializeLocalizations();
 
-			Action<Group, UIDataString> AddTranslationUnit;
 			if (existingTxlTranslations == null)
 			{
 				if (existingLocalizations == null)
@@ -204,41 +205,33 @@ namespace SIL.Transcelerator.Localization
 							AddTranslationUnit(questionGroup, key);
 						}
 
-						if (q.AlternateForms != null)
-						{
-							var alternatesGroup = questionGroup.AddSubGroup(FileBody.kAlternatesGroupId);
-							foreach (var altForm in q.AlternateForms.Where(a => !String.IsNullOrWhiteSpace(a)))
-							{
-								key = new UIDataString(q, LocalizableStringType.Alternate, altForm) {UseAnyAlternate = false};
-								AddTranslationUnit(alternatesGroup, key);
-							}
-						}
-						if (q.Answers != null)
-						{
-							var answersGroup = questionGroup.SubGroups?.SingleOrDefault(g => g.Id == FileBody.kAnswersGroupId) ??
-								questionGroup.AddSubGroup(FileBody.kAnswersGroupId);
-							foreach (var answer in q.Answers.Where(a => !string.IsNullOrWhiteSpace(a)))
-							{
-								key = new UIDataString(q, LocalizableStringType.Answer, answer);
-								AddTranslationUnit(answersGroup, key);
-							}
-						}
-						if (q.Notes != null)
-						{
-							var notesGroup = questionGroup.AddSubGroup(FileBody.kNotesGroupId);
-
-							foreach (var comment in q.Notes.Where(n => !string.IsNullOrWhiteSpace(n)))
-							{
-								key = new UIDataString(q, LocalizableStringType.Note, comment);
-								AddTranslationUnit(notesGroup, key);
-							}
-						}
+						AddQuestionSubgroupAndLocalizableStringsIfNeeded(q, questionGroup, LocalizableStringType.Alternate, qu => qu.AlternateForms);
+						AddQuestionSubgroupAndLocalizableStringsIfNeeded(q, questionGroup, LocalizableStringType.Answer, qu => qu.Answers);
+						AddQuestionSubgroupAndLocalizableStringsIfNeeded(q, questionGroup, LocalizableStringType.Note, qu => qu.Notes);
 					}
 				}
 			}
 
 			if (retainOnlyTranslatedStrings)
 				Localizations.DeleteGroupsWithoutLocalizations();
+
+			AddTranslationUnit = null;
+		}
+
+		private void AddQuestionSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup, LocalizableStringType type, Func<Question, string[]> data)
+		{
+			var stringsToAdd = data(q);
+			if (stringsToAdd != null)
+			{
+				var subGroup = questionGroup.GetQuestionSubGroup(type) ?? questionGroup.AddSubGroup(type.SubQuestionGroupId());
+				foreach (var str in stringsToAdd.Where(a => !String.IsNullOrWhiteSpace(a)))
+				{
+					var key = new UIDataString(q, type, str);
+					if (type == LocalizableStringType.Alternate)
+						key.UseAnyAlternate = false;
+					AddTranslationUnit(subGroup, key);
+				}
+			}
 		}
 
 		string LookupTranslation(List<XmlTranslation> translations, UIDataString key)
