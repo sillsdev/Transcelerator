@@ -39,8 +39,8 @@ namespace SIL.Transcelerator
 
         public int ChangeVersification(int reference, IScrVers scrVersSource)
         {
-            return this == scrVersSource ? reference :
-                m_host.ChangeVersification(reference, ((ScrVers)scrVersSource).Name, Name);
+            return this.Equals(scrVersSource) ? reference :
+                m_host.ChangeVersification(reference, scrVersSource.Name, Name);
         }
 
 	    public bool IsExcluded(int bbbcccvvv)
@@ -48,7 +48,7 @@ namespace SIL.Transcelerator
 		    throw new System.NotImplementedException();
 	    }
 
-	    public VerseRef FirstIncludedVerse(int bookNum, int chapterNum)
+	    public VerseRef? FirstIncludedVerse(int bookNum, int chapterNum)
 	    {
 		    throw new System.NotImplementedException();
 	    }
@@ -58,12 +58,12 @@ namespace SIL.Transcelerator
 		    throw new System.NotImplementedException();
 	    }
 
-	    public void ChangeVersification(VerseRef reference)
+	    public void ChangeVersification(ref VerseRef reference)
 	    {
 		    throw new System.NotImplementedException();
 	    }
 
-	    public bool ChangeVersificationWithRanges(VerseRef reference)
+	    public bool ChangeVersificationWithRanges(VerseRef reference, out VerseRef newReference)
 	    {
 		    throw new System.NotImplementedException();
 	    }
