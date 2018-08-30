@@ -16,7 +16,7 @@ namespace SIL.Transcelerator
 {
 	public class TestScrVers : IScrVers
 	{
-		private IScrVers m_vers;
+		private readonly IScrVers m_vers;
 
 		/// ------------------------------------------------------------------------------------
 		public TestScrVers()
@@ -65,7 +65,7 @@ namespace SIL.Transcelerator
 			throw new System.NotImplementedException();
 		}
 
-		public VerseRef FirstIncludedVerse(int bookNum, int chapterNum)
+		public VerseRef? FirstIncludedVerse(int bookNum, int chapterNum)
 		{
 			throw new System.NotImplementedException();
 		}
@@ -75,12 +75,12 @@ namespace SIL.Transcelerator
 			throw new System.NotImplementedException();
 		}
 
-		public void ChangeVersification(VerseRef reference)
+		public void ChangeVersification(ref VerseRef reference)
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public bool ChangeVersificationWithRanges(VerseRef reference)
+		public bool ChangeVersificationWithRanges(VerseRef reference, out VerseRef newReference)
 		{
 			throw new System.NotImplementedException();
 		}
