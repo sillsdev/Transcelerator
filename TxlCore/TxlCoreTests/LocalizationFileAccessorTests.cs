@@ -592,7 +592,7 @@ namespace SIL.Transcelerator.Localization
 		// component into the ID to distinguish them (or maybe put some special notation, such as [#1] into the source
 		// question itself). That will definitely complicate lookups and display.
 		[Test]
-		public void GenerateOrUpdateFromMasterQuestions_DuplicateQuestionInVerse_Coalesced()
+		public void GenerateOrUpdateFromMasterQuestions_DuplicateQuestionInVerseWithDifferentAnswers_QuestionsCoalescedIntoOneWithAllAnswers()
 		{
 			QuestionSections qs = new QuestionSections();
 			qs.Items = new Section[1];
@@ -646,6 +646,59 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual("Por que?", sut.GetLocalizedString(keyQ4));
 			Assert.AreEqual("Porque Dios no pueded perdonar...", sut.GetLocalizedString(keyQ4A1));
 			Assert.AreEqual("Para hacerles aceptables...", sut.GetLocalizedString(keyQ2A1));
+		}
+
+		// Note: If we ever need to translate the two questions differently, we'll need to introduce some additional
+		// component into the ID to distinguish them (or maybe put some special notation, such as [#1] into the source
+		// question itself). That will definitely complicate lookups and display.
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_DuplicateQuestionInVerseWithRepeatedAlternates_QuestionsCoalescedIntoOneWithNoDuplicateAlternates()
+		{
+			QuestionSections qs = new QuestionSections();
+			qs.Items = new Section[1];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("HEB 12.12-13", "Hebrews 12:12, 13", 58012012, 58012013, 3, 0);
+			int iC = 0;
+			int iQ = 0;
+			var q1 = qs.Items[iS].Categories[iC].Questions[iQ];
+			q1.StartRef = 58012012;
+			q1.EndRef = 58012013;
+			q1.ScriptureReference = "HEB 12.12-13";
+			q1.Text = "What does the author tell/want them to do here?";
+			q1.Answers = new[] { "To make every effort to reach the goal God has set for them." };
+			q1.AlternateForms = new[] { "What does the author tell them to do here?", "What does the author want them to do here?" };
+
+			var q2 = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q2.StartRef = 58012012;
+			q2.EndRef = 58012013;
+			q2.ScriptureReference = "HEB 12.12-13";
+			q2.Text = "What does he say about tired hands and shaky legs?";
+			q2.Answers = new[] { "He tells them to take a new grip with their hands and to stand firm on their shaky legs." };
+
+			var q3 = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q3.StartRef = 58012012;
+			q3.EndRef = 58012013;
+			q3.ScriptureReference = "HEB 12.12-13";
+			q3.Text = "What does the author tell/want them to do here?";
+			q3.Answers = new[] { "He tells them to take a new grip with their hands and to stand firm on their shaky legs." };
+			q3.AlternateForms = new[] { "What does the author tell them to do here?", "What does the author want them to do here?" };
+			var sut = new TestLocalizationsFileAccessor();
+			sut.GenerateOrUpdateFromMasterQuestions(qs);
+			Assert.IsTrue(sut.LocalizationsAccessor.IsValid(out string error), error);
+
+			var keyQ3Alt1 = new UIDataString(q3, LocalizableStringType.Alternate, q3.AlternateForms[0]);
+			sut.AddLocalizationEntry(keyQ3Alt1, "¿Qué les dice el autor que hagan?");
+			var keyQ3Alt2 = new UIDataString(q3, LocalizableStringType.Alternate, q3.AlternateForms[1]);
+			sut.AddLocalizationEntry(keyQ3Alt2, "¿Qué quiere el autor que hagan? Please review this translation");
+			var keyQ1Alt1 = new UIDataString(q1, LocalizableStringType.Alternate, q1.AlternateForms[0]);
+			var keyQ1Alt2 = new UIDataString(q1, LocalizableStringType.Alternate, q1.AlternateForms[1]);
+			sut.AddLocalizationEntry(keyQ1Alt2, "¿Qué quiere el autor que hagan?");
+			Assert.AreEqual("¿Qué les dice el autor que hagan?", sut.GetLocalizedString(keyQ1Alt1));
+			Assert.AreEqual("¿Qué quiere el autor que hagan?", sut.GetLocalizedString(keyQ1Alt2));
+			Assert.AreEqual("¿Qué les dice el autor que hagan?", sut.GetLocalizedString(keyQ3Alt1));
+			Assert.AreEqual("¿Qué quiere el autor que hagan?", sut.GetLocalizedString(keyQ3Alt2));
+			Assert.AreEqual(2, sut.LocalizationsAccessor.Groups[1].SubGroups.Single().SubGroups.Count);
+			Assert.AreEqual(2, sut.LocalizationsAccessor.Groups[1].SubGroups.Single().SubGroups[0].SubGroups.Single(g => g.Id == FileBody.kAlternatesGroupId).TranslationUnits.Count);
 		}
 
 		[Test]
