@@ -109,6 +109,13 @@
               <target state="signed-off">¿Qué sabes acerca del nombre "Israel"?</target>
               <note>!ACT!1~6#Question:What do you know about the name "Israel"?</note>
             </trans-unit>
+            <group id="Notes">
+              <trans-unit id="n:!ACT!1~6#Note:What do you know about the name &quot;Israel&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!ACT!1~6#Note:What do you know about the name "Israel"?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
         <group id="Details">
@@ -1120,6 +1127,15 @@
               <note>!EPH!2~11#Question:What do you think it means to circumcise someone?</note>
             </trans-unit>
           </group>
+          <group id="Q:EPH 2.11-22+Whom do you think Paul meant by &quot;citizenship in Israel&quot;?">
+            <group id="Notes">
+              <trans-unit id="n:!EPH!2~11#Note:Whom do you think Paul meant by &quot;citizenship in Israel&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!EPH!2~11#Note:Whom do you think Paul meant by "citizenship in Israel"?</note>
+              </trans-unit>
+            </group>
+          </group>
           <group id="Q:EPH 2.11-22+What do you know about prophets?">
             <trans-unit id="q:!EPH!2~11#Question:What do you know about prophets?">
               <source>What do you know about prophets?</source>
@@ -1694,6 +1710,15 @@
           </group>
         </group>
         <group id="Details">
+          <group id="Q:GAL 6.11-18+Whom do you think he meant by the &quot;Israel of God&quot;?">
+            <group id="Notes">
+              <trans-unit id="n:!GAL!6~11#Note:Whom do you think he meant by the &quot;Israel of God&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!GAL!6~11#Note:Whom do you think he meant by the "Israel of God"?</note>
+              </trans-unit>
+            </group>
+          </group>
           <group id="Q:GAL 6.11-18+What do you think it means when someone is merciful to someone else?">
             <trans-unit id="q:!GAL!6~11#Question:What do you think it means when someone is merciful to someone else?">
               <source>What do you think it means when someone is merciful to someone else?</source>
@@ -5488,6 +5513,13 @@
               <target state="signed-off">¿Qué sabes acerca del nombre "Israel"?</target>
               <note>!JHN!1~10#Question:What do you know about the name "Israel"?</note>
             </trans-unit>
+            <group id="Notes">
+              <trans-unit id="n:!JHN!1~10#Note:What do you know about the name &quot;Israel&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!JHN!1~10#Note:What do you know about the name "Israel"?</note>
+              </trans-unit>
+            </group>
           </group>
           <group id="Q:JHN 1.14+What was the Word like?">
             <trans-unit id="q:!JHN!1~14#Question:What was the Word like?">
@@ -6990,6 +7022,43 @@
           </group>
         </group>
       </group>
+      <group id="S:!LUK!5~33-39">
+        <group id="Details">
+          <group id="Q:LUK 5.36+If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.">
+            <trans-unit id="q:!LUK!5~36#Question:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.">
+              <source>If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</source>
+              <target state="signed-off">Si los hablantes de su idioma usan lenguaje simbólico/parábolas, cuénteme una de esas historias y luego cuénteme su significado.</target>
+              <note>!LUK!5~36#Question:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+            </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!LUK!5~36#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.2019661025">
+                <source>If the people who speak your language use picture language, tell me one of those stories and then tell me its meaning.</source>
+                <target state="signed-off">Si los hablantes de su idioma usan lenguaje simbólico, cuénteme una de esas historias y luego cuénteme su significado.</target>
+                <note>!LUK!5~36#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+              <trans-unit id="l:!LUK!5~36#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.966642417">
+                <source>If the people who speak your language use parables, tell me one of those stories and then tell me its meaning.</source>
+                <target state="signed-off">Si los hablantes de su idioma usan parábolas, cuénteme una de esas historias y luego cuénteme su significado.</target>
+                <note>!LUK!5~36#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+            </group>
+            <group id="Answers">
+              <trans-unit id="a:!LUK!5~36#Answer:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.-180753404">
+                <source>Key Term Check: A parable shows its meaning indirectly by using picture language to make a comparison. The parts of the comparison are generally not explained. The listeners themselves must think much about the meaning hidden in each part of the picture language. Jesus taught spiritual truths in this story form.</source>
+                <target state="signed-off">Verificación de término clave: una parábola muestra su significado indirectamente utilizando lenguaje simbólico para hacer una comparación. Las partes de la comparación generalmente no se explican. Los oyentes mismos deben pensar profundamente sobre el significado oculto en cada símbolo. Jesús enseñó verdades espirituales utilizando esta estilo de historia.</target>
+                <note>!LUK!5~36#Answer:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+            </group>
+            <group id="Notes">
+              <trans-unit id="n:!LUK!5~36#Note:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.903541393">
+                <source>See "parable" in KBT.</source>
+                <target state="signed-off">Véase "parábola" en TBC.</target>
+                <note>!LUK!5~36#Note:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
       <group id="S:!LUK!6~12-16">
         <group id="Details">
           <group id="Q:LUK 6.12-16+What do you think a &quot;Zealot&quot; was?">
@@ -7390,6 +7459,36 @@
               <target state="signed-off">¿Por qué cree usted que les llamó así?</target>
               <note>!MRK!3~16#Question:Why do you think that he called them that?</note>
             </trans-unit>
+          </group>
+        </group>
+      </group>
+      <group id="S:!MRK!3~20-30">
+        <group id="Details">
+          <group id="Q:MRK 3.23-26+If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.">
+            <trans-unit id="q:!MRK!3~23#Question:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.">
+              <source>If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</source>
+              <target state="signed-off">Si los hablantes de su idioma usan lenguaje simbólico/parábolas, cuénteme una de esas historias y luego cuénteme su significado.</target>
+              <note>!MRK!3~23#Question:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+            </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!MRK!3~23#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.2019661025">
+                <source>If the people who speak your language use picture language, tell me one of those stories and then tell me its meaning.</source>
+                <target state="signed-off">Si los hablantes de su idioma usan lenguaje simbólico, cuénteme una de esas historias y luego cuénteme su significado.</target>
+                <note>!MRK!3~23#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+              <trans-unit id="l:!MRK!3~23#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.966642417">
+                <source>If the people who speak your language use parables, tell me one of those stories and then tell me its meaning.</source>
+                <target state="signed-off">Si los hablantes de su idioma usan parábolas, cuénteme una de esas historias y luego cuénteme su significado.</target>
+                <note>!MRK!3~23#Alternate:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+            </group>
+            <group id="Notes">
+              <trans-unit id="n:!MRK!3~23#Note:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.903541393">
+                <source>See "parable" in KBT.</source>
+                <target state="signed-off">Véase "parábola" en TBC.</target>
+                <note>!MRK!3~23#Note:If the people who speak your language use picture language/parables, tell me one of those stories and then tell me its meaning.</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
       </group>
@@ -8092,6 +8191,13 @@
               <target state="signed-off">¿Qué sabes acerca del nombre "Israel"?</target>
               <note>!MAT!2~3#Question:What do you know about the name "Israel"?</note>
             </trans-unit>
+            <group id="Notes">
+              <trans-unit id="n:!MAT!2~3#Note:What do you know about the name &quot;Israel&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!MAT!2~3#Note:What do you know about the name "Israel"?</note>
+              </trans-unit>
+            </group>
           </group>
           <group id="Q:MAT 2.8+What did he tell them to do?">
             <trans-unit id="q:!MAT!2~8#Question:What did he tell them to do?">
@@ -8460,6 +8566,13 @@
               <target state="signed-off">¿Qué cree usted que es una parábola?</target>
               <note>!MAT!13~1#Question:What do you think a parable is?</note>
             </trans-unit>
+            <group id="Notes">
+              <trans-unit id="n:!MAT!13~1#Note:What do you think a parable is?903541393">
+                <source>See "parable" in KBT.</source>
+                <target state="signed-off">Véase "parábola" en TBC.</target>
+                <note>!MAT!13~1#Note:What do you think a parable is?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
         <group id="Details">
@@ -9273,6 +9386,13 @@
               <target state="signed-off">¿Qué sabes acerca del nombre "Israel"?</target>
               <note>!PHP!3~1#Question:What do you know about the name "Israel"?</note>
             </trans-unit>
+            <group id="Notes">
+              <trans-unit id="n:!PHP!3~1#Note:What do you know about the name &quot;Israel&quot;?-848175447">
+                <source>See "Israel" in KBT.</source>
+                <target state="translated">Véase "Israel" en TBC.</target>
+                <note>!PHP!3~1#Note:What do you know about the name "Israel"?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
       </group>
@@ -28407,7 +28527,7 @@
           <group id="Q:JDG 13.2-7+What did the angel of the LORD say to Manoah's wife regarding the son that was to be born of her?">
             <trans-unit id="q:!JDG!13~2#Question:What did the angel of the LORD say to Manoah's wife regarding the son that was to be born of her?">
               <source>What did the angel of the LORD say to Manoah's wife regarding the son that was to be born of her?</source>
-              <target state="signed-off">¿Qué le dijo el ángel de Jehová a la esposa de Manoa con respecto al hijo que iba a nacer de ella? </target>
+              <target state="signed-off">¿Qué le dijo el ángel de Jehová a la esposa de Manoa con respecto al hijo que iba a nacer de ella?</target>
               <note>!JDG!13~2#Question:What did the angel of the LORD say to Manoah's wife regarding the son that was to be born of her?</note>
             </trans-unit>
           </group>

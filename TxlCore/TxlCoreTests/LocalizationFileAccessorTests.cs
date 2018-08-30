@@ -350,16 +350,27 @@ namespace SIL.Transcelerator.Localization
 			Assert.IsNull(sut.LocalizationsAccessor.Groups);
 		}
 
-		[Test]
-		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNoCategoriesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained()
+		[TestCase(State.Approved)]
+		[TestCase(State.Localized)]
+		[TestCase(State.NotLocalized)]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNoCategoriesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained(State status)
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
+			var tuForQ1 = sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?", status);
+			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios", status);
+			// Check setup:
+			Assert.AreEqual(status, tuForQ1.Target.Status);
+			Assert.AreEqual(status, tuForAnswerToQ1.Target.Status);
 			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
+			// This is weird, but since crowdin fails to download the state="signed-off" attribute,
+			// we need the code to correct any translation targets that appear to be localized but
+			// have a status of NotLocalized.
+			var expectedFixedUpStatus = status == State.NotLocalized ? State.Approved : status;
+			Assert.AreEqual(expectedFixedUpStatus, tuForQ1.Target.Status);
+			Assert.AreEqual(expectedFixedUpStatus, tuForAnswerToQ1.Target.Status);
 
 			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
