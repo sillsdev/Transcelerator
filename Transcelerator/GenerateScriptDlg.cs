@@ -17,7 +17,6 @@ using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Scripture;
-using SIL.Transcelerator.Localization;
 using SIL.Utils;
 using File = System.IO.File;
 
@@ -33,7 +32,6 @@ namespace SIL.Transcelerator
 	{
 		public delegate DataLocalizer DataLocalizerNeededEventHandler(object sender, string localeId);
 		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
-		//Func<string, LocalizationsFileAccessor> getLocalizer
 		#region RangeOption enum
 		public enum RangeOption
 		{
@@ -511,19 +509,14 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		public string GetLocalizedNormalizedDataString(UIDataString key, out string lang)
+		public string GetDataString(UIDataString key, out string lang)
 		{
-			string text;
 			if (m_dataLoc == null)
 			{
 				lang = "en";
-				text = key.SourceUIString;
+				return key.SourceUIString;
 			}
-			else
-			{
-				text = m_dataLoc.GetLocalizedDataString(key, out lang);
-			}
-			return text.Normalize(NormalizationForm.FormC);
+			return m_dataLoc.GetLocalizedDataString(key, out lang);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
@@ -14,9 +15,10 @@ namespace SIL.Transcelerator
 			m_dataLocFileAccessor = localizationsFileAccessor ?? throw new ArgumentNullException(nameof(localizationsFileAccessor));
 		}
 
-		public string GetLocalizedDataString(IQuestionKey key, LocalizableStringType type, string english, out string localeID)
+		public string GetLocalizedCommentOrAnswerString(IQuestionKey key, LocalizableStringType type, string english)
 		{
-			return GetLocalizedDataString(new UIDataString(key, type, english), out localeID);
+			Debug.Assert(type == LocalizableStringType.Answer || type == LocalizableStringType.Note);
+			return GetLocalizedDataString(new UIDataString(key, type, english), out string notUsed);
 		}
 
 		public string GetLocalizedDataString(UIDataString key, out string localeID)
@@ -27,9 +29,7 @@ namespace SIL.Transcelerator
 
 		public string GetLocalizedDataString(TranslatablePhrase tp)
 		{
-			var key = tp.IsCategoryName ? new UIDataString(tp.PhraseInUse, LocalizableStringType.Category) :
-				new UIDataString(tp.PhraseKey, LocalizableStringType.Question);
-			return m_dataLocFileAccessor.GetLocalizedString(key);
+			return  m_dataLocFileAccessor.GetLocalizedString(tp.ToUIDataString());
 		}
 	}
 }
