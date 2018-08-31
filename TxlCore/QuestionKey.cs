@@ -17,11 +17,9 @@ using System.Xml.Serialization;
 
 namespace SIL.Transcelerator
 {
-	public interface IQuestionKey
+	public interface IQuestionKey : IRefRange
 	{
 		string ScriptureReference { get; }
-		int StartRef { get; }
-		int EndRef { get; }
 		/// <summary>Text of the question in COMPOSED form</summary>
 		string Text { get; }
 		string PhraseInUse { get; }

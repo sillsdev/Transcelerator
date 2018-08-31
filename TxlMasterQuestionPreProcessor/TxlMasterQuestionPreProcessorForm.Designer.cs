@@ -40,6 +40,7 @@
 			this.txtLocale = new System.Windows.Forms.TextBox();
 			this.lblLocale = new System.Windows.Forms.Label();
 			this.btnNavigateToSourceFile = new System.Windows.Forms.Button();
+			this.m_chkRetainOnlyTranslated = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// btnTextToSfm
@@ -174,11 +175,23 @@
 			this.btnNavigateToSourceFile.UseVisualStyleBackColor = true;
 			this.btnNavigateToSourceFile.Click += new System.EventHandler(this.btnNavigateToSourceFile_Click);
 			// 
+			// m_chkRetainOnlyTranslated
+			// 
+			this.m_chkRetainOnlyTranslated.AutoSize = true;
+			this.m_chkRetainOnlyTranslated.Location = new System.Drawing.Point(233, 65);
+			this.m_chkRetainOnlyTranslated.Name = "m_chkRetainOnlyTranslated";
+			this.m_chkRetainOnlyTranslated.Size = new System.Drawing.Size(161, 17);
+			this.m_chkRetainOnlyTranslated.TabIndex = 12;
+			this.m_chkRetainOnlyTranslated.Text = "Retain only translated strings";
+			this.m_chkRetainOnlyTranslated.UseVisualStyleBackColor = true;
+			this.m_chkRetainOnlyTranslated.Visible = false;
+			// 
 			// TxlMasterQuestionPreProcessorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(461, 274);
+			this.Controls.Add(this.m_chkRetainOnlyTranslated);
 			this.Controls.Add(this.btnNavigateToSourceFile);
 			this.Controls.Add(this.lblLocale);
 			this.Controls.Add(this.txtLocale);
@@ -216,5 +229,6 @@
 		private System.Windows.Forms.TextBox txtLocale;
 		private System.Windows.Forms.Label lblLocale;
 		private System.Windows.Forms.Button btnNavigateToSourceFile;
+		private System.Windows.Forms.CheckBox m_chkRetainOnlyTranslated;
 	}
 }

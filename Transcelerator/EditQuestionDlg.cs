@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
@@ -28,7 +29,18 @@ namespace SIL.Transcelerator
 
 		internal string ModifiedPhrase
 		{
-			get { return m_txtModified.Text; }
+			get
+			{
+				if (m_txtModified.Text == m_txtOriginal.Text)
+					return m_txtOriginal.Tag as string ?? m_txtModified.Text;
+				if (m_pnlAlternatives.Visible)
+				{
+					var selectedAlt = m_pnlAlternatives.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+					if (selectedAlt != null)
+						return (string)selectedAlt.Tag;
+				}
+				return m_txtModified.Text;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -36,15 +48,24 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:EditQuestion"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public EditQuestionDlg(TranslatablePhrase question, List<String> existingQuestionsForRef)
+		public EditQuestionDlg(TranslatablePhrase question, List<String> existingQuestionsForRef, DataLocalizer dataLocalizer)
 		{
 			m_question = question;
 			m_existingQuestionsForRef = existingQuestionsForRef;
 			InitializeComponent();
-			m_txtOriginal.Text = question.OriginalPhrase;
-			m_txtModified.Text = question.PhraseInUse;
+			if (dataLocalizer == null)
+			{
+				m_txtOriginal.Text = question.OriginalPhrase;
+				m_txtModified.Text = question.PhraseInUse;
+			}
+			else
+			{
+				m_txtOriginal.Tag = question.OriginalPhrase;
+				m_txtOriginal.Text = dataLocalizer.GetLocalizedDataString(question.UIDataStringForQuestion(true), out string locale);
+				m_txtModified.Text = question.OriginalPhrase == question.PhraseInUse ? m_txtOriginal.Text : question.PhraseInUse;
+			}
 			Question q = question.QuestionInfo;
-			if (q != null && q.AlternateForms != null)
+			if (q?.AlternateForms != null)
 			{
 				System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
 
@@ -54,13 +75,26 @@ namespace SIL.Transcelerator
 					m_pnlAlternatives.Controls.Add(newBtn);
 					resources.ApplyResources(newBtn, "m_rdoAlternative");
 					m_pnlAlternatives.SetFlowBreak(newBtn, true);
-					newBtn.Text = alternateForm;
+					InitializeRadioButton(newBtn, alternateForm, dataLocalizer);
 					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
-				m_rdoAlternative.Text = q.AlternateForms.First();
+				InitializeRadioButton(m_rdoAlternative, q.AlternateForms.First(), dataLocalizer);
 				return;
 			}
 			m_pnlAlternatives.Hide();
+		}
+
+		private void InitializeRadioButton(RadioButton btn, string alternateForm, DataLocalizer dataLocalizer)
+		{
+			if (dataLocalizer == null)
+				btn.Text = alternateForm;
+			else
+			{
+				btn.Text = dataLocalizer.GetLocalizedDataString(m_question.UIDataStringForKnownAlternate(alternateForm, false), out string locale);
+				btn.Tag = alternateForm;
+
+			}
+			btn.Checked = m_txtModified.Text == btn.Text;
 		}
 
 		private void m_txtModified_TextChanged(object sender, EventArgs e)
@@ -70,12 +104,12 @@ namespace SIL.Transcelerator
 			if (!m_pnlAlternatives.Visible)
 				return;
 			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
-				rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text);
+				rdoAlt.Checked = (rdoAlt.Text == m_txtModified.Text || m_txtModified.Text.Equals(rdoAlt.Tag));
 		}
 
 		private void m_rdoAlternative_CheckedChanged(object sender, EventArgs e)
 		{
-			var btn = ((RadioButton) sender);
+			var btn = (RadioButton)sender;
 			if (btn.Checked)
 				m_txtModified.Text = btn.Text;
 		}
