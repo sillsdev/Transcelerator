@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
@@ -30,6 +29,7 @@ namespace SIL.Transcelerator.Localization
 		Alternate,
 		Answer,
 		Note,
+		NonLocalizable,
 	}
 
 	public enum State
@@ -213,7 +213,7 @@ namespace SIL.Transcelerator.Localization
 
 		internal TranslationUnit GetStringLocalization(UIDataString key)
 		{
-			if (String.IsNullOrWhiteSpace(key?.SourceUIString))
+			if (String.IsNullOrWhiteSpace(key?.SourceUIString) || key.Type == LocalizableStringType.NonLocalizable)
 				return null;
 
 			TranslationUnit transUnit = null;

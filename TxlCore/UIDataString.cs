@@ -48,8 +48,8 @@ namespace SIL.Transcelerator
 
 		public UIDataString(string uiString, LocalizableStringType type, int startRef = 0, int endRef = 0, string question = null)
 		{
-			if (type != LocalizableStringType.Category && startRef <= 0)
-				throw new ArgumentException("Scripture reference must be specified for all types other than categories");
+			if (type != LocalizableStringType.Category && type != LocalizableStringType.NonLocalizable && startRef <= 0)
+				throw new ArgumentException("Scripture reference must be specified for all localizable types other than categories");
 			StartRef = startRef;
 			EndRef = endRef;
 			SourceUIString = uiString ?? throw new ArgumentNullException(nameof(uiString));

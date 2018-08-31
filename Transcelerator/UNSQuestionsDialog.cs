@@ -1242,21 +1242,19 @@ namespace SIL.Transcelerator
                             if (!sectionHeadHasBeenOutput)
                             {
 	                            if (section == null)
-	                            {
 		                            sw.WriteLine($"<h2>{phrase.Reference}</h2>");
-								}
 	                            else
 	                            {
-		                            string heading = dlg.GetLocalizedNormalizedDataString(new UIDataString(section), out lang);
-		                            sw.WriteLine($"<h2 lang=\"{lang}\">{heading}</h2>");
+		                            var h2 = dlg.GetDataString(new UIDataString(section), out lang);
+									WriteParagraphElement(sw, null, h2, m_vernIcuLocale, lang, "h2");
 	                            }
 	                            sectionHeadHasBeenOutput = true;
                             }
 
                             if (phrase.Category != prevCategory)
                             {
-	                            var lwcCategoryName = dlg.GetLocalizedNormalizedDataString(new UIDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
-								sw.WriteLine($"<h3 lang=\"{lang}\">{lwcCategoryName}</h3>");
+	                            var lwcCategoryName = dlg.GetDataString(new UIDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
+								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
                                 prevCategory = phrase.Category;
                             }
 
@@ -1290,38 +1288,32 @@ namespace SIL.Transcelerator
                                 prevQuestionRef = phrase.Reference;
                             }
 
-	                        if (phrase.HasUserTranslation)
-		                        sw.WriteLine("<p class=\"question\">" + phrase.Translation.Normalize(NormalizationForm.FormC) + "</p>");
-	                        else
-	                        {
-		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Question), out lang);
-		                        sw.WriteLine("<p class=\"question\" lang=\"" + lang + "\"> " + lwcQuestion + "</p>");
-	                        }
+	                        lang = m_vernIcuLocale;
+	                        var questionText = phrase.HasUserTranslation ? phrase.Translation :
+								dlg.GetDataString(phrase.ToUIDataString(), out lang);
+	                        WriteParagraphElement(sw, "question", questionText, m_vernIcuLocale, lang);
 
-	                        sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
+							sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
 	                        if (dlg.m_chkIncludeLWCQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
 	                        {
-		                        var lwcQuestion = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Question), out lang);
-								var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
-								sw.WriteLine($"<p class=\"questionbt\"{langSpec}>{lwcQuestion}</p>");
+		                        var lwcQuestion = dlg.GetDataString(phrase.ToUIDataString(), out lang);
+		                        WriteParagraphElement(sw, "questionbt", lwcQuestion, dlg.LwcLocale, lang);
 	                        }
 	                        Question answersAndComments = phrase.QuestionInfo;
                             if (dlg.m_chkIncludeLWCAnswers.Checked && answersAndComments.Answers != null)
                             {
 	                            foreach (var answer in answersAndComments.Answers)
 	                            {
-		                            var lwcAnswer = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Answer, answer), out lang);
-		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
-									sw.WriteLine($"<p class=\"answer\"{langSpec}>{lwcAnswer}</p>");
+		                            var lwcAnswer = dlg.GetDataString(new UIDataString(questionKey, LocalizableStringType.Answer, answer), out lang);
+		                            WriteParagraphElement(sw, "answer", lwcAnswer, dlg.LwcLocale, lang);
 	                            }
                             }
                             if (dlg.m_chkIncludeLWCComments.Checked && answersAndComments.Notes != null)
                             {
 	                            foreach (var comment in answersAndComments.Notes)
 	                            {
-		                            var lwcComment = dlg.GetLocalizedNormalizedDataString(new UIDataString(questionKey, LocalizableStringType.Note, comment), out lang);
-		                            var langSpec = (lang == dlg.LwcLocale) ? String.Empty : $" lang=\"{lang}\"";
-		                            sw.WriteLine($"<p class=\"comment\"{langSpec}>{lwcComment}</p>");
+		                            var lwcComment = dlg.GetDataString(new UIDataString(questionKey, LocalizableStringType.Note, comment), out lang);
+									WriteParagraphElement(sw, "comment", lwcComment, dlg.LwcLocale, lang);
 	                            }
                             }
                             sw.WriteLine("</div>");
@@ -1332,6 +1324,13 @@ namespace SIL.Transcelerator
                     Process.Start(dlg.FileName);
                 }
             }
+		}
+
+		private static void WriteParagraphElement(StreamWriter sw, string className, string data, string defaultLangInContext, string langOfData, string paragraphType = "p")
+		{
+			var langAttrib = langOfData == defaultLangInContext ? null : $" lang=\"{langOfData}\"";
+			var classAttrib = className == null ? null : $" class=\"{className}\"";
+			sw.WriteLine($"<{paragraphType}{classAttrib}{langAttrib}>{data.Normalize(NormalizationForm.FormC)}</{paragraphType}>");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1355,6 +1354,7 @@ namespace SIL.Transcelerator
 			for (;;)
 			{
 				extractedScr.Append(GetExtractedScriptureFromSingleChapter(startRefTemp.BBCCCVVV, endRefTemp.BBCCCVVV));
+				extractedScr.Append(Environment.NewLine);
 				if (endRefTemp.Chapter == endChapter)
 					break;
 				startRefTemp.Chapter++;
@@ -1857,7 +1857,7 @@ namespace SIL.Transcelerator
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard(false);
-			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase, m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef, phrase.Category).Where(p => p != phrase).Select(p => p.PhraseInUse).ToList()))
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase, m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef, phrase.Category).Where(p => p != phrase).Select(p => p.PhraseInUse).ToList(), m_dataLocalizer))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -2626,7 +2626,7 @@ namespace SIL.Transcelerator
 			label.Visible = contents.Visible = details?.Length > 0;
 			if (label.Visible)
 			{
-				var loc = m_dataLocalizer == null ? details : details?.Select(d => m_dataLocalizer.GetLocalizedDataString(question, type, d, out string notUsed));
+				var loc = m_dataLocalizer == null ? details : details?.Select(d => m_dataLocalizer.GetLocalizedCommentOrAnswerString(question, type, d));
 				label.Show(); // Is this needed?
 				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
 				contents.Text = loc.ToString(Environment.NewLine + "\t");
