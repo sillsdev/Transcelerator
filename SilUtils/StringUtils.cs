@@ -117,9 +117,10 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="sName">Name to be filtered</param>
 		/// <param name="invalidChars">characters to filter out</param>
+		/// <param name="replaceNbsp"></param>
 		/// <returns>the filtered name</returns>
 		/// ------------------------------------------------------------------------------------
-		public static string FilterForFileName(string sName, string invalidChars)
+		public static string FilterForFileName(string sName, string invalidChars, bool replaceNbsp = true)
 		{
 			StringBuilder cleanName = new StringBuilder(sName);
 
@@ -129,6 +130,8 @@ namespace SIL.Utils
 				if (invalidChars.IndexOf(sName[i]) >= 0 || sName[i] < ' ') // eliminate all control characters too
 					cleanName[i] = '_';
 			}
+			if (replaceNbsp)
+				cleanName.Replace('\u00A0', ' ');
 			return cleanName.ToString();
 		}
 
