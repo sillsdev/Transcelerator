@@ -427,5 +427,17 @@ namespace SIL.Transcelerator.Properties {
                 this["OverrideDisplayLanguage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        public string GenerateTemplateUseLWC {
+            get {
+                return ((string)(this["GenerateTemplateUseLWC"]));
+            }
+            set {
+                this["GenerateTemplateUseLWC"] = value;
+            }
+        }
     }
 }

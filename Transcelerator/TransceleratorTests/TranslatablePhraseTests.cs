@@ -92,6 +92,96 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
+		#region IsUsingKnownAlternateForm tests
+		[Test]
+		public void IsUsingKnownAlternateForm_QuestionHasNoAlternateForms_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+
+			cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
+
+			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			Assert.IsFalse(phrases.Single().IsUsingKnownAlternateForm);
+		}
+
+		[Test]
+		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsButIsNotModified_ReturnsFalse()
+		{
+			var qk = new Question { Text = "What does the fox say?" };
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
+			Assert.IsNull(phrase.ModifiedPhrase);
+			Assert.IsFalse(phrase.IsExcludedOrModified);
+			Assert.IsFalse(phrase.IsUsingKnownAlternateForm);
+		}
+
+		[Test]
+		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsButIsModifiedUsingCustomText_ReturnsFalse()
+		{
+			var qk = new Question { Text = "What does the fox say?" };
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
+			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
+			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
+			Assert.IsTrue(phrase.IsExcludedOrModified);
+			Assert.IsFalse(phrase.IsUsingKnownAlternateForm);
+		}
+
+		[TestCase(0)]
+		[TestCase(1)]
+		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsAndPhraseIsUsingOneOfThem_ReturnsFalse(int i)
+		{
+			var qk = new Question { Text = "What does the fox say?" };
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			phrase.ModifiedPhrase = qk.AlternateForms[i];
+			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
+			Assert.IsTrue(phrase.IsExcludedOrModified);
+			Assert.IsTrue(phrase.IsUsingKnownAlternateForm);
+		}
+		#endregion
+
+		#region ModifiedPhrase tests
+		[Test]
+		public void SetModifiedPhrase_DifferentFromOriginal_ModifiedPhraseIsSetToValue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+
+			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
+
+			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+
+			TranslatablePhrase phrase1 = phrases[0];
+
+			phrase1.ModifiedPhrase = "\u00BFQue\u0301 le dijo Dios a Pablo?";
+
+			Assert.AreEqual("\u00BFQue\u0301 le dijo Dios a Pablo?".Normalize(NormalizationForm.FormC),
+				phrase1.ModifiedPhrase);
+			Assert.AreEqual(phrase1.PhraseInUse, phrase1.PhraseInUse);
+			Assert.IsTrue(phrase1.IsExcludedOrModified);
+		}
+
+		[Test]
+		public void SetModifiedPhrase_SetToOriginal_ModifiedPhraseIsNull()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+
+			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
+
+			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+
+			TranslatablePhrase phrase1 = phrases[0];
+
+			phrase1.ModifiedPhrase = "What did God tell Paul?";
+
+			Assert.IsNull(phrase1.ModifiedPhrase);
+			Assert.AreEqual(phrase1.PhraseInUse, phrase1.OriginalPhrase);
+			Assert.IsFalse(phrase1.IsExcludedOrModified);
+		}
+		#endregion
+
 		#region AppliesToReference tests
 		[Test]
         public void AppliesToReference_CategoryName_ReturnsFalse()

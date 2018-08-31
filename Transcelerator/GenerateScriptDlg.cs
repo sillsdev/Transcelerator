@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.
+#region // Copyright (c) 2018, SIL International.
+// <copyright from='2011' to='2018' company='SIL International'>
+//		Copyright (c) 2018, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,10 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Scripture;
 using SIL.Utils;
+using File = System.IO.File;
 
 namespace SIL.Transcelerator
 {
@@ -27,7 +30,9 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public partial class GenerateScriptDlg : Form
 	{
-	    #region RangeOption enum
+		public delegate DataLocalizer DataLocalizerNeededEventHandler(object sender, string localeId);
+		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
+		#region RangeOption enum
 		public enum RangeOption
 		{
 			WholeBook = 0,
@@ -39,11 +44,17 @@ namespace SIL.Transcelerator
 		#region Data members
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
-		private readonly List<string> m_sectionRefs = new List<string>();
+		private readonly List<SectionInfo> m_sections;
 		private BCVRef m_startRef = new BCVRef();
 		private BCVRef m_endRef = new BCVRef();
         private readonly IScrExtractor m_scrExtractor;
-        #endregion
+		private List<string> m_lwcLocaleIds;
+		private DataLocalizer m_dataLoc;
+		private string m_fmtChkEnglishQuestions;
+		private string m_fmtChkEnglishAnswers;
+		private string m_fmtChkIncludeComments;
+
+		#endregion
 
 		#region Constructor and initialization methods
 		/// ------------------------------------------------------------------------------------
@@ -53,13 +64,17 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
             string defaultFolder, IEnumerable<int> canonicalBookIds,
-            IEnumerable<KeyValuePair<string, string>> sections)
+            IEnumerable<SectionInfo> sections,
+			IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
 		{
 		    m_scrExtractor = scrExtractor;
-		    InitializeComponent();
-			m_chkEnglishQuestions.Tag = btnChooseEnglishQuestionColor;
-			m_chkEnglishAnswers.Tag = btnChooseEnglishAnswerColor;
-			m_chkIncludeComments.Tag = btnChooserCommentColor;
+			InitializeComponent();
+			m_chkIncludeLWCQuestions.Tag = btnChooseEnglishQuestionColor;
+			m_chkIncludeLWCAnswers.Tag = btnChooseEnglishAnswerColor;
+			m_chkIncludeLWCComments.Tag = btnChooserCommentColor;
+			m_fmtChkEnglishQuestions = m_chkIncludeLWCQuestions.Text;
+			m_fmtChkEnglishAnswers = m_chkIncludeLWCAnswers.Text;
+			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;
 			btnChooseQuestionGroupHeadingsColor.Tag = m_lblQuestionGroupHeadingsColor;
 			btnChooseEnglishQuestionColor.Tag = m_lblEnglishQuestionColor;
 			btnChooseEnglishAnswerColor.Tag = m_lblEnglishAnswerTextColor;
@@ -73,7 +88,9 @@ namespace SIL.Transcelerator
             }
 
 			LoadBooks(canonicalBookIds);
-			LoadSectionCombos(sections);
+			m_sections = sections.ToList();
+			LoadSectionCombos();
+			LoadLWCCombo(availableAdditionalLWCs);
 
 			switch ((RangeOption)Properties.Settings.Default.GenerateTemplateRange)
 			{
@@ -93,9 +110,7 @@ namespace SIL.Transcelerator
 			}
 
 			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
-			m_chkEnglishQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
-			m_chkEnglishAnswers.Checked = Properties.Settings.Default.GenerateTemplateEnglishAnswers;
-			m_chkIncludeComments.Checked = Properties.Settings.Default.GenerateTemplateIncludeComments;
+			SetDefaultCheckedStateForLWCOptions();
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
 
             m_lblFolder.Text = string.IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
@@ -118,6 +133,13 @@ namespace SIL.Transcelerator
 				m_txtCssFile.Text = Properties.Settings.Default.GenerateTemplateCssFile;
 				m_chkAbsoluteCssPath.Checked = Properties.Settings.Default.GenerateTemplateAbsoluteCssPath;
 			}
+		}
+
+		private void SetDefaultCheckedStateForLWCOptions()
+		{
+			m_chkIncludeLWCQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
+			m_chkIncludeLWCAnswers.Checked = Properties.Settings.Default.GenerateTemplateEnglishAnswers;
+			m_chkIncludeLWCComments.Checked = Properties.Settings.Default.GenerateTemplateIncludeComments;
 		}
 
 		private void TrySelectItem(ComboBox cbo, string value)
@@ -150,28 +172,38 @@ namespace SIL.Transcelerator
 		/// section heads in the vernacular Scripture but rather from the master question file).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LoadSectionCombos(IEnumerable<KeyValuePair<string, string>> sections)
+		private void LoadSectionCombos()
 		{
-			foreach (KeyValuePair<string, string> sectionInfo in sections)
+			foreach (var sectionInfo in m_sections)
 			{
-				m_sectionRefs.Add(sectionInfo.Key);
-				m_cboSection.Items.Add(sectionInfo.Value);
-				m_cboStartSection.Items.Add(sectionInfo.Value);
-				m_cboEndSection.Items.Add(sectionInfo.Value);
+				m_cboSection.Items.Add(sectionInfo);
+				m_cboStartSection.Items.Add(sectionInfo);
+				m_cboEndSection.Items.Add(sectionInfo);
 			}
+		}
+
+		private void LoadLWCCombo(IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
+		{
+			m_lwcLocaleIds = new List<string>(new [] {"en-US"});
+			int i = 0;
+			foreach (var lwc in availableAdditionalLWCs)
+			{
+				m_cboUseLWC.Items.Insert(++i, lwc.Item1);
+				m_lwcLocaleIds.Add(lwc.Item2);
+				if (Properties.Settings.Default.GenerateTemplateUseLWC == lwc.Item2)
+					m_cboUseLWC.SelectedIndex = i;
+			}
+			if (String.IsNullOrWhiteSpace(Properties.Settings.Default.GenerateTemplateUseLWC))
+				m_cboUseLWC.SelectedIndex = m_cboUseLWC.Items.Count - 1; // None
+			if (m_cboUseLWC.SelectedIndex == -1)
+				m_cboUseLWC.SelectedIndex = 0;
 		}
 		#endregion
 
 		#region Properties
-		public BCVRef VerseRangeStartRef
-		{
-			get { return m_startRef; }
-		}
+		public BCVRef VerseRangeStartRef => m_startRef;
 
-		public BCVRef VerseRangeEndRef
-		{
-			get { return m_endRef; }
-		}
+		public BCVRef VerseRangeEndRef => m_endRef;
 
 		public string FileName
 		{
@@ -184,10 +216,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public string CssFile
-		{
-			get { return m_txtCssFile.Text; }
-		}
+		public string CssFile => m_txtCssFile.Text;
 
 		public string FullCssPath
 		{
@@ -200,13 +229,10 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public bool WriteCssFile
-		{
-			get
-			{
-				return m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
-			}
-		}
+		public bool WriteCssFile => m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
+
+		public string NormalizedTitle => m_txtTitle.Text.Normalize(NormalizationForm.FormC);
+		public string LwcLocale => m_dataLoc.Locale;
 		#endregion
 
 		#region Event handlers
@@ -254,10 +280,11 @@ namespace SIL.Transcelerator
 		    UpdateOkButtonEnabledState();
 			if (m_cboSection.SelectedIndex < 0)
 				return;
-			string sRef = m_sectionRefs[m_cboSection.SelectedIndex];
-			BCVRef.ParseRefRange(sRef, ref m_startRef, ref m_endRef);
-			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(sRef), m_sFilenameTemplate);
-			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
+			var info = m_sections[m_cboSection.SelectedIndex];
+			m_startRef = new BCVRef(info.StartRef);
+			m_endRef = new BCVRef(info.EndRef);
+			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(info.Heading), m_sFilenameTemplate);
+			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
 
 	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
@@ -387,9 +414,12 @@ namespace SIL.Transcelerator
             }
 
             Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
-            Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkEnglishQuestions.Checked;
-            Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkEnglishAnswers.Checked;
-            Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeComments.Checked;
+	        Properties.Settings.Default.GenerateTemplateUseLWC = m_chkIncludeLWCQuestions.Enabled ?
+				m_lwcLocaleIds[m_cboUseLWC.SelectedIndex] : null;
+			Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkIncludeLWCQuestions.Checked;
+            Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkIncludeLWCAnswers.Checked;
+            Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeLWCComments.Checked;
+			m_dataLoc = DataLocalizerNeeded?.Invoke(this, Properties.Settings.Default.GenerateTemplateUseLWC);
             Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
 
             Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
@@ -414,11 +444,37 @@ namespace SIL.Transcelerator
             ComboBox cbo = (ComboBox)sender;
             if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
                 cbo.SelectedIndex = -1;
-        }
+		}
+
+		private void HandleLWCSelectedIndexChanged(object sender, EventArgs e)
+		{
+			int i = m_cboUseLWC.SelectedIndex;
+			if (i < 0 || i >= m_cboUseLWC.Items.Count - 1)
+			{
+				m_chkIncludeLWCQuestions.Enabled = m_chkIncludeLWCQuestions.Checked =
+				m_chkIncludeLWCAnswers.Enabled = m_chkIncludeLWCAnswers.Checked =
+				m_chkIncludeLWCComments.Enabled = m_chkIncludeLWCComments.Checked = false;
+				m_chkIncludeLWCQuestions.Text = String.Format(m_fmtChkEnglishQuestions, String.Empty);
+				m_chkIncludeLWCAnswers.Text = String.Format(m_fmtChkEnglishAnswers, String.Empty);
+				m_chkIncludeLWCComments.Text = String.Format(m_fmtChkIncludeComments, String.Empty);
+			}
+			else
+			{
+				if (!m_chkIncludeLWCQuestions.Enabled)
+				{
+					m_chkIncludeLWCQuestions.Enabled = m_chkIncludeLWCAnswers.Enabled = m_chkIncludeLWCComments.Enabled = true;
+					SetDefaultCheckedStateForLWCOptions();
+				}
+				var languageName = m_cboUseLWC.SelectedItem.ToString();
+				m_chkIncludeLWCQuestions.Text = String.Format(m_fmtChkEnglishQuestions, languageName);
+				m_chkIncludeLWCAnswers.Text = String.Format(m_fmtChkEnglishAnswers, languageName);
+				m_chkIncludeLWCComments.Text = String.Format(m_fmtChkIncludeComments, languageName);
+			}
+		}
 		#endregion
 
 		#region Private helper methods
-        private void UpdateOkButtonEnabledState()
+		private void UpdateOkButtonEnabledState()
         {
             btnOk.Enabled = true;
             if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
@@ -431,9 +487,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0)
 				return false;
-			string sRef = m_sectionRefs[m_cboStartSection.SelectedIndex];
-			BCVRef dummy = new BCVRef();
-			BCVRef.ParseRefRange(sRef, ref m_startRef, ref dummy);
+			m_startRef = m_sections[m_cboStartSection.SelectedIndex].StartRef;
 			return true;
 		}
 
@@ -441,9 +495,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboEndSection.SelectedIndex < 0)
 				return false;
-			string sRef = m_sectionRefs[m_cboEndSection.SelectedIndex];
-			BCVRef dummy = new BCVRef();
-			BCVRef.ParseRefRange(sRef, ref dummy, ref m_endRef);
+			m_endRef = m_sections[m_cboEndSection.SelectedIndex].EndRef;
 			return true;
 		}
 
@@ -456,5 +508,15 @@ namespace SIL.Transcelerator
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}
 		#endregion
+
+		public string GetDataString(UIDataString key, out string lang)
+		{
+			if (m_dataLoc == null)
+			{
+				lang = "en";
+				return key.SourceUIString;
+			}
+			return m_dataLoc.GetLocalizedDataString(key, out lang);
+		}
 	}
 }

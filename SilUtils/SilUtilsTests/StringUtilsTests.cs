@@ -47,11 +47,25 @@ namespace SIL.Utils
 		[Test]
 		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
 			Justification="Unit test")]
-		public void TestFilterForFileName()
+		public void FilterForFileName_PassedInListOfInvalidCharacters_InvalidCharactersReplacedWithUnderscores()
 		{
 			Assert.AreEqual("My__File__Dude_____.'[];funny()___",
 				StringUtils.FilterForFileName(@"My?|File<>Dude\?*:/.'[];funny()" + "\n\t" + '"',
 				"?|<>\\?*:/\n\t\""));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that we get a valid filename when the filename contains invalid characters.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
+			Justification = "Unit test")]
+		public void FilterForFileName_NoBreakSpace_NbspReplacedWithNormalSpace()
+		{
+			Assert.AreEqual("My File Dude.txt",
+				StringUtils.FilterForFileName("My File\u00A0Dude.txt"));
 		}
 
 		#region FindStringDifference tests

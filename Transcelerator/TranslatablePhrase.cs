@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -198,6 +199,8 @@ namespace SIL.Transcelerator
 			internal set
 			{
 				m_sModifiedPhrase = value.Normalize(NormalizationForm.FormC);
+				if (m_sModifiedPhrase.Equals(OriginalPhrase))
+					m_sModifiedPhrase = null;
 				QuestionInfo.Text = value;
 			}
 		}
@@ -550,6 +553,16 @@ namespace SIL.Transcelerator
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternateForms;
 
+		public bool IsUsingKnownAlternateForm
+		{
+			get
+			{
+				if (m_sModifiedPhrase == null)
+					return false;
+				var alts = AlternateForms;
+				return alts != null && alts.Contains(m_sModifiedPhrase);
+			}
+		}
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)
@@ -561,6 +574,34 @@ namespace SIL.Transcelerator
 		public override string ToString()
 		{
 			return PhraseKey.ToString();
+		}
+
+		public UIDataString ToUIDataString()
+		{
+			if (IsUserAdded)
+				return null;
+			if (IsCategoryName)
+				return new UIDataString(PhraseInUse, LocalizableStringType.Category);
+
+			if (m_sModifiedPhrase != null)
+			{
+				if (IsUsingKnownAlternateForm)
+					return UIDataStringForKnownAlternate(m_sModifiedPhrase);
+				return new UIDataString(PhraseInUse, LocalizableStringType.NonLocalizable);
+			}
+			return UIDataStringForQuestion(false);
+		}
+
+		public UIDataString UIDataStringForKnownAlternate(string knownAlternateForm, bool useAnyAlternateForm = true)
+		{
+			return new UIDataString(knownAlternateForm, LocalizableStringType.Alternate, StartRef, EndRef, OriginalPhrase)
+				{ UseAnyAlternate = useAnyAlternateForm };
+		}
+
+		public UIDataString UIDataStringForQuestion(bool original)
+		{
+			return new UIDataString(original ? OriginalPhrase : PhraseInUse, LocalizableStringType.Question, StartRef, EndRef, OriginalPhrase)
+				{ UseAnyAlternate = !original };
 		}
 
 		/// ------------------------------------------------------------------------------------
