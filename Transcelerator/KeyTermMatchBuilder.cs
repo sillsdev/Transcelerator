@@ -22,7 +22,7 @@ namespace SIL.Transcelerator
 {
 	public class KeyTermMatchBuilder
 	{
-		// The following "magic number" is based on the observation that in real life, and matcher
+		// The following "magic number" is based on the observation that in real life, a matcher
 		// longer than 6 words never gets used.
 		private const int kMaxWordsInMatcher = 6;
 		private readonly List<KeyTermMatch> m_list = new List<KeyTermMatch>();
