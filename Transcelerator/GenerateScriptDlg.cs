@@ -232,7 +232,7 @@ namespace SIL.Transcelerator
 		public bool WriteCssFile => m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
 
 		public string NormalizedTitle => m_txtTitle.Text.Normalize(NormalizationForm.FormC);
-		public string LwcLocale => m_dataLoc.Locale;
+		public string LwcLocale => m_dataLoc?.Locale ?? "en";
 		#endregion
 
 		#region Event handlers
