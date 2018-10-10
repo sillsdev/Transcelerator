@@ -88,6 +88,7 @@
     <Compile Include="IRefRange.cs" />
     <Compile Include="ITranslatablePhrase.cs" />
     <Compile Include="LocalizationsFileAccessor.cs" />
+    <Compile Include="LocalizationsFileGenerator.cs" />
     <Compile Include="Localizations.cs" />
     <Compile Include="QuestionWords.cs" />
     <Compile Include="ParsedPart.cs" />
@@ -100,6 +101,11 @@
     <Compile Include="Question.cs" />
     <Compile Include="QuestionKey.cs" />
     <Compile Include="QuestionSections.cs" />
+    <Compile Include="UIAlternateDataString.cs" />
+    <Compile Include="UIAnswerOrNoteDataString.cs" />
+    <Compile Include="UISimpleDataString.cs" />
+    <Compile Include="UISectionHeadDataString.cs" />
+    <Compile Include="UIQuestionDataString.cs" />
     <Compile Include="UIDataString.cs" />
     <Compile Include="Word.cs" />
     <Compile Include="XmlTranslation.cs" />

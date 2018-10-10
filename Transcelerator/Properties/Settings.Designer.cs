@@ -439,5 +439,17 @@ namespace SIL.Transcelerator.Properties {
                 this["GenerateTemplateUseLWC"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateTemplateSkipQuestionIfNotTranslated {
+            get {
+                return ((bool)(this["GenerateTemplateSkipQuestionIfNotTranslated"]));
+            }
+            set {
+                this["GenerateTemplateSkipQuestionIfNotTranslated"] = value;
+            }
+        }
     }
 }

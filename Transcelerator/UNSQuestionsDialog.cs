@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
+using Keyman7Interop;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Windows.Forms.Scripture;
@@ -56,7 +57,7 @@ namespace SIL.Transcelerator
 	    private readonly Action m_helpDelegate;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
-		private DataLocalizer m_dataLocalizer;
+		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
 		private readonly string m_defaultLcfFolder = null;
@@ -423,7 +424,7 @@ namespace SIL.Transcelerator
 			{
 				var repo = GlobalWritingSystemRepository.Initialize();
 #endif
-			foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
+			foreach (var locale in LocalizationsFileGenerator.GetAvailableLocales(m_installDir))
 			{
 				string languageName;
 #if UseGlobalWritingSystemRepo
@@ -480,7 +481,7 @@ namespace SIL.Transcelerator
 			m_dataLocalizer = GetDataLocalizer(preferredUiLocale);
 		}
 
-		private DataLocalizer GetDataLocalizer(string localeId)
+		private LocalizationsFileAccessor GetDataLocalizer(string localeId)
 		{
 			if (localeId == "en" || localeId == "en-US" || String.IsNullOrWhiteSpace(localeId))
 				return null;
@@ -488,8 +489,8 @@ namespace SIL.Transcelerator
 			if (m_dataLocalizer?.Locale == localeId)
 				return m_dataLocalizer;
 
-			var localizationsFileAccessor = new LocalizationsFileAccessor(m_installDir, localeId);
-			return localizationsFileAccessor.Exists ? new DataLocalizer(localizationsFileAccessor) : null;
+			var dataLocalizer = new LocalizationsFileAccessor(m_installDir, localeId);
+			return dataLocalizer.Exists ? dataLocalizer : null;
 		}
 
 		#endregion
@@ -815,7 +816,7 @@ namespace SIL.Transcelerator
 			{
 				case 0: e.Value = tp.Reference; break;
 				case 1:
-					e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedDataString(tp);
+					e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedString(tp.ToUIDataString());
 					break;
 				case 2: e.Value = tp.Translation; break;
 				case 3: e.Value = tp.HasUserTranslation; break;
@@ -971,7 +972,7 @@ namespace SIL.Transcelerator
 
 			m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter,
 				mnuViewExcludedQuestions.Checked, m_dataLocalizer == null ? null :
-				(Func<TranslatablePhrase, string>)(tp => m_dataLocalizer.GetLocalizedDataString(tp)));
+				(Func<TranslatablePhrase, string>)(tp => m_dataLocalizer.GetLocalizedString(tp.ToUIDataString())));
 			dataGridUns.RowCount = m_helper.Phrases.Count();
 
             dataGridUns.RowEnter += dataGridUns_RowEnter;
@@ -1219,7 +1220,7 @@ namespace SIL.Transcelerator
 
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
                         {
-	                        var questionKey = phrase.PhraseKey;
+	                        var question = phrase.QuestionInfo;
 	                        string lang;
                             if (section == null || phrase.EndRef > section.EndRef)
                             {
@@ -1245,7 +1246,7 @@ namespace SIL.Transcelerator
 		                            sw.WriteLine($"<h2>{phrase.Reference}</h2>");
 	                            else
 	                            {
-		                            var h2 = dlg.GetDataString(new UIDataString(section), out lang);
+		                            var h2 = dlg.GetDataString(new UISectionHeadDataString(section), out lang);
 									WriteParagraphElement(sw, null, h2, m_vernIcuLocale, lang, "h2");
 	                            }
 	                            sectionHeadHasBeenOutput = true;
@@ -1253,7 +1254,7 @@ namespace SIL.Transcelerator
 
                             if (phrase.Category != prevCategory)
                             {
-	                            var lwcCategoryName = dlg.GetDataString(new UIDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
+	                            var lwcCategoryName = dlg.GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
                                 prevCategory = phrase.Category;
                             }
@@ -1299,20 +1300,19 @@ namespace SIL.Transcelerator
 		                        var lwcQuestion = dlg.GetDataString(phrase.ToUIDataString(), out lang);
 		                        WriteParagraphElement(sw, "questionbt", lwcQuestion, dlg.LwcLocale, lang);
 	                        }
-	                        Question answersAndComments = phrase.QuestionInfo;
-                            if (dlg.m_chkIncludeLWCAnswers.Checked && answersAndComments.Answers != null)
+	                        if (dlg.m_chkIncludeLWCAnswers.Checked && question.Answers != null)
                             {
-	                            foreach (var answer in answersAndComments.Answers)
+	                            for (var index = 0; index < question.Answers.Length; index++)
 	                            {
-		                            var lwcAnswer = dlg.GetDataString(new UIDataString(questionKey, LocalizableStringType.Answer, answer), out lang);
+		                            var lwcAnswer = dlg.GetDataString(new UIAnswerOrNoteDataString(question, LocalizableStringType.Answer, index), out lang);
 		                            WriteParagraphElement(sw, "answer", lwcAnswer, dlg.LwcLocale, lang);
 	                            }
                             }
-                            if (dlg.m_chkIncludeLWCComments.Checked && answersAndComments.Notes != null)
+                            if (dlg.m_chkIncludeLWCComments.Checked && question.Notes != null)
                             {
-	                            foreach (var comment in answersAndComments.Notes)
-	                            {
-		                            var lwcComment = dlg.GetDataString(new UIDataString(questionKey, LocalizableStringType.Note, comment), out lang);
+								for (var index = 0; index < question.Notes.Length; index++)
+								{
+									var lwcComment = dlg.GetDataString(new UIAnswerOrNoteDataString(question, LocalizableStringType.Note, index), out lang);
 									WriteParagraphElement(sw, "comment", lwcComment, dlg.LwcLocale, lang);
 	                            }
                             }
@@ -2626,7 +2626,15 @@ namespace SIL.Transcelerator
 			label.Visible = contents.Visible = details?.Length > 0;
 			if (label.Visible)
 			{
-				var loc = m_dataLocalizer == null ? details : details?.Select(d => m_dataLocalizer.GetLocalizedCommentOrAnswerString(question, type, d));
+				string[] loc;
+				if (m_dataLocalizer == null)
+					loc = details;
+				else
+				{
+					loc = new string[details.Length];
+					for (int i = 0; i < details.Length; i++)
+						loc[i] = m_dataLocalizer.GetLocalizedDataString(new UIAnswerOrNoteDataString(question, type, i), out string notUsed);
+				}
 				label.Show(); // Is this needed?
 				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
 				contents.Text = loc.ToString(Environment.NewLine + "\t");

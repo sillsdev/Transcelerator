@@ -7,22 +7,39 @@
 // </copyright>
 #endregion
 //
-// File: UIDataString.cs
+// File: UISimpleDataString.cs
 // ---------------------------------------------------------------------------------------------
-using SIL.Scripture;
+using System.Diagnostics;
 using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
-	public abstract class UIDataString : IRefRange
+	public class UISimpleDataString : UIDataString
 	{
-		public abstract string SourceUIString { get; }
-		public abstract LocalizableStringType Type { get; }
-		public string ScriptureReference => StartRef > 0 ? BCVRef.MakeReferenceString(StartRef, EndRef, ".", "-") : null;
-		public abstract int StartRef { get; }
-		public abstract int EndRef { get; }
-		public abstract string Question { get; }
-		public virtual bool UseAnyAlternate => false;
+		public UISimpleDataString(string source, LocalizableStringType type)
+		{
+			Debug.Assert(type == LocalizableStringType.Category || type == LocalizableStringType.NonLocalizable);
+			SourceUIString = source;
+			Type = type;
+		}
+
+		public override string SourceUIString { get; }
+		public override LocalizableStringType Type { get; }
+		public override int StartRef => 0;
+		public override int EndRef => 0;
+		public override string Question => null;
+
+		public override int GetHashCode()
+		{
+			return Type.GetHashCode() * 397 ^ SourceUIString.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is UISimpleDataString other)
+				return SourceUIString == other.SourceUIString && Type == other.Type;
+			return false;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

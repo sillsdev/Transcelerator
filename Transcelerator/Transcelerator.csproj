@@ -205,7 +205,6 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLocalizer.cs" />
     <Compile Include="Number.cs" />
     <Compile Include="IProgressMessage.cs" />
     <Compile Include="KeyTerm.cs" />
