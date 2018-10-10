@@ -15,6 +15,7 @@ using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
@@ -92,54 +93,88 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region IsUsingKnownAlternateForm tests
+		#region ToUIDataString tests
 		[Test]
-		public void IsUsingKnownAlternateForm_QuestionHasNoAlternateForms_ReturnsFalse()
+		public void ToUIDataString_UnmodifiedQuestionWithNoAlternateForms_ReturnsUIQuestionDataString()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 
 			cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
 
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
-			Assert.IsFalse(phrases.Single().IsUsingKnownAlternateForm);
+			var phrases = new QuestionProvider(GetParsedQuestions()).ToList();
+			var result = (UIQuestionDataString)phrases.Single().ToUIDataString();
+			Assert.AreEqual("Abc", result.SourceUIString);
+			Assert.AreEqual(02003001, result.StartRef);
+			Assert.AreEqual(02003012, result.EndRef);
 		}
 
 		[Test]
-		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsButIsNotModified_ReturnsFalse()
+		public void ToUIDataString_QuestionHasAlternateFormsButIsNotModified_ReturnsUIQuestionDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
-			Assert.IsFalse(phrase.IsUsingKnownAlternateForm);
+			var result = (UIQuestionDataString)phrase.ToUIDataString();
+			Assert.AreEqual(phrase.OriginalPhrase, result.SourceUIString);
 		}
 
 		[Test]
-		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsButIsModifiedUsingCustomText_ReturnsFalse()
+		public void ToUIDataString_QuestionHasAlternateFormsButIsModifiedUsingCustomText_ReturnsNonLocalizableUISimpleDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
-			Assert.IsFalse(phrase.IsUsingKnownAlternateForm);
+			var result = (UISimpleDataString)phrase.ToUIDataString();
+			Assert.AreEqual(LocalizableStringType.NonLocalizable,  result.Type);
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
+			// Let's also prove that the result's source UI string is an immutable copy of the original modified form
+			phrase.ModifiedPhrase = "XXXXX";
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
+			phrase.ModifiedPhrase = phrase.OriginalPhrase;
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
+		}
+
+		[Test]
+		public void ToUIDataString_QuestionIsModifiedButHasNoAlternateForms_ReturnsNonLocalizableUISimpleDataString()
+		{
+			var qk = new Question { Text = "What does the fox say?" };
+			var phrase = new TranslatablePhrase(qk, 1, 6);
+			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
+			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
+			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
+			Assert.IsTrue(phrase.IsExcludedOrModified);
+			var result = (UISimpleDataString)phrase.ToUIDataString();
+			Assert.AreEqual(LocalizableStringType.NonLocalizable, result.Type);
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
+			// Let's also prove that the result's source UI string is an immutable copy of the original modified form
+			phrase.ModifiedPhrase = "XXXXX";
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
+			phrase.ModifiedPhrase = phrase.OriginalPhrase;
+			Assert.AreEqual("What sound does that there fox seem to be making?", result.SourceUIString);
 		}
 
 		[TestCase(0)]
 		[TestCase(1)]
-		public void IsUsingKnownAlternateForm_QuestionHasAlternateFormsAndPhraseIsUsingOneOfThem_ReturnsFalse(int i)
+		public void ToUIDataString_QuestionHasAlternateFormsAndPhraseIsUsingOneOfThem_ReturnsFalse(int i)
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that procedd from the vocal apparatus pertaining to the fox?"};
+			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
 			phrase.ModifiedPhrase = qk.AlternateForms[i];
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
-			Assert.IsTrue(phrase.IsUsingKnownAlternateForm);
+			var result = (UIAlternateDataString)phrase.ToUIDataString();
+			Assert.AreEqual(phrase.ModifiedPhrase, result.SourceUIString);
+			// Let's also prove that the original result does not change if a different alternate is later selected
+			phrase.ModifiedPhrase = qk.AlternateForms[i == 0 ? 1 : 0];
+			Assert.AreNotEqual(phrase.ToUIDataString().SourceUIString, result.SourceUIString);
 		}
 		#endregion
 

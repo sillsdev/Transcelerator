@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
@@ -552,17 +553,6 @@ namespace SIL.Transcelerator
 
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternateForms;
-
-		public bool IsUsingKnownAlternateForm
-		{
-			get
-			{
-				if (m_sModifiedPhrase == null)
-					return false;
-				var alts = AlternateForms;
-				return alts != null && alts.Contains(m_sModifiedPhrase);
-			}
-		}
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)
@@ -581,27 +571,19 @@ namespace SIL.Transcelerator
 			if (IsUserAdded)
 				return null;
 			if (IsCategoryName)
-				return new UIDataString(PhraseInUse, LocalizableStringType.Category);
+				return new UISimpleDataString(PhraseInUse, LocalizableStringType.Category);
 
 			if (m_sModifiedPhrase != null)
 			{
-				if (IsUsingKnownAlternateForm)
-					return UIDataStringForKnownAlternate(m_sModifiedPhrase);
-				return new UIDataString(PhraseInUse, LocalizableStringType.NonLocalizable);
+				if (AlternateForms != null)
+				{
+					var iAlt = AlternateForms.IndexOf(m_sModifiedPhrase);
+					if (iAlt >= 0)
+						return new UIAlternateDataString(QuestionInfo, iAlt);
+				}
+				return new UISimpleDataString(PhraseInUse, LocalizableStringType.NonLocalizable);
 			}
-			return UIDataStringForQuestion(false);
-		}
-
-		public UIDataString UIDataStringForKnownAlternate(string knownAlternateForm, bool useAnyAlternateForm = true)
-		{
-			return new UIDataString(knownAlternateForm, LocalizableStringType.Alternate, StartRef, EndRef, OriginalPhrase)
-				{ UseAnyAlternate = useAnyAlternateForm };
-		}
-
-		public UIDataString UIDataStringForQuestion(bool original)
-		{
-			return new UIDataString(original ? OriginalPhrase : PhraseInUse, LocalizableStringType.Question, StartRef, EndRef, OriginalPhrase)
-				{ UseAnyAlternate = !original };
+			return new UIQuestionDataString(PhraseKey, true, true);
 		}
 
 		/// ------------------------------------------------------------------------------------

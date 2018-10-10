@@ -25,15 +25,15 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			if (includeSomeOtherCategory)
-				sut.AddLocalizationEntry(new UIDataString("Overview", LocalizableStringType.Category));
-			Assert.AreEqual("Details", sut.GetLocalizedString(new UIDataString("Details", LocalizableStringType.Category)));
+				sut.AddLocalizationEntry(new UISimpleDataString("Overview", LocalizableStringType.Category));
+			Assert.AreEqual("Details", sut.GetLocalizedString(new UISimpleDataString("Details", LocalizableStringType.Category)));
 		}
 
 		[Test]
 		public void GetLocalizedString_NoMatchingCategoryNoFailover_ReturnsNull()
 		{
 			var sut = new LocalizationsFileAccessor();
-			Assert.IsNull(sut.GetLocalizedString(new UIDataString("Details", LocalizableStringType.Category), false));
+			Assert.IsNull(sut.GetLocalizedString(new UISimpleDataString("Details", LocalizableStringType.Category), false));
 		}
 
 		[TestCase(true)]
@@ -42,16 +42,20 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			if (includeSomeOtherSection)
-				sut.AddLocalizationEntry(new UIDataString("Jude 3-13 Some section", LocalizableStringType.SectionHeading, 65001003, 65001013));
-			Assert.AreEqual("Acts 3:1-15 This is Bryan's birthday.",
-				sut.GetLocalizedString(new UIDataString("Acts 3:1-15 This is Bryan's birthday.", LocalizableStringType.SectionHeading, 44003001, 44003015)));
+			{
+				var otherSection = new Section {Heading = "Jude 3-13 Some section", StartRef = 65001003, EndRef = 65001013};
+				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(otherSection)));
+			}
+			var sectionToGet = new Section { Heading = "Acts 3:1-15 This is Bryan's birthday.", StartRef = 44003001, EndRef = 44003015 };
+			Assert.AreEqual(sectionToGet.Heading, sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet))));
 		}
 
 		[Test]
 		public void GetLocalizedString_NoMatchingSectionNoFailover_ReturnsNull()
 		{
 			var sut = new LocalizationsFileAccessor();
-			Assert.IsNull(sut.GetLocalizedString(new UIDataString("Rev 9:2-14 More stuff that's going to happen", LocalizableStringType.SectionHeading, 66009002, 66009014), false));
+			var sectionToGet = new Section { Heading = "Rev 9:2-14 More stuff that's going to happen", StartRef = 66009002, EndRef = 66009014 };
+			Assert.IsNull(sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet)), false));
 		}
 
 		[TestCase(true, true)]
@@ -62,19 +66,25 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 			if (includeSection)
 			{
-				sut.AddLocalizationEntry(new UIDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, 40003001, 40003020));
+				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
+				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
 				if (includeSomeOtherQuestion)
-					sut.AddLocalizationEntry(new UIDataString("Is this really a detail question?", LocalizableStringType.Question, 40003019, 40003019));
+				{
+					var otherQuestion = new Question("MAT 3:19", 40003019, 40003019, "Is this really a detail question?", "Answer not relevant in this test");
+					sut.AddLocalizationEntry(new UIQuestionDataString(otherQuestion, false, false));
+				}
 			}
+			var questionToGet = new Question("MAT 3:2", 40003002, 40003002, "What are we testing here?", "Answer not relevant in this test");
 			Assert.AreEqual("What are we testing here?",
-				sut.GetLocalizedString(new UIDataString("What are we testing here?", LocalizableStringType.Question, 40003002, 40003002)));
+				sut.GetLocalizedString(new UIQuestionDataString(questionToGet, false, false)));
 		}
 
 		[Test]
 		public void GetLocalizedString_NoMatchingQuestionNoFailover_ReturnsNull()
 		{
 			var sut = new LocalizationsFileAccessor();
-			Assert.IsNull(sut.GetLocalizedString(new UIDataString("What are we testing here?", LocalizableStringType.Question, 40003002, 40003002), false));
+			var questionToGet = new Question("MAT 3:2", 40003002, 40003002, "What are we testing here?", "Answer not relevant in this test");
+			Assert.IsNull(sut.GetLocalizedString(new UIQuestionDataString(questionToGet, false, false), false));
 		}
 
 		[TestCase(LocalizableStringType.Answer, false, false)]
@@ -88,16 +98,28 @@ namespace SIL.Transcelerator.Localization
 		[TestCase(LocalizableStringType.Note, true, true)]
 		public void GetLocalizedString_NoMatchingEntryWithFailover_ReturnsEnglish(LocalizableStringType type, bool includeBaseQuestion, bool includeOtherEntry)
 		{
+			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", null);
+			baseQuestion.Answers = new[] { "Answer 1", "This is a whatchamacallit.", "Answer 3" };
+			baseQuestion.Notes = new[] { "Note 1", "This is a whatchamacallit.", "Note 3" };
+			baseQuestion.AlternateForms = new[] { "Do you adore this underlying question?", "This is a whatchamacallit.", "Is this the sort of platform question you appreciate?" };
+
 			var sut = new TestLocalizationsFileAccessor();
 			if (includeBaseQuestion)
 			{
-				sut.AddLocalizationEntry(new UIDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, 40003001, 40003020));
-				sut.AddLocalizationEntry(new UIDataString("Do you like this base question?", LocalizableStringType.Question, 40003002, 40003003));
+				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
+				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+				sut.AddLocalizationEntry(new UIQuestionDataString(baseQuestion, true, true));
 				if (includeOtherEntry)
-					sut.AddLocalizationEntry(new UIDataString("This is not the right thingy.", type, 40003002, 40003003, "Do you like this base question?"));
+				{
+					sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(baseQuestion, LocalizableStringType.Answer, 0));
+					sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(baseQuestion, LocalizableStringType.Note, 0));
+					sut.AddLocalizationEntry(new UIAlternateDataString(baseQuestion, 0));
+				}
 			}
+			UIDataString key = type == LocalizableStringType.Alternate ? new UIAlternateDataString(baseQuestion, 1, false) :
+				(UIDataString)new UIAnswerOrNoteDataString(baseQuestion, type, 1);
 			Assert.AreEqual("This is a whatchamacallit.",
-				sut.GetLocalizedString(new UIDataString("This is a whatchamacallit.", type, 40003002, 40003003, "Do you like this base question?")));
+				sut.GetLocalizedString(key));
 		}
 
 		[TestCase(LocalizableStringType.Answer)]
@@ -105,43 +127,34 @@ namespace SIL.Transcelerator.Localization
 		[TestCase(LocalizableStringType.Note)]
 		public void GetLocalizedString_NoMatchingEntryNoFailover_ReturnsNull(LocalizableStringType type)
 		{
-			var sut = new TestLocalizationsFileAccessor();
-			Assert.IsNull(sut.GetLocalizedString(
-				new UIDataString("This is a whatchamacallit.", type, 40003002, 40003003, "Do you like this base question?"), false));
+			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", "This is a whatchamacallit.");
+			baseQuestion.Notes = new[] { "This is a whatchamacallit." };
+			baseQuestion.AlternateForms = new[] { "This is a whatchamacallit." };
+
+			var sut = new LocalizationsFileAccessor();
+			UIDataString key = type == LocalizableStringType.Alternate ? new UIAlternateDataString(baseQuestion, 0, false) :
+				(UIDataString)new UIAnswerOrNoteDataString(baseQuestion, type, 0);
+			Assert.IsNull(sut.GetLocalizedString(key, false));
 		}
 
 		[Test]
 		public void GetLocalizedString_MatchingCategoryNotLocalized_ReturnsEnglish()
 		{
-			var key = new UIDataString("Details", LocalizableStringType.Category);
+			var key = new UISimpleDataString("Details", LocalizableStringType.Category);
 			var sut = new TestLocalizationsFileAccessor();
 			sut.AddLocalizationEntry(key);
 			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
 		}
 
-		[Test]
-		public void GetLocalizedString_MatchingSectionNotLocalized_ReturnsEnglish()
+		[TestCase("Rev 9:2-14 More stuff that's going to happen", 66009002, 66009014)] // Normal (multi-verse in single chapter) section
+		[TestCase("Rev 9:15-11:5 Crazy stuff that will happen", 66009015, 66011005)] // Multi-chapter section
+		[TestCase("Hebrews 2:10", 58002010, 58002010)] // Single-verse section
+		public void GetLocalizedString_MatchingSectionNotLocalized_ReturnsEnglish(string heading, int startRef, int endRef)
 		{
-			var key = new UIDataString("Rev 9:2-14 More stuff that's going to happen", LocalizableStringType.SectionHeading, 66009002, 66009014);
+			var section = new Section { Heading = heading, StartRef = startRef, EndRef = endRef };
+			var sectionInfo = new SectionInfo(section);
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(key);
-			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
-		}
-
-		[Test]
-		public void GetLocalizedString_MatchingMultiChapterSectionNotLocalized_ReturnsEnglish()
-		{
-			var key = new UIDataString("Rev 9:15-11:5 Crazy stuff that will happen", LocalizableStringType.SectionHeading, 66009015, 66011005);
-			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(key);
-			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
-		}
-
-		[Test]
-		public void GetLocalizedString_MatchingSingleVerseSectionNotLocalized_ReturnsEnglish()
-		{
-			var key = new UIDataString("Hebrews 2:10", LocalizableStringType.SectionHeading, 58002010, 58002010);
-			var sut = new TestLocalizationsFileAccessor();
+			var key = new UISectionHeadDataString(sectionInfo);
 			sut.AddLocalizationEntry(key);
 			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
 		}
@@ -149,10 +162,12 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GetLocalizedString_MatchingQuestionNotLocalized_ReturnsEnglish()
 		{
-			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, 40003002, 40003003);
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(new UIDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, 40003001, 40003020));
+			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
+			sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
 
+			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", null);
+			var key = new UIQuestionDataString(baseQuestion, true, false);
 			sut.AddLocalizationEntry(key);
 
 			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
@@ -163,23 +178,33 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 
-			var sectionKey = new UIDataString("Matthew 3:1-20 Section", LocalizableStringType.SectionHeading, 40003001, 40003020);
+			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
+			var sectionKey = new UISectionHeadDataString(new SectionInfo(section));
 			sut.AddLocalizationEntry(sectionKey, "Mateo 3:1-20 Sección");
-			var questionKey1 = new UIDataString("Why is this here?", LocalizableStringType.Question, 40003002, 40003003);
+			var q1 = new Question("MAT 3:2-3", 40003002, 40003003, "Why is this here?", null);
+			q1.Answers = new[] {"Because it needs to be.", "It's a place-holder."};
+			q1.Notes = new[] { "This is a bad question.", "See guidelines for writing good questions." };
+			q1.AlternateForms = new[] { "What's up with this?", "For what reason is this here?" };
+
+			var questionKey1 = new UIQuestionDataString(q1, true, false);
 			sut.AddLocalizationEntry(questionKey1, "¿Por qué está aquí esto?");
-			var questionKey2 = new UIDataString("Can we skip this question?", LocalizableStringType.Question, 40003004, 40003004);
+			var q2 = new Question("MAT 3:4", 40003004, 40003004, "Can we skip this question?", null);
+			var questionKey2 = new UIQuestionDataString(q2, true, false);
 			sut.AddLocalizationEntry(questionKey2, "¿Podríamos saltart esta pregunta?");
-			var answerKey1 = new UIDataString("Because it needs to be.", LocalizableStringType.Question, 40003002, 40003003, "Why is this here?");
+
+			var answerKey1 = new UIAnswerOrNoteDataString(q1, LocalizableStringType.Answer, 0);
 			sut.AddLocalizationEntry(answerKey1, "¡Porque sí!");
-			var answerKey2 = new UIDataString("It's a place-holder.", LocalizableStringType.Question, 40003002, 40003003, "Why is this here?");
+			var answerKey2 = new UIAnswerOrNoteDataString(q1, LocalizableStringType.Answer, 1);
 			sut.AddLocalizationEntry(answerKey2, "Solo está ocupando el lugar.");
-			var altKey1 = new UIDataString("What's up with this?", LocalizableStringType.Alternate, 40003002, 40003003, "Why is this here?");
+
+			var altKey1 = new UIAlternateDataString(q1, 0, false);
 			sut.AddLocalizationEntry(altKey1, "¿Qué pasa con esto?");
-			var altKey2 = new UIDataString("For what reason is this here?", LocalizableStringType.Alternate, 40003002, 40003003, "Why is this here?");
+			var altKey2 = new UIAlternateDataString(q1, 1, false);
 			sut.AddLocalizationEntry(altKey2, "¿Por qué razón está aquí esto?");
-			var noteKey1 = new UIDataString("This is a bad question.", LocalizableStringType.Alternate, 40003002, 40003003, "Why is this here?");
+
+			var noteKey1 = new UIAnswerOrNoteDataString(q1, LocalizableStringType.Note, 0);
 			sut.AddLocalizationEntry(noteKey1, "Esta pregunta no sirve.");
-			var noteKey2 = new UIDataString("See guidelines for writing good questions.", LocalizableStringType.Alternate, 40003002, 40003003, "Why is this here?");
+			var noteKey2 = new UIAnswerOrNoteDataString(q1, LocalizableStringType.Note, 1);
 			sut.AddLocalizationEntry(noteKey2, "Vea el guía de como hacer buenas preguntas.");
 
 			Assert.AreEqual("Mateo 3:1-20 Sección", sut.GetLocalizedString(sectionKey));
@@ -198,18 +223,18 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 
-			var sectionKey1 = new UIDataString("Matthew 3:1-20", LocalizableStringType.SectionHeading, 40003001, 40003020);
+			var sectionKey1 = new UITestDataString("Matthew 3:1-20", LocalizableStringType.SectionHeading, 40003001, 40003020);
 			sut.AddLocalizationEntry(sectionKey1);
-			var sectionKey2 = new UIDataString("Matthew 3:21-29", LocalizableStringType.SectionHeading, 40003021, 40003029);
+			var sectionKey2 = new UITestDataString("Matthew 3:21-29", LocalizableStringType.SectionHeading, 40003021, 40003029);
 			sut.AddLocalizationEntry(sectionKey2);
 
-			var questionKey1 = new UIDataString("Why is this here?", LocalizableStringType.Question, 40003002, 40003003);
+			var questionKey1 = new UITestDataString("Why is this here?", LocalizableStringType.Question, 40003002, 40003003);
 			sut.AddLocalizationEntry(questionKey1, "¿Por qué está aquí esto?");
 
-			var questionKey2 = new UIDataString("Why is this here?", LocalizableStringType.Question, 40003021, 40003021);
+			var questionKey2 = new UITestDataString("Why is this here?", LocalizableStringType.Question, 40003021, 40003021);
 			sut.AddLocalizationEntry(questionKey2, "¿Qué hace esto aquí?");
 
-			var questionKey3 = new UIDataString("Is this unique?", LocalizableStringType.Question, 40003022, 40003025);
+			var questionKey3 = new UITestDataString("Is this unique?", LocalizableStringType.Question, 40003022, 40003025);
 			sut.AddLocalizationEntry(questionKey3, "¿Es único esto?");
 
 			Assert.AreEqual("¿Por qué está aquí esto?", sut.GetLocalizedString(questionKey1));
@@ -220,9 +245,9 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GetLocalizedString_MatchingQuestionInMultiChapterSectionNotLocalized_ReturnsEnglish()
 		{
-			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, 40004002, 40004003);
+			var key = new UITestDataString("Do you like this base question?", LocalizableStringType.Question, 40004002, 40004003);
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(new UIDataString("Matthew 3:21-4:7 Multi-chapter section", LocalizableStringType.SectionHeading, 40003021, 40004007));
+			sut.AddLocalizationEntry(new UITestDataString("Matthew 3:21-4:7 Multi-chapter section", LocalizableStringType.SectionHeading, 40003021, 40004007));
 
 			sut.AddLocalizationEntry(key);
 
@@ -232,9 +257,9 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GetLocalizedString_MatchingQuestionInSingleVerseSectionNotLocalized_ReturnsEnglish()
 		{
-			var key = new UIDataString("Do you like this base question?", LocalizableStringType.Question, 58002010, 58002010);
+			var key = new UITestDataString("Do you like this base question?", LocalizableStringType.Question, 58002010, 58002010);
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(new UIDataString("Hebrews 2:10 Single-verse section", LocalizableStringType.SectionHeading, 58002010, 58002010));
+			sut.AddLocalizationEntry(new UITestDataString("Hebrews 2:10 Single-verse section", LocalizableStringType.SectionHeading, 58002010, 58002010));
 
 			sut.AddLocalizationEntry(key);
 
@@ -246,10 +271,10 @@ namespace SIL.Transcelerator.Localization
 		[TestCase(LocalizableStringType.Note)]
 		public void GetLocalizedString_MatchingEntryNotLocalized_ReturnsEnglish(LocalizableStringType type)
 		{
-			var key = new UIDataString("This is a whatchamacallit.", type, 40003002, 40003003, "Do you like this base question?");
+			var key = new UITestDataString("This is a whatchamacallit.", type, 40003002, 40003003, "Do you like this base question?");
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(new UIDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, 40003001, 40003020));
-			sut.AddLocalizationEntry(new UIDataString("Do you like this base question?", LocalizableStringType.Question, 40003002, 40003003));
+			sut.AddLocalizationEntry(new UITestDataString("Matthew 3:1-20 Some section", LocalizableStringType.SectionHeading, 40003001, 40003020));
+			sut.AddLocalizationEntry(new UITestDataString("Do you like this base question?", LocalizableStringType.Question, 40003002, 40003003));
 			sut.AddLocalizationEntry(key);
 
 			Assert.AreEqual(key.SourceUIString, sut.GetLocalizedString(key));
@@ -259,7 +284,7 @@ namespace SIL.Transcelerator.Localization
 		public void GetLocalizableStringInfo_AccessorHasNoEntries_ReturnsNullEntry()
 		{
 			var sut = new TestLocalizationsFileAccessor();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("This is some text for which no localization entry has been added.", LocalizableStringType.Question, 002002007, 002002007)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UITestDataString("This is some text for which no localization entry has been added.", LocalizableStringType.Question, 002002007, 002002007)));
 		}
 
 		[Test]
@@ -267,22 +292,19 @@ namespace SIL.Transcelerator.Localization
 		{
 			// I'm not 100% sure this is even possible to set up via TXL's UI.
 			var sut = new TestLocalizationsFileAccessor();
-			sut.AddLocalizationEntry(new UIDataString("Dummy section head", LocalizableStringType.SectionHeading, 001001001, 001001010));
-			var unmodifiedKey = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", null);
-			sut.AddLocalizationEntry(new UIDataString(unmodifiedKey, LocalizableStringType.Question), "¿Qué hizo él?");
-			var altFormKey = new Question("Gen 1.6", 001001006, 001001007, "What did he do?", null) { ModifiedPhrase = "What did he do?" };
-			Assert.AreEqual(sut.GetLocalizableStringInfo(new UIDataString(unmodifiedKey, LocalizableStringType.Question)), 
-				sut.GetLocalizableStringInfo(new UIDataString(altFormKey, LocalizableStringType.Question)));
+			sut.AddLocalizationEntry(new UITestDataString("Dummy section head", LocalizableStringType.SectionHeading, 001001001, 001001010));
+			var origQuestion = new Question("Gen 1.6", 001001006, 001001006, "What did he do?", null);
+			sut.AddLocalizationEntry(new UIQuestionDataString(origQuestion, true, false), "¿Qué hizo él?");
+			var questionWithDifferentEndRef = new Question("Gen 1.6", 001001006, 001001007, "What did he do?", null) { ModifiedPhrase = "What did he do?" };
+			Assert.AreEqual(sut.GetLocalizableStringInfo(new UIQuestionDataString(origQuestion, false, true)),
+				sut.GetLocalizableStringInfo(new UIQuestionDataString(questionWithDifferentEndRef, false, true)));
 		}
 
-		[TestCase(true, LocalizableStringType.Question)]
-		[TestCase(false, LocalizableStringType.Question)]
-		[TestCase(true, LocalizableStringType.Alternate)]
-		[TestCase(false, LocalizableStringType.Alternate)]
-		public void GetLocalizedString_ModifiedQuestionWithNoExistingTranslationForBaseQuestionOrAlternates_ReturnsModifiedForm(bool callGenerateOrUpdateFromMasterQuestions,
-			LocalizableStringType questionOrAlternate)
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetLocalizedString_ModifiedQuestionWithNoExistingTranslationForBaseQuestionOrAlternates_ReturnsModifiedForm(bool callGenerateOrUpdateFromMasterQuestions)
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections(true);
 			if (callGenerateOrUpdateFromMasterQuestions)
 				sut.GenerateOrUpdateFromMasterQuestions(qs);
@@ -292,14 +314,15 @@ namespace SIL.Transcelerator.Localization
 			// custom phrase in use.
 			var lastQuestion = qs.Items.Last().Categories.Last().Questions.Last();
 			lastQuestion.ModifiedPhrase = "This is also gobbledy-gook, wouldn't you say?";
-			var key = new UIDataString(lastQuestion, questionOrAlternate, lastQuestion.ModifiedPhrase);
+
+			var key = new UIQuestionDataString(lastQuestion, false, false);
 			Assert.AreEqual("This is also gobbledy-gook, wouldn't you say?", sut.GetLocalizedString(key));
 		}
 
 		[Test]
 		public void GetLocalizedString_OnlyAlternateFormsHaveLocalizations_BestLocalizationIsReturnedForEachFormOfQuestion()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections(true);
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
@@ -310,23 +333,30 @@ namespace SIL.Transcelerator.Localization
 
 			// First check that the correct localized form of each alternate is returned.
 			var firstQuestion = qs.Items[0].Categories[0].Questions.First();
-			var key = new UIDataString(firstQuestion, LocalizableStringType.Alternate, "How would you define wisdom?");
+			UIDataString key = new UIAlternateDataString(firstQuestion, 1, false);
 			Assert.AreEqual("¿Cómo se puede definir la sabiduría?", sut.GetLocalizedString(key));
-			key = new UIDataString(firstQuestion, LocalizableStringType.Alternate, "What is meant by \"wisdom?\"");
+			key = new UIAlternateDataString(firstQuestion, 0, false);
 			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
 
 			// Next check that the first* localized alternate is returned for the base question (which is not itself localized).
 			// * "first" in the order the alternate occurs in the question, not in the order in the list above.
-			key = new UIDataString(firstQuestion, LocalizableStringType.Question);
+			key = new UIQuestionDataString(firstQuestion, false, true);
+			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
+			key = new UIQuestionDataString(firstQuestion, true, true);
 			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
 
-			// Finally check that if the user has customized the question in a way that does not match any of the known forms,
-			// retrieving the localized form will still get the localized form of the first localized alternate.
+			// Now check that if the user has customized the question in a way that does not match any of the known forms,
+			// retrieving the localized form of the ORIGINAL question will still get the localized form of the first localized alternate.
 			firstQuestion.ModifiedPhrase = "This is pure gobbledy-gook, isn't it?";
-			key = new UIDataString(firstQuestion, LocalizableStringType.Question);
+			key = new UIQuestionDataString(firstQuestion, true, true);
 			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
-			// And for good measure, is UseAnyAlternate is false, then it will just return the unlocalized modified version.
-			key.UseAnyAlternate = false;
+			// Unless UseAnyAlternate is false, in which case it will return the original (unlocalized) text of the question.
+			key = new UIQuestionDataString(firstQuestion, true, false);
+			Assert.AreEqual(firstQuestion.Text, sut.GetLocalizedString(key));
+			// Repeat the above two checks if the key is based on the modifed (Phrase-in-use) form of the question.
+			key = new UIQuestionDataString(firstQuestion, false, true); // This key should never be created in normal production code.
+			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
+			key = new UIQuestionDataString(firstQuestion, false, false);
 			Assert.AreEqual("This is pure gobbledy-gook, isn't it?", sut.GetLocalizedString(key));
 		}
 
@@ -359,8 +389,8 @@ namespace SIL.Transcelerator.Localization
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			var tuForQ1 = sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?", status);
-			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios", status);
+			var tuForQ1 = sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?", status);
+			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios", status);
 			// Check setup:
 			Assert.AreEqual(status, tuForQ1.Target.Status);
 			Assert.AreEqual(status, tuForAnswerToQ1.Target.Status);
@@ -389,8 +419,8 @@ namespace SIL.Transcelerator.Localization
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
+			sut.AddLocalizationEntry(new UISimpleDataString("Details", LocalizableStringType.Category), "Detalles");
+			sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?");
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
 				new XmlTranslation {PhraseKey = "Overview", Translation = "Resumen"},
@@ -414,11 +444,11 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
-			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
-			sut.AddLocalizationEntry(new UIDataString("Overview", LocalizableStringType.Category), "Resumen");
+			sut.AddLocalizationEntry(new UISimpleDataString("Details", LocalizableStringType.Category), "Detalles");
+			sut.AddLocalizationEntry(new UISimpleDataString("Overview", LocalizableStringType.Category), "Resumen");
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
+			sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?");
+			sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios");
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // Update
 
 			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
@@ -434,10 +464,10 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections(true);
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
-			sut.AddLocalizationEntry(new UIDataString("Details", LocalizableStringType.Category), "Detalles");
+			sut.AddLocalizationEntry(new UISimpleDataString("Details", LocalizableStringType.Category), "Detalles");
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Question), "¿Qué es la sabiduría?");
-			sut.AddLocalizationEntry(new UIDataString(firstOverviewQuestion, LocalizableStringType.Answer, "A gift from God"), "Un don de Dios");
+			sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?");
+			sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios");
 			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
 
 			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
@@ -445,27 +475,27 @@ namespace SIL.Transcelerator.Localization
 				new[] { "Details", "What is wisdom?", "A gift from God" }));
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
 				new[] { "Detalles", "¿Qué es la sabiduría?", "Un don de Dios" }));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("Overview", LocalizableStringType.Category)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.StartRef, section.EndRef)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
 			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers.Single())));
-			Assert.IsTrue(detailQuestion.Notes.All(n => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, n)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 0)));
+			Assert.IsTrue(detailQuestion.Notes.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, detailQuestion.Notes.Single())));
-			Assert.IsTrue(detailQuestion.AlternateForms.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, a)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, 0)));
+			Assert.IsTrue(detailQuestion.AlternateForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsTrue(detailQuestion.Answers.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, a)) == null));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, detailQuestion.AlternateForms.Single())));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsTrue(detailQuestion.Answers.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, i)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, 0)));
 		}
 
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_UpdateWithAddedAndModifiedTxlTranslations_CorrectEntriesHaveCorrectLocalizations()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections();
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
@@ -534,25 +564,25 @@ namespace SIL.Transcelerator.Localization
 			Assert.IsTrue(results.Select(k => sut.GetLocalizedString(k)).SequenceEqual(
 				new[] { "Resumen", "¿Qué es la sabiduría?", "Un don de Dios", "Perlas preciosas", "Riquezas", "Un don de Dios" }));
 
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString("Details", LocalizableStringType.Category)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.StartRef, section.EndRef)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
 			var overviewQuestion = qs.Items.First().Categories.First().Questions.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Answer, overviewQuestion.Answers.First())));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Alternate, overviewQuestion.AlternateForms.First())));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(overviewQuestion, LocalizableStringType.Alternate, overviewQuestion.AlternateForms.Last())));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(overviewQuestion, LocalizableStringType.Answer, 0)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, 0)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, overviewQuestion.AlternateForms.Length - 1)));
 			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers.Single())));
-			Assert.IsTrue(detailQuestion.Notes.All(n => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, n)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 0)));
+			Assert.IsTrue(detailQuestion.Notes.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Note, detailQuestion.Notes.Single())));
-			Assert.IsTrue(detailQuestion.AlternateForms.All(a => sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, a)) == null));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, 0)));
+			Assert.IsTrue(detailQuestion.AlternateForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Question)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Answer, detailQuestion.Answers[1])));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIDataString(detailQuestion, LocalizableStringType.Alternate, detailQuestion.AlternateForms.Single())));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 1)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, 0)));
 		}
 
 		[Test]
@@ -581,20 +611,20 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 			sut.GenerateOrUpdateFromMasterQuestions(qs);
 			var question = qs.Items[0].Categories[0].Questions[0];
-			var key = new UIDataString(question, LocalizableStringType.Answer, "Smartness on steroids");
+			UIDataString key = new UIAnswerOrNoteDataString(question, LocalizableStringType.Answer, 0);
 			Assert.AreEqual("Smartness on steroids", sut.GetTranslationUnit(key).English);
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Answer).Count);
 
-			key = new UIDataString(question, LocalizableStringType.Alternate, "How would you define wisdom?");
+			key = new UIAlternateDataString(question, 2);
 			Assert.AreEqual("How would you define wisdom?", sut.GetTranslationUnit(key).English);
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Alternate).Count);
 
 			question = qs.Items[0].Categories[1].Questions[0];
-			key = new UIDataString(question, LocalizableStringType.Answer, "A bunch");
+			key = new UIAnswerOrNoteDataString(question, LocalizableStringType.Answer, 1);
 			Assert.AreEqual("A bunch", sut.GetTranslationUnit(key).English);
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Answer).Count);
 
-			key = new UIDataString(question, LocalizableStringType.Note, "Exact answer is: Five");
+			key = new UIAnswerOrNoteDataString(question, LocalizableStringType.Note, 0);
 			Assert.AreEqual("Exact answer is: Five", sut.GetTranslationUnit(key).English);
 			Assert.AreEqual(1, sut.GetQuestionSubgroupTranslationUnits(question, LocalizableStringType.Note).Count);
 		}
@@ -644,13 +674,13 @@ namespace SIL.Transcelerator.Localization
 			sut.GenerateOrUpdateFromMasterQuestions(qs);
 			Assert.IsTrue(sut.LocalizationsAccessor.IsValid(out string error), error);
 
-			var keyQ4 = new UIDataString(q4, LocalizableStringType.Question);
+			var keyQ4 = new UIQuestionDataString(q4, true, true);
 			sut.AddLocalizationEntry(keyQ4, "This one gets clobbered by the next one, right?");
-			var keyQ4A1 = new UIDataString(q4, LocalizableStringType.Answer, q4.Answers.Single());
+			var keyQ4A1 = new UIAnswerOrNoteDataString(q4, LocalizableStringType.Answer, 0);
 			sut.AddLocalizationEntry(keyQ4A1, "Porque Dios no pueded perdonar...");
 			Assert.AreEqual("This one gets clobbered by the next one, right?", sut.GetLocalizedString(keyQ4));
-			var keyQ2 = new UIDataString(q2, LocalizableStringType.Question);
-			var keyQ2A1 = new UIDataString(q2, LocalizableStringType.Answer, q2.Answers.Single());
+			var keyQ2 = new UIQuestionDataString(q2, true, true);
+			var keyQ2A1 = new UIAnswerOrNoteDataString(q2, LocalizableStringType.Answer, 0);
 			sut.AddLocalizationEntry(keyQ2, "Por que?");
 			sut.AddLocalizationEntry(keyQ2A1, "Para hacerles aceptables...");
 			Assert.AreEqual("Por que?", sut.GetLocalizedString(keyQ2));
@@ -697,12 +727,12 @@ namespace SIL.Transcelerator.Localization
 			sut.GenerateOrUpdateFromMasterQuestions(qs);
 			Assert.IsTrue(sut.LocalizationsAccessor.IsValid(out string error), error);
 
-			var keyQ3Alt1 = new UIDataString(q3, LocalizableStringType.Alternate, q3.AlternateForms[0]);
+			var keyQ3Alt1 = new UIAlternateDataString(q3, 0);
 			sut.AddLocalizationEntry(keyQ3Alt1, "¿Qué les dice el autor que hagan?");
-			var keyQ3Alt2 = new UIDataString(q3, LocalizableStringType.Alternate, q3.AlternateForms[1]);
+			var keyQ3Alt2 = new UIAlternateDataString(q3, 1);
 			sut.AddLocalizationEntry(keyQ3Alt2, "¿Qué quiere el autor que hagan? Please review this translation");
-			var keyQ1Alt1 = new UIDataString(q1, LocalizableStringType.Alternate, q1.AlternateForms[0]);
-			var keyQ1Alt2 = new UIDataString(q1, LocalizableStringType.Alternate, q1.AlternateForms[1]);
+			var keyQ1Alt1 = new UIAlternateDataString(q1, 0);
+			var keyQ1Alt2 = new UIAlternateDataString(q1, 1);
 			sut.AddLocalizationEntry(keyQ1Alt2, "¿Qué quiere el autor que hagan?");
 			Assert.AreEqual("¿Qué les dice el autor que hagan?", sut.GetLocalizedString(keyQ1Alt1));
 			Assert.AreEqual("¿Qué quiere el autor que hagan?", sut.GetLocalizedString(keyQ1Alt2));
@@ -761,7 +791,7 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_GenerateFirstTimeWithTxlTranslations_CorrectEntriesHaveLocalizations()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections();
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
@@ -783,7 +813,7 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_OnlyAlternateFormsHaveTxlTranslations_StoredLocalizationsAreForAlternates()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections(true);
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
@@ -802,7 +832,7 @@ namespace SIL.Transcelerator.Localization
 		[Test]
 		public void GenerateOrUpdateFromMasterQuestions_TxlTranslationsOfQuestionsAndAlternates_CorrectEntriesHaveLocalizations()
 		{
-			var sut = new LocalizationsFileAccessor();
+			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections(true);
 			var existingTxlTranslations = new List<XmlTranslation>
 			{
@@ -838,9 +868,10 @@ namespace SIL.Transcelerator.Localization
 			// Finally, check that the translation of an unknown form passed in as an existing TXL translation was truly ignored.
 			var questionAboutWordCount = qs.Items.Last().Categories.Last().Questions[0];
 			questionAboutWordCount.ModifiedPhrase = "How much verbiage exists?";
-			var key = new UIDataString(questionAboutWordCount, LocalizableStringType.Question);
+			UIDataString key = new UIQuestionDataString(questionAboutWordCount, false, true);
 			Assert.AreEqual("How much verbiage exists?", sut.GetLocalizedString(key));
-			key = new UIDataString(questionAboutWordCount, LocalizableStringType.Alternate, questionAboutWordCount.ModifiedPhrase);
+			key = new UITestDataString(questionAboutWordCount.ModifiedPhrase, LocalizableStringType.Alternate,
+				questionAboutWordCount.StartRef, questionAboutWordCount.EndRef, questionAboutWordCount.Text, true);
 			Assert.AreEqual("How much verbiage exists?", sut.GetLocalizedString(key));
 		}
 
@@ -849,7 +880,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			using (var folder = new TemporaryFolder("SaveAndLoad_NoAlternates_NoLoss"))
 			{
-				var accessorToSave = new LocalizationsFileAccessor(folder.Path, "es");
+				var accessorToSave = new LocalizationsFileGenerator(folder.Path, "es");
 				var qs = GenerateProverbsQuestionSections();
 				var existingTxlTranslations = new List<XmlTranslation>
 				{
@@ -861,7 +892,7 @@ namespace SIL.Transcelerator.Localization
 				accessorToSave.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
 				accessorToSave.Save();
 
-				var accessorToLoad = new LocalizationsFileAccessor(folder.Path, "es");
+				var accessorToLoad = new LocalizationsFileGenerator(folder.Path, "es");
 				var results = GetKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
 				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
 					new[] { "Overview", "What is wisdom?", "A gift from God", "Jewels", "A gift from God" }));
@@ -875,7 +906,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			using (var folder = new TemporaryFolder("SaveAndLoad_Alternates_NoLoss"))
 			{
-				var accessorToSave = new LocalizationsFileAccessor(folder.Path, "es");
+				var accessorToSave = new LocalizationsFileGenerator(folder.Path, "es");
 				var qs = GenerateProverbsQuestionSections(true);
 				var existingTxlTranslations = new List<XmlTranslation>
 				{
@@ -888,7 +919,7 @@ namespace SIL.Transcelerator.Localization
 				accessorToSave.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
 				accessorToSave.Save();
 
-				var accessorToLoad = new LocalizationsFileAccessor(folder.Path, "es");
+				var accessorToLoad = new LocalizationsFileGenerator(folder.Path, "es");
 				var results = GetKeysWithLocalizedStrings(accessorToLoad, qs).ToList();
 				Assert.AreEqual(6, results.Count);
 				Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
@@ -990,17 +1021,17 @@ namespace SIL.Transcelerator.Localization
 
 		private void VerifyAllEntriesExistWithNoLocalizedStrings(TestLocalizationsFileAccessor sut, QuestionSections qs)
 		{
-			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString("Overview", LocalizableStringType.Category)).Target.Status);
-			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString("Details", LocalizableStringType.Category)).Target.Status);
+			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)).Target.Status);
+			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)).Target.Status);
 
 			foreach (var section in qs.Items)
 			{
 				Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(
-					new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.StartRef, section.EndRef)).Target.Status);
+					new UISectionHeadDataString(new SectionInfo(section))).Target.Status);
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
-					var key = new UIDataString(question, LocalizableStringType.Question);
+					var key = new UIQuestionDataString(question, false, true);
 					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(key).Target.Status);
 
 					VerifyNotLocalized(sut, question, question.AlternateForms, LocalizableStringType.Alternate);
@@ -1015,40 +1046,39 @@ namespace SIL.Transcelerator.Localization
 			if (subStrings != null)
 			{
 				foreach (var s in subStrings)
-					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UIDataString(question, type, s)).Target.Status);
+					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UITestDataString(s, type, question.StartRef, question.EndRef, question.Text)).Target.Status);
 			}
 		}
 
-		private IEnumerable<UIDataString> GetKeysWithLocalizedStrings(LocalizationsFileAccessor sut, QuestionSections qs, bool useAnyAlternate = false)
+		private IEnumerable<UIDataString> GetKeysWithLocalizedStrings(LocalizationsFileGenerator sut, QuestionSections qs, bool useAnyAlternate = false)
 		{
-			var key = new UIDataString("Overview", LocalizableStringType.Category);
+			UIDataString key = new UISimpleDataString("Overview", LocalizableStringType.Category);
 			var localizedString = sut.GetLocalizedString(key);
 			if (localizedString != key.SourceUIString)
 				yield return key;
-			key = new UIDataString("Details", LocalizableStringType.Category);
+			key = new UISimpleDataString("Details", LocalizableStringType.Category);
 			localizedString = sut.GetLocalizedString(key);
 			if (localizedString != key.SourceUIString)
 				yield return key;
 
 			foreach (var section in qs.Items)
 			{
-				key = new UIDataString(section.Heading, LocalizableStringType.SectionHeading, section.StartRef, section.EndRef);
+				key = new UISectionHeadDataString(new SectionInfo(section));
 				localizedString = sut.GetLocalizedString(key);
 				if (localizedString != key.SourceUIString)
 					yield return key;
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
-					key = new UIDataString(question, LocalizableStringType.Question) {UseAnyAlternate = useAnyAlternate};
+					key = new UIQuestionDataString(question, false, useAnyAlternate);
 					if (sut.GetLocalizedString(key) != question.PhraseInUse)
 						yield return key;
 
 					if (question.AlternateForms != null)
 					{
-						foreach (var alternateForm in question.AlternateForms)
+						for (var index = 0; index < question.AlternateForms.Length; index++)
 						{
-							key = new UIDataString(question, LocalizableStringType.Alternate, alternateForm)
-								{ UseAnyAlternate = useAnyAlternate };
+							key = new UIAlternateDataString(question, index, useAnyAlternate);
 							if (sut.GetLocalizedString(key) != key.SourceUIString)
 								yield return key;
 						}
@@ -1056,18 +1086,18 @@ namespace SIL.Transcelerator.Localization
 
 					if (question.Answers != null)
 					{
-						foreach (var answer in question.Answers)
+						for (var index = 0; index < question.Answers.Length; index++)
 						{
-							key = new UIDataString(question, LocalizableStringType.Answer, answer);
+							key = new UIAnswerOrNoteDataString(question, LocalizableStringType.Answer, index);
 							if (sut.GetLocalizedString(key) != key.SourceUIString)
 								yield return key;
 						}
 					}
 					if (question.Notes != null)
 					{
-						foreach (var comment in question.Notes)
+						for (var index = 0; index < question.Notes.Length; index++)
 						{
-							key = new UIDataString(question, LocalizableStringType.Note, comment);
+							key = new UIAnswerOrNoteDataString(question, LocalizableStringType.Note, index);
 							if (sut.GetLocalizedString(key) != key.SourceUIString)
 								yield return key;
 						}

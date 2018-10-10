@@ -16,12 +16,14 @@ using System.Diagnostics;
 
 namespace SIL.Transcelerator.Localization
 {
-	public class TestLocalizationsFileAccessor : LocalizationsFileAccessor
+	public class TestLocalizationsFileAccessor : LocalizationsFileGenerator
 	{
 		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, State status = State.Approved)
 		{
 			if (String.IsNullOrWhiteSpace(data?.SourceUIString))
 				throw new ArgumentException("Invalid key!", nameof(data));
+
+			InitializeLookupTable();
 
 			TranslationUnit existing;
 			Group group = null;
@@ -145,7 +147,7 @@ namespace SIL.Transcelerator.Localization
 				case LocalizableStringType.Alternate:
 				case LocalizableStringType.Answer:
 				case LocalizableStringType.Note:
-					UIDataString key = new UIDataString(question, LocalizableStringType.Question);
+					UIDataString key = new UIQuestionDataString(question, true, false);
 					return Localizations.FindQuestionGroup(key)?.GetQuestionSubGroup(type)?.TranslationUnits;
 
 				default:

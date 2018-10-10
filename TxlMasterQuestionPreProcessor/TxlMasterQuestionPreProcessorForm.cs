@@ -102,7 +102,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 
 		private string TryGenerateQuestionLocalizationsFile(out string missingFileName)
 		{
-			var txlLocalizationManager = new LocalizationsFileAccessor(DestinationDirectory, txtLocale.Text);
+			var txlLocalizationManager = new LocalizationsFileGenerator(DestinationDirectory, txtLocale.Text);
 			var existingTranslationsFilename = String.IsNullOrWhiteSpace(txtSourceFile.Text) ? null : txtSourceFile.Text;
 			var finfoExistingTxlTranslations = existingTranslationsFilename == null ? null : new FileInfo(txtSourceFile.Text);
 			var finfoMasterQuestionFile = new FileInfo(txtXmlQuestionFile.Text);

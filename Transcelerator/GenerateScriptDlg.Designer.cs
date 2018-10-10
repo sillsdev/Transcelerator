@@ -104,6 +104,7 @@ namespace SIL.Transcelerator
 			this.m_cboUseLWC = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
+			this.m_rdoSkipUntranslated = new System.Windows.Forms.RadioButton();
 			label1 = new System.Windows.Forms.Label();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			label4 = new System.Windows.Forms.Label();
@@ -284,6 +285,7 @@ namespace SIL.Transcelerator
 			// panel1
 			// 
 			resources.ApplyResources(this.panel1, "panel1");
+			this.panel1.Controls.Add(this.m_rdoSkipUntranslated);
 			this.panel1.Controls.Add(this.m_rdoDisplayWarning);
 			this.panel1.Controls.Add(this.label6);
 			this.panel1.Controls.Add(label5);
@@ -557,6 +559,12 @@ namespace SIL.Transcelerator
 			this.tabAppearance.Name = "tabAppearance";
 			this.tabAppearance.UseVisualStyleBackColor = true;
 			// 
+			// m_rdoSkipUntranslated
+			// 
+			resources.ApplyResources(this.m_rdoSkipUntranslated, "m_rdoSkipUntranslated");
+			this.m_rdoSkipUntranslated.Name = "m_rdoSkipUntranslated";
+			this.m_rdoSkipUntranslated.UseVisualStyleBackColor = true;
+			// 
 			// GenerateScriptDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -645,5 +653,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ComboBox m_cboUseLWC;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabPage tabAppearance;
+		internal System.Windows.Forms.RadioButton m_rdoSkipUntranslated;
 	}
 }

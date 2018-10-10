@@ -7,22 +7,37 @@
 // </copyright>
 #endregion
 //
-// File: UIDataString.cs
+// File: UISectionHeadDataString.cs
 // ---------------------------------------------------------------------------------------------
-using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
-	public abstract class UIDataString : IRefRange
+	public class UISectionHeadDataString : UIDataString
 	{
-		public abstract string SourceUIString { get; }
-		public abstract LocalizableStringType Type { get; }
-		public string ScriptureReference => StartRef > 0 ? BCVRef.MakeReferenceString(StartRef, EndRef, ".", "-") : null;
-		public abstract int StartRef { get; }
-		public abstract int EndRef { get; }
-		public abstract string Question { get; }
-		public virtual bool UseAnyAlternate => false;
+		private readonly SectionInfo m_section;
+		public UISectionHeadDataString(SectionInfo section)
+		{
+			m_section = section;
+		}
+		
+		public override string SourceUIString => m_section.Heading;
+		public override LocalizableStringType Type => LocalizableStringType.SectionHeading;
+		public override int StartRef => m_section.StartRef;
+		public override int EndRef => m_section.EndRef;
+		public override string Question => null;
+
+		public override int GetHashCode()
+		{
+			return m_section.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is UISectionHeadDataString other)
+				return SourceUIString == other.SourceUIString;
+			return false;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

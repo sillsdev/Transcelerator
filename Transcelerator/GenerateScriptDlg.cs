@@ -17,6 +17,7 @@ using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 using SIL.Utils;
 using File = System.IO.File;
 
@@ -30,16 +31,14 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public partial class GenerateScriptDlg : Form
 	{
-		public delegate DataLocalizer DataLocalizerNeededEventHandler(object sender, string localeId);
+		public delegate LocalizationsFileAccessor DataLocalizerNeededEventHandler(object sender, string localeId);
 		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
-		#region RangeOption enum
 		public enum RangeOption
 		{
 			WholeBook = 0,
 			SingleSection = 1,
 			RangeOfSections = 2,
 		}
-		#endregion
 
 		#region Data members
 		private string m_sFilenameTemplate;
@@ -49,7 +48,7 @@ namespace SIL.Transcelerator
 		private BCVRef m_endRef = new BCVRef();
         private readonly IScrExtractor m_scrExtractor;
 		private List<string> m_lwcLocaleIds;
-		private DataLocalizer m_dataLoc;
+		private LocalizationsFileAccessor m_dataLoc;
 		private string m_fmtChkEnglishQuestions;
 		private string m_fmtChkEnglishAnswers;
 		private string m_fmtChkIncludeComments;
@@ -112,6 +111,7 @@ namespace SIL.Transcelerator
 			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
 			SetDefaultCheckedStateForLWCOptions();
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
+			m_rdoSkipUntranslated.Checked = !m_rdoUseOriginal.Checked && Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated; // These two settings should never be able to both be true, but just to be safe.
 
             m_lblFolder.Text = string.IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
                 Properties.Settings.Default.GenerateTemplateFolder;
@@ -421,6 +421,8 @@ namespace SIL.Transcelerator
             Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeLWCComments.Checked;
 			m_dataLoc = DataLocalizerNeeded?.Invoke(this, Properties.Settings.Default.GenerateTemplateUseLWC);
             Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
+			Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated = m_rdoSkipUntranslated.Checked;
+
 
             Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
 
