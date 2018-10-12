@@ -729,6 +729,12 @@
     <Alternate name="named"/>
     <Alternate name="called"/>
   </KeyTermRule>
+  
+  <!-- There seems to be a bug in the Major Biblical Terms list. Both the city and the people are listed as Thessalonica. -->
+  <KeyTermRule id="Thessalonica">
+    <Alternate name="Thessalonian"/>
+    <Alternate name="Thessalonians"/>
+  </KeyTermRule>
 
   <!-- New Terms in P8 -->
   <KeyTermRule id ="female fallow deer, doe">

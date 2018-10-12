@@ -3693,15 +3693,18 @@
   </Alternative>
   <Alternative>
     <Original>Into what does the righteous run for safety?</Original>
-    <Alt>Into what does the righteous run for safety?</Alt>
     <Alt>Into what does the righteous run and are safe?</Alt>
     <Alt>Where do the righteous run for safety?</Alt>
     <Alt>Where do the righteous go for safety?</Alt>
   </Alternative>
   <Alternative>
     <Original>Do you think this person speaks like this very often?</Original>
-    <Alt>Do you think this person speaks like this very often?</Alt>
     <Alt>Do you think he/she speaks like this very often?</Alt>
     <Alt>Do you think he speaks like this very often?</Alt>
+  </Alternative>
+  <Alternative>
+    <Original>What did he say about the one who sent him?</Original>
+    <Alt>What did Jesus say about the one who sent him?</Alt>
+    <Alt>What did he say about that one?</Alt>
   </Alternative>
 </QuestionAlternativeOverrides>

@@ -173,6 +173,16 @@
   <PropertyGroup>
     <PostBuildEvent>IF "$(ConfigurationName)" == "Debug - Copy To Paratext" (
 xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
+IF EXIST "C:\Program Files (x86)\Paratext 7" (
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
+IF EXIST "C:\Program Files (x86)\Paratext 8" (
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
+)
+IF "$(ConfigurationName)" == "Release - Copy To Paratext" (
+IF EXIST "C:\Program Files (x86)\Paratext 7" (
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
+IF EXIST "C:\Program Files (x86)\Paratext 8" (
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>
