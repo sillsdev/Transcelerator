@@ -32,13 +32,6 @@ namespace SIL.Transcelerator.Localization
 		NonLocalizable,
 	}
 
-	public enum State
-	{
-		NotLocalized,
-		Localized,
-		Approved,
-	}
-
 	#region Localizations
 	[Serializable]
 	[DebuggerStepThrough]
@@ -79,7 +72,7 @@ namespace SIL.Transcelerator.Localization
 	}
 	#endregion
 
-	#region File
+	#region File (owned by Localizations)
 	[Serializable]
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
@@ -143,7 +136,7 @@ namespace SIL.Transcelerator.Localization
 	}
 	#endregion
 
-	#region FileBody
+	#region FileBody (owned by File)
 	[Serializable]
 	[DesignerCategory("code")]
 	[XmlRoot(ElementName = "body")]
@@ -195,7 +188,7 @@ namespace SIL.Transcelerator.Localization
 			Categories.TranslationUnits = new List<TranslationUnit>();
 		}
 
-		public Group Categories => Groups.FirstOrDefault(g => g.Id == "Categories");
+		public Group Categories => Groups?.FirstOrDefault(g => g.Id == "Categories");
 
 		internal static string GetSectionId(IRefRange refs)
 		{
@@ -213,7 +206,7 @@ namespace SIL.Transcelerator.Localization
 
 		internal TranslationUnit GetStringLocalization(UIDataString key)
 		{
-			if (String.IsNullOrWhiteSpace(key?.SourceUIString) || key.Type == LocalizableStringType.NonLocalizable)
+			if (String.IsNullOrWhiteSpace(key?.SourceUIString) || key.Type == LocalizableStringType.NonLocalizable || Groups == null)
 				return null;
 
 			TranslationUnit transUnit = null;
@@ -324,12 +317,7 @@ namespace SIL.Transcelerator.Localization
 				}
 				if (group.TranslationUnits != null)
 				{
-					// This is pretty annoying: If a file is downloaded from Crowdin, it marks anything that has been
-					// translated but not approved as translated, but anything that has been approved doesn't get
-					// marked with a status. So this is a HACK to put the status back to signed-off/approved.
-					foreach (var tu in group.TranslationUnits.Where(tu => tu.Target.Status == State.NotLocalized && tu.English != tu.Target.Text))
-						tu.Target.Status = State.Approved;
-					group.TranslationUnits.RemoveAll(tu => tu.Target.Status == State.NotLocalized);
+					group.TranslationUnits.RemoveAll(tu => !tu.Target.IsLocalized);
 					if (group.TranslationUnits.Count == 0)
 						group.TranslationUnits = null;
 				}
@@ -339,7 +327,7 @@ namespace SIL.Transcelerator.Localization
 	}
 	#endregion
 
-	#region Group
+	#region Group (in a list owned by FileBody)
 	[Serializable]
 	[DesignerCategory("code")]
 	public class Group
@@ -407,8 +395,12 @@ namespace SIL.Transcelerator.Localization
 			TranslationUnits.Add(tu);
 		}
 
-		public TranslationUnit AddTranslationUnit(UIDataString data, string translation = null, State status = State.Approved)
+		public TranslationUnit AddTranslationUnit(UIDataString data, string translation = null, bool isLocalized = true)
 		{
+			// Note: In the context of this method, if a translation string is provided that the caller deems to be a valid
+			// localization for the data string, then it is always regarded as being an "approved" translation.
+			if (translation == null)
+				isLocalized = false;
 			var idPrefix = $"{data.Type.IdLetter()}:";
 			var idSuffix = "";
 			string context;
@@ -440,7 +432,8 @@ namespace SIL.Transcelerator.Localization
 							if (translation != null)
 							{
 								existing.Target.Text = translation;
-								existing.Target.Status = status;
+								existing.Target.IsLocalized = isLocalized;
+								existing.Approved = isLocalized; // see Note above
 							}
 							return existing;
 						}
@@ -454,14 +447,14 @@ namespace SIL.Transcelerator.Localization
 			if (translation == null)
 			{
 				target.Text = data.SourceUIString;
-				target.Status = State.NotLocalized;
 			}
 			else
 			{
 				target.Text = translation;
-				target.Status = status;
+				target.IsLocalized = isLocalized;
 			}
-			var newTu = new TranslationUnit {Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString, Target = target, Context = context};
+			var newTu = new TranslationUnit {Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString,
+				Target = target, Context = context, Approved = isLocalized}; // see Note above re: Approved
 			AddTranslationUnit(newTu);
 			return newTu;
 		}
@@ -485,14 +478,33 @@ namespace SIL.Transcelerator.Localization
 	}
 	#endregion
 
-	#region TranslationUnit
+	#region TranslationUnit (in a list owned by Group)
 	[Serializable]
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	public class TranslationUnit
 	{
+		private bool m_approved;
+
 		[XmlAttribute(AttributeName = "id")]
 		public string Id { get; set; }
+
+		// Although the XLIFF 1.2 standard says a Target can have a "signed-off" State, crowdin doesn't use this.
+		// Instead it indicates this by means of an "approved" attribute on the TranslationUnit itself.
+		[XmlAttribute(AttributeName = "approved")]
+		[DefaultValue(null)]
+		public string ApprovedStr
+		{
+			get => Approved ? "yes" : null;
+			set => Approved = (value == "yes");
+		}
+
+		[XmlIgnore]
+		public bool Approved
+		{
+			get => m_approved && Target != null && Target.IsLocalized;
+			set => m_approved = value;
+		}
 
 		[XmlElement("source")]
 		public string English { get; set; }
@@ -508,39 +520,34 @@ namespace SIL.Transcelerator.Localization
 	}
 	#endregion
 
-	#region Target
+	#region Localization (the Target  of a Translation Unit)
 	[XmlRoot(ElementName = "target")]
 	public class Localization
 	{
+		private bool m_isLocalized;
+
 		[XmlAttribute(AttributeName = "state")]
 		public string State
 		{
-			get
-			{
-				switch (Status)
-				{
-					default:
-					case Transcelerator.Localization.State.NotLocalized:
-						return "needs-translation";
-					case Transcelerator.Localization.State.Localized: return "translated";
-					case Transcelerator.Localization.State.Approved: return "signed-off";
-				}
-			}
+			get => IsLocalized ? "translated" : "needs-translation";
 			set
 			{
 				switch (value)
 				{
-					case "needs-translation": Status = Transcelerator.Localization.State.NotLocalized; break;
-					case "translated": Status = Transcelerator.Localization.State.Localized; break;
-					case "signed-off": Status = Transcelerator.Localization.State.Approved; break;
+					default: IsLocalized = false; break;
+					case "translated":
+					case "signed-off": // Defined in XLIFF 1.2, but no loonger used in TXL's XLIFF files
+						IsLocalized = true; break;
 				}
 			}
 		}
 
 		[XmlIgnore]
-		public State Status { get; set; }
-
-		internal bool IsLocalized => Status != Transcelerator.Localization.State.NotLocalized;
+		internal bool IsLocalized
+		{
+			get => m_isLocalized && !String.IsNullOrEmpty(Text);
+			set => m_isLocalized = value;
+		}
 
 		[XmlText]
 		public string Text { get; set; }

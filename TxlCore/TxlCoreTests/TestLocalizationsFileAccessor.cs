@@ -18,7 +18,7 @@ namespace SIL.Transcelerator.Localization
 {
 	public class TestLocalizationsFileAccessor : LocalizationsFileGenerator
 	{
-		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, State status = State.Approved)
+		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, bool isLocalized = true)
 		{
 			if (String.IsNullOrWhiteSpace(data?.SourceUIString))
 				throw new ArgumentException("Invalid key!", nameof(data));
@@ -32,7 +32,7 @@ namespace SIL.Transcelerator.Localization
 			{
 				existing = Localizations.Categories.TranslationUnits.SingleOrDefault(c => c.Id == data.SourceUIString);
 				if (existing == null)
-					return Localizations.Categories.AddTranslationUnit(data, localizedString, status);
+					return Localizations.Categories.AddTranslationUnit(data, localizedString, isLocalized);
 			}
 			else if (type == LocalizableStringType.SectionHeading)
 			{
@@ -43,7 +43,7 @@ namespace SIL.Transcelerator.Localization
 					var sectionGroup = new Group {Id = id};
 					Localizations.Groups.Add(sectionGroup);
 					sectionGroup.SubGroups = new List<Group>();
-					return sectionGroup.AddTranslationUnit(data, localizedString, status);
+					return sectionGroup.AddTranslationUnit(data, localizedString, isLocalized);
 				}
 			}
 			else
@@ -76,10 +76,10 @@ namespace SIL.Transcelerator.Localization
 			if (existing == null)
 			{
 				Debug.Assert(group != null);
-				return group.AddTranslationUnit(data, localizedString, status);
+				return group.AddTranslationUnit(data, localizedString, isLocalized);
 			}
 			existing.Target.Text = localizedString;
-			existing.Target.Status = status;
+			existing.Target.IsLocalized = isLocalized;
 			return existing;
 		}
 

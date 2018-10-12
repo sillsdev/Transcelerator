@@ -90,6 +90,7 @@
     <Compile Include="QuestionTests.cs" />
     <Compile Include="TestLocalizationsFileAccessor.cs" />
     <Compile Include="UITestDataString.cs" />
+    <Compile Include="TranslationUnitTests.cs" />
     <Compile Include="WordTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

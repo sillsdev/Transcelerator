@@ -53,7 +53,8 @@ namespace SIL.Transcelerator.Localization
 
 				if (!m_xliffRoot.IsValid(out string error))
 					throw new DataException(error);
-				if (String.IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage))
+				// Crowdin insists on using "es-ES" (Spanish as spoke in Spain), rather than supporting generic Spanish.
+				if (String.IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage) || (m_xliffRoot.File.TargetLanguage == "es-ES" && locale == "es"))
 					m_xliffRoot.File.TargetLanguage = locale;
 				else if (m_xliffRoot.File.TargetLanguage != locale)
 					throw new DataException($"The target language ({m_xliffRoot.File.TargetLanguage}) specified in the data does not match the locale indicated by the file name: {FileName}");

@@ -380,27 +380,21 @@ namespace SIL.Transcelerator.Localization
 			Assert.IsNull(sut.LocalizationsAccessor.Groups);
 		}
 
-		[TestCase(State.Approved)]
-		[TestCase(State.Localized)]
-		[TestCase(State.NotLocalized)]
-		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNoCategoriesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained(State status)
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNoCategoriesHaveLocalizations_NoErrorsAndOnlyTranslatedRetained()
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			var qs = GenerateProverbsQuestionSections();
 			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
 			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
-			var tuForQ1 = sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?", status);
-			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios", status);
+			var tuForQ1 = sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?");
+			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios");
 			// Check setup:
-			Assert.AreEqual(status, tuForQ1.Target.Status);
-			Assert.AreEqual(status, tuForAnswerToQ1.Target.Status);
+			Assert.IsTrue(tuForQ1.Target.IsLocalized);
+			Assert.IsTrue(tuForAnswerToQ1.Target.IsLocalized);
 			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
-			// This is weird, but since crowdin fails to download the state="signed-off" attribute,
-			// we need the code to correct any translation targets that appear to be localized but
-			// have a status of NotLocalized.
-			var expectedFixedUpStatus = status == State.NotLocalized ? State.Approved : status;
-			Assert.AreEqual(expectedFixedUpStatus, tuForQ1.Target.Status);
-			Assert.AreEqual(expectedFixedUpStatus, tuForAnswerToQ1.Target.Status);
+			Assert.IsTrue(tuForQ1.Target.IsLocalized);
+			Assert.IsTrue(tuForAnswerToQ1.Target.IsLocalized);
 
 			var results = GetKeysWithLocalizedStrings(sut, qs).ToList();
 			Assert.IsTrue(results.Select(k => k.SourceUIString).SequenceEqual(
@@ -410,6 +404,25 @@ namespace SIL.Transcelerator.Localization
 			var onlyQuestionLeftInLocalizations = sut.LocalizationsAccessor.Groups.Single().SubGroups.Single().SubGroups.Single();
 			Assert.AreEqual(1, onlyQuestionLeftInLocalizations.TranslationUnits.Count);
 			Assert.AreEqual("Answers", onlyQuestionLeftInLocalizations.SubGroups.Single().Id);
+		}
+
+		[Test]
+		public void GenerateOrUpdateFromMasterQuestions_UpdateToRemoveUntranslatedNodesWhenNothingIsLocalized_NothingRetained()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+			var qs = GenerateProverbsQuestionSections();
+			sut.GenerateOrUpdateFromMasterQuestions(qs); // First time
+			var firstOverviewQuestion = qs.Items.First().Categories.First().Questions.First();
+			var tuForQ1 = sut.AddLocalizationEntry(new UIQuestionDataString(firstOverviewQuestion, true, false), "¿Qué es la sabiduría?", false);
+			var tuForAnswerToQ1 = sut.AddLocalizationEntry(new UIAnswerOrNoteDataString(firstOverviewQuestion, LocalizableStringType.Answer, 1), "Un don de Dios", false);
+			// Check setup:
+			Assert.IsFalse(tuForQ1.Target.IsLocalized);
+			Assert.IsFalse(tuForAnswerToQ1.Target.IsLocalized);
+			sut.GenerateOrUpdateFromMasterQuestions(qs, null, true); // Update
+			Assert.IsFalse(tuForQ1.Target.IsLocalized);
+			Assert.IsFalse(tuForAnswerToQ1.Target.IsLocalized);
+
+			Assert.AreEqual(0, GetKeysWithLocalizedStrings(sut, qs).Count());
 		}
 
 		[Test]
@@ -1021,18 +1034,18 @@ namespace SIL.Transcelerator.Localization
 
 		private void VerifyAllEntriesExistWithNoLocalizedStrings(TestLocalizationsFileAccessor sut, QuestionSections qs)
 		{
-			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)).Target.Status);
-			Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)).Target.Status);
+			Assert.IsFalse(sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)).Target.IsLocalized);
+			Assert.IsFalse(sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)).Target.IsLocalized);
 
 			foreach (var section in qs.Items)
 			{
-				Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(
-					new UISectionHeadDataString(new SectionInfo(section))).Target.Status);
+				Assert.IsFalse(sut.GetLocalizableStringInfo(
+					new UISectionHeadDataString(new SectionInfo(section))).Target.IsLocalized);
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
 					var key = new UIQuestionDataString(question, false, true);
-					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(key).Target.Status);
+					Assert.IsFalse(sut.GetLocalizableStringInfo(key).Target.IsLocalized);
 
 					VerifyNotLocalized(sut, question, question.AlternateForms, LocalizableStringType.Alternate);
 					VerifyNotLocalized(sut, question, question.Answers, LocalizableStringType.Answer);
@@ -1046,7 +1059,7 @@ namespace SIL.Transcelerator.Localization
 			if (subStrings != null)
 			{
 				foreach (var s in subStrings)
-					Assert.AreEqual(State.NotLocalized, sut.GetLocalizableStringInfo(new UITestDataString(s, type, question.StartRef, question.EndRef, question.Text)).Target.Status);
+					Assert.IsFalse(sut.GetLocalizableStringInfo(new UITestDataString(s, type, question.StartRef, question.EndRef, question.Text)).Target.IsLocalized);
 			}
 		}
 
