@@ -135,12 +135,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       <Component Guid="{E0A7B9CE-FAC2-4726-9305-9FD3B0501699}">
         <File Id="TxlQuestionWords.xml_P7" ShortName="zk1ka5xk.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
       </Component>
-      <Component Guid="{5B673BB8-C35B-458C-A7F6-F9F4EF533041}">
-        <File Id="LocalizedPhrases_es.xlf_P7" ShortName="6i9lrqdm.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
-      </Component>
-      <Component Guid="{473B3B44-FABF-4E81-96FF-B01F7041A203}">
-        <File Id="LocalizedPhrases_en_GB.xlf_P7" ShortName="4gy7oj6e.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
-      </Component>
       <Component Guid="{352892BC-8904-4760-8E61-FC26C2865827}">
         <File Id="Analytics.NET.dll_P7" ShortName="wzi8aqe7.dll" KeyPath="yes" Name="Analytics.NET.dll" />
       </Component>
@@ -212,6 +206,18 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <File Id="Transcelerator.dll.config_P7" ShortName="gzmrl3nd.cfg" KeyPath="yes" Name="Transcelerator.dll.config" />
       </Component>      
     </ComponentGroup>
+
+	<ComponentGroup Id="COMPONENTSFORP7PLUGIN_es" Directory="INSTALLDIR7" Source="..\Transcelerator\bin\Release" >
+      <Component Id="LocalizedPhrases_es.xlf_P7" Guid="{5B673BB8-C35B-458C-A7F6-F9F4EF533041}">
+        <File Id="LocalizedPhrases_es.xlf_P7" ShortName="6i9lrqdm.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
+      </Component>
+	</ComponentGroup>
+	
+	<ComponentGroup Id="COMPONENTSFORP7PLUGIN_en_GB" Directory="INSTALLDIR7" Source="..\Transcelerator\bin\Release">
+      <Component Id="LocalizedPhrases_en_GB.xlf_P7" Guid="{473B3B44-FABF-4E81-96FF-B01F7041A203}">
+        <File Id="LocalizedPhrases_en_GB.xlf_P7" ShortName="4gy7oj6e.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
+      </Component>
+	</ComponentGroup>
 	
     <ComponentGroup Id="COMPONENTSFORP7TestPLUGIN" Directory="INSTALLDIR7TEST" Source="..\Transcelerator\bin\Release">
       <Component Guid="{6517fe81-0e7f-42ed-bdbc-0d5041bf6f46}">
@@ -229,12 +235,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       <Component Guid="{44eae9ce-57b3-48e8-9790-8a4824468472}">
         <File Id="TxlQuestionWords.xml_P7Test" ShortName="4m95zkrf.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
       </Component>
-      <Component Guid="{3C31EA3F-3B5A-4934-81FE-121E61B60FFF}">
-        <File Id="LocalizedPhrases_es.xlf_P7Test" ShortName="ejoysqre.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
-      </Component>
-      <Component Guid="{ED4756C6-C306-44C5-8418-0DEAA239D3E2}">
-        <File Id="LocalizedPhrases_en_GB.xlf_P7Test" ShortName="7cogbz73.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
-      </Component>
+
       <Component Guid="{1c250d8a-b1be-4a69-9205-13dbc232010f}">
         <File Id="Analytics.NET.dll_P7Test" ShortName="pt3ei4z5.dll" KeyPath="yes" Name="Analytics.NET.dll" />
       </Component>
@@ -307,6 +308,18 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
 	  </ComponentGroup>
 
+	<ComponentGroup Id="COMPONENTSFORP7TestPLUGIN_es" Directory="INSTALLDIR7TEST" Source="..\Transcelerator\bin\Release" >
+	  <Component Id="LocalizedPhrases_es.xlf_P7Test" Guid="{3C31EA3F-3B5A-4934-81FE-121E61B60FFF}">
+        <File Id="LocalizedPhrases_es.xlf_P7Test" ShortName="ejoysqre.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
+      </Component>
+	</ComponentGroup>
+	
+	<ComponentGroup Id="COMPONENTSFORP7TestPLUGIN_en_GB" Directory="INSTALLDIR7TEST" Source="..\Transcelerator\bin\Release">
+      <Component Id="COMPONENTSFORP7TestPLUGIN_en_GB" Guid="{ED4756C6-C306-44C5-8418-0DEAA239D3E2}">
+        <File Id="LocalizedPhrases_en_GB.xlf_P7Test" ShortName="7cogbz73.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
+      </Component>
+	</ComponentGroup>
+	  
     <ComponentGroup Id="COMPONENTSFORP8PLUGIN" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\Release">
       <Component Guid="{91562ae0-0a28-4f0c-9345-95464e109314}">
         <File Id="Transcelerator.dll_P8" ShortName="c9c8ckpm.dll" KeyPath="yes" Name="Transcelerator.dll" />
@@ -322,12 +335,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
       <Component Guid="{fc7b1474-f88a-46b7-9953-1894f9c00923}">
         <File Id="TxlQuestionWords.xml_P8" ShortName="yd6ebdz3.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
-      </Component>
-      <Component Guid="{116D4A05-3D7E-4964-AC27-36DC38EE66B8}">
-        <File Id="LocalizedPhrases_es.xlf_P8" ShortName="64emy0yg.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
-      </Component>
-      <Component Guid="{5538D0DE-30C2-411F-AFDA-B906F423B3A8}">
-        <File Id="LocalizedPhrases_en_GB.xlf_P8" ShortName="zy33laeh.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
       </Component>
       <Component Guid="{524b2f76-d358-42a3-b32b-90f5f5410300}">
         <File Id="Analytics.NET.dll_P8" ShortName="k2rh61ic.dll" KeyPath="yes" Name="Analytics.NET.dll" />
@@ -401,6 +408,18 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
 	  </ComponentGroup>
 
+	<ComponentGroup Id="COMPONENTSFORP8PLUGIN_es" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\Release">
+      <Component Id="LocalizedPhrases_es.xlf_P8" Guid="{116D4A05-3D7E-4964-AC27-36DC38EE66B8}">
+        <File Id="LocalizedPhrases_es.xlf_P8" ShortName="64emy0yg.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
+      </Component>
+	</ComponentGroup>
+	
+	<ComponentGroup Id="COMPONENTSFORP8PLUGIN_en_GB" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\Release">
+      <Component Id="LocalizedPhrases_en_GB.xlf_P8" Guid="{5538D0DE-30C2-411F-AFDA-B906F423B3A8}">
+        <File Id="LocalizedPhrases_en_GB.xlf_P8" ShortName="zy33laeh.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
+      </Component>
+	</ComponentGroup>
+
     <ComponentGroup Id="COMPONENTSFORP8TestPLUGIN" Directory="INSTALLDIR8TEST" Source="..\Transcelerator\bin\Release">
       <Component Guid="{7990ac5d-987f-4134-9146-ddb0ee7c5933}">
         <File Id="Transcelerator.dll_P8Test" ShortName="1qbjgu3h.dll" KeyPath="yes" Name="Transcelerator.dll" />
@@ -416,12 +435,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
       <Component Guid="{9f22feff-d35a-47c9-876b-af6760c27690}">
         <File Id="TxlQuestionWords.xml_P8Test" ShortName="lab9u8fk.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
-      </Component>
-      <Component Guid="{8152F7DF-01E1-4886-9C24-0F465A94EB60}">
-        <File Id="LocalizedPhrases_es.xlf_P8Test" ShortName="dwf68pwf.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
-      </Component>
-      <Component Guid="{8940BFFC-065E-4EA4-AE82-2D204AB77FC8}">
-        <File Id="LocalizedPhrases_en_GB.xlf_P8Test" ShortName="4fo7jpqg.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
       </Component>
       <Component Guid="{dc8c9640-b274-4b73-9f71-2dda293ddea5}">
         <File Id="Analytics.NET.dll_P8Test" ShortName="y47plibz.dll" KeyPath="yes" Name="Analytics.NET.dll" />
@@ -494,26 +507,70 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <File Id="Transcelerator.dll.config_P8Test" ShortName="g9cputjl.cfg" KeyPath="yes" Name="Transcelerator.dll.config" />
       </Component>
 	  </ComponentGroup>
-
+  
+	<ComponentGroup Id="COMPONENTSFORP8TestPLUGIN_es" Directory="INSTALLDIR8TEST" Source="..\Transcelerator\bin\Release" >
+	  <Component Id="LocalizedPhrases_es.xlf_P8Test" Guid="{8152F7DF-01E1-4886-9C24-0F465A94EB60}">
+        <File Id="LocalizedPhrases_es.xlf_P8Test" ShortName="dwf68pwf.xlf" KeyPath="yes" Name="LocalizedPhrases-es.xlf" />
+      </Component>
+	</ComponentGroup>
+	
+	<ComponentGroup Id="COMPONENTSFORP8TestPLUGIN_en_GB" Directory="INSTALLDIR8TEST" Source="..\Transcelerator\bin\Release">
+      <Component Id="COMPONENTSFORP8TestPLUGIN_en_GB" Guid="{8940BFFC-065E-4EA4-AE82-2D204AB77FC8}">
+        <File Id="LocalizedPhrases_en_GB.xlf_P8Test" ShortName="4fo7jpqg.xlf" KeyPath="yes" Name="LocalizedPhrases-en-GB.xlf" />
+      </Component>
+	</ComponentGroup>
+	
 	  <Feature Id="PluginFeature_P7" Level="0" Title="Plugin for Paratext 7.5" AllowAdvertise="no">
-      <Condition Level="1"><![CDATA[PARATEXT75100ORGREATER]]></Condition>
-      <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN"/>
-    </Feature>
+        <Condition Level="1"><![CDATA[PARATEXT75100ORGREATER]]></Condition>
+        <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN"/>
+		<Feature Id="Localization_P7" Level="1" Title="Localizations" InstallDefault="followParent" AllowAdvertise="no">
+		  <Feature Id="Localization_P7_es" Level="1" Title="español" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP7PLUGIN_es"/>
+		  </Feature>
+		  <Feature Id="Localization_P7_enGB" Level="1" Title="British English" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP7PLUGIN_en_GB"/>
+		  </Feature>
+		</Feature>
+	  </Feature>
 	
 	  <Feature Id="PluginFeature_P7Test" Level="0" Title="Plugin for Paratext 7.6 (pre-release)" AllowAdvertise="no">
-      <Condition Level="1"><![CDATA[PARATEXT7TEST]]></Condition>
-      <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN"/>
-    </Feature>
+        <Condition Level="1"><![CDATA[PARATEXT7TEST]]></Condition>
+        <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN"/>
+		<Feature Id="Localization_P7Test" Level="1" Title="Localizations" InstallDefault="followParent" AllowAdvertise="no">
+		  <Feature Id="Localization_P7Test_es" Level="1" Title="español" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN_es"/>
+		  </Feature>
+		  <Feature Id="Localization_P7Test_enGB" Level="1" Title="British English" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN_en_GB"/>
+		  </Feature>
+		</Feature>
+      </Feature>
 	
 	  <Feature Id="PluginFeature_P8" Level="0" Title="Plugin for Paratext 8" AllowAdvertise="no">
-      <Condition Level="1"><![CDATA[PARATEXT8]]></Condition>
-      <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN"/>
-    </Feature>
+        <Condition Level="1"><![CDATA[PARATEXT8]]></Condition>
+        <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN"/>
+		<Feature Id="Localization_P8" Level="1" Title="Localizations" InstallDefault="followParent" AllowAdvertise="no">
+		  <Feature Id="Localization_P8_es" Level="1" Title="español" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP8PLUGIN_es"/>
+		  </Feature>
+		  <Feature Id="Localization_P8_enGB" Level="1" Title="British English" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP8PLUGIN_en_GB"/>
+		  </Feature>
+		</Feature>
+      </Feature>
 	
 	  <Feature Id="PluginFeature_P8Test" Level="0" Title="Plugin for Paratext 8 Pre-release" AllowAdvertise="no">
-      <Condition Level="1"><![CDATA[PARATEXT8TEST]]></Condition>
-      <ComponentGroupRef Id="COMPONENTSFORP8TestPLUGIN"/>
-    </Feature>
+        <Condition Level="1"><![CDATA[PARATEXT8TEST]]></Condition>
+        <ComponentGroupRef Id="COMPONENTSFORP8TestPLUGIN"/>
+		<Feature Id="Localization_P8Test" Level="1" Title="Localizations" InstallDefault="followParent" AllowAdvertise="no">
+		  <Feature Id="Localization_P8Test_es" Level="1" Title="español" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP8TestPLUGIN_es"/>
+		  </Feature>
+		  <Feature Id="Localization_P8Test_enGB" Level="1" Title="British English" InstallDefault="followParent" AllowAdvertise="no">
+			<ComponentGroupRef Id="COMPONENTSFORP8TestPLUGIN_en_GB"/>
+		  </Feature>
+		</Feature>
+      </Feature>
 	
 	  <CustomAction Id="SetUpdatePluginStore_P7" Property="UpdatePluginStore_P7" Value="&quot;[PARATEXT7]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check"/>
 	  <CustomAction Id="SetUpdatePluginStore_P7Test" Property="UpdatePluginStore_P7Test" Value="&quot;[PARATEXT7TEST]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check"/>
