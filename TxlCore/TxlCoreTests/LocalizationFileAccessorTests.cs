@@ -319,8 +319,9 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual("This is also gobbledy-gook, wouldn't you say?", sut.GetLocalizedString(key));
 		}
 
-		[Test]
-		public void GetLocalizedString_OnlyAlternateFormsHaveLocalizations_BestLocalizationIsReturnedForEachFormOfQuestion()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetLocalizedString_OnlyAlternateFormsHaveLocalizations_BestLocalizationIsReturnedForEachFormOfQuestion(bool retainOnlyTranslatedStrings)
 		{
 			var sut = new LocalizationsFileGenerator();
 			var qs = GenerateProverbsQuestionSections(true);
@@ -329,7 +330,7 @@ namespace SIL.Transcelerator.Localization
 				new XmlTranslation {PhraseKey = "How would you define wisdom?", Reference = "PRO 3.1-35", Translation = "¿Cómo se puede definir la sabiduría?"},
 				new XmlTranslation {PhraseKey = "What is meant by \"wisdom?\"", Reference = "PRO 3.1-35", Translation = "¿Qué significa la palabra \"sabiduría?\""},
 			};
-			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations);
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations, retainOnlyTranslatedStrings);
 
 			// First check that the correct localized form of each alternate is returned.
 			var firstQuestion = qs.Items[0].Categories[0].Questions.First();
@@ -358,6 +359,33 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual("¿Qué significa la palabra \"sabiduría?\"", sut.GetLocalizedString(key));
 			key = new UIQuestionDataString(firstQuestion, false, false);
 			Assert.AreEqual("This is pure gobbledy-gook, isn't it?", sut.GetLocalizedString(key));
+		}
+
+		[TestCase("How would you define wisdom?", "¿Cómo se puede definir la sabiduría?")]
+		[TestCase("What is meant by \"wisdom?\"", "¿Qué significa la palabra \"sabiduría?\"")]
+		public void GetLocalizedString_OneAlternateFormLocalizedAnyAlternate_ReturnsLocalizedForm(string englishAlt, string localized)
+		{
+			var sut = new LocalizationsFileGenerator();
+			var qs = GenerateProverbsQuestionSections(true);
+			var existingTxlTranslations = new List<XmlTranslation>
+			{
+				new XmlTranslation {PhraseKey = englishAlt, Reference = "PRO 3.1-35", Translation = localized},
+			};
+			sut.GenerateOrUpdateFromMasterQuestions(qs, existingTxlTranslations, true);
+
+			var firstQuestion = qs.Items[0].Categories[0].Questions.First();
+			UIDataString key = new UIAlternateDataString(firstQuestion, 0, true);
+			Assert.AreEqual(localized, sut.GetLocalizedString(key));
+			key = new UIAlternateDataString(firstQuestion, 1, true);
+			Assert.AreEqual(localized, sut.GetLocalizedString(key));
+			key = new UIQuestionDataString(firstQuestion, true, true);
+			Assert.AreEqual(localized, sut.GetLocalizedString(key));
+			firstQuestion.ModifiedPhrase = englishAlt;
+			key = new UIQuestionDataString(firstQuestion, false, true);
+			Assert.AreEqual(localized, sut.GetLocalizedString(key));
+			firstQuestion.ModifiedPhrase = localized;
+			key = new UIQuestionDataString(firstQuestion, false, true);
+			Assert.AreEqual(localized, sut.GetLocalizedString(key));
 		}
 
 		[Test]

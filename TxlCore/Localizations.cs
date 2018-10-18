@@ -240,8 +240,8 @@ namespace SIL.Transcelerator.Localization
 						{
 							if (transUnit != null)
 								return transUnit;
-							transUnit = question.TranslationUnits.First();
-							return transUnit.Target.IsLocalized ? transUnit :
+							transUnit = question.TranslationUnits?.FirstOrDefault();
+							return transUnit != null && transUnit.Target.IsLocalized ? transUnit :
 								alternates?.TranslationUnits.FirstOrDefault(tu => tu.Target.IsLocalized);
 						}
 						break;
@@ -340,8 +340,6 @@ namespace SIL.Transcelerator.Localization
 
 		[XmlElement(ElementName = "group")]
 		public List<Group> SubGroups { get; set; }
-
-		private int NextSequentialId => TranslationUnits?.Count + 1 ?? 1;
 
 		public bool IsValid(out string error)
 		{
