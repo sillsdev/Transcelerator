@@ -789,11 +789,6 @@ namespace SIL.Transcelerator
 			m_selectKeyboard?.Invoke(InTranslationCell);
 		}
 
-		private void UNSQuestionsDialog_Deactivate(object sender, EventArgs e)
-		{
-
-		}
-
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			m_lastTranslationSelectionState = null;
