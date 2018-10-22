@@ -87,6 +87,7 @@ namespace SIL.Transcelerator
 			this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuGenerate = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuProduceScriptureForgeFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateOutputForArloToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLoadTranslationsFromTextFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -351,6 +352,7 @@ namespace SIL.Transcelerator
             this.reloadToolStripMenuItem,
             this.toolStripSeparator2,
             this.mnuGenerate,
+            this.mnuProduceScriptureForgeFiles,
             this.generateOutputForArloToolStripMenuItem,
             this.mnuLoadTranslationsFromTextFile,
             this.toolStripSeparator3,
@@ -389,6 +391,14 @@ namespace SIL.Transcelerator
 			this.mnuGenerate.Name = "mnuGenerate";
 			resources.ApplyResources(this.mnuGenerate, "mnuGenerate");
 			this.mnuGenerate.Click += new System.EventHandler(this.mnuGenerate_Click);
+			// 
+			// mnuProduceScriptureForgeFiles
+			// 
+			this.mnuProduceScriptureForgeFiles.CheckOnClick = true;
+			this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
+			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
+			resources.ApplyResources(this.mnuProduceScriptureForgeFiles, "mnuProduceScriptureForgeFiles");
+			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
 			// 
 			// generateOutputForArloToolStripMenuItem
 			// 
@@ -874,5 +884,6 @@ namespace SIL.Transcelerator
 		private ToolStripSeparator toolStripSeparator9;
 		private ToolStripMenuItem displayLanguageToolStripMenuItem;
 		private ToolStripMenuItem en_ToolStripMenuItem;
+		private ToolStripMenuItem mnuProduceScriptureForgeFiles;
 	}
 }

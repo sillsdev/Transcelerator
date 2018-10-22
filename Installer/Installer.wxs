@@ -190,6 +190,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	    <Component Guid="{5D7D6D47-0C76-4CCB-B81A-923A90EC7AB3}">
         <File Id="Transcelerator.pdb_P7" ShortName="mjmy5nue.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
       </Component>
+      <Component Guid="{9F324AC8-0587-444B-A0E3-D43EA396A095}">
+        <File Id="ComprehensionCheckingData.dll_P7" ShortName="bmjlk7h1.dll" KeyPath="yes" Name="ComprehensionCheckingData.dll" />
+      </Component>
+      <Component Guid="{0164B894-60DA-4E91-8A4F-853134933F9C}">
+        <File Id="ComprehensionCheckingData.pdb_P7" ShortName="10wrgnrt.pdb" KeyPath="yes" Name="ComprehensionCheckingData.pdb" />
+      </Component>
       <Component Guid="{F289E8D6-42EC-4D72-8C0D-4347E17497F8}">
         <File Id="TxlCore.pdb_P7" ShortName="jleb4eyo.pdb" KeyPath="yes" Name="TxlCore.pdb" />
       </Component>
@@ -291,6 +297,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 	    <Component Guid="{bb19a8dc-04dd-4583-b2b1-1353e2a505fe}">
         <File Id="Transcelerator.pdb_P7Test" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
       </Component>
+      <Component Guid="{837742E8-A464-4326-A63A-1BECCCA913F2}">
+        <File Id="ComprehensionCheckingData.dll_P7Test" ShortName="vp29mioj.dll" KeyPath="yes" Name="ComprehensionCheckingData.dll" />
+      </Component>
+      <Component Guid="{3A3F02C0-FB36-4A67-B0F0-177D1274058F}">
+        <File Id="ComprehensionCheckingData.pdb_P7Test" ShortName="jmjj2d6f.pdb" KeyPath="yes" Name="ComprehensionCheckingData.pdb" />
+      </Component>
       <Component Guid="{00aa3d84-74f1-45f2-866d-be00f3b105e1}">
         <File Id="TxlCore.pdb_P7Test" ShortName="l1xkhgcz.pdb" KeyPath="yes" Name="TxlCore.pdb" />
       </Component>
@@ -388,8 +400,14 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       <Component Guid="{620c6217-5618-4aeb-b13b-15f15b8906d0}">
         <File Id="KeymanLink.dll_P8" ShortName="ysg24p4b.dll" KeyPath="yes" Name="KeymanLink.dll" />
       </Component>
-	    <Component Guid="{fb7d15cf-09ab-4b45-93bb-8ffdae0ad510}">
+	  <Component Guid="{fb7d15cf-09ab-4b45-93bb-8ffdae0ad510}">
         <File Id="Transcelerator.pdb_P8" ShortName="t7n2y6jm.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
+      </Component>
+      <Component Guid="{D9BA2D91-C5B3-4B3C-AC03-A2A8E3A4741F}">
+        <File Id="ComprehensionCheckingData.dll_P8" ShortName="s2io46yh.dll" KeyPath="yes" Name="ComprehensionCheckingData.dll" />
+      </Component>
+      <Component Guid="{684E397E-4FC3-441F-853F-08AE2766C235}">
+        <File Id="ComprehensionCheckingData.pdb_P8" ShortName="3grbuofg.pdb" KeyPath="yes" Name="ComprehensionCheckingData.pdb" />
       </Component>
       <Component Guid="{c33f7d66-3c8f-4f8e-a727-5e3bd20d6e11}">
         <File Id="TxlCore.pdb_P8" ShortName="payc3gvo.pdb" KeyPath="yes" Name="TxlCore.pdb" />
@@ -490,6 +508,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
       </Component>
 	    <Component Guid="{e961e06b-0f95-4b24-8942-ad36bbd7da0c}">
         <File Id="Transcelerator.pdb_P8Test" ShortName="ijtwwnxe.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
+      </Component>
+      <Component Guid="{123E1E82-E82E-4C60-9130-F2D9F0C78CD8}">
+        <File Id="ComprehensionCheckingData.dll_P8Test" ShortName="gv00orsb.dll" KeyPath="yes" Name="ComprehensionCheckingData.dll" />
+      </Component>
+      <Component Guid="{727F0875-059E-4938-B165-58996F047F91}">
+        <File Id="ComprehensionCheckingData.pdb_P8Test" ShortName="aekbdwja.pdb" KeyPath="yes" Name="ComprehensionCheckingData.pdb" />
       </Component>
       <Component Guid="{cab157f6-4fe7-47c4-8589-fc370316e766}">
         <File Id="TxlCore.pdb_P8Test" ShortName="gpd0x10v.pdb" KeyPath="yes" Name="TxlCore.pdb" />

@@ -30,6 +30,8 @@ using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
 using SIL.Xml;
 using File = System.IO.File;
+using SIL.ComprehensionCheckingData;
+using SIL.Transcelerator.Properties;
 
 namespace SIL.Transcelerator
 {
@@ -387,6 +389,8 @@ namespace SIL.Transcelerator
 			btnReceiveScrReferences.Checked = Properties.Settings.Default.ReceiveScrRefs;
 			ShowAnswersAndComments = Properties.Settings.Default.ShowAnswersAndComments;
 			MaximumHeightOfKeyTermsPane = Properties.Settings.Default.MaximumHeightOfKeyTermsPane;
+			mnuProduceScriptureForgeFiles.Checked = Properties.Settings.Default.ProduceScriptureForgeFiles;
+			mnuAutoSave.Checked = Properties.Settings.Default.AutoSave;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -424,7 +428,7 @@ namespace SIL.Transcelerator
 			{
 				var repo = GlobalWritingSystemRepository.Initialize();
 #endif
-			foreach (var locale in LocalizationsFileGenerator.GetAvailableLocales(m_installDir))
+			foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
 			{
 				string languageName;
 #if UseGlobalWritingSystemRepo
@@ -537,8 +541,13 @@ namespace SIL.Transcelerator
 						break;
 				}
 			}
-            if (!e.Cancel)
-                Properties.Settings.Default.Save();
+			if (!e.Cancel)
+			{
+				Properties.Settings.Default.Save();
+
+				if (Properties.Settings.Default.ProduceScriptureForgeFiles)
+					ProduceScriptureForgeFiles();
+			}
 
 			Application.RemoveMessageFilter(this);
 
@@ -778,6 +787,11 @@ namespace SIL.Transcelerator
 		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
 		{
 			m_selectKeyboard?.Invoke(InTranslationCell);
+		}
+
+		private void UNSQuestionsDialog_Deactivate(object sender, EventArgs e)
+		{
+
 		}
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -1107,7 +1121,6 @@ namespace SIL.Transcelerator
 						XmlSerializationHelper.SerializeToString(customizations));
 				}
 			}
-
 			m_saving = false;
 		}
 
@@ -1148,20 +1161,20 @@ namespace SIL.Transcelerator
 
 				if (dlg.ShowDialog() == DialogResult.OK)
                 {
-                    Func<int, int, bool> InRange;
+                    Func<TranslatablePhrase, bool> InRange;
                     if (dlg.m_rdoWholeBook.Checked)
                     {
                         int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
-                        InRange = (bcvStart, bcvEnd) => BCVRef.GetBookFromBcv(bcvStart) == bookNum;
+                        InRange = (tp) => BCVRef.GetBookFromBcv(tp.StartRef) == bookNum;
                     }
                     else
                     {
                         BCVRef startRef = dlg.VerseRangeStartRef;
                         BCVRef endRef = dlg.VerseRangeEndRef;
-                        InRange = (bcvStart, bcvEnd) => bcvStart >= startRef && bcvEnd <= endRef;
+                        InRange = (tp) => tp.StartRef >= startRef && tp.EndRef <= endRef;
                     }
 
-                    List<TranslatablePhrase> allPhrasesInRange = m_helper.UnfilteredPhrases.Where(tp => tp.Category > -1 && InRange(tp.StartRef, tp.EndRef) && !tp.IsExcluded).ToList();
+                    List<TranslatablePhrase> allPhrasesInRange = m_helper.AllActivePhrasesWhere(InRange).ToList();
                     if (dlg.m_rdoDisplayWarning.Checked)
                     {
                         int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
@@ -1331,6 +1344,95 @@ namespace SIL.Transcelerator
 			var langAttrib = langOfData == defaultLangInContext ? null : $" lang=\"{langOfData}\"";
 			var classAttrib = className == null ? null : $" class=\"{className}\"";
 			sw.WriteLine($"<{paragraphType}{classAttrib}{langAttrib}>{data.Normalize(NormalizationForm.FormC)}</{paragraphType}>");
+		}
+
+		private void ProduceScriptureForgeFiles()
+		{
+			var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
+
+			int prevBook = -1;
+			ComprehensionCheckingQuestionsForBook currentBookQuestions = null; 
+
+			foreach (TranslatablePhrase phrase in m_helper.AllActivePhrasesWhere(p => p.HasUserTranslation))
+			{
+				var question = phrase.QuestionInfo;
+				var startRef = new BCVRef(phrase.StartRef);
+				int currBook = startRef.Book;
+				if (currBook != prevBook)
+				{
+					if (currentBookQuestions != null)
+					{
+						m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
+							currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+					}
+					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
+					{
+						Lang = m_vernIcuLocale,
+						BookId = BCVRef.NumberToBookCode(currBook),
+						Questions = new List<ComprehensionCheckingQuestion>()
+					};
+					prevBook = currBook;
+				}
+
+				var q = new ComprehensionCheckingQuestion
+				{
+					Question = GetQuestionAlternates(phrase, allAvailableLocalizers),
+					IsOverview = !phrase.IsDetail,
+					Chapter = startRef.Chapter,
+					StartVerse = startRef.Verse,
+					Answers = GetMultilingualStrings(question, LocalizableStringType.Answer, allAvailableLocalizers),
+					Notes = GetMultilingualStrings(question, LocalizableStringType.Note, allAvailableLocalizers)
+				};
+
+				if (phrase.StartRef != phrase.EndRef)
+				{
+					var endRef = new BCVRef(phrase.EndRef);
+					if (startRef.Chapter != endRef.Chapter)
+						q.EndChapter = endRef.Chapter;
+					q.EndVerse = endRef.Verse;
+				}
+				
+				currentBookQuestions.Questions.Add(q);
+			}
+			// Now output the final book's questions.
+			if (currentBookQuestions != null)
+			{
+				m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
+					currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+			}
+		}
+
+		private StringAlt[] GetQuestionAlternates(TranslatablePhrase question, IReadOnlyList<LocalizationsFileAccessor> localizers)
+		{
+			var list = new List<StringAlt> {new StringAlt {Lang = m_vernIcuLocale, Text = question.Translation}};
+			string variant = null;
+			var locKey = question.ToUIDataString();
+			list.Add(new StringAlt { Lang = "en-US", Text = locKey.SourceUIString });
+			list.AddRange(from loc in localizers.Where(l => l.Locale != m_vernIcuLocale)
+				where loc.TryGetLocalizedString(locKey, out variant)
+				select new StringAlt { Lang = loc.Locale, Text = variant });
+				
+			return list.ToArray();
+		}
+
+		private StringAlt[][] GetMultilingualStrings(Question question, LocalizableStringType type, IReadOnlyList<LocalizationsFileAccessor> localizers)
+		{
+			string[] sourceStrings = type == LocalizableStringType.Answer ? question.Answers : question.Notes;
+			if (sourceStrings == null)
+				return null;
+			string variant;
+			var ms = new StringAlt[sourceStrings.Length][];
+			for (var i = 0; i < sourceStrings.Length; i++)
+			{
+				var locKey = new UIAnswerOrNoteDataString(question, type, i);
+				variant = null;
+				List<StringAlt> list = new List<StringAlt> {new StringAlt {Lang = "en-US", Text = sourceStrings[i]}};
+				list.AddRange(from loc in localizers
+							  where loc.TryGetLocalizedString(locKey, out variant)
+							  select new StringAlt {Lang = loc.Locale, Text = variant});
+				ms[i] = list.ToArray();
+			}
+			return ms;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1622,6 +1724,7 @@ namespace SIL.Transcelerator
 		{
 			if (mnuAutoSave.Checked)
 				Save(false, false);
+			Properties.Settings.Default.AutoSave = mnuAutoSave.Checked;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2808,11 +2911,18 @@ namespace SIL.Transcelerator
 				}
 			}
 		}
-#endregion
-	}
-#endregion
+		#endregion
 
-#region class SubstringDescriptor
+		private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
+		{
+			mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
+				Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
+			Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
+		}
+	}
+	#endregion
+
+	#region class SubstringDescriptor
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Simple class to allow methods to pass an offset and a length in order to descibe a
