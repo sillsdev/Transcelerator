@@ -199,7 +199,12 @@ namespace SIL.Transcelerator
             Data = data;
         }
 
-        public override string Read(DataFileId fileId)
+	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
+	    {
+		    throw new NotImplementedException();
+	    }
+
+	    public override string Read(DataFileId fileId)
         {
             if (fileId != DataFileId.KeyTermRenderingInfo)
                 throw new ArgumentException("Unexpected DataFileId '" + fileId + "'passed to Read method.", "fileId");

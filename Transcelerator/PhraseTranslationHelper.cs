@@ -313,6 +313,11 @@ namespace SIL.Transcelerator
 			}
 		}
 
+		internal IEnumerable<TranslatablePhrase> AllActivePhrasesWhere(Func<TranslatablePhrase, bool> include)
+		{
+			return UnfilteredPhrases.Where(tp => tp.Category > -1 && include(tp) && !tp.IsExcluded);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the list of customized (added, inserted, modified, deleted) phrases, sorted by

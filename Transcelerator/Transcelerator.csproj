@@ -427,6 +427,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ComprehensionCheckingData\ComprehensionCheckingData.csproj">
+      <Project>{c6474f83-4e0a-462f-bd87-883c197f1be6}</Project>
+      <Name>ComprehensionCheckingData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
@@ -444,6 +448,8 @@
     <None Include="Properties\SILLogoBlue132x184.png" />
     <None Include="Properties\Arrow-Down-icon24x24.png" />
     <None Include="Properties\Arrow-Up-icon24x24.png" />
+    <None Include="Properties\sf_logo_medium - selected.png" />
+    <None Include="Properties\sf_logo_medium.png" />
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -451,5 +451,29 @@ namespace SIL.Transcelerator.Properties {
                 this["GenerateTemplateSkipQuestionIfNotTranslated"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ProduceScriptureForgeFiles {
+            get {
+                return ((bool)(this["ProduceScriptureForgeFiles"]));
+            }
+            set {
+                this["ProduceScriptureForgeFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoSave {
+            get {
+                return ((bool)(this["AutoSave"]));
+            }
+            set {
+                this["AutoSave"] = value;
+            }
+        }
     }
 }

@@ -13,6 +13,9 @@
   <KeyTermRule id="wish; pray" rule="Exclude">
     <Alternate name="pray"/>
   </KeyTermRule>
+  <KeyTermRule id="idol">
+    <Alternate name="fetish"/>
+  </KeyTermRule>
   <KeyTermRule id="poor, humble, meek; before God" rule="Exclude">
     <Alternate name="humble"/>
     <Alternate name="poor"/>

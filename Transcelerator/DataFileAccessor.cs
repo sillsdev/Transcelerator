@@ -5,17 +5,22 @@ using AddInSideViews;
 namespace SIL.Transcelerator
 {
     public abstract class DataFileAccessor
-    {
-        public enum DataFileId
-        {
-            Translations,
-            QuestionCustomizations,
-            PhraseSubstitutions,
-            KeyTermRenderingInfo,
-            TermRenderingSelectionRules,
-        }
+	{
+		public enum DataFileId
+		{
+			Translations,
+			QuestionCustomizations,
+			PhraseSubstitutions,
+			KeyTermRenderingInfo,
+			TermRenderingSelectionRules,
+		}
 
-        protected static string GetFileName(DataFileId fileId)
+		public enum BookSpecificDataFileId
+		{
+			ScriptureForge,
+		}
+
+		protected static string GetFileName(DataFileId fileId)
         {
             switch (fileId)
             {
@@ -24,13 +29,26 @@ namespace SIL.Transcelerator
                 case DataFileId.PhraseSubstitutions: return "Phrase substitutions.xml";
                 case DataFileId.KeyTermRenderingInfo: return "Key term rendering info.xml";
                 case DataFileId.TermRenderingSelectionRules: return "Term rendering selection rules.xml";
+				default:
+		            throw new ArgumentException("Bogus", nameof(fileId));
             }
-            throw new ArgumentException("Bogus", "fileId");
-        }
+		}
 
-        public abstract void Write(DataFileId fileId, string data);
+		protected static string GetBookSpecificFileName(BookSpecificDataFileId fileId, string bookId)
+		{
+			switch (fileId)
+			{
+				case BookSpecificDataFileId.ScriptureForge: return $"Translated Checking Questions for {bookId}.xml";
+				default:
+					throw new ArgumentException("Bogus", nameof(fileId));
+			}
+		}
 
-        public abstract string Read(DataFileId fileId);
+		public abstract void Write(DataFileId fileId, string data);
+
+		public abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
+
+		public abstract string Read(DataFileId fileId);
 
         public abstract bool Exists(DataFileId fileId);
 
@@ -80,7 +98,12 @@ namespace SIL.Transcelerator
             m_putPlugInData(GetFileName(fileId), data);
         }
 
-        public override string Read(DataFileId fileId)
+	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
+	    {
+			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), data);
+		}
+
+	    public override string Read(DataFileId fileId)
         {
             return m_getPlugInData(GetFileName(fileId)) ?? string.Empty;
         }
