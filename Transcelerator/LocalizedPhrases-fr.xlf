@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file original="TransceleratorLocalizations.xml" source-language="en" datatype="plaintext" target-language="fr">
+    <body>
+      <group id="Categories">
+        <trans-unit id="c:Category nameOverview">
+          <source>Overview</source>
+          <target state="translated">Vue d'ensemble</target>
+          <note>Category name</note>
+        </trans-unit>
+        <trans-unit id="c:Category nameDetails">
+          <source>Details</source>
+          <target state="translated">Détails</target>
+          <note>Category name</note>
+        </trans-unit>
+      </group>
+      <group id="S:!ACT!1~1-5">
+        <group id="Overview">
+          <group id="Q:ACT 1.1-5+What information did Luke, the writer of this book, give in this introduction?">
+            <trans-unit id="q:!ACT!1~1#Question:What information did Luke, the writer of this book, give in this introduction?">
+              <source>What information did Luke, the writer of this book, give in this introduction?</source>
+              <target state="translated">Quelles informations Luc, l'auteur de ce livre, a-t-il données dans cette introduction ?</target>
+              <note>!ACT!1~1#Question:What information did Luke, the writer of this book, give in this introduction?</note>
+            </trans-unit>
+            <group id="Answers">
+              <trans-unit id="a:!ACT!1~1#Answer:What information did Luke, the writer of this book, give in this introduction?270938112">
+                <source>Luke reminded his readers that he was about to continue the true story about Jesus and his apostles that Luke had written in his first book. (1)</source>
+                <target state="translated">Luc a rappelé à ses lecteurs qu'il était sur le point de continuer l'histoire vraie de Jésus et de ses apôtres que Luc avait écrite dans son premier livre. (1)</target>
+                <note>!ACT!1~1#Answer:What information did Luke, the writer of this book, give in this introduction?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!1~6-11">
+        <group id="Details">
+          <group id="Q:ACT 1.8+To what places did Jesus tell the apostles that they would go after they had received the Holy Spirit?">
+            <group id="Notes">
+              <trans-unit id="n:!ACT!1~8#Note:To what places did Jesus tell the apostles that they would go after they had received the Holy Spirit?803315475">
+                <source>(Note: See Luke 24:47-48.)</source>
+                <target state="translated">(Remarque : voir Luc 24:47-48.)</target>
+                <note>!ACT!1~8#Note:To what places did Jesus tell the apostles that they would go after they had received the Holy Spirit?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!2~14-41">
+        <group id="Details">
+          <group id="Q:ACT 2.33+Peter included a statement about God the Father and one about the Holy Spirit. What did he say about each of these Persons?">
+            <group id="Notes">
+              <trans-unit id="n:!ACT!2~33#Note:Peter included a statement about God the Father and one about the Holy Spirit. What did he say about each of these Persons?1346094554">
+                <source>(Note: See Luke 3:16.)</source>
+                <target state="translated">(Remarque : voir Luc 3:16.)</target>
+                <note>!ACT!2~33#Note:Peter included a statement about God the Father and one about the Holy Spirit. What did he say about each of these Persons?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!6~1-7">
+        <group id="Overview">
+          <group id="Q:ACT 6.1-7+What do you think is the reason that the author of Acts gave details about how the church took care of widows among the believers who had needs?">
+            <group id="Notes">
+              <trans-unit id="n:!ACT!6~1#Note:What do you think is the reason that the author of Acts gave details about how the church took care of widows among the believers who had needs?-1428358303">
+                <source>Luke made it clear that the church took care of the widows who had no one to provide for them. The apostles were doing this work of caring for the widows. This was taking time which they needed to teach and preach the Word of God, and for prayer. So the members of the church chose a group of seven men to do the other tasks.</source>
+                <target state="translated">Luc a dit clairement que l'église s'occupait des veuves qui n'avaient personne pour subvenir à leurs besoins. Les apôtres faisaient ce travail de soins aux veuves. Cela prenait du temps dont ils avaient besoin pour enseigner et prêcher la Parole de Dieu, et pour prier. Les membres de l'église ont donc choisi un groupe de sept hommes pour faire les autres tâches.</target>
+                <note>!ACT!6~1#Note:What do you think is the reason that the author of Acts gave details about how the church took care of widows among the believers who had needs?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!13~4-12">
+        <group id="Details">
+          <group id="Q:ACT 13.8+What other name did [people] call Bar-Jesus?">
+            <group id="Notes">
+              <trans-unit id="n:!ACT!13~8#Note:What other name did [people] call Bar-Jesus?-1087263428">
+                <source>(Note: Several people who Luke has mentioned in Acts had two names. For example, Tabitha, or Dorcas (9:36), Bar-Jesus, or Elymas (13:6, 8), and Saul, or Paul (13:9). (See the NIV footnote on 9:36.) The reason that these people had two names was that one was the person's name in Hebrew, or Aramaic, and the other was his or her name in Greek.)</source>
+                <target state="translated">(Note : Plusieurs personnes que Luc a mentionnées dans les Actes des apôtres avaient deux noms. Par exemple, Tabitha, ou Dorcas (9:36), Bar-Jésus, ou Élymas (13:6, 8), et Saul, ou Paul (13:9). (Voir la note de bas de page de la NIV sur 9:36.) La raison pour laquelle ces personnes avaient deux noms était que l'un était le nom de la personne en hébreu, ou araméen, et l'autre était son nom en grec.)</target>
+                <note>!ACT!13~8#Note:What other name did [people] call Bar-Jesus?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!20~1-12">
+        <group id="Overview">
+          <group id="Q:ACT 20.1-12+With whom did Paul travel from Philippi to Troas?">
+            <group id="Answers">
+              <trans-unit id="a:!ACT!20~1#Answer:With whom did Paul travel from Philippi to Troas?328670092">
+                <source>Paul and his companion [probably Luke] remained in Philippi until after the festival of Passover.</source>
+                <target state="translated">Paul et son compagnon [probablement Luc] restèrent à Philippi jusqu'après la fête de la Pâque.</target>
+                <note>!ACT!20~1#Answer:With whom did Paul travel from Philippi to Troas?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+        <group id="Details">
+          <group id="Q:ACT 20.7+What did Paul and his companion do on the night before they left Troas?">
+            <group id="Answers">
+              <trans-unit id="a:!ACT!20~7#Answer:What did Paul and his companion do on the night before they left Troas?1196483230">
+                <source>The night before Paul [and Luke] left, the believers met together to celebrate the Lord's Supper. (7a)</source>
+                <target state="translated">La veille du départ de Paul [et Luc], les croyants se sont réunis pour célébrer la Cène du Seigneur. (7a)</target>
+                <note>!ACT!20~7#Answer:What did Paul and his companion do on the night before they left Troas?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!ACT!28~1-10">
+        <group id="Details">
+          <group id="Q:ACT 28.7+Where did Paul and a few of the other people from the ship stay for three days?">
+            <group id="Answers">
+              <trans-unit id="a:!ACT!28~7#Answer:Where did Paul and a few of the other people from the ship stay for three days?-846931617">
+                <source>He invited Paul, [Luke] and probably a few others to stay in his home for three days. (7)</source>
+                <target state="translated">Il invita Paul, [Luc] et probablement quelques autres à rester chez lui pendant trois jours. (7)</target>
+                <note>!ACT!28~7#Answer:Where did Paul and a few of the other people from the ship stay for three days?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!LUK!1~1-4">
+        <trans-unit id="h:!LUK!1~1#Section Heading">
+          <source>Luke 1:1-4 Luke told about the purpose of his writing these words.</source>
+          <target state="translated">Luc 1:1-4 Luc a parlé du but de son écriture de ces mots.</target>
+          <note>!LUK!1~1#Section Heading</note>
+        </trans-unit>
+      </group>
+      <group id="S:!LUK!2~39-40">
+        <group id="Overview">
+          <group id="Q:LUK 2.39-40+What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?">
+            <group id="Answers">
+              <trans-unit id="a:!LUK!2~39#Answer:What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?1511193847">
+                <source>Luke told Theophilus at the beginning of this book (1:1-4) that he wanted to present a true account of Jesus's life. Since Mary and Joseph had come to Bethlehem for having their names recorded, it would be natural for them to return home to Nazareth.</source>
+                <target state="translated">Luc a dit à Théophile au début de ce livre (1:1-4) qu'il voulait présenter un vrai récit de la vie de Jésus. Comme Marie et Joseph étaient venus à Bethléem pour faire enregistrer leurs noms, il serait naturel pour eux de rentrer chez eux à Nazareth.</target>
+                <note>!LUK!2~39#Answer:What do you think that we are to learn from what Luke wrote about the family returning to Nazareth?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+      <group id="S:!LUK!3~1-6">
+        <group id="Overview">
+          <group id="Q:LUK 3.1-6+What do you think that we are to learn from what Luke wrote about John the Baptizer's work?">
+            <group id="Answers">
+              <trans-unit id="a:!LUK!3~1#Answer:What do you think that we are to learn from what Luke wrote about John the Baptizer's work?-953326137">
+                <source>Luke wanted to show us that John began the work of getting people's hearts ready to hear and obey Jesus's message, just as the angel (1:16-17) and the Holy Spirit (1:76-79) had told Zechariah that John would do.</source>
+                <target state="translated">Luc voulait nous montrer que Jean a commencé à préparer le cœur des gens à entendre et à obéir au message de Jésus, tout comme l'ange (1:16-17) et l'Esprit Saint (1:76-79) avaient dit à Zacharie que Jean ferait.</target>
+                <note>!LUK!3~1#Answer:What do you think that we are to learn from what Luke wrote about John the Baptizer's work?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
+    </body>
+  </file>
+</xliff>
