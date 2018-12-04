@@ -568,12 +568,10 @@ namespace SIL.Transcelerator
 
 		public UIDataString ToUIDataString()
 		{
-			if (IsUserAdded)
-				return null;
 			if (IsCategoryName)
 				return new UISimpleDataString(PhraseInUse, LocalizableStringType.Category);
 
-			if (m_sModifiedPhrase != null)
+			if (m_sModifiedPhrase != null || IsUserAdded)
 			{
 				if (AlternateForms != null)
 				{
