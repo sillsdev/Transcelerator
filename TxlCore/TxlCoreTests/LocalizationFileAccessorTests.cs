@@ -1,8 +1,8 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
-//    
+#region // Copyright (c) 2019, SIL International.
+// <copyright from='2018' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International.   
+//	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
@@ -240,6 +240,35 @@ namespace SIL.Transcelerator.Localization
 			Assert.AreEqual("¿Por qué está aquí esto?", sut.GetLocalizedString(questionKey1));
 			Assert.AreEqual("¿Qué hace esto aquí?", sut.GetLocalizedString(questionKey2));
 			Assert.AreEqual("¿Es único esto?", sut.GetLocalizedString(questionKey3));
+		}
+
+		[Test]
+		public void GetLocalizedString_MidVerseSectionBreak_FindsLocalizedQuestionInSecondSection()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+
+			var sectionKey1 = new UITestDataString("Luke 9:37-43a Jesus ordered an evil spirit to leave.",
+				LocalizableStringType.SectionHeading, 42009037, 42009043);
+			sut.AddLocalizationEntry(sectionKey1);
+			var sectionKey2 = new UITestDataString("Luke 9:43b-45 Jesus says someone will betray him",
+				LocalizableStringType.SectionHeading, 42009043, 42009045);
+			sut.AddLocalizationEntry(sectionKey2);
+
+			var questionKey1 = new UITestDataString("About what was the man shouting?", LocalizableStringType.Question, 42009038, 42009038);
+			var q1InSpanish = "¿Acerca de que gritaba el hombre?";
+			sut.AddLocalizationEntry(questionKey1, q1InSpanish);
+
+			var questionKey2 = new UITestDataString("What did all the crowd think about this?", LocalizableStringType.Question, 42009043, 42009043);
+			var q2InSpanish = "¿Qué pensaba la multitud acerca de esto?";
+			sut.AddLocalizationEntry(questionKey2, q2InSpanish, true, 0);
+			
+			var questionKey3 = new UITestDataString("What new information did Jesus tell his disciples?", LocalizableStringType.Question, 42009043, 42009043);
+			var q3InSpanish = "¿Qué información nuevo compartió Jesús con sus discípulos?";
+			sut.AddLocalizationEntry(questionKey3, q3InSpanish, true, 1);
+			
+			Assert.AreEqual(q1InSpanish, sut.GetLocalizedString(questionKey1));
+			Assert.AreEqual(q2InSpanish, sut.GetLocalizedString(questionKey2));
+			Assert.AreEqual(q3InSpanish, sut.GetLocalizedString(questionKey3));
 		}
 
 		[Test]
