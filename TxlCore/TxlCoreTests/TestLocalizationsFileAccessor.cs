@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2013' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2019, SIL International.
+// <copyright from='2013' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -18,7 +18,7 @@ namespace SIL.Transcelerator.Localization
 {
 	public class TestLocalizationsFileAccessor : LocalizationsFileGenerator
 	{
-		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, bool isLocalized = true)
+		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, bool isLocalized = true, int specificSection = 0)
 		{
 			if (String.IsNullOrWhiteSpace(data?.SourceUIString))
 				throw new ArgumentException("Invalid key!", nameof(data));
@@ -48,7 +48,7 @@ namespace SIL.Transcelerator.Localization
 			}
 			else
 			{
-				var sectionGroup = Localizations.FindSectionForQuestion(data);
+				var sectionGroup = Localizations.FindSectionsForQuestion(data).Skip(specificSection).FirstOrDefault();
 				Debug.Assert(sectionGroup != null);
 				group = sectionGroup.FindQuestionGroup(data.Question) ?? AddQuestionGroup(sectionGroup, data);
 				switch (type)

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2019, SIL International.
+// <copyright from='2018' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -219,7 +219,7 @@ namespace SIL.Transcelerator.Localization
 			}
 			else
 			{
-				Group question = FindQuestionGroup(key);
+				var question = FindQuestionGroup(key);
 				if (question == null)
 					return null;
 				switch (key.Type)
@@ -257,15 +257,31 @@ namespace SIL.Transcelerator.Localization
 
 		internal Group FindQuestionGroup(UIDataString data)
 		{
-			return FindSectionForQuestion(data)?.FindQuestionGroup(data.Question);
+			var sections = FindSectionsForQuestion(data).ToList();
+			switch (sections.Count)
+			{
+				case 0:
+					return null;
+				case 1:
+					return sections[0].FindQuestionGroup(data.Question);
+				default:
+					foreach (var section in sections)
+					{
+						var group = section.FindQuestionGroup(data.Question);
+						if (group != null)
+							return group;
+					}
+			   return null;
+			}
 		}
 
-		internal Group FindSectionForQuestion(UIDataString key)
+		internal IEnumerable<Group> FindSectionsForQuestion(UIDataString key)
 		{
 			var bcvQStart = new BCVRef(key.StartRef);
 			var questionBookContextPrefix = bcvQStart.BookContextPrefix();
 			var requiredBookPrefix = kSectionIdPrefix + questionBookContextPrefix;
 			//Group prevSection = null;
+			bool foundFirstOne = false;
 			foreach (var sectionGroup in Groups.Where(s => s.Id.StartsWith(requiredBookPrefix)))
 			{
 				int endChapter = 0, endVerse = 0;
@@ -293,9 +309,13 @@ namespace SIL.Transcelerator.Localization
 				var bcvRefSectionStart = new BCVRef(bcvQStart.Book, startChapter, startVerse);
 				var bcvRefSectionEnd = new BCVRef(bcvQStart.Book, endChapter, endVerse);
 				if (bcvRefSectionStart <= bcvQStart && bcvRefSectionEnd >= bcvQStart)
-					return sectionGroup;
+				{
+					yield return sectionGroup;
+					foundFirstOne = true;
+				}
+				else if (foundFirstOne)
+					break;
 			}
-			return null;
 		}
 
 		public void DeleteGroupsWithoutLocalizations()
