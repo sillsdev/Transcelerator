@@ -1,4 +1,16 @@
-﻿## 1.2.1 15 September 2015
+﻿## 1.3.11 16 April 2019
+* Added Installer support for Paratext 9.
+
+## 1.3.9 9 January 2019
+* Added (draft quality) localizations of all questions, answers, and notes for French and Spanish.
+
+## 1.3.8 22 October 2018
+* Added capability to produce a publicly consumable set of comprehension checking questions (to be used in an upcoming version of Scripture Forge).
+
+## 1.3.1 9 August 2018
+* Added support for display of questions, answers, and notes in languages other than English.
+
+## 1.2.1 15 September 2015
 * Improved ability to add, modify, and exclude questions, including the capability of adding questions for verses that do not have any existing questions. These kinds of changes no longer require an immediate restart of Transcelerator to load and process each change, so the performance is now much better!
 
 ## 1.1.5439 15 September 2015
