@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.   
-// <copyright from='2013' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2019, SIL International.   
+// <copyright from='2013' to='2019' company='SIL International'>
+//		Copyright (c) 2019, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -29,7 +29,7 @@ namespace SIL.Transcelerator
 	[AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
 		Version = "1.3", Publisher = "SIL International")]
 	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
-	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Text Converter")]
+	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Custom tools")]
 	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
 	[QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.scriptureProjectActive)]
     [QualificationData(PluginMetaDataKeys.multipleInstances, CreateInstanceRule.forEachActiveProject)]
@@ -78,7 +78,7 @@ namespace SIL.Transcelerator
                 // whole point of this code is to activate the splash screen so the user can see
                 // it's still starting up. But there is no harm in calling Activate on the splash
                 // screen if we happen to catch it between the time it is closed and the member
-                // variable is set to null, since in that case, the "real" splash scree is closed
+                // variable is set to null, since in that case, the "real" splash screen is closed
                 // and Activate is a no-op. But we do need to use a temp variable because it could
                 // get set to null between the time we check for null and the call to Activate.
                 TxlSplashScreen tempSplashScreen = splashScreen;

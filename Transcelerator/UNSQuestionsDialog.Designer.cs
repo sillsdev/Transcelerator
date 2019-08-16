@@ -399,6 +399,7 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			resources.ApplyResources(this.mnuProduceScriptureForgeFiles, "mnuProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
+			this.mnuProduceScriptureForgeFiles.Click += new System.EventHandler(this.mnuProduceScriptureForgeFiles_Clicked);
 			// 
 			// generateOutputForArloToolStripMenuItem
 			// 
