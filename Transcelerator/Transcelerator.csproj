@@ -224,6 +224,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\Settings.cs" />
+    <Compile Include="ScriptureForgeInfoDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ScriptureForgeInfoDlg.Designer.cs">
+      <DependentUpon>ScriptureForgeInfoDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxlInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -334,6 +340,9 @@
     <EmbeddedResource Include="RenderingSelectionRulesDlg.resx">
       <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ScriptureForgeInfoDlg.resx">
+      <DependentUpon>ScriptureForgeInfoDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ScrReferenceFilterDlg.resx">
       <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>

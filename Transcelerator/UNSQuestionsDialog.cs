@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.   
-// <copyright from='2011' to='2018 company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2019, SIL International.   
+// <copyright from='2011' to='2019 company='SIL International'>
+//		Copyright (c) 2019, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -632,6 +632,31 @@ namespace SIL.Transcelerator
             {
                 CutToClipboard();
             }
+		}
+
+        private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
+        {
+	        mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
+		        Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
+	        Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
+
+	        if (mnuProduceScriptureForgeFiles.Checked && (string)mnuProduceScriptureForgeFiles.Tag == "first click")
+	        {
+		        mnuProduceScriptureForgeFiles.Tag = "shown";
+
+				using (var dlg = new ScriptureForgeInfoDlg())
+		        {
+			        dlg.ShowDialog(this);
+		        }
+	        }
+		}
+
+        private void mnuProduceScriptureForgeFiles_Clicked(object sender, EventArgs e)
+        {
+	        if (mnuProduceScriptureForgeFiles.Tag == null)
+	        {
+		        mnuProduceScriptureForgeFiles.Tag = "first click";
+	        }
         }
 
         /// ------------------------------------------------------------------------------------
@@ -2179,6 +2204,7 @@ namespace SIL.Transcelerator
 			TextControl = e.Control as DataGridViewTextBoxEditingControl;
 			if (TextControl == null)
 				return;
+
 			TextControl.AllowDrop = true;
 			TextControl.DragDrop += TextControl_DragDrop;
 			TextControl.DragEnter += TextControl_Drag;
@@ -2907,13 +2933,6 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
-
-		private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
-		{
-			mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
-				Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
-			Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
-		}
 	}
 	#endregion
 
