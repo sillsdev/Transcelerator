@@ -79,7 +79,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <![CDATA[Installed OR PARATEXT7 OR PARATEXT7TEST OR PARATEXT8 OR PARATEXT8TEST OR PARATEXT9]]>
         </Condition>
 
-        <Property Id="PARATEXT75100ORGREATER">
+        <Property Id="PARATEXT75100ORGREATER" Secure="yes">
             <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT7]">
                 <FileSearch Name="Paratext.exe" MinVersion="7.5.100.0" />
             </DirectorySearch>
@@ -87,7 +87,45 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Condition Message="Before Transcelerator can install, you need to install Paratext 7.5.100.0 or later.">
             <![CDATA[Installed OR PARATEXT75100ORGREATER OR PARATEXT7TEST OR PARATEXT8 OR PARATEXT8TEST OR PARATEXT9]]>
         </Condition>
-
+		
+		<Property Id="UPDATEP7PLUGINCACHE" Secure="yes">
+            <DirectorySearch Id="Paratext7PluginCacheExeExists" Path="[PARATEXT7]">
+                <FileSearch Name="UpdateParatextPluginCache.exe"/>
+            </DirectorySearch>
+        </Property>
+		
+		<Property Id="UPDATEP7TESTPLUGINCACHE" Secure="yes">
+            <DirectorySearch Id="Paratext7TestPluginCacheExeExists" Path="[PARATEXT7TEST]">
+                <FileSearch Name="UpdateParatextPluginCache.exe"/>
+            </DirectorySearch>
+        </Property>
+		
+		<Property Id="UPDATEP8PLUGINCACHE" Secure="yes">
+            <DirectorySearch Id="Paratext8PluginCacheExeExists" Path="[PARATEXT8]">
+                <FileSearch Name="UpdateParatextPluginCache.exe"/>
+            </DirectorySearch>
+        </Property>
+		
+		<Property Id="UPDATEP8TESTPLUGINCACHE" Secure="yes">
+            <DirectorySearch Id="Paratext8TestPluginCacheExeExists" Path="[PARATEXT8TEST]">
+                <FileSearch Name="UpdateParatextPluginCache.exe"/>
+            </DirectorySearch>
+        </Property>
+		
+		<Property Id="UPDATEP9PLUGINCACHE" Secure="yes">
+            <DirectorySearch Id="Paratext9PluginCacheExeExists" Path="[PARATEXT9]">
+                <FileSearch Name="UpdateParatextPluginCache.exe"/>
+            </DirectorySearch>
+        </Property>
+		
+		<!-- This is extremely unlikely... -->
+        <Condition Message="Paratext is not installed properly. Missing required file: UpdateParatextPluginCache.exe. Re-run the Paratext Installer to repair the installation. Then re-run the Transcelerator Installer.">
+            <![CDATA[Installed OR
+			(PARATEXT75100ORGREATER AND UPDATEP7PLUGINCACHE) OR (PARATEXT7TEST AND UPDATEP7TESTPLUGINCACHE) OR
+			(PARATEXT8 AND UPDATEP8PLUGINCACHE) OR (PARATEXT8TEST AND UPDATEP8TESTPLUGINCACHE) OR
+			(PARATEXT9 AND UPDATEP9PLUGINCACHE)]]>
+        </Condition>
+		
         <Binary Id="CustomInstallerActions.CA.dll"
                 SourceFile="CustomInstallerActions/bin/Release/CustomInstallerActions.CA.dll" />
 
@@ -756,7 +794,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </ComponentGroup>
 
         <Feature Id="PluginFeature_P7" Level="0" Title="Plugin for Paratext 7.5" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT75100ORGREATER]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT75100ORGREATER AND UPDATEP7PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN" />
             <Feature Id="Localization_P7" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -776,7 +814,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P7Test" Level="0" Title="Plugin for Paratext 7.6 (pre-release)" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT7TEST]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT7TEST AND UPDATEP7TESTPLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN" />
             <Feature Id="Localization_P7Test" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -796,7 +834,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P8" Level="0" Title="Plugin for Paratext 8" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT8]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT8 AND UPDATEP8PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN" />
             <Feature Id="Localization_P8" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -816,7 +854,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P8Test" Level="0" Title="Plugin for Paratext 8 Pre-release" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT8TEST]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT8TEST AND UPDATEP8TESTPLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP8TestPLUGIN" />
             <Feature Id="Localization_P8Test" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -836,7 +874,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT9 AND UPDATEP9PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
             <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -868,6 +906,19 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <CustomAction Id="SetUpdatePluginStore_P9" Property="UpdatePluginStore_P9"
                       Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
 
+        <CustomAction Id="SetUpdatePluginStore_P7_Failsafe" Property="UpdatePluginStore_P7_Failsafe"
+                      Value="&quot;[PARATEXT7]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
+        <CustomAction Id="SetUpdatePluginStore_P7Test_Failsafe" Property="UpdatePluginStore_P7Test_Failsafe"
+                      Value="&quot;[PARATEXT7TEST]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
+                      Return="check" />
+        <CustomAction Id="SetUpdatePluginStore_P8_Failsafe" Property="UpdatePluginStore_P8_Failsafe"
+                      Value="&quot;[PARATEXT8]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
+        <CustomAction Id="SetUpdatePluginStore_P8Test_Failsafe" Property="UpdatePluginStore_P8Test_Failsafe"
+                      Value="&quot;[PARATEXT8TEST]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
+                      Return="check" />
+        <CustomAction Id="SetUpdatePluginStore_P9_Failsafe" Property="UpdatePluginStore_P9_Failsafe"
+                      Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
+					  
         <CustomAction Id="UpdatePluginStore_P7" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
                       Execute="deferred" Return="check" />
         <CustomAction Id="UpdatePluginStore_P7Test" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
@@ -879,43 +930,88 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <CustomAction Id="UpdatePluginStore_P9" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
                       Execute="deferred" Return="check" />
 
+        <CustomAction Id="UpdatePluginStore_P7_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
+                      Execute="deferred" Return="asyncWait" />
+        <CustomAction Id="UpdatePluginStore_P7Test_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
+                      Execute="deferred" Return="asyncWait" />
+        <CustomAction Id="UpdatePluginStore_P8_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
+                      Execute="deferred" Return="asyncWait" />
+        <CustomAction Id="UpdatePluginStore_P8Test_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
+                      Execute="deferred" Return="asyncWait" />
+        <CustomAction Id="UpdatePluginStore_P9_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
+                      Execute="deferred" Return="asyncWait" />
+					  
+		<!-- INSTALLSTATE_LOCAL = 3 -->
+		<!-- INSTALLSTATE_ABSENT = 2 -->
         <InstallExecuteSequence>
             <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
 
-            <!--<RemoveExistingProducts After="InstallFinalize" />-->
+			<!-- Sequencing of the failsafe and non-failsafe versions of the actions is arbitrary since their
+			conditions are mutually exclusive. -->
+			
             <Custom Action="UpdatePluginStore_P7" Before="InstallFinalize">
                 <![CDATA[&PluginFeature_P7=3]]>
             </Custom>
+            <Custom Action="UpdatePluginStore_P7_Failsafe" Before="InstallFinalize">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P7=2) AND UPDATEP7PLUGINCACHE AND (!PluginFeature_P7=3)]]>
+            </Custom>
             <Custom Action="SetUpdatePluginStore_P7" Before="UpdatePluginStore_P7">
                 <![CDATA[&PluginFeature_P7=3]]>
+            </Custom>
+            <Custom Action="SetUpdatePluginStore_P7_Failsafe" Before="UpdatePluginStore_P7_Failsafe">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P7=2) AND UPDATEP7PLUGINCACHE AND (!PluginFeature_P7=3)]]>
             </Custom>
 
             <Custom Action="UpdatePluginStore_P7Test" Before="InstallFinalize">
                 <![CDATA[&PluginFeature_P7Test=3]]>
             </Custom>
+            <Custom Action="UpdatePluginStore_P7Test_Failsafe" Before="InstallFinalize">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P7Test=2) AND UPDATEP7TESTPLUGINCACHE AND (!PluginFeature_P7Test=3)]]>
+            </Custom>
             <Custom Action="SetUpdatePluginStore_P7Test" Before="UpdatePluginStore_P7Test">
                 <![CDATA[&PluginFeature_P7Test=3]]>
+            </Custom>
+            <Custom Action="SetUpdatePluginStore_P7Test_Failsafe" Before="UpdatePluginStore_P7Test_Failsafe">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P7Test=2) AND UPDATEP7TESTPLUGINCACHE AND (!PluginFeature_P7Test=3)]]>
             </Custom>
 
             <Custom Action="UpdatePluginStore_P8" Before="InstallFinalize">
                 <![CDATA[&PluginFeature_P8=3]]>
             </Custom>
+            <Custom Action="UpdatePluginStore_P8_Failsafe" Before="InstallFinalize">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P8=2) AND UPDATEP8PLUGINCACHE AND (!PluginFeature_P8=3)]]>
+            </Custom>
             <Custom Action="SetUpdatePluginStore_P8" Before="UpdatePluginStore_P8">
                 <![CDATA[&PluginFeature_P8=3]]>
+            </Custom>
+            <Custom Action="SetUpdatePluginStore_P8_Failsafe" Before="UpdatePluginStore_P8_Failsafe">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P8=2) AND UPDATEP8PLUGINCACHE AND (!PluginFeature_P8=3)]]>
             </Custom>
 
             <Custom Action="UpdatePluginStore_P8Test" Before="InstallFinalize">
                 <![CDATA[&PluginFeature_P8Test=3]]>
             </Custom>
+            <Custom Action="UpdatePluginStore_P8Test_Failsafe" Before="InstallFinalize">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P8Test=2) AND UPDATEP8TESTPLUGINCACHE AND (!PluginFeature_P8Test=3)]]>
+            </Custom>
             <Custom Action="SetUpdatePluginStore_P8Test" Before="UpdatePluginStore_P8Test">
                 <![CDATA[&PluginFeature_P8Test=3]]>
+            </Custom>
+            <Custom Action="SetUpdatePluginStore_P8Test_Failsafe" Before="UpdatePluginStore_P8Test_Failsafe">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P8Test=2) AND UPDATEP8TESTPLUGINCACHE AND (!PluginFeature_P8Test=3)]]>
             </Custom>
 
             <Custom Action="UpdatePluginStore_P9" Before="InstallFinalize">
                 <![CDATA[&PluginFeature_P9=3]]>
             </Custom>
+            <Custom Action="UpdatePluginStore_P9_Failsafe" Before="InstallFinalize">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
+            </Custom>
             <Custom Action="SetUpdatePluginStore_P9" Before="UpdatePluginStore_P9">
                 <![CDATA[&PluginFeature_P9=3]]>
+            </Custom>
+            <Custom Action="SetUpdatePluginStore_P9_Failsafe" Before="UpdatePluginStore_P9_Failsafe">
+                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
             </Custom>
         </InstallExecuteSequence>
 
