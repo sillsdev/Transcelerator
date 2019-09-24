@@ -1,0 +1,15 @@
+output/
+obj/
+bin/
+packages/
+*.suo
+*.user
+*.pdb
+/.vs
+icu*.dll
+lib/dotnet/icu*.config
+lib/dotnet/L10NSharp.dll
+lib/dotnet/SIL.*.dll
+lib/dotnet/Keyman*.dll
+.nuget/NuGet.exe
+Thumbs.db
