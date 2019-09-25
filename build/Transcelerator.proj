@@ -95,7 +95,7 @@
 		<NUnitTeamCity
 			Assemblies="@(TestAssemblies)"
 			ExcludeCategory="SkipOnTeamCity"
-			NUnitVersion="NUnit-2.5.5" />
+			NUnitVersion="NUnit-3" />
 	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
