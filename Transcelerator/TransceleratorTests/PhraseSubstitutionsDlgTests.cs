@@ -68,10 +68,9 @@ namespace SIL.Transcelerator
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	[TestFixture]
+	[TestFixture, Apartment(ApartmentState.STA)]
 	[SuppressMessage("Gendarme.Rules.Design", "TypesWithDisposableFieldsShouldBeDisposableRule",
 		Justification="Unit test - m_dlg gets disposed in Teardown(); m_textBox is a reference")]
-	[RequiresSTA]
 	public class PhraseSubstitutionsDlgTests
 	{
 		#region Data Members

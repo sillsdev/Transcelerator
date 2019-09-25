@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -166,8 +167,7 @@ namespace SIL.Transcelerator
     }
     #endregion
 
-    [TestFixture]
-	[RequiresSTA]
+    [TestFixture, Apartment(ApartmentState.STA)]
 	public class PhraseTranslationHelperTests : PhraseTranslationTestBase
     {
         #region List sorting tests
