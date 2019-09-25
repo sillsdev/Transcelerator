@@ -137,11 +137,9 @@
     </Reference>
     <Reference Include="Analytics.NET, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Analytics.2.0.2\lib\Analytics.NET.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="DesktopAnalytics, Version=1.2.4.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DesktopAnalytics.1.2.4.5\lib\net40\DesktopAnalytics.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="DesktopAnalytics, Version=1.2.4.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DesktopAnalytics.1.2.4.11\lib\net40\DesktopAnalytics.dll</HintPath>
     </Reference>
     <Reference Include="Keyman7Interop, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -151,8 +149,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\dotnet\KeymanLink.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core">
       <HintPath>..\lib\dotnet\SIL.Core.dll</HintPath>
@@ -502,9 +500,14 @@ xcopy $(TargetDir)*.* ..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectNa
 )
 IF "$(ConfigurationName)" == "Release - Copy To Paratext" (
 IF EXIST "C:\Program Files (x86)\Paratext 7" (
+   @echo Copying Transcelerator plugin files Paratext 7 plugin folder...
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
 IF EXIST "C:\Program Files (x86)\Paratext 8" (
+   @echo Copying Transcelerator plugin files Paratext 8 plugin folder...
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
-)</PostBuildEvent>
+IF EXIST "C:\Program Files (x86)\Paratext 9" (
+   @echo Copying Transcelerator plugin files Paratext 9 plugin folder...
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /y /i
+))</PostBuildEvent>
   </PropertyGroup>
 </Project>
