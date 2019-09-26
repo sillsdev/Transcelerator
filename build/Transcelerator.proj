@@ -3,6 +3,8 @@
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
+    <useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
+    <useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<BuildTasksDll>$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
 		<Solution>Transcelerator.sln</Solution>
 		<ApplicationName>Transcelerator</ApplicationName>
@@ -15,8 +17,8 @@
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="Split" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="FileUpdate" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="NUnitTeamCity" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)" Condition="'$(teamcity_version)' != '' And '$(OS)'=='Windows_NT'"/>
-
+  <UsingTask TaskName="NUnit3" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
+  
 	<Target Name="VersionNumbers">
 	<Message Text="BuildTasksDll: $(BuildTasksDll)"/>
 	<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
@@ -84,19 +86,37 @@
 			 Properties="Configuration=%(Configurations.Identity)" />
 	</Target>
 
-	<Target Name="Test" DependsOnTargets="Build">
-		<CallTarget Targets="TestOnly"/>
-	</Target>
+  <Target Name="Test" DependsOnTargets="Build">
+    <CallTarget Targets="RunNUnit"/>
+  </Target>
 
-	<Target Name="TestOnly">
+	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
+
+	<Target Name="SetTestAssemblies">
 		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-		<NUnitTeamCity
-			Assemblies="@(TestAssemblies)"
-			ExcludeCategory="SkipOnTeamCity"
-			NUnitVersion="NUnit-3" />
 	</Target>
+
+  <Target Name="RunNUnit" DependsOnTargets="SetTestAssemblies">
+    <NUnit3 Condition="'$(teamcity_version)' == ''"
+			Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.5.0/tools"
+			ExcludeCategory="$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"
+			TeamCity="false"/>
+    <NUnit3 Condition="'$(teamcity_version)' != ''"
+			Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.5.0/tools"
+			ExcludeCategory="SkipOnTeamCity,$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="$(useNUnit-x86)"
+			Verbose="true"
+			TeamCity="true"/>
+  </Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
 
