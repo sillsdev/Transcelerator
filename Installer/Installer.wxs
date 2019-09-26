@@ -203,33 +203,26 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{1A126530-7E7F-4169-96E4-00900BA09864}">
                 <File Id="SIL.WritingSystems.dll_P7" ShortName="pfznpucn.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-                <File Id="SIL.WritingSystems.pdb_P7" Name="SIL.WritingSystems.pdb" />
             </Component>
             <Component Guid="{22416287-2AA6-469C-8240-2B5DB18C984E}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P7" ShortName="k1dzcjen.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
-                <File Id="SIL.Windows.Forms.Keyboarding.pdb_P7" Name="SIL.Windows.Forms.Keyboarding.pdb" />
             </Component>
             <Component Guid="{C0CFE633-A73C-4344-99B8-7A6A13F45B58}">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P7" ShortName="91oxry23.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
-                <File Id="SIL.Windows.Forms.Scripture.pdb_P7" Name="SIL.Windows.Forms.Scripture.pdb" />
             </Component>
             <Component Guid="{6FF0AF28-DF6E-49FD-AB94-3A782C24D8D4}">
                 <File Id="SIL.Scripture.dll_P7" ShortName="0phlyosz.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-                <File Id="SIL.Scripture.pdb_P7" Name="SIL.Scripture.pdb" />
             </Component>
             <Component Guid="{FF6542DE-FFE1-4BF6-ABAB-CF21BD3318F3}">
                 <File Id="SIL.Windows.Forms.dll_P7" ShortName="ddnzx3rw.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
-                <File Id="SIL.Windows.Forms.pdb_P7" Name="SIL.Windows.Forms.pdb" />
             </Component>
             <Component Guid="{6E7C6D97-830E-4FDA-AC27-70951793A4B1}">
                 <File Id="SIL.Core.dll_P7" ShortName="jlqxwocw.dll" KeyPath="yes" Name="SIL.Core.dll" />
-                <File Id="SIL.Core.pdb_P7" Name="SIL.Core.pdb" />
             </Component>
             <Component Guid="{C23F40CC-DADC-4E51-B317-E2B3DC4AAF6A}">
                 <File Id="SIL.Core.Desktop.dll_P7" ShortName="1n8w3sdg.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
-                <File Id="SIL.Core.Desktop.pdb_P7" Name="SIL.Core.Desktop.pdb" />
             </Component>
             <Component Guid="{98D718FC-99AF-4AEF-BE0D-9D24F69B5DA7}">
                 <File Id="Keyman7Interop.dll_P7" ShortName="ie4zttme.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
@@ -328,35 +321,28 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{9694698d-7734-4a19-ac2c-efcfc9a003cf}">
                 <File Id="SIL.WritingSystems.dll_P7Test" ShortName="0dmsdv4y.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-                <File Id="SIL.WritingSystems.pdb_P7Test" Name="SIL.WritingSystems.pdb" />
             </Component>
             <Component Guid="{0e576195-dcd9-4cf6-8b44-3d0056f65c5b}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P7Test" ShortName="ww6bl0mp.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
-                <File Id="SIL.Windows.Forms.Keyboarding.pdb_P7Test" Name="SIL.Windows.Forms.Keyboarding.pdb" />
             </Component>
             <Component Guid="{2cb842c8-5dc5-4f06-a1fb-eb2b0ff93099}">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P7Test" ShortName="7wglaoxs.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
-                <File Id="SIL.Windows.Forms.Scripture.pdb_P7Test" Name="SIL.Windows.Forms.Scripture.pdb" />
             </Component>
             <Component Guid="{b5a5f215-72d0-4c8a-9841-63f409d8b739}">
                 <File Id="SIL.Scripture.dll_P7Test" ShortName="qpybzotc.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-                <File Id="SIL.Scripture.pdb_P7Test" Name="SIL.Scripture.pdb" />
             </Component>
             <Component Guid="{a79aa7e2-d44c-41f2-a751-db91567cc512}">
                 <File Id="SIL.Windows.Forms.dll_P7Test" ShortName="5j3m7jap.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.dll" />
-                <File Id="SIL.Windows.Forms.pdb_P7Test" Name="SIL.Windows.Forms.pdb" />
             </Component>
             <Component Guid="{66f4fbfd-00c5-4fcf-8270-e58c79b7a2cd}">
                 <File Id="SIL.Core.dll_P7Test" ShortName="yifsuyy7.dll" KeyPath="yes" Name="SIL.Core.dll" />
-                <File Id="SIL.Core.pdb_P7Test" Name="SIL.Core.pdb" />
             </Component>
             <Component Guid="{C1D088B1-0982-4340-9C0E-4E4A47271C9C}">
                 <File Id="SIL.Core.Desktop.dll_P7Test" ShortName="q3763bq8.dll" KeyPath="yes"
                       Name="SIL.Core.Desktop.dll" />
-                <File Id="SIL.Core.Desktop.pdb_P7Test" Name="SIL.Core.Desktop.pdb" />
             </Component>
             <Component Guid="{5942686e-bb3a-468e-92c0-84a2de6dd86d}">
                 <File Id="Keyman7Interop.dll_P7Test" ShortName="5qlbklph.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
@@ -455,33 +441,26 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{8da65678-990f-4d26-b30b-f9a0b3ab384e}">
                 <File Id="SIL.WritingSystems.dll_P8" ShortName="q2jcchib.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-                <File Id="SIL.WritingSystems.pdb_P8" Name="SIL.WritingSystems.pdb" />
             </Component>
             <Component Guid="{425041c5-2c46-426b-9be1-1fda9ce60666}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P8" ShortName="ochr89pt.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
-                <File Id="SIL.Windows.Forms.Keyboarding.pdb_P8" Name="SIL.Windows.Forms.Keyboarding.pdb" />
             </Component>
             <Component Guid="{658481e1-e25e-4663-9ea1-b0ff43f42591}">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P8" ShortName="wtdrx7x9.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
-                <File Id="SIL.Windows.Forms.Scripture.pdb_P8" Name="SIL.Windows.Forms.Scripture.pdb" />
             </Component>
             <Component Guid="{56307ad1-f507-4fbb-bf9b-cfe46299d414}">
                 <File Id="SIL.Scripture.dll_P8" ShortName="qfrihxy0.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-                <File Id="SIL.Scripture.pdb_P8" Name="SIL.Scripture.pdb" />
             </Component>
             <Component Guid="{fb1bb928-930d-4765-a0fc-35cb1d65ca6a}">
                 <File Id="SIL.Windows.Forms.dll_P8" ShortName="gqvfgrc4.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
-                <File Id="SIL.Windows.Forms.pdb_P8" Name="SIL.Windows.Forms.pdb" />
             </Component>
             <Component Guid="{b06457d9-ffee-490a-a91b-4be5963e0ed0}">
                 <File Id="SIL.Core.dll_P8" ShortName="7eknk7h0.dll" KeyPath="yes" Name="SIL.Core.dll" />
-                <File Id="SIL.Core.pdb_P8" Name="SIL.Core.pdb" />
             </Component>
             <Component Guid="{DADD9256-2DB4-4E98-AB1F-A5F4AC369815}">
                 <File Id="SIL.Core.Desktop.dll_P8" ShortName="gw7omb4n.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
-                <File Id="SIL.Core.Desktop.pdb_P8" Name="SIL.Core.Desktop.pdb" />
             </Component>
             <Component Guid="{deb9c275-7425-4b06-a1ea-6c93ab1d4404}">
                 <File Id="Keyman7Interop.dll_P8" ShortName="0n2q2w3k.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
@@ -579,35 +558,28 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{a220c833-66ac-487e-bfea-e00de1dc33f6}">
                 <File Id="SIL.WritingSystems.dll_P8Test" ShortName="8r8cz6l1.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-                <File Id="SIL.WritingSystems.pdb_P8Test" Name="SIL.WritingSystems.pdb" />
             </Component>
             <Component Guid="{bb6d2d96-7e16-480f-9f37-e219c3589013}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P8Test" ShortName="0ehz7b9i.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
-                <File Id="SIL.Windows.Forms.Keyboarding.pdb_P8Test" Name="SIL.Windows.Forms.Keyboarding.pdb" />
             </Component>
             <Component Guid="{516e4c61-4bc4-4e9e-a3ec-f2ef96727bb4}">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P8Test" ShortName="4aaxc6jt.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
-                <File Id="SIL.Windows.Forms.Scripture.pdb_P8Test" Name="SIL.Windows.Forms.Scripture.pdb" />
             </Component>
             <Component Guid="{d4021a80-8be2-467c-bdff-ea1496a883e6}">
                 <File Id="SIL.Scripture.dll_P8Test" ShortName="yvx1fs1p.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-                <File Id="SIL.Scripture.pdb_P8Test" Name="SIL.Scripture.pdb" />
             </Component>
             <Component Guid="{efb05702-b4a0-4c0e-90d1-ee0e06011036}">
                 <File Id="SIL.Windows.Forms.dll_P8Test" ShortName="9n4l8r68.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.dll" />
-                <File Id="SIL.Windows.Forms.pdb_P8Test" Name="SIL.Windows.Forms.pdb" />
             </Component>
             <Component Guid="{ed487a12-4a45-4cea-bd98-05b70eaf1e8a}">
                 <File Id="SIL.Core.dll_P8Test" ShortName="qzidxcbc.dll" KeyPath="yes" Name="SIL.Core.dll" />
-                <File Id="SIL.Core.pdb_P8Test" Name="SIL.Core.pdb" />
             </Component>
             <Component Guid="{2829C42C-3D44-4815-AB85-89C12B1FB0CE}">
                 <File Id="SIL.Core.Desktop.dll_P8Test" ShortName="4jpk9hzs.dll" KeyPath="yes"
                       Name="SIL.Core.Desktop.dll" />
-                <File Id="SIL.Core.Desktop.pdb_P8Test" Name="SIL.Core.Desktop.pdb" />
             </Component>
             <Component Guid="{971d56c8-1076-4a7d-8a59-7b0233ffbd18}">
                 <File Id="Keyman7Interop.dll_P8Test" ShortName="2pkf5jyr.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
@@ -706,33 +678,26 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{4d733489-b9a8-4a68-8ba9-ba0b6c72f414}">
                 <File Id="SIL.WritingSystems.dll_P9" ShortName="u3wozlbp.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-                <File Id="SIL.WritingSystems.pdb_P9" Name="SIL.WritingSystems.pdb" />
             </Component>
             <Component Guid="{c11029f6-7032-41c4-a707-9ead7b0a7cbe}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P9" ShortName="tp04hoif.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
-                <File Id="SIL.Windows.Forms.Keyboarding.pdb_P9" Name="SIL.Windows.Forms.Keyboarding.pdb" />
             </Component>
             <Component Guid="{1fa8f155-e2ff-4cb2-8bb3-e038380cdc64}">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
-                <File Id="SIL.Windows.Forms.Scripture.pdb_P9" Name="SIL.Windows.Forms.Scripture.pdb" />
             </Component>
             <Component Guid="{7f8e0f5a-102e-4f40-98e4-b23fca6e5f7e}">
                 <File Id="SIL.Scripture.dll_P9" ShortName="hq9z3a0z.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-                <File Id="SIL.Scripture.pdb_P9" Name="SIL.Scripture.pdb" />
             </Component>
             <Component Guid="{cb485a09-1136-40ea-b435-9264cba035f5}">
                 <File Id="SIL.Windows.Forms.dll_P9" ShortName="6cm4n2mk.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
-                <File Id="SIL.Windows.Forms.pdb_P9" Name="SIL.Windows.Forms.pdb" />
             </Component>
             <Component Guid="{5644ff76-8813-4764-bed7-15399ee8d8c0}">
                 <File Id="SIL.Core.dll_P9" ShortName="fqfi7v4n.dll" KeyPath="yes" Name="SIL.Core.dll" />
-                <File Id="SIL.Core.pdb_P9" Name="SIL.Core.pdb" />
             </Component>
             <Component Guid="{a9ffad78-39bb-4d21-8882-e9c10cc9b398}">
                 <File Id="SIL.Core.Desktop.dll_P9" ShortName="3ibsrrdb.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
-                <File Id="SIL.Core.Desktop.pdb_P9" Name="SIL.Core.Desktop.pdb" />
             </Component>
             <Component Guid="{f1b00bc1-82cb-46d5-83b6-aed6013b6963}">
                 <File Id="Keyman7Interop.dll_P9" ShortName="ygpveztm.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
