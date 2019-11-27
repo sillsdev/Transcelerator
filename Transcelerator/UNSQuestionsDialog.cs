@@ -22,7 +22,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AddInSideViews;
-using Keyman7Interop;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Windows.Forms.Scripture;
