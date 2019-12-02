@@ -17,8 +17,7 @@
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="Split" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="FileUpdate" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="NUnit3" AssemblyFile="$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll"
-		Condition="Exists('$(RootDir)/packages/SIL.BuildTasks/tools/SIL.BuildTasks.dll')" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
   
 	<Target Name="VersionNumbers">
 	<Message Text="BuildTasksDll: $(BuildTasksDll)"/>
@@ -94,7 +93,7 @@
 	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
 
 	<Target Name="SetTestAssemblies">
-		<CreateItem Include="$(RootDir)/**/bin/**/$(Configuration)/*Tests.dll">
+		<CreateItem Include="$(RootDir)/**/bin/$(Platform)/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 	</Target>
