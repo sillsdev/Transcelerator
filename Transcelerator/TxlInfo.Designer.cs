@@ -137,8 +137,8 @@ namespace SIL.Transcelerator
 			// pictLogo
 			// 
 			this.pictLogo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.pictLogo.Image = global::SIL.Transcelerator.Properties.Resources.SILLogoBlue132x184;
-			this.pictLogo.InitialImage = global::SIL.Transcelerator.Properties.Resources.SILLogoBlue132x184;
+			this.pictLogo.Image = SIL.Windows.Forms.Properties.Resources.SILLogoBlue132x184;
+			this.pictLogo.InitialImage = SIL.Windows.Forms.Properties.Resources.SILLogoBlue132x184;
 			this.pictLogo.Location = new System.Drawing.Point(575, 108);
 			this.pictLogo.Name = "pictLogo";
 			this.pictLogo.Size = new System.Drawing.Size(93, 126);

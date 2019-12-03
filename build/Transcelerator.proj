@@ -17,7 +17,7 @@
 	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="Split" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
 	<UsingTask TaskName="FileUpdate" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
-  <UsingTask TaskName="NUnit3" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
   
 	<Target Name="VersionNumbers">
 	<Message Text="BuildTasksDll: $(BuildTasksDll)"/>
@@ -58,7 +58,7 @@
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
     <Message Text="RestartBuild=$(RestartBuild)"/>
     <Message Text="Configuration=$(Configuration)"/>
-    <Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -version 2.2.1-beta0006 -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+    <Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
       Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
     </Target>
@@ -93,30 +93,31 @@
 	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
 
 	<Target Name="SetTestAssemblies">
-		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
+		<CreateItem Include="$(RootDir)/**/bin/$(Platform)/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 	</Target>
-
-  <Target Name="RunNUnit" DependsOnTargets="SetTestAssemblies">
-    <NUnit3 Condition="'$(teamcity_version)' == ''"
+  
+  	<Target Name="RunNUnit" DependsOnTargets ="SetTestAssemblies">
+		<NUnit3 Condition="'$(teamcity_version)' == ''"
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.5.0/tools"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.10.0/tools"
 			ExcludeCategory="$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="$(useNUnit-x86)"
 			Verbose="true"
 			OutputXmlFile="$(RootDir)/output/$(Configuration)/TestResults.xml"
+			UseNUnit3Xml = "true"
 			TeamCity="false"/>
-    <NUnit3 Condition="'$(teamcity_version)' != ''"
+		<NUnit3 Condition="'$(teamcity_version)' != ''"
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.5.0/tools"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.10.0/tools"
 			ExcludeCategory="SkipOnTeamCity,$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="$(useNUnit-x86)"
 			Verbose="true"
 			TeamCity="true"/>
-  </Target>
+	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
 
