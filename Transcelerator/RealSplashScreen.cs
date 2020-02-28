@@ -126,8 +126,8 @@ namespace SIL.Transcelerator
 			// 
 			// lblMessage
 			// 
-			this.lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.lblMessage.BackColor = System.Drawing.Color.Transparent;
 			this.lblMessage.ForeColor = System.Drawing.Color.Black;
 			this.lblMessage.Location = new System.Drawing.Point(12, 372);
@@ -137,8 +137,8 @@ namespace SIL.Transcelerator
 			// 
 			// m_txlInfo
 			// 
-			this.m_txlInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_txlInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_txlInfo.AutoSize = true;
 			this.m_txlInfo.BackColor = System.Drawing.Color.Transparent;
 			this.m_txlInfo.Location = new System.Drawing.Point(0, 0);
@@ -151,7 +151,7 @@ namespace SIL.Transcelerator
 			// 
 			this.AutoSize = true;
 			this.BackColor = System.Drawing.Color.White;
-			this.ClientSize = new System.Drawing.Size(648, 398);
+			this.ClientSize = new System.Drawing.Size(652, 394);
 			this.ControlBox = false;
 			this.Controls.Add(this.m_txlInfo);
 			this.Controls.Add(marqueeGif);
@@ -161,7 +161,8 @@ namespace SIL.Transcelerator
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "RealSplashScreen";
-			this.Opacity = 0;
+			this.Opacity = 0D;
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			((System.ComponentModel.ISupportInitialize)(marqueeGif)).EndInit();

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using static System.String;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -85,7 +86,7 @@ namespace SIL.Transcelerator
 		[XmlAttribute("questionMatcher")]
 		public string QuestionMatchingPattern
 		{
-			get { return m_questionMatchingPattern; }
+			get => m_questionMatchingPattern;
 			set
 			{
 				ErrorMessageQ = null;
@@ -106,10 +107,10 @@ namespace SIL.Transcelerator
 					}
 					catch (Exception ex)
 					{
-                        if (ex is ArgumentException || ex is FormatException)
-                            ErrorMessageQ = ex.Message;
-                        else
-                            throw;
+						if (ex is ArgumentException || ex is FormatException)
+							ErrorMessageQ = ex.Message;
+						else
+							throw;
 					}
 				}
 			}
@@ -123,7 +124,7 @@ namespace SIL.Transcelerator
 		[XmlAttribute("renderingSelector")]
 		public string RenderingMatchingPattern
 		{
-			get { return m_renderingMatchingPattern; }
+			get => m_renderingMatchingPattern;
 			set
 			{
 				ErrorMessageR = null;
@@ -207,7 +208,7 @@ namespace SIL.Transcelerator
 			Regex regExQuestion = null;
 			try
 			{
-				regExQuestion = new Regex(string.Format(m_questionMatchingPattern, "(?i:" + term.ToString(@"\W+") + ")"), RegexOptions.CultureInvariant);
+				regExQuestion = new Regex(Format(m_questionMatchingPattern, "(?i:" + term.ToString(@"\W+") + ")"), RegexOptions.CultureInvariant);
 			}
 			catch (ArgumentException ex)
 			{
@@ -236,10 +237,8 @@ namespace SIL.Transcelerator
 		/// Returns a <see cref="System.String"/> that represents this instance.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override string ToString()
-		{
-			return Name ?? m_questionMatchingPattern + ":" + m_renderingMatchingPattern;
-		}
+		public override string ToString() =>
+			Name ?? m_questionMatchingPattern + ":" + m_renderingMatchingPattern;
 		#endregion
 
 		#region Internal (non-XML) Properties
