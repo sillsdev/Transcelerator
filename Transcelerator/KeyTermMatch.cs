@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -22,10 +22,8 @@ namespace SIL.Transcelerator
 		#region Data members
 		private readonly List<Word> m_words;
 		private readonly List<IKeyTerm> m_terms;
-		private readonly bool m_matchForRefOnly;
 		private HashSet<int> m_occurrences;
-	    private bool m_isInUse;
-	    private KeyTermMatchSurrogate m_surrogate; // Cached for efficiency
+		private KeyTermMatchSurrogate m_surrogate; // Cached for efficiency
 		#endregion
 
 		#region Constructors
@@ -68,7 +66,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal KeyTermMatch(IEnumerable<Word> words, IKeyTerm term, bool matchForRefOnly)
 		{
-			m_matchForRefOnly = matchForRefOnly;
+			MatchForRefOnly = matchForRefOnly;
 			m_words = words.ToList();
 			m_terms = new List<IKeyTerm>();
 			m_terms.Add(term);
@@ -90,15 +88,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public override bool Equals(object obj)
 		{
-			if (obj is KeyTermMatch)
+			switch (obj)
 			{
-				return m_words.SequenceEqual(((KeyTermMatch)obj).m_words);
+				case KeyTermMatch _:
+					return m_words.SequenceEqual(((KeyTermMatch)obj).m_words);
+				case IEnumerable<Word> _:
+					return m_words.SequenceEqual((IEnumerable<Word>)obj);
 			}
-			if (obj is IEnumerable<Word>)
-			{
-				return m_words.SequenceEqual((IEnumerable<Word>)obj);
-			}
- 			return base.Equals(obj);
+			return base.Equals(obj);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -110,12 +107,9 @@ namespace SIL.Transcelerator
 		/// structures like a hash table. 
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
+		public override int GetHashCode() => base.GetHashCode();
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents this instance.
 		/// </summary>
@@ -123,53 +117,38 @@ namespace SIL.Transcelerator
 		/// A <see cref="System.String"/> that represents this instance.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		public override string ToString()
-        {
-            return m_words.ToString(" ");
-        }
+		public override string ToString() => m_words.ToString(" ");
 		#endregion
 
-        #region Public properties
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Count of words this object matches on.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public int WordCount
-        {
-            get { return m_words.Count; }
-        }
+		#region Public properties
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Count of words this object matches on.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public int WordCount => m_words.Count;
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the term Id.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public string Id
-        {
-            get { return m_terms.First().Id; }
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the term Id.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public string Id => m_terms.First().Id;
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets whether this match should only be considered for questions/phrases for one of
-        /// the occurrences of the term(s).
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public bool MatchForRefOnly
-        {
-            get { return m_matchForRefOnly; }
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether this match should only be considered for questions/phrases for one of
+		/// the occurrences of the term(s).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool MatchForRefOnly { get; }
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets whether this resulted in an actual match for some question/phrase
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public bool InUse
-	    {
-            get { return m_isInUse; }
-	    }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether this resulted in an actual match for some question/phrase
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool InUse { get; internal set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -177,27 +156,22 @@ namespace SIL.Transcelerator
 		/// BBBCCCVVV.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IList<int> BcvOccurences
-		{
-			get { return m_terms.SelectMany(keyTerm => keyTerm.BcvOccurences).Distinct().ToList(); }
-		}
+		public IList<int> BcvOccurences =>
+			m_terms.SelectMany(keyTerm => keyTerm.BcvOccurences).Distinct().ToList();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all the key terms for this match.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<IKeyTerm> AllTerms
-		{
-			get { return m_terms; }
-		}
+		public IEnumerable<IKeyTerm> AllTerms => m_terms;
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the ith Word in the sequence of words on which this object matches
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        public Word this[int i]
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the ith Word in the sequence of words on which this object matches
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public Word this[int i]
         {
             get { return m_words[i]; }
         }
@@ -214,7 +188,7 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         public bool AppliesTo(int startRef, int endRef)
 		{
-			if (!m_matchForRefOnly)
+			if (!MatchForRefOnly)
 				return true;
 			if (m_occurrences == null)
 				m_occurrences = new HashSet<int>(m_terms.SelectMany(term => term.BcvOccurences));
@@ -276,11 +250,6 @@ namespace SIL.Transcelerator
 		{
 			m_words.AddRange(words);
             m_surrogate = null;
-        }
-
-        internal void MarkInUse()
-        {
-            m_isInUse = true;
         }
 		#endregion
 	}

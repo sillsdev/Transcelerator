@@ -164,7 +164,7 @@ namespace SIL.Transcelerator
 					if (m_iStartMatch > minUnhandled)
 						yield return YieldTranslatablePart(m_words.Skip(minUnhandled).Take(m_iStartMatch - minUnhandled), m_phrase);
 					m_keyTermsUsedForPhrase.Add(bestKeyTerm);
-					bestKeyTerm.MarkInUse();
+					bestKeyTerm.InUse = true;
 					yield return new ParsedPart(bestKeyTerm);
 					m_iStartMatch = m_iNextWord = minUnhandled = m_iStartMatch + keyTermWordCount;
 				}
