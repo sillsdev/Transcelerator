@@ -169,6 +169,7 @@ namespace SIL.Transcelerator
 						RemoveDeletionAndAdditionPair(iDel, iAdditionToRemove);
 				}
 				iDel = 0;
+				var iDelOrig = iDel;
 				// Pass 2: Neither deletion nor addition have ModifiedPhrase set
 				while (!m_isResolved && iDel < Deletions.Count)
 				{
@@ -181,6 +182,9 @@ namespace SIL.Transcelerator
 						iAdditionToRemove = AdditionsAndInsertions.IndexOf(a => String.IsNullOrEmpty(a.ModifiedPhrase) || a.ModifiedPhrase == a.OriginalPhrase);
 					if (iAdditionToRemove >= 0)
 						RemoveDeletionAndAdditionPair(iDel, iAdditionToRemove);
+					else if (iDel == iDelOrig)
+						break;
+					iDelOrig = iDel;
 				}
 				// Pass 3: Pair 'em up and blow 'em away
 				while (!m_isResolved)
