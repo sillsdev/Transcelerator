@@ -360,7 +360,7 @@ namespace SIL.Transcelerator
 							}
 							else
 							{
-								// This is a question whose reference does not match eaither of the surrounding questions, so its Type is
+								// This is a question whose reference does not match either of the surrounding questions, so its Type is
 								// really arbitrary.
 								customizations.Add(new PhraseCustomization(translatablePhrase.OriginalPhrase,
 									translatablePhrase.QuestionInfo,
