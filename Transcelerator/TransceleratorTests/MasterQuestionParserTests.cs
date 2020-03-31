@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2013' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -16,7 +16,6 @@ using System.Text;
 using AddInSideViews;
 using NUnit.Framework;
 using SIL.Extensions;
-using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International.   
-// <copyright from='2011' to='2019 company='SIL International'>
-//		Copyright (c) 2019, SIL International.   
+#region // Copyright (c) 2020, SIL International.   
+// <copyright from='2011' to='2020 company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,6 +9,15 @@
 // 
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
+using AddInSideViews;
+using SIL.ComprehensionCheckingData;
+using SIL.Scripture;
+using SIL.Transcelerator.Localization;
+using SIL.Transcelerator.Properties;
+using SIL.Utils;
+using SIL.Windows.Forms.FileDialogExtender;
+using SIL.Windows.Forms.Scripture;
+using SIL.Xml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,16 +30,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using AddInSideViews;
-using SIL.Scripture;
-using SIL.Transcelerator.Localization;
-using SIL.Windows.Forms.Scripture;
-using SIL.Utils;
-using SIL.Windows.Forms.FileDialogExtender;
-using SIL.Xml;
 using File = System.IO.File;
-using SIL.ComprehensionCheckingData;
-using SIL.Transcelerator.Properties;
 
 namespace SIL.Transcelerator
 {

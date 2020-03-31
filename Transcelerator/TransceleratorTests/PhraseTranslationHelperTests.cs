@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -1212,6 +1212,83 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Maybe", customizations[i].Answer);
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
 		}
+
+        /// <summary>
+        /// TXL-207: More than two questions should be able to be added after a question without causing data
+        /// corruption (System.InvalidOperationException : Sequence contains more than one matching element in
+        /// MasterQuestionParser).
+        /// </summary>
+	    [Test]
+	    public void CustomizedPhrases_NewlyAddedQuestionsAfterPreviousAdditionsForSameRef_QuestionsAddedWithoutDuplicateKey()
+        {
+	        var onlySection = m_sections.Items[0];
+	        onlySection.StartRef = 1022012;
+	        onlySection.EndRef = 1022014;
+	        var cat = onlySection.Categories[0];
+		    var qBefore = AddTestQuestion(cat, "What else did he say to Abraham?", "GEN 22.12", 1022012, 1022012);
+		    var qBase = AddTestQuestion(cat, "Was Abraham able to sacrifice a burnt offering to God?", "GEN 22.13", 1022013, 1022013);
+		    var qAfter = AddTestQuestion(cat, "Why did Abraham name the place \"The Lord Will Provide\"?", "GEN 22.14", 1022014, 1022014);
+
+		    var sectionsOrig = m_sections.Clone();
+
+		    var qAdded = AddTestQuestion(cat, "Que veux dire bindum?", "GEN 22.13", 1022013, 1022013);
+		    qAdded.IsUserAdded = true;
+		    qAdded.Answers = new[] { "Yo yomee á la place dequel" };
+		    qBase.AddedQuestionAfter = qAdded;
+
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+
+		    var parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
+			    null, null, customizations, null);
+		    ParsedQuestions pq = parser.Result;
+
+		    m_sections = pq.Sections;
+		    cat = m_sections.Items[0].Categories[0];
+
+		    qBase = cat.Questions.Single(q => q.Text == "Was Abraham able to sacrifice a burnt offering to God?");
+		    qAdded = AddTestQuestion(cat, "Quand il a fini le sacrifice, est-ce qu'il pouvait le manger", "GEN 22.13", 1022013, 1022013);
+		    qAdded.IsUserAdded = true;
+		    qAdded.Answers = new[] { "Haani, mat ájuh. Mara areemendeemen yo peepe, bajut waŋañoe" };
+		    qBase.AddedQuestionAfter = qAdded;
+
+		    qp = new QuestionProvider(GetParsedQuestions());
+		    pth = new PhraseTranslationHelper(qp);
+
+		    customizations = pth.CustomizedPhrases;
+
+		    parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
+			    null, null, customizations, null);
+		    pq = parser.Result;
+
+		    m_sections = pq.Sections;
+		    cat = m_sections.Items[0].Categories[0];
+
+		    qBase = cat.Questions.Single(q => q.Text == "Was Abraham able to sacrifice a burnt offering to God?");
+		    qAdded = AddTestQuestion(cat, "Que veux dire holocauste", "GEN 22.13", 1022013, 1022013);
+		    qAdded.IsUserAdded = true;
+		    qBase.AddedQuestionAfter = qAdded;
+
+		    qp = new QuestionProvider(GetParsedQuestions());
+		    pth = new PhraseTranslationHelper(qp);
+
+		    customizations = pth.CustomizedPhrases;
+
+		    parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
+			    null, null, customizations, null);
+		    pq = parser.Result;
+
+		    var allQuestions = pq.Sections.Items[0].Categories[0].Questions;
+		    Assert.AreEqual(6, allQuestions.Count);
+            Assert.AreEqual(qBefore.Text, allQuestions[0].Text);
+            Assert.AreEqual("Was Abraham able to sacrifice a burnt offering to God?", allQuestions[1].Text);
+            Assert.AreEqual("Que veux dire holocauste", allQuestions[2].Text);
+            Assert.AreEqual("Quand il a fini le sacrifice, est-ce qu'il pouvait le manger", allQuestions[3].Text);
+            Assert.AreEqual("Que veux dire bindum?", allQuestions[4].Text);
+            Assert.AreEqual(qAfter.Text, allQuestions[5].Text);
+        }
 		#endregion
 
 		#region AddQuestion Tests

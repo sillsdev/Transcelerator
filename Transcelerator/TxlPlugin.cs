@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International.   
-// <copyright from='2013' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International.   
+#region // Copyright (c) 2020, SIL International.   
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -112,7 +112,7 @@ namespace SIL.Transcelerator
 
 				Thread mainUIThread = new Thread(() =>
 				{
-					InitializeErrorHandling();
+					InitializeErrorHandling(projectName);
 
                     const string kMajorList = "Major";
 
@@ -286,7 +286,7 @@ namespace SIL.Transcelerator
 		    }
 		}
 
-		private void InitializeErrorHandling()
+		private void InitializeErrorHandling(string projectName)
 		{
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
 			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
@@ -300,6 +300,7 @@ namespace SIL.Transcelerator
 				assembly.GetName().Version,
 				File.GetLastWriteTime(assembly.Location).ToShortDateString()));
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
+			ErrorReport.AddProperty("Project Name", projectName);
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 	}
