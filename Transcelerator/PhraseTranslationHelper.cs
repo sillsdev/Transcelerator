@@ -346,22 +346,25 @@ namespace SIL.Transcelerator
 						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
 							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
 						{
+							TranslatablePhrase firstNonUserQuestionFroRef;
 							if (i > 0 && allPhrases[i - 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
 							{
 								customizations.Add(new PhraseCustomization(allPhrases[i - 1].OriginalPhrase,
 									translatablePhrase.QuestionInfo,
 									PhraseCustomization.CustomizationType.AdditionAfter));
 							}
-							else if (i < allPhrases.Count - 1 && allPhrases[i + 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
+							else if (i < allPhrases.Count - 1 && (firstNonUserQuestionFroRef = allPhrases.Skip(i + 1).TakeWhile(q => q.QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0).FirstOrDefault(q => !q.IsUserAdded)) != null)
 							{
-								customizations.Add(new PhraseCustomization(allPhrases[i + 1].OriginalPhrase,
+								customizations.Add(new PhraseCustomization(firstNonUserQuestionFroRef.OriginalPhrase,
 									translatablePhrase.QuestionInfo,
 									PhraseCustomization.CustomizationType.InsertionBefore));
 							}
 							else
 							{
-								// This is a question whose reference does not match either of the surrounding questions, so its Type is
-								// really arbitrary.
+								// This is a question whose reference does not match either of the surrounding questions
+								// (or is the first one in a sequence of user-added questions for a reference which had
+								// no built-in questions, so it is somewhat arbitrary whether we think of it as an addition
+								// or and insertion.
 								customizations.Add(new PhraseCustomization(translatablePhrase.OriginalPhrase,
 									translatablePhrase.QuestionInfo,
 									i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter));

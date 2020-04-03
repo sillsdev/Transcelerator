@@ -1138,6 +1138,48 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
 		}
 
+	    /// <summary>
+	    /// TXL-207: A question should be able to be added after an inserted question without causing them
+	    /// to get cross-linked such that a duplicate results.
+	    /// </summary>
+	    [Test]
+	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "Is this just a question?", "GEN 22:13", 1022013, 1022013);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			var qBase1 = pth[0];
+			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
+			pth.AddQuestion(insertedQuestionBefore, 0, qBase1.SequenceNumber, mp);
+		   var customizations = pth.CustomizedPhrases;
+		   Assert.AreEqual(1, customizations.Count);
+
+		    var qBase2 = pth[0];
+		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
+			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
+		    pth.AddQuestion(addedQuestion, 0, qBase2.SequenceNumber + 1, mp);
+
+		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
+
+			customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(2, customizations.Count);
+            int i = 0;
+            Assert.AreEqual("Is this just a question?", customizations[i].OriginalPhrase);
+            Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?", customizations[i].ModifiedPhrase);
+            Assert.AreEqual("Yes", customizations[i].Answer);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+            i++;
+            Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?", customizations[i].OriginalPhrase);
+            Assert.AreEqual("Was this question added after the inserted one?", customizations[i].ModifiedPhrase);
+            Assert.AreEqual("You bet", customizations[i].Answer);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+	    }
+
 	    [Test]
 	    public void CustomizedPhrases_PreviouslyInsertedAndAddedQuestionsMatchSurroundingAdjacentRefs_AddedQuestionsAreInCorrectOrder()
 	    {
@@ -1213,92 +1255,16 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
 		}
 
+        #endregion
+
+        #region AddQuestion Tests
+        /// ------------------------------------------------------------------------------------
         /// <summary>
-        /// TXL-207: More than two questions should be able to be added after a question without causing data
-        /// corruption (System.InvalidOperationException : Sequence contains more than one matching element in
-        /// MasterQuestionParser).
+        /// Tests adding a totally unique question (no words corresponding to existing parts)
+        /// to a PhraseTranslationHelper with no filter set and sorted by reference.
         /// </summary>
-	    [Test]
-	    public void CustomizedPhrases_NewlyAddedQuestionsAfterPreviousAdditionsForSameRef_QuestionsAddedWithoutDuplicateKey()
-        {
-	        var onlySection = m_sections.Items[0];
-	        onlySection.StartRef = 1022012;
-	        onlySection.EndRef = 1022014;
-	        var cat = onlySection.Categories[0];
-		    var qBefore = AddTestQuestion(cat, "What else did he say to Abraham?", "GEN 22.12", 1022012, 1022012);
-		    var qBase = AddTestQuestion(cat, "Was Abraham able to sacrifice a burnt offering to God?", "GEN 22.13", 1022013, 1022013);
-		    var qAfter = AddTestQuestion(cat, "Why did Abraham name the place \"The Lord Will Provide\"?", "GEN 22.14", 1022014, 1022014);
-
-		    var sectionsOrig = m_sections.Clone();
-
-		    var qAdded = AddTestQuestion(cat, "Que veux dire bindum?", "GEN 22.13", 1022013, 1022013);
-		    qAdded.IsUserAdded = true;
-		    qAdded.Answers = new[] { "Yo yomee á la place dequel" };
-		    qBase.AddedQuestionAfter = qAdded;
-
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-
-		    var customizations = pth.CustomizedPhrases;
-
-		    var parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
-			    null, null, customizations, null);
-		    ParsedQuestions pq = parser.Result;
-
-		    m_sections = pq.Sections;
-		    cat = m_sections.Items[0].Categories[0];
-
-		    qBase = cat.Questions.Single(q => q.Text == "Was Abraham able to sacrifice a burnt offering to God?");
-		    qAdded = AddTestQuestion(cat, "Quand il a fini le sacrifice, est-ce qu'il pouvait le manger", "GEN 22.13", 1022013, 1022013);
-		    qAdded.IsUserAdded = true;
-		    qAdded.Answers = new[] { "Haani, mat ájuh. Mara areemendeemen yo peepe, bajut waŋañoe" };
-		    qBase.AddedQuestionAfter = qAdded;
-
-		    qp = new QuestionProvider(GetParsedQuestions());
-		    pth = new PhraseTranslationHelper(qp);
-
-		    customizations = pth.CustomizedPhrases;
-
-		    parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
-			    null, null, customizations, null);
-		    pq = parser.Result;
-
-		    m_sections = pq.Sections;
-		    cat = m_sections.Items[0].Categories[0];
-
-		    qBase = cat.Questions.Single(q => q.Text == "Was Abraham able to sacrifice a burnt offering to God?");
-		    qAdded = AddTestQuestion(cat, "Que veux dire holocauste", "GEN 22.13", 1022013, 1022013);
-		    qAdded.IsUserAdded = true;
-		    qBase.AddedQuestionAfter = qAdded;
-
-		    qp = new QuestionProvider(GetParsedQuestions());
-		    pth = new PhraseTranslationHelper(qp);
-
-		    customizations = pth.CustomizedPhrases;
-
-		    parser = new MasterQuestionParser(sectionsOrig, MasterQuestionParserTests.s_questionWords,
-			    null, null, customizations, null);
-		    pq = parser.Result;
-
-		    var allQuestions = pq.Sections.Items[0].Categories[0].Questions;
-		    Assert.AreEqual(6, allQuestions.Count);
-            Assert.AreEqual(qBefore.Text, allQuestions[0].Text);
-            Assert.AreEqual("Was Abraham able to sacrifice a burnt offering to God?", allQuestions[1].Text);
-            Assert.AreEqual("Que veux dire holocauste", allQuestions[2].Text);
-            Assert.AreEqual("Quand il a fini le sacrifice, est-ce qu'il pouvait le manger", allQuestions[3].Text);
-            Assert.AreEqual("Que veux dire bindum?", allQuestions[4].Text);
-            Assert.AreEqual(qAfter.Text, allQuestions[5].Text);
-        }
-		#endregion
-
-		#region AddQuestion Tests
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests adding a totally unique question (no words corresponding to existing parts)
-		/// to a PhraseTranslationHelper with no filter set and sorted by reference.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
+        /// ------------------------------------------------------------------------------------
+        [Test]
 		public void AddQuestion_NoFilterSet_SortedByReference_NoKeyTerms_OneNewPart_NewPhraseWithOneNewPartAdded()
 		{
 			AddMockedKeyTerm("God");
