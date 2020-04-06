@@ -23,7 +23,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	[AddIn(pluginName, Description = "Prepares the master question file for Transcelerator - not for distribution to end-users.",
 		Version = "1.0", Publisher = "SIL International")]
 	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
-	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Transcelerator")]
+	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Paratext|Paratext settings")]
 	[QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.always)]
 	public class TxlMasterQuestionPreProcessorPlugin : IParatextAddIn
 	{
