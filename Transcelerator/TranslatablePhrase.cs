@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -19,6 +19,7 @@ using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -90,12 +91,12 @@ namespace SIL.Transcelerator
 		public TranslatablePhrase(string originalPhrase, string modifiedPhrase)
 		{
 			OriginalPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
-			if (!string.IsNullOrEmpty(modifiedPhrase))
+			if (!IsNullOrEmpty(modifiedPhrase))
 			{
 				m_sModifiedPhrase = modifiedPhrase.Normalize(NormalizationForm.FormC);
 
 			}
-			if (!String.IsNullOrEmpty(OriginalPhrase))
+			if (!IsNullOrEmpty(OriginalPhrase))
 			{
 				switch (PhraseInUse[PhraseInUse.Length - 1])
 				{
@@ -105,7 +106,7 @@ namespace SIL.Transcelerator
 				}
 				if (m_type == TypeOfPhrase.Unknown && OriginalPhrase.StartsWith(Question.kGuidPrefix))
 				{
-					OriginalPhrase = string.Empty;
+					OriginalPhrase = Empty;
 					m_type = TypeOfPhrase.NoEnglishVersion;
 				}
 			}
@@ -284,8 +285,8 @@ namespace SIL.Transcelerator
 			{
 				if (m_fHasUserTranslation)
 					return m_sTranslation;
-				if (!string.IsNullOrEmpty(m_sTranslation))
-					return String.Format(m_sTranslation, KeyTermRenderings.Union(NumberRenderings).ToArray());
+				if (!IsNullOrEmpty(m_sTranslation))
+					return Format(m_sTranslation, KeyTermRenderings.Concat(NumberRenderings).Cast<object>().ToArray());
 				return s_helper.InitialPunctuationForType(TypeOfPhrase) +
 					m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this)) +
 					s_helper.FinalPunctuationForType(TypeOfPhrase);
@@ -294,7 +295,7 @@ namespace SIL.Transcelerator
 			{
 				if (IsExcluded)
 					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
-				SetHasUserTranslationInternal(!string.IsNullOrEmpty(value));
+				SetHasUserTranslationInternal(!IsNullOrEmpty(value));
 				SetTranslationInternal(value);
 			}
 		}
@@ -413,13 +414,13 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(m_sTranslation) && m_sTranslation.Contains("{0}"))
+				if (!IsNullOrEmpty(m_sTranslation) && m_sTranslation.Contains("{0}"))
 				{
 					var parameters = GetValuesForPartsOfType<KeyTerm>(t => "(" + t.DebugInfo + ")")
-						.Union(GetValuesForPartsOfType<Number>(n => "#" + n.DebugInfo)).Cast<object>().ToArray();
-					return String.Format(m_sTranslation, parameters);
+						.Concat(GetValuesForPartsOfType<Number>(n => "#" + n.DebugInfo)).Cast<object>().ToArray();
+					return Format(m_sTranslation, parameters);
 				}
-				return String.Empty;
+				return Empty;
 			}
 		}
 		
@@ -457,7 +458,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the key term renderings (i.e., tranlsations), ordered by their
+		/// Gets an an array of the key term renderings (i.e., translations), ordered by their
 		/// occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -467,7 +468,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets an an array of the numbers formatted appropriately for inserting into a
-		/// tranlsations, ordered by their occurrence in the phrase.
+		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
@@ -476,7 +477,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets an an array of the parts formatted appropriately for inserting into a
-		/// tranlsations, ordered by their occurrence in the phrase.
+		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private string[] GetRenderingsOfType<T>() where T : IPhrasePart
@@ -487,7 +488,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets an an array of the numbers formatted appropriately for inserting into a
-		/// tranlsations, ordered by their occurrence in the phrase.
+		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private IEnumerable<string> GetValuesForPartsOfType<T>(Func<T, string> selector) where T : IPhrasePart
@@ -549,7 +550,7 @@ namespace SIL.Transcelerator
 		public Question QuestionInfo => m_questionInfo as Question;
 
 		[Browsable(false)]
-		public TypeOfPhrase TypeOfPhrase => (IsUserAdded && m_sModifiedPhrase == string.Empty) ? TypeOfPhrase.NoEnglishVersion : m_type;
+		public TypeOfPhrase TypeOfPhrase => (IsUserAdded && m_sModifiedPhrase == Empty) ? TypeOfPhrase.NoEnglishVersion : m_type;
 
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternateForms;
@@ -685,9 +686,9 @@ namespace SIL.Transcelerator
 			switch (ktFilter)
 			{
 				case PhraseTranslationHelper.KeyTermFilterType.WithRenderings:
-					return m_parts.OfType<KeyTerm>().All(kt => !string.IsNullOrEmpty(kt.Translation));
+					return m_parts.OfType<KeyTerm>().All(kt => !IsNullOrEmpty(kt.Translation));
 				case PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings:
-					bool temp = m_parts.OfType<KeyTerm>().Any(kt => string.IsNullOrEmpty(kt.Translation));
+					bool temp = m_parts.OfType<KeyTerm>().Any(kt => IsNullOrEmpty(kt.Translation));
 					return temp;
 				default: // PhraseTranslationHelper.KeyTermFilterType.All
 					return true;
