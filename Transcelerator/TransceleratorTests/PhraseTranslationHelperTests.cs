@@ -13,12 +13,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Reflection;
+using static System.Int32;
 
 namespace SIL.Transcelerator
 {
@@ -89,6 +91,11 @@ namespace SIL.Transcelerator
 					            kt = new KeyTermMatchSurrogate(sWords, new string(sWords.Reverse().ToArray()));
 			            parsedPart = new ParsedPart(kt);
 		            }
+                    else if (sPart.StartsWith("num:"))
+					{
+						var number = Parse(sPart.Substring(4));
+						parsedPart = new ParsedPart(number);
+					}
 		            else
 		            {
 						if (!m_translatablePartsDictionary.TryGetValue(sPart, out parsedPart))
@@ -3075,6 +3082,88 @@ namespace SIL.Transcelerator
                 new RenderingSelectionRule(@"{0}\w*ed\b", @"o$")});
 
             Assert.AreEqual("\u00BFFue sanado el mago?", phrase2.Translation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// TXL-208: Tests that getting the Translation (and also the DebugInfo) of a phrase
+        /// that has a pattern does not crash (and correctly uses an empty string) when there
+        /// are no non-empty key term renderings set for the key terms used in an untranslated
+        /// question.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetTranslation_MatchesPatternOfAnotherQuestionButKeyTermRenderingsAreUnknown_EmptyKeyTermRenderingsAreUsed()
+        {
+            AddMockedKeyTerm("magician", "naicigam", "");
+            AddMockedKeyTerm("servant", "tnavres", "criado", "siervo");
+            AddMockedKeyTerm("man", "nam", "hombre");
+            AddMockedKeyTerm("heal", "laeh", "sanar", "curada", "sanado", "sanara\u0301", "sanas", "curan", "cura", "sana");
+            AddMockedKeyTerm("help", "pleh", "ayudado", "ayudar", "auxiliado", "ayudara\u0301", "ayudas", "auxilian", "auxilia", "ayuda");
+            AddMockedKeyTerm("blind", "dnilb", "");
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Was the servant healed?", "A", 1, 1, "was the", "kt:servant", "kt:heal");
+            Question q2 = AddTestQuestion(cat, "Was the magician blinded?", "A", 1, 1, "was the", "kt:magician", "kt:blind");
+            Question q3 = AddTestQuestion(cat, "Was the man helped?", "B", 2, 2, "was the", "kt:man", "kt:help");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+
+            phrase1.Translation = "\u00BFFue sanado el siervo?";
+            Assert.AreEqual("\u00BFFue ayudado el hombre?", phrase3.Translation,
+	            "Sanity check: If this fails, the pattern was probably not detected based on setting the preceding translation.");
+
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            Assert.AreEqual("\u00BFFue  el ?", phrase2.Translation);
+            Assert.AreEqual("\u00BFFue (KT: ) el (KT: )?  ---  was the (3, Fue) | Magician (KT: ) | Blind (KT: )", phrase2.DebugInfo);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// TXL-208: Tests that getting the Translation (and also the DebugInfo) of a phrase
+        /// that has a pattern does not crash (and correctly uses renderings and numbers.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [TestCase("magos", "enciegados")]
+        [TestCase("magos", "")]
+        [TestCase("", "ciegos")]
+        [TestCase("", "")]
+        public void GetTranslation_MatchesPatternOfAnotherQuestionWithNumbers_EmptyKeyTermRenderingsAreUsed(string magicianRendering, string blindedRendering)
+        {
+            AddMockedKeyTerm("magician", "naicigam", magicianRendering);
+            AddMockedKeyTerm("servant", "tnavres", "criados", "criado");
+            AddMockedKeyTerm("man", "nam", "hombre", "hombres");
+            AddMockedKeyTerm("heal", "laeh", "sanar", "curada", "sanado", "sanados", "sanara\u0301", "sanas", "curan", "cura", "sana");
+            AddMockedKeyTerm("help", "pleh", "ayudar", "ayudado", "ayudados", "auxiliado", "ayudara\u0301", "ayudas", "auxilian", "auxilia", "ayuda");
+            AddMockedKeyTerm("blind", "dnilb", blindedRendering);
+
+            var cat = m_sections.Items[0].Categories[0];
+            Question q1 = AddTestQuestion(cat, "Were the 2 servants healed by the 2 men?", "A", 1, 1, "were the", "num:2", "kt:servant", "kt:heal", "by the", "num:2", "kt:man");
+            Question q2 = AddTestQuestion(cat, "Were the 4 magicians blinded by the 4 servants?", "A", 1, 1, "were the", "num:4", "kt:magician", "kt:blind", "by the", "num:4", "kt:servant");
+            Question q3 = AddTestQuestion(cat, "Were the 12 men helped by the 6 servants?", "B", 2, 2, "were the", "num:12", "kt:man", "kt:help", "by the", "num:6", "kt:servant");
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+
+            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+            TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+            TranslatablePhrase phrase3 = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+
+            phrase1.Translation = "\u00BFFueron sanados los 2 criados por los 2 hombres?";
+            phrase3.Translation = "\u00BFFueron ayudados los 12 hombres por los 6 siervos?";
+
+            Assert.IsFalse(phrase2.HasUserTranslation);
+
+            Assert.AreEqual($"\u00BFFueron {blindedRendering} los 4 {magicianRendering} por los 4 criados?", phrase2.Translation);
+            Assert.That(phrase2.DebugInfo.StartsWith($"\u00BFFueron (KT: {blindedRendering}) los #4 (KT: {magicianRendering}) por los #4 (KT: criados)?  ---  "));
         }
 
         /// ------------------------------------------------------------------------------------
