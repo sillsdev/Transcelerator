@@ -346,16 +346,16 @@ namespace SIL.Transcelerator
 						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
 							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
 						{
-							TranslatablePhrase firstNonUserQuestionFroRef;
+							TranslatablePhrase firstNonUserQuestionForRef;
 							if (i > 0 && allPhrases[i - 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
 							{
 								customizations.Add(new PhraseCustomization(allPhrases[i - 1].OriginalPhrase,
 									translatablePhrase.QuestionInfo,
 									PhraseCustomization.CustomizationType.AdditionAfter));
 							}
-							else if (i < allPhrases.Count - 1 && (firstNonUserQuestionFroRef = allPhrases.Skip(i + 1).TakeWhile(q => q.QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0).FirstOrDefault(q => !q.IsUserAdded)) != null)
+							else if (i < allPhrases.Count - 1 && (firstNonUserQuestionForRef = allPhrases.Skip(i + 1).TakeWhile(q => q.QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0).FirstOrDefault(q => !q.IsUserAdded)) != null)
 							{
-								customizations.Add(new PhraseCustomization(firstNonUserQuestionFroRef.OriginalPhrase,
+								customizations.Add(new PhraseCustomization(firstNonUserQuestionForRef.OriginalPhrase,
 									translatablePhrase.QuestionInfo,
 									PhraseCustomization.CustomizationType.InsertionBefore));
 							}
