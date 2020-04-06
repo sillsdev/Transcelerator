@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -1138,6 +1138,48 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
 		}
 
+	    /// <summary>
+	    /// TXL-207: A question should be able to be added after an inserted question without causing them
+	    /// to get cross-linked such that a duplicate results.
+	    /// </summary>
+	    [Test]
+	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "Is this just a question?", "GEN 22:13", 1022013, 1022013);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			var qBase1 = pth[0];
+			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
+			pth.AddQuestion(insertedQuestionBefore, 0, qBase1.SequenceNumber, mp);
+		   var customizations = pth.CustomizedPhrases;
+		   Assert.AreEqual(1, customizations.Count);
+
+		    var qBase2 = pth[0];
+		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
+			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
+		    pth.AddQuestion(addedQuestion, 0, qBase2.SequenceNumber + 1, mp);
+
+		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
+
+			customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(2, customizations.Count);
+            int i = 0;
+            Assert.AreEqual("Is this just a question?", customizations[i].OriginalPhrase);
+            Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?", customizations[i].ModifiedPhrase);
+            Assert.AreEqual("Yes", customizations[i].Answer);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+            i++;
+            Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?", customizations[i].OriginalPhrase);
+            Assert.AreEqual("Was this question added after the inserted one?", customizations[i].ModifiedPhrase);
+            Assert.AreEqual("You bet", customizations[i].Answer);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+	    }
+
 	    [Test]
 	    public void CustomizedPhrases_PreviouslyInsertedAndAddedQuestionsMatchSurroundingAdjacentRefs_AddedQuestionsAreInCorrectOrder()
 	    {
@@ -1212,16 +1254,17 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Maybe", customizations[i].Answer);
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
 		}
-		#endregion
 
-		#region AddQuestion Tests
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests adding a totally unique question (no words corresponding to existing parts)
-		/// to a PhraseTranslationHelper with no filter set and sorted by reference.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
+        #endregion
+
+        #region AddQuestion Tests
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests adding a totally unique question (no words corresponding to existing parts)
+        /// to a PhraseTranslationHelper with no filter set and sorted by reference.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
 		public void AddQuestion_NoFilterSet_SortedByReference_NoKeyTerms_OneNewPart_NewPhraseWithOneNewPartAdded()
 		{
 			AddMockedKeyTerm("God");

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -29,7 +29,7 @@ namespace SIL.Transcelerator
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
 	[XmlRoot(Namespace = "", IsNullable = false)]
-	public class Question : QuestionKey
+	public class Question : QuestionKey, ICloneable
 	{
 		public const string kGuidPrefix = "GUID: ";
 		private string m_text;
@@ -171,6 +171,38 @@ namespace SIL.Transcelerator
 
 			if (!string.IsNullOrEmpty(answer))
 				Answers = new[] { answer };
+		}
+
+		public Question Clone() => (Question)((ICloneable)this).Clone();
+
+		object ICloneable.Clone()
+		{
+			var clone = (Question)MemberwiseClone();
+			if (Answers != null)
+			{
+				clone.Answers = new string[Answers.Length];
+				for (var index = 0; index < Answers.Length; index++)
+					clone.Answers[index] = Answers[index];
+			}
+			if (Notes != null)
+			{
+				clone.Answers = new string[Notes.Length];
+				for (var index = 0; index < Notes.Length; index++)
+					clone.Notes[index] = Notes[index];
+			}
+			if (AlternateForms != null)
+			{
+				clone.Answers = new string[AlternateForms.Length];
+				for (var index = 0; index < AlternateForms.Length; index++)
+					clone.AlternateForms[index] = AlternateForms[index];
+			}
+			
+			if (InsertedQuestionBefore != null)
+				clone.InsertedQuestionBefore = InsertedQuestionBefore.Clone();
+			if (AddedQuestionAfter != null)
+				clone.AddedQuestionAfter = AddedQuestionAfter.Clone();
+
+			return clone;
 		}
 	}
 	#endregion

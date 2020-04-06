@@ -211,7 +211,6 @@ namespace SIL.Transcelerator
 			this.m_dataGridViewExistingQuestions.ShowEditingIcon = false;
 			this.m_dataGridViewExistingQuestions.ShowRowErrors = false;
 			this.m_dataGridViewExistingQuestions.Scroll += new System.Windows.Forms.ScrollEventHandler(this.m_dataGridViewExistingQuestions_Scroll);
-			this.m_dataGridViewExistingQuestions.SelectionChanged += new System.EventHandler(this.m_dataGridViewExistingQuestions_SelectionChanged);
 			// 
 			// colQuestion
 			// 
@@ -299,7 +298,7 @@ namespace SIL.Transcelerator
 			this.m_btnDown.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon24x24;
 			this.m_btnDown.Name = "m_btnDown";
 			this.m_btnDown.UseVisualStyleBackColor = true;
-			this.m_btnDown.Click += new System.EventHandler(this.HandleDownArrowClick);
+			this.m_btnDown.Click += new System.EventHandler(this.HandleArrowClick);
 			// 
 			// m_btnUp
 			// 
@@ -307,7 +306,7 @@ namespace SIL.Transcelerator
 			this.m_btnUp.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon24x24;
 			this.m_btnUp.Name = "m_btnUp";
 			this.m_btnUp.UseVisualStyleBackColor = true;
-			this.m_btnUp.Click += new System.EventHandler(this.HandleUpArrowClick);
+			this.m_btnUp.Click += new System.EventHandler(this.HandleArrowClick);
 			// 
 			// m_cboCategory
 			// 

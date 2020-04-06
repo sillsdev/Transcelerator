@@ -922,7 +922,7 @@
     <value>m_scrPsgReference</value>
   </data>
   <data name="&gt;&gt;m_scrPsgReference.Type" xml:space="preserve">
-    <value>SIL.Windows.Forms.Scripture.ScrPassageControl, SIL.Windows.Forms.Scripture, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.Scripture.ScrPassageControl, SIL.Windows.Forms.Scripture, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2</value>
   </data>
   <data name="&gt;&gt;m_scrPsgReference.Parent" xml:space="preserve">
     <value>$this</value>
