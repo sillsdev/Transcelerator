@@ -2840,6 +2840,88 @@
           </group>
         </group>
       </group>
+	  <group id="S:!LUK!22~24-30">
+        <group id="Details">
+          <group id="Q:LUK 22.24+About what did the disciples quarrel?">
+            <group id="Alternates">
+              <trans-unit id="l:!LUK!22~24#Alternate:About what did the disciples quarrel?252342649">
+                <source>About what did a quarrel break out among the disciples?</source>
+                <target state="signed-off">About what did a quarrel break out amongnst the disciples?</target>
+                <note>!LUK!22~24#Alternate:About what did the disciples quarrel?</note>
+              </trans-unit>
+              <trans-unit id="l:!LUK!22~24#Alternate:About what did the disciples quarrel?-1953687579">
+                <source>About what are the disciples quarreling?</source>
+                <target state="signed-off">About what are the disciples quarreling?</target>
+                <note>!LUK!22~24#Alternate:About what did the disciples quarrel?</note>
+              </trans-unit>
+		    </group>
+          </group>
+	      <group id="Q:LUK 22.27+What did Jesus say about his behavior among the disciples?">
+            <trans-unit id="q:!LUK!22~27#Question:What did Jesus say about his behavior among the disciples?">
+              <source>What did Jesus say about his behavior among the disciples?</source>
+              <target state="signed-off">What did Jesus say about his behaviour amongst the disciples?</target>
+              <note>!LUK!22~27#Question:What did Jesus say about his behavior among the disciples?</note>
+            </trans-unit>
+          </group>
+        </group>
+      </group>
+      <group id="S:!LUK!22~47-53">
+	    <group id="Details">
+          <group id="Q:LUK 22.51+Was Jesus in favor of his disciples attacking that man?">
+            <trans-unit id="q:!LUK!22~51#Question:Was Jesus in favor of his disciples attacking that man?">
+              <source>Was Jesus in favor of his disciples attacking that man?</source>
+              <target state="signed-off">Was Jesus in favour of his disciples attacking that man?</target>
+              <note>!LUK!22~51#Question:Was Jesus in favor of his disciples attacking that man?</note>
+            </trans-unit>
+          </group>
+        </group>
+      </group>
+      <group id="S:!LUK!24~1-12">
+	    <group id="Details">
+          <group id="Q:LUK 24.5+Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?">
+            <trans-unit id="q:!LUK!24~5#Question:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?">
+              <source>Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?</source>
+              <target state="signed-off">Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [amongst the dead]?</target>
+              <note>!LUK!24~5#Question:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?</note>
+            </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?-1192172785">
+                <source>Why did the men ask the women why they were looking for the living among the dead?</source>
+                <target state="signed-off">Why did the men ask the women why they were looking for the living amongst the dead?</target>
+                <note>!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?</note>
+              </trans-unit>
+              <trans-unit id="l:!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?-1197330486">
+                <source>Why did the men ask the women why they were looking for Jesus among the dead?</source>
+                <target state="signed-off">Why did the men ask the women why they were looking for Jesus amongst the dead?</target>
+                <note>!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?</note>
+              </trans-unit>
+              <trans-unit id="l:!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?1988072659">
+                <source>Why did the angels ask the women why they were looking for the living among the dead?</source>
+                <target state="signed-off">Why did the angels ask the women why they were looking for the living amongst the dead?</target>
+                <note>!LUK!24~5#Alternate:Why did the men/angels ask the women why they were looking for Jesus [the living] in the tomb [among the dead]?</note>
+              </trans-unit>
+            </group>
+		  </group>
+        </group>
+      </group>
+      <group id="S:!LUK!24~32-49">
+        <group id="Details">
+          <group id="Q:LUK 24.36+[Having stood among them,] what did Jesus say?">
+            <trans-unit id="q:!LUK!24~36#Question:[Having stood among them,] what did Jesus say?">
+              <source>[Having stood among them,] what did Jesus say?</source>
+              <target state="signed-off">[Having stood amongst them,] what did Jesus say?</target>
+              <note>!LUK!24~36#Question:[Having stood among them,] what did Jesus say?</note>
+            </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!LUK!24~36#Alternate:[Having stood among them,] what did Jesus say?1250354299">
+                <source>Having stood amongst them, what did Jesus say?</source>
+                <target state="signed-off">Having stood among them, what did Jesus say?</target>
+                <note>!LUK!24~36#Alternate:[Having stood among them,] what did Jesus say?</note>
+              </trans-unit>
+            </group>
+          </group>
+        </group>
+      </group>
       <group id="S:!MRK!1~9-11">
         <group id="Details">
           <group id="Q:MRK 1.11+What do we learn about Jesus from what God said?">

@@ -554,6 +554,7 @@ namespace SIL.Transcelerator.Localization
 				{
 					default: IsLocalized = false; break;
 					case "translated":
+					case "final": // This is what we get from Crowdin
 					case "signed-off": // Defined in XLIFF 1.2, but no loonger used in TXL's XLIFF files
 						IsLocalized = true; break;
 				}
