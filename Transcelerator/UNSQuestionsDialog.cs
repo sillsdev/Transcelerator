@@ -2123,6 +2123,8 @@ namespace SIL.Transcelerator
 				m_lastTranslationSelectionState = null;
 				TextControl.Focus();
 			}
+			else
+				SaveNeeded = true;
 			dataGridUns.InvalidateRow(rowIndex);
 		}
 
