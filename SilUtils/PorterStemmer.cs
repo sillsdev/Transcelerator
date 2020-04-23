@@ -92,7 +92,7 @@ namespace SIL.Utils
 
 		public bool StagedStemming { get; set; }
 
-		/* Implementation of the .NET interface - added as part of realease 4 (Leif) */
+		/* Implementation of the .NET interface - added as part of release 4 (Leif) */
 		public string stemTerm( string s )
 		{
 			setTerm( s );
@@ -102,7 +102,7 @@ namespace SIL.Utils
 
 		/*
 			SetTerm and GetTerm have been simply added to ease the 
-			interface with other lanaguages. They replace the add functions 
+			interface with other languages. They replace the add functions 
 			and toString function. This was done because the original functions stored
 			all stemmed words (and each time a new word was added, the buffer would be
 			re-copied each time, making it quite slow). Now, The class interface 
