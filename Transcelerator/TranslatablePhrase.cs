@@ -124,7 +124,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
         /// <summary>
-        /// Gets whether this is a Detail (as oppposed to Overview or category name)
+        /// Gets whether this is a Detail (as opposed to Overview or category name)
         /// question/phrase.
         /// </summary>
         /// ------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
         /// <summary>
-        /// Gets whether this is a category name (as oppposed to a Detail or Overview
+        /// Gets whether this is a category name (as opposed to a Detail or Overview
         /// question/phrase.)
         /// </summary>
         /// ------------------------------------------------------------------------------------

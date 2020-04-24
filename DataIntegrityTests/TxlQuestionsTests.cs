@@ -240,7 +240,13 @@ namespace DataIntegrityTests
 						}
 						break;
 					case 1:
-						if (!inOverviewSection)
+						if (inOverviewSection)
+						{
+							var firstMatch = regexZeroRef.Match(line, startPos);
+							Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
+								$"Error at line {matchedLine.LineNumber}. Overview sections should have 0 startref and endref attributes: " + line);
+						}
+						else
 						{
 							Assert.False(regexZeroRef.IsMatch(line, startPos),
 								$"Error at line {matchedLine.LineNumber}. Only overview sections should have 0 startref or endref attributes: " + line);
