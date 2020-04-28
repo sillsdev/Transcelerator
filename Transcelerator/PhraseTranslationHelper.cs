@@ -169,11 +169,11 @@ namespace SIL.Transcelerator
 				val = a.Category.CompareTo(b.Category);
 				if (val == 0)
 				{
-					val = a.EndRef.CompareTo(b.EndRef);
-					if (val == 0)
-					{
+					//val = a.EndRef.CompareTo(b.EndRef);
+					//if (val == 0)
+					//{
 						val = a.SequenceNumber.CompareTo(b.SequenceNumber);
-					}
+					//}
 				}
 			}
 			return val * direction;
@@ -199,8 +199,7 @@ namespace SIL.Transcelerator
 			{
 				foreach (TranslatablePhrase x in m_phrases.Where(p => p.AlternateForms != null))
 				{
-					if (reference == null || x.PhraseKey.ScriptureReference == reference)
-						if (x.AlternateForms.Contains(englishPhrase))
+					if ((reference == null || x.PhraseKey.ScriptureReference == reference) && x.AlternateForms.Contains(englishPhrase))
 					{
 						phrase = x;
 						break;

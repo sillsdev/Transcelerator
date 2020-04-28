@@ -1247,7 +1247,8 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
                         SectionInfo section = null;
-                        string prevQuestionRef = null;
+                        var prevQuestionStartRef = -1;
+                        var prevQuestionEndRef = -1;
                         bool sectionHeadHasBeenOutput = false;
 
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
@@ -1289,9 +1290,11 @@ namespace SIL.Transcelerator
 	                            var lwcCategoryName = dlg.GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
                                 prevCategory = phrase.Category;
+                                prevQuestionStartRef = -1;
+                                prevQuestionEndRef = -1;
                             }
 
-                            if (prevQuestionRef != phrase.Reference)
+                            if (prevQuestionStartRef != phrase.StartRef || prevQuestionEndRef < phrase.EndRef )
                             {
                                 if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
                                 {
@@ -1318,7 +1321,8 @@ namespace SIL.Transcelerator
                                         }
                                     }
                                 }
-                                prevQuestionRef = phrase.Reference;
+                                prevQuestionStartRef = phrase.StartRef;
+                                prevQuestionEndRef = phrase.EndRef;
                             }
 
 	                        lang = m_vernIcuLocale;

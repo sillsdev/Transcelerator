@@ -39,7 +39,7 @@ namespace DataIntegrityTests
 			// Although these references are regarded as human-readable, the current state of the data is that in some cases,
 			// instead of book names, there is just an abbreviation, either in mixed case or all caps. Probably not ideal, but
 			// not really a problem.
-			var regexHeadingHumanReadableRef = new Regex(" heading=\"(?<bookName>([1-3] ?)?(([A-Z][A-Za-z]+))( [A-Za-z]+){0,2}) (?<chapterAndVerse>((?<chapter>[1-9][0-9]*):)?(?<startVerse>[1-9][0-9]*)(?<startVerseSegment>[a|b])?((?<connector>-|(, ?))(((?<endChapter>[1-9][0-9]*)?):)?(?<endVerse>[1-9][0-9]*)(?<endVerseSegment>a)?)?)", RegexOptions.Compiled);
+			var regexHeadingHumanReadableRef = new Regex(" heading=\"(?<bookName>([1-3] ?)?(([A-Z][A-Za-z]+))( [A-Za-z]+){0,2}) (?<chapterAndVerse>((?<chapter>[1-9][0-9]*):)?(?<startVerse>[1-9][0-9]*)(?<startVerseSegment>[b])?((?<connector>-|(, ?))(((?<endChapter>[1-9][0-9]*)?):)?(?<endVerse>[1-9][0-9]*)(?<endVerseSegment>a)?)?)", RegexOptions.Compiled);
 			var regexWellFormedScrRef = new Regex(" scrref=\"(?<bookId>([1-3][A-Z]{2})|([A-Z]{3})) (?<chapterAndVerseInScrRef>[^\"]*[0-9a-b])\"", RegexOptions.Compiled);
 			var regexScrRefAttrib = new Regex(" scrref=", RegexOptions.Compiled);
 			var bbbcccvvvRef = "((?<zero>0)|(?<bookNum>0?[0-9]{1,2})(?<chapterNum>[0-9]{3})(?<verseNum>[0-9]{3}))";
@@ -55,6 +55,10 @@ namespace DataIntegrityTests
 			var endVerse = -1;
 			var endChapter = -1;
 			var prevBookNum = -1;
+			var prevSectionEndedWithSegment = false;
+			var prevSectionEndCCCVVV = -1;
+			var prevQuestionStartCCCVVV = 0;
+			var prevQuestionEndCCCVVV = 0;
 			var inSingleChapterBook = false;
 
 			foreach (var matchedLine in GetMatchingLines(regexHeading, m_regexQuestion))
@@ -105,11 +109,10 @@ namespace DataIntegrityTests
 						bookNum = BCVRef.BookToNumber(bookId);
 						if (bookNum != prevBookNum)
 						{
+							Assert.That(bookNum >= 1 && bookNum <= 66,
+								$"Book ID ({bookId}) does not correspond to a valid book: " + line);
 							inSingleChapterBook = englishVersification.GetLastChapter(bookNum) == 1;
-							prevBookNum = bookNum;
 						}
-						Assert.That(bookNum >= 1 && bookNum <= 66,
-							$"Book ID ({bookId}) does not correspond to a valid book: " + line);
 
 						if (!bookId.Equals(bookName, StringComparison.OrdinalIgnoreCase))
 						{
@@ -141,6 +144,36 @@ namespace DataIntegrityTests
 							"Chapter in endref attribute does not match section end chapter: " + line);
 						Assert.AreEqual(endVerse, Parse(matchEndRef.Groups["verseNum"].Value),
 							"Verse in endref attribute does not match section end verse: " + line);
+
+						if (bookNum == prevBookNum)
+						{
+							var currSectionStartsWithSegment = matchHeadingHumanReadableRef.Groups["startVerseSegment"].Value != Empty;
+							var currSectionEndsWithSegment = matchHeadingHumanReadableRef.Groups["endVerseSegment"].Value != Empty;
+							var currSectionEndCCCVVV = endChapter * 1000 + endVerse;
+							var currSectionStartCCCVVV = chapter * 1000 + startVerse;
+
+							// Ensure references are in ascending order
+							if (prevSectionEndedWithSegment)
+							{
+								Assert.That(currSectionStartsWithSegment && prevSectionEndCCCVVV == currSectionStartCCCVVV,
+									"Section out of order: " + line);
+							}
+							else
+							{
+								Assert.That(prevSectionEndCCCVVV < currSectionStartCCCVVV,
+									"Section out of order: " + line);
+							}
+
+							prevSectionEndCCCVVV = currSectionEndCCCVVV;
+							prevSectionEndedWithSegment = currSectionEndsWithSegment;
+						}
+						else
+						{
+							prevBookNum = bookNum;
+							prevSectionEndCCCVVV = -1;
+							Assert.False(prevSectionEndedWithSegment);
+						}
+						prevQuestionStartCCCVVV = 0;
 						break;
 					case 1:
 						matchScrRef = regexWellFormedScrRef.Match(line, startPos);
@@ -161,7 +194,7 @@ namespace DataIntegrityTests
 						matchStartRef = regexStartRef.Match(line, startPos);
 						Assert.That(matchStartRef.Success, "Question does not contain a valid startref attribute: " + line);
 
-						var questionStartCccVvv = -1;
+						var questionStartCccVvv = 0;
 
 						var startRefSpecifiedExplicitly = matchStartRef.Groups["zero"].Value == Empty;
 						if (startRefSpecifiedExplicitly)
@@ -173,12 +206,16 @@ namespace DataIntegrityTests
 							Assert.That(chapter * 1000 + startVerse <= questionStartCccVvv,
 								"Question starts outside of containing section: " + line);
 						}
+						Assert.That(questionStartCccVvv >= prevQuestionStartCCCVVV,
+							$"Error at line {matchedLine.LineNumber}. Question out of order: " + line);
+						prevQuestionStartCCCVVV = questionStartCccVvv;
 
 						matchEndRef = regexEndRef.Match(line, startPos);
 						Assert.That(matchEndRef.Success, "Question does not contain a valid endref attribute: " + line);
 						if (startRefSpecifiedExplicitly)
 						{
-							Assert.That(matchEndRef.Groups["zero"].Value == Empty);
+							Assert.That(matchEndRef.Groups["zero"].Value == Empty,
+								"Start and end ref must both be explicit or both be implicit: " + line);
 
 							Assert.AreEqual(bookNum, Parse(matchEndRef.Groups["bookNum"].Value));
 							var questionEndChapter = Parse(matchEndRef.Groups["chapterNum"].Value);
@@ -189,7 +226,12 @@ namespace DataIntegrityTests
 								"Question ends outside of containing section: " + line);
 							
 							Assert.That(questionStartCccVvv <= questionEndCccVvv,
-								"Question start reference is later than the end reference", line);
+								"Question start reference is later than the end reference: " + line);
+						}
+						else
+						{
+							Assert.That(matchEndRef.Groups["zero"].Value != Empty,
+								"Start and end ref must both be explicit or both be implicit: " + line);
 						}
 
 						break;
