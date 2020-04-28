@@ -54,12 +54,13 @@ namespace SIL.Transcelerator
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular category and reference).</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber)
+		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber, bool summary = false)
 			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
 			Category = category;
 			SequenceNumber = seqNumber;
+			Summary = summary;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
 			// chicken-and-egg problem when constructing this, so we need to do it here.
 			if (IsUserAdded && m_sModifiedPhrase != null)
@@ -520,6 +521,15 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		public int SequenceNumber { get; private set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether this phrase is a summary question (in which case its end reference is
+		/// used for sorting/grouping).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public bool Summary { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

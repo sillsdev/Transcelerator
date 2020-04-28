@@ -14,8 +14,9 @@ namespace DataIntegrityTests
 	public class Tests
 	{
 		Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
-		
-		private class MatchedXmlLine
+		Regex m_regexSummary = new Regex(" summary=\"true\"", RegexOptions.Compiled);
+
+			private class MatchedXmlLine
 		{
 			public MatchedXmlLine(int level, string line, int lineNumber, int matchEndPosition)
 			{
@@ -206,7 +207,7 @@ namespace DataIntegrityTests
 							Assert.That(chapter * 1000 + startVerse <= questionStartCccVvv,
 								"Question starts outside of containing section: " + line);
 						}
-						Assert.That(questionStartCccVvv >= prevQuestionStartCCCVVV,
+						Assert.That(m_regexSummary.IsMatch(line, startPos) || questionStartCccVvv >= prevQuestionStartCCCVVV,
 							$"Error at line {matchedLine.LineNumber}. Question out of order: " + line);
 						prevQuestionStartCCCVVV = questionStartCccVvv;
 
@@ -286,12 +287,12 @@ namespace DataIntegrityTests
 						{
 							var firstMatch = regexZeroRef.Match(line, startPos);
 							Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
-								$"Error at line {matchedLine.LineNumber}. Overview sections should have 0 startref and endref attributes: " + line);
+								$"Error at line {matchedLine.LineNumber}. Overview questions should have 0 startref and endref attributes: " + line);
 						}
-						else
+						else if (!m_regexSummary.IsMatch(line, startPos))
 						{
 							Assert.False(regexZeroRef.IsMatch(line, startPos),
-								$"Error at line {matchedLine.LineNumber}. Only overview sections should have 0 startref or endref attributes: " + line);
+								$"Error at line {matchedLine.LineNumber}. Only summary and overview questions should have 0 startref or endref attributes: " + line);
 						}
 						break;
 				}

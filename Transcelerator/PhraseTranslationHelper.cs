@@ -161,21 +161,35 @@ namespace SIL.Transcelerator
 			return (a, b) => ComparePhraseReferences(a, b, direction);
 		}
 
-		static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
+		public static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
 		{
-			int val = a.StartRef.CompareTo(b.StartRef);
-			if (val == 0)
+			int val;
+			if (a.Summary == b.Summary || (a.EndRef < b.StartRef || a.StartRef > b.EndRef))
+			{
+				val = a.StartRef.CompareTo(b.StartRef);
+				if (val == 0)
+				{
+					val = a.Category.CompareTo(b.Category);
+					if (val == 0)
+					{
+						if (a.Summary)
+							val = a.EndRef.CompareTo(b.EndRef);
+						if (val == 0)
+						{
+							val = a.SequenceNumber.CompareTo(b.SequenceNumber);
+						}
+					}
+				}
+			}
+			else
 			{
 				val = a.Category.CompareTo(b.Category);
 				if (val == 0)
 				{
-					//val = a.EndRef.CompareTo(b.EndRef);
-					//if (val == 0)
-					//{
-						val = a.SequenceNumber.CompareTo(b.SequenceNumber);
-					//}
+					val = a.SequenceNumber.CompareTo(b.SequenceNumber);
 				}
 			}
+
 			return val * direction;
 		}
 		#endregion

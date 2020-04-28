@@ -1294,7 +1294,21 @@ namespace SIL.Transcelerator
                                 prevQuestionEndRef = -1;
                             }
 
-                            if (prevQuestionStartRef != phrase.StartRef || prevQuestionEndRef < phrase.EndRef )
+							// Summary questions are allowed to occur out of order, so they should not affect
+							// the flow of the scripture text being output. (We need them to accurately reflect the
+							// range of Scripture to which they pertain so we can indicate that in the script and
+							// because if they are used in a place (e.g., Scripture Forge or a mobile quiz app)
+							// where the respondent can't necessarily look back over the preceding verses, they may
+							// need to be shown the relevant passage.
+							if (phrase.Summary)
+							{
+								int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
+								int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
+								sw.WriteLine("<h4 class=\"summaryRef\">");
+								sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+								sw.WriteLine("</h4>");
+							}
+							else if (prevQuestionStartRef != phrase.StartRef || prevQuestionEndRef < phrase.EndRef)
                             {
                                 if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
                                 {
@@ -1711,6 +1725,7 @@ namespace SIL.Transcelerator
 			sw.WriteLine("  background-color:black;}");
 			sw.WriteLine("h3 {font-size:1.3em;");
 			sw.WriteLine("  color:blue;}");
+			sw.WriteLine("h4 {font-size:1.1em;}");
 			sw.WriteLine("p {font-size:1.0em;}");
 			sw.WriteLine("h1:lang(en) {font-family:sans-serif;}");
 			sw.WriteLine("h2:lang(en) {font-family:serif;}");

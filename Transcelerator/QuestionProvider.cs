@@ -161,7 +161,7 @@ namespace SIL.Transcelerator
 							q.StartRef = section.StartRef;
 							q.EndRef = section.EndRef;
 						}
-						phrase = new TranslatablePhrase(q, categoryType, iQuestion + 1);
+						phrase = new TranslatablePhrase(q, categoryType, iQuestion + 1, q.IsSummaryQuestion);
 					    if (!phrase.IsExcluded)
 					        InitializePhraseParts(phrase);
 					    yield return phrase;

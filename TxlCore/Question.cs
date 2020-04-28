@@ -46,6 +46,9 @@ namespace SIL.Transcelerator
         [XmlAttribute("exclude")]
         public bool IsExcluded { get; set; }
 
+        [XmlAttribute("summary")]
+        public bool IsSummaryQuestion { get; set; }
+
 		[XmlAttribute("user")]
 		public bool IsUserAdded
 		{
