@@ -283,17 +283,21 @@ namespace DataIntegrityTests
 						}
 						break;
 					case 1:
-						if (inOverviewSection)
+						if (!m_regexSummary.IsMatch(line, startPos))
 						{
-							var firstMatch = regexZeroRef.Match(line, startPos);
-							Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
-								$"Error at line {matchedLine.LineNumber}. Overview questions should have 0 startref and endref attributes: " + line);
+							if (inOverviewSection)
+							{
+								var firstMatch = regexZeroRef.Match(line, startPos);
+								Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
+									$"Error at line {matchedLine.LineNumber}. Overview questions should be marked as \"summary\" questions unless they have 0 startref and endref attributes: " + line);
+							}
+							else
+							{
+								Assert.False(regexZeroRef.IsMatch(line, startPos),
+									$"Error at line {matchedLine.LineNumber}. Only summary and overview questions should have 0 startref or endref attributes: " + line);
+							}
 						}
-						else if (!m_regexSummary.IsMatch(line, startPos))
-						{
-							Assert.False(regexZeroRef.IsMatch(line, startPos),
-								$"Error at line {matchedLine.LineNumber}. Only summary and overview questions should have 0 startref or endref attributes: " + line);
-						}
+
 						break;
 				}
 				
