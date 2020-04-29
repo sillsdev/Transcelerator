@@ -166,9 +166,4 @@
 		<Exec Command='sign "$(RootDir)\output\installer\$(InstallerFileName)"' ContinueOnError="true"></Exec>
 	</Target>
 	
-	<Target Name="Upload" DependsOnTargets="VersionNumbers" >
-	<Message Text="Attempting rsync of TransceleratorInstaller.$(Version).msi" Importance="high"/>
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/$(InstallerFileName)" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/transcelerator/' />
-	<Exec Command ='"c:\program files\cwRsync\bin\rsync.exe" -vzlt --chmod=Dug=rwx,Fu=rw,go=r --stats --rsync-path="sudo -u vu2004 rsync" -e"\"c:\program files\cwRsync\bin\ssh\" -oUserKnownHostsFile=C:\BuildAgent\conf\known_hosts -oIdentityFile=/cygdrive/c/BuildAgent/conf/bob.key -l root"  "../output/installer/$(DownloadInfoFileName)" root@software.sil.org:/var/www/virtual/software.sil.org/htdocs/downloads/r/transcelerator/' />
-</Target>
 </Project>
