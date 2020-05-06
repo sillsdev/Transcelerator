@@ -289,7 +289,7 @@ namespace DataIntegrityTests
 							{
 								var firstMatch = regexZeroRef.Match(line, startPos);
 								Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
-									$"Error at line {matchedLine.LineNumber}. Overview questions should be marked as \"summary\" questions unless they have 0 startref and endref attributes: " + line);
+									$"Error at line {matchedLine.LineNumber}. Overview questions with specified references should be marked as \"summary\" questions: " + line);
 							}
 							else
 							{
