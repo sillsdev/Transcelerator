@@ -45,6 +45,7 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Constructors
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
@@ -53,14 +54,17 @@ namespace SIL.Transcelerator
 		/// <param name="category">The category (e.g. Overview vs. Detail question).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular category and reference).</param>
+		/// <param name="fixedOrder">Order in sequence of questions (relative to surrounding
+		/// questions with overlapping reference ranges) is fixed, not dependent on the
+		/// Scripture reference/range.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber, bool summary = false)
+		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber, bool fixedOrder = false)
 			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
 			Category = category;
 			SequenceNumber = seqNumber;
-			Summary = summary;
+			HasFixedOrder = fixedOrder;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
 			// chicken-and-egg problem when constructing this, so we need to do it here.
 			if (IsUserAdded && m_sModifiedPhrase != null)
@@ -524,12 +528,15 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets whether this phrase is a summary question (in which case its end reference is
-		/// used for sorting/grouping).
+		/// Gets whether this phrase is a summary question or some other question whose order in
+		/// the sequence of questions (relative to surrounding questions with overlapping
+		/// reference ranges) is fixed, not dependent on the Scripture reference/range.
+		/// Note: when fixed-order questions are compared against "normal questions" their end
+		/// references (rather than primarily the start reference) is used for sorting/grouping.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public bool Summary { get; private set; }
+		public bool HasFixedOrder { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
