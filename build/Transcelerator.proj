@@ -93,7 +93,7 @@
 	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
 
 	<Target Name="SetTestAssemblies">
-		<CreateItem Include="$(RootDir)/**/bin/$(Platform)/$(Configuration)/*Tests.dll">
+		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
 	</Target>
