@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
 using SIL.Scripture;
 using SIL.Transcelerator;
