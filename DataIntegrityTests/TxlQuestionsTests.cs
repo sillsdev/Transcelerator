@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 using NUnit.Framework;
 using SIL.Scripture;
 using SIL.Transcelerator;
@@ -525,7 +526,8 @@ namespace DataIntegrityTests
 
 		private IEnumerable<MatchedXmlLine> GetMatchingLines(Regex regexLevel0, Regex regexLevel1 = null)
 		{
-			using (var reader = new StreamReader(new FileStream(TxlCore.kQuestionsFilename, FileMode.Open)))
+			var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+			using (var reader = new StreamReader(new FileStream(Path.Combine(folder, TxlCore.kQuestionsFilename), FileMode.Open)))
 			{
 				Assert.IsNotNull(reader);
 				var lineNumber = 1;
