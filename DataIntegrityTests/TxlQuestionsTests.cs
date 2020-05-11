@@ -426,7 +426,7 @@ namespace DataIntegrityTests
 
 							var type = matchedLine.Match.Groups["idType"].Value;
 							Assert.IsFalse(groupInstructionsMissing,
-								$"Instructions should come before Note with {type} information: " + line);
+								$"Instructions - with correct group letters - should come before Note with {type} information: " + line);
 
 							if (type == "group")
 							{
@@ -448,10 +448,12 @@ namespace DataIntegrityTests
 						}
 						else
 						{
+							Assert.IsTrue(groupInstructionsMissing,
+								$"Found additional unexpected group instructions at line {matchedLine.LineNumber}: " + line);
+
 							int expectedCount = -1;
 							if (matchedLine.Match.Groups["useEitherGroup"].Value != Empty)
 							{
-								groupInstructionsMissing = false;
 								expectedCount = Parse(matchedLine.Match.Groups["count"].Value);
 								Assert.That(expectedCount > 2,
 									"Total questions in pair of groups should be more than 2: " + line);
@@ -460,10 +462,24 @@ namespace DataIntegrityTests
 									"Chapter mismatch in group ID line: " + line);
 								Assert.AreEqual(verses, matchedLine.Match.Groups["groupVerses"].Value,
 									"Chapter mismatch in group ID line: " + line);
+
+								var firstGroup = matchedLine.Match.Groups["firstGroup"].Value[0];
+								var secondGroup = matchedLine.Match.Groups["secondGroup"].Value[0];
+								Assert.AreEqual(1, secondGroup - firstGroup,
+									"Second group letter should be one greater than the first: " + line);
+								if (countOfQuestionsInCurrentPairOfGroups == 1)
+								{
+									Assert.AreEqual(group, firstGroup,
+										"For first occurence of instructions, first group ID should match current group: " + line);
+								}
+								else
+								{
+									Assert.AreEqual(group, secondGroup,
+										"For second occurence of instructions, second group ID should match current group: " + line);
+								}
 							}
 							else if (matchedLine.Match.Groups["useEitherQuestion"].Value != Empty)
 							{
-								groupInstructionsMissing = false;
 								expectedCount = 2;
 
 								Assert.AreEqual(group, matchedLine.Match.Groups["thisGroup"].Value[0],
@@ -485,6 +501,8 @@ namespace DataIntegrityTests
 							{
 								Assert.Fail("Regex claimed to match but didn't set expected value for any group.");
 							}
+
+							groupInstructionsMissing = false;
 
 							if (expectedTotalQuestionsInCurrentPairOfGroups > -1)
 							{
