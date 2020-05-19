@@ -164,7 +164,7 @@ namespace SIL.Transcelerator
 		public static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
 		{
 			int val;
-			if (a.Summary == b.Summary || (a.EndRef < b.StartRef || a.StartRef > b.EndRef))
+			if (a.HasFixedOrder == b.HasFixedOrder || (a.EndRef < b.StartRef || a.StartRef > b.EndRef))
 			{
 				val = a.StartRef.CompareTo(b.StartRef);
 				if (val == 0)
@@ -172,7 +172,7 @@ namespace SIL.Transcelerator
 					val = a.Category.CompareTo(b.Category);
 					if (val == 0)
 					{
-						if (a.Summary)
+						if (a.HasFixedOrder)
 							val = a.EndRef.CompareTo(b.EndRef);
 						if (val == 0)
 						{

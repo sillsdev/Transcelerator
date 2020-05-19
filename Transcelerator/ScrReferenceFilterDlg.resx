@@ -253,7 +253,7 @@
     <value>scrPsgFrom</value>
   </data>
   <data name="&gt;&gt;scrPsgFrom.Type" xml:space="preserve">
-    <value>SILUBS.SharedScrControls.ScrPassageControl, SharedScrControls, Version=7.2.0.21336, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.Scripture.ScrPassageControl, SharedScrControls, Version=7.2.0.21336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrPsgFrom.Parent" xml:space="preserve">
     <value>$this</value>
@@ -277,7 +277,7 @@
     <value>scrPsgTo</value>
   </data>
   <data name="&gt;&gt;scrPsgTo.Type" xml:space="preserve">
-    <value>SILUBS.SharedScrControls.ScrPassageControl, SharedScrControls, Version=7.2.0.21336, Culture=neutral, PublicKeyToken=null</value>
+    <value>SIL.Windows.Forms.Scripture, SharedScrControls, Version=7.2.0.21336, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scrPsgTo.Parent" xml:space="preserve">
     <value>$this</value>

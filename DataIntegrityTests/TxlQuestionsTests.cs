@@ -14,22 +14,24 @@ namespace DataIntegrityTests
 	public class Tests
 	{
 		Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
-		Regex m_regexSummary = new Regex(" summary=\"true\"", RegexOptions.Compiled);
+		Regex m_regexSummary = new Regex(" ordered=\"true\"", RegexOptions.Compiled);
 
 			private class MatchedXmlLine
 		{
-			public MatchedXmlLine(int level, string line, int lineNumber, int matchEndPosition)
+			public MatchedXmlLine(int level, string line, int lineNumber, Match match)
 			{
 				Level = level;
 				Line = line;
 				LineNumber = lineNumber;
-				MatchEndPosition = matchEndPosition;
+				MatchEndPosition = match.Index + match.Length;
+				Match = match;
 			}
 
 			internal int Level { get; }
 			internal string Line { get; }
 			internal int LineNumber { get; }
 			internal int MatchEndPosition { get; }
+			internal Match Match { get; }
 		}
 
 		[Test]
@@ -289,12 +291,12 @@ namespace DataIntegrityTests
 							{
 								var firstMatch = regexZeroRef.Match(line, startPos);
 								Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
-									$"Error at line {matchedLine.LineNumber}. Overview questions with specified references should be marked as \"summary\" questions: " + line);
+									$"Error at line {matchedLine.LineNumber}. Overview questions with specified references should be marked as \"ordered\" questions: " + line);
 							}
 							else
 							{
 								Assert.False(regexZeroRef.IsMatch(line, startPos),
-									$"Error at line {matchedLine.LineNumber}. Only summary and overview questions should have 0 startref or endref attributes: " + line);
+									$"Error at line {matchedLine.LineNumber}. Only ordered and overview questions should have 0 startref or endref attributes: " + line);
 							}
 						}
 
@@ -304,9 +306,227 @@ namespace DataIntegrityTests
 			}
 		}
 
+		[Test]
+		public void DataIntegrity_Groups_HaveConsistentReferencesAndLetters()
+		{
+			const string kVerseOrBridge = "(?<groupVerses>\\d+(-\\d+)?)";
+			var regexGroupedQuestion = new Regex("<Questions [^>]*\\bscrref=\"(?<book>[1-3]?[A-Z]{2,3}) " +
+				"((?<chapter>\\d{1,3})\\.)?(?<verses>[^\"]+)\"[^>]*\\bgroup=\"", RegexOptions.Compiled);
+			var regexGroupRelatedNote = new Regex("<Note>((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
+				$"(?<useEitherGroup>For \\w+ ((?<chapter>\\d+):)?{kVerseOrBridge}, use either the group (?<firstGroup>[ACEGIKMOQSUWY]) questions or the group (?<secondGroup>[BDFHJLNPRTVXZ]) questions. It would be redundant to ask all (?<count>\\d+) questions.)|" +
+				"(?<useEitherQuestion>Use either this question \\((?<thisGroup>[A-Z])\\) or the ((?<following>following)|(preceding)) question \\((?<otherGroup>[A-Z])\\). It would be redundant to ask both questions.)<\\/Note>", RegexOptions.Compiled);
+
+			var regexGroupAttrib = new Regex($"{kVerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
+
+			string bookId = null;
+			string chapter = null;
+			string verses = null;
+			char group = (char)0;
+			int questionLineNumber = -1;
+			var groupInstructionsMissing = false;
+			var groupOrQuestionIdNoteMissing = false;
+			var expectedTotalQuestionsInCurrentPairOfGroups = -1;
+			var countOfQuestionsInCurrentPairOfGroups = 0;
+
+			foreach (var matchedLine in GetMatchingLines(regexGroupedQuestion, regexGroupRelatedNote))
+			{
+				var line = matchedLine.Line;
+				var startPos = matchedLine.MatchEndPosition;
+				switch (matchedLine.Level)
+				{
+					case 0:
+						Assert.IsFalse(groupInstructionsMissing,
+							$"Did not find note with instructions for group {verses}{group} in {bookId} {chapter} at line {questionLineNumber}.");
+						Assert.IsFalse(groupOrQuestionIdNoteMissing,
+							$"Did not find note with the group information for {verses}{group} in {bookId} {chapter} at line {questionLineNumber}.");
+
+						questionLineNumber = matchedLine.LineNumber;
+						var newBookId = matchedLine.Match.Groups["book"].Value;
+						if (bookId != newBookId)
+						{
+							groupInstructionsMissing = true;
+							bookId = newBookId;
+							group = (char)0;
+						}
+
+						var newChapter = matchedLine.Match.Groups["chapter"].Value;
+						if (chapter != newChapter)
+						{
+							groupInstructionsMissing = true;
+							chapter = newChapter;
+							group = (char)0;
+						}
+
+						var questionVerses = matchedLine.Match.Groups["verses"].Value;
+
+						var matchGroupAttrib = regexGroupAttrib.Match(matchedLine.Line, startPos);
+
+						Assert.IsTrue(matchGroupAttrib.Success && matchGroupAttrib.Index == startPos,
+							"The group attribute failed to match the expected format: " + line);
+
+						var newVerses = matchGroupAttrib.Groups["groupVerses"].Value;
+						if (verses != newVerses)
+						{
+							groupInstructionsMissing = true;
+							verses = newVerses;
+							group = (char)0;
+						}
+
+						if (verses != questionVerses)
+						{
+							var questionVerseParts = verses.Split('-');
+							var questionStartVerse = Parse(questionVerseParts[0]);
+							var groupVerseParts = verses.Split('-');
+							var groupStartVerse = Parse(groupVerseParts[0]);
+							Assert.IsTrue(questionStartVerse >= groupStartVerse,
+								"Question has a group with a reference range that does not contain the verse(s) in the scrref attribute: " + line);
+							var questionEndVerse = questionVerseParts.Length > 1 ? Parse(questionVerseParts[1]) : questionStartVerse;
+							var groupEndVerse = groupVerseParts.Length > 1 ? Parse(groupVerseParts[1]) : groupStartVerse;
+							Assert.IsTrue(questionEndVerse <= groupEndVerse,
+								"Question has a group with a reference range that does not contain the verse(s) in the scrref attribute: " + line);
+						}
+
+						var newGroup = matchGroupAttrib.Groups["group"].Value[0];
+						if (group != newGroup)
+						{
+							if (group != (char)0)
+							{
+								Assert.AreEqual(1, newGroup - group,
+									"Group letter should increment for each new group in a particular verse or verse range: " + line);
+							}
+
+							if (!groupInstructionsMissing)
+								groupInstructionsMissing = true;
+							else
+								expectedTotalQuestionsInCurrentPairOfGroups = -1;
+
+							group = newGroup;
+
+							if ((group - 'A') % 2 == 0)
+							{
+								countOfQuestionsInCurrentPairOfGroups = 0;
+								expectedTotalQuestionsInCurrentPairOfGroups = -1;
+							}
+						}
+						countOfQuestionsInCurrentPairOfGroups++;
+
+						if (!groupInstructionsMissing)
+						{
+							Assert.IsTrue(countOfQuestionsInCurrentPairOfGroups <= expectedTotalQuestionsInCurrentPairOfGroups,
+								"This question puts the total number of questions over the expected number for the current pair of groups: " + line);
+						}
+
+						groupOrQuestionIdNoteMissing = true;
+						break;
+					case 1:
+						var bookIdInGroupId = matchedLine.Match.Groups["book"].Value;
+						if (bookIdInGroupId != Empty)
+						{
+							groupOrQuestionIdNoteMissing = false;
+
+							var type = matchedLine.Match.Groups["idType"].Value;
+							Assert.IsFalse(groupInstructionsMissing,
+								$"Instructions - with correct group letters - should come before Note with {type} information: " + line);
+
+							if (type == "group")
+							{
+								Assert.IsTrue(expectedTotalQuestionsInCurrentPairOfGroups > 2,
+									"Note should use \"group\" when there are more than 2 questions involved :" + line);
+							}
+							else
+							{
+								Assert.AreEqual(2, expectedTotalQuestionsInCurrentPairOfGroups,
+									"Note should use \"question\" when there are only 2 questions involved :" + line);
+							}
+
+							Assert.That(bookIdInGroupId.Equals(bookId, StringComparison.OrdinalIgnoreCase),
+								"Book mismatch in group ID line: " + line);
+							Assert.AreEqual(chapter, matchedLine.Match.Groups["chapterInGrpId"].Value,
+								"Chapter mismatch in group ID line: " + line);
+							Assert.AreEqual(verses, matchedLine.Match.Groups["verses"].Value,
+								"Chapter mismatch in group ID line: " + line);
+						}
+						else
+						{
+							Assert.IsTrue(groupInstructionsMissing,
+								$"Found additional unexpected group instructions at line {matchedLine.LineNumber}: " + line);
+
+							int expectedCount = -1;
+							if (matchedLine.Match.Groups["useEitherGroup"].Value != Empty)
+							{
+								expectedCount = Parse(matchedLine.Match.Groups["count"].Value);
+								Assert.That(expectedCount > 2,
+									"Total questions in pair of groups should be more than 2: " + line);
+
+								Assert.AreEqual(chapter, matchedLine.Match.Groups["chapter"].Value,
+									"Chapter mismatch in group ID line: " + line);
+								Assert.AreEqual(verses, matchedLine.Match.Groups["groupVerses"].Value,
+									"Chapter mismatch in group ID line: " + line);
+
+								var firstGroup = matchedLine.Match.Groups["firstGroup"].Value[0];
+								var secondGroup = matchedLine.Match.Groups["secondGroup"].Value[0];
+								Assert.AreEqual(1, secondGroup - firstGroup,
+									"Second group letter should be one greater than the first: " + line);
+								if (countOfQuestionsInCurrentPairOfGroups == 1)
+								{
+									Assert.AreEqual(group, firstGroup,
+										"For first occurence of instructions, first group ID should match current group: " + line);
+								}
+								else
+								{
+									Assert.AreEqual(group, secondGroup,
+										"For second occurence of instructions, second group ID should match current group: " + line);
+								}
+							}
+							else if (matchedLine.Match.Groups["useEitherQuestion"].Value != Empty)
+							{
+								expectedCount = 2;
+
+								Assert.AreEqual(group, matchedLine.Match.Groups["thisGroup"].Value[0],
+									$"{matchedLine.LineNumber} Incorrect group ID for \"this group\":" + line);
+								var otherGroup = matchedLine.Match.Groups["otherGroup"].Value[0];
+
+								if (matchedLine.Match.Groups["following"].Value != Empty)
+								{
+									Assert.AreEqual(1, otherGroup - group,
+										$"{matchedLine.LineNumber} Incorrect group ID for \"following group\":" + line);
+								}
+								else
+								{
+									Assert.AreEqual(1, group, otherGroup,
+										$"{matchedLine.LineNumber} Incorrect group ID for \"preceding group\":" + line);
+								}
+							}
+							else
+							{
+								Assert.Fail("Regex claimed to match but didn't set expected value for any group.");
+							}
+
+							groupInstructionsMissing = false;
+
+							if (expectedTotalQuestionsInCurrentPairOfGroups > -1)
+							{
+								Assert.AreEqual(expectedTotalQuestionsInCurrentPairOfGroups, expectedCount,
+									$"Instructions at line {matchedLine.LineNumber} contain total number of questions that does not match instructions for first question in previous group: " + line);
+							}
+							else
+							{
+								expectedTotalQuestionsInCurrentPairOfGroups = expectedCount;
+							}
+
+							Assert.IsTrue(countOfQuestionsInCurrentPairOfGroups <= expectedTotalQuestionsInCurrentPairOfGroups,
+								$"Instructions contain incorrect total number of questions (line {matchedLine.LineNumber}: {line}");
+						}
+
+						break;
+				}
+			}
+		}
+
 		private IEnumerable<MatchedXmlLine> GetMatchingLines(Regex regexLevel0, Regex regexLevel1 = null)
 		{
-			using (var reader = new StreamReader(new FileStream(TxlCore.kQuestionsFilename, FileMode.Open)))
+			var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+			using (var reader = new StreamReader(new FileStream(Path.Combine(folder, TxlCore.kQuestionsFilename), FileMode.Open)))
 			{
 				Assert.IsNotNull(reader);
 				var lineNumber = 1;
@@ -315,12 +535,12 @@ namespace DataIntegrityTests
 				{
 					var match = regexLevel0.Match(line);
 					if (match.Success)
-						yield return new MatchedXmlLine(0, line, lineNumber, match.Index + match.Length);
+						yield return new MatchedXmlLine(0, line, lineNumber, match);
 					else if (regexLevel1 != null)
 					{
 						match = regexLevel1.Match(line);
 						if (match.Success)
-							yield return new MatchedXmlLine(1, line, lineNumber, match.Index + match.Length);
+							yield return new MatchedXmlLine(1, line, lineNumber, match);
 					}
 					line = reader.ReadLine();
 					lineNumber++;
