@@ -302,7 +302,6 @@ namespace DataIntegrityTests
 
 						break;
 				}
-				
 			}
 		}
 
@@ -526,6 +525,15 @@ namespace DataIntegrityTests
 		private IEnumerable<MatchedXmlLine> GetMatchingLines(Regex regexLevel0, Regex regexLevel1 = null)
 		{
 			var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+			Assert.IsNotNull(folder);
+			var sourceXmlFolder = Path.GetDirectoryName(folder);
+			if (sourceXmlFolder != null)
+			{
+				sourceXmlFolder = Path.GetDirectoryName(sourceXmlFolder);
+				if (sourceXmlFolder != null)
+					folder = Path.Combine(sourceXmlFolder, "Transcelerator");
+			}
+
 			using (var reader = new StreamReader(new FileStream(Path.Combine(folder, TxlCore.kQuestionsFilename), FileMode.Open)))
 			{
 				Assert.IsNotNull(reader);
