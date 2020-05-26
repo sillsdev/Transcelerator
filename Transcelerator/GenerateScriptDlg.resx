@@ -679,7 +679,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_chkPassageBeforeOverview.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="panel1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Right</value>
@@ -814,7 +814,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="m_chkIncludeLWCComments.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -844,7 +844,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_chkIncludeLWCComments.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="m_chkIncludeLWCAnswers.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -874,7 +874,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_chkIncludeLWCAnswers.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="m_chkIncludeLWCQuestions.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -907,7 +907,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_chkIncludeLWCQuestions.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="m_lblQuestionGroupHeadingsColor.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1518,6 +1518,36 @@
   <data name="&gt;&gt;tabGeneral.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="m_chkIncludeVerseNumbers.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 35</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 17</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Text" xml:space="preserve">
+    <value>Include verse numbers</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Name" xml:space="preserve">
+    <value>m_chkIncludeVerseNumbers</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Parent" xml:space="preserve">
+    <value>tabOptions</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="m_cboUseLWC.Items" xml:space="preserve">
     <value>American English</value>
   </data>
@@ -1543,7 +1573,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_cboUseLWC.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1570,7 +1600,7 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="tabOptions.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 22</value>
