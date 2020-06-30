@@ -570,7 +570,7 @@ namespace SIL.Transcelerator
 		public TypeOfPhrase TypeOfPhrase => (IsUserAdded && m_sModifiedPhrase == Empty) ? TypeOfPhrase.NoEnglishVersion : m_type;
 
 		[Browsable(false)]
-		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternateForms;
+		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternativeForms;
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)

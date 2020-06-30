@@ -3562,12 +3562,18 @@ namespace SIL.Transcelerator
 		/// forms.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetPhrase_MatchesAlternate_GetsIt()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetPhrase_MatchesAlternate_GetsIt(bool hiddenAlternative)
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			var q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
-			q1.AlternateForms = new[] { "Who was the adult male person?", "Who was that man?", "Who was the gentleman?" };
+			q1.Alternatives = new[]
+			{ 
+				new AlternativeForm {Text = "Who was the adult male person?"}, 
+				new AlternativeForm {Text = "Who was that man?", Hide = hiddenAlternative},
+				new AlternativeForm {Text = "Who was the gentleman?"}
+			};
 			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
 			AddTestQuestion(cat, "Who was that man?", "B", 2, 2, "who was the man");
 

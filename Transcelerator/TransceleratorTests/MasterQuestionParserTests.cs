@@ -4371,12 +4371,9 @@ namespace SIL.Transcelerator
 							Assert.AreEqual(expQuestion.EndRef, actQuestion.EndRef);
 							Assert.AreEqual(expQuestion.ScriptureReference, actQuestion.ScriptureReference);
 						}
-						Assert.IsTrue((expQuestion.Answers == null && actQuestion.Answers == null) ||
-							expQuestion.Answers.SequenceEqual(actQuestion.Answers));
-						Assert.IsTrue((expQuestion.Notes == null && actQuestion.Notes == null) ||
-							expQuestion.Notes.SequenceEqual(actQuestion.Notes));
-						Assert.IsTrue((expQuestion.AlternateForms == null && actQuestion.AlternateForms == null) ||
-							expQuestion.AlternateForms.SequenceEqual(actQuestion.AlternateForms));
+						CollectionAssert.AreEqual(expQuestion.Answers, actQuestion.Answers);
+						CollectionAssert.AreEqual(expQuestion.Notes, actQuestion.Notes);
+						CollectionAssert.AreEqual(expQuestion.Alternatives, actQuestion.Alternatives);
 						iExpQ++;
 
 						foreach (string part in actQuestion.ParsedParts.Where(pp => pp.Type == PartType.TranslatablePart).Select(pp => pp.Text))

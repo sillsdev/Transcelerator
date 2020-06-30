@@ -157,13 +157,14 @@ namespace SIL.Transcelerator.Localization
 
 		private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
 		{
-			var stringsToAdd = q.AlternateForms;
-			if (stringsToAdd != null)
+			var alternatives = q.Alternatives;
+			if (alternatives != null)
 			{
 				var subGroup = questionGroup.GetQuestionSubGroup(LocalizableStringType.Alternate) ?? questionGroup.AddSubGroup(LocalizableStringType.Alternate.SubQuestionGroupId());
-				for (var index = 0; index < stringsToAdd.Length; index++)
+				for (var index = 0; index < alternatives.Length; index++)
 				{
-					if (String.IsNullOrWhiteSpace(stringsToAdd[index]))
+					// No need for localizing hidden alternatives
+					if (alternatives[index].Hide || String.IsNullOrWhiteSpace(alternatives[index].Text))
 						continue;
 
 					var key = new UIAlternateDataString(q, index, false);

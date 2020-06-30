@@ -762,7 +762,7 @@ namespace SIL.Transcelerator
 			Assert.IsNull(question.ScriptureReference);
 	        Assert.IsNull(question.Answers);
 			Assert.IsNull(question.Notes);
-			Assert.IsNull(question.AlternateForms);
+			Assert.IsNull(question.Alternatives);
 
 			question = category.Questions[1];
 
@@ -771,7 +771,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("Paul wanted the people in the synagogue to recognize that David was not speaking about himself...", question.Answers[0]);
 			Assert.IsNull(question.Notes);
-			Assert.AreEqual(2, question.AlternateForms.Length);
+			Assert.AreEqual(2, question.Alternatives.Length);
 
 			question = category.Questions[2];
 
@@ -781,7 +781,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("[THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.", question.Answers[0]);
 			Assert.AreEqual("[DARKNESS/SHADOWS:] The time of not knowing about the true God and of being afraid that something, perhaps God or evil spirits, might soon make us die, ends. (78-79)", question.Answers[1]);
 			Assert.IsNull(question.Notes);
-			Assert.AreEqual(3, question.AlternateForms.Length);
+			Assert.AreEqual(3, question.Alternatives.Length);
 
 			question = category.Questions[3];
 
@@ -790,9 +790,11 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("These questions should be joined as options.", question.Answers[0]);
 			Assert.IsNull(question.Notes);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("Question A?", question.AlternateForms[0]);
-			Assert.AreEqual("Question B?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("Question A?", question.Alternatives[0].Text);
+			Assert.False(question.Alternatives[0].Hide);
+			Assert.AreEqual("Question B?", question.Alternatives[1].Text);
+			Assert.False(question.Alternatives[1].Hide);
 
 			question = category.Questions[4];
 
@@ -914,72 +916,72 @@ namespace SIL.Transcelerator
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What do you think it means if/that someone condemns someone else?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What do you think it means if someone condemns someone else?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What do you think it means that someone condemns someone else?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What do you think it means if someone condemns someone else?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What do you think it means that someone condemns someone else?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[1];
 			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges/accusations did he say/write that the members of the Sanhedrin made against Paul?", question.Text);
-			Assert.AreEqual(4, question.AlternateForms.Count());
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he say that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he write that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he say that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(2));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he write that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(3));
+			Assert.AreEqual(4, question.AlternativeForms.Count());
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he say that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he write that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he say that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(2));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he write that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(3));
 
 			question = category.Questions[2];
 			Assert.AreEqual("Tell me what the picture language about the sun/darkness/shadows means to you?", question.Text);
-			Assert.AreEqual(3, question.AlternateForms.Count());
-			Assert.AreEqual("Tell me what the picture language about the sun means to you?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("Tell me what the picture language about the darkness means to you?", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("Tell me what the picture language about the shadows means to you?", question.AlternateForms.ElementAt(2));
+			Assert.AreEqual(3, question.AlternativeForms.Count());
+			Assert.AreEqual("Tell me what the picture language about the sun means to you?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("Tell me what the picture language about the darkness means to you?", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("Tell me what the picture language about the shadows means to you?", question.AlternativeForms.ElementAt(2));
 
 			question = category.Questions[3];
 			Assert.AreEqual("Pretend you are the angel and this table/chair/bench/tree is the altar. Show me where the angel was standing according to this verse.", question.Text);
-			Assert.AreEqual(4, question.AlternateForms.Count());
-			Assert.AreEqual("Pretend you are the angel and this table is the altar. Show me where the angel was standing according to this verse.", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("Pretend you are the angel and this chair is the altar. Show me where the angel was standing according to this verse.", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("Pretend you are the angel and this bench is the altar. Show me where the angel was standing according to this verse.", question.AlternateForms.ElementAt(2));
-			Assert.AreEqual("Pretend you are the angel and this tree is the altar. Show me where the angel was standing according to this verse.", question.AlternateForms.ElementAt(3));
+			Assert.AreEqual(4, question.AlternativeForms.Count());
+			Assert.AreEqual("Pretend you are the angel and this table is the altar. Show me where the angel was standing according to this verse.", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("Pretend you are the angel and this chair is the altar. Show me where the angel was standing according to this verse.", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("Pretend you are the angel and this bench is the altar. Show me where the angel was standing according to this verse.", question.AlternativeForms.ElementAt(2));
+			Assert.AreEqual("Pretend you are the angel and this tree is the altar. Show me where the angel was standing according to this verse.", question.AlternativeForms.ElementAt(3));
 
 			question = category.Questions[4];
 			Assert.AreEqual("What does he say about teaching/lessons?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What does he say about teaching?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What does he say about lessons?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What does he say about teaching?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What does he say about lessons?", question.AlternativeForms.ElementAt(1));
 
 			// For the remaining cases the results are not ideal, but this is the best we can do without a helper file to clarify the intended meaning
 
 			question = category.Questions[5];
 			Assert.AreEqual("Where was Paul when he wrote/was writing this letter?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("Where was Paul when he wrote writing this letter?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("Where was Paul when he was writing this letter?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("Where was Paul when he wrote writing this letter?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("Where was Paul when he was writing this letter?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[6];
 			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying/for people to carefully obey such rules?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying people to carefully obey such rules?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What is the reason that there is no real value in people carefully for people to carefully obey such rules?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying people to carefully obey such rules?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What is the reason that there is no real value in people carefully for people to carefully obey such rules?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[7];
 			Assert.AreEqual("What does Christ do for the body/the church/the believers?", question.Text);
-			Assert.AreEqual(4, question.AlternateForms.Count());
-			Assert.AreEqual("What does Christ do for the body church believers?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What does Christ do for the body the believers?", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("What does Christ do for the the church believers?", question.AlternateForms.ElementAt(2));
-			Assert.AreEqual("What does Christ do for the the the believers?", question.AlternateForms.ElementAt(3));
+			Assert.AreEqual(4, question.AlternativeForms.Count());
+			Assert.AreEqual("What does Christ do for the body church believers?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What does Christ do for the body the believers?", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("What does Christ do for the the church believers?", question.AlternativeForms.ElementAt(2));
+			Assert.AreEqual("What does Christ do for the the the believers?", question.AlternativeForms.ElementAt(3));
 
 			question = category.Questions[8];
 			Assert.AreEqual("What did the prophets write about Jesus/the Messiah long ago?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What did the prophets write about Jesus Messiah long ago?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What did the prophets write about the Messiah long ago?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What did the prophets write about Jesus Messiah long ago?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What did the prophets write about the Messiah long ago?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[9];
 			Assert.AreEqual("From what Matthew wrote, when do you think he \"came\"/\"appeared\"?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("From what Matthew wrote, when do you think he \"came\"?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("From what Matthew wrote, when do you think he \"appeared\"?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("From what Matthew wrote, when do you think he \"came\"?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("From what Matthew wrote, when do you think he \"appeared\"?", question.AlternativeForms.ElementAt(1));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1026,42 +1028,42 @@ namespace SIL.Transcelerator
 
 			Question question = category.Questions[0];
 			Assert.AreEqual("What do you think it means if/that someone condemns someone else?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What do you think it means if someone condemns someone else?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What do you think it means that someone condemns someone else?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What do you think it means if someone condemns someone else?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What do you think it means that someone condemns someone else?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[1];
 			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges/accusations did he say/write that the members of the Sanhedrin made against Paul?", question.Text);
-			Assert.AreEqual(4, question.AlternateForms.Count());
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he say that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he write that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he say that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(2));
-			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he write that the members of the Sanhedrin made against Paul?", question.AlternateForms.ElementAt(3));
+			Assert.AreEqual(4, question.AlternativeForms.Count());
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he say that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what charges did he write that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he say that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(2));
+			Assert.AreEqual("In the letter that Claudius Lysias wrote, what accusations did he write that the members of the Sanhedrin made against Paul?", question.AlternativeForms.ElementAt(3));
 
 			question = category.Questions[2];
 			Assert.AreEqual("Where was Paul when he wrote/was writing this letter?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("Where was Paul when he wrote this letter?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("Where was Paul when he was writing this letter?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("Where was Paul when he wrote this letter?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("Where was Paul when he was writing this letter?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[3];
 			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying/for people to carefully obey such rules?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying such rules?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What is the reason that there is no real value for people to carefully obey such rules?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What is the reason that there is no real value in people carefully obeying such rules?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What is the reason that there is no real value for people to carefully obey such rules?", question.AlternativeForms.ElementAt(1));
 
 			question = category.Questions[4];
 			Assert.AreEqual("What does Christ do for the body/the church/the believers?", question.Text);
-			Assert.AreEqual(3, question.AlternateForms.Count());
-			Assert.AreEqual("What does Christ do for the body?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What does Christ do for the church?", question.AlternateForms.ElementAt(1));
-			Assert.AreEqual("What does Christ do for the believers?", question.AlternateForms.ElementAt(2));
+			Assert.AreEqual(3, question.AlternativeForms.Count());
+			Assert.AreEqual("What does Christ do for the body?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What does Christ do for the church?", question.AlternativeForms.ElementAt(1));
+			Assert.AreEqual("What does Christ do for the believers?", question.AlternativeForms.ElementAt(2));
 
 			question = category.Questions[5];
 			Assert.AreEqual("What did the prophets write about Jesus/the Messiah long ago?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Count());
-			Assert.AreEqual("What did the prophets write about Jesus long ago?", question.AlternateForms.ElementAt(0));
-			Assert.AreEqual("What did the prophets write about the Messiah long ago?", question.AlternateForms.ElementAt(1));
+			Assert.AreEqual(2, question.AlternativeForms.Count());
+			Assert.AreEqual("What did the prophets write about Jesus long ago?", question.AlternativeForms.ElementAt(0));
+			Assert.AreEqual("What did the prophets write about the Messiah long ago?", question.AlternativeForms.ElementAt(1));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1103,29 +1105,29 @@ namespace SIL.Transcelerator
 			Question question = category.Questions[0];
 
 			Assert.AreEqual("[Read verses 22-23 again. Then ask this question:] How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("Read verses 22-23 again. Then ask this question: How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?", question.AlternateForms[0]);
-			Assert.AreEqual("How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("Read verses 22-23 again. Then ask this question: How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?", question.Alternatives[0].Text);
+			Assert.AreEqual("How do those words of the important man in your language sound to you? Do the words make you think that he was happy or frustrated or sad or angry?", question.Alternatives[1].Text);
 
 			question = category.Questions[1];
 
 			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and [people] had buried his body, his body had decayed?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and people had buried his body, his body had decayed?", question.AlternateForms[0]);
-			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and had buried his body, his body had decayed?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and people had buried his body, his body had decayed?", question.Alternatives[0].Text);
+			Assert.AreEqual("For what reason did Paul remind the people in the synagogue that after David had died and had buried his body, his body had decayed?", question.Alternatives[1].Text);
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("Paul wanted the people in the synagogue to recognize that David was not speaking about himself...", question.Answers[0]);
 
 			question = category.Questions[2];
 
 			Assert.AreEqual("[IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK:] Tell me what the picture language about the sun/darkness/shadows means to you?", question.Text);
-			Assert.AreEqual(6, question.AlternateForms.Length);
-			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the sun means to you?", question.AlternateForms[0]);
-			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the darkness means to you?", question.AlternateForms[1]);
-			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the shadows means to you?", question.AlternateForms[2]);
-			Assert.AreEqual("Tell me what the picture language about the sun means to you?", question.AlternateForms[3]);
-			Assert.AreEqual("Tell me what the picture language about the darkness means to you?", question.AlternateForms[4]);
-			Assert.AreEqual("Tell me what the picture language about the shadows means to you?", question.AlternateForms[5]);
+			Assert.AreEqual(6, question.Alternatives.Length);
+			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the sun means to you?", question.Alternatives[0].Text);
+			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the darkness means to you?", question.Alternatives[1].Text);
+			Assert.AreEqual("IF THE TRANSLATION OF VERSES 78-79 HAS PICTURE LANGUAGE ABOUT THE SUN OR DARKNESS OR SHADOWS, ASK: Tell me what the picture language about the shadows means to you?", question.Alternatives[2].Text);
+			Assert.AreEqual("Tell me what the picture language about the sun means to you?", question.Alternatives[3].Text);
+			Assert.AreEqual("Tell me what the picture language about the darkness means to you?", question.Alternatives[4].Text);
+			Assert.AreEqual("Tell me what the picture language about the shadows means to you?", question.Alternatives[5].Text);
 			Assert.AreEqual("LUK 1.78-79", question.ScriptureReference);
 			Assert.AreEqual(2, question.Answers.Length);
 			Assert.AreEqual("[THE SUN:] The sun is a picture of the savior coming from heaven to start a new day, a new period in our lives. He makes it clear to us how he saves us. Now we are encouraged about what is going to happen to us.", question.Answers[0]);
@@ -1134,9 +1136,9 @@ namespace SIL.Transcelerator
 			question = category.Questions[3];
 
 			Assert.AreEqual("When would these events about which Joel prophesied take place [in relation to the \"day of the Lord\"]?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("When would these events about which Joel prophesied take place in relation to the \"day of the Lord\"?", question.AlternateForms[0]);
-			Assert.AreEqual("When would these events about which Joel prophesied take place?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("When would these events about which Joel prophesied take place in relation to the \"day of the Lord\"?", question.Alternatives[0].Text);
+			Assert.AreEqual("When would these events about which Joel prophesied take place?", question.Alternatives[1].Text);
 			Assert.AreEqual("LUK 1.20", question.ScriptureReference);
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("All of the events that Peter mentioned in what he quoted from the prophet Joel would take place before the \"day of the Lord.\" They would happen before the time when God judges people for what they have done. (20b)", question.Answers[0]);
@@ -1144,13 +1146,13 @@ namespace SIL.Transcelerator
 			question = category.Questions[4];
 
 			Assert.AreEqual("At what places did Paul stop as he returned from Corinth [in Greece/Achaia] to Antioch [in Syria]?", question.Text);
-			Assert.AreEqual(6, question.AlternateForms.Length);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch in Syria?", question.AlternateForms[0]);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch in Syria?", question.AlternateForms[1]);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch?", question.AlternateForms[2]);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch?", question.AlternateForms[3]);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch in Syria?", question.AlternateForms[4]);
-			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch?", question.AlternateForms[5]);
+			Assert.AreEqual(6, question.Alternatives.Length);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch in Syria?", question.Alternatives[0].Text);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch in Syria?", question.Alternatives[1].Text);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Greece to Antioch?", question.Alternatives[2].Text);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth in Achaia to Antioch?", question.Alternatives[3].Text);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch in Syria?", question.Alternatives[4].Text);
+			Assert.AreEqual("At what places did Paul stop as he returned from Corinth to Antioch?", question.Alternatives[5].Text);
 			Assert.AreEqual("LUK 1.23", question.ScriptureReference);
 			Assert.AreEqual(1, question.Answers.Length);
 			Assert.AreEqual("[God] counted/accepted him as a righteous person. (23)", question.Answers[0]);
@@ -1186,13 +1188,13 @@ namespace SIL.Transcelerator
 			Question question = category.Questions[0];
 
 			Assert.AreEqual("What do you think it means to be tempted [by someone/something] to do something bad/wrong?", question.Text);
-			Assert.AreEqual(6, question.AlternateForms.Length);
-			Assert.AreEqual("What do you think it means to be tempted by someone to do something bad?", question.AlternateForms[0]);
-			Assert.AreEqual("What do you think it means to be tempted by someone to do something wrong?", question.AlternateForms[1]);
-			Assert.AreEqual("What do you think it means to be tempted by something to do something bad?", question.AlternateForms[2]);
-			Assert.AreEqual("What do you think it means to be tempted by something to do something wrong?", question.AlternateForms[3]);
-			Assert.AreEqual("What do you think it means to be tempted to do something bad?", question.AlternateForms[4]);
-			Assert.AreEqual("What do you think it means to be tempted to do something wrong?", question.AlternateForms[5]);
+			Assert.AreEqual(6, question.Alternatives.Length);
+			Assert.AreEqual("What do you think it means to be tempted by someone to do something bad?", question.Alternatives[0].Text);
+			Assert.AreEqual("What do you think it means to be tempted by someone to do something wrong?", question.Alternatives[1].Text);
+			Assert.AreEqual("What do you think it means to be tempted by something to do something bad?", question.Alternatives[2].Text);
+			Assert.AreEqual("What do you think it means to be tempted by something to do something wrong?", question.Alternatives[3].Text);
+			Assert.AreEqual("What do you think it means to be tempted to do something bad?", question.Alternatives[4].Text);
+			Assert.AreEqual("What do you think it means to be tempted to do something wrong?", question.Alternatives[5].Text);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1229,31 +1231,31 @@ namespace SIL.Transcelerator
 			Question question = category.Questions[0];
 
 			Assert.AreEqual("Who rules the believers now? // To whom do the believers now belong?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("Who rules the believers now?", question.AlternateForms[0]);
-			Assert.AreEqual("To whom do the believers now belong?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("Who rules the believers now?", question.Alternatives[0].Text);
+			Assert.AreEqual("To whom do the believers now belong?", question.Alternatives[1].Text);
 
 			question = category.Questions[1];
 
 			Assert.AreEqual("According to God, for what reason would his Spirit not remain with people/mankind forever/for a long time? -OR- According to God, for what reason would he not allow people/mankind to live forever/for a long time?", question.Text);
-			Assert.AreEqual(8, question.AlternateForms.Length);
-			Assert.AreEqual("According to God, for what reason would his Spirit not remain with people forever a long time?", question.AlternateForms[0]);
-			Assert.AreEqual("According to God, for what reason would his Spirit not remain with people for a long time?", question.AlternateForms[1]);
-			Assert.AreEqual("According to God, for what reason would his Spirit not remain with mankind forever a long time?", question.AlternateForms[2]);
-			Assert.AreEqual("According to God, for what reason would his Spirit not remain with mankind for a long time?", question.AlternateForms[3]);
-			Assert.AreEqual("According to God, for what reason would he not allow people to live forever a long time?", question.AlternateForms[4]);
-			Assert.AreEqual("According to God, for what reason would he not allow people to live for a long time?", question.AlternateForms[5]);
-			Assert.AreEqual("According to God, for what reason would he not allow mankind to live forever a long time?", question.AlternateForms[6]);
-			Assert.AreEqual("According to God, for what reason would he not allow mankind to live for a long time?", question.AlternateForms[7]);
+			Assert.AreEqual(8, question.Alternatives.Length);
+			Assert.AreEqual("According to God, for what reason would his Spirit not remain with people forever a long time?", question.Alternatives[0].Text);
+			Assert.AreEqual("According to God, for what reason would his Spirit not remain with people for a long time?", question.Alternatives[1].Text);
+			Assert.AreEqual("According to God, for what reason would his Spirit not remain with mankind forever a long time?", question.Alternatives[2].Text);
+			Assert.AreEqual("According to God, for what reason would his Spirit not remain with mankind for a long time?", question.Alternatives[3].Text);
+			Assert.AreEqual("According to God, for what reason would he not allow people to live forever a long time?", question.Alternatives[4].Text);
+			Assert.AreEqual("According to God, for what reason would he not allow people to live for a long time?", question.Alternatives[5].Text);
+			Assert.AreEqual("According to God, for what reason would he not allow mankind to live forever a long time?", question.Alternatives[6].Text);
+			Assert.AreEqual("According to God, for what reason would he not allow mankind to live for a long time?", question.Alternatives[7].Text);
 
 			question = category.Questions[2];
 
 			Assert.AreEqual("What does he say about teaching/lessons? (or, What does the author want/tell the readers to do?)", question.Text);
-			Assert.AreEqual(4, question.AlternateForms.Length);
-			Assert.AreEqual("What does he say about teaching?", question.AlternateForms[0]);
-			Assert.AreEqual("What does he say about lessons?", question.AlternateForms[1]);
-			Assert.AreEqual("What does the author want the readers to do?", question.AlternateForms[2]);
-			Assert.AreEqual("What does the author tell the readers to do?", question.AlternateForms[3]);
+			Assert.AreEqual(4, question.Alternatives.Length);
+			Assert.AreEqual("What does he say about teaching?", question.Alternatives[0].Text);
+			Assert.AreEqual("What does he say about lessons?", question.Alternatives[1].Text);
+			Assert.AreEqual("What does the author want the readers to do?", question.Alternatives[2].Text);
+			Assert.AreEqual("What does the author tell the readers to do?", question.Alternatives[3].Text);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1290,9 +1292,9 @@ namespace SIL.Transcelerator
 			Question question = category.Questions[0];
 
 			Assert.AreEqual("What would the shepherds see which would prove to them that what the angel said was true? -OR- How would the shepherds know if they had found the baby which the angel was talking about?", question.Text);
-			Assert.AreEqual(2, question.AlternateForms.Length);
-			Assert.AreEqual("What would the shepherds see which would prove to them that what the angel said was true?", question.AlternateForms[0]);
-			Assert.AreEqual("How would the shepherds know if they had found the baby which the angel was talking about?", question.AlternateForms[1]);
+			Assert.AreEqual(2, question.Alternatives.Length);
+			Assert.AreEqual("What would the shepherds see which would prove to them that what the angel said was true?", question.Alternatives[0].Text);
+			Assert.AreEqual("How would the shepherds know if they had found the baby which the angel was talking about?", question.Alternatives[1].Text);
 			Assert.AreEqual(2, question.Answers.Length);
 			Assert.AreEqual("They would find the baby wrapped in pieces of cloth (according to their Jewish custom) (12b)", question.Answers[0]);
 			Assert.AreEqual("and lying in a manger, that is, an animal's food trough/box. (12c)", question.Answers[1]);

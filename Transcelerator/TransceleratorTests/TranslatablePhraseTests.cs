@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -112,7 +112,11 @@ namespace SIL.Transcelerator
 		public void ToUIDataString_QuestionHasAlternateFormsButIsNotModified_ReturnsUIQuestionDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
+			qk.Alternatives = new[] 
+			{
+				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
+				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
+			};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
@@ -125,7 +129,11 @@ namespace SIL.Transcelerator
 		public void ToUIDataString_QuestionHasAlternateFormsButIsModifiedUsingCustomText_ReturnsNonLocalizableUISimpleDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
+			qk.Alternatives = new[] 
+			{
+				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
+				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
+			};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
@@ -165,15 +173,20 @@ namespace SIL.Transcelerator
 		public void ToUIDataString_QuestionHasAlternateFormsAndPhraseIsUsingOneOfThem_ReturnsFalse(int i)
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			qk.AlternateForms = new[] {"Pray tell what sayeth the fox?", "Could you specify the utterances that proceded from the vocal apparatus pertaining to the fox?"};
+			// Arbitrarily make one of the two hidden, since for this purpose, hidden and non-hidden alternates should behave the same.
+			qk.Alternatives = new[] 
+			{
+				new AlternativeForm {Text = "Pray tell what sayeth the fox?", Hide = true},
+				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
+			};
 			var phrase = new TranslatablePhrase(qk, 1, 6);
-			phrase.ModifiedPhrase = qk.AlternateForms[i];
+			phrase.ModifiedPhrase = qk.AlternativeForms.ElementAt(i);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
 			var result = (UIAlternateDataString)phrase.ToUIDataString();
 			Assert.AreEqual(phrase.ModifiedPhrase, result.SourceUIString);
 			// Let's also prove that the original result does not change if a different alternate is later selected
-			phrase.ModifiedPhrase = qk.AlternateForms[i == 0 ? 1 : 0];
+			phrase.ModifiedPhrase = qk.AlternativeForms.ElementAt(i == 0 ? 1 : 0);
 			Assert.AreNotEqual(phrase.ToUIDataString().SourceUIString, result.SourceUIString);
 		}
 		#endregion

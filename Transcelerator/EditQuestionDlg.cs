@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Transcelerator.Localization;
@@ -61,37 +62,45 @@ namespace SIL.Transcelerator
 			else
 			{
 				m_txtOriginal.Tag = question.OriginalPhrase;
-				m_txtOriginal.Text = dataLocalizer.GetLocalizedDataString(new UIQuestionDataString(question.PhraseKey, true, false), out string locale);
+				m_txtOriginal.Text = dataLocalizer.GetLocalizedDataString(new UIQuestionDataString(question.PhraseKey, true, false), out _);
 				m_txtModified.Text = question.OriginalPhrase == question.PhraseInUse ? m_txtOriginal.Text : question.PhraseInUse;
 			}
-			Question q = question.QuestionInfo;
-			if (q?.AlternateForms != null)
+			var alternativeForms = question.QuestionInfo?.Alternatives;
+			if (alternativeForms != null && alternativeForms.Any(f => !f.Hide))
 			{
-				System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
-
-				for (int i = 1; i < q.AlternateForms.Length; i++)
+				var resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
+				var firstOneToShow = -1;
+				for (var i = 0; i < alternativeForms.Length; i++)
 				{
-					RadioButton newBtn = new RadioButton();
+					if (alternativeForms[i].Hide)
+						continue;
+					if (firstOneToShow == -1)
+					{
+						firstOneToShow = i;
+						continue;
+					}
+					var newBtn = new RadioButton();
 					m_pnlAlternatives.Controls.Add(newBtn);
 					resources.ApplyResources(newBtn, "m_rdoAlternative");
 					m_pnlAlternatives.SetFlowBreak(newBtn, true);
 					InitializeRadioButton(newBtn, i, dataLocalizer);
 					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
-				InitializeRadioButton(m_rdoAlternative, 0, dataLocalizer);
-				return;
+				Debug.Assert(firstOneToShow >= 0);
+				InitializeRadioButton(m_rdoAlternative, firstOneToShow, dataLocalizer);
 			}
-			m_pnlAlternatives.Hide();
+			else
+				m_pnlAlternatives.Hide();
 		}
 
 		private void InitializeRadioButton(RadioButton btn, int index, LocalizationsFileAccessor dataLocalizer)
 		{
-			var alternateForm = m_question.QuestionInfo.AlternateForms[index];
+			var alternateForm = m_question.QuestionInfo.Alternatives[index].Text;
 			if (dataLocalizer == null)
 				btn.Text = alternateForm;
 			else
 			{
-				btn.Text = dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out string locale);
+				btn.Text = dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
 				btn.Tag = alternateForm;
 
 			}
