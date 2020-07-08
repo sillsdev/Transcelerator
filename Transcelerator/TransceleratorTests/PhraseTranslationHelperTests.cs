@@ -3732,6 +3732,19 @@ namespace SIL.Transcelerator
 		        Assert.That(result < 0);
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_NormalQuestionsInDifferentSectionsSameStartRefs_SortedByEndRef(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 21);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 1, 2);
+	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, b, ascending ? 1 : -1);
+	        Assert.AreEqual(ascending, result < 0);
+	        // Repeat with parameters switched
+	        result = PhraseTranslationHelper.ComparePhraseReferences(b, a, ascending ? 1 : -1);
+	        Assert.AreEqual(ascending, result > 0);
+        }
+
         [TestCase(001001001, 001001002, 001001002, 001001002, true)]
         [TestCase(001001001, 001001002, 001001002, 001001002, false)]
         [TestCase(001001002, 001001002, 001001001, 001001002, true)]
@@ -3745,15 +3758,40 @@ namespace SIL.Transcelerator
         [TestCase(001001006, 001001008, 001001002, 001001006, true)]
         [TestCase(001001006, 001001008, 001001002, 001001006, false)]
         public void ComparePhraseReferences_OrderedAndUnOrderedQuestionsWithOverlappingRefs_SortedBySequenceNumber(
-            int startRefA, int endRefA, int startRefB, int endRefB, bool aisOrdered)
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool aIsOrdered)
         {
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-            var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 1, 1, aisOrdered);
-            var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 2, !aisOrdered);
-            var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
-            var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
-            Assert.That(resultAscending < 0);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 1, 1, aIsOrdered);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 2, !aIsOrdered);
+	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
+	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
+	        Assert.That(resultAscending < 0);
+	        Assert.That(resultDescending > 0);
+        }
+
+        [TestCase(001001001, 001001002, 001001002, 001001002)]
+        [TestCase(001001001, 001001002, 001001002, 001001002)]
+        [TestCase(001001002, 001001002, 001001001, 001001002)]
+        [TestCase(001001002, 001001002, 001001001, 001001002)]
+        [TestCase(001001001, 001001005, 001001002, 001001002)]
+        [TestCase(001001001, 001001005, 001001002, 001001002)]
+        [TestCase(001001002, 001001003, 001001002, 001001006)]
+        [TestCase(001001002, 001001003, 001001002, 001001006)]
+        [TestCase(001001005, 001001007, 001001002, 001001006)]
+        [TestCase(001001005, 001001007, 001001002, 001001006)]
+        [TestCase(001001006, 001001008, 001001002, 001001006)]
+        [TestCase(001001006, 001001008, 001001002, 001001006)]
+        public void ComparePhraseReferences_OrderedQuestionsWithOverlappingRefs_SortedBySequenceNumber(
+	        int startRefA, int endRefA, int startRefB, int endRefB)
+        {
+	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
+	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 1, 1, true);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 2, true);
+	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
+	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
+	        Assert.That(resultAscending < 0);
 	        Assert.That(resultDescending > 0);
         }
 
@@ -3766,12 +3804,12 @@ namespace SIL.Transcelerator
         [TestCase(001001002, 001001003, 001001004, 001001006, true)]
         [TestCase(001001002, 001001003, 001001004, 001001006, false)]
         public void ComparePhraseReferences_OrderedAndUnOrderedQuestionsWithNonOverlappingRefs_SortedByStartRef(
-	        int startRefA, int endRefA, int startRefB, int endRefB, bool aisOrdered)
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool aIsOrdered)
         {
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 2, 2, aisOrdered);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 1, !aisOrdered);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 2, 2, aIsOrdered);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 1, !aIsOrdered);
 	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
 	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
 	        if (startRefA < startRefB)

@@ -1300,15 +1300,18 @@ namespace SIL.Transcelerator
 							// because if they are used in a place (e.g., Scripture Forge or a mobile quiz app)
 							// where the respondent can't necessarily look back over the preceding verses, they may
 							// need to be shown the relevant passage.
-							if (phrase.HasFixedOrder && (section == null || phrase.StartRef != section.StartRef || phrase.EndRef != section.EndRef))
+							if (phrase.HasFixedOrder)
 							{
-								int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
-								int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
-								sw.WriteLine("<h4 class=\"summaryRef\">");
-								sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
-								sw.WriteLine("</h4>");
+								if (section == null || phrase.StartRef != section.StartRef || phrase.EndRef != section.EndRef)
+								{
+									int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
+									int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
+									sw.WriteLine("<h4 class=\"summaryRef\">");
+									sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+									sw.WriteLine("</h4>");
+								}
 							}
-							else if (prevQuestionStartRef != phrase.StartRef || prevQuestionEndRef < phrase.EndRef)
+							else if (prevQuestionEndRef < phrase.EndRef)
                             {
                                 if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
                                 {

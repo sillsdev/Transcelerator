@@ -161,10 +161,16 @@ namespace SIL.Transcelerator
 			return (a, b) => ComparePhraseReferences(a, b, direction);
 		}
 
+		private static bool PhraseReferencesOverlap(TranslatablePhrase a, TranslatablePhrase b) =>
+			a.EndRef < b.StartRef || a.StartRef > b.EndRef;
+
 		public static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
 		{
+			if (!a.HasFixedOrder && !b.HasFixedOrder && a.StartRef == 001029014 && b.StartRef == 1029014)
+				Debug.WriteLine("Wow");
 			int val;
-			if (a.HasFixedOrder == b.HasFixedOrder || (a.EndRef < b.StartRef || a.StartRef > b.EndRef))
+			if ((!a.HasFixedOrder && !b.HasFixedOrder) ||
+				((a.HasFixedOrder || b.HasFixedOrder) && PhraseReferencesOverlap(a, b)))
 			{
 				val = a.StartRef.CompareTo(b.StartRef);
 				if (val == 0)
@@ -172,7 +178,7 @@ namespace SIL.Transcelerator
 					val = a.Category.CompareTo(b.Category);
 					if (val == 0)
 					{
-						if (a.HasFixedOrder)
+						if (!a.HasFixedOrder && !b.HasFixedOrder)
 							val = a.EndRef.CompareTo(b.EndRef);
 						if (val == 0)
 						{
