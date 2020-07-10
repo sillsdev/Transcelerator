@@ -1010,7 +1010,7 @@ namespace SIL.Transcelerator
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-			Assert.IsFalse(pth.GetMatchingPhrases(4, 6, 1).Any());
+			Assert.IsFalse(pth.GetMatchingPhrases(4, 6).Any());
 		}
 
 		[Test]
@@ -1029,10 +1029,10 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 			pth.Sort(listSortedBy, ascending);
 
-			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			var matches = pth.GetMatchingPhrases(2, 2);
 			Assert.AreEqual(2, matches.Count);
-			Assert.AreEqual("Q1", matches[0].PhraseInUse);
-			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q2"));
 		}
 
 		[Test]
@@ -1047,10 +1047,10 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 			pth[0].IsExcluded = true;
 
-			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			var matches = pth.GetMatchingPhrases(2, 2);
 			Assert.AreEqual(2, matches.Count);
-			Assert.AreEqual("Q1", matches[0].PhraseInUse);
-			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
 		}
 		#endregion
 
@@ -1120,13 +1120,13 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("Question 1? (replaced)", qBase1.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    qBase1.IsExcluded = true;
 			var addedQuestion = new Question(qBase1.QuestionInfo, "Question 2? (added)", "Yes");
-		    pth.AddQuestion(addedQuestion, 1, qBase1.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase1.SectionIndex, 1, qBase1.SequenceNumber + 1, mp);
 		    qBase1.AddedPhraseAfter = addedQuestion;
 
 		    var qBase4 = pth[2];
 		    Assert.AreEqual("Question 4?", qBase4.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    addedQuestion = new Question(qBase4.QuestionInfo, "Question 3? (inserted)", "No");
-		    pth.AddQuestion(addedQuestion, 1, 2, mp);
+		    pth.AddQuestion(addedQuestion, qBase4.SectionIndex, 1, 2, mp);
 		    qBase4.InsertedPhraseBefore = addedQuestion;
 
 			var customizations = pth.CustomizedPhrases;
@@ -1162,7 +1162,7 @@ namespace SIL.Transcelerator
 
 			var qBase1 = pth[0];
 			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
-			pth.AddQuestion(insertedQuestionBefore, 0, qBase1.SequenceNumber, mp);
+			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionIndex, 0, qBase1.SequenceNumber, mp);
 		   var customizations = pth.CustomizedPhrases;
 		   Assert.AreEqual(1, customizations.Count);
 
@@ -1170,7 +1170,7 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
 			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
-		    pth.AddQuestion(addedQuestion, 0, qBase2.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase2.SectionIndex, 0, qBase2.SequenceNumber + 1, mp);
 
 		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
 
@@ -1304,7 +1304,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Wherefore cometh thou?", "I'm just bored, I guess."),
-				1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
+				basedOnQuestion.SectionIndex, 1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
 
 			Assert.AreEqual("Wherefore cometh thou?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(basedOnQuestion, pth[3], "Based on question should still be in same position in list.");
@@ -1364,7 +1364,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "What is Paul saying?", null),
-				1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionIndex, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("What is Paul saying?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase.SequenceNumber + 1, basedOnQuestion.SequenceNumber);
@@ -1430,7 +1430,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Explain this with respect to that.", null),
-				1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionIndex, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("Explain this with respect to that.", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase, pth[0]);
@@ -1465,11 +1465,16 @@ namespace SIL.Transcelerator
 	    #endregion
 
 		#region AttachNewQuestionToAdjacentPhrase Tests
+        // This is a test scenario that does not correspond to something that could really happen,
+        // because the actual TXL data has Overview questions for the first sectin in Genesis.
 		[Test]
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsFirstInList_AttachedAsInsertBefore()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+            // TODO: Check the setup. Presumably we want to add a question to a category with a
+            // lower index than the first test question. Otherwise, that first question would be
+            // the normal "base phrase" and AttachNewQuestionToAdjacentPhrase would not get called.
+			AddTestQuestion(cat, "Q1", "GEN 1:1", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
 
@@ -1477,7 +1482,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var newQuestion = new Question("GEN 1:1", 1, 1, "Why is this the first question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q1 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
@@ -1490,6 +1495,8 @@ namespace SIL.Transcelerator
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsLastInList_AttachedAsAddedAfter()
 		{
 			var cat = m_sections.Items[0].Categories[0];
+            // Technically this setup does not reflect reality, because we never combine different
+            // books and chapters in a section.
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
@@ -1498,7 +1505,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var newQuestion = new Question("REV 20:10-12", 66020010, 66020012, "Why is this the last question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1 /* new category for this section*/, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q3 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
@@ -1507,10 +1514,12 @@ namespace SIL.Transcelerator
 			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
 		}
 
-		[Test]
+		[TestCase]
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsPrecedingQuestion_AttachedAsAddedAfter()
 		{
 			var cat = m_sections.Items[0].Categories[0];
+			// Technically this setup does not reflect reality, because we never combine different
+			// books and chapters in a section.
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
@@ -1519,7 +1528,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var newQuestion = new Question("MAT 6:4", 40006004, 40006004, "Please explain.", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q2 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
@@ -1540,7 +1549,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var newQuestion = new Question("MAT 6:1", 40006001, 40006001, "How does this chapter start?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q2 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
@@ -3700,31 +3709,23 @@ namespace SIL.Transcelerator
 		#endregion
 
         #region ComparePhraseReferences tests
-        [TestCase(true, false)]
-        [TestCase(false, false)]
-        [TestCase(true, true)]
-        [TestCase(false, true)]
-        public void ComparePhraseReferences_QuestionsWithIdenticalKeys_ReturnsZero(bool ascending, bool ordered)
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_QuestionComparedToItself_ReturnsZero(bool ascending)
         {
-	        var questionA = new Question("GEN 1:2", 2, 2, "Why is this the first question?", null);
-	        var questionB = new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null);
-	        var result = PhraseTranslationHelper.ComparePhraseReferences(new TranslatablePhrase(questionA, 1, 1, ordered),
-		        new TranslatablePhrase(questionB, 1, 1, ordered), ascending ? 1 : -1);
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, a, ascending ? 1 : -1);
 		    Assert.AreEqual(0, result);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ComparePhraseReferences_NormalQuestionsWithDifferentStartRefs_SortedByStartRef(bool ascending)
+        private static void VerifyComparePhraseReferencesALessThanB(bool ascending, TranslatablePhrase a, TranslatablePhrase b)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null), 1, 1);
-	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the second question?", null), 1, 1);
 	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, b, ascending ? 1 : -1);
 	        if (ascending)
 		        Assert.That(result < 0);
 	        else
 		        Assert.That(result > 0);
-            // Repeat with parameters switched
+	        // Repeat with parameters switched
 	        result = PhraseTranslationHelper.ComparePhraseReferences(b, a, ascending ? 1 : -1);
 	        if (ascending)
 		        Assert.That(result > 0);
@@ -3732,17 +3733,97 @@ namespace SIL.Transcelerator
 		        Assert.That(result < 0);
         }
 
+        [TestCase(1, 1, 1, 2, 1, 1, true)]
+        [TestCase(1, 1, 1, 2, 1, 1, false)]
+        [TestCase(1, 1, 1, 1, 2, 1, true)]
+        [TestCase(1, 1, 1, 1, 2, 1, false)]
+        [TestCase(1, 1, 1, 1, 1, 2, true)]
+        [TestCase(1, 1, 1, 1, 1, 2, false)]
+        public void ComparePhraseReferences_QuestionsWithIdenticalReferencesButDifferentIndices_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence,
+	        bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+
         [TestCase(true)]
         [TestCase(false)]
-        public void ComparePhraseReferences_NormalQuestionsInDifferentSectionsSameStartRefs_SortedByEndRef(bool ascending)
+        public void ComparePhraseReferences_QuestionsWithDifferentStartRefs_SortedByStartRef(bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 21);
-	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 1, 2);
-	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, b, ascending ? 1 : -1);
-	        Assert.AreEqual(ascending, result < 0);
+	        var a = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null), 1, 1, 2);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Is this an overview question?", null), 1, 0, 1);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_QuestionsInDifferentSectionsSameStartRefs_SortedByEndRef(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+        #endregion
+
+        #region ComparePhrasesByIndexedOrder tests
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhrasesByIndexedOrder_QuestionComparedToItself_ReturnsZero(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(a, a);
+	        Assert.AreEqual(0, result);
+        }
+
+        private static void VerifyComparePhrasesByIndexedOrderALessThanB(TranslatablePhrase a, TranslatablePhrase b)
+        {
+	        var result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(a, b);
+	        Assert.That(result < 0);
 	        // Repeat with parameters switched
-	        result = PhraseTranslationHelper.ComparePhraseReferences(b, a, ascending ? 1 : -1);
-	        Assert.AreEqual(ascending, result > 0);
+	        result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(b, a);
+	        Assert.That(result > 0);
+        }
+
+        [TestCase(1, 1, 1, 2, 1, 1)]
+        [TestCase(1, 1, 1, 1, 2, 1)]
+        [TestCase(1, 1, 1, 1, 1, 2)]
+        public void ComparePhrasesByIndexedOrder_QuestionsWithIdenticalReferencesButDifferentIndices_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [TestCase(1, 1, 1, 2, 1, 1)]
+        [TestCase(1, 1, 1, 1, 2, 1)]
+        [TestCase(1, 1, 1, 1, 1, 2)]
+        public void ComparePhrasesByIndexedOrder_QuestionsWithDifferentStartRefs_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this question out of verse order?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Is this a summary question?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [Test]
+        public void ComparePhrasesByIndexedOrder_QuestionsInDifferentSectionsSameStartRefs_SortedBySection()
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
         [TestCase(001001001, 001001002, 001001002, 001001002, true)]
@@ -3757,42 +3838,16 @@ namespace SIL.Transcelerator
         [TestCase(001001005, 001001007, 001001002, 001001006, false)]
         [TestCase(001001006, 001001008, 001001002, 001001006, true)]
         [TestCase(001001006, 001001008, 001001002, 001001006, false)]
-        public void ComparePhraseReferences_OrderedAndUnOrderedQuestionsWithOverlappingRefs_SortedBySequenceNumber(
-	        int startRefA, int endRefA, int startRefB, int endRefB, bool aIsOrdered)
+        public void ComparePhrasesByIndexedOrder_QuestionsWithOverlappingRefs_SortedBySequenceNumber(
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool differByCategory)
         {
+	        int bCategory = differByCategory ? 1 : 0;
+	        int bSequence = differByCategory ? 1 : 2;
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 1, 1, aIsOrdered);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 2, !aIsOrdered);
-	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
-	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
-	        Assert.That(resultAscending < 0);
-	        Assert.That(resultDescending > 0);
-        }
-
-        [TestCase(001001001, 001001002, 001001002, 001001002)]
-        [TestCase(001001001, 001001002, 001001002, 001001002)]
-        [TestCase(001001002, 001001002, 001001001, 001001002)]
-        [TestCase(001001002, 001001002, 001001001, 001001002)]
-        [TestCase(001001001, 001001005, 001001002, 001001002)]
-        [TestCase(001001001, 001001005, 001001002, 001001002)]
-        [TestCase(001001002, 001001003, 001001002, 001001006)]
-        [TestCase(001001002, 001001003, 001001002, 001001006)]
-        [TestCase(001001005, 001001007, 001001002, 001001006)]
-        [TestCase(001001005, 001001007, 001001002, 001001006)]
-        [TestCase(001001006, 001001008, 001001002, 001001006)]
-        [TestCase(001001006, 001001008, 001001002, 001001006)]
-        public void ComparePhraseReferences_OrderedQuestionsWithOverlappingRefs_SortedBySequenceNumber(
-	        int startRefA, int endRefA, int startRefB, int endRefB)
-        {
-	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
-	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 1, 1, true);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 2, true);
-	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
-	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
-	        Assert.That(resultAscending < 0);
-	        Assert.That(resultDescending > 0);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 6, 0, 1);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 6, bCategory, bSequence);
+            VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
         [TestCase(001001001, 001001002, 001001003, 001001003, true)]
@@ -3803,57 +3858,16 @@ namespace SIL.Transcelerator
         [TestCase(001001001, 001001005, 001001006, 001001006, false)]
         [TestCase(001001002, 001001003, 001001004, 001001006, true)]
         [TestCase(001001002, 001001003, 001001004, 001001006, false)]
-        public void ComparePhraseReferences_OrderedAndUnOrderedQuestionsWithNonOverlappingRefs_SortedByStartRef(
-	        int startRefA, int endRefA, int startRefB, int endRefB, bool aIsOrdered)
+        public void ComparePhrasesByIndexedOrder_NonOverlappingRefs_SortedBySequenceNumber(
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool differByCategory)
         {
+	        int bCategory = differByCategory ? 1 : 0;
+	        int bSequence = differByCategory ? 1 : 2;
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 2, 2, aIsOrdered);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 1, 1, !aIsOrdered);
-	        var resultAscending = PhraseTranslationHelper.ComparePhraseReferences(a, b);
-	        var resultDescending = PhraseTranslationHelper.ComparePhraseReferences(a, b, -1);
-	        if (startRefA < startRefB)
-	        {
-		        Assert.That(resultAscending < 0);
-		        Assert.That(resultDescending > 0);
-	        }
-            else
-            {
-	            Assert.That(resultAscending > 0);
-	            Assert.That(resultDescending < 0);
-            }
-        }
-
-        [TestCase(true, false)]
-        [TestCase(false, false)]
-        [TestCase(true, true)]
-        [TestCase(false, true)]
-        public void ComparePhraseReferences_QuestionsWithSameRefsButDifferentCategories_SortedByCategory(bool ascending, bool ordered)
-        {
-	        var questionA = new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null);
-	        var questionB = new Question("GEN 1:1-2", 1, 2, "Why is this the second question?", null);
-	        var result = PhraseTranslationHelper.ComparePhraseReferences(new TranslatablePhrase(questionA, 0, 0, ordered),
-		        new TranslatablePhrase(questionB, 1, 0, ordered), ascending ? 1 : -1);
-	        if (ascending)
-		        Assert.That(result < 0);
-	        else
-		        Assert.That(result > 0);
-        }
-
-        [TestCase(true, false)]
-        [TestCase(false, false)]
-        [TestCase(true, true)]
-        [TestCase(false, true)]
-        public void ComparePhraseReferences_QuestionsWithSameRefsAndCategoryButDifferentSequenceNumber_SortedByCategory(bool ascending, bool ordered)
-        {
-	        var questionA = new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null);
-	        var questionB = new Question("GEN 1:1-2", 1, 2, "Why is this the second question?", null);
-	        var result = PhraseTranslationHelper.ComparePhraseReferences(new TranslatablePhrase(questionA, 1, 0, ordered),
-		        new TranslatablePhrase(questionB, 1, 1, ordered), ascending ? 1 : -1);
-	        if (ascending)
-		        Assert.That(result < 0);
-	        else
-		        Assert.That(result > 0);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 4, 0, 1);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 4, bCategory, bSequence);
+            VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
         #endregion
 

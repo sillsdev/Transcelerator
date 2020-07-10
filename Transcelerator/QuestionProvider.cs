@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SIL.Scripture;
@@ -29,7 +30,7 @@ namespace SIL.Transcelerator
         #region Data members
         private readonly QuestionSections m_sections;
         private readonly PhrasePartManager m_manager;
-        private SortedDictionary<int, SectionInfo> m_sectionInfo;
+        private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 
 	    #endregion
@@ -81,23 +82,13 @@ namespace SIL.Transcelerator
 		#region Public Properties
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a sorted (canonically) dictionary of all sections keyed by (integer
-		/// representation of) the start reference. (Note that these are not the section
-		/// heads in the vernacular Scripture but rather from the master question file.)
+		/// Gets an object representing the collection of sections that cover all the
+		/// Transcelerator questions. (Note that these are not the sections in the
+		/// vernacular Scripture but rather from the master question file.)
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public SortedDictionary<int, SectionInfo> SectionInfo
-        {
-            get
-            {
-                if (m_sectionInfo == null)
-                {
-	                m_sectionInfo = new SortedDictionary<int, SectionInfo>(
-                        m_sections.Items.ToDictionary(s => s.StartRef, s => new SectionInfo(s)));
-                }
-                return m_sectionInfo;
-            }
-        }
+		public TransceleratorSections SectionInfo =>
+			m_sectionInfo ?? (m_sectionInfo = new TransceleratorSections(m_sections));
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
@@ -128,46 +119,47 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private IEnumerable<TranslatablePhrase> GetPhrases()
 		{
-			HashSet<string> processedCategories = new HashSet<string>();
-	        TranslatablePhrase phrase;
-		    int categoryType;
-			foreach (Section section in m_sections.Items)
-			{
-				for (int iCat = 0; iCat < section.Categories.Length; iCat++)
-				{
-					Category category = section.Categories[iCat];
-					categoryType = iCat;
-					if (iCat == 0 && !category.IsOverview) // 0 is reserved for "overview", so we can't use that for non-overview categories.
-						categoryType++;
+			var processedCategories = new Dictionary<string, int>();
+			for (var iSection = 0; iSection < m_sections.Items.Length; iSection++)
+		    {
+			    var section = m_sections.Items[iSection];
+			    foreach (var category in section.Categories)
+			    {
+				    TranslatablePhrase phrase;
 
+				    var categoryIndex = int.MinValue;
 				    if (category.Type != null)
 				    {
-				        string lcCategory = category.Type.ToLowerInvariant();
-				        if (!processedCategories.Contains(lcCategory))
-				        {
-				            phrase = new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, processedCategories.Count);
-                            phrase.m_parts.Add(m_manager.GetOrCreatePart(PhraseParser.GetWordsInString(lcCategory), phrase, false));
-				            yield return phrase;
-				            processedCategories.Add(lcCategory);
-				        }
+					    var lcCategory = category.Type.ToLowerInvariant();
+					    if (!processedCategories.TryGetValue(lcCategory, out categoryIndex))
+					    {
+						    phrase = new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, -1, processedCategories.Count);
+						    phrase.m_parts.Add(m_manager.GetOrCreatePart(PhraseParser.GetWordsInString(lcCategory), phrase, false));
+						    yield return phrase;
+						    // 0 is reserved for "overview", so we can't use that for non-overview categories.
+						    categoryIndex = category.IsOverview ? 0 : Math.Max(1, processedCategories.Count);
+						    processedCategories[lcCategory] = categoryIndex;
+					    }
 				    }
 
 				    for (int iQuestion = 0; iQuestion < category.Questions.Count; iQuestion++)
-					{
-						Question q = category.Questions[iQuestion];
-						if (q.ScriptureReference == null)
-						{
-							q.ScriptureReference = section.ScriptureReference;
-							q.StartRef = section.StartRef;
-							q.EndRef = section.EndRef;
-						}
-						phrase = new TranslatablePhrase(q, categoryType, iQuestion + 1, q.HasFixedOrder);
+				    {
+					    Question q = category.Questions[iQuestion];
+					    if (q.ScriptureReference == null)
+					    {
+						    q.ScriptureReference = section.ScriptureReference;
+						    q.StartRef = section.StartRef;
+						    q.EndRef = section.EndRef;
+					    }
+
+						Debug.Assert(categoryIndex >= 0);
+					    phrase = new TranslatablePhrase(q, iSection, categoryIndex, iQuestion + 1);
 					    if (!phrase.IsExcluded)
-					        InitializePhraseParts(phrase);
+						    InitializePhraseParts(phrase);
 					    yield return phrase;
-					}
-				}
-			}
+				    }
+			    }
+		    }
 		}
 
 		public void InitializePhraseParts(TranslatablePhrase phrase)

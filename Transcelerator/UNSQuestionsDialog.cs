@@ -70,7 +70,7 @@ namespace SIL.Transcelerator
         private readonly IScrVers m_projectVersification;
 	    private BCVRef m_startRef;
         private BCVRef m_endRef;
-        private SortedDictionary<int, SectionInfo> m_sectionInfo;
+        private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
@@ -1174,7 +1174,7 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, m_sectionInfo.Values, AvailableLocales))
+                defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, AvailableLocales))
             {
 	            dlg.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
 
@@ -1257,15 +1257,10 @@ namespace SIL.Transcelerator
 	                        string lang;
                             if (section == null || phrase.EndRef > section.EndRef)
                             {
-	                            if (!m_sectionInfo.TryGetValue(phrase.StartRef, out section))
-									section = m_sectionInfo.Values.FirstOrDefault(s => s.StartRef <= phrase.StartRef && s.EndRef >= phrase.EndRef);
+	                            section = m_sectionInfo.GetSection(phrase);
 								if (section != null)
 									sectionHeadHasBeenOutput = false;
-								else
-								{
-									// This is a last-ditch fallback - should never happen.
-									section = null;
-								}
+								// else: this should never happen.
 
 								prevCategory = -1;
                             }
@@ -1294,13 +1289,16 @@ namespace SIL.Transcelerator
                                 prevQuestionEndRef = -1;
                             }
 
-							// Summary questions are allowed to occur out of order, so they should not affect
+							// Questions are allowed to occur out of reference order, but they should not affect
 							// the flow of the scripture text being output. (We need them to accurately reflect the
 							// range of Scripture to which they pertain so we can indicate that in the script and
-							// because if they are used in a place (e.g., Scripture Forge or a mobile quiz app)
+							// because if they are used in a place -- e.g., Scripture Forge or a mobile quiz app --
 							// where the respondent can't necessarily look back over the preceding verses, they may
-							// need to be shown the relevant passage.
-							if (phrase.HasFixedOrder)
+							// need to be shown the relevant passage.) To avoid confusion and help an interviewer
+							// understand that this question looks back over verses previously covered, we output
+							// the question's reference range unless it is a "summary" question (pertaining to the
+							// entire section).
+							if (phrase.StartRef < prevQuestionStartRef)
 							{
 								if (section == null || phrase.StartRef != section.StartRef || phrase.EndRef != section.EndRef)
 								{
@@ -2001,7 +1999,10 @@ namespace SIL.Transcelerator
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard(false);
-			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase, m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef, phrase.Category).Where(p => p != phrase).Select(p => p.PhraseInUse).ToList(), m_dataLocalizer))
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase,
+				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
+					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+					.Select(p => p.PhraseInUse).ToList(), m_dataLocalizer))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -2028,7 +2029,8 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard(false);
 			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
+			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
+				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -2054,7 +2056,8 @@ namespace SIL.Transcelerator
 							basePhrase.AddedPhraseAfter = newQuestion;
 					}
 
-					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.Category, dlg.SequenceNumber, m_parser);
+					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.OwningSection,
+						dlg.Category, dlg.SequenceNumber, m_parser);
 					if (basePhrase == null)
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
 

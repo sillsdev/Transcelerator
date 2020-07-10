@@ -49,7 +49,8 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:EditQuestion"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public EditQuestionDlg(TranslatablePhrase question, List<String> existingQuestionsForRef, LocalizationsFileAccessor dataLocalizer)
+		public EditQuestionDlg(TranslatablePhrase question, List<string> existingQuestionsForRef,
+			LocalizationsFileAccessor dataLocalizer)
 		{
 			m_question = question;
 			m_existingQuestionsForRef = existingQuestionsForRef;

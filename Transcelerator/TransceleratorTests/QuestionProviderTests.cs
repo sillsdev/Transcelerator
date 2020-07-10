@@ -207,7 +207,7 @@ namespace SIL.Transcelerator
             QuestionProvider qp = new QuestionProvider(qs, null);
 
             Assert.AreEqual(4, qp.SectionInfo.Count);
-            IEnumerable<int> keys = qp.SectionInfo.Keys;
+            var keys = qp.SectionInfo.AllSectionStartRefs;
             var key = keys.ElementAt(0);
             Assert.AreEqual(40013001, key);
             Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionInfo[key].Heading);

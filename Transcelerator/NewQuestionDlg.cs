@@ -10,10 +10,12 @@
 // File: NewQuestionDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.Extensions;
 using SIL.ObjectModel;
 using SIL.Scripture;
 
@@ -29,29 +31,24 @@ namespace SIL.Transcelerator
 		private readonly IScrVers m_projectVersification;
 		private readonly IScrVers m_masterVersification;
 		private readonly string m_vernLanguage;
+		private readonly TransceleratorSections m_sectionInfo;
 		private readonly PhraseTranslationHelper m_ptHelper;
 		private int m_previouslySelectedRow = -1;
 		private string m_locationFormat;
 		private BCVRef m_existingStartRef;
+		private List<SectionInfo> m_currentSections;
+		private List<TranslatablePhrase> m_existingPhrasesInCurrentSections;
+		private List<TranslatablePhrase> m_currentExistingPhrases;
 		private int m_existingEndVerse;
 		private int m_insertionLocation;
 		private Action<bool> m_changeKeyboard;
 
 		#region Properties
-		public string EnglishQuestion
-		{
-			get { return m_chkNoEnglish.Checked ? null : m_txtEnglishQuestion.Text; }
-		}
-		
-		public string Answer
-		{
-			get { return m_txtAnswer.Text; }
-		}
+		public string EnglishQuestion => m_chkNoEnglish.Checked ? null : m_txtEnglishQuestion.Text;
 
-		public string Translation
-		{
-			get { return m_txtVernacularQuestion.Text;  }
-		}
+		public string Answer => m_txtAnswer.Text;
+
+		public string Translation => m_txtVernacularQuestion.Text;
 
 		private string ReferenceInProjectVersification
 		{
@@ -67,10 +64,8 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Starting reference (in master versification)
 		/// </summary>
-		public BCVRef StartReference
-		{
-			get { return new BCVRef(m_masterVersification.ChangeVersification(m_scrPsgReference.ScReference, m_projectVersification)); }
-		}
+		public BCVRef StartReference =>
+			new BCVRef(m_masterVersification.ChangeVersification(m_scrPsgReference.ScReference, m_projectVersification));
 
 		/// <summary>
 		/// Ending reference (in master versification)
@@ -88,10 +83,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Starting verse number (in project versification - i.e., matches what the user sees)
 		/// </summary>
-		private int StartVerse
-		{
-			get { return m_scrPsgReference.ScReference.Verse; }
-		}
+		private int StartVerse => m_scrPsgReference.ScReference.Verse;
 
 		/// <summary>
 		/// Ending verse number (in project versification - i.e., matches what the user sees)
@@ -118,10 +110,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public int Category
-		{
-			get { return m_cboCategory.SelectedIndex; }
-		}
+		public int Category => m_cboCategory.SelectedIndex;
 
 		public int SequenceNumber
 		{
@@ -146,6 +135,25 @@ namespace SIL.Transcelerator
 			}
 		}
 
+		public int OwningSection
+		{
+			get
+			{
+				if (m_currentSections.Count == 1)
+					return m_sectionInfo.AllSections.IndexOf(m_currentSections[0]);
+				if (BasePhrase != null)
+					return BasePhrase.SectionIndex;
+				// This is the very rare (probably nonexistent) case where a verse
+				// is split across two sections and a question is being added to a
+				// category that does not have any existing questions. If the end
+				// ref is greater than the start ref, the new question must belong
+				// to the second section. If it's same, then we can't know which of
+				// the two sections is intended. But we can safely - albeit
+				// arbitrarily choose the 2nd one.
+				return m_sectionInfo.AllSections.IndexOf(m_currentSections.Last());
+			}
+		}
+
 		/// <summary>
 		/// Gets the phrase/question that the new question is to hang off of. Although it would seem
 		/// that this should be the selected one in the UI, in fact, we always return the one BEFORE
@@ -156,6 +164,8 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
+				// TODO: When there are two sections, handle special cases of inserting after last question for
+				// the end verse of section and before the first question of the start verse of section.
 				if (m_dataGridViewExistingQuestions.SelectedRows.Count == 0)
 					return null;
 				var row = m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
@@ -163,7 +173,7 @@ namespace SIL.Transcelerator
 				Debug.Assert(SelectedInsertionLocation == row || SelectedInsertionLocation == row + 1,
 					"Insertion must be either immediately before or immediately after current (selected) row");
 				if (SelectedInsertionLocation > 0 && SelectedInsertionLocation == row)
-					row--; // Insert after the row before the selected on instead.
+					row--; // Insert after the row before the selected one instead.
 				return (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
 			}
 		}
@@ -177,11 +187,13 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:NewQuestionDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage, IScrVers projectVersification, IScrVers masterVersification, PhraseTranslationHelper pth,
-			int[] canonicalBookIds, Action<bool> changeKeyboard)
+		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage,
+			TransceleratorSections sectionInfo, IScrVers projectVersification, IScrVers masterVersification,
+			PhraseTranslationHelper pth, int[] canonicalBookIds, Action<bool> changeKeyboard)
 		{
 			var baseQuestion = basePhrase.QuestionInfo;
 			m_vernLanguage = vernLanguage;
+			m_sectionInfo = sectionInfo;
 			m_projectVersification = projectVersification;
 			m_masterVersification = masterVersification;
 			m_ptHelper = pth;
@@ -193,6 +205,7 @@ namespace SIL.Transcelerator
 			var startref = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
 			m_scrPsgReference.Initialize(new BCVRef(startref), m_projectVersification, canonicalBookIds);
 			m_existingStartRef = m_scrPsgReference.ScReference;
+			SetCurrentSections();
 			var endref = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
 			m_existingEndVerse = BCVRef.GetVerseFromBcv(endref);
 			PopulateEndRefComboBox();
@@ -212,19 +225,36 @@ namespace SIL.Transcelerator
 			m_scrPsgReference.PassageChanged += r =>
 			{
 				// This check overcomes a HACK in the ScrPassageControl, which causes spurious PassageChanged events.
-				if (m_existingStartRef != m_scrPsgReference.ScReference)
+				var newRef = m_scrPsgReference.ScReference;
+				if (m_existingStartRef != newRef)
 				{
-					m_existingStartRef = m_scrPsgReference.ScReference;
-					PopulateMatchingQuestionsGrid();
+					var newRefInMasterVersification = StartReference;
+					var sectionChange = newRefInMasterVersification < m_currentSections[0].StartRef ||
+						newRefInMasterVersification > m_currentSections.Last().EndRef;
+					m_existingStartRef = newRef;
+					if (sectionChange)
+						PopulateExistingQuestionsGrid();
+					else
+						SetDefaultInsertionLocation();
 				}
 			};
 			m_cboEndVerse.SelectedIndexChanged += (sender, args) =>
 			{
 				m_existingEndVerse = EndVerse;
-				PopulateMatchingQuestionsGrid();
+				SetDefaultInsertionLocation();
 			};
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
+		}
+
+		private void SetCurrentSections()
+		{
+			m_currentSections = m_sectionInfo.GetSections(StartReference).ToList();
+			BCVRef startRef = m_currentSections.First().StartRef;
+			BCVRef endRef = m_currentSections.Last().EndRef;
+			m_existingPhrasesInCurrentSections = m_ptHelper.UnfilteredPhrases
+				.Where(tp => tp.StartRef >= startRef && tp.EndRef <= endRef).ToList();
+			PopulateCategoryComboBox();
 		}
 
 		#region Event handlers and helper methods
@@ -253,7 +283,9 @@ namespace SIL.Transcelerator
 				(m_cboEndVerse.Items.Count == 0 && m_existingEndVerse == StartVerse);
 			m_cboEndVerse.Items.Clear();
 			m_cboEndVerse.Items.Add(String.Empty);
-			for (int i = StartVerse; i <= m_projectVersification.GetLastVerse(m_scrPsgReference.ScReference.Book, m_scrPsgReference.ScReference.Chapter); i++)
+
+			var lastCoveredVerse = new BCVRef(m_currentSections.Last().EndRef).Verse;
+			for (int i = StartVerse; i <= lastCoveredVerse; i++)
 				m_cboEndVerse.Items.Add(i.ToString());
 
 			if (noEndRef)
@@ -265,6 +297,8 @@ namespace SIL.Transcelerator
 		private void PopulateCategoryComboBox()
 		{
 			m_cboCategory.Items.Clear();
+			//m_cboCategory.Items.AddRange(m_existingPhrasesInCurrentSections.Select(p => p.Category).Distinct()
+			//	.Select(i => m_ptHelper.GetCategoryName(i)).Cast<object>().ToArray());
 			m_cboCategory.Items.AddRange(m_ptHelper.AllCategories.Cast<object>().ToArray());
 		}
 
@@ -285,15 +319,13 @@ namespace SIL.Transcelerator
 			if (m_txtEnglishQuestion.Text.Length > 0)
 			{
 				btnOk.Enabled = true;
-				foreach (DataGridViewRow row in m_dataGridViewExistingQuestions.Rows)
+				if (m_ptHelper.GetMatchingPhrases(StartReference, EndReference)
+					.Any(mp => mp.PhraseToDisplayInUI == m_txtEnglishQuestion.Text))
 				{
-					if (m_txtEnglishQuestion.Text == row.Cells[colQuestion.Index].Value as string)
-					{
-						btnOk.Enabled = false;
-						m_chkNoEnglish.Visible = false;
-						m_lblIdenticalQuestion.Visible = true;
-						return;
-					}
+					btnOk.Enabled = false;
+					m_chkNoEnglish.Visible = false;
+					m_lblIdenticalQuestion.Visible = true;
+					return;
 				}
 			}
 			else
@@ -355,22 +387,23 @@ namespace SIL.Transcelerator
 
 		private void m_scrPsgReference_PassageChanged(BCVRef newReference)
 		{
+			SetCurrentSections();
 			PopulateEndRefComboBox();
 		}
 
 		private void HandleCategoryChanged(object sender, EventArgs e)
 		{
-			PopulateMatchingQuestionsGrid();
+			PopulateExistingQuestionsGrid();
 		}
 
-		private void PopulateMatchingQuestionsGrid()
+		private void PopulateExistingQuestionsGrid()
 		{
-			var matches = m_ptHelper.GetMatchingPhrases(StartReference, EndReference, Category).ToList();
-			m_dataGridViewExistingQuestions.DataSource = new SortableBindingList<TranslatablePhrase>(matches);
+			m_currentExistingPhrases = m_existingPhrasesInCurrentSections.Where(tp => tp.Category == Category).ToList();
+			m_dataGridViewExistingQuestions.DataSource = new SortableBindingList<TranslatablePhrase>(m_currentExistingPhrases);
 
 			// Seems like colExcluded.Visible = ... should be sufficient, but apparently when using data binding,
 			// the original columns only serve as a template for the actual columns.
-			m_dataGridViewExistingQuestions.Columns.OfType<DataGridViewColumn>().Single(c => c.Name == colExcluded.Name).Visible = (matches.Any(p => p.IsExcluded));
+			m_dataGridViewExistingQuestions.Columns.OfType<DataGridViewColumn>().Single(c => c.Name == colExcluded.Name).Visible = (m_currentExistingPhrases.Any(p => p.IsExcluded));
 
 			int newHeight = (m_dataGridViewExistingQuestions.RowCount > 0) ?
 				m_dataGridViewExistingQuestions.ColumnHeadersHeight + m_dataGridViewExistingQuestions.Rows[0].Height * Math.Min(4, m_dataGridViewExistingQuestions.RowCount) :
@@ -378,10 +411,7 @@ namespace SIL.Transcelerator
 			m_pnlArrow.Height = newHeight + m_dataGridViewExistingQuestions.Margin.Vertical;
 			m_dataGridViewExistingQuestions.Height = newHeight;
 
-			if (m_dataGridViewExistingQuestions.RowCount > 0)
-				SetRowWithInsertionAfter(m_dataGridViewExistingQuestions.RowCount - 1);
-			else
-				SelectedInsertionLocation = 0;
+			SetDefaultInsertionLocation();
 
 			m_pnlUpDownArrows.Visible = m_insertionPointArrow.Visible =
 				m_dataGridViewExistingQuestions.Enabled =
@@ -389,6 +419,18 @@ namespace SIL.Transcelerator
 
 			UpdateDisplay();
 			SetButtonState();
+		}
+
+		private void SetDefaultInsertionLocation()
+		{
+			if (m_dataGridViewExistingQuestions.RowCount > 0)
+			{
+				SetRowWithInsertionAfter(m_currentExistingPhrases.FindLastIndex(
+					p => p.StartRef < StartReference ||
+						(p.StartRef == StartReference && p.EndRef <= EndReference)));
+			}
+			else
+				SelectedInsertionLocation = 0;
 		}
 
 		private void SetRowWithInsertionAfter(int rowToSet)

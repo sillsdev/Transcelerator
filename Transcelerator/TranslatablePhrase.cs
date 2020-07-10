@@ -51,20 +51,24 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
 		/// </summary>
 		/// <param name="questionInfo">Information about the original question</param>
-		/// <param name="category">The category (e.g. Overview vs. Detail question).</param>
+		/// <param name="iSection">The index of the section to which this question pertains
+		/// (or -1 if this is a category name).</param>
+		/// <param name="iCategory">The index of the category (e.g. Overview vs. Detail question)
+		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
-		/// a phrase within a particular category and reference).</param>
+		/// a phrase within a particular section and category).</param>
 		/// <param name="fixedOrder">Order in sequence of questions (relative to surrounding
 		/// questions with overlapping reference ranges) is fixed, not dependent on the
 		/// Scripture reference/range.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber, bool fixedOrder = false)
+		public TranslatablePhrase(IQuestionKey questionInfo, int iSection, int iCategory,
+			int seqNumber)
 			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
-			Category = category;
+			SectionIndex = iSection;
+			Category = iCategory;
 			SequenceNumber = seqNumber;
-			HasFixedOrder = fixedOrder;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
 			// chicken-and-egg problem when constructing this, so we need to do it here.
 			if (IsUserAdded && m_sModifiedPhrase != null)
@@ -121,11 +125,23 @@ namespace SIL.Transcelerator
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the category of this phrase (used to group phrases having the same reference).
+		/// Gets the category of this phrase (used to group phrases within the same section).
+		/// Returns -1 if this is a category name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		public int Category { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the index index of the section to which this question pertains (or -1 if this
+		/// is a category name)
+		/// For now, this can be -2 if this is a user-added question for a reference that does
+		/// not match any existing question)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public int SectionIndex { get; }
 
 		/// ------------------------------------------------------------------------------------
         /// <summary>
@@ -174,7 +190,8 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets the phrase as it is being presented to the user (the original phrase, a
 		/// modified form of it, or a special UI string indicating a user-added question with
-		/// no English equivalent).
+		/// no English equivalent). Despite its name, this is NOT the localized form of the
+		/// question (if the UI is being presented in a locale other than U.S. English.) 
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string PhraseToDisplayInUI
@@ -182,7 +199,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				return (m_type == TypeOfPhrase.NoEnglishVersion) ? Properties.Resources.kstidUserAddedEmptyPhrase :
-					m_sModifiedPhrase ?? OriginalPhrase;
+					PhraseInUse;
 			}
 		}
 
@@ -525,18 +542,6 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		public int SequenceNumber { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets whether this phrase is a summary question or some other question whose order in
-		/// the sequence of questions (relative to surrounding questions with overlapping
-		/// reference ranges) is fixed, not dependent on the Scripture reference/range.
-		/// Note: when fixed-order questions are compared against "normal questions" their end
-		/// references (rather than primarily the start reference) is used for sorting/grouping.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		public bool HasFixedOrder { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
