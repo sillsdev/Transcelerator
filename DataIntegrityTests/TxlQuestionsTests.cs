@@ -266,6 +266,7 @@ namespace DataIntegrityTests
 
 						var isOverview = matchAttribs.Groups["isOverview"].Value;
 						var category = matchAttribs.Result("${category}");
+						Assert.IsFalse(IsNullOrWhiteSpace(category));
 
 						switch (isOverview)
 						{

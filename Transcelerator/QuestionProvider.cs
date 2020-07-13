@@ -127,7 +127,9 @@ namespace SIL.Transcelerator
 			    {
 				    TranslatablePhrase phrase;
 
-				    var categoryIndex = int.MinValue;
+				    // In the event of an unnamed category (only possible in tests), treat it as
+				    // "Details" (or whatever Category 1 happens to be).
+				    var categoryIndex = 1;
 				    if (category.Type != null)
 				    {
 					    var lcCategory = category.Type.ToLowerInvariant();

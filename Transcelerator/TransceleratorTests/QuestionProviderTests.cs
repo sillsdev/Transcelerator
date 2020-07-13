@@ -354,6 +354,8 @@ namespace SIL.Transcelerator
         ///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that a category that doesn't have a Type specified is skipped when enumerating.
+		/// Not sure why this is/was important. The data integrity tests now ensure this can't
+		/// happen in real life.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
