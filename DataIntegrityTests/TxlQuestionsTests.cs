@@ -14,7 +14,6 @@ namespace DataIntegrityTests
 	public class Tests
 	{
 		Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
-		Regex m_regexSummary = new Regex(" ordered=\"true\"", RegexOptions.Compiled);
 
 			private class MatchedXmlLine
 		{
@@ -60,8 +59,6 @@ namespace DataIntegrityTests
 			var prevBookNum = -1;
 			var prevSectionEndedWithSegment = false;
 			var prevSectionEndCCCVVV = -1;
-			var prevQuestionStartCCCVVV = 0;
-			var prevQuestionEndCCCVVV = 0;
 			var inSingleChapterBook = false;
 
 			foreach (var matchedLine in GetMatchingLines(regexHeading, m_regexQuestion))
@@ -176,7 +173,6 @@ namespace DataIntegrityTests
 							prevSectionEndCCCVVV = -1;
 							Assert.False(prevSectionEndedWithSegment);
 						}
-						prevQuestionStartCCCVVV = 0;
 						break;
 					case 1:
 						matchScrRef = regexWellFormedScrRef.Match(line, startPos);
@@ -202,16 +198,17 @@ namespace DataIntegrityTests
 						var startRefSpecifiedExplicitly = matchStartRef.Groups["zero"].Value == Empty;
 						if (startRefSpecifiedExplicitly)
 						{
-							Assert.AreEqual(bookNum, Parse(matchStartRef.Groups["bookNum"].Value));
+							Assert.AreEqual(bookNum, Parse(matchStartRef.Groups["bookNum"].Value),
+								"Unexpected book number in startRef: " + line);
 							var questionStartChapter = Parse(matchStartRef.Groups["chapterNum"].Value);
 							var questionStartVerse = Parse(matchStartRef.Groups["verseNum"].Value);
 							questionStartCccVvv = questionStartChapter * 1000 + questionStartVerse;
-							Assert.That(chapter * 1000 + startVerse <= questionStartCccVvv,
-								"Question starts outside of containing section: " + line);
+							if (chapter * 1000 + startVerse > questionStartCccVvv)
+							{
+								Assert.That(line.Contains("multiSectionSummary=\"true\""),
+									"Question unexpectedly starts outside of containing section: " + line);
+							}
 						}
-						Assert.That(m_regexSummary.IsMatch(line, startPos) || questionStartCccVvv >= prevQuestionStartCCCVVV,
-							$"Error at line {matchedLine.LineNumber}. Question out of order: " + line);
-						prevQuestionStartCCCVVV = questionStartCccVvv;
 
 						matchEndRef = regexEndRef.Match(line, startPos);
 						Assert.That(matchEndRef.Success, "Question does not contain a valid endref attribute: " + line);
@@ -248,59 +245,31 @@ namespace DataIntegrityTests
 			Regex regexCategory = new Regex("<Category", RegexOptions.Compiled);
 			Regex regexAttribs = new Regex(" overview=\"(?<isOverview>(true)|(false))\" ?(type=\"(?<category>[A-Z][^\"]*)\")?>", RegexOptions.Compiled);
 
-			var regexZeroRef = new Regex("( startref=\"0\")|( endref=\"0\")", RegexOptions.Compiled);
-
-			var inOverviewSection = false;
-
-			foreach (var matchedLine in GetMatchingLines(regexCategory, m_regexQuestion))
+			foreach (var matchedLine in GetMatchingLines(regexCategory))
 			{
 				var line = matchedLine.Line;
 				var startPos = matchedLine.MatchEndPosition;
 
-				switch (matchedLine.Level)
+				var matchAttribs = regexAttribs.Match(line, startPos);
+				Assert.That(matchAttribs.Success, "Category does not contain expected attributes: " + line);
+				Assert.AreEqual(startPos, matchAttribs.Index, "Category has unexpected attributes: " + line);
+
+				var isOverview = matchAttribs.Groups["isOverview"].Value;
+				var category = matchAttribs.Result("${category}");
+				Assert.IsFalse(IsNullOrWhiteSpace(category));
+
+				switch (isOverview)
 				{
-					case 0:
-						var matchAttribs = regexAttribs.Match(line, startPos);
-						Assert.That(matchAttribs.Success, "Category does not contain expected attributes: " + line);
-						Assert.AreEqual(startPos, matchAttribs.Index, "Category has unexpected attributes: " + line);
-
-						var isOverview = matchAttribs.Groups["isOverview"].Value;
-						var category = matchAttribs.Result("${category}");
-						Assert.IsFalse(IsNullOrWhiteSpace(category));
-
-						switch (isOverview)
-						{
-							case "true":
-								Assert.AreEqual("Overview", category,
-									"The \"Overview\" category should have overview=\"true\"" + line);
-								inOverviewSection = true;
-								break;
-							case "false":
-								Assert.AreNotEqual("Overview", category,
-									"Only the \"Overview\" category should have overview=\"true\"" + line);
-								inOverviewSection = false;
-								break;
-							default:
-								Assert.Fail("Unexpected boolean value in overview attribute " + line);
-								break;
-						}
+					case "true":
+						Assert.AreEqual("Overview", category,
+							"The \"Overview\" category should have overview=\"true\"" + line);
 						break;
-					case 1:
-						if (!m_regexSummary.IsMatch(line, startPos))
-						{
-							if (inOverviewSection)
-							{
-								var firstMatch = regexZeroRef.Match(line, startPos);
-								Assert.True(firstMatch.Success && regexZeroRef.IsMatch(line, firstMatch.Index + firstMatch.Length),
-									$"Error at line {matchedLine.LineNumber}. Overview questions with specified references should be marked as \"ordered\" questions: " + line);
-							}
-							else
-							{
-								Assert.False(regexZeroRef.IsMatch(line, startPos),
-									$"Error at line {matchedLine.LineNumber}. Only ordered and overview questions should have 0 startref or endref attributes: " + line);
-							}
-						}
-
+					case "false":
+						Assert.AreNotEqual("Overview", category,
+							"Only the \"Overview\" category should have overview=\"true\"" + line);
+						break;
+					default:
+						Assert.Fail("Unexpected boolean value in overview attribute " + line);
 						break;
 				}
 			}

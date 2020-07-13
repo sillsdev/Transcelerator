@@ -123,13 +123,15 @@ namespace SIL.Transcelerator
 			for (var iSection = 0; iSection < m_sections.Items.Length; iSection++)
 		    {
 			    var section = m_sections.Items[iSection];
+				Debug.Assert(section.Categories.Select(c => c.Type).Distinct().Count() == section.Categories.Length,
+					"Section contains a repeated category.");
 			    foreach (var category in section.Categories)
 			    {
 				    TranslatablePhrase phrase;
 
-				    // In the event of an unnamed category (only possible in tests), treat it as
-				    // "Details" (or whatever Category 1 happens to be).
-				    var categoryIndex = 1;
+				    // In the event of an unnamed non-overview category (only possible in tests),
+				    // treat it as "Details" (or whatever Category 1 happens to be).
+				    var categoryIndex = category.IsOverview ? 0 : 1;
 				    if (category.Type != null)
 				    {
 					    var lcCategory = category.Type.ToLowerInvariant();
@@ -155,7 +157,7 @@ namespace SIL.Transcelerator
 					    }
 
 						Debug.Assert(categoryIndex >= 0);
-					    phrase = new TranslatablePhrase(q, iSection, categoryIndex, iQuestion + 1);
+					    phrase = new TranslatablePhrase(q, iSection, categoryIndex, iQuestion);
 					    if (!phrase.IsExcluded)
 						    InitializePhraseParts(phrase);
 					    yield return phrase;

@@ -94,7 +94,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -135,7 +135,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -148,7 +148,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6-10", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001010, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -161,7 +161,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001006, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -393,7 +393,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ROM 1.1-17", phrase.Reference);
 			Assert.AreEqual(45001001, phrase.StartRef);
 			Assert.AreEqual(45001017, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Length);
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -468,7 +468,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("Luke reminded his readers that he was about to continue the true story about Jesus",
@@ -490,7 +490,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("He addressed this book to Theophilus.",
@@ -502,7 +502,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6-10", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001010, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("Stuff", phrase.QuestionInfo.Answers.First());
@@ -514,7 +514,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001006, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("The apostles asked Jesus whether he was soon going to set up his kingdom in a way that everybody could see and cause the people of Israel to have power in that kingdom.",

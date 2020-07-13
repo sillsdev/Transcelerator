@@ -57,9 +57,6 @@ namespace SIL.Transcelerator
 		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular section and category).</param>
-		/// <param name="fixedOrder">Order in sequence of questions (relative to surrounding
-		/// questions with overlapping reference ranges) is fixed, not dependent on the
-		/// Scripture reference/range.</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(IQuestionKey questionInfo, int iSection, int iCategory,
 			int seqNumber)

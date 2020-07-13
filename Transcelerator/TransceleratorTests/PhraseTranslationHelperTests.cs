@@ -310,13 +310,13 @@ namespace SIL.Transcelerator
             var section = m_sections.Items[0];
             section.Categories = new Category[2];
 
-            var cat = m_sections.Items[0].Categories[0] = new Category();
+            var cat = section.Categories[0] = new Category { IsOverview = true };
 	        cat.IsOverview = true;
             AddTestQuestion(cat, "What is the meaning of life?", "A-D", 1, 4);
-            AddTestQuestion(cat, "Why is there evil?", "E-G", 5, 6);
+            AddTestQuestion(cat, "Why is there evil?", "E-F", 5, 6);
             AddTestQuestion(cat, "Why am I here?", "A-D", 1, 4);
 
-            cat = section.Categories[1] = new Category();
+            cat = section.Categories[1] = new Category { IsOverview = false };
             AddTestQuestion(cat, "What would God do?", "A", 1, 1);
             AddTestQuestion(cat, "When is the best time for ice cream?", "C", 3, 3);
             AddTestQuestion(cat, "Is it okay for Paul to talk to God today?", "D", 4, 4);
@@ -333,26 +333,26 @@ namespace SIL.Transcelerator
 
             Assert.AreEqual("What is the meaning of life?", pth[0].PhraseInUse);
             Assert.AreEqual("A-D", pth[0].Reference);
-            Assert.AreEqual(1, pth[0].SequenceNumber);
+            Assert.AreEqual(0, pth[0].SequenceNumber);
             Assert.AreEqual("Why am I here?", pth[1].PhraseInUse);
             Assert.AreEqual("A-D", pth[1].Reference);
-            Assert.AreEqual(3, pth[1].SequenceNumber);
+            Assert.AreEqual(2, pth[1].SequenceNumber);
             Assert.AreEqual("What would God do?", pth[2].PhraseInUse);
             Assert.AreEqual("A", pth[2].Reference);
-            Assert.AreEqual(1, pth[2].SequenceNumber);
+            Assert.AreEqual(0, pth[2].SequenceNumber);
             Assert.AreEqual("What is Paul asking that man?", pth[3].PhraseInUse);
             Assert.AreEqual("A", pth[3].Reference);
-            Assert.AreEqual(7, pth[3].SequenceNumber);
+            Assert.AreEqual(6, pth[3].SequenceNumber);
             Assert.AreEqual("C", pth[4].Reference);
             Assert.AreEqual("Is it okay for Paul to talk to God today?", pth[5].PhraseInUse);
             Assert.AreEqual("D", pth[5].Reference);
-            Assert.AreEqual(3, pth[5].SequenceNumber);
+            Assert.AreEqual(2, pth[5].SequenceNumber);
             Assert.AreEqual("Is a dog man's best friend?", pth[6].PhraseInUse);
             Assert.AreEqual("D", pth[6].Reference);
-            Assert.AreEqual(8, pth[6].SequenceNumber);
-            Assert.AreEqual("E-G", pth[7].Reference);
+            Assert.AreEqual(7, pth[6].SequenceNumber);
+            Assert.AreEqual("E-F", pth[7].Reference);
             Assert.AreEqual(0, pth[7].Category);
-            Assert.AreEqual(2, pth[7].SequenceNumber);
+            Assert.AreEqual(1, pth[7].SequenceNumber);
             Assert.AreEqual("E", pth[8].Reference);
             Assert.AreEqual("E-F", pth[9].Reference);
             Assert.AreEqual("E-G", pth[10].Reference);
@@ -364,21 +364,21 @@ namespace SIL.Transcelerator
             Assert.AreEqual(1, pth[0].Category);
             Assert.AreEqual("E-F", pth[1].Reference);
             Assert.AreEqual("E", pth[2].Reference);
-            Assert.AreEqual("E-G", pth[3].Reference);
+            Assert.AreEqual("E-F", pth[3].Reference);
             Assert.AreEqual(0, pth[3].Category);
             Assert.AreEqual("D", pth[4].Reference);
-            Assert.AreEqual(8, pth[4].SequenceNumber);
+            Assert.AreEqual(7, pth[4].SequenceNumber);
             Assert.AreEqual("D", pth[5].Reference);
-            Assert.AreEqual(3, pth[5].SequenceNumber);
+            Assert.AreEqual(2, pth[5].SequenceNumber);
             Assert.AreEqual("C", pth[6].Reference);
             Assert.AreEqual("A", pth[7].Reference);
-            Assert.AreEqual(7, pth[7].SequenceNumber);
+            Assert.AreEqual(6, pth[7].SequenceNumber);
             Assert.AreEqual("A", pth[8].Reference);
-            Assert.AreEqual(1, pth[8].SequenceNumber);
+            Assert.AreEqual(0, pth[8].SequenceNumber);
             Assert.AreEqual("A-D", pth[9].Reference);
-            Assert.AreEqual(3, pth[9].SequenceNumber);
+            Assert.AreEqual(2, pth[9].SequenceNumber);
             Assert.AreEqual("A-D", pth[10].Reference);
-            Assert.AreEqual(1, pth[10].SequenceNumber);
+            Assert.AreEqual(0, pth[10].SequenceNumber);
         }
 
         /// ------------------------------------------------------------------------------------
@@ -1334,7 +1334,7 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// ------------------------------------------------------------------------------------
 	    [Test]
-		public void AddQuestion_Insert_NoFilterSet_DefaultSorting_ExistingKeyTermsAndsParts_NewPhraseAdded()
+		public void AddQuestion_Insert_NoFilterSet_DefaultSorting_ExistingKeyTermsAndParts_NewPhraseAdded()
 	    {
 			AddMockedKeyTerm("God");
 			AddMockedKeyTerm("Paul");
@@ -1342,17 +1342,16 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("say", null);
 
 			var cat = m_sections.Items[0].Categories[0];
-			var otherQuestions = new List<Question>(6);
-			otherQuestions.Add(AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
-				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul"));
-			otherQuestions.Add(AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */));
-			otherQuestions.Add(AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */));
-			otherQuestions.Add(AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today"));
-			otherQuestions.Add(AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish"));
-			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
+			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -1360,7 +1359,6 @@ namespace SIL.Transcelerator
 
 			var basedOnQuestion = pth[3];
 			var sequenceNumberOfNewQuestion = basedOnQuestion.SequenceNumber;
-			otherQuestions.Remove(basedOnQuestion.QuestionInfo);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "What is Paul saying?", null),
@@ -1372,14 +1370,11 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(originalCount + 1, pth.UnfilteredPhraseCount);
 			Assert.AreEqual(originalCount + 1, pth.FilteredPhraseCount);
 
+			var expectedSeq = 0;
+			foreach (var tp in pth.UnfilteredPhrases)
+				Assert.AreEqual(expectedSeq++, tp.SequenceNumber);
 			foreach (var tp in pth.Phrases)
-			{
 				Assert.IsTrue(pth.UnfilteredPhrases.Contains(tp));
-				if (otherQuestions.Contains(tp.QuestionInfo))
-					Assert.AreEqual(tp.Reference[0] - 'A' + 1, tp.SequenceNumber);
-			}
-			for (int i = 0; i < pth.FilteredPhraseCount; i++)
-				Assert.IsTrue(pth.UnfilteredPhrases.Contains(pth[i]));
 
 			var translatableParts = newPhrase.TranslatableParts.ToList();
 			Assert.AreEqual(2, translatableParts.Count);
@@ -1418,7 +1413,7 @@ namespace SIL.Transcelerator
 			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
 			pth.Filter("this", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -1466,23 +1461,24 @@ namespace SIL.Transcelerator
 
 		#region AttachNewQuestionToAdjacentPhrase Tests
         // This is a test scenario that does not correspond to something that could really happen,
-        // because the actual TXL data has Overview questions for the first sectin in Genesis.
+        // because the actual TXL data has Overview questions for the first section in Genesis.
 		[Test]
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsFirstInList_AttachedAsInsertBefore()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-            // TODO: Check the setup. Presumably we want to add a question to a category with a
-            // lower index than the first test question. Otherwise, that first question would be
-            // the normal "base phrase" and AttachNewQuestionToAdjacentPhrase would not get called.
-			AddTestQuestion(cat, "Q1", "GEN 1:1", 2, 2, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+            Assert.IsFalse(m_sections.Items[0].Categories.Single().IsOverview,
+	            "Setup problem: This test want to insert into a (non-existent) category with a " +
+	            "lower index than that of the first test question");
+
+			AddTestQuestion(cat, "Q1", "GEN 1:1", 001001001, 001001001, "Q1");
+			AddTestQuestion(cat, "Q2", "GEN 2:2", 001002002, 001002002, "Q2");
+			AddTestQuestion(cat, "Q3", "GEN 2:2-3", 001002002, 001002003, "Q3");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
 
-			var newQuestion = new Question("GEN 1:1", 1, 1, "Why is this the first question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
+			var newQuestion = new Question("GEN 1:1", 001001001, 001001001, "Why is this the first question?", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 0, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q1 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
@@ -1495,67 +1491,26 @@ namespace SIL.Transcelerator
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsLastInList_AttachedAsAddedAfter()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-            // Technically this setup does not reflect reality, because we never combine different
-            // books and chapters in a section.
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+			AddTestQuestion(cat, "Q1", "REV 20:9", 66020009, 66020009, "Q1");
+			AddTestQuestion(cat, "Q2", "REV 20:9", 66020009, 66020009, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 20:11-12", 66020011, 66020012, "Q3");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
+			foreach (var phrase in pth.UnfilteredPhrases)
+			{
+				Assert.AreEqual(0, phrase.SectionIndex, "Setup sanity check");
+				Assert.AreEqual(1, phrase.Category, "Setup sanity check");
+			}
 
 			var newQuestion = new Question("REV 20:10-12", 66020010, 66020012, "Why is this the last question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1 /* new category for this section*/, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 2 /* new category for this section*/, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q3 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
 			Assert.AreEqual("Q3", q3.PhraseInUse);
 			Assert.AreEqual(q3.AddedPhraseAfter, newQuestion);
 			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
-		}
-
-		[TestCase]
-		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsPrecedingQuestion_AttachedAsAddedAfter()
-		{
-			var cat = m_sections.Items[0].Categories[0];
-			// Technically this setup does not reflect reality, because we never combine different
-			// books and chapters in a section.
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
-
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-
-			var newQuestion = new Question("MAT 6:4", 40006004, 40006004, "Please explain.", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
-			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
-
-			var q2 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
-			Assert.AreEqual("Q2", q2.PhraseInUse);
-			Assert.AreEqual(q2.AddedPhraseAfter, newQuestion);
-			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
-		}
-
-		[Test]
-		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsFollowingQuestion_AttachedAsInsertBefore()
-		{
-			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
-
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-
-			var newQuestion = new Question("MAT 6:1", 40006001, 40006001, "How does this chapter start?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 1, 0);
-			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
-
-			var q2 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
-			Assert.AreEqual("Q2", q2.PhraseInUse);
-			Assert.AreEqual(q2.InsertedPhraseBefore, newQuestion);
-			Assert.IsTrue(pth.Phrases.All(p => p.AddedPhraseAfter == null));
 		}
 		#endregion
 

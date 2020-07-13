@@ -47,9 +47,6 @@ namespace SIL.Transcelerator
         [XmlAttribute("exclude")]
         public bool IsExcluded { get; set; }
 
-        [XmlAttribute("ordered")]
-        public bool HasFixedOrder { get; set; }
-
 		[XmlAttribute("user")]
 		public bool IsUserAdded
 		{

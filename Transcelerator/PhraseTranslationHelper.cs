@@ -163,18 +163,21 @@ namespace SIL.Transcelerator
 
 		public static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
 		{
+			if (a == b)
+				return 0;
 			int val = a.StartRef.CompareTo(b.StartRef);
 			if (val == 0)
 			{
-				val = a.Category.CompareTo(b.Category);
-				if (val == 0)
 				{
-					val = a.EndRef.CompareTo(b.EndRef);
+					val = a.SectionIndex.CompareTo(b.SectionIndex);
 					if (val == 0)
 					{
-						val = a.SequenceNumber.CompareTo(b.SequenceNumber);
+						val = a.Category.CompareTo(b.Category);
+						if (val == 0)
+						{
+							val = a.SequenceNumber.CompareTo(b.SequenceNumber);
+						}
 					}
-					// TODO: finish
 				}
 			}
 
@@ -183,6 +186,8 @@ namespace SIL.Transcelerator
 
 		public static int ComparePhrasesByIndexedOrder(TranslatablePhrase a, TranslatablePhrase b)
 		{
+			if (a == b)
+				return 0;
 			var val = a.SectionIndex.CompareTo(b.SectionIndex);
 			if (val != 0)
 				return val;

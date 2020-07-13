@@ -1198,7 +1198,7 @@ namespace SIL.Transcelerator
                     {
                         int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
                         if (untranslatedQuestions > 0 &&
-                            MessageBox.Show(string.Format(Properties.Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
+                            MessageBox.Show(string.Format(Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
                             m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
