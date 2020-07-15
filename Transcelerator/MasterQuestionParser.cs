@@ -46,6 +46,9 @@ namespace SIL.Transcelerator
 			private string ModifiedPhrase => Modification?.ModifiedPhrase;
 
 			public bool IsAdditionOrInsertion => AdditionsAndInsertions.Any();
+			/// If the text hasn't changed, it's not a real addition; user just changed the
+			/// reference or answer.
+			public bool IsAdditionOfDifferentPhrase => AdditionsAndInsertions.Any(a => a.OriginalPhrase != a.ModifiedPhrase);
 
 			public Customizations()
 			{
@@ -133,15 +136,15 @@ namespace SIL.Transcelerator
 				var insertion = AdditionsAndInsertions.SingleOrDefault(a => a.Type == PhraseCustomization.CustomizationType.InsertionBefore);
 				if (insertion != null)
 				{
-					question.InsertedQuestionBefore = new Question(question.ScriptureReference, question.StartRef, question.EndRef,
-						insertion.ModifiedPhrase, insertion.Answer);
+					question.InsertedQuestionBefore = new Question(insertion.Reference, insertion.ScrStartReference,
+						insertion.ScrEndReference, insertion.ModifiedPhrase, insertion.Answer);
 				}
 
 				var addition = AdditionsAndInsertions.SingleOrDefault(a => a.Type == PhraseCustomization.CustomizationType.AdditionAfter);
 				if (addition != null)
 				{
-					question.AddedQuestionAfter = new Question(question.ScriptureReference, question.StartRef, question.EndRef,
-						addition.ModifiedPhrase, addition.Answer);
+					question.AddedQuestionAfter = new Question(addition.Reference, addition.ScrStartReference,
+						addition.ScrEndReference, addition.ModifiedPhrase, addition.Answer);
 				}
 			}
 
@@ -548,18 +551,20 @@ namespace SIL.Transcelerator
         /// or added (after) phrases. Also note any "Deletions" (i.e., exclusions).
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        private static IEnumerable<Question> GetCustomizations(Question q, Category category, int index,
-	        SortedDictionary<QuestionKey, Customizations> customizations, bool processAllAdditionsForRef = false)
+        private static IEnumerable<Question> GetCustomizations(Question q,
+	        IRefRange sectionRange, Category category, int index,
+	        SortedDictionary<QuestionKey, Customizations> customizations,
+	        bool processAllAdditionsForRef = false)
         {
 	        Customizations customizationsForQuestion;
-			if (customizations.TryGetValue(q, out customizationsForQuestion))
+			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out customizationsForQuestion))
 			{
-				customizations.Remove(q);
 				customizationsForQuestion.ApplyToQuestion(q);
 				if (q.InsertedQuestionBefore != null)
 				{
 					category.Questions.Insert(index, q.InsertedQuestionBefore);
-					foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, category, index, customizations))
+					foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, sectionRange,
+						category, index, customizations))
 					{
 						yield return customQuestion;
 						index++;
@@ -584,7 +589,8 @@ namespace SIL.Transcelerator
 					// We now want to remove this, but only if it doesn't have additional pending insertions or deletions hanging off it.
 					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
 						customizations.Remove(key);
-					foreach (Question customQuestion in GetCustomizations(newQ, category, index, customizations, true))
+					foreach (Question customQuestion in GetCustomizations(newQ, sectionRange,
+						category, index, customizations, true))
 					{
 						yield return customQuestion;
 						index++;
@@ -597,13 +603,39 @@ namespace SIL.Transcelerator
 	        if (q.AddedQuestionAfter != null)
 	        {
 		        category.Questions.Insert(index + 1, q.AddedQuestionAfter);
-				foreach (Question tpAdded in GetCustomizations(q.AddedQuestionAfter, category, index + 1, customizations))
+				foreach (Question tpAdded in GetCustomizations(q.AddedQuestionAfter, sectionRange, 
+					category, index + 1, customizations))
 		        {
 			        yield return tpAdded;
 			        index++;
 		        }
 	        }
 		}
+
+        private static bool TryPopCustomizationForQuestion(SortedDictionary<QuestionKey,
+	        Customizations> customizations, Question question, IRefRange sectionRange,
+	        out Customizations customizationsForQuestion)
+        {
+	        if (customizations.TryGetValue(question, out customizationsForQuestion))
+	        {
+				customizations.Remove(question);
+		        return true;
+	        }
+
+	        foreach (var kvpCustomization in customizations
+		        .TakeWhile(c => c.Key.EndRef <= sectionRange.EndRef && c.Key.StartRef >= sectionRange.StartRef)
+		        .Where(c => c.Value.IsAdditionOfDifferentPhrase)) // If user just changed the reference, it gets dealt with elsewhere.
+			{
+				if (kvpCustomization.Key.Text == question.PhraseInUse)
+				{
+					customizationsForQuestion = kvpCustomization.Value;
+					customizations.Remove(kvpCustomization.Key);
+					return true;
+				}
+			}
+
+			return false;
+        }
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -619,17 +651,23 @@ namespace SIL.Transcelerator
 	        SortedDictionary<QuestionKey, Customizations> currBookCustomizations = null;
 			Category category = null;
 			Question lastQuestionInBook = null;
+			Section lastSectionInBook = null;
 	        int iQuestion = -1;
 			foreach (Section section in m_sections.Items)
             {
 	            if (m_customizations != null && BCVRef.GetBookFromBcv(section.StartRef) != currBook)
 	            {
-		            foreach (var question in GetTrailingCustomizations(currBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
-				        yield return question;
+		            if (lastSectionInBook != null)
+		            {
+			            foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+				            yield return question;
+		            }
 
 		            currBook = BCVRef.GetBookFromBcv(section.StartRef);
 		            m_customizations.TryGetValue(currBook, out currBookCustomizations);
 	            }
+
+	            lastSectionInBook = section;
 	            for (int iCat = 0; iCat < section.Categories.Length; iCat++)
                 {
                     category = section.Categories[iCat];
@@ -652,7 +690,7 @@ namespace SIL.Transcelerator
                         }
                         if (currBookCustomizations != null)
                         {
-                            foreach (var question in GetCustomizations(q, category, iQuestion, currBookCustomizations))
+                            foreach (var question in GetCustomizations(q, section, category, iQuestion, currBookCustomizations))
                             {
 	                            lastQuestionInBook = question;
 								yield return question;
@@ -667,12 +705,12 @@ namespace SIL.Transcelerator
                     }
                 }
             }
-	        foreach (var question in GetTrailingCustomizations(currBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+	        foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
 		        yield return question;
 			m_customizations = null; // Allow this to be garbage collected (and prevent accidental future use)
 		}
 
-		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
+		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, IRefRange finalSection, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
 			Category category, int iQuestion)
 		{
 			if (customizations != null)
@@ -694,7 +732,7 @@ namespace SIL.Transcelerator
 					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
 						customizations.Remove(key);
 					category.Questions.Add(newQ);
-					foreach (Question question in GetCustomizations(newQ, category, iQuestion, customizations))
+					foreach (Question question in GetCustomizations(newQ, finalSection, category, iQuestion, customizations))
 					{
 						lastQuestionInBook = question;
 						yield return question;

@@ -1181,15 +1181,16 @@ namespace SIL.Transcelerator
 				if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     Func<TranslatablePhrase, bool> InRange;
-                    if (dlg.m_rdoWholeBook.Checked)
+                    var book = dlg.SelectedBook;
+                    if (book != null)
                     {
-                        int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
+                        int bookNum = BCVRef.BookToNumber(book);
                         InRange = (tp) => BCVRef.GetBookFromBcv(tp.StartRef) == bookNum;
                     }
                     else
                     {
-                        BCVRef startRef = dlg.VerseRangeStartRef;
-                        BCVRef endRef = dlg.VerseRangeEndRef;
+                        var startRef = dlg.VerseRangeStartRef;
+                        var endRef = dlg.VerseRangeEndRef;
                         InRange = (tp) => tp.StartRef >= startRef && tp.EndRef <= endRef;
                     }
 
@@ -1246,7 +1247,8 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
                         sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
-                        SectionInfo section = null;
+                        int prevSection = -1;
+                        ISectionInfo section = null;
                         var prevQuestionStartRef = -1;
                         var prevQuestionEndRef = -1;
                         bool sectionHeadHasBeenOutput = false;
@@ -1255,14 +1257,14 @@ namespace SIL.Transcelerator
                         {
 	                        var question = phrase.QuestionInfo;
 	                        string lang;
-                            if (section == null || phrase.EndRef > section.EndRef)
+                            if (section == null || phrase.SectionId != prevSection)
                             {
-	                            section = m_sectionInfo.GetSection(phrase);
-								if (section != null)
-									sectionHeadHasBeenOutput = false;
-								// else: this should never happen.
+	                            section = m_sectionInfo.Find(phrase);
+	                            sectionHeadHasBeenOutput = false;
 
+	                            prevSection = phrase.SectionId;
 								prevCategory = -1;
+								prevQuestionStartRef = -1;
                             }
 
                             if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
@@ -1311,6 +1313,8 @@ namespace SIL.Transcelerator
 							}
 							else if (prevQuestionEndRef < phrase.EndRef)
                             {
+								// REVIEW: Should we also output the entire section's text even if
+								// there are no overview questions?
                                 if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
                                 {
                                     int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
@@ -2029,7 +2033,7 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard(false);
 			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
+			using (var dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
 				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -2037,19 +2041,10 @@ namespace SIL.Transcelerator
 					if (m_parser == null)
 						m_parser = new MasterQuestionParser(GetQuestionWords(), m_getKeyTerms(), GetKeyTermRules(), PhraseSubstitutions);
 
-					Question newQuestion;
+					Question newQuestion = dlg.NewQuestion;
 					var basePhrase = dlg.BasePhrase;
-					if (basePhrase == null)
+					if (basePhrase != null)
 					{
-						var startRef = dlg.StartReference;
-						var endRef = dlg.EndReference;
-						newQuestion = new Question(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"),
-							startRef.BBCCCVVV, endRef.BBCCCVVV, dlg.EnglishQuestion, dlg.Answer);
-					}
-					else
-					{
-						newQuestion = new Question(basePhrase.QuestionInfo, dlg.EnglishQuestion, dlg.Answer);
-
 						if (dlg.InsertBeforeBasePhrase)
 							basePhrase.InsertedPhraseBefore = newQuestion;
 						else

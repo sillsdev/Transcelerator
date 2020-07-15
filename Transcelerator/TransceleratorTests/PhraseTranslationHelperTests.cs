@@ -1120,13 +1120,13 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("Question 1? (replaced)", qBase1.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    qBase1.IsExcluded = true;
 			var addedQuestion = new Question(qBase1.QuestionInfo, "Question 2? (added)", "Yes");
-		    pth.AddQuestion(addedQuestion, qBase1.SectionIndex, 1, qBase1.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase1.SectionId, 1, qBase1.SequenceNumber + 1, mp);
 		    qBase1.AddedPhraseAfter = addedQuestion;
 
 		    var qBase4 = pth[2];
 		    Assert.AreEqual("Question 4?", qBase4.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    addedQuestion = new Question(qBase4.QuestionInfo, "Question 3? (inserted)", "No");
-		    pth.AddQuestion(addedQuestion, qBase4.SectionIndex, 1, 2, mp);
+		    pth.AddQuestion(addedQuestion, qBase4.SectionId, 1, 2, mp);
 		    qBase4.InsertedPhraseBefore = addedQuestion;
 
 			var customizations = pth.CustomizedPhrases;
@@ -1162,7 +1162,7 @@ namespace SIL.Transcelerator
 
 			var qBase1 = pth[0];
 			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
-			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionIndex, 0, qBase1.SequenceNumber, mp);
+			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, 0, qBase1.SequenceNumber, mp);
 		   var customizations = pth.CustomizedPhrases;
 		   Assert.AreEqual(1, customizations.Count);
 
@@ -1170,7 +1170,7 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
 			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
-		    pth.AddQuestion(addedQuestion, qBase2.SectionIndex, 0, qBase2.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase2.SectionId, 0, qBase2.SequenceNumber + 1, mp);
 
 		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
 
@@ -1304,7 +1304,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Wherefore cometh thou?", "I'm just bored, I guess."),
-				basedOnQuestion.SectionIndex, 1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
 
 			Assert.AreEqual("Wherefore cometh thou?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(basedOnQuestion, pth[3], "Based on question should still be in same position in list.");
@@ -1362,7 +1362,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "What is Paul saying?", null),
-				basedOnQuestion.SectionIndex, 1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("What is Paul saying?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase.SequenceNumber + 1, basedOnQuestion.SequenceNumber);
@@ -1425,7 +1425,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Explain this with respect to that.", null),
-				basedOnQuestion.SectionIndex, 1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("Explain this with respect to that.", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase, pth[0]);
@@ -1499,7 +1499,7 @@ namespace SIL.Transcelerator
 			var pth = new PhraseTranslationHelper(qp);
 			foreach (var phrase in pth.UnfilteredPhrases)
 			{
-				Assert.AreEqual(0, phrase.SectionIndex, "Setup sanity check");
+				Assert.AreEqual(0, phrase.SectionId, "Setup sanity check");
 				Assert.AreEqual(1, phrase.Category, "Setup sanity check");
 			}
 
@@ -3823,6 +3823,16 @@ namespace SIL.Transcelerator
 	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 4, 0, 1);
 	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 4, bCategory, bSequence);
             VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [Test]
+        public void ComparePhrasesByIndexedOrder_DifferentBooks_SortedByBookNumber()
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1.1", 1001001, 1001001,
+		        "At what time did these events happen?", null), 4, 1, 0);
+	        var b = new TranslatablePhrase(new Question("ACT 1:1-2", 44001001, 44001002, 
+			    "To whom did the writer of Acts address this book?", null), 0, 1, 0);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
         #endregion
 

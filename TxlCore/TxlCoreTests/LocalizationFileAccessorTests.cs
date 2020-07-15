@@ -44,10 +44,10 @@ namespace SIL.Transcelerator.Localization
 			if (includeSomeOtherSection)
 			{
 				var otherSection = new Section {Heading = "Jude 3-13 Some section", StartRef = 65001003, EndRef = 65001013};
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(otherSection)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(otherSection));
 			}
 			var sectionToGet = new Section { Heading = "Acts 3:1-15 This is Bryan's birthday.", StartRef = 44003001, EndRef = 44003015 };
-			Assert.AreEqual(sectionToGet.Heading, sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet))));
+			Assert.AreEqual(sectionToGet.Heading, sut.GetLocalizedString(new UISectionHeadDataString(sectionToGet)));
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new LocalizationsFileAccessor();
 			var sectionToGet = new Section { Heading = "Rev 9:2-14 More stuff that's going to happen", StartRef = 66009002, EndRef = 66009014 };
-			Assert.IsNull(sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet)), false));
+			Assert.IsNull(sut.GetLocalizedString(new UISectionHeadDataString(sectionToGet), false));
 		}
 
 		[TestCase(true, true)]
@@ -67,7 +67,7 @@ namespace SIL.Transcelerator.Localization
 			if (includeSection)
 			{
 				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 				if (includeSomeOtherQuestion)
 				{
 					var otherQuestion = new Question("MAT 3:19", 40003019, 40003019, "Is this really a detail question?", "Answer not relevant in this test");
@@ -112,7 +112,7 @@ namespace SIL.Transcelerator.Localization
 			if (includeBaseQuestion)
 			{
 				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 				sut.AddLocalizationEntry(new UIQuestionDataString(baseQuestion, true, true));
 				if (includeOtherEntry)
 				{
@@ -157,7 +157,7 @@ namespace SIL.Transcelerator.Localization
 		public void GetLocalizedString_MatchingSectionNotLocalized_ReturnsEnglish(string heading, int startRef, int endRef)
 		{
 			var section = new Section { Heading = heading, StartRef = startRef, EndRef = endRef };
-			var sectionInfo = new SectionInfo(section);
+			var sectionInfo = section;
 			var sut = new TestLocalizationsFileAccessor();
 			var key = new UISectionHeadDataString(sectionInfo);
 			sut.AddLocalizationEntry(key);
@@ -169,7 +169,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-			sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+			sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 
 			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", null);
 			var key = new UIQuestionDataString(baseQuestion, true, false);
@@ -184,7 +184,7 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 
 			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-			var sectionKey = new UISectionHeadDataString(new SectionInfo(section));
+			var sectionKey = new UISectionHeadDataString(section);
 			sut.AddLocalizationEntry(sectionKey, "Mateo 3:1-20 Sección");
 			var q1 = new Question("MAT 3:2-3", 40003002, 40003003, "Why is this here?", null);
 			q1.Answers = new[] {"Because it needs to be.", "It's a place-holder."};
@@ -556,7 +556,7 @@ namespace SIL.Transcelerator.Localization
 				new[] { "Detalles", "¿Qué es la sabiduría?", "Un don de Dios" }));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(section)));
 			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 0)));
@@ -645,7 +645,7 @@ namespace SIL.Transcelerator.Localization
 
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(section)));
 			var overviewQuestion = qs.Items.First().Categories.First().Questions.Single();
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(overviewQuestion, LocalizableStringType.Answer, 0)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, 0)));
@@ -1133,7 +1133,7 @@ namespace SIL.Transcelerator.Localization
 			foreach (var section in qs.Items)
 			{
 				Assert.IsFalse(sut.GetLocalizableStringInfo(
-					new UISectionHeadDataString(new SectionInfo(section))).Target.IsLocalized);
+					new UISectionHeadDataString(section)).Target.IsLocalized);
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
@@ -1169,7 +1169,7 @@ namespace SIL.Transcelerator.Localization
 
 			foreach (var section in qs.Items)
 			{
-				key = new UISectionHeadDataString(new SectionInfo(section));
+				key = new UISectionHeadDataString(section);
 				localizedString = sut.GetLocalizedString(key);
 				if (localizedString != key.SourceUIString)
 					yield return key;

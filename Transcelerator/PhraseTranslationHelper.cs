@@ -169,7 +169,7 @@ namespace SIL.Transcelerator
 			if (val == 0)
 			{
 				{
-					val = a.SectionIndex.CompareTo(b.SectionIndex);
+					val = a.SectionId.CompareTo(b.SectionId);
 					if (val == 0)
 					{
 						val = a.Category.CompareTo(b.Category);
@@ -188,7 +188,10 @@ namespace SIL.Transcelerator
 		{
 			if (a == b)
 				return 0;
-			var val = a.SectionIndex.CompareTo(b.SectionIndex);
+			var val = BCVRef.GetBookFromBcv(a.StartRef).CompareTo(BCVRef.GetBookFromBcv(b.StartRef));
+			if (val != 0)
+				return val;
+			val = a.SectionId.CompareTo(b.SectionId);
 			if (val != 0)
 				return val;
 			val = a.Category.CompareTo(b.Category);
@@ -537,7 +540,7 @@ namespace SIL.Transcelerator
 		{
 			// Advance sequence numbers of any other questions in this category of this section that
 			// have a sequence number >= the new one.
-			var phrasesToAdvance = m_phrases.Where(p => p.SectionIndex == section &&
+			var phrasesToAdvance = m_phrases.Where(p => p.SectionId == section &&
 				p.Category == category && p.SequenceNumber >= seqNumber).ToArray();
 			foreach (var phrase in phrasesToAdvance)
 				phrase.IncrementSequenceNumber();

@@ -36,7 +36,7 @@ namespace SIL.Transcelerator
 		private int m_previouslySelectedRow = -1;
 		private string m_locationFormat;
 		private BCVRef m_existingStartRef;
-		private List<SectionInfo> m_currentSections;
+		private List<KeyValuePair<int, ISectionInfo>> m_currentSections;
 		private List<TranslatablePhrase> m_existingPhrasesInCurrentSections;
 		private List<TranslatablePhrase> m_currentExistingPhrases;
 		private int m_existingEndVerse;
@@ -157,28 +157,65 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets the phrase/question that the new question is to hang off of. Although it would seem
 		/// that this should be the selected one in the UI, in fact, we always return the one BEFORE
-		/// the insertion position except when inserting at the very beginning of the list. Inserting
+		/// the insertion position except when inserting at the beginning of a category. Inserting
 		/// before an existing question causes the question to get added twice, and that's not good.
 		/// </summary>
 		public TranslatablePhrase BasePhrase
 		{
 			get
 			{
-				// TODO: When there are two sections, handle special cases of inserting after last question for
-				// the end verse of section and before the first question of the start verse of section.
 				if (m_dataGridViewExistingQuestions.SelectedRows.Count == 0)
 					return null;
 				var row = m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
 				Debug.Assert(row >= 0);
 				Debug.Assert(SelectedInsertionLocation == row || SelectedInsertionLocation == row + 1,
 					"Insertion must be either immediately before or immediately after current (selected) row");
-				if (SelectedInsertionLocation > 0 && SelectedInsertionLocation == row)
-					row--; // Insert after the row before the selected one instead.
+				if (row > 0 && !InsertBeforeBasePhrase)
+					row--;
+
+				//if (SelectedInsertionLocation > 0 && SelectedInsertionLocation == row)
+				//{
+				//	// See if we should insert after the row before the selected one instead.
+				//	if (m_currentSections.Count == 1)
+				//		row--;
+				//	else
+				//	{
+				//		// This handles the special case when we are inserting a question for a
+				//		// verse that spans two sections. In this case, the section corresponding to the
+				//		// selected question is the one we want to add the new question to.
+				//		var selectedQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
+				//		var prevQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row -1].DataBoundItem;
+				//		if (selectedQuestion.SectionIndex == prevQuestion.SectionIndexy)
+				//		{
+				//			row--;
+				//		}
+				//	}
+				//}
+
 				return (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
 			}
 		}
 
-		public bool InsertBeforeBasePhrase => SelectedInsertionLocation == 0;
+		public bool InsertBeforeBasePhrase
+		{
+			get
+			{
+				if (SelectedInsertionLocation == 0)
+					return true;
+				if (m_currentSections.Count == 1)
+					return false;
+
+				// This handles the special case when we are inserting a question for a
+				// verse that spans two sections. In this case, the section corresponding to the
+				// selected question is the one we want to add the new question to.
+				var row = m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
+				if (row == 0)
+					return false;
+				var selectedQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
+				var prevQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row -1].DataBoundItem;
+				return selectedQuestion.SectionIndex != prevQuestion.SectionIndex;
+			}
+		}
 
 		#endregion
 
@@ -240,8 +277,17 @@ namespace SIL.Transcelerator
 			};
 			m_cboEndVerse.SelectedIndexChanged += (sender, args) =>
 			{
+				var repopulateQuestionGrid = m_currentSections.Count > 1 && m_existingEndVerse < EndVerse;
 				m_existingEndVerse = EndVerse;
-				SetDefaultInsertionLocation();
+				if (repopulateQuestionGrid)
+				{
+					SetCurrentSections();
+					PopulateExistingQuestionsGrid();
+				}
+				else
+				{
+					SetDefaultInsertionLocation();
+				}
 			};
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
@@ -249,12 +295,11 @@ namespace SIL.Transcelerator
 
 		private void SetCurrentSections()
 		{
-			m_currentSections = m_sectionInfo.GetSections(StartReference).ToList();
-			BCVRef startRef = m_currentSections.First().StartRef;
-			BCVRef endRef = m_currentSections.Last().EndRef;
+			m_currentSections = m_sectionInfo.GetSectionsThatContainRange(StartReference, EndReference).ToList();
+			BCVRef startRef = m_currentSections.First().Value.StartRef;
+			BCVRef endRef = m_currentSections.Last().Value.EndRef;
 			m_existingPhrasesInCurrentSections = m_ptHelper.UnfilteredPhrases
 				.Where(tp => tp.StartRef >= startRef && tp.EndRef <= endRef).ToList();
-			PopulateCategoryComboBox();
 		}
 
 		#region Event handlers and helper methods
@@ -284,7 +329,7 @@ namespace SIL.Transcelerator
 			m_cboEndVerse.Items.Clear();
 			m_cboEndVerse.Items.Add(String.Empty);
 
-			var lastCoveredVerse = new BCVRef(m_currentSections.Last().EndRef).Verse;
+			var lastCoveredVerse = new BCVRef(m_currentSections.Last().Value.EndRef).Verse;
 			for (int i = StartVerse; i <= lastCoveredVerse; i++)
 				m_cboEndVerse.Items.Add(i.ToString());
 
@@ -297,8 +342,6 @@ namespace SIL.Transcelerator
 		private void PopulateCategoryComboBox()
 		{
 			m_cboCategory.Items.Clear();
-			//m_cboCategory.Items.AddRange(m_existingPhrasesInCurrentSections.Select(p => p.Category).Distinct()
-			//	.Select(i => m_ptHelper.GetCategoryName(i)).Cast<object>().ToArray());
 			m_cboCategory.Items.AddRange(m_ptHelper.AllCategories.Cast<object>().ToArray());
 		}
 

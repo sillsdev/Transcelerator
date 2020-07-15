@@ -69,8 +69,8 @@ namespace SIL.Transcelerator
 			QuestionProvider qp = new QuestionProvider(qs, null);
 
 			Assert.AreEqual(2, qp.SectionInfo.Count);
-			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo[44001001].Heading);
-			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo[44001006].Heading);
+			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo.Find(44001001).Heading);
+			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo.Find(44001006).Heading);
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(44, qp.AvailableBookIds[0]);
 
@@ -210,16 +210,16 @@ namespace SIL.Transcelerator
             var keys = qp.SectionInfo.AllSectionStartRefs;
             var key = keys.ElementAt(0);
             Assert.AreEqual(40013001, key);
-            Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(1);
             Assert.AreEqual(44001001, key);
-            Assert.AreEqual("Acts 1:1-18 Jesus Leaves.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 1:1-18 Jesus Leaves.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(2);
             Assert.AreEqual(44002001, key);
-            Assert.AreEqual("Acts 2:1-5 Stuff.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 2:1-5 Stuff.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(3);
             Assert.AreEqual(44002006, key);
-            Assert.AreEqual("Acts 2:6-10 Preaching.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 2:6-10 Preaching.", qp.SectionInfo.Find(key).Heading);
         }
 
         ///--------------------------------------------------------------------------------------
@@ -381,7 +381,7 @@ namespace SIL.Transcelerator
 			QuestionProvider qp = new QuestionProvider(qs, null);
 
 			Assert.AreEqual(1, qp.SectionInfo.Count);
-			Assert.AreEqual("Romans 1:1-17 Introduction to the book.", qp.SectionInfo[s.StartRef].Heading);
+			Assert.AreEqual("Romans 1:1-17 Introduction to the book.", qp.SectionInfo.Find(s.StartRef).Heading);
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(45, qp.AvailableBookIds[0]);
 			List<TranslatablePhrase> phrases = qp.ToList();
@@ -449,8 +449,8 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(44, qp.AvailableBookIds[0]);
 			Assert.AreEqual(2, qp.SectionInfo.Count);
-			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo[44001001].Heading);
-			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo[44001006].Heading);
+			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo.Find(44001001).Heading);
+			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo.Find(44001006).Heading);
 
 			TranslatablePhrase phrase = phrases[0];
 			Assert.AreEqual("Overview", phrase.PhraseInUse);

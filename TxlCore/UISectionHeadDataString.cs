@@ -15,8 +15,8 @@ namespace SIL.Transcelerator
 {
 	public class UISectionHeadDataString : UIDataString
 	{
-		private readonly SectionInfo m_section;
-		public UISectionHeadDataString(SectionInfo section)
+		private readonly ISectionInfo m_section;
+		public UISectionHeadDataString(ISectionInfo section)
 		{
 			m_section = section;
 		}

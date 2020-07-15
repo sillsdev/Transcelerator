@@ -12,24 +12,11 @@
 
 namespace SIL.Transcelerator
 {
-	public class SectionInfo
+	public interface ISectionInfo
 	{
-		public string Heading { get; }
-
-		public int StartRef { get; }
-
-		public int EndRef { get; }
-
-		public SectionInfo(Section section)
-		{
-			Heading = section.Heading;
-			StartRef = section.StartRef;
-			EndRef = section.EndRef;
-		}
-
-		public override string ToString()
-		{
-			return Heading;
-		}
+		string Heading { get; }
+		int StartRef { get; }
+		int EndRef { get; }
+		string ToString();
 	}
 }

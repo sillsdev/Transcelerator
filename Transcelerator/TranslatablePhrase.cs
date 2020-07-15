@@ -51,19 +51,19 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
 		/// </summary>
 		/// <param name="questionInfo">Information about the original question</param>
-		/// <param name="iSection">The index of the section to which this question pertains
+		/// <param name="section">The id of the section to which this question pertains
 		/// (or -1 if this is a category name).</param>
 		/// <param name="iCategory">The index of the category (e.g. Overview vs. Detail question)
 		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular section and category).</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(IQuestionKey questionInfo, int iSection, int iCategory,
+		public TranslatablePhrase(IQuestionKey questionInfo, int section, int iCategory,
 			int seqNumber)
 			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
-			SectionIndex = iSection;
+			SectionId = section;
 			Category = iCategory;
 			SequenceNumber = seqNumber;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
@@ -71,7 +71,7 @@ namespace SIL.Transcelerator
 			if (IsUserAdded && m_sModifiedPhrase != null)
 			{
 				// This cast is entirely safe. Note above that for m_sModifiedPhrase to be non-null,
-				// the questionInfo object
+				// the questionInfo object has to be a Question
 				((Question)questionInfo).Text = m_sModifiedPhrase;
 			}
 		}
@@ -131,14 +131,14 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the index index of the section to which this question pertains (or -1 if this
-		/// is a category name)
-		/// For now, this can be -2 if this is a user-added question for a reference that does
-		/// not match any existing question)
+		/// Gets the id of the section to which this question pertains (or -1 if this
+		/// is a category name).
 		/// </summary>
+		/// <remarks>Within a book, section IDs are sequential. Unfortunately, however, they
+		/// are not sequential throughout Scripture (books are out of canonical order)</remarks>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public int SectionIndex { get; }
+		public int SectionId { get; }
 
 		/// ------------------------------------------------------------------------------------
         /// <summary>

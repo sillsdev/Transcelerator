@@ -123,7 +123,7 @@ namespace SIL.Transcelerator
 			for (var iSection = 0; iSection < m_sections.Items.Length; iSection++)
 		    {
 			    var section = m_sections.Items[iSection];
-				Debug.Assert(section.Categories.Select(c => c.Type).Distinct().Count() == section.Categories.Length,
+				Debug.Assert(section.Categories.Distinct(CategoryComparer.AreSame).Count() == section.Categories.Length,
 					"Section contains a repeated category.");
 			    foreach (var category in section.Categories)
 			    {
