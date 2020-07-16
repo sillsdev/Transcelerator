@@ -2054,7 +2054,10 @@ namespace SIL.Transcelerator
 					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.OwningSection,
 						dlg.Category, dlg.SequenceNumber, m_parser);
 					if (basePhrase == null)
+					{
+						// TODO: This needs to add enough metadata to indicate that this is a new category
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
+					}
 
 					if (dlg.Translation != string.Empty)
 						newPhrase.Translation = dlg.Translation;

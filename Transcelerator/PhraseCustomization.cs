@@ -9,8 +9,9 @@
 //
 // File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
-using System.Xml.Serialization;
 using SIL.Scripture;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace SIL.Transcelerator
 {
@@ -92,11 +93,30 @@ namespace SIL.Transcelerator
 		public string Answer { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the translation.
+		/// Gets or sets the type of customization.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute("type")]
 		public CustomizationType Type { get; set; }
+		
+		/// --------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets a value indicating whether this addition or insertion should result
+		/// in the creation of a new category. This is only meaningful if Type is
+		/// InsertionBefore or AdditionAfter (it will be ignored otherwise). If 0, then the
+		/// addition or insertion occurs in the same category as the base. Otherwise, its
+		/// value (which is always positive) indicates the number of categories before or
+		/// after the base.
+		/// </summary>
+		/// <remarks>When processing customizations, if a category is found in that
+		/// position and a matching question is not in that category, the added phrase will
+		/// be added to the end of the existing ones if it is an InsertionBefore, or to the
+		/// beginning of the existing ones if it is an AdditionAfter.</remarks>
+		/// --------------------------------------------------------------------------------
+		[XmlAttribute("categoryOffset")]
+		[DefaultValue(0)]
+		public int AddedCategoryOffset { get; set; }
+
         /// --------------------------------------------------------------------------------
         /// <summary>
         /// Initializes a new instance of the <see cref="PhraseCustomization"/> class, needed

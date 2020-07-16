@@ -4196,7 +4196,63 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(2, pq.TranslatableParts.Length);
 		}
 
-		
+		#region TXL-216 tests
+	    private static QuestionSections CreateLuke9V37Thru45TestSections(string overviewQuestionForSecondSection = null)
+	    {
+		    var qs = new QuestionSections {Items = new Section[2]};
+		    var iS = 0;
+		    qs.Items[iS] = CreateSection("LUK 9.37-43a", "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.", 42009037,
+			    42009043, 1, 2);
+		    var iC = 0;
+		    var q = qs.Items[iS].Categories[iC].Questions[0];
+		    q.Text = "What do you think was the reason that Jesus was so upset?";
+		    q.Answers = new[] {"He had given all twelve disciples power and authority over these things earlier (9:1)."};
+
+		    iC = 1;
+		    var iQ = 0;
+		    q = qs.Items[iS].Categories[iC].Questions[iQ];
+		    q.StartRef = 42009038;
+		    q.EndRef = 42009040;
+		    q.ScriptureReference = "LUK 9.38-40";
+		    q.Text = "One man in the crowd was shouting to Jesus. About what was he shouting?";
+		    q.Answers = new[] {"He wanted Jesus to take a look at his son, (who was his only child). (38)"};
+
+		    q = qs.Items[iS].Categories[iC].Questions[++iQ];
+		    q.StartRef = 42009043;
+		    q.EndRef = 42009043;
+		    q.ScriptureReference = "LUK 9.43";
+		    q.Text = "What did all the crowd think about this?";
+		    q.Answers = new[] {"They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)"};
+
+		    qs.Items[++iS] = CreateSection("LUK 9.43-45", "Luke 9:43b-45 Jesus says someone will betray him to his enemies.", 42009043,
+			    42009045, overviewQuestionForSecondSection == null ? 0 : 1, 2);
+		    iC = 0;
+		    iQ = 0;
+			if (overviewQuestionForSecondSection != null)
+			{
+				q = qs.Items[iS].Categories[iC].Questions[iQ];
+				q.StartRef = 42009043;
+				q.EndRef = 42009045;
+				q.ScriptureReference = "LUK 9.43-45";
+				q.Text = overviewQuestionForSecondSection;
+				iC++;
+			}
+
+		    q = qs.Items[iS].Categories[iC].Questions[iQ];
+		    q.StartRef = 42009043;
+		    q.EndRef = 42009044;
+		    q.ScriptureReference = "LUK 9.43-44";
+		    q.Text = "What new information did Jesus tell his disciples?";
+		    q.Answers = new[] {"He told them that someone would betray [him,] the Son of Man, into the hands/control of other men. (44)"};
+
+		    q = qs.Items[iS].Categories[iC].Questions[++iQ];
+		    q.StartRef = 42009044;
+		    q.EndRef = 42009044;
+		    q.ScriptureReference = "LUK 9.44";
+		    q.Text = "What do you think it means to betray someone into other people's hands/control?";
+		    q.Answers = new[] {"Key Term Check: It means to deliver that person into the control of someone whom that person regards as an enemy."};
+		    return qs;
+	    }
 
 	    ///--------------------------------------------------------------------------------------
 	    /// <summary>
@@ -4220,49 +4276,7 @@ namespace SIL.Transcelerator
 	        };
 	        customizations.Add(pc);
 
-	        var qs = new QuestionSections {Items = new Section[2]};
-	        var iS = 0;
-	        qs.Items[iS] = CreateSection("LUK 9.37-43a", "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.", 42009037,
-		        42009043, 1, 2);
-	        var iC = 0;
-	        var q = qs.Items[iS].Categories[iC].Questions[0];
-	        q.Text = "What do you think was the reason that Jesus was so upset?";
-	        q.Answers = new[] { "He had given all twelve disciples power and authority over these things earlier (9:1)." };
-
-	        iC = 1;
-	        var iQ = 0;
-	        q = qs.Items[iS].Categories[iC].Questions[iQ];
-	        q.StartRef = 42009038;
-	        q.EndRef = 42009040;
-	        q.ScriptureReference = "LUK 9.38-40";
-	        q.Text = "One man in the crowd was shouting to Jesus. About what was he shouting?";
-	        q.Answers = new[] { "He wanted Jesus to take a look at his son, (who was his only child). (38)" };
-
-	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
-	        q.StartRef = 42009043;
-	        q.EndRef = 42009043;
-	        q.ScriptureReference = "LUK 9.43";
-	        q.Text = "What did all the crowd think about this?";
-	        q.Answers = new[] { "They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)" };
-
-	        qs.Items[++iS] = CreateSection("LUK 9.43-45", "Luke 9:43b-45 Jesus says someone will betray him to his enemies.", 42009043,
-		        42009045, 0, 2);
-	        iC = 0;
-	        iQ = 0;
-	        q = qs.Items[iS].Categories[iC].Questions[iQ];
-	        q.StartRef = 42009043;
-	        q.EndRef = 42009044;
-	        q.ScriptureReference = "LUK 9.43-44";
-	        q.Text = "What new information did Jesus tell his disciples?";
-	        q.Answers = new[] { "He told them that someone would betray [him,] the Son of Man, into the hands/control of other men. (44)" };
-
-	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
-	        q.StartRef = 42009044;
-	        q.EndRef = 42009044;
-	        q.ScriptureReference = "LUK 9.44";
-	        q.Text = "What do you think it means to betray someone into other people's hands/control?";
-	        q.Answers = new[] { "Key Term Check: It means to deliver that person into the control of someone whom that person regards as an enemy." };
-
+	        var qs = CreateLuke9V37Thru45TestSections();
 	        var qp = new MasterQuestionParser(qs, new List<string>(), null, null, customizations, null);
 
 	        var pq = qp.Result;
@@ -4271,13 +4285,13 @@ namespace SIL.Transcelerator
 	        var excludedQuestions = 0;
 	        var iQuestion = 0;
 
-	        for (iS = 0; iS < sections.Length; iS++)
+	        for (var iS = 0; iS < sections.Length; iS++)
 	        {
 	            var actSection = sections[iS];
-	            for (iC = 0; iC < actSection.Categories.Length; iC++)
+	            for (var iC = 0; iC < actSection.Categories.Length; iC++)
 	            {
 	                var actCategory = actSection.Categories[iC];
-	                for (iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                for (var iQ = 0; iQ < actCategory.Questions.Count; iQ++)
 	                {
 	                    var actQuestion = actCategory.Questions[iQ];
 
@@ -4342,6 +4356,227 @@ namespace SIL.Transcelerator
 	        Assert.AreEqual(6, iQuestion);
 	        Assert.AreEqual(0, excludedQuestions);
 	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// TXL-216: Tests that a user question is properly inserted into a new (overview)
+	    /// category for the correct (existing) section.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_InsertedQuestionInNewCategory_PhrasesAreInCorrectCategoryAndSection()
+	    {
+	        var customizations = new List<PhraseCustomization>();
+	        var pc = new PhraseCustomization
+	        {
+		        Reference = "LUK 9.43-45",
+		        OriginalPhrase = "What new information did Jesus tell his disciples?",
+		        ModifiedPhrase = "What happened in this passage?",
+		        Answer = "Various things.",
+		        Type = PhraseCustomization.CustomizationType.InsertionBefore,
+				AddedCategoryOffset = 1
+	        };
+	        customizations.Add(pc);
+
+	        var qs = CreateLuke9V37Thru45TestSections();
+	        var qp = new MasterQuestionParser(qs, new List<string>(), null, null, customizations, null);
+
+	        var pq = qp.Result;
+	        var sections = pq.Sections.Items;
+
+	        var excludedQuestions = 0;
+	        var iQuestion = 0;
+
+	        for (var iS = 0; iS < sections.Length; iS++)
+	        {
+	            var actSection = sections[iS];
+	            for (var iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                var actCategory = actSection.Categories[iC];
+	                for (var iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    var actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.AreEqual("What do you think was the reason that Jesus was so upset?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+									Assert.AreEqual(0, iS);
+									Assert.AreEqual(0, iC);
+	                                break;
+	                            case 2:
+	                                Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(0, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+	                            case 3:
+		                            Assert.AreEqual("What did all the crowd think about this?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+		                            Assert.AreEqual(0, iS);
+		                            Assert.AreEqual(1, iC);
+		                            break;
+	                            case 4:
+		                            Assert.IsTrue(actCategory.IsOverview);
+		                            Assert.AreEqual("What happened in this passage?", actQuestion.PhraseInUse);
+		                            Assert.AreEqual("LUK 9.43-45", actQuestion.ScriptureReference);
+		                            Assert.AreEqual(42009043, actQuestion.StartRef);
+		                            Assert.AreEqual(42009045, actQuestion.EndRef);
+		                            Assert.IsTrue(actQuestion.IsUserAdded);
+									Assert.AreEqual("Various things.", actQuestion.Answers.Single());
+		                            Assert.AreEqual(1, iS);
+		                            Assert.AreEqual(0, iC);
+		                            break;
+	                            case 5:
+		                            Assert.IsFalse(actCategory.IsOverview);
+	                                Assert.AreEqual("What new information did Jesus tell his disciples?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+                                case 6:
+	                                Assert.AreEqual("What do you think it means to betray someone into other people's hands/control?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(6, iQuestion);
+	        Assert.AreEqual(0, excludedQuestions);
+	    }
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// TXL-216: Tests that a user question that was inserted before the first detail
+	    /// question, intended to create the overview category, is properly added to the end of
+	    /// the existing overview category (which can happen if the overview category is later
+	    /// added to the list of canned questions).
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_InsertedQuestionInNewCategoryThatNowExists_PhrasesAreInCorrectCategoryAndSection()
+	    {
+	        var customizations = new List<PhraseCustomization>();
+	        var pc = new PhraseCustomization
+	        {
+		        Reference = "LUK 9.43-45",
+		        OriginalPhrase = "What new information did Jesus tell his disciples?",
+		        ModifiedPhrase = "What happened in this passage?",
+		        Answer = "Various things.",
+		        Type = PhraseCustomization.CustomizationType.InsertionBefore,
+				AddedCategoryOffset = 1
+	        };
+	        customizations.Add(pc);
+
+	        var qs = CreateLuke9V37Thru45TestSections("Please summarize what you remember.");
+	        var qp = new MasterQuestionParser(qs, new List<string>(), null, null, customizations, null);
+
+	        var pq = qp.Result;
+	        var sections = pq.Sections.Items;
+
+	        var excludedQuestions = 0;
+	        var iQuestion = 0;
+
+	        for (var iS = 0; iS < sections.Length; iS++)
+	        {
+	            var actSection = sections[iS];
+	            for (var iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                var actCategory = actSection.Categories[iC];
+	                for (var iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    var actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.AreEqual("What do you think was the reason that Jesus was so upset?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+									Assert.AreEqual(0, iS);
+									Assert.AreEqual(0, iC);
+	                                break;
+	                            case 2:
+	                                Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(0, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+	                            case 3:
+		                            Assert.AreEqual("What did all the crowd think about this?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+		                            Assert.AreEqual(0, iS);
+		                            Assert.AreEqual(1, iC);
+		                            break;
+	                            case 4:
+		                            Assert.IsTrue(actCategory.IsOverview);
+		                            Assert.AreEqual("Please summarize what you remember.", actQuestion.PhraseInUse);
+		                            Assert.AreEqual("LUK 9.43-45", actQuestion.ScriptureReference);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+		                            Assert.AreEqual(1, iS);
+		                            Assert.AreEqual(0, iC);
+		                            break;
+	                            case 5:
+		                            Assert.IsTrue(actCategory.IsOverview);
+		                            Assert.AreEqual("What happened in this passage?", actQuestion.PhraseInUse);
+		                            Assert.AreEqual("LUK 9.43-45", actQuestion.ScriptureReference);
+		                            Assert.AreEqual(42009043, actQuestion.StartRef);
+		                            Assert.AreEqual(42009045, actQuestion.EndRef);
+		                            Assert.IsTrue(actQuestion.IsUserAdded);
+		                            Assert.AreEqual("Various things.", actQuestion.Answers.Single());
+		                            Assert.AreEqual(1, iS);
+		                            Assert.AreEqual(0, iC);
+		                            break;
+	                            case 6:
+		                            Assert.IsFalse(actCategory.IsOverview);
+	                                Assert.AreEqual("What new information did Jesus tell his disciples?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+                                case 7:
+	                                Assert.AreEqual("What do you think it means to betray someone into other people's hands/control?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(7, iQuestion);
+	        Assert.AreEqual(0, excludedQuestions);
+	    }
+		#endregion
 	    #endregion
 
 		#region Private helper methods
