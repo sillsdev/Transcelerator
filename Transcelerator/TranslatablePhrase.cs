@@ -100,7 +100,6 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(modifiedPhrase))
 			{
 				m_sModifiedPhrase = modifiedPhrase.Normalize(NormalizationForm.FormC);
-
 			}
 			if (!IsNullOrEmpty(OriginalPhrase))
 			{

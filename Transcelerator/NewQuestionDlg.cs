@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2012' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2012' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -11,11 +11,9 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.Extensions;
 using SIL.ObjectModel;
 using SIL.Scripture;
 
@@ -41,7 +39,7 @@ namespace SIL.Transcelerator
 		private List<TranslatablePhrase> m_currentExistingPhrases;
 		private int m_existingEndVerse;
 		private int m_insertionLocation;
-		private Action<bool> m_changeKeyboard;
+		private readonly Action<bool> m_changeKeyboard;
 
 		#region Properties
 		public string EnglishQuestion => m_chkNoEnglish.Checked ? null : m_txtEnglishQuestion.Text;
@@ -55,8 +53,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				var startRef = m_scrPsgReference.ScReference;
-				var endRef = new BCVRef(startRef);
-				endRef.Verse = EndVerse;
+				var endRef = new BCVRef(startRef) { Verse = EndVerse };
 				return BCVRef.MakeReferenceString(startRef, endRef, ".", "-");
 			}
 		}
@@ -112,17 +109,9 @@ namespace SIL.Transcelerator
 
 		public int Category => m_cboCategory.SelectedIndex;
 
-		public int SequenceNumber
-		{
-			get
-			{
-				if (m_dataGridViewExistingQuestions.RowCount == 0)
-					return 1;
-				
-				return ((TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[0].DataBoundItem).SequenceNumber +
-					SelectedInsertionLocation;
-			}
-		}
+		public int SequenceNumber =>
+			BasePhrase == null ? 0 :
+				BasePhrase.SequenceNumber + (InsertBeforeBasePhrase ? 0 : 1);
 
 		private int SelectedInsertionLocation
 		{
@@ -135,88 +124,38 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public int OwningSection
-		{
-			get
-			{
-				if (m_currentSections.Count == 1)
-					return m_sectionInfo.AllSections.IndexOf(m_currentSections[0]);
-				if (BasePhrase != null)
-					return BasePhrase.SectionIndex;
-				// This is the very rare (probably nonexistent) case where a verse
-				// is split across two sections and a question is being added to a
-				// category that does not have any existing questions. If the end
-				// ref is greater than the start ref, the new question must belong
-				// to the second section. If it's same, then we can't know which of
-				// the two sections is intended. But we can safely - albeit
-				// arbitrarily choose the 2nd one.
-				return m_sectionInfo.AllSections.IndexOf(m_currentSections.Last());
-			}
-		}
+		public TranslatablePhrase BasePhrase =>
+			m_dataGridViewExistingQuestions.SelectedRows.Count != 1 ? null :
+			(TranslatablePhrase)m_dataGridViewExistingQuestions.SelectedRows[0].DataBoundItem;
+
+		public int OwningSection =>
+			// BasePhrase will rarely be null, but it could be if a question is
+			// being added to a category that does not have any existing questions.
+			// If the end ref is greater than the start ref, the new question must
+			// belong to the second section. If it's same, then we can't know
+			// which of the two sections is intended. But we can safely - albeit
+			// arbitrarily - choose the 2nd one.
+			BasePhrase?.SectionId ??
+			m_existingPhrasesInCurrentSections.Last().SectionId;
 
 		/// <summary>
 		/// Gets the phrase/question that the new question is to hang off of. Although it would seem
 		/// that this should be the selected one in the UI, in fact, we always return the one BEFORE
-		/// the insertion position except when inserting at the beginning of a category. Inserting
+		/// the insertion position except when inserting at the very beginning of the list. Inserting
 		/// before an existing question causes the question to get added twice, and that's not good.
 		/// </summary>
-		public TranslatablePhrase BasePhrase
+		public Question NewQuestion
 		{
 			get
 			{
-				if (m_dataGridViewExistingQuestions.SelectedRows.Count == 0)
-					return null;
-				var row = m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
-				Debug.Assert(row >= 0);
-				Debug.Assert(SelectedInsertionLocation == row || SelectedInsertionLocation == row + 1,
-					"Insertion must be either immediately before or immediately after current (selected) row");
-				if (row > 0 && !InsertBeforeBasePhrase)
-					row--;
-
-				//if (SelectedInsertionLocation > 0 && SelectedInsertionLocation == row)
-				//{
-				//	// See if we should insert after the row before the selected one instead.
-				//	if (m_currentSections.Count == 1)
-				//		row--;
-				//	else
-				//	{
-				//		// This handles the special case when we are inserting a question for a
-				//		// verse that spans two sections. In this case, the section corresponding to the
-				//		// selected question is the one we want to add the new question to.
-				//		var selectedQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
-				//		var prevQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row -1].DataBoundItem;
-				//		if (selectedQuestion.SectionIndex == prevQuestion.SectionIndexy)
-				//		{
-				//			row--;
-				//		}
-				//	}
-				//}
-
-				return (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
+				var startRef = StartReference;
+				var endRef = EndReference;
+				return new Question(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"),
+					startRef.BBCCCVVV, endRef.BBCCCVVV, EnglishQuestion, Answer);
 			}
 		}
 
-		public bool InsertBeforeBasePhrase
-		{
-			get
-			{
-				if (SelectedInsertionLocation == 0)
-					return true;
-				if (m_currentSections.Count == 1)
-					return false;
-
-				// This handles the special case when we are inserting a question for a
-				// verse that spans two sections. In this case, the section corresponding to the
-				// selected question is the one we want to add the new question to.
-				var row = m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
-				if (row == 0)
-					return false;
-				var selectedQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row].DataBoundItem;
-				var prevQuestion = (TranslatablePhrase)m_dataGridViewExistingQuestions.Rows[row -1].DataBoundItem;
-				return selectedQuestion.SectionIndex != prevQuestion.SectionIndex;
-			}
-		}
-
+		public bool InsertBeforeBasePhrase => SelectedInsertionLocation == m_dataGridViewExistingQuestions.CurrentCellAddress.Y;
 		#endregion
 
 		/// ------------------------------------------------------------------------------------
@@ -239,19 +178,19 @@ namespace SIL.Transcelerator
 
 			HandleStringsLocalized();
 
-			var startref = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
-			m_scrPsgReference.Initialize(new BCVRef(startref), m_projectVersification, canonicalBookIds);
+			var startRef = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
+			m_scrPsgReference.Initialize(new BCVRef(startRef), m_projectVersification, canonicalBookIds);
 			m_existingStartRef = m_scrPsgReference.ScReference;
 			SetCurrentSections();
-			var endref = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
-			m_existingEndVerse = BCVRef.GetVerseFromBcv(endref);
+			var endRef = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
+			m_existingEndVerse = BCVRef.GetVerseFromBcv(endRef);
 			PopulateEndRefComboBox();
 
 			PopulateCategoryComboBox();
 			if (basePhrase.Category < m_cboCategory.Items.Count)
 				m_cboCategory.SelectedIndex = basePhrase.Category;
 
-			// Find and select basePhrase in datagrid
+			// Find and select basePhrase in the grid of existing questions
 			DataGridViewRow rowToSelect = m_dataGridViewExistingQuestions.Rows.Cast<DataGridViewRow>().FirstOrDefault(row => ((TranslatablePhrase)row.DataBoundItem) == basePhrase);
 			if (rowToSelect != null)
 			{
@@ -266,8 +205,8 @@ namespace SIL.Transcelerator
 				if (m_existingStartRef != newRef)
 				{
 					var newRefInMasterVersification = StartReference;
-					var sectionChange = newRefInMasterVersification < m_currentSections[0].StartRef ||
-						newRefInMasterVersification > m_currentSections.Last().EndRef;
+					var sectionChange = newRefInMasterVersification < m_currentSections[0].Value.StartRef ||
+						newRefInMasterVersification > m_currentSections.Last().Value.EndRef;
 					m_existingStartRef = newRef;
 					if (sectionChange)
 						PopulateExistingQuestionsGrid();

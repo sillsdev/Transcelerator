@@ -59,7 +59,7 @@ namespace SIL.Transcelerator
 			if (endRef > m_sections.Values.Last().EndRef)
 				throw new ArgumentOutOfRangeException("Invalid end reference");
 			var index = m_sections.Keys.BinarySearch(startRef);
-			foreach (var section in m_sections.Select(s => s.Value)
+			foreach (var section in m_sections.Select(s => s.Value).SkipWhile(s => s.EndRef < endRef)
 				.TakeWhile(s => s.StartRef <= startRef && s.EndRef >= endRef))
 			{
 				yield return new KeyValuePair<int, ISectionInfo>(index++, section);
