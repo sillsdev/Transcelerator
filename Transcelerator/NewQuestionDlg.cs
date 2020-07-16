@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using SIL.ObjectModel;
 using SIL.Scripture;
 
@@ -298,20 +299,27 @@ namespace SIL.Transcelerator
 
 		private void SetButtonState()
 		{
-			if (m_txtEnglishQuestion.Text.Length > 0)
+			if (m_currentExistingPhrases.Any())
 			{
-				btnOk.Enabled = true;
-				if (m_ptHelper.GetMatchingPhrases(StartReference, EndReference)
-					.Any(mp => mp.PhraseToDisplayInUI == m_txtEnglishQuestion.Text))
+				if (m_txtEnglishQuestion.Text.Length > 0)
 				{
-					btnOk.Enabled = false;
-					m_chkNoEnglish.Visible = false;
-					m_lblIdenticalQuestion.Visible = true;
-					return;
+					btnOk.Enabled = true;
+					if (m_ptHelper.GetMatchingPhrases(StartReference, EndReference)
+						.Any(mp => mp.PhraseToDisplayInUI == m_txtEnglishQuestion.Text))
+					{
+						btnOk.Enabled = false;
+						m_chkNoEnglish.Visible = false;
+						m_lblIdenticalQuestion.Visible = true;
+						return;
+					}
 				}
+				else
+					btnOk.Enabled = m_chkNoEnglish.Checked && m_txtVernacularQuestion.Text.Length > 0;
 			}
 			else
-				btnOk.Enabled = m_chkNoEnglish.Checked && m_txtVernacularQuestion.Text.Length > 0;
+			{
+				btnOk.Enabled = false;
+			}
 			m_lblIdenticalQuestion.Visible = false;
 			m_chkNoEnglish.Visible = true;
 		}
@@ -376,6 +384,7 @@ namespace SIL.Transcelerator
 		private void HandleCategoryChanged(object sender, EventArgs e)
 		{
 			PopulateExistingQuestionsGrid();
+			m_linklblWishForTxl218.Visible = !m_currentExistingPhrases.Any();
 		}
 
 		private void PopulateExistingQuestionsGrid()
@@ -407,9 +416,16 @@ namespace SIL.Transcelerator
 		{
 			if (m_dataGridViewExistingQuestions.RowCount > 0)
 			{
-				SetRowWithInsertionAfter(m_currentExistingPhrases.FindLastIndex(
+				var rowToSelect = m_currentExistingPhrases.FindLastIndex(
 					p => p.StartRef < StartReference ||
-						(p.StartRef == StartReference && p.EndRef <= EndReference)));
+						(p.StartRef == StartReference && p.EndRef <= EndReference));
+				if (rowToSelect >= 0)
+					SetRowWithInsertionAfter(rowToSelect);
+				else
+				{
+					SelectedInsertionLocation = 0;
+					SetRowAndArrowPosition(0);
+				}
 			}
 			else
 				SelectedInsertionLocation = 0;
@@ -447,6 +463,19 @@ namespace SIL.Transcelerator
 		private void m_txtVernacularQuestion_Leave(object sender, EventArgs e)
 		{
 			m_changeKeyboard(false);
+		}
+
+		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			if (DialogResult.OK ==
+				MessageBox.Show(this, "Sorry this feature is not available yet. But if you are " +
+				"connected to the Internet and have not opted out of transmitting analytics data, " +
+				"this feature will now be requested for you.",
+				"Transcelerator Feature Request", MessageBoxButtons.OKCancel))
+			{
+				Analytics.Track("TXL-218", new Dictionary<string, string>
+					{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
+			}
 		}
 	}
 }

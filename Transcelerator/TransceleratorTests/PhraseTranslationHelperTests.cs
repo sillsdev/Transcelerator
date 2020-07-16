@@ -1262,7 +1262,40 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Maybe", customizations[i].Answer);
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
 		}
+        
+		[TestCase(37)]
+		[TestCase(38)]
+		[TestCase(43)]
+	    public void CustomizedPhrases_PreviouslyAddedQuestionsWithDifferentReferencesInCategoryOfPrecedingQuestion_AddedQuestionsAreAssociatedWithBaseInSameCategory(
+		    int verseForAddedQuestion)
+	    {
+		    m_sections.Items[0].Categories = new Category[2];
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Overview", IsOverview = true};
+		    var q = AddTestQuestion(cat, "What happened when Jesus and the three disciples came down from the mountain?",
+			    "LUK 9.37-43", 42009037, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"A crowd met them.", 
+			    "A man in that crowd had a son whom a spirit seized, caused him to have convulsions and would not leave him alone."};
+		    var bbCccVvv = 42009000 + verseForAddedQuestion;
+		    q = AddTestQuestion(cat, "Is this inserted in the overview category?", $"LUK 9:{verseForAddedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    cat = m_sections.Items[0].Categories[1] = new Category {Type = "Minutia", IsOverview = false};
+		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "D", 42009038, 42009040);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
 
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(5, pth.UnfilteredPhraseCount);
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What happened when Jesus and the three disciples came down from the mountain?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted in the overview category?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type);
+		}
         #endregion
 
         #region AddQuestion Tests

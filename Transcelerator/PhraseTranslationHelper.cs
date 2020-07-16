@@ -1036,7 +1036,6 @@ namespace SIL.Transcelerator
 			}
 			else
 			{
-				// TODO: Change logic to use section ref and category to determine relative affinity???
 				if (phraseBefore == null || newPhrase.StartRef - phraseBefore.StartRef > phraseAfter.StartRef - newPhrase.EndRef)
 					phraseAfter.InsertedPhraseBefore = newPhrase.QuestionInfo;
 				else
