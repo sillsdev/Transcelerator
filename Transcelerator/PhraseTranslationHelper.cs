@@ -349,11 +349,13 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+				var customizations = new List<PhraseCustomization>();
 				var allPhrases = UnfilteredPhrases;
 				for (var i = 0; i < allPhrases.Count; i++)
 				{
-					TranslatablePhrase translatablePhrase = allPhrases[i];
+					var translatablePhrase = allPhrases[i];
+					if (translatablePhrase.IsCategoryName)
+						continue;
 					if (translatablePhrase.IsExcludedOrModified)
 						customizations.Add(new PhraseCustomization(translatablePhrase));
 					if (translatablePhrase.InsertedPhraseBefore != null)
@@ -367,29 +369,11 @@ namespace SIL.Transcelerator
 						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
 							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
 						{
-							TranslatablePhrase firstNonUserQuestionForRef;
-							if (i > 0 && allPhrases[i - 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
-							{
-								customizations.Add(new PhraseCustomization(allPhrases[i - 1].OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									PhraseCustomization.CustomizationType.AdditionAfter));
-							}
-							else if (i < allPhrases.Count - 1 && (firstNonUserQuestionForRef = allPhrases.Skip(i + 1).TakeWhile(q => q.QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0).FirstOrDefault(q => !q.IsUserAdded)) != null)
-							{
-								customizations.Add(new PhraseCustomization(firstNonUserQuestionForRef.OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									PhraseCustomization.CustomizationType.InsertionBefore));
-							}
-							else
-							{
-								// This is a question whose reference does not match either of the surrounding questions
-								// (or is the first one in a sequence of user-added questions for a reference which had
-								// no built-in questions, so it is somewhat arbitrary whether we think of it as an addition
-								// or and insertion.
-								customizations.Add(new PhraseCustomization(translatablePhrase.OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter));
-							}
+							// This is a "previous" addition or insertion, so it is not explicitly attached to the
+							// adjacent question that is its base.
+							customizations.Add(GetPhraseCustomization(translatablePhrase,
+								i == 0 || allPhrases[i - 1].IsCategoryName ? null : allPhrases[i - 1],
+								allPhrases.Skip(i + 1).FirstOrDefault(q => !q.IsUserAdded)));
 						}
 					}
 					if (translatablePhrase.AddedPhraseAfter != null)
@@ -401,6 +385,86 @@ namespace SIL.Transcelerator
 				}
 				return customizations;
 			}
+		}
+
+		/// <summary>
+		/// Gets a PhraseCustomization for the addedPhrase by determining whether to hang it as
+		/// an addition off the phraseBefore or as an insertion off the phraseAfter. (TXL-218: Or
+		/// in rare cases, hang it off itself.) We make this determination by first looking at
+		/// the section/category, then by considering the reference. If both of the adjacent phrases
+		/// have the same section and category, but neither has the same reference, we arbitrarily
+		/// treat it as an addition hanging off the phraseBefore.
+		/// </summary>
+		private static PhraseCustomization GetPhraseCustomization(TranslatablePhrase addedPhrase,
+			TranslatablePhrase phraseBefore, TranslatablePhrase nonUserPhraseAfter)
+		{
+			bool AreInSameSectionAndCategory(TranslatablePhrase a, TranslatablePhrase b) =>
+				a.SectionId == b.SectionId && a.Category == b.Category;
+
+			if (phraseBefore == null)
+			{
+				Debug.Assert(nonUserPhraseAfter != null);
+				if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+				{
+					return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text, addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.InsertionBefore);
+				}
+
+				Debug.Fail("TXL-218: For now, this shouldn't happen.");
+				// Hang the question off itself
+				return new PhraseCustomization(addedPhrase.OriginalPhrase,
+					addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.InsertionBefore /* arbitrary */);
+			}
+
+			if (nonUserPhraseAfter == null)
+			{
+				Debug.Assert(phraseBefore != null);
+				if (AreInSameSectionAndCategory(phraseBefore, addedPhrase))
+				{
+					return new PhraseCustomization(phraseBefore.QuestionInfo.Text, addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.AdditionAfter);
+				}
+
+				Debug.Fail("TXL-218: For now, this shouldn't happen.");
+				// Hang the question off itself
+				return new PhraseCustomization(addedPhrase.OriginalPhrase,
+					addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.AdditionAfter /* arbitrary */);
+			}
+
+			if (AreInSameSectionAndCategory(phraseBefore, addedPhrase))
+			{
+				if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+				{
+					// All three questions are in the same section and category, so attach it to the
+					// one for the same reference, if any.
+					if (phraseBefore.QuestionInfo.CompareRefs(addedPhrase.QuestionInfo) == 0 ||
+						(nonUserPhraseAfter.QuestionInfo.CompareRefs(addedPhrase.QuestionInfo) != 0))
+					{
+						return new PhraseCustomization(phraseBefore.QuestionInfo.Text,
+							addedPhrase.QuestionInfo,
+							PhraseCustomization.CustomizationType.AdditionAfter);
+					}
+
+					return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text,
+						addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.InsertionBefore);
+				}
+
+				return new PhraseCustomization(phraseBefore.QuestionInfo.Text, addedPhrase.QuestionInfo,
+					PhraseCustomization.CustomizationType.AdditionAfter);
+			}
+
+			if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+			{
+				return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text, addedPhrase.QuestionInfo,
+					PhraseCustomization.CustomizationType.InsertionBefore);
+			}
+
+			// REVIEW (TXL-218): For now, this probably can't happen, but when we implement TXL-218,
+			// we want to hang the question off itself.
+			Debug.Fail("TXL-218: For now, this shouldn't happen.");
+			return new PhraseCustomization(addedPhrase.OriginalPhrase,
+				addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.AdditionAfter /* arbitrary */);
 		}
 
 		internal DataFileAccessor FileProxy

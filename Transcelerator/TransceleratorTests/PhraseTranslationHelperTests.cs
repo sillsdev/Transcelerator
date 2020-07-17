@@ -1150,8 +1150,10 @@ namespace SIL.Transcelerator
 	    /// TXL-207: A question should be able to be added after an inserted question without causing them
 	    /// to get cross-linked such that a duplicate results.
 	    /// </summary>
-	    [Test]
-	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder()
+	    // ENHANCE(TXL-218): [TestCase(0)]
+	    [TestCase(1)]
+	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder(
+		    int categoryForNewQuestions)
 	    {
 		    var cat = m_sections.Items[0].Categories[0];
 		    AddTestQuestion(cat, "Is this just a question?", "GEN 22:13", 1022013, 1022013);
@@ -1162,7 +1164,7 @@ namespace SIL.Transcelerator
 
 			var qBase1 = pth[0];
 			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
-			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, 0, qBase1.SequenceNumber, mp);
+			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, categoryForNewQuestions, qBase1.SequenceNumber, mp);
 		   var customizations = pth.CustomizedPhrases;
 		   Assert.AreEqual(1, customizations.Count);
 
@@ -1170,7 +1172,7 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
 			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
-		    pth.AddQuestion(addedQuestion, qBase2.SectionId, 0, qBase2.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase2.SectionId, categoryForNewQuestions, qBase2.SequenceNumber + 1, mp);
 
 		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
 
@@ -1186,6 +1188,68 @@ namespace SIL.Transcelerator
             Assert.AreEqual("Was this question added after the inserted one?", customizations[i].ModifiedPhrase);
             Assert.AreEqual("You bet", customizations[i].Answer);
             Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+	    }
+
+	    [Test]
+	    public void CustomizedPhrases_InsertedQuestionWithLaterReference_NewQuestionComesBeforeBase()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+			AddTestQuestion(cat, "Had anyone else tried to help this man and his boy?", "LUK 9.40", 42009040, 42009040);
+			AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
+			AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			pth.Sort(PhrasesSortedBy.Reference, true);
+		    var qBase = pth[2];
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
+			    "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
+		    var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    qBase.InsertedPhraseBefore = addedQuestion;
+		    //qBase = added;
+		    //addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
+		    //var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    //qBase.InsertedPhraseBefore = addedQuestion;
+
+			var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+
+	    [Test]
+	    public void CustomizedPhrases_AddedQuestionWithEarlierReference_NewQuestionComesAfterBase()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+		    AddTestQuestion(cat, "Had anyone else tried to help this man and his boy?", "LUK 9.40", 42009040, 42009040);
+		    AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
+		    AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+		    pth.Sort(PhrasesSortedBy.Reference, true);
+		    var qBase = pth[2];
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
+			    "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question("LUK 9.38", 42009038, 42009038, "Is this in order?", "No");
+		    pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber + 1, mp);
+		    qBase.AddedPhraseAfter = addedQuestion;
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type);
 	    }
 
 	    [Test]
@@ -1247,22 +1311,23 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
 		    Assert.AreEqual(3, customizations.Count);
 			int i = 0;
-		    Assert.AreEqual("Question 1? (inserted)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Question 2?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 1? (inserted)", customizations[i].ModifiedPhrase);
 		    Assert.AreEqual("Yes", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type, "This is really arbitrary");
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 2?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 3? (added)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
 		    i++;
 		    Assert.AreEqual("Question 3? (added)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
-		    Assert.AreEqual("No", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
-		    i++;
-		    Assert.AreEqual("Question 4? (added)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Question 4? (added)", customizations[i].ModifiedPhrase);
 		    Assert.AreEqual("Maybe", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
 		}
         
+        #region TXL-216
 		[TestCase(37)]
 		[TestCase(38)]
 		[TestCase(43)]
@@ -1277,11 +1342,11 @@ namespace SIL.Transcelerator
 		    q.Answers = new[] {"A crowd met them.", 
 			    "A man in that crowd had a son whom a spirit seized, caused him to have convulsions and would not leave him alone."};
 		    var bbCccVvv = 42009000 + verseForAddedQuestion;
-		    q = AddTestQuestion(cat, "Is this inserted in the overview category?", $"LUK 9:{verseForAddedQuestion}", bbCccVvv, bbCccVvv);
+		    q = AddTestQuestion(cat, "Is this added to the overview category?", $"LUK 9:{verseForAddedQuestion}", bbCccVvv, bbCccVvv);
 			q.IsUserAdded = true;
 		    q.Answers = new[] { "I hope so." };
 		    cat = m_sections.Items[0].Categories[1] = new Category {Type = "Minutia", IsOverview = false};
-		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "D", 42009038, 42009040);
+		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
 		    q.IsUserAdded = false;
 		    q.Answers = new[] { "He needed help." };
 
@@ -1289,13 +1354,148 @@ namespace SIL.Transcelerator
 		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 		    var customizations = pth.CustomizedPhrases;
-		    Assert.AreEqual(5, pth.UnfilteredPhraseCount);
+		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
 		    Assert.AreEqual(1, customizations.Count);
 		    Assert.AreEqual("What happened when Jesus and the three disciples came down from the mountain?", customizations[0].OriginalPhrase);
-		    Assert.AreEqual("Is this inserted in the overview category?", customizations[0].ModifiedPhrase);
-		    Assert.AreEqual("I hope so", customizations[0].Answer);
+		    Assert.AreEqual("Is this added to the overview category?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type);
 		}
+        
+	    [TestCase(37, 37)]
+	    [TestCase(38, 38)]
+	    [TestCase(38, 43)]
+	    [TestCase(43, 43)]
+	    [TestCase(41, 43)]
+	    [TestCase(41, 42)]
+	    public void CustomizedPhrases_PreviouslyAddedQuestionsWithDifferentReferencesInSectionOfPrecedingQuestion_AddedQuestionsAreAssociatedWithBaseInSameSectionAndCategory(
+		    int startVerseForAddedQuestion, int endVerseForAddedQuestion)
+	    {
+		    m_sections.Items = new Section[2];
+		    m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+			    Heading = "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.",
+			    StartRef = 42009037,
+			    EndRef = 4200943
+		    };
+		    m_sections.Items[1] = new Section
+		    {
+			    Categories = new Category[1],
+			    Heading = "Luke 9:43b-45 Jesus says someone will betray him to his enemies.",
+			    StartRef = 42009043,
+			    EndRef = 4200945
+		    };
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var q = AddTestQuestion(cat, "What did all the crowd think about this?",
+			    "LUK 9.43", 42009043, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)"};
+		    cat = m_sections.Items[1].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var verseBridgeSuffix = startVerseForAddedQuestion == endVerseForAddedQuestion ? null : "-" + endVerseForAddedQuestion; 
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category of the second section?",
+			    $"LUK 9:{startVerseForAddedQuestion}{verseBridgeSuffix}",
+			    42009000 + startVerseForAddedQuestion, 42009000 + endVerseForAddedQuestion);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "What new information did Jesus tell his disciples?", "LUK 9.43-44", 42009043, 42009044);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What new information did Jesus tell his disciples?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category of the second section?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        
+		[TestCase(37)]
+		[TestCase(38)]
+		[TestCase(43)]
+	    public void CustomizedPhrases_PreviouslyInsertedQuestionsWithDifferentReferencesInCategoryOfFollowingQuestion_InsertedQuestionsAreAssociatedWithBaseInSameCategory(
+		    int verseForInsertedQuestion)
+	    {
+		    m_sections.Items[0].Categories = new Category[2];
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Overview", IsOverview = true};
+		    var q = AddTestQuestion(cat, "What happened when Jesus and the three disciples came down from the mountain?",
+			    "LUK 9.37-43", 42009037, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"A crowd met them.", 
+			    "A man in that crowd had a son whom a spirit seized, caused him to have convulsions and would not leave him alone."};
+		    cat = m_sections.Items[0].Categories[1] = new Category {Type = "Minutia", IsOverview = false};
+		    var bbCccVvv = 42009000 + verseForInsertedQuestion;
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category?", $"LUK 9:{verseForInsertedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        
+		[TestCase(43)]
+		[TestCase(44)]
+		[TestCase(45)]
+	    public void CustomizedPhrases_PreviouslyInsertedQuestionsWithDifferentReferencesInSectionOfFollowingQuestion_InsertedQuestionsAreAssociatedWithBaseInSameSectionAndCategory(
+		    int verseForInsertedQuestion)
+	    {
+		    m_sections.Items = new Section[2];
+		    m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+			    Heading = "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.",
+			    StartRef = 42009037,
+			    EndRef = 4200943
+		    };
+		    m_sections.Items[1] = new Section
+		    {
+			    Categories = new Category[1],
+			    Heading = "Luke 9:43b-45 Jesus says someone will betray him to his enemies.",
+			    StartRef = 42009043,
+			    EndRef = 4200945
+		    };
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var q = AddTestQuestion(cat, "What did all the crowd think about this?",
+			    "LUK 9.43", 42009043, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)"};
+		    cat = m_sections.Items[1].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var bbCccVvv = 42009000 + verseForInsertedQuestion;
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category of the second section?",
+			    $"LUK 9:{verseForInsertedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "What new information did Jesus tell his disciples?", "LUK 9.43-44", 42009043, 42009044);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What new information did Jesus tell his disciples?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category of the second section?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        #endregion
         #endregion
 
         #region AddQuestion Tests
