@@ -1253,6 +1253,30 @@ namespace SIL.Transcelerator
                         var prevQuestionEndRef = -1;
                         bool sectionHeadHasBeenOutput = false;
 
+                        void OutputScripture(int startRef, int endRef)
+                        {
+	                        if (m_scrExtractor == null)
+	                        {
+		                        sw.WriteLine("<p class=\"scripture\">");
+		                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+		                        sw.WriteLine("</p>");
+	                        }
+	                        else
+	                        {
+		                        try
+		                        {
+			                        sw.Write(GetExtractedScripture(startRef, endRef));
+		                        }
+		                        catch (Exception ex)
+		                        {
+			                        sw.Write(ex.Message);
+#if DEBUG
+			                        throw;
+#endif
+		                        }
+	                        }
+                        }
+
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
                         {
 	                        var question = phrase.QuestionInfo;
@@ -1284,9 +1308,19 @@ namespace SIL.Transcelerator
 
                             if (phrase.Category != prevCategory)
                             {
+	                            if (prevCategory == -1 && phrase.Category > 0 && dlg.m_chkPassageBeforeOverview.Checked)
+	                            {
+									// No Overview for this section. Output full section passage anyway.
+		                            OutputScripture(section.StartRef, section.EndRef);
+	                            }
+
 	                            var lwcCategoryName = dlg.GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
-                                prevCategory = phrase.Category;
+
+								if (phrase.Category == 0 && dlg.m_chkPassageBeforeOverview.Checked)
+									OutputScripture(section.StartRef, section.EndRef);
+
+								prevCategory = phrase.Category;
                                 prevQuestionStartRef = -1;
                                 prevQuestionEndRef = -1;
                             }
@@ -1313,32 +1347,11 @@ namespace SIL.Transcelerator
 							}
 							else if (prevQuestionEndRef < phrase.EndRef)
                             {
-								// REVIEW: Should we also output the entire section's text even if
-								// there are no overview questions?
-                                if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
+                                if (phrase.Category > 0)
                                 {
                                     int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
                                     int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
-                                    if (m_scrExtractor == null)
-                                    {
-                                        sw.WriteLine("<p class=\"scripture\">");
-                                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
-                                        sw.WriteLine("</p>");
-                                    }
-                                    else
-                                    {
-                                        try
-                                        {
-											sw.Write(GetExtractedScripture(startRef, endRef));
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            sw.Write(ex.Message);
-#if DEBUG
-                                            throw;
-#endif
-                                        }
-                                    }
+									OutputScripture(startRef, endRef);
                                 }
                                 prevQuestionStartRef = phrase.StartRef;
                                 prevQuestionEndRef = phrase.EndRef;
@@ -1381,7 +1394,7 @@ namespace SIL.Transcelerator
             }
 		}
 
-		private static void WriteParagraphElement(StreamWriter sw, string className, string data, string defaultLangInContext, string langOfData, string paragraphType = "p")
+	    private static void WriteParagraphElement(StreamWriter sw, string className, string data, string defaultLangInContext, string langOfData, string paragraphType = "p")
 		{
 			var langAttrib = langOfData == defaultLangInContext ? null : $" lang=\"{langOfData}\"";
 			var classAttrib = className == null ? null : $" class=\"{className}\"";
