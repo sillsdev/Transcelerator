@@ -727,7 +727,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_tableLayoutPanel.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="m_tableLayoutPanel.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
     <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="m_pnlEnglishQuestionControls" Row="2" RowSpan="1" Column="3" ColumnSpan="2" /&gt;&lt;Control Name="m_lblEnglishQuestion" Row="2" RowSpan="1" Column="0" ColumnSpan="3" /&gt;&lt;Control Name="m_pnlArrow" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="m_lblVernacularQuestion" Row="4" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_lblSelectLocation" Row="0" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_txtVernacularQuestion" Row="5" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_dataGridViewExistingQuestions" Row="1" RowSpan="1" Column="2" ColumnSpan="3" /&gt;&lt;Control Name="m_txtEnglishQuestion" Row="3" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_txtAnswer" Row="7" RowSpan="1" Column="0" ColumnSpan="5" /&gt;&lt;Control Name="m_lblAnswer" Row="6" RowSpan="1" Column="0" ColumnSpan="4" /&gt;&lt;Control Name="m_pnlUpDownArrows" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="m_lblVernacularQuestionIsOptional" Row="4" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;Control Name="m_lblAnswerIsOptional" Row="6" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,Percent,100,AutoSize,0,AutoSize,0" /&gt;&lt;Rows Styles="AutoSize,0,AutoSize,0,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,38.46154,AutoSize,0,Percent,23.07692" /&gt;&lt;/TableLayoutSettings&gt;</value>
@@ -793,7 +793,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_lblCategory.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="lblReference.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -820,7 +820,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblReference.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="m_lblAlternative.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -874,7 +874,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
@@ -901,7 +901,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="m_scrPsgReference.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -928,7 +928,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_scrPsgReference.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="m_cboEndVerse.Location" type="System.Drawing.Point, System.Drawing">
     <value>355, 6</value>
@@ -952,7 +952,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_cboEndVerse.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="label3.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -982,7 +982,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="m_cboCategory.Location" type="System.Drawing.Point, System.Drawing">
     <value>139, 41</value>
@@ -1003,6 +1003,36 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;m_cboCategory.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_linklblWishForTxl218.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_linklblWishForTxl218.Location" type="System.Drawing.Point, System.Drawing">
+    <value>293, 43</value>
+  </data>
+  <data name="m_linklblWishForTxl218.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 13</value>
+  </data>
+  <data name="m_linklblWishForTxl218.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="m_linklblWishForTxl218.Text" xml:space="preserve">
+    <value>I wish I could add this category.</value>
+  </data>
+  <data name="m_linklblWishForTxl218.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;m_linklblWishForTxl218.Name" xml:space="preserve">
+    <value>m_linklblWishForTxl218</value>
+  </data>
+  <data name="&gt;&gt;m_linklblWishForTxl218.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_linklblWishForTxl218.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_linklblWishForTxl218.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

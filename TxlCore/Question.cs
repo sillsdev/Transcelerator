@@ -47,9 +47,6 @@ namespace SIL.Transcelerator
         [XmlAttribute("exclude")]
         public bool IsExcluded { get; set; }
 
-        [XmlAttribute("ordered")]
-        public bool HasFixedOrder { get; set; }
-
 		[XmlAttribute("user")]
 		public bool IsUserAdded
 		{
@@ -147,7 +144,7 @@ namespace SIL.Transcelerator
 		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(Question baseQuestion, string newQuestion, string answer) :
+		public Question(IQuestionKey baseQuestion, string newQuestion, string answer) :
 			this(baseQuestion.ScriptureReference, baseQuestion.StartRef, 
 			baseQuestion.EndRef, newQuestion, answer)
 		{

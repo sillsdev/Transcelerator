@@ -156,30 +156,23 @@ namespace SIL.Transcelerator
 			phrases.Sort(how);
 		}
 
-		private static Comparison<TranslatablePhrase> PhraseReferenceComparison(int direction)
-		{
-			return (a, b) => ComparePhraseReferences(a, b, direction);
-		}
+		private static Comparison<TranslatablePhrase> NaturalOrderComparison() => ComparePhrasesByIndexedOrder;
 
-		private static bool PhraseReferencesOverlap(TranslatablePhrase a, TranslatablePhrase b) =>
-			a.EndRef < b.StartRef || a.StartRef > b.EndRef;
+		private static Comparison<TranslatablePhrase> PhraseReferenceComparison(int direction) =>
+			(a, b) => ComparePhraseReferences(a, b, direction);
 
 		public static int ComparePhraseReferences(TranslatablePhrase a, TranslatablePhrase b, int direction = kAscending)
 		{
-			if (!a.HasFixedOrder && !b.HasFixedOrder && a.StartRef == 001029014 && b.StartRef == 1029014)
-				Debug.WriteLine("Wow");
-			int val;
-			if ((!a.HasFixedOrder && !b.HasFixedOrder) ||
-				((a.HasFixedOrder || b.HasFixedOrder) && PhraseReferencesOverlap(a, b)))
+			if (a == b)
+				return 0;
+			int val = a.StartRef.CompareTo(b.StartRef);
+			if (val == 0)
 			{
-				val = a.StartRef.CompareTo(b.StartRef);
-				if (val == 0)
 				{
-					val = a.Category.CompareTo(b.Category);
+					val = a.SectionId.CompareTo(b.SectionId);
 					if (val == 0)
 					{
-						if (!a.HasFixedOrder && !b.HasFixedOrder)
-							val = a.EndRef.CompareTo(b.EndRef);
+						val = a.Category.CompareTo(b.Category);
 						if (val == 0)
 						{
 							val = a.SequenceNumber.CompareTo(b.SequenceNumber);
@@ -187,16 +180,26 @@ namespace SIL.Transcelerator
 					}
 				}
 			}
-			else
-			{
-				val = a.Category.CompareTo(b.Category);
-				if (val == 0)
-				{
-					val = a.SequenceNumber.CompareTo(b.SequenceNumber);
-				}
-			}
 
 			return val * direction;
+		}
+
+		public static int ComparePhrasesByIndexedOrder(TranslatablePhrase a, TranslatablePhrase b)
+		{
+			if (a == b)
+				return 0;
+			var val = BCVRef.GetBookFromBcv(a.StartRef).CompareTo(BCVRef.GetBookFromBcv(b.StartRef));
+			if (val != 0)
+				return val;
+			val = a.SectionId.CompareTo(b.SectionId);
+			if (val != 0)
+				return val;
+			val = a.Category.CompareTo(b.Category);
+			if (val != 0)
+				return val; 
+			val = a.SequenceNumber.CompareTo(b.SequenceNumber);
+			Debug.Assert(val != 0);
+			return val;
 		}
 		#endregion
 
@@ -264,15 +267,12 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets all the questions/phrases for the given reference and category, in sequence
-		/// order.
+		/// Gets all the questions/phrases for the given reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public List<TranslatablePhrase> GetMatchingPhrases(int startRef, int endRef, int category)
+		public List<TranslatablePhrase> GetMatchingPhrases(int startRef, int endRef)
 		{
-			var list = m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef && p.Category == category).ToList();
-			SortList(list, PhrasesSortedBy.Reference, true);
-			return list;
+			return m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef).ToList();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -319,7 +319,9 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the complete list of phrases sorted by reference.
+		/// Gets the complete list of phrases in the natural order in which they should occur in
+		/// the script. (Note: This is mostly in order by reference, but there are occasionally
+		/// questions which are intentionally asked out of order.)
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal IReadOnlyList<TranslatablePhrase> UnfilteredPhrases
@@ -327,7 +329,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				List<TranslatablePhrase> temp = m_phrases.GetRange(0, m_phrases.Count);
-				temp.Sort(PhraseReferenceComparison(kAscending));
+				temp.Sort(NaturalOrderComparison());
 				return temp;
 			}
 		}
@@ -339,19 +341,21 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the list of customized (added, inserted, modified, deleted) phrases, sorted by
-		/// reference (and insertion order).
+		/// Gets the list of customized (added, inserted, modified, deleted) phrases, in the
+		/// order in which they should occur in the script.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal List<PhraseCustomization> CustomizedPhrases
 		{
 			get
 			{
-				List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+				var customizations = new List<PhraseCustomization>();
 				var allPhrases = UnfilteredPhrases;
 				for (var i = 0; i < allPhrases.Count; i++)
 				{
-					TranslatablePhrase translatablePhrase = allPhrases[i];
+					var translatablePhrase = allPhrases[i];
+					if (translatablePhrase.IsCategoryName)
+						continue;
 					if (translatablePhrase.IsExcludedOrModified)
 						customizations.Add(new PhraseCustomization(translatablePhrase));
 					if (translatablePhrase.InsertedPhraseBefore != null)
@@ -365,29 +369,11 @@ namespace SIL.Transcelerator
 						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
 							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
 						{
-							TranslatablePhrase firstNonUserQuestionForRef;
-							if (i > 0 && allPhrases[i - 1].QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0)
-							{
-								customizations.Add(new PhraseCustomization(allPhrases[i - 1].OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									PhraseCustomization.CustomizationType.AdditionAfter));
-							}
-							else if (i < allPhrases.Count - 1 && (firstNonUserQuestionForRef = allPhrases.Skip(i + 1).TakeWhile(q => q.QuestionInfo.CompareRefs(translatablePhrase.QuestionInfo) == 0).FirstOrDefault(q => !q.IsUserAdded)) != null)
-							{
-								customizations.Add(new PhraseCustomization(firstNonUserQuestionForRef.OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									PhraseCustomization.CustomizationType.InsertionBefore));
-							}
-							else
-							{
-								// This is a question whose reference does not match either of the surrounding questions
-								// (or is the first one in a sequence of user-added questions for a reference which had
-								// no built-in questions, so it is somewhat arbitrary whether we think of it as an addition
-								// or and insertion.
-								customizations.Add(new PhraseCustomization(translatablePhrase.OriginalPhrase,
-									translatablePhrase.QuestionInfo,
-									i == 0 ? PhraseCustomization.CustomizationType.InsertionBefore : PhraseCustomization.CustomizationType.AdditionAfter));
-							}
+							// This is a "previous" addition or insertion, so it is not explicitly attached to the
+							// adjacent question that is its base.
+							customizations.Add(GetPhraseCustomization(translatablePhrase,
+								i == 0 || allPhrases[i - 1].IsCategoryName ? null : allPhrases[i - 1],
+								allPhrases.Skip(i + 1).FirstOrDefault(q => !q.IsUserAdded)));
 						}
 					}
 					if (translatablePhrase.AddedPhraseAfter != null)
@@ -399,6 +385,86 @@ namespace SIL.Transcelerator
 				}
 				return customizations;
 			}
+		}
+
+		/// <summary>
+		/// Gets a PhraseCustomization for the addedPhrase by determining whether to hang it as
+		/// an addition off the phraseBefore or as an insertion off the phraseAfter. (TXL-218: Or
+		/// in rare cases, hang it off itself.) We make this determination by first looking at
+		/// the section/category, then by considering the reference. If both of the adjacent phrases
+		/// have the same section and category, but neither has the same reference, we arbitrarily
+		/// treat it as an addition hanging off the phraseBefore.
+		/// </summary>
+		private static PhraseCustomization GetPhraseCustomization(TranslatablePhrase addedPhrase,
+			TranslatablePhrase phraseBefore, TranslatablePhrase nonUserPhraseAfter)
+		{
+			bool AreInSameSectionAndCategory(TranslatablePhrase a, TranslatablePhrase b) =>
+				a.SectionId == b.SectionId && a.Category == b.Category;
+
+			if (phraseBefore == null)
+			{
+				Debug.Assert(nonUserPhraseAfter != null);
+				if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+				{
+					return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text, addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.InsertionBefore);
+				}
+
+				Debug.Fail("TXL-218: For now, this shouldn't happen.");
+				// Hang the question off itself
+				return new PhraseCustomization(addedPhrase.OriginalPhrase,
+					addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.InsertionBefore /* arbitrary */);
+			}
+
+			if (nonUserPhraseAfter == null)
+			{
+				Debug.Assert(phraseBefore != null);
+				if (AreInSameSectionAndCategory(phraseBefore, addedPhrase))
+				{
+					return new PhraseCustomization(phraseBefore.QuestionInfo.Text, addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.AdditionAfter);
+				}
+
+				Debug.Fail("TXL-218: For now, this shouldn't happen.");
+				// Hang the question off itself
+				return new PhraseCustomization(addedPhrase.OriginalPhrase,
+					addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.AdditionAfter /* arbitrary */);
+			}
+
+			if (AreInSameSectionAndCategory(phraseBefore, addedPhrase))
+			{
+				if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+				{
+					// All three questions are in the same section and category, so attach it to the
+					// one for the same reference, if any.
+					if (phraseBefore.QuestionInfo.CompareRefs(addedPhrase.QuestionInfo) == 0 ||
+						(nonUserPhraseAfter.QuestionInfo.CompareRefs(addedPhrase.QuestionInfo) != 0))
+					{
+						return new PhraseCustomization(phraseBefore.QuestionInfo.Text,
+							addedPhrase.QuestionInfo,
+							PhraseCustomization.CustomizationType.AdditionAfter);
+					}
+
+					return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text,
+						addedPhrase.QuestionInfo,
+						PhraseCustomization.CustomizationType.InsertionBefore);
+				}
+
+				return new PhraseCustomization(phraseBefore.QuestionInfo.Text, addedPhrase.QuestionInfo,
+					PhraseCustomization.CustomizationType.AdditionAfter);
+			}
+
+			if (AreInSameSectionAndCategory(nonUserPhraseAfter, addedPhrase))
+			{
+				return new PhraseCustomization(nonUserPhraseAfter.QuestionInfo.Text, addedPhrase.QuestionInfo,
+					PhraseCustomization.CustomizationType.InsertionBefore);
+			}
+
+			// REVIEW (TXL-218): For now, this probably can't happen, but when we implement TXL-218,
+			// we want to hang the question off itself.
+			Debug.Fail("TXL-218: For now, this shouldn't happen.");
+			return new PhraseCustomization(addedPhrase.OriginalPhrase,
+				addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.AdditionAfter /* arbitrary */);
 		}
 
 		internal DataFileAccessor FileProxy
@@ -454,7 +520,7 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				for (int i = 0; i < m_categories.Count; i++)
+				for (var i = 0; i < m_categories.Count; i++)
 					yield return GetCategoryName(i);
 			}
 		}
@@ -534,14 +600,15 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public TranslatablePhrase AddQuestion(Question question, int category, int seqNumber, MasterQuestionParser parser)
+		public TranslatablePhrase AddQuestion(Question question, int section, int category, int seqNumber, MasterQuestionParser parser)
 		{
-			// Advance sequence numbers of any other questions in this category for this reference that
+			// Advance sequence numbers of any other questions in this category of this section that
 			// have a sequence number >= the new one.
-			var phrasesToAdvance = m_phrases.Where(p => p.Reference == question.ScriptureReference && p.SequenceNumber >= seqNumber).ToArray();
+			var phrasesToAdvance = m_phrases.Where(p => p.SectionId == section &&
+				p.Category == category && p.SequenceNumber >= seqNumber).ToArray();
 			foreach (var phrase in phrasesToAdvance)
 				phrase.IncrementSequenceNumber();
-			var newPhrase = new TranslatablePhrase(question, category, seqNumber);
+			var newPhrase = new TranslatablePhrase(question, section, category, seqNumber);
 			m_phrases.Add(newPhrase);
 			if (m_filteredPhrases != m_phrases)
 				m_filteredPhrases.Add(newPhrase);
@@ -568,7 +635,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Parses lines from given stream reader to get translated questions for a particular
-		/// referenceand attempts to find the corresponding master question and set the
+		/// reference and attempts to find the corresponding master question and set the
 		/// translation if there is a unique match and the question is not already translated. 
 		/// </summary>
 		/// <param name="reader">Stream reader with \rf lines to indicate book and chapter and
@@ -1001,21 +1068,28 @@ namespace SIL.Transcelerator
 			m_justGettingStarted = false;
 		}
 
+		/// <summary>
+		/// In (rare) case where a custom question is added and there are no other
+		/// questions in the selected category for this section, this method finds
+		/// an adjacent question (in a different section and/or category) to attach
+		/// the new question to.
+		/// </summary>
+		/// <param name="newPhrase"></param>
 		internal void AttachNewQuestionToAdjacentPhrase(TranslatablePhrase newPhrase)
 		{
 			TranslatablePhrase phraseBefore = null, phraseAfter = null;
 			foreach (var tp in m_phrases.Where(p => p != newPhrase))
 			{
-				var result = ComparePhraseReferences(tp, newPhrase);
+				var result = ComparePhrasesByIndexedOrder(tp, newPhrase);
 				if (result < 0)
 				{
-					if (phraseBefore == null || ComparePhraseReferences(phraseBefore, tp) < 0)
+					if (phraseBefore == null || ComparePhrasesByIndexedOrder(phraseBefore, tp) < 0)
 						phraseBefore = tp;
 				}
 				else
 				{
 					Debug.Assert(result != 0);
-					if (phraseAfter == null || ComparePhraseReferences(tp, phraseAfter) < 0)
+					if (phraseAfter == null || ComparePhrasesByIndexedOrder(tp, phraseAfter) < 0)
 						phraseAfter = tp;
 				}
 			}

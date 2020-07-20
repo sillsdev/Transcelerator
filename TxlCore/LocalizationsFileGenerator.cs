@@ -110,7 +110,7 @@ namespace SIL.Transcelerator.Localization
 			{
 				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
-				key = new UISectionHeadDataString(new SectionInfo(section));
+				key = new UISectionHeadDataString(section);
 				AddTranslationUnit(sectionGroup, key);
 				
 				foreach (Category category in section.Categories)

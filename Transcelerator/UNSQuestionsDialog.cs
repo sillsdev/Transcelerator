@@ -70,7 +70,7 @@ namespace SIL.Transcelerator
         private readonly IScrVers m_projectVersification;
 	    private BCVRef m_startRef;
         private BCVRef m_endRef;
-        private SortedDictionary<int, SectionInfo> m_sectionInfo;
+        private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
@@ -1174,22 +1174,23 @@ namespace SIL.Transcelerator
         private void GenerateScript(string defaultFolder)
         {
             using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
-                defaultFolder, AvailableBookIds, m_sectionInfo.Values, AvailableLocales))
+                defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, AvailableLocales))
             {
 	            dlg.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
 
 				if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     Func<TranslatablePhrase, bool> InRange;
-                    if (dlg.m_rdoWholeBook.Checked)
+                    var book = dlg.SelectedBook;
+                    if (book != null)
                     {
-                        int bookNum = BCVRef.BookToNumber((string)dlg.m_cboBooks.SelectedItem);
+                        int bookNum = BCVRef.BookToNumber(book);
                         InRange = (tp) => BCVRef.GetBookFromBcv(tp.StartRef) == bookNum;
                     }
                     else
                     {
-                        BCVRef startRef = dlg.VerseRangeStartRef;
-                        BCVRef endRef = dlg.VerseRangeEndRef;
+                        var startRef = dlg.VerseRangeStartRef;
+                        var endRef = dlg.VerseRangeEndRef;
                         InRange = (tp) => tp.StartRef >= startRef && tp.EndRef <= endRef;
                     }
 
@@ -1198,7 +1199,7 @@ namespace SIL.Transcelerator
                     {
                         int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
                         if (untranslatedQuestions > 0 &&
-                            MessageBox.Show(string.Format(Properties.Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
+                            MessageBox.Show(string.Format(Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
                             m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
@@ -1246,28 +1247,48 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
                         sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
-                        SectionInfo section = null;
+                        int prevSection = -1;
+                        ISectionInfo section = null;
                         var prevQuestionStartRef = -1;
                         var prevQuestionEndRef = -1;
                         bool sectionHeadHasBeenOutput = false;
+
+                        void OutputScripture(int startRef, int endRef)
+                        {
+	                        if (m_scrExtractor == null)
+	                        {
+		                        sw.WriteLine("<p class=\"scripture\">");
+		                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+		                        sw.WriteLine("</p>");
+	                        }
+	                        else
+	                        {
+		                        try
+		                        {
+			                        sw.Write(GetExtractedScripture(startRef, endRef));
+		                        }
+		                        catch (Exception ex)
+		                        {
+			                        sw.Write(ex.Message);
+#if DEBUG
+			                        throw;
+#endif
+		                        }
+	                        }
+                        }
 
                         foreach (TranslatablePhrase phrase in allPhrasesInRange)
                         {
 	                        var question = phrase.QuestionInfo;
 	                        string lang;
-                            if (section == null || phrase.EndRef > section.EndRef)
+                            if (section == null || phrase.SectionId != prevSection)
                             {
-	                            if (!m_sectionInfo.TryGetValue(phrase.StartRef, out section))
-									section = m_sectionInfo.Values.FirstOrDefault(s => s.StartRef <= phrase.StartRef && s.EndRef >= phrase.EndRef);
-								if (section != null)
-									sectionHeadHasBeenOutput = false;
-								else
-								{
-									// This is a last-ditch fallback - should never happen.
-									section = null;
-								}
+	                            section = m_sectionInfo.Find(phrase);
+	                            sectionHeadHasBeenOutput = false;
 
+	                            prevSection = phrase.SectionId;
 								prevCategory = -1;
+								prevQuestionStartRef = -1;
                             }
 
                             if (!phrase.HasUserTranslation && (phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion || !dlg.m_rdoUseOriginal.Checked))
@@ -1287,20 +1308,33 @@ namespace SIL.Transcelerator
 
                             if (phrase.Category != prevCategory)
                             {
+	                            if (prevCategory == -1 && phrase.Category > 0 && dlg.m_chkPassageBeforeOverview.Checked)
+	                            {
+									// No Overview for this section. Output full section passage anyway.
+		                            OutputScripture(section.StartRef, section.EndRef);
+	                            }
+
 	                            var lwcCategoryName = dlg.GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
-                                prevCategory = phrase.Category;
+
+								if (phrase.Category == 0 && dlg.m_chkPassageBeforeOverview.Checked)
+									OutputScripture(section.StartRef, section.EndRef);
+
+								prevCategory = phrase.Category;
                                 prevQuestionStartRef = -1;
                                 prevQuestionEndRef = -1;
                             }
 
-							// Summary questions are allowed to occur out of order, so they should not affect
+							// Questions are allowed to occur out of reference order, but they should not affect
 							// the flow of the scripture text being output. (We need them to accurately reflect the
 							// range of Scripture to which they pertain so we can indicate that in the script and
-							// because if they are used in a place (e.g., Scripture Forge or a mobile quiz app)
+							// because if they are used in a place -- e.g., Scripture Forge or a mobile quiz app --
 							// where the respondent can't necessarily look back over the preceding verses, they may
-							// need to be shown the relevant passage.
-							if (phrase.HasFixedOrder)
+							// need to be shown the relevant passage.) To avoid confusion and help an interviewer
+							// understand that this question looks back over verses previously covered, we output
+							// the question's reference range unless it is a "summary" question (pertaining to the
+							// entire section).
+							if (phrase.StartRef < prevQuestionStartRef)
 							{
 								if (section == null || phrase.StartRef != section.StartRef || phrase.EndRef != section.EndRef)
 								{
@@ -1313,30 +1347,11 @@ namespace SIL.Transcelerator
 							}
 							else if (prevQuestionEndRef < phrase.EndRef)
                             {
-                                if (phrase.Category > 0 || dlg.m_chkPassageBeforeOverview.Checked)
+                                if (phrase.Category > 0)
                                 {
                                     int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
                                     int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
-                                    if (m_scrExtractor == null)
-                                    {
-                                        sw.WriteLine("<p class=\"scripture\">");
-                                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
-                                        sw.WriteLine("</p>");
-                                    }
-                                    else
-                                    {
-                                        try
-                                        {
-											sw.Write(GetExtractedScripture(startRef, endRef));
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            sw.Write(ex.Message);
-#if DEBUG
-                                            throw;
-#endif
-                                        }
-                                    }
+									OutputScripture(startRef, endRef);
                                 }
                                 prevQuestionStartRef = phrase.StartRef;
                                 prevQuestionEndRef = phrase.EndRef;
@@ -1379,7 +1394,7 @@ namespace SIL.Transcelerator
             }
 		}
 
-		private static void WriteParagraphElement(StreamWriter sw, string className, string data, string defaultLangInContext, string langOfData, string paragraphType = "p")
+	    private static void WriteParagraphElement(StreamWriter sw, string className, string data, string defaultLangInContext, string langOfData, string paragraphType = "p")
 		{
 			var langAttrib = langOfData == defaultLangInContext ? null : $" lang=\"{langOfData}\"";
 			var classAttrib = className == null ? null : $" class=\"{className}\"";
@@ -2001,7 +2016,10 @@ namespace SIL.Transcelerator
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard(false);
-			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase, m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef, phrase.Category).Where(p => p != phrase).Select(p => p.PhraseInUse).ToList(), m_dataLocalizer))
+			using (EditQuestionDlg dlg = new EditQuestionDlg(phrase,
+				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
+					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
+					.Select(p => p.PhraseInUse).ToList(), m_dataLocalizer))
 			{
 				if (dlg.ShowDialog() == DialogResult.OK)
 				{
@@ -2028,33 +2046,26 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard(false);
 			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (NewQuestionDlg dlg = new NewQuestionDlg(CurrentPhrase, language, m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
+			using (var dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
+				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					if (m_parser == null)
 						m_parser = new MasterQuestionParser(GetQuestionWords(), m_getKeyTerms(), GetKeyTermRules(), PhraseSubstitutions);
 
-					Question newQuestion;
+					Question newQuestion = dlg.NewQuestion;
 					var basePhrase = dlg.BasePhrase;
-					if (basePhrase == null)
+					if (basePhrase != null)
 					{
-						var startRef = dlg.StartReference;
-						var endRef = dlg.EndReference;
-						newQuestion = new Question(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"),
-							startRef.BBCCCVVV, endRef.BBCCCVVV, dlg.EnglishQuestion, dlg.Answer);
-					}
-					else
-					{
-						newQuestion = new Question(basePhrase.QuestionInfo, dlg.EnglishQuestion, dlg.Answer);
-
 						if (dlg.InsertBeforeBasePhrase)
 							basePhrase.InsertedPhraseBefore = newQuestion;
 						else
 							basePhrase.AddedPhraseAfter = newQuestion;
 					}
 
-					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.Category, dlg.SequenceNumber, m_parser);
+					var newPhrase = m_helper.AddQuestion(newQuestion, dlg.OwningSection,
+						dlg.Category, dlg.SequenceNumber, m_parser);
 					if (basePhrase == null)
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
 

@@ -70,13 +70,14 @@ namespace SIL.Transcelerator
 			this.m_txtVernacularQuestion = new System.Windows.Forms.TextBox();
 			this.m_insertionPointArrow = new System.Windows.Forms.PictureBox();
 			this.m_tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.m_pnlEnglishQuestionControls = new System.Windows.Forms.TableLayoutPanel();
+			this.m_lblIdenticalQuestion = new System.Windows.Forms.Label();
 			this.m_pnlArrow = new System.Windows.Forms.Panel();
 			this.m_pnlUpDownArrows = new System.Windows.Forms.Panel();
 			this.m_btnDown = new System.Windows.Forms.Button();
 			this.m_btnUp = new System.Windows.Forms.Button();
 			this.m_cboCategory = new System.Windows.Forms.ComboBox();
-			this.m_pnlEnglishQuestionControls = new System.Windows.Forms.TableLayoutPanel();
-			this.m_lblIdenticalQuestion = new System.Windows.Forms.Label();
+			this.m_linklblWishForTxl218 = new System.Windows.Forms.LinkLabel();
 			m_lblEnglishQuestion = new System.Windows.Forms.Label();
 			m_lblAnswer = new System.Windows.Forms.Label();
 			m_lblCategory = new System.Windows.Forms.Label();
@@ -84,9 +85,9 @@ namespace SIL.Transcelerator
 			((System.ComponentModel.ISupportInitialize)(this.m_dataGridViewExistingQuestions)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_insertionPointArrow)).BeginInit();
 			this.m_tableLayoutPanel.SuspendLayout();
+			this.m_pnlEnglishQuestionControls.SuspendLayout();
 			this.m_pnlArrow.SuspendLayout();
 			this.m_pnlUpDownArrows.SuspendLayout();
-			this.m_pnlEnglishQuestionControls.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_lblEnglishQuestion
@@ -279,6 +280,20 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.Controls.Add(m_lblAnswerIsOptional, 4, 6);
 			this.m_tableLayoutPanel.Name = "m_tableLayoutPanel";
 			// 
+			// m_pnlEnglishQuestionControls
+			// 
+			resources.ApplyResources(this.m_pnlEnglishQuestionControls, "m_pnlEnglishQuestionControls");
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_pnlEnglishQuestionControls, 2);
+			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_chkNoEnglish, 0, 0);
+			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_lblIdenticalQuestion, 0, 1);
+			this.m_pnlEnglishQuestionControls.Name = "m_pnlEnglishQuestionControls";
+			// 
+			// m_lblIdenticalQuestion
+			// 
+			resources.ApplyResources(this.m_lblIdenticalQuestion, "m_lblIdenticalQuestion");
+			this.m_lblIdenticalQuestion.ForeColor = System.Drawing.Color.Red;
+			this.m_lblIdenticalQuestion.Name = "m_lblIdenticalQuestion";
+			// 
 			// m_pnlArrow
 			// 
 			resources.ApplyResources(this.m_pnlArrow, "m_pnlArrow");
@@ -316,19 +331,12 @@ namespace SIL.Transcelerator
 			this.m_cboCategory.Name = "m_cboCategory";
 			this.m_cboCategory.SelectedIndexChanged += new System.EventHandler(this.HandleCategoryChanged);
 			// 
-			// m_pnlEnglishQuestionControls
+			// m_linklblWishForTxl218
 			// 
-			resources.ApplyResources(this.m_pnlEnglishQuestionControls, "m_pnlEnglishQuestionControls");
-			this.m_tableLayoutPanel.SetColumnSpan(this.m_pnlEnglishQuestionControls, 2);
-			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_chkNoEnglish, 0, 0);
-			this.m_pnlEnglishQuestionControls.Controls.Add(this.m_lblIdenticalQuestion, 0, 1);
-			this.m_pnlEnglishQuestionControls.Name = "m_pnlEnglishQuestionControls";
-			// 
-			// m_lblIdenticalQuestion
-			// 
-			resources.ApplyResources(this.m_lblIdenticalQuestion, "m_lblIdenticalQuestion");
-			this.m_lblIdenticalQuestion.ForeColor = System.Drawing.Color.Red;
-			this.m_lblIdenticalQuestion.Name = "m_lblIdenticalQuestion";
+			resources.ApplyResources(this.m_linklblWishForTxl218, "m_linklblWishForTxl218");
+			this.m_linklblWishForTxl218.Name = "m_linklblWishForTxl218";
+			this.m_linklblWishForTxl218.TabStop = true;
+			this.m_linklblWishForTxl218.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linklblWishForTxl218_LinkClicked);
 			// 
 			// NewQuestionDlg
 			// 
@@ -336,6 +344,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
+			this.Controls.Add(this.m_linklblWishForTxl218);
 			this.Controls.Add(this.m_cboCategory);
 			this.Controls.Add(m_lblCategory);
 			this.Controls.Add(this.m_tableLayoutPanel);
@@ -355,11 +364,11 @@ namespace SIL.Transcelerator
 			((System.ComponentModel.ISupportInitialize)(this.m_insertionPointArrow)).EndInit();
 			this.m_tableLayoutPanel.ResumeLayout(false);
 			this.m_tableLayoutPanel.PerformLayout();
+			this.m_pnlEnglishQuestionControls.ResumeLayout(false);
+			this.m_pnlEnglishQuestionControls.PerformLayout();
 			this.m_pnlArrow.ResumeLayout(false);
 			this.m_pnlUpDownArrows.ResumeLayout(false);
 			this.m_pnlUpDownArrows.PerformLayout();
-			this.m_pnlEnglishQuestionControls.ResumeLayout(false);
-			this.m_pnlEnglishQuestionControls.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -394,5 +403,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
 		private System.Windows.Forms.TableLayoutPanel m_pnlEnglishQuestionControls;
 		private System.Windows.Forms.Label m_lblIdenticalQuestion;
+		private System.Windows.Forms.LinkLabel m_linklblWishForTxl218;
 	}
 }

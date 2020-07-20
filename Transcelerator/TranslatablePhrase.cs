@@ -51,26 +51,27 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
 		/// </summary>
 		/// <param name="questionInfo">Information about the original question</param>
-		/// <param name="category">The category (e.g. Overview vs. Detail question).</param>
+		/// <param name="section">The id of the section to which this question pertains
+		/// (or -1 if this is a category name).</param>
+		/// <param name="iCategory">The index of the category (e.g. Overview vs. Detail question)
+		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
-		/// a phrase within a particular category and reference).</param>
-		/// <param name="fixedOrder">Order in sequence of questions (relative to surrounding
-		/// questions with overlapping reference ranges) is fixed, not dependent on the
-		/// Scripture reference/range.</param>
+		/// a phrase within a particular section and category).</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(IQuestionKey questionInfo, int category, int seqNumber, bool fixedOrder = false)
+		public TranslatablePhrase(IQuestionKey questionInfo, int section, int iCategory,
+			int seqNumber)
 			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
 		{
 			m_questionInfo = questionInfo;
-			Category = category;
+			SectionId = section;
+			Category = iCategory;
 			SequenceNumber = seqNumber;
-			HasFixedOrder = fixedOrder;
 			// The following is normally done by the ModifiedPhrase setter, but there's a
 			// chicken-and-egg problem when constructing this, so we need to do it here.
 			if (IsUserAdded && m_sModifiedPhrase != null)
 			{
 				// This cast is entirely safe. Note above that for m_sModifiedPhrase to be non-null,
-				// the questionInfo object
+				// the questionInfo object has to be a Question
 				((Question)questionInfo).Text = m_sModifiedPhrase;
 			}
 		}
@@ -99,7 +100,6 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(modifiedPhrase))
 			{
 				m_sModifiedPhrase = modifiedPhrase.Normalize(NormalizationForm.FormC);
-
 			}
 			if (!IsNullOrEmpty(OriginalPhrase))
 			{
@@ -121,11 +121,23 @@ namespace SIL.Transcelerator
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the category of this phrase (used to group phrases having the same reference).
+		/// Gets the category of this phrase (used to group phrases within the same section).
+		/// Returns -1 if this is a category name.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		public int Category { get; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the id of the section to which this question pertains (or -1 if this
+		/// is a category name).
+		/// </summary>
+		/// <remarks>Within a book, section IDs are sequential. Unfortunately, however, they
+		/// are not sequential throughout Scripture (books are out of canonical order)</remarks>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public int SectionId { get; }
 
 		/// ------------------------------------------------------------------------------------
         /// <summary>
@@ -174,7 +186,8 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets the phrase as it is being presented to the user (the original phrase, a
 		/// modified form of it, or a special UI string indicating a user-added question with
-		/// no English equivalent).
+		/// no English equivalent). Despite its name, this is NOT the localized form of the
+		/// question (if the UI is being presented in a locale other than U.S. English.) 
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public string PhraseToDisplayInUI
@@ -182,7 +195,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				return (m_type == TypeOfPhrase.NoEnglishVersion) ? Properties.Resources.kstidUserAddedEmptyPhrase :
-					m_sModifiedPhrase ?? OriginalPhrase;
+					PhraseInUse;
 			}
 		}
 
@@ -519,24 +532,12 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the sequence number of this phrase (uniquely identifies this phrase within a
-		/// given category and for a particular reference).
+		/// Gets the (0-based) sequence number of this phrase (uniquely identifies this phrase
+		/// within a given category of a particular section).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
 		public int SequenceNumber { get; private set; }
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets whether this phrase is a summary question or some other question whose order in
-		/// the sequence of questions (relative to surrounding questions with overlapping
-		/// reference ranges) is fixed, not dependent on the Scripture reference/range.
-		/// Note: when fixed-order questions are compared against "normal questions" their end
-		/// references (rather than primarily the start reference) is used for sorting/grouping.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		public bool HasFixedOrder { get; private set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -666,11 +667,12 @@ namespace SIL.Transcelerator
 			if (compare != 0)
 				return compare;
 			// 4)
-			compare = (Reference == null) ? (other.Reference == null? 0 : -1) : Reference.CompareTo(other.Reference);
+			compare = (Reference == null) ? (other.Reference == null? 0 : -1) : 
+				Compare(Reference, other.Reference, StringComparison.Ordinal);
 			if (compare != 0)
 				return compare;
 			// 5)
-			return PhraseInUse.CompareTo(other.PhraseInUse);
+			return Compare(PhraseInUse, other.PhraseInUse, StringComparison.Ordinal);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -830,13 +832,13 @@ namespace SIL.Transcelerator
 		/// and the offset of the end of the preceding occurrence of the rendering of the term
 		/// (if any).</param>
 		/// <param name="editingSelectionState">Substring descriptor (location & length) that
-		/// indicates what part of the transaltion text the user had selected if this
+		/// indicates what part of the translation text the user had selected if this
 		/// translation was being edited at the time the new rendering was chosen. If this is
 		/// not null, we'll consider whether the new rendering should be inserted at that point.
 		/// </param>
 		/// <param name="newRendering">The selected rendering.</param>
 		/// <returns>true if the rendering is inserted based on the editing state; false
-		/// otehrwise (merely replaces an existing rendering or is inserted at the end).</returns>
+		/// otherwise (merely replaces an existing rendering or is inserted at the end).</returns>
 		/// ------------------------------------------------------------------------------------
 		public bool InsertKeyTermRendering(ITermRenderingInfo renderingInfo,
 			SubstringDescriptor editingSelectionState, string newRendering)
