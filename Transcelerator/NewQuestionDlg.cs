@@ -110,6 +110,11 @@ namespace SIL.Transcelerator
 
 		public int Category => m_cboCategory.SelectedIndex;
 
+		/// <summary>
+		/// Gets the sequence number to use for inserting this phrase into the
+		/// selected category of the <see cref="OwningSection"/>.
+		/// </summary>
+		/// <remarks><seealso cref="TranslatablePhrase.SequenceNumber"/></remarks>
 		public int SequenceNumber =>
 			BasePhrase == null ? 0 :
 				BasePhrase.SequenceNumber + (InsertBeforeBasePhrase ? 0 : 1);

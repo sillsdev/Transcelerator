@@ -532,8 +532,8 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the sequence number of this phrase (uniquely identifies this phrase within a
-		/// given category and for a particular reference).
+		/// Gets the (0-based) sequence number of this phrase (uniquely identifies this phrase
+		/// within a given category of a particular section).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
@@ -667,11 +667,12 @@ namespace SIL.Transcelerator
 			if (compare != 0)
 				return compare;
 			// 4)
-			compare = (Reference == null) ? (other.Reference == null? 0 : -1) : Reference.CompareTo(other.Reference);
+			compare = (Reference == null) ? (other.Reference == null? 0 : -1) : 
+				Compare(Reference, other.Reference, StringComparison.Ordinal);
 			if (compare != 0)
 				return compare;
 			// 5)
-			return PhraseInUse.CompareTo(other.PhraseInUse);
+			return Compare(PhraseInUse, other.PhraseInUse, StringComparison.Ordinal);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -831,13 +832,13 @@ namespace SIL.Transcelerator
 		/// and the offset of the end of the preceding occurrence of the rendering of the term
 		/// (if any).</param>
 		/// <param name="editingSelectionState">Substring descriptor (location & length) that
-		/// indicates what part of the transaltion text the user had selected if this
+		/// indicates what part of the translation text the user had selected if this
 		/// translation was being edited at the time the new rendering was chosen. If this is
 		/// not null, we'll consider whether the new rendering should be inserted at that point.
 		/// </param>
 		/// <param name="newRendering">The selected rendering.</param>
 		/// <returns>true if the rendering is inserted based on the editing state; false
-		/// otehrwise (merely replaces an existing rendering or is inserted at the end).</returns>
+		/// otherwise (merely replaces an existing rendering or is inserted at the end).</returns>
 		/// ------------------------------------------------------------------------------------
 		public bool InsertKeyTermRendering(ITermRenderingInfo renderingInfo,
 			SubstringDescriptor editingSelectionState, string newRendering)
