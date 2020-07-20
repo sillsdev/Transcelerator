@@ -204,22 +204,6 @@ namespace SIL.Transcelerator
 				SelectedInsertionLocation = rowToSelect.Index + 1;
 			}
 
-			m_scrPsgReference.PassageChanged += r =>
-			{
-				// This check overcomes a HACK in the ScrPassageControl, which causes spurious PassageChanged events.
-				var newRef = m_scrPsgReference.ScReference;
-				if (m_existingStartRef != newRef)
-				{
-					var newRefInMasterVersification = StartReference;
-					var sectionChange = newRefInMasterVersification < m_currentSections[0].Value.StartRef ||
-						newRefInMasterVersification > m_currentSections.Last().Value.EndRef;
-					m_existingStartRef = newRef;
-					if (sectionChange)
-						PopulateExistingQuestionsGrid();
-					else
-						SetDefaultInsertionLocation();
-				}
-			};
 			m_cboEndVerse.SelectedIndexChanged += (sender, args) =>
 			{
 				var repopulateQuestionGrid = m_currentSections.Count > 1 && m_existingEndVerse < EndVerse;
@@ -382,8 +366,24 @@ namespace SIL.Transcelerator
 
 		private void m_scrPsgReference_PassageChanged(BCVRef newReference)
 		{
-			SetCurrentSections();
-			PopulateEndRefComboBox();
+			// This check overcomes a HACK in the ScrPassageControl, which causes spurious PassageChanged events.
+			var newRef = m_scrPsgReference.ScReference;
+			if (m_existingStartRef != newRef)
+			{
+				var newRefInMasterVersification = StartReference;
+				var sectionChange = m_currentSections.Count == 0 ||
+					newRefInMasterVersification < m_currentSections[0].Value.StartRef ||
+					newRefInMasterVersification > m_currentSections.Last().Value.EndRef;
+
+				SetCurrentSections();
+				PopulateEndRefComboBox();
+
+				m_existingStartRef = newRef;
+				if (sectionChange)
+					PopulateExistingQuestionsGrid();
+				else
+					SetDefaultInsertionLocation();
+			}
 		}
 
 		private void HandleCategoryChanged(object sender, EventArgs e)
