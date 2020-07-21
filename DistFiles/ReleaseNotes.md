@@ -1,4 +1,12 @@
-﻿## 1.3.11 16 April 2019
+﻿## 1.4.0 21 July 2020
+* Major improvements to question content and script generation.
+* New option to control how out-of-order detail questions are handled in script.
+* Improvements to New Question dialog, including ability to add questions out of order.
+
+## 1.3.17 11 May 2020
+* Added missing questions for Luke 22-24.
+
+## 1.3.11 16 April 2019
 * Added Installer support for Paratext 9.
 
 ## 1.3.9 9 January 2019
