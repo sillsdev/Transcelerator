@@ -1308,7 +1308,7 @@ namespace SIL.Transcelerator
 
                             if (phrase.Category != prevCategory)
                             {
-	                            if (prevCategory == -1 && phrase.Category > 0 && dlg.m_chkPassageBeforeOverview.Checked)
+	                            if (prevCategory == -1 && phrase.Category > 0 && dlg.OutputFullPassageAtStartOfSection)
 	                            {
 									// No Overview for this section. Output full section passage anyway.
 		                            OutputScripture(section.StartRef, section.EndRef);
@@ -1325,27 +1325,40 @@ namespace SIL.Transcelerator
                                 prevQuestionEndRef = -1;
                             }
 
-							// Questions are allowed to occur out of reference order, but they should not affect
-							// the flow of the scripture text being output. (We need them to accurately reflect the
-							// range of Scripture to which they pertain so we can indicate that in the script and
-							// because if they are used in a place -- e.g., Scripture Forge or a mobile quiz app --
-							// where the respondent can't necessarily look back over the preceding verses, they may
-							// need to be shown the relevant passage.) To avoid confusion and help an interviewer
-							// understand that this question looks back over verses previously covered, we output
-							// the question's reference range unless it is a "summary" question (pertaining to the
-							// entire section).
-							if (phrase.StartRef < prevQuestionStartRef)
+							// Questions are allowed to occur out of reference order, but we want them to accurately
+							// reflect the range of Scripture to which they pertain. Within the overview section,
+							// most questions do not specify a specific verse or range of verses. For the ones that
+							// do, we just output a line with the reference. In the detail questions, when we go back
+							// and ask a question whose answer comes from a preceding verse, in order to avoid
+							// confusion, there is an option to either output the question's reference range (same as
+							// for an overview question) or actually output the relevant Scripture passage.
+							// Note: we do not do this for "summary" questions -- typically at the end of the detail
+							// questions -- since the question itself should make it clear that the question is
+							// asking about something that pertains to the whole section (or sometimes even preceding
+							// sections).
+							var outOfOrderQuestion = phrase.StartRef < prevQuestionStartRef;
+							var outputPassage = false;
+							if (outOfOrderQuestion)
 							{
-								if (section == null || phrase.StartRef != section.StartRef || phrase.EndRef != section.EndRef)
+								// Regardless of category, if the question covers then entire section (i.e., is
+								// "verse-specific") we want to basically treat it as an overview question and
+								// not output the reference or the text of the passage.
+								var verseSpecificQuestion = section == null || phrase.StartRef != section.StartRef
+									|| phrase.EndRef != section.EndRef;
+								if (verseSpecificQuestion)
 								{
-									int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
-									int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
-									sw.WriteLine("<h4 class=\"summaryRef\">");
-									sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
-									sw.WriteLine("</h4>");
+									outputPassage = dlg.OutputPassageForOutOfOrderQuestions && phrase.Category > 0;
+									if (!outputPassage)
+									{
+										int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
+										int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
+										sw.WriteLine("<h4 class=\"summaryRef\">");
+										sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+										sw.WriteLine("</h4>");
+									}
 								}
 							}
-							else if (prevQuestionEndRef < phrase.EndRef)
+							if ((!outOfOrderQuestion && prevQuestionEndRef < phrase.EndRef) || outputPassage)
                             {
                                 if (phrase.Category > 0)
                                 {

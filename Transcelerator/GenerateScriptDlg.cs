@@ -111,6 +111,8 @@ namespace SIL.Transcelerator
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
 			m_rdoSkipUntranslated.Checked = !m_rdoUseOriginal.Checked && Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated; // These two settings should never be able to both be true, but just to be safe.
 
+			m_rdoOutputPassageForOutOfOrderQuestions.Checked = Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions;
+
             m_lblFolder.Text = string.IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
                 Properties.Settings.Default.GenerateTemplateFolder;
 
@@ -249,6 +251,9 @@ namespace SIL.Transcelerator
 
 		public string NormalizedTitle => m_txtTitle.Text.Normalize(NormalizationForm.FormC);
 		public string LwcLocale => m_dataLoc?.Locale ?? "en";
+
+		public bool OutputFullPassageAtStartOfSection => m_chkPassageBeforeOverview.Checked;
+		public bool OutputPassageForOutOfOrderQuestions => m_rdoOutputPassageForOutOfOrderQuestions.Checked;
 		#endregion
 
 		#region Event handlers
@@ -439,6 +444,7 @@ namespace SIL.Transcelerator
             Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
 			Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated = m_rdoSkipUntranslated.Checked;
 
+			Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions = m_rdoOutputPassageForOutOfOrderQuestions.Checked;
 
             Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
 
