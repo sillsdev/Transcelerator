@@ -1,4 +1,7 @@
-﻿## 1.3.11 16 April 2019
+﻿﻿## 1.4.0 21 July 2020
+* Added option to output verse numbers in script (Note: If using an external CSS file, to get verse numbers to appear superscripted, you will either need to allow Transcelerator to overwrite your CSS file or edit the existing one to add verse {vertical-align: super; font-size: .80em; color:DimGray;}.
+
+## 1.3.11 16 April 2019
 * Added Installer support for Paratext 9.
 
 ## 1.3.9 9 January 2019
