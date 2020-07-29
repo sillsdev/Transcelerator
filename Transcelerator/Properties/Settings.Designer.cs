@@ -474,6 +474,17 @@ namespace SIL.Transcelerator.Properties {
             set {
                 this["AutoSave"] = value;
             }
+        }        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateIncludeVerseNumbers {
+            get {
+                return ((bool)(this["GenerateIncludeVerseNumbers"]));
+            }
+            set {
+                this["GenerateIncludeVerseNumbers"] = value;
+            }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]

@@ -1551,6 +1551,36 @@
   <data name="&gt;&gt;tabGeneral.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="m_chkIncludeVerseNumbers.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 35</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>133, 17</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="m_chkIncludeVerseNumbers.Text" xml:space="preserve">
+    <value>Include verse numbers</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Name" xml:space="preserve">
+    <value>m_chkIncludeVerseNumbers</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.Parent" xml:space="preserve">
+    <value>tabOptions</value>
+  </data>
+  <data name="&gt;&gt;m_chkIncludeVerseNumbers.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="panel3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Right</value>
   </data>

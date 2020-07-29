@@ -110,6 +110,7 @@ namespace SIL.Transcelerator
 			this.m_cboUseLWC = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
+			this.m_chkIncludeVerseNumbers = new System.Windows.Forms.CheckBox();
 			label1 = new System.Windows.Forms.Label();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			label4 = new System.Windows.Forms.Label();
@@ -540,6 +541,7 @@ namespace SIL.Transcelerator
 			// 
 			// tabOptions
 			// 
+			this.tabOptions.Controls.Add(this.m_chkIncludeVerseNumbers);
 			this.tabOptions.Controls.Add(this.panel3);
 			this.tabOptions.Controls.Add(this.m_cboUseLWC);
 			this.tabOptions.Controls.Add(this.label3);
@@ -607,6 +609,12 @@ namespace SIL.Transcelerator
 			this.tabAppearance.Name = "tabAppearance";
 			this.tabAppearance.UseVisualStyleBackColor = true;
 			// 
+			// m_chkIncludeVerseNumbers
+			//
+			resources.ApplyResources(this.m_chkIncludeVerseNumbers, "m_chkIncludeVerseNumbers");
+			this.m_chkIncludeVerseNumbers.Name = "m_chkIncludeVerseNumbers";
+			this.m_chkIncludeVerseNumbers.UseVisualStyleBackColor = true;
+			//
 			// GenerateScriptDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -698,6 +706,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabPage tabAppearance;
 		internal System.Windows.Forms.RadioButton m_rdoSkipUntranslated;
+		internal System.Windows.Forms.CheckBox m_chkIncludeVerseNumbers;
 		private System.Windows.Forms.Panel panel3;
 		internal System.Windows.Forms.RadioButton m_rdoDisplayReferenceForOutOfOrderQuestions;
 		private System.Windows.Forms.Label label8;

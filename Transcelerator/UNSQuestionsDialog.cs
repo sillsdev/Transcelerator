@@ -75,7 +75,8 @@ namespace SIL.Transcelerator
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
 		private static Regex s_regexGlossaryEntry;
-        private readonly string m_parsedQuestionsFilename;
+		private static Regex s_regexVerseNumbers;
+		private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private MasterQuestionParser m_parser;
 		/// <summary>Use PhraseSubstitutions property to ensure non-null cache</summary>
@@ -1194,6 +1195,9 @@ namespace SIL.Transcelerator
                         InRange = (tp) => tp.StartRef >= startRef && tp.EndRef <= endRef;
                     }
 
+					if (Properties.Settings.Default.GenerateIncludeVerseNumbers && s_regexVerseNumbers == null)
+						s_regexVerseNumbers = new Regex("(<verse number=\")([^\"]+)(\" style=\"v\")\\s\\/>", RegexOptions.Compiled);
+
                     List<TranslatablePhrase> allPhrasesInRange = m_helper.AllActivePhrasesWhere(InRange).ToList();
                     if (dlg.m_rdoDisplayWarning.Checked)
                     {
@@ -1537,6 +1541,8 @@ namespace SIL.Transcelerator
 					endRefTemp.Verse = m_projectVersification.GetLastVerse(endRefTemp.Book, endRefTemp.Chapter);
 				}
 			}
+			if (Properties.Settings.Default.GenerateIncludeVerseNumbers)
+				return s_regexVerseNumbers.Replace(extractedScr.ToString(), "$1$2$3>$2</verse>");
 			return extractedScr.ToString();
 		}
 
@@ -1560,7 +1566,6 @@ namespace SIL.Transcelerator
 				extractedScr.Remove(extractedScr.Length - usfxTail.Length, usfxTail.Length);
 			extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
 			extractedScr.Replace("/para", "/DIV");
-			extractedScr.Replace(" />", "></DIV>");
 
 			if (s_regexGlossaryEntry == null)
 				s_regexGlossaryEntry = new Regex("\\<char style=\"w\"\\>(?<surfaceFormOfGlossaryWord>[^|]*)\\|[^<]*\\</char\\>", RegexOptions.Compiled);
@@ -1762,6 +1767,7 @@ namespace SIL.Transcelerator
 			sw.WriteLine("h2:lang(en) {font-family:serif;}");
 			sw.WriteLine("p:lang(en) {font-family:serif;");
   			sw.WriteLine("font-size:0.85em;}");
+			sw.WriteLine("verse {vertical-align: super; font-size: .80em; color:DimGray;}");
 			sw.WriteLine("h3 {color:" + questionGroupHeadingsClr.Name + ";}");
 			sw.WriteLine(".questionbt {color:" + englishQuestionClr.Name + ";}");
 			sw.WriteLine(".answer {color:" + englishAnswerClr.Name + ";}");
