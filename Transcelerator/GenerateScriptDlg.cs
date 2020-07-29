@@ -109,6 +109,10 @@ namespace SIL.Transcelerator
 			}
 
 			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
+			if (m_scrExtractor == null)
+				m_chkIncludeVerseNumbers.Checked = m_chkIncludeVerseNumbers.Enabled = false;
+			else
+				m_chkIncludeVerseNumbers.Checked = Properties.Settings.Default.GenerateIncludeVerseNumbers;
 			SetDefaultCheckedStateForLWCOptions();
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
 			m_rdoSkipUntranslated.Checked = !m_rdoUseOriginal.Checked && Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated; // These two settings should never be able to both be true, but just to be safe.
@@ -414,7 +418,12 @@ namespace SIL.Transcelerator
             }
 
             Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
-	        Properties.Settings.Default.GenerateTemplateUseLWC = m_chkIncludeLWCQuestions.Enabled ?
+            if (m_chkIncludeVerseNumbers.Enabled)
+            {
+	            Properties.Settings.Default.GenerateIncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
+	            m_scrExtractor.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
+            }
+            Properties.Settings.Default.GenerateTemplateUseLWC = m_chkIncludeLWCQuestions.Enabled ?
 				m_lwcLocaleIds[m_cboUseLWC.SelectedIndex] : null;
 			Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkIncludeLWCQuestions.Checked;
             Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkIncludeLWCAnswers.Checked;

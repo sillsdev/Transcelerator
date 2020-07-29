@@ -70,6 +70,7 @@ namespace SIL.Transcelerator
 			this.m_rdoSingleSection = new System.Windows.Forms.RadioButton();
 			this.m_chkPassageBeforeOverview = new System.Windows.Forms.CheckBox();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.m_rdoSkipUntranslated = new System.Windows.Forms.RadioButton();
 			this.m_rdoDisplayWarning = new System.Windows.Forms.RadioButton();
 			this.label6 = new System.Windows.Forms.Label();
 			this.m_rdoUseOriginal = new System.Windows.Forms.RadioButton();
@@ -104,7 +105,7 @@ namespace SIL.Transcelerator
 			this.m_cboUseLWC = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
-			this.m_rdoSkipUntranslated = new System.Windows.Forms.RadioButton();
+			this.m_chkIncludeVerseNumbers = new System.Windows.Forms.CheckBox();
 			label1 = new System.Windows.Forms.Label();
 			groupBox2 = new System.Windows.Forms.GroupBox();
 			label4 = new System.Windows.Forms.Label();
@@ -291,6 +292,12 @@ namespace SIL.Transcelerator
 			this.panel1.Controls.Add(label5);
 			this.panel1.Controls.Add(this.m_rdoUseOriginal);
 			this.panel1.Name = "panel1";
+			// 
+			// m_rdoSkipUntranslated
+			// 
+			resources.ApplyResources(this.m_rdoSkipUntranslated, "m_rdoSkipUntranslated");
+			this.m_rdoSkipUntranslated.Name = "m_rdoSkipUntranslated";
+			this.m_rdoSkipUntranslated.UseVisualStyleBackColor = true;
 			// 
 			// m_rdoDisplayWarning
 			// 
@@ -522,6 +529,7 @@ namespace SIL.Transcelerator
 			// 
 			// tabOptions
 			// 
+			this.tabOptions.Controls.Add(this.m_chkIncludeVerseNumbers);
 			this.tabOptions.Controls.Add(this.m_cboUseLWC);
 			this.tabOptions.Controls.Add(this.label3);
 			this.tabOptions.Controls.Add(this.panel1);
@@ -559,11 +567,11 @@ namespace SIL.Transcelerator
 			this.tabAppearance.Name = "tabAppearance";
 			this.tabAppearance.UseVisualStyleBackColor = true;
 			// 
-			// m_rdoSkipUntranslated
+			// m_chkIncludeVerseNumbers
 			// 
-			resources.ApplyResources(this.m_rdoSkipUntranslated, "m_rdoSkipUntranslated");
-			this.m_rdoSkipUntranslated.Name = "m_rdoSkipUntranslated";
-			this.m_rdoSkipUntranslated.UseVisualStyleBackColor = true;
+			resources.ApplyResources(this.m_chkIncludeVerseNumbers, "m_chkIncludeVerseNumbers");
+			this.m_chkIncludeVerseNumbers.Name = "m_chkIncludeVerseNumbers";
+			this.m_chkIncludeVerseNumbers.UseVisualStyleBackColor = true;
 			// 
 			// GenerateScriptDlg
 			// 
@@ -654,5 +662,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TabPage tabAppearance;
 		internal System.Windows.Forms.RadioButton m_rdoSkipUntranslated;
+		internal System.Windows.Forms.CheckBox m_chkIncludeVerseNumbers;
 	}
 }
