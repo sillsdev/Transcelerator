@@ -25,7 +25,7 @@ namespace SIL.Transcelerator
 			UseAnyAlternate = useAnyAlternate;
 		}
 
-		public override string SourceUIString => m_baseQuestion.AlternateForms[m_index];
+		public override string SourceUIString => m_baseQuestion.Alternatives[m_index].Text;
 		public override LocalizableStringType Type => LocalizableStringType.Alternate;
 		public override int StartRef => m_baseQuestion.StartRef;
 		public override int EndRef => m_baseQuestion.EndRef;

@@ -54,6 +54,7 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.Label label4;
 			System.Windows.Forms.Label label5;
 			System.Windows.Forms.Label label9;
+			System.Windows.Forms.Label label10;
 			this.m_lblFolder = new System.Windows.Forms.Label();
 			this.btnBrowse = new System.Windows.Forms.Button();
 			this.m_txtFilename = new System.Windows.Forms.TextBox();
@@ -102,6 +103,10 @@ namespace SIL.Transcelerator
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabGeneral = new System.Windows.Forms.TabPage();
 			this.tabOptions = new System.Windows.Forms.TabPage();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.m_rdoDisplayReferenceForOutOfOrderQuestions = new System.Windows.Forms.RadioButton();
+			this.label8 = new System.Windows.Forms.Label();
+			this.m_rdoOutputPassageForOutOfOrderQuestions = new System.Windows.Forms.RadioButton();
 			this.m_cboUseLWC = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
@@ -111,6 +116,7 @@ namespace SIL.Transcelerator
 			label4 = new System.Windows.Forms.Label();
 			label5 = new System.Windows.Forms.Label();
 			label9 = new System.Windows.Forms.Label();
+			label10 = new System.Windows.Forms.Label();
 			groupBox2.SuspendLayout();
 			this.m_grpRange.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -120,6 +126,7 @@ namespace SIL.Transcelerator
 			this.tabControl1.SuspendLayout();
 			this.tabGeneral.SuspendLayout();
 			this.tabOptions.SuspendLayout();
+			this.panel3.SuspendLayout();
 			this.tabAppearance.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -187,6 +194,11 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(label9, "label9");
 			label9.Name = "label9";
+			// 
+			// label10
+			// 
+			resources.ApplyResources(label10, "label10");
+			label10.Name = "label10";
 			// 
 			// m_rdoWholeBook
 			// 
@@ -530,6 +542,7 @@ namespace SIL.Transcelerator
 			// tabOptions
 			// 
 			this.tabOptions.Controls.Add(this.m_chkIncludeVerseNumbers);
+			this.tabOptions.Controls.Add(this.panel3);
 			this.tabOptions.Controls.Add(this.m_cboUseLWC);
 			this.tabOptions.Controls.Add(this.label3);
 			this.tabOptions.Controls.Add(this.panel1);
@@ -540,6 +553,35 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.tabOptions, "tabOptions");
 			this.tabOptions.Name = "tabOptions";
 			this.tabOptions.UseVisualStyleBackColor = true;
+			// 
+			// panel3
+			// 
+			resources.ApplyResources(this.panel3, "panel3");
+			this.panel3.Controls.Add(this.m_rdoDisplayReferenceForOutOfOrderQuestions);
+			this.panel3.Controls.Add(this.label8);
+			this.panel3.Controls.Add(label10);
+			this.panel3.Controls.Add(this.m_rdoOutputPassageForOutOfOrderQuestions);
+			this.panel3.Name = "panel3";
+			// 
+			// m_rdoDisplayReferenceForOutOfOrderQuestions
+			// 
+			resources.ApplyResources(this.m_rdoDisplayReferenceForOutOfOrderQuestions, "m_rdoDisplayReferenceForOutOfOrderQuestions");
+			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Checked = true;
+			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Name = "m_rdoDisplayReferenceForOutOfOrderQuestions";
+			this.m_rdoDisplayReferenceForOutOfOrderQuestions.TabStop = true;
+			this.m_rdoDisplayReferenceForOutOfOrderQuestions.UseVisualStyleBackColor = true;
+			// 
+			// label8
+			// 
+			resources.ApplyResources(this.label8, "label8");
+			this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.label8.Name = "label8";
+			// 
+			// m_rdoOutputPassageForOutOfOrderQuestions
+			// 
+			resources.ApplyResources(this.m_rdoOutputPassageForOutOfOrderQuestions, "m_rdoOutputPassageForOutOfOrderQuestions");
+			this.m_rdoOutputPassageForOutOfOrderQuestions.Name = "m_rdoOutputPassageForOutOfOrderQuestions";
+			this.m_rdoOutputPassageForOutOfOrderQuestions.UseVisualStyleBackColor = true;
 			// 
 			// m_cboUseLWC
 			// 
@@ -568,11 +610,11 @@ namespace SIL.Transcelerator
 			this.tabAppearance.UseVisualStyleBackColor = true;
 			// 
 			// m_chkIncludeVerseNumbers
-			// 
+			//
 			resources.ApplyResources(this.m_chkIncludeVerseNumbers, "m_chkIncludeVerseNumbers");
 			this.m_chkIncludeVerseNumbers.Name = "m_chkIncludeVerseNumbers";
 			this.m_chkIncludeVerseNumbers.UseVisualStyleBackColor = true;
-			// 
+			//
 			// GenerateScriptDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -603,6 +645,8 @@ namespace SIL.Transcelerator
 			this.tabGeneral.ResumeLayout(false);
 			this.tabOptions.ResumeLayout(false);
 			this.tabOptions.PerformLayout();
+			this.panel3.ResumeLayout(false);
+			this.panel3.PerformLayout();
 			this.tabAppearance.ResumeLayout(false);
 			this.tabAppearance.PerformLayout();
 			this.ResumeLayout(false);
@@ -620,15 +664,15 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ColorDialog colorDlg;
 		private System.Windows.Forms.Button btnChooserCommentColor;
 		private System.Windows.Forms.Button btnChooseEnglishAnswerColor;
-		internal System.Windows.Forms.RadioButton m_rdoWholeBook;
-		internal System.Windows.Forms.ComboBox m_cboSection;
-		internal System.Windows.Forms.RadioButton m_rdoSingleSection;
-		internal System.Windows.Forms.ComboBox m_cboStartSection;
-		internal System.Windows.Forms.RadioButton m_rdoSectionRange;
-		internal System.Windows.Forms.ComboBox m_cboEndSection;
-		internal System.Windows.Forms.TextBox m_txtTitle;
+		private System.Windows.Forms.RadioButton m_rdoWholeBook;
+		private System.Windows.Forms.ComboBox m_cboSection;
+		private System.Windows.Forms.RadioButton m_rdoSingleSection;
+		private System.Windows.Forms.ComboBox m_cboStartSection;
+		private System.Windows.Forms.RadioButton m_rdoSectionRange;
+		private System.Windows.Forms.ComboBox m_cboEndSection;
+		private System.Windows.Forms.TextBox m_txtTitle;
 		internal System.Windows.Forms.CheckBox m_chkPassageBeforeOverview;
-		internal System.Windows.Forms.TextBox m_txtFilename;
+		private System.Windows.Forms.TextBox m_txtFilename;
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCQuestions;
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCAnswers;
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCComments;
@@ -636,7 +680,7 @@ namespace SIL.Transcelerator
 		internal System.Windows.Forms.Label m_lblCommentTextColor;
 		internal System.Windows.Forms.Label m_lblEnglishAnswerTextColor;
 		internal System.Windows.Forms.Label m_lblFolder;
-		internal System.Windows.Forms.ComboBox m_cboBooks;
+		private System.Windows.Forms.ComboBox m_cboBooks;
 		internal System.Windows.Forms.Label m_lblQuestionGroupHeadingsColor;
 		private System.Windows.Forms.Button btnChooseQuestionGroupHeadingsColor;
 		internal System.Windows.Forms.RadioButton m_rdoUseOriginal;
@@ -663,5 +707,9 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.TabPage tabAppearance;
 		internal System.Windows.Forms.RadioButton m_rdoSkipUntranslated;
 		internal System.Windows.Forms.CheckBox m_chkIncludeVerseNumbers;
+		private System.Windows.Forms.Panel panel3;
+		internal System.Windows.Forms.RadioButton m_rdoDisplayReferenceForOutOfOrderQuestions;
+		private System.Windows.Forms.Label label8;
+		internal System.Windows.Forms.RadioButton m_rdoOutputPassageForOutOfOrderQuestions;
 	}
 }

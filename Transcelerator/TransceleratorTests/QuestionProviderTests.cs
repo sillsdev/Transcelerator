@@ -69,8 +69,8 @@ namespace SIL.Transcelerator
 			QuestionProvider qp = new QuestionProvider(qs, null);
 
 			Assert.AreEqual(2, qp.SectionInfo.Count);
-			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo[44001001].Heading);
-			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo[44001006].Heading);
+			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo.Find(44001001).Heading);
+			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo.Find(44001006).Heading);
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(44, qp.AvailableBookIds[0]);
 
@@ -94,7 +94,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -135,7 +135,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -148,7 +148,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6-10", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001010, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -161,7 +161,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001006, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -207,19 +207,19 @@ namespace SIL.Transcelerator
             QuestionProvider qp = new QuestionProvider(qs, null);
 
             Assert.AreEqual(4, qp.SectionInfo.Count);
-            IEnumerable<int> keys = qp.SectionInfo.Keys;
+            var keys = qp.SectionInfo.AllSectionStartRefs;
             var key = keys.ElementAt(0);
             Assert.AreEqual(40013001, key);
-            Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Matthew 13:1-7 Parable.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(1);
             Assert.AreEqual(44001001, key);
-            Assert.AreEqual("Acts 1:1-18 Jesus Leaves.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 1:1-18 Jesus Leaves.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(2);
             Assert.AreEqual(44002001, key);
-            Assert.AreEqual("Acts 2:1-5 Stuff.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 2:1-5 Stuff.", qp.SectionInfo.Find(key).Heading);
             key = keys.ElementAt(3);
             Assert.AreEqual(44002006, key);
-            Assert.AreEqual("Acts 2:6-10 Preaching.", qp.SectionInfo[key].Heading);
+            Assert.AreEqual("Acts 2:6-10 Preaching.", qp.SectionInfo.Find(key).Heading);
         }
 
         ///--------------------------------------------------------------------------------------
@@ -354,6 +354,8 @@ namespace SIL.Transcelerator
         ///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests that a category that doesn't have a Type specified is skipped when enumerating.
+		/// Not sure why this is/was important. The data integrity tests now ensure this can't
+		/// happen in real life.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
@@ -379,7 +381,7 @@ namespace SIL.Transcelerator
 			QuestionProvider qp = new QuestionProvider(qs, null);
 
 			Assert.AreEqual(1, qp.SectionInfo.Count);
-			Assert.AreEqual("Romans 1:1-17 Introduction to the book.", qp.SectionInfo[s.StartRef].Heading);
+			Assert.AreEqual("Romans 1:1-17 Introduction to the book.", qp.SectionInfo.Find(s.StartRef).Heading);
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(45, qp.AvailableBookIds[0]);
 			List<TranslatablePhrase> phrases = qp.ToList();
@@ -391,7 +393,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ROM 1.1-17", phrase.Reference);
 			Assert.AreEqual(45001001, phrase.StartRef);
 			Assert.AreEqual(45001017, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Length);
 			Assert.IsNull(phrase.QuestionInfo.Notes);
@@ -447,8 +449,8 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(1, qp.AvailableBookIds.Length);
 			Assert.AreEqual(44, qp.AvailableBookIds[0]);
 			Assert.AreEqual(2, qp.SectionInfo.Count);
-			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo[44001001].Heading);
-			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo[44001006].Heading);
+			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo.Find(44001001).Heading);
+			Assert.AreEqual("Acts 1:6-10 The continuing saga.", qp.SectionInfo.Find(44001006).Heading);
 
 			TranslatablePhrase phrase = phrases[0];
 			Assert.AreEqual("Overview", phrase.PhraseInUse);
@@ -466,7 +468,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("Luke reminded his readers that he was about to continue the true story about Jesus",
@@ -488,7 +490,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.1-5", phrase.Reference);
 			Assert.AreEqual(44001001, phrase.StartRef);
 			Assert.AreEqual(44001005, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("He addressed this book to Theophilus.",
@@ -500,7 +502,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6-10", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001010, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("Stuff", phrase.QuestionInfo.Answers.First());
@@ -512,7 +514,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("ACT 1.6", phrase.Reference);
 			Assert.AreEqual(44001006, phrase.StartRef);
 			Assert.AreEqual(44001006, phrase.EndRef);
-			Assert.AreEqual(1, phrase.SequenceNumber);
+			Assert.AreEqual(0, phrase.SequenceNumber);
 			Assert.IsNotNull(phrase.QuestionInfo);
 			Assert.AreEqual(1, phrase.QuestionInfo.Answers.Count());
 			Assert.AreEqual("The apostles asked Jesus whether he was soon going to set up his kingdom in a way that everybody could see and cause the people of Israel to have power in that kingdom.",

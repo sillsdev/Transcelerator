@@ -44,10 +44,10 @@ namespace SIL.Transcelerator.Localization
 			if (includeSomeOtherSection)
 			{
 				var otherSection = new Section {Heading = "Jude 3-13 Some section", StartRef = 65001003, EndRef = 65001013};
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(otherSection)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(otherSection));
 			}
 			var sectionToGet = new Section { Heading = "Acts 3:1-15 This is Bryan's birthday.", StartRef = 44003001, EndRef = 44003015 };
-			Assert.AreEqual(sectionToGet.Heading, sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet))));
+			Assert.AreEqual(sectionToGet.Heading, sut.GetLocalizedString(new UISectionHeadDataString(sectionToGet)));
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new LocalizationsFileAccessor();
 			var sectionToGet = new Section { Heading = "Rev 9:2-14 More stuff that's going to happen", StartRef = 66009002, EndRef = 66009014 };
-			Assert.IsNull(sut.GetLocalizedString(new UISectionHeadDataString(new SectionInfo(sectionToGet)), false));
+			Assert.IsNull(sut.GetLocalizedString(new UISectionHeadDataString(sectionToGet), false));
 		}
 
 		[TestCase(true, true)]
@@ -67,7 +67,7 @@ namespace SIL.Transcelerator.Localization
 			if (includeSection)
 			{
 				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 				if (includeSomeOtherQuestion)
 				{
 					var otherQuestion = new Question("MAT 3:19", 40003019, 40003019, "Is this really a detail question?", "Answer not relevant in this test");
@@ -101,13 +101,18 @@ namespace SIL.Transcelerator.Localization
 			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", null);
 			baseQuestion.Answers = new[] { "Answer 1", "This is a whatchamacallit.", "Answer 3" };
 			baseQuestion.Notes = new[] { "Note 1", "This is a whatchamacallit.", "Note 3" };
-			baseQuestion.AlternateForms = new[] { "Do you adore this underlying question?", "This is a whatchamacallit.", "Is this the sort of platform question you appreciate?" };
+			baseQuestion.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "Do you adore this underlying question?"},
+				new AlternativeForm {Text = "This is a whatchamacallit."},
+				new AlternativeForm {Text = "Is this the sort of platform question you appreciate?"} 
+			};
 
 			var sut = new TestLocalizationsFileAccessor();
 			if (includeBaseQuestion)
 			{
 				var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-				sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+				sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 				sut.AddLocalizationEntry(new UIQuestionDataString(baseQuestion, true, true));
 				if (includeOtherEntry)
 				{
@@ -129,7 +134,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", "This is a whatchamacallit.");
 			baseQuestion.Notes = new[] { "This is a whatchamacallit." };
-			baseQuestion.AlternateForms = new[] { "This is a whatchamacallit." };
+			baseQuestion.Alternatives = new[] { new AlternativeForm {Text = "This is a whatchamacallit."} };
 
 			var sut = new LocalizationsFileAccessor();
 			UIDataString key = type == LocalizableStringType.Alternate ? new UIAlternateDataString(baseQuestion, 0, false) :
@@ -152,7 +157,7 @@ namespace SIL.Transcelerator.Localization
 		public void GetLocalizedString_MatchingSectionNotLocalized_ReturnsEnglish(string heading, int startRef, int endRef)
 		{
 			var section = new Section { Heading = heading, StartRef = startRef, EndRef = endRef };
-			var sectionInfo = new SectionInfo(section);
+			var sectionInfo = section;
 			var sut = new TestLocalizationsFileAccessor();
 			var key = new UISectionHeadDataString(sectionInfo);
 			sut.AddLocalizationEntry(key);
@@ -164,7 +169,7 @@ namespace SIL.Transcelerator.Localization
 		{
 			var sut = new TestLocalizationsFileAccessor();
 			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-			sut.AddLocalizationEntry(new UISectionHeadDataString(new SectionInfo(section)));
+			sut.AddLocalizationEntry(new UISectionHeadDataString(section));
 
 			var baseQuestion = new Question("MAT 3:2-3", 40003002, 40003003, "Do you like this base question?", null);
 			var key = new UIQuestionDataString(baseQuestion, true, false);
@@ -179,12 +184,16 @@ namespace SIL.Transcelerator.Localization
 			var sut = new TestLocalizationsFileAccessor();
 
 			var section = new Section { Heading = "Matthew 3:1-20 Some section", StartRef = 40003001, EndRef = 40003020 };
-			var sectionKey = new UISectionHeadDataString(new SectionInfo(section));
+			var sectionKey = new UISectionHeadDataString(section);
 			sut.AddLocalizationEntry(sectionKey, "Mateo 3:1-20 Sección");
 			var q1 = new Question("MAT 3:2-3", 40003002, 40003003, "Why is this here?", null);
 			q1.Answers = new[] {"Because it needs to be.", "It's a place-holder."};
 			q1.Notes = new[] { "This is a bad question.", "See guidelines for writing good questions." };
-			q1.AlternateForms = new[] { "What's up with this?", "For what reason is this here?" };
+			q1.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "What's up with this?"},
+				new AlternativeForm {Text = "For what reason is this here?"}
+			};
 
 			var questionKey1 = new UIQuestionDataString(q1, true, false);
 			sut.AddLocalizationEntry(questionKey1, "¿Por qué está aquí esto?");
@@ -547,7 +556,7 @@ namespace SIL.Transcelerator.Localization
 				new[] { "Detalles", "¿Qué es la sabiduría?", "Un don de Dios" }));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Overview", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(section)));
 			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 0)));
@@ -555,7 +564,7 @@ namespace SIL.Transcelerator.Localization
 			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, 0)));
-			Assert.IsTrue(detailQuestion.AlternateForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
+			Assert.IsTrue(detailQuestion.AlternativeForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsTrue(detailQuestion.Answers.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, i)) == null));
@@ -636,11 +645,11 @@ namespace SIL.Transcelerator.Localization
 
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UISimpleDataString("Details", LocalizableStringType.Category)));
 			var section = qs.Items.Single();
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(new SectionInfo(section))));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UISectionHeadDataString(section)));
 			var overviewQuestion = qs.Items.First().Categories.First().Questions.Single();
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(overviewQuestion, LocalizableStringType.Answer, 0)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, 0)));
-			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, overviewQuestion.AlternateForms.Length - 1)));
+			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAlternateDataString(overviewQuestion, overviewQuestion.Alternatives.Length - 1)));
 			var detailQuestion = qs.Items.First().Categories.Last().Questions[0];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 0)));
@@ -648,7 +657,7 @@ namespace SIL.Transcelerator.Localization
 			detailQuestion = qs.Items.First().Categories.Last().Questions[1];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Note, 0)));
-			Assert.IsTrue(detailQuestion.AlternateForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
+			Assert.IsTrue(detailQuestion.AlternativeForms.Select((n, i) => i).All(i => sut.GetLocalizableStringInfo(new UIAlternateDataString(detailQuestion, i)) == null));
 			detailQuestion = qs.Items.First().Categories.Last().Questions[2];
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIQuestionDataString(detailQuestion, true, true)));
 			Assert.IsNull(sut.GetLocalizableStringInfo(new UIAnswerOrNoteDataString(detailQuestion, LocalizableStringType.Answer, 1)));
@@ -666,7 +675,12 @@ namespace SIL.Transcelerator.Localization
 			Question q = qs.Items[iS].Categories[iC].Questions[0];
 			q.Text = "What is wisdom?";
 			q.Answers = new[] { "Smartness on steroids", "" };
-			q.AlternateForms = new[] { "", null, "How would you define wisdom?" };
+			q.Alternatives = new[]
+			{
+				new AlternativeForm {Text = ""},
+				new AlternativeForm {Text = null},
+				new AlternativeForm {Text = "How would you define wisdom?"}
+			};
 
 			iC = 1;
 			int iQ = 0;
@@ -731,7 +745,12 @@ namespace SIL.Transcelerator.Localization
 			q.ScriptureReference = "HEB 9.21-22";
 			q.Text = "Why did he do it that way? // What else does it say about sin and blood? // What does it say about how things were made \"clean?\"";
 			q.Answers = new[] { "Almost everything under the Old Agreement was made acceptable to God by sprinkling it with blood." };
-			q.AlternateForms = new[] { "Why did he do it that way?", "What else does it say about sin and blood?", "What does it say about how things were made \"clean?\"" };
+			q.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "Why did he do it that way?"},
+				new AlternativeForm {Text = "What else does it say about sin and blood?"}, 
+				new AlternativeForm {Text = "What does it say about how things were made \"clean?\""} 
+			};
 
 			var q4 = qs.Items[iS].Categories[iC].Questions[++iQ];
 			q4.StartRef = 58009021;
@@ -777,7 +796,11 @@ namespace SIL.Transcelerator.Localization
 			q1.ScriptureReference = "HEB 12.12-13";
 			q1.Text = "What does the author tell/want them to do here?";
 			q1.Answers = new[] { "To make every effort to reach the goal God has set for them." };
-			q1.AlternateForms = new[] { "What does the author tell them to do here?", "What does the author want them to do here?" };
+			q1.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "What does the author tell them to do here?"},
+				new AlternativeForm {Text = "What does the author want them to do here?"}
+			};
 
 			var q2 = qs.Items[iS].Categories[iC].Questions[++iQ];
 			q2.StartRef = 58012012;
@@ -792,7 +815,11 @@ namespace SIL.Transcelerator.Localization
 			q3.ScriptureReference = "HEB 12.12-13";
 			q3.Text = "What does the author tell/want them to do here?";
 			q3.Answers = new[] { "He tells them to take a new grip with their hands and to stand firm on their shaky legs." };
-			q3.AlternateForms = new[] { "What does the author tell them to do here?", "What does the author want them to do here?" };
+			q3.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "What does the author tell them to do here?"},
+				new AlternativeForm {Text = "What does the author want them to do here?"}
+			};
 			var sut = new TestLocalizationsFileAccessor();
 			sut.GenerateOrUpdateFromMasterQuestions(qs);
 			Assert.IsTrue(sut.LocalizationsAccessor.IsValid(out string error), error);
@@ -1021,7 +1048,11 @@ namespace SIL.Transcelerator.Localization
 			q.Answers = new[] { "Smartness on steroids", "A gift from God" };
 			if (includeAlternatives)
 			{
-				q.AlternateForms = new[] { "What is meant by \"wisdom?\"", "How would you define wisdom?" };
+				q.Alternatives = new[]
+				{
+					new AlternativeForm {Text = "What is meant by \"wisdom?\""},
+					new AlternativeForm {Text = "How would you define wisdom?"}
+				};
 			}
 
 			iC = 1;
@@ -1042,7 +1073,12 @@ namespace SIL.Transcelerator.Localization
 			q.Notes = new[] { "Make sure respondent understands the differnece between temporal happiness and deep blessing." };
 			if (includeAlternatives)
 			{
-				q.AlternateForms = new[] { "What person is happy?", "Who is happy?", "What kind of person is blessed?" };
+				q.Alternatives = new[]
+				{
+					new AlternativeForm {Text = "What person is happy?"},
+					new AlternativeForm {Text = "Who is happy?"},
+					new AlternativeForm {Text = "What kind of person is blessed?"}
+				};
 			}
 
 			q = qs.Items[iS].Categories[iC].Questions[++iQ];
@@ -1053,7 +1089,7 @@ namespace SIL.Transcelerator.Localization
 			q.Answers = new[] { "Jewels", "Life", "Riches", "A gift from God" };
 			if (includeAlternatives)
 			{
-				q.AlternateForms = new[] { "How would you define wisdom?" };
+				q.Alternatives = new[] { new AlternativeForm {Text = "How would you define wisdom?"} };
 			}
 
 			return qs;
@@ -1097,21 +1133,21 @@ namespace SIL.Transcelerator.Localization
 			foreach (var section in qs.Items)
 			{
 				Assert.IsFalse(sut.GetLocalizableStringInfo(
-					new UISectionHeadDataString(new SectionInfo(section))).Target.IsLocalized);
+					new UISectionHeadDataString(section)).Target.IsLocalized);
 
 				foreach (var question in section.Categories.SelectMany(c => c.Questions))
 				{
 					var key = new UIQuestionDataString(question, false, true);
 					Assert.IsFalse(sut.GetLocalizableStringInfo(key).Target.IsLocalized);
 
-					VerifyNotLocalized(sut, question, question.AlternateForms, LocalizableStringType.Alternate);
+					VerifyNotLocalized(sut, question, question.AlternativeForms, LocalizableStringType.Alternate);
 					VerifyNotLocalized(sut, question, question.Answers, LocalizableStringType.Answer);
 					VerifyNotLocalized(sut, question, question.Notes, LocalizableStringType.Note);
 				}
 			}
 		}
 
-		private void VerifyNotLocalized(TestLocalizationsFileAccessor sut, Question question, string[] subStrings, LocalizableStringType type)
+		private void VerifyNotLocalized(TestLocalizationsFileAccessor sut, Question question, IEnumerable<string> subStrings, LocalizableStringType type)
 		{
 			if (subStrings != null)
 			{
@@ -1133,7 +1169,7 @@ namespace SIL.Transcelerator.Localization
 
 			foreach (var section in qs.Items)
 			{
-				key = new UISectionHeadDataString(new SectionInfo(section));
+				key = new UISectionHeadDataString(section);
 				localizedString = sut.GetLocalizedString(key);
 				if (localizedString != key.SourceUIString)
 					yield return key;
@@ -1144,13 +1180,16 @@ namespace SIL.Transcelerator.Localization
 					if (sut.GetLocalizedString(key) != question.PhraseInUse)
 						yield return key;
 
-					if (question.AlternateForms != null)
+					if (question.Alternatives != null)
 					{
-						for (var index = 0; index < question.AlternateForms.Length; index++)
+						for (var index = 0; index < question.Alternatives.Length; index++)
 						{
-							key = new UIAlternateDataString(question, index, useAnyAlternate);
-							if (sut.GetLocalizedString(key) != key.SourceUIString)
-								yield return key;
+							if (!question.Alternatives[index].Hide)
+							{
+								key = new UIAlternateDataString(question, index, useAnyAlternate);
+								if (sut.GetLocalizedString(key) != key.SourceUIString)
+									yield return key;
+							}
 						}
 					}
 

@@ -474,8 +474,7 @@ namespace SIL.Transcelerator.Properties {
             set {
                 this["AutoSave"] = value;
             }
-        }
-        
+        }        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -485,6 +484,18 @@ namespace SIL.Transcelerator.Properties {
             }
             set {
                 this["GenerateIncludeVerseNumbers"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool GenerateOutputPassageForOutOfOrderQuestions {
+            get {
+                return ((bool)(this["GenerateOutputPassageForOutOfOrderQuestions"]));
+            }
+            set {
+                this["GenerateOutputPassageForOutOfOrderQuestions"] = value;
             }
         }
     }

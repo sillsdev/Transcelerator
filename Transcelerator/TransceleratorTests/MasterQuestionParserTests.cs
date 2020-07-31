@@ -2108,8 +2108,8 @@ namespace SIL.Transcelerator
 	    {
 	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 	        PhraseCustomization pc = new PhraseCustomization();
-	        // Note that the following two customizations really should have been done as a modifaction
-	        // rather than as a deletion and additon, but a realy user did it this way, so just checking
+	        // Note that the following two customizations really should have been done as a modification
+	        // rather than as a deletion and addition, but a really user did it this way, so just checking
 	        // to be sure it works.
 	        pc.Reference = "PRO 3.13";
 	        pc.OriginalPhrase = "What man is happy?";
@@ -2312,7 +2312,7 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    ///--------------------------------------------------------------------------------------
 	    [Test]
-	    public void GetResult_InsertedQuestionWithVerseRangeThatDoesNotMatchxistingQuestion_InsertedPhraseIncludedInCorrectPlace()
+	    public void GetResult_InsertedQuestionWithVerseRangeThatDoesNotMatchExistingQuestion_InsertedPhraseIncludedInCorrectPlace()
 	    {
 	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 	        PhraseCustomization pc = new PhraseCustomization();
@@ -2400,8 +2400,8 @@ namespace SIL.Transcelerator
 	    {
 	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 	        PhraseCustomization pc = new PhraseCustomization();
-	        // Note that the following two customizations really should have been done as a modifaction
-	        // rather than as a deletion and additon, but a realy user did it this way, so just checking
+	        // Note that the following two customizations really should have been done as a modification
+	        // rather than as a deletion and addition, but a really user did it this way, so just checking
 	        // to be sure it works.
 	        pc.Reference = "PRO 3.13";
 	        pc.OriginalPhrase = "What man is happy?";
@@ -2436,13 +2436,16 @@ namespace SIL.Transcelerator
 	        pc.Reference = "PRO 3.13-20";
 	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
 	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-	        pc.Answer = "[Make a list of the words not understood](13 - 20) - Added by Tom to prove this answer is no even being considered.";
+	        pc.Answer = "[Make a list of the words not understood](13 - 20) - Added by Tom to prove this answer is not even being considered.";
 	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
 	        customizations.Add(pc);
 			// And just to keep things confusing, this one is an "insertion before" (because that
-			// is apparently the default if there are no matching questions), but it actually
+			// is apparently the default if there are no matching questions*), but it actually
 			// comes after all the others (by virtue of its start reference), including all other
 			// built-in questions in the book.
+			// *The dialog was later changed to show all questions in the selected category for the
+			// section containing the selected reference, so if they were to do this today, there
+			// would be matching questions.
 	        pc = new PhraseCustomization();
 	        pc.Reference = "PRO 3.20";
 	        pc.OriginalPhrase = "Are there any words in this section whose meaning is not clear?";
@@ -4192,7 +4195,154 @@ namespace SIL.Transcelerator
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(2, pq.TranslatableParts.Length);
 		}
-		#endregion
+
+		
+
+	    ///--------------------------------------------------------------------------------------
+	    /// <summary>
+	    /// TXL-216: Tests that a user question is properly inserted into the correct location
+	    /// and associated with the correct section when it is for a verse that spans two
+	    /// sections and the first detail question of the second section applies to multiple
+	    /// verses.
+	    /// </summary>
+	    ///--------------------------------------------------------------------------------------
+	    [Test]
+	    public void GetResult_InsertedQuestionHasSameStartVerseAsBaseButCoversSingleVerse_PhrasesAreInCorrectOrderAndSection()
+	    {
+	        var customizations = new List<PhraseCustomization>();
+	        var pc = new PhraseCustomization
+	        {
+		        Reference = "LUK 9.43",
+		        OriginalPhrase = "What new information did Jesus tell his disciples?",
+		        ModifiedPhrase = "Why did Jesus use this precise moment, in the midst of the hoopla and emotion, to bring his disciples back down to the cold reality?",
+		        Answer = "Sometimes in moments of ecstasy, that's what's needed.",
+		        Type = PhraseCustomization.CustomizationType.InsertionBefore
+	        };
+	        customizations.Add(pc);
+
+	        var qs = new QuestionSections {Items = new Section[2]};
+	        var iS = 0;
+	        qs.Items[iS] = CreateSection("LUK 9.37-43a", "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.", 42009037,
+		        42009043, 1, 2);
+	        var iC = 0;
+	        var q = qs.Items[iS].Categories[iC].Questions[0];
+	        q.Text = "What do you think was the reason that Jesus was so upset?";
+	        q.Answers = new[] { "He had given all twelve disciples power and authority over these things earlier (9:1)." };
+
+	        iC = 1;
+	        var iQ = 0;
+	        q = qs.Items[iS].Categories[iC].Questions[iQ];
+	        q.StartRef = 42009038;
+	        q.EndRef = 42009040;
+	        q.ScriptureReference = "LUK 9.38-40";
+	        q.Text = "One man in the crowd was shouting to Jesus. About what was he shouting?";
+	        q.Answers = new[] { "He wanted Jesus to take a look at his son, (who was his only child). (38)" };
+
+	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
+	        q.StartRef = 42009043;
+	        q.EndRef = 42009043;
+	        q.ScriptureReference = "LUK 9.43";
+	        q.Text = "What did all the crowd think about this?";
+	        q.Answers = new[] { "They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)" };
+
+	        qs.Items[++iS] = CreateSection("LUK 9.43-45", "Luke 9:43b-45 Jesus says someone will betray him to his enemies.", 42009043,
+		        42009045, 0, 2);
+	        iC = 0;
+	        iQ = 0;
+	        q = qs.Items[iS].Categories[iC].Questions[iQ];
+	        q.StartRef = 42009043;
+	        q.EndRef = 42009044;
+	        q.ScriptureReference = "LUK 9.43-44";
+	        q.Text = "What new information did Jesus tell his disciples?";
+	        q.Answers = new[] { "He told them that someone would betray [him,] the Son of Man, into the hands/control of other men. (44)" };
+
+	        q = qs.Items[iS].Categories[iC].Questions[++iQ];
+	        q.StartRef = 42009044;
+	        q.EndRef = 42009044;
+	        q.ScriptureReference = "LUK 9.44";
+	        q.Text = "What do you think it means to betray someone into other people's hands/control?";
+	        q.Answers = new[] { "Key Term Check: It means to deliver that person into the control of someone whom that person regards as an enemy." };
+
+	        var qp = new MasterQuestionParser(qs, new List<string>(), null, null, customizations, null);
+
+	        var pq = qp.Result;
+	        var sections = pq.Sections.Items;
+
+	        var excludedQuestions = 0;
+	        var iQuestion = 0;
+
+	        for (iS = 0; iS < sections.Length; iS++)
+	        {
+	            var actSection = sections[iS];
+	            for (iC = 0; iC < actSection.Categories.Length; iC++)
+	            {
+	                var actCategory = actSection.Categories[iC];
+	                for (iQ = 0; iQ < actCategory.Questions.Count; iQ++)
+	                {
+	                    var actQuestion = actCategory.Questions[iQ];
+
+	                    if (actQuestion.IsExcluded)
+	                    {
+	                        excludedQuestions++;
+	                    }
+	                    else
+	                    {
+	                        iQuestion++;
+	                        Assert.IsNull(actQuestion.ModifiedPhrase);
+	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        switch (iQuestion)
+	                        {
+	                            case 1:
+	                                Assert.AreEqual("What do you think was the reason that Jesus was so upset?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+									Assert.AreEqual(0, iS);
+									Assert.AreEqual(0, iC);
+	                                break;
+	                            case 2:
+	                                Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(0, iS);
+	                                Assert.AreEqual(1, iC);
+	                                break;
+	                            case 3:
+		                            Assert.AreEqual("What did all the crowd think about this?", actQuestion.PhraseInUse);
+		                            Assert.IsFalse(actQuestion.IsUserAdded);
+		                            Assert.AreEqual(0, iS);
+		                            Assert.AreEqual(1, iC);
+		                            break;
+	                            case 4:
+		                            Assert.AreEqual("Why did Jesus use this precise moment, in the midst of the hoopla and emotion, to bring his disciples back down to the cold reality?", actQuestion.PhraseInUse);
+		                            Assert.AreEqual("LUK 9.43", actQuestion.ScriptureReference);
+		                            Assert.AreEqual(42009043, actQuestion.StartRef);
+		                            Assert.AreEqual(42009043, actQuestion.EndRef);
+		                            Assert.IsTrue(actQuestion.IsUserAdded);
+		                            Assert.AreEqual(1, iS);
+		                            Assert.AreEqual(0, iC);
+		                            break;
+	                            case 5:
+	                                Assert.AreEqual("What new information did Jesus tell his disciples?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(0, iC);
+	                                break;
+                                case 6:
+	                                Assert.AreEqual("What do you think it means to betray someone into other people's hands/control?", actQuestion.PhraseInUse);
+	                                Assert.IsFalse(actQuestion.IsUserAdded);
+	                                Assert.AreEqual(1, iS);
+	                                Assert.AreEqual(0, iC);
+	                                break;
+	                            default:
+	                                throw new Exception("More included questions than expected.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        Assert.IsNull(pq.KeyTerms);
+	        Assert.AreEqual(6, iQuestion);
+	        Assert.AreEqual(0, excludedQuestions);
+	    }
+	    #endregion
 
 		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
@@ -4306,7 +4456,8 @@ namespace SIL.Transcelerator
 		}
 
 		/// ------------------------------------------------------------------------------------
-		internal static Section CreateSection(string sRef, string heading, int startRef, int endRef, int cOverviewQuestions, int cDetailQuestions)
+		internal static Section CreateSection(string sRef, string heading, int startRef, int endRef,
+			int cOverviewQuestions, int cDetailQuestions)
 		{
 			Section s = new Section();
 			s.ScriptureReference = sRef;
@@ -4371,12 +4522,9 @@ namespace SIL.Transcelerator
 							Assert.AreEqual(expQuestion.EndRef, actQuestion.EndRef);
 							Assert.AreEqual(expQuestion.ScriptureReference, actQuestion.ScriptureReference);
 						}
-						Assert.IsTrue((expQuestion.Answers == null && actQuestion.Answers == null) ||
-							expQuestion.Answers.SequenceEqual(actQuestion.Answers));
-						Assert.IsTrue((expQuestion.Notes == null && actQuestion.Notes == null) ||
-							expQuestion.Notes.SequenceEqual(actQuestion.Notes));
-						Assert.IsTrue((expQuestion.AlternateForms == null && actQuestion.AlternateForms == null) ||
-							expQuestion.AlternateForms.SequenceEqual(actQuestion.AlternateForms));
+						CollectionAssert.AreEqual(expQuestion.Answers, actQuestion.Answers);
+						CollectionAssert.AreEqual(expQuestion.Notes, actQuestion.Notes);
+						CollectionAssert.AreEqual(expQuestion.Alternatives, actQuestion.Alternatives);
 						iExpQ++;
 
 						foreach (string part in actQuestion.ParsedParts.Where(pp => pp.Type == PartType.TranslatablePart).Select(pp => pp.Text))

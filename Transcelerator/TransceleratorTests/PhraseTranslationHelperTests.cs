@@ -20,6 +20,7 @@ using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Reflection;
+using SIL.Scripture;
 using static System.Int32;
 
 namespace SIL.Transcelerator
@@ -309,13 +310,13 @@ namespace SIL.Transcelerator
             var section = m_sections.Items[0];
             section.Categories = new Category[2];
 
-            var cat = m_sections.Items[0].Categories[0] = new Category();
+            var cat = section.Categories[0] = new Category { IsOverview = true };
 	        cat.IsOverview = true;
             AddTestQuestion(cat, "What is the meaning of life?", "A-D", 1, 4);
-            AddTestQuestion(cat, "Why is there evil?", "E-G", 5, 6);
+            AddTestQuestion(cat, "Why is there evil?", "E-F", 5, 6);
             AddTestQuestion(cat, "Why am I here?", "A-D", 1, 4);
 
-            cat = section.Categories[1] = new Category();
+            cat = section.Categories[1] = new Category { IsOverview = false };
             AddTestQuestion(cat, "What would God do?", "A", 1, 1);
             AddTestQuestion(cat, "When is the best time for ice cream?", "C", 3, 3);
             AddTestQuestion(cat, "Is it okay for Paul to talk to God today?", "D", 4, 4);
@@ -332,26 +333,26 @@ namespace SIL.Transcelerator
 
             Assert.AreEqual("What is the meaning of life?", pth[0].PhraseInUse);
             Assert.AreEqual("A-D", pth[0].Reference);
-            Assert.AreEqual(1, pth[0].SequenceNumber);
+            Assert.AreEqual(0, pth[0].SequenceNumber);
             Assert.AreEqual("Why am I here?", pth[1].PhraseInUse);
             Assert.AreEqual("A-D", pth[1].Reference);
-            Assert.AreEqual(3, pth[1].SequenceNumber);
+            Assert.AreEqual(2, pth[1].SequenceNumber);
             Assert.AreEqual("What would God do?", pth[2].PhraseInUse);
             Assert.AreEqual("A", pth[2].Reference);
-            Assert.AreEqual(1, pth[2].SequenceNumber);
+            Assert.AreEqual(0, pth[2].SequenceNumber);
             Assert.AreEqual("What is Paul asking that man?", pth[3].PhraseInUse);
             Assert.AreEqual("A", pth[3].Reference);
-            Assert.AreEqual(7, pth[3].SequenceNumber);
+            Assert.AreEqual(6, pth[3].SequenceNumber);
             Assert.AreEqual("C", pth[4].Reference);
             Assert.AreEqual("Is it okay for Paul to talk to God today?", pth[5].PhraseInUse);
             Assert.AreEqual("D", pth[5].Reference);
-            Assert.AreEqual(3, pth[5].SequenceNumber);
+            Assert.AreEqual(2, pth[5].SequenceNumber);
             Assert.AreEqual("Is a dog man's best friend?", pth[6].PhraseInUse);
             Assert.AreEqual("D", pth[6].Reference);
-            Assert.AreEqual(8, pth[6].SequenceNumber);
-            Assert.AreEqual("E-G", pth[7].Reference);
+            Assert.AreEqual(7, pth[6].SequenceNumber);
+            Assert.AreEqual("E-F", pth[7].Reference);
             Assert.AreEqual(0, pth[7].Category);
-            Assert.AreEqual(2, pth[7].SequenceNumber);
+            Assert.AreEqual(1, pth[7].SequenceNumber);
             Assert.AreEqual("E", pth[8].Reference);
             Assert.AreEqual("E-F", pth[9].Reference);
             Assert.AreEqual("E-G", pth[10].Reference);
@@ -363,21 +364,21 @@ namespace SIL.Transcelerator
             Assert.AreEqual(1, pth[0].Category);
             Assert.AreEqual("E-F", pth[1].Reference);
             Assert.AreEqual("E", pth[2].Reference);
-            Assert.AreEqual("E-G", pth[3].Reference);
+            Assert.AreEqual("E-F", pth[3].Reference);
             Assert.AreEqual(0, pth[3].Category);
             Assert.AreEqual("D", pth[4].Reference);
-            Assert.AreEqual(8, pth[4].SequenceNumber);
+            Assert.AreEqual(7, pth[4].SequenceNumber);
             Assert.AreEqual("D", pth[5].Reference);
-            Assert.AreEqual(3, pth[5].SequenceNumber);
+            Assert.AreEqual(2, pth[5].SequenceNumber);
             Assert.AreEqual("C", pth[6].Reference);
             Assert.AreEqual("A", pth[7].Reference);
-            Assert.AreEqual(7, pth[7].SequenceNumber);
+            Assert.AreEqual(6, pth[7].SequenceNumber);
             Assert.AreEqual("A", pth[8].Reference);
-            Assert.AreEqual(1, pth[8].SequenceNumber);
+            Assert.AreEqual(0, pth[8].SequenceNumber);
             Assert.AreEqual("A-D", pth[9].Reference);
-            Assert.AreEqual(3, pth[9].SequenceNumber);
+            Assert.AreEqual(2, pth[9].SequenceNumber);
             Assert.AreEqual("A-D", pth[10].Reference);
-            Assert.AreEqual(1, pth[10].SequenceNumber);
+            Assert.AreEqual(0, pth[10].SequenceNumber);
         }
 
         /// ------------------------------------------------------------------------------------
@@ -1009,7 +1010,7 @@ namespace SIL.Transcelerator
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-			Assert.IsFalse(pth.GetMatchingPhrases(4, 6, 1).Any());
+			Assert.IsFalse(pth.GetMatchingPhrases(4, 6).Any());
 		}
 
 		[Test]
@@ -1028,10 +1029,10 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 			pth.Sort(listSortedBy, ascending);
 
-			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			var matches = pth.GetMatchingPhrases(2, 2);
 			Assert.AreEqual(2, matches.Count);
-			Assert.AreEqual("Q1", matches[0].PhraseInUse);
-			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q2"));
 		}
 
 		[Test]
@@ -1046,10 +1047,10 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 			pth[0].IsExcluded = true;
 
-			var matches = pth.GetMatchingPhrases(2, 2, 1);
+			var matches = pth.GetMatchingPhrases(2, 2);
 			Assert.AreEqual(2, matches.Count);
-			Assert.AreEqual("Q1", matches[0].PhraseInUse);
-			Assert.AreEqual("Q2", matches[1].PhraseInUse);
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
 		}
 		#endregion
 
@@ -1119,13 +1120,13 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("Question 1? (replaced)", qBase1.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    qBase1.IsExcluded = true;
 			var addedQuestion = new Question(qBase1.QuestionInfo, "Question 2? (added)", "Yes");
-		    pth.AddQuestion(addedQuestion, 1, qBase1.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase1.SectionId, 1, qBase1.SequenceNumber + 1, mp);
 		    qBase1.AddedPhraseAfter = addedQuestion;
 
 		    var qBase4 = pth[2];
 		    Assert.AreEqual("Question 4?", qBase4.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    addedQuestion = new Question(qBase4.QuestionInfo, "Question 3? (inserted)", "No");
-		    pth.AddQuestion(addedQuestion, 1, 2, mp);
+		    pth.AddQuestion(addedQuestion, qBase4.SectionId, 1, 2, mp);
 		    qBase4.InsertedPhraseBefore = addedQuestion;
 
 			var customizations = pth.CustomizedPhrases;
@@ -1149,8 +1150,10 @@ namespace SIL.Transcelerator
 	    /// TXL-207: A question should be able to be added after an inserted question without causing them
 	    /// to get cross-linked such that a duplicate results.
 	    /// </summary>
-	    [Test]
-	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder()
+	    // ENHANCE(TXL-218): [TestCase(0)]
+	    [TestCase(1)]
+	    public void CustomizedPhrases_NewlyInsertedQuestionBeforeFirstExistingQuestionWithSubsequentAddition_NewQuestionsAreInCorrectOrder(
+		    int categoryForNewQuestions)
 	    {
 		    var cat = m_sections.Items[0].Categories[0];
 		    AddTestQuestion(cat, "Is this just a question?", "GEN 22:13", 1022013, 1022013);
@@ -1161,7 +1164,7 @@ namespace SIL.Transcelerator
 
 			var qBase1 = pth[0];
 			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
-			pth.AddQuestion(insertedQuestionBefore, 0, qBase1.SequenceNumber, mp);
+			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, categoryForNewQuestions, qBase1.SequenceNumber, mp);
 		   var customizations = pth.CustomizedPhrases;
 		   Assert.AreEqual(1, customizations.Count);
 
@@ -1169,7 +1172,7 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
 			    qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question(qBase2.QuestionInfo, "Was this question added after the inserted one?", "You bet");
-		    pth.AddQuestion(addedQuestion, 0, qBase2.SequenceNumber + 1, mp);
+		    pth.AddQuestion(addedQuestion, qBase2.SectionId, categoryForNewQuestions, qBase2.SequenceNumber + 1, mp);
 
 		    Assert.AreEqual(3, pth.UnfilteredPhraseCount);
 
@@ -1185,6 +1188,68 @@ namespace SIL.Transcelerator
             Assert.AreEqual("Was this question added after the inserted one?", customizations[i].ModifiedPhrase);
             Assert.AreEqual("You bet", customizations[i].Answer);
             Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+	    }
+
+	    [Test]
+	    public void CustomizedPhrases_InsertedQuestionWithLaterReference_NewQuestionComesBeforeBase()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+			AddTestQuestion(cat, "Had anyone else tried to help this man and his boy?", "LUK 9.40", 42009040, 42009040);
+			AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
+			AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			pth.Sort(PhrasesSortedBy.Reference, true);
+		    var qBase = pth[2];
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
+			    "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
+		    var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    qBase.InsertedPhraseBefore = addedQuestion;
+		    //qBase = added;
+		    //addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
+		    //var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    //qBase.InsertedPhraseBefore = addedQuestion;
+
+			var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+
+	    [Test]
+	    public void CustomizedPhrases_AddedQuestionWithEarlierReference_NewQuestionComesAfterBase()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+		    AddTestQuestion(cat, "Had anyone else tried to help this man and his boy?", "LUK 9.40", 42009040, 42009040);
+		    AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
+		    AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+		    pth.Sort(PhrasesSortedBy.Reference, true);
+		    var qBase = pth[2];
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
+			    "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question("LUK 9.38", 42009038, 42009038, "Is this in order?", "No");
+		    pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber + 1, mp);
+		    qBase.AddedPhraseAfter = addedQuestion;
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type);
 	    }
 
 	    [Test]
@@ -1246,22 +1311,191 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
 		    Assert.AreEqual(3, customizations.Count);
 			int i = 0;
-		    Assert.AreEqual("Question 1? (inserted)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Question 2?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 1? (inserted)", customizations[i].ModifiedPhrase);
 		    Assert.AreEqual("Yes", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type, "This is really arbitrary");
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
+		    i++;
+		    Assert.AreEqual("Question 2?", customizations[i].OriginalPhrase);
+		    Assert.AreEqual("Question 3? (added)", customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("No", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
 		    i++;
 		    Assert.AreEqual("Question 3? (added)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
-		    Assert.AreEqual("No", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
-		    i++;
-		    Assert.AreEqual("Question 4? (added)", customizations[i].OriginalPhrase);
-		    Assert.AreEqual(customizations[i].OriginalPhrase, customizations[i].ModifiedPhrase, "This insertion is not based on the question before which it was inserted because it is for a different reference");
+		    Assert.AreEqual("Question 4? (added)", customizations[i].ModifiedPhrase);
 		    Assert.AreEqual("Maybe", customizations[i].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type, "This is really arbitrary");
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
 		}
+        
+        #region TXL-216
+		[TestCase(37)]
+		[TestCase(38)]
+		[TestCase(43)]
+	    public void CustomizedPhrases_PreviouslyAddedQuestionsWithDifferentReferencesInCategoryOfPrecedingQuestion_AddedQuestionsAreAssociatedWithBaseInSameCategory(
+		    int verseForAddedQuestion)
+	    {
+		    m_sections.Items[0].Categories = new Category[2];
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Overview", IsOverview = true};
+		    var q = AddTestQuestion(cat, "What happened when Jesus and the three disciples came down from the mountain?",
+			    "LUK 9.37-43", 42009037, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"A crowd met them.", 
+			    "A man in that crowd had a son whom a spirit seized, caused him to have convulsions and would not leave him alone."};
+		    var bbCccVvv = 42009000 + verseForAddedQuestion;
+		    q = AddTestQuestion(cat, "Is this added to the overview category?", $"LUK 9:{verseForAddedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    cat = m_sections.Items[0].Categories[1] = new Category {Type = "Minutia", IsOverview = false};
+		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
 
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What happened when Jesus and the three disciples came down from the mountain?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this added to the overview category?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type);
+		}
+        
+	    [TestCase(37, 37)]
+	    [TestCase(38, 38)]
+	    [TestCase(38, 43)]
+	    [TestCase(43, 43)]
+	    [TestCase(41, 43)]
+	    [TestCase(41, 42)]
+	    public void CustomizedPhrases_PreviouslyAddedQuestionsWithDifferentReferencesInSectionOfPrecedingQuestion_AddedQuestionsAreAssociatedWithBaseInSameSectionAndCategory(
+		    int startVerseForAddedQuestion, int endVerseForAddedQuestion)
+	    {
+		    m_sections.Items = new Section[2];
+		    m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+			    Heading = "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.",
+			    StartRef = 42009037,
+			    EndRef = 4200943
+		    };
+		    m_sections.Items[1] = new Section
+		    {
+			    Categories = new Category[1],
+			    Heading = "Luke 9:43b-45 Jesus says someone will betray him to his enemies.",
+			    StartRef = 42009043,
+			    EndRef = 4200945
+		    };
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var q = AddTestQuestion(cat, "What did all the crowd think about this?",
+			    "LUK 9.43", 42009043, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)"};
+		    cat = m_sections.Items[1].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var verseBridgeSuffix = startVerseForAddedQuestion == endVerseForAddedQuestion ? null : "-" + endVerseForAddedQuestion; 
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category of the second section?",
+			    $"LUK 9:{startVerseForAddedQuestion}{verseBridgeSuffix}",
+			    42009000 + startVerseForAddedQuestion, 42009000 + endVerseForAddedQuestion);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "What new information did Jesus tell his disciples?", "LUK 9.43-44", 42009043, 42009044);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What new information did Jesus tell his disciples?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category of the second section?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        
+		[TestCase(37)]
+		[TestCase(38)]
+		[TestCase(43)]
+	    public void CustomizedPhrases_PreviouslyInsertedQuestionsWithDifferentReferencesInCategoryOfFollowingQuestion_InsertedQuestionsAreAssociatedWithBaseInSameCategory(
+		    int verseForInsertedQuestion)
+	    {
+		    m_sections.Items[0].Categories = new Category[2];
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Overview", IsOverview = true};
+		    var q = AddTestQuestion(cat, "What happened when Jesus and the three disciples came down from the mountain?",
+			    "LUK 9.37-43", 42009037, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"A crowd met them.", 
+			    "A man in that crowd had a son whom a spirit seized, caused him to have convulsions and would not leave him alone."};
+		    cat = m_sections.Items[0].Categories[1] = new Category {Type = "Minutia", IsOverview = false};
+		    var bbCccVvv = 42009000 + verseForInsertedQuestion;
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category?", $"LUK 9:{verseForInsertedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "One man in the crowd was shouting to Jesus. About what was he shouting?", "LUK 9.38-40", 42009038, 42009040);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        
+		[TestCase(43)]
+		[TestCase(44)]
+		[TestCase(45)]
+	    public void CustomizedPhrases_PreviouslyInsertedQuestionsWithDifferentReferencesInSectionOfFollowingQuestion_InsertedQuestionsAreAssociatedWithBaseInSameSectionAndCategory(
+		    int verseForInsertedQuestion)
+	    {
+		    m_sections.Items = new Section[2];
+		    m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+			    Heading = "Luke 9:37-43a Jesus ordered an evil spirit to leave a boy, and it did.",
+			    StartRef = 42009037,
+			    EndRef = 4200943
+		    };
+		    m_sections.Items[1] = new Section
+		    {
+			    Categories = new Category[1],
+			    Heading = "Luke 9:43b-45 Jesus says someone will betray him to his enemies.",
+			    StartRef = 42009043,
+			    EndRef = 4200945
+		    };
+		    var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var q = AddTestQuestion(cat, "What did all the crowd think about this?",
+			    "LUK 9.43", 42009043, 42009043);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] {"They were all astounded/amazed at the great power of God to cast out such a powerful demon. (43a)"};
+		    cat = m_sections.Items[1].Categories[0] = new Category {Type = "Minutia", IsOverview = false};
+		    var bbCccVvv = 42009000 + verseForInsertedQuestion;
+		    q = AddTestQuestion(cat, "Is this inserted into the Minutia category of the second section?",
+			    $"LUK 9:{verseForInsertedQuestion}", bbCccVvv, bbCccVvv);
+			q.IsUserAdded = true;
+		    q.Answers = new[] { "I hope so." };
+		    q = AddTestQuestion(cat, "What new information did Jesus tell his disciples?", "LUK 9.43-44", 42009043, 42009044);
+		    q.IsUserAdded = false;
+		    q.Answers = new[] { "He needed help." };
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
+		    Assert.AreEqual(1, customizations.Count);
+		    Assert.AreEqual("What new information did Jesus tell his disciples?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual("Is this inserted into the Minutia category of the second section?", customizations[0].ModifiedPhrase);
+		    Assert.AreEqual("I hope so.", customizations[0].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+		}
+        #endregion
         #endregion
 
         #region AddQuestion Tests
@@ -1303,7 +1537,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Wherefore cometh thou?", "I'm just bored, I guess."),
-				1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfQuestionBeforeNewQuestion + 1, mp);
 
 			Assert.AreEqual("Wherefore cometh thou?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(basedOnQuestion, pth[3], "Based on question should still be in same position in list.");
@@ -1333,7 +1567,7 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// ------------------------------------------------------------------------------------
 	    [Test]
-		public void AddQuestion_Insert_NoFilterSet_DefaultSorting_ExistingKeyTermsAndsParts_NewPhraseAdded()
+		public void AddQuestion_Insert_NoFilterSet_DefaultSorting_ExistingKeyTermsAndParts_NewPhraseAdded()
 	    {
 			AddMockedKeyTerm("God");
 			AddMockedKeyTerm("Paul");
@@ -1341,17 +1575,16 @@ namespace SIL.Transcelerator
 			AddMockedKeyTerm("say", null);
 
 			var cat = m_sections.Items[0].Categories[0];
-			var otherQuestions = new List<Question>(6);
-			otherQuestions.Add(AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
-				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul"));
-			otherQuestions.Add(AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
-				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */));
-			otherQuestions.Add(AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */));
-			otherQuestions.Add(AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
-				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today"));
-			otherQuestions.Add(AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
-				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish"));
-			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
+			AddTestQuestion(cat, "This would God have me to say with respect to Paul?", "A", 1, 1,
+				"this would", "kt:god", "kt:have", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "kt:paul");
+			AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2,
+				"what is" /* 3 */, "kt:paul", "asking", "me to" /* 3 */, "kt:say", "with respect to" /* 3 */, "that dog" /* 4 */);
+			AddTestQuestion(cat, "that dog", "C", 3, 3, "that dog" /* 4 */);
+			AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4,
+				"is it okay for", "kt:paul", "me to" /* 3 */, "talk", "with respect to" /* 3 */, "kt:god", "today");
+			AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5,
+				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
+			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
 			var qp = new QuestionProvider(GetParsedQuestions());
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
@@ -1359,11 +1592,10 @@ namespace SIL.Transcelerator
 
 			var basedOnQuestion = pth[3];
 			var sequenceNumberOfNewQuestion = basedOnQuestion.SequenceNumber;
-			otherQuestions.Remove(basedOnQuestion.QuestionInfo);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "What is Paul saying?", null),
-				1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("What is Paul saying?", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase.SequenceNumber + 1, basedOnQuestion.SequenceNumber);
@@ -1371,14 +1603,11 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(originalCount + 1, pth.UnfilteredPhraseCount);
 			Assert.AreEqual(originalCount + 1, pth.FilteredPhraseCount);
 
+			var expectedSeq = 0;
+			foreach (var tp in pth.UnfilteredPhrases)
+				Assert.AreEqual(expectedSeq++, tp.SequenceNumber);
 			foreach (var tp in pth.Phrases)
-			{
 				Assert.IsTrue(pth.UnfilteredPhrases.Contains(tp));
-				if (otherQuestions.Contains(tp.QuestionInfo))
-					Assert.AreEqual(tp.Reference[0] - 'A' + 1, tp.SequenceNumber);
-			}
-			for (int i = 0; i < pth.FilteredPhraseCount; i++)
-				Assert.IsTrue(pth.UnfilteredPhrases.Contains(pth[i]));
 
 			var translatableParts = newPhrase.TranslatableParts.ToList();
 			Assert.AreEqual(2, translatableParts.Count);
@@ -1417,7 +1646,7 @@ namespace SIL.Transcelerator
 			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
 			pth.Filter("this", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -1429,7 +1658,7 @@ namespace SIL.Transcelerator
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 			TranslatablePhrase newPhrase = pth.AddQuestion(new Question(basedOnQuestion.QuestionInfo, "Explain this with respect to that.", null),
-				1, sequenceNumberOfNewQuestion, mp);
+				basedOnQuestion.SectionId, 1, sequenceNumberOfNewQuestion, mp);
 
 			Assert.AreEqual("Explain this with respect to that.", newPhrase.QuestionInfo.Text);
 			Assert.AreEqual(newPhrase, pth[0]);
@@ -1464,19 +1693,25 @@ namespace SIL.Transcelerator
 	    #endregion
 
 		#region AttachNewQuestionToAdjacentPhrase Tests
+        // This is a test scenario that does not correspond to something that could really happen,
+        // because the actual TXL data has Overview questions for the first section in Genesis.
 		[Test]
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsFirstInList_AttachedAsInsertBefore()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+            Assert.IsFalse(m_sections.Items[0].Categories.Single().IsOverview,
+	            "Setup problem: This test want to insert into a (non-existent) category with a " +
+	            "lower index than that of the first test question");
+
+			AddTestQuestion(cat, "Q1", "GEN 1:1", 001001001, 001001001, "Q1");
+			AddTestQuestion(cat, "Q2", "GEN 2:2", 001002002, 001002002, "Q2");
+			AddTestQuestion(cat, "Q3", "GEN 2:2-3", 001002002, 001002003, "Q3");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
 
-			var newQuestion = new Question("GEN 1:1", 1, 1, "Why is this the first question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newQuestion = new Question("GEN 1:1", 001001001, 001001001, "Why is this the first question?", null);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 0, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q1 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
@@ -1489,63 +1724,26 @@ namespace SIL.Transcelerator
 		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsLastInList_AttachedAsAddedAfter()
 		{
 			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
+			AddTestQuestion(cat, "Q1", "REV 20:9", 66020009, 66020009, "Q1");
+			AddTestQuestion(cat, "Q2", "REV 20:9", 66020009, 66020009, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 20:11-12", 66020011, 66020012, "Q3");
 
 			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = new PhraseTranslationHelper(qp);
+			foreach (var phrase in pth.UnfilteredPhrases)
+			{
+				Assert.AreEqual(0, phrase.SectionId, "Setup sanity check");
+				Assert.AreEqual(1, phrase.Category, "Setup sanity check");
+			}
 
 			var newQuestion = new Question("REV 20:10-12", 66020010, 66020012, "Why is this the last question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 2 /* new category for this section*/, 0);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q3 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
 			Assert.AreEqual("Q3", q3.PhraseInUse);
 			Assert.AreEqual(q3.AddedPhraseAfter, newQuestion);
 			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
-		}
-
-		[Test]
-		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsPreceedingQuestion_AttachedAsAddedAfter()
-		{
-			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
-
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-
-			var newQuestion = new Question("MAT 6:4", 40006004, 40006004, "Please explain.", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
-			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
-
-			var q2 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
-			Assert.AreEqual("Q2", q2.PhraseInUse);
-			Assert.AreEqual(q2.AddedPhraseAfter, newQuestion);
-			Assert.IsTrue(pth.Phrases.All(p => p.InsertedPhraseBefore == null));
-		}
-
-		[Test]
-		public void AttachNewQuestionToAdjacentPhrase_NewQuestionIsInSameChapterAsFollowingQuestion_AttachedAsInsertBefore()
-		{
-			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2:2", 40002002, 400020022, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 6:2-7", 40006002, 40006007, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 66006004, 66006005, "Q3");
-
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-
-			var newQuestion = new Question("MAT 6:1", 40006001, 40006001, "How does this chapter start?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 1, 0);
-			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
-
-			var q2 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
-			Assert.AreEqual("Q2", q2.PhraseInUse);
-			Assert.AreEqual(q2.InsertedPhraseBefore, newQuestion);
-			Assert.IsTrue(pth.Phrases.All(p => p.AddedPhraseAfter == null));
 		}
 		#endregion
 
@@ -3561,12 +3759,18 @@ namespace SIL.Transcelerator
 		/// forms.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetPhrase_MatchesAlternate_GetsIt()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetPhrase_MatchesAlternate_GetsIt(bool hiddenAlternative)
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			var q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
-			q1.AlternateForms = new[] { "Who was the adult male person?", "Who was that man?", "Who was the gentleman?" };
+			q1.Alternatives = new[]
+			{ 
+				new AlternativeForm {Text = "Who was the adult male person?"}, 
+				new AlternativeForm {Text = "Who was that man?", Hide = hiddenAlternative},
+				new AlternativeForm {Text = "Who was the gentleman?"}
+			};
 			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
 			AddTestQuestion(cat, "Who was that man?", "B", 2, 2, "who was the man");
 
@@ -3691,6 +3895,179 @@ namespace SIL.Transcelerator
 			Assert.IsNull(pth.GetPhrase(null, "Who was the manager?"));
 		}
 		#endregion
+
+        #region ComparePhraseReferences tests
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_QuestionComparedToItself_ReturnsZero(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, a, ascending ? 1 : -1);
+		    Assert.AreEqual(0, result);
+        }
+
+        private static void VerifyComparePhraseReferencesALessThanB(bool ascending, TranslatablePhrase a, TranslatablePhrase b)
+        {
+	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, b, ascending ? 1 : -1);
+	        if (ascending)
+		        Assert.That(result < 0);
+	        else
+		        Assert.That(result > 0);
+	        // Repeat with parameters switched
+	        result = PhraseTranslationHelper.ComparePhraseReferences(b, a, ascending ? 1 : -1);
+	        if (ascending)
+		        Assert.That(result > 0);
+	        else
+		        Assert.That(result < 0);
+        }
+
+        [TestCase(1, 1, 1, 2, 1, 1, true)]
+        [TestCase(1, 1, 1, 2, 1, 1, false)]
+        [TestCase(1, 1, 1, 1, 2, 1, true)]
+        [TestCase(1, 1, 1, 1, 2, 1, false)]
+        [TestCase(1, 1, 1, 1, 1, 2, true)]
+        [TestCase(1, 1, 1, 1, 1, 2, false)]
+        public void ComparePhraseReferences_QuestionsWithIdenticalReferencesButDifferentIndices_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence,
+	        bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_QuestionsWithDifferentStartRefs_SortedByStartRef(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null), 1, 1, 2);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Is this an overview question?", null), 1, 0, 1);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhraseReferences_QuestionsInDifferentSectionsSameStartRefs_SortedByEndRef(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
+        }
+        #endregion
+
+        #region ComparePhrasesByIndexedOrder tests
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ComparePhrasesByIndexedOrder_QuestionComparedToItself_ReturnsZero(bool ascending)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(a, a);
+	        Assert.AreEqual(0, result);
+        }
+
+        private static void VerifyComparePhrasesByIndexedOrderALessThanB(TranslatablePhrase a, TranslatablePhrase b)
+        {
+	        var result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(a, b);
+	        Assert.That(result < 0);
+	        // Repeat with parameters switched
+	        result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(b, a);
+	        Assert.That(result > 0);
+        }
+
+        [TestCase(1, 1, 1, 2, 1, 1)]
+        [TestCase(1, 1, 1, 1, 2, 1)]
+        [TestCase(1, 1, 1, 1, 1, 2)]
+        public void ComparePhrasesByIndexedOrder_QuestionsWithIdenticalReferencesButDifferentIndices_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [TestCase(1, 1, 1, 2, 1, 1)]
+        [TestCase(1, 1, 1, 1, 2, 1)]
+        [TestCase(1, 1, 1, 1, 1, 2)]
+        public void ComparePhrasesByIndexedOrder_QuestionsWithDifferentStartRefs_SortedByIndex(
+	        int aSection, int aCategory, int aSequence,
+	        int bSection, int bCategory, int bSequence)
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this question out of verse order?", null),
+		        aSection, aCategory, aSequence);
+	        var b = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Is this a summary question?", null),
+		        bSection, bCategory, bSequence);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [Test]
+        public void ComparePhrasesByIndexedOrder_QuestionsInDifferentSectionsSameStartRefs_SortedBySection()
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [TestCase(001001001, 001001002, 001001002, 001001002, true)]
+        [TestCase(001001001, 001001002, 001001002, 001001002, false)]
+        [TestCase(001001002, 001001002, 001001001, 001001002, true)]
+        [TestCase(001001002, 001001002, 001001001, 001001002, false)]
+        [TestCase(001001001, 001001005, 001001002, 001001002, true)]
+        [TestCase(001001001, 001001005, 001001002, 001001002, false)]
+        [TestCase(001001002, 001001003, 001001002, 001001006, true)]
+        [TestCase(001001002, 001001003, 001001002, 001001006, false)]
+        [TestCase(001001005, 001001007, 001001002, 001001006, true)]
+        [TestCase(001001005, 001001007, 001001002, 001001006, false)]
+        [TestCase(001001006, 001001008, 001001002, 001001006, true)]
+        [TestCase(001001006, 001001008, 001001002, 001001006, false)]
+        public void ComparePhrasesByIndexedOrder_QuestionsWithOverlappingRefs_SortedBySequenceNumber(
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool differByCategory)
+        {
+	        int bCategory = differByCategory ? 1 : 0;
+	        int bSequence = differByCategory ? 1 : 2;
+	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
+	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 6, 0, 1);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 6, bCategory, bSequence);
+            VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [TestCase(001001001, 001001002, 001001003, 001001003, true)]
+        [TestCase(001001001, 001001002, 001001003, 001001003, false)]
+        [TestCase(001001003, 001001003, 001001001, 001001002, true)]
+        [TestCase(001001003, 001001003, 001001001, 001001002, false)]
+        [TestCase(001001001, 001001005, 001001006, 001001006, true)]
+        [TestCase(001001001, 001001005, 001001006, 001001006, false)]
+        [TestCase(001001002, 001001003, 001001004, 001001006, true)]
+        [TestCase(001001002, 001001003, 001001004, 001001006, false)]
+        public void ComparePhrasesByIndexedOrder_NonOverlappingRefs_SortedBySequenceNumber(
+	        int startRefA, int endRefA, int startRefB, int endRefB, bool differByCategory)
+        {
+	        int bCategory = differByCategory ? 1 : 0;
+	        int bSequence = differByCategory ? 1 : 2;
+	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
+	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 4, 0, 1);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 4, bCategory, bSequence);
+            VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+
+        [Test]
+        public void ComparePhrasesByIndexedOrder_DifferentBooks_SortedByBookNumber()
+        {
+	        var a = new TranslatablePhrase(new Question("GEN 1.1", 1001001, 1001001,
+		        "At what time did these events happen?", null), 4, 1, 0);
+	        var b = new TranslatablePhrase(new Question("ACT 1:1-2", 44001001, 44001002, 
+			    "To whom did the writer of Acts address this book?", null), 0, 1, 0);
+	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
+        }
+        #endregion
 
         #region Private helper methods
         /// ------------------------------------------------------------------------------------

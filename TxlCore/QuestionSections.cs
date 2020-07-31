@@ -10,7 +10,6 @@
 // File: QuestionSections.cs
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Schema;
@@ -48,7 +47,7 @@ namespace SIL.Transcelerator
 	[DebuggerStepThrough]
 	[DesignerCategory("code")]
 	[XmlType(AnonymousType = true)]
-	public class Section : IRefRange, ICloneable
+	public class Section : IRefRange, ISectionInfo, ICloneable
 	{
 		[XmlAttribute("heading")]
 		public string Heading { get; set; }
@@ -75,40 +74,11 @@ namespace SIL.Transcelerator
 				clone.Categories[index] = Categories[index].Clone();
 			return clone;
 		}
-	}
-	#endregion
 
-	#region class Category
-	[Serializable]
-	[DebuggerStepThrough]
-	[DesignerCategory("code")]
-	[XmlType(AnonymousType = true)]
-	public class Category : ICloneable
-	{
-		[XmlAttribute("overview")]
-		public bool IsOverview { get; set; }
-
-		[XmlAttribute("type")]
-		public string Type { get; set; }
-
-	    private List<Question> m_questions;
-		[XmlElement]
-        public List<Question> Questions => m_questions ?? (m_questions = new List<Question>());
-
-        public Category Clone() => (Category)((ICloneable)this).Clone();
-
-        object ICloneable.Clone()
-        {
-	        var clone = (Category)MemberwiseClone();
-	        if (m_questions != null)
-	        {
-				clone.m_questions = new List<Question>(m_questions.Count);
-		        foreach (var q in m_questions)
-			        clone.m_questions.Add(q.Clone());
-	        }
-
-	        return clone;
-        }
+		public override string ToString()
+		{
+			return Heading;
+		}
 	}
 	#endregion
 }

@@ -43,10 +43,8 @@ namespace SIL.Transcelerator
 		#region Data members
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
-		private readonly List<SectionInfo> m_sections;
-		private BCVRef m_startRef = new BCVRef();
-		private BCVRef m_endRef = new BCVRef();
-        private readonly IScrExtractor m_scrExtractor;
+		private readonly IList<ISectionInfo> m_sections;
+		private readonly IScrExtractor m_scrExtractor;
 		private List<string> m_lwcLocaleIds;
 		private LocalizationsFileAccessor m_dataLoc;
 		private string m_fmtChkEnglishQuestions;
@@ -63,7 +61,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
             string defaultFolder, IEnumerable<int> canonicalBookIds,
-            IEnumerable<SectionInfo> sections,
+            IList<ISectionInfo> sections,
 			IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
 		{
 		    m_scrExtractor = scrExtractor;
@@ -87,7 +85,7 @@ namespace SIL.Transcelerator
             }
 
 			LoadBooks(canonicalBookIds);
-			m_sections = sections.ToList();
+			m_sections = sections;
 			LoadSectionCombos();
 			LoadLWCCombo(availableAdditionalLWCs);
 
@@ -116,6 +114,8 @@ namespace SIL.Transcelerator
 			SetDefaultCheckedStateForLWCOptions();
 			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
 			m_rdoSkipUntranslated.Checked = !m_rdoUseOriginal.Checked && Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated; // These two settings should never be able to both be true, but just to be safe.
+
+			m_rdoOutputPassageForOutOfOrderQuestions.Checked = Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions;
 
             m_lblFolder.Text = string.IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
                 Properties.Settings.Default.GenerateTemplateFolder;
@@ -205,9 +205,27 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Properties
-		public BCVRef VerseRangeStartRef => m_startRef;
+		public string SelectedBook => m_rdoWholeBook.Checked ? (string)m_cboBooks.SelectedItem : null;
 
-		public BCVRef VerseRangeEndRef => m_endRef;
+		// ENHANCE: It's less than ideal to provide the selected "sections" in terms of
+		// start and end refs because there are couple sections that start/end mid-verse.
+		// If the user selects one of these as a single section or starts/ends the section
+		// range in one of these, the generated script is going to include one of more
+		// questions from the adjacent section. From a task-oriented perspective this is
+		// unlikely. Unfortunately, because the section IDs are not in ascending with
+		// respect to the canonical order of Scripture books, they cannot be treated as
+		// indices for the purpose of establishing a range, and although the sections know
+		// which questions they own, the questions themselves do not hold their section IDs.
+		// The corresponding TranslatablePhrase objects hold that information. To fix this
+		// would require either a fairly expensive lookup:
+		// (((Section)sectionInfo).Categories[0].Questions[0] --- helper ---> phrase.SectionId
+		// OR a change to QuestionProvider to supply the questions in canonical order.
+		// To make this easier, it would obviously make sense to just re-order the books in
+		// the source question file. But I'm not sure if this would wreak havoc on the
+		// localization files (or perhaps something else).
+		public BCVRef VerseRangeStartRef { get; private set; } = new BCVRef();
+
+		public BCVRef VerseRangeEndRef { get; private set; } = new BCVRef();
 
 		public string FileName
 		{
@@ -237,6 +255,9 @@ namespace SIL.Transcelerator
 
 		public string NormalizedTitle => m_txtTitle.Text.Normalize(NormalizationForm.FormC);
 		public string LwcLocale => m_dataLoc?.Locale ?? "en";
+
+		public bool OutputFullPassageAtStartOfSection => m_chkPassageBeforeOverview.Checked;
+		public bool OutputPassageForOutOfOrderQuestions => m_rdoOutputPassageForOutOfOrderQuestions.Checked;
 		#endregion
 
 		#region Event handlers
@@ -285,8 +306,8 @@ namespace SIL.Transcelerator
 			if (m_cboSection.SelectedIndex < 0)
 				return;
 			var info = m_sections[m_cboSection.SelectedIndex];
-			m_startRef = new BCVRef(info.StartRef);
-			m_endRef = new BCVRef(info.EndRef);
+			VerseRangeStartRef = new BCVRef(info.StartRef);
+			VerseRangeEndRef = new BCVRef(info.EndRef);
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(info.Heading), m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
@@ -432,6 +453,7 @@ namespace SIL.Transcelerator
             Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
 			Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated = m_rdoSkipUntranslated.Checked;
 
+			Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions = m_rdoOutputPassageForOutOfOrderQuestions.Checked;
 
             Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
 
@@ -498,7 +520,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0)
 				return false;
-			m_startRef = m_sections[m_cboStartSection.SelectedIndex].StartRef;
+			VerseRangeStartRef = m_sections[m_cboStartSection.SelectedIndex].StartRef;
 			return true;
 		}
 
@@ -506,7 +528,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboEndSection.SelectedIndex < 0)
 				return false;
-			m_endRef = m_sections[m_cboEndSection.SelectedIndex].EndRef;
+			VerseRangeEndRef = m_sections[m_cboEndSection.SelectedIndex].EndRef;
 			return true;
 		}
 
@@ -514,7 +536,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0)
 				return;
-			string sRef = BCVRef.MakeReferenceString(m_startRef, m_endRef, ".", "-");
+			string sRef = BCVRef.MakeReferenceString(VerseRangeStartRef, VerseRangeEndRef, ".", "-");
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, sRef, m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}

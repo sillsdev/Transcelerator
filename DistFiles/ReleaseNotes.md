@@ -1,5 +1,11 @@
-﻿﻿## 1.4.0 21 July 2020
+﻿## 1.4.0 31 July 2020
 * Added option to output verse numbers in script (Note: If using an external CSS file, to get verse numbers to appear superscripted, you will either need to allow Transcelerator to overwrite your CSS file or edit the existing one to add verse {vertical-align: super; font-size: .80em; color:DimGray;}.
+* Major improvements to question content and script generation.
+* New option to control how out-of-order detail questions are handled in script.
+* Improvements to New Question dialog, including ability to add questions out of order.
+
+## 1.3.17 11 May 2020
+* Added missing questions for Luke 22-24.
 
 ## 1.3.11 16 April 2019
 * Added Installer support for Paratext 9.

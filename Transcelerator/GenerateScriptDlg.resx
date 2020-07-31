@@ -438,6 +438,39 @@
   <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <metadata name="label10.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 8</value>
+  </data>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 13</value>
+  </data>
+  <data name="label10.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="label10.Text" xml:space="preserve">
+    <value>When Detail Questions are out of Order:</value>
+  </data>
+  <data name="&gt;&gt;label10.Name" xml:space="preserve">
+    <value>label10</value>
+  </data>
+  <data name="&gt;&gt;label10.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="m_rdoWholeBook.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -661,13 +694,13 @@
     <value>8, 14</value>
   </data>
   <data name="m_chkPassageBeforeOverview.Size" type="System.Drawing.Size, System.Drawing">
-    <value>217, 17</value>
+    <value>241, 17</value>
   </data>
   <data name="m_chkPassageBeforeOverview.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="m_chkPassageBeforeOverview.Text" xml:space="preserve">
-    <value>Include Entire Passage Before &amp;Overview</value>
+    <value>&amp;Include Entire Passage at the Start of Section</value>
   </data>
   <data name="&gt;&gt;m_chkPassageBeforeOverview.Name" xml:space="preserve">
     <value>m_chkPassageBeforeOverview</value>
@@ -799,7 +832,7 @@
     <value>256, 6</value>
   </data>
   <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>246, 115</value>
+    <value>246, 102</value>
   </data>
   <data name="panel1.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1546,6 +1579,117 @@
     <value>tabOptions</value>
   </data>
   <data name="&gt;&gt;m_chkIncludeVerseNumbers.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="panel3.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Right</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 29</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 17</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="m_rdoDisplayReferenceForOutOfOrderQuestions.Text" xml:space="preserve">
+    <value>&amp;Just Display the Reference</value>
+  </data>
+  <data name="&gt;&gt;m_rdoDisplayReferenceForOutOfOrderQuestions.Name" xml:space="preserve">
+    <value>m_rdoDisplayReferenceForOutOfOrderQuestions</value>
+  </data>
+  <data name="&gt;&gt;m_rdoDisplayReferenceForOutOfOrderQuestions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rdoDisplayReferenceForOutOfOrderQuestions.Parent" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;m_rdoDisplayReferenceForOutOfOrderQuestions.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="label8.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="label8.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="label8.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 23</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 2</value>
+  </data>
+  <data name="label8.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="&gt;&gt;label8.Name" xml:space="preserve">
+    <value>label8</value>
+  </data>
+  <data name="&gt;&gt;label8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label8.Parent" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;label8.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 52</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 17</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="m_rdoOutputPassageForOutOfOrderQuestions.Text" xml:space="preserve">
+    <value>&amp;Output the Text of the Passage</value>
+  </data>
+  <data name="&gt;&gt;m_rdoOutputPassageForOutOfOrderQuestions.Name" xml:space="preserve">
+    <value>m_rdoOutputPassageForOutOfOrderQuestions</value>
+  </data>
+  <data name="&gt;&gt;m_rdoOutputPassageForOutOfOrderQuestions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rdoOutputPassageForOutOfOrderQuestions.Parent" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;m_rdoOutputPassageForOutOfOrderQuestions.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="panel3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>256, 114</value>
+  </data>
+  <data name="panel3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 76</value>
+  </data>
+  <data name="panel3.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="&gt;&gt;panel3.Name" xml:space="preserve">
+    <value>panel3</value>
+  </data>
+  <data name="&gt;&gt;panel3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel3.Parent" xml:space="preserve">
+    <value>tabOptions</value>
+  </data>
+  <data name="&gt;&gt;panel3.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="m_cboUseLWC.Items" xml:space="preserve">

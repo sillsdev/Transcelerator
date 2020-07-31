@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -93,7 +94,9 @@ namespace SIL.Transcelerator
 		public string[] Notes { get; set; }
 
         [XmlElement("Alternative", Form = XmlSchemaForm.Unqualified, IsNullable = true)]
-        public string[] AlternateForms { get; set; }
+        public AlternativeForm[] Alternatives { get; set; }
+
+        public IEnumerable<string> AlternativeForms => Alternatives?.Select(a => a.Text);
 
         protected List<ParsedPart> m_parsedParts;
 		private bool m_isUserAdded;
@@ -141,7 +144,7 @@ namespace SIL.Transcelerator
 		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(Question baseQuestion, string newQuestion, string answer) :
+		public Question(IQuestionKey baseQuestion, string newQuestion, string answer) :
 			this(baseQuestion.ScriptureReference, baseQuestion.StartRef, 
 			baseQuestion.EndRef, newQuestion, answer)
 		{
@@ -190,11 +193,11 @@ namespace SIL.Transcelerator
 				for (var index = 0; index < Notes.Length; index++)
 					clone.Notes[index] = Notes[index];
 			}
-			if (AlternateForms != null)
+			if (AlternativeForms != null)
 			{
-				clone.Answers = new string[AlternateForms.Length];
-				for (var index = 0; index < AlternateForms.Length; index++)
-					clone.AlternateForms[index] = AlternateForms[index];
+				clone.Alternatives = new AlternativeForm[Alternatives.Length];
+				for (var index = 0; index < Alternatives.Length; index++)
+					clone.Alternatives[index] = Alternatives[index].Clone();
 			}
 			
 			if (InsertedQuestionBefore != null)

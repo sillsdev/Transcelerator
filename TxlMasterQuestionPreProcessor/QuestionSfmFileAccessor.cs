@@ -388,7 +388,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
 		/// ------------------------------------------------------------------------------------
 		public static void GenerateAlternateForms(QuestionSections sections, Dictionary<string, string[]> alternatives)
 		{
-			string[] altForms;
 			foreach (Section section in sections.Items)
 			{
 			    foreach (Category category in section.Categories)
@@ -397,16 +396,14 @@ namespace SIL.TxlMasterQuestionPreProcessor
 						continue;
 					foreach (Question q in category.Questions)
 					{
-						if (alternatives != null && alternatives.TryGetValue(q.Text, out altForms))
-							q.AlternateForms = altForms;
+						if (alternatives != null && alternatives.TryGetValue(q.Text, out var altForms))
+							q.Alternatives = altForms.Select(f => new AlternativeForm {Text=f}).ToArray();
 						else
 						{
-							QuestionProviderAlternateFormBuilder bldr = new QuestionProviderAlternateFormBuilder(q.Text);
+							var bldr = new QuestionProviderAlternateFormBuilder(q.Text);
 							if (bldr.Alternatives.Count > 1)
 							{
-								q.AlternateForms = new string[bldr.Alternatives.Count];
-								for (int index = 0; index < bldr.Alternatives.Count; index++)
-									q.AlternateForms[index] = bldr.Alternatives[index];
+								q.Alternatives = bldr.Alternatives.Select(f => new AlternativeForm {Text = f}).ToArray();
 							}
 						}
 					}
