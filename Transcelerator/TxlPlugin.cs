@@ -11,6 +11,7 @@ using System;
 using System.AddIn;
 using System.AddIn.Pipeline;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -18,6 +19,8 @@ using System.Threading;
 using System.Windows.Forms;
 using AddInSideViews;
 using DesktopAnalytics;
+using L10NSharp;
+using SIL.IO;
 using SIL.Keyboarding;
 using SIL.Reporting;
 using SIL.Scripture;
@@ -36,6 +39,7 @@ namespace SIL.Transcelerator
 	public class TxlPlugin : IParatextAddIn2
 	{
 		public const string pluginName = "Transcelerator";
+		public const string emailAddress = "transcelerator_feedback@sil.org";
 	    private TxlSplashScreen splashScreen;
 		private UNSQuestionsDialog unsMainWindow;
 		private IHost host;
@@ -115,6 +119,7 @@ namespace SIL.Transcelerator
 					InitializeErrorHandling(projectName);
 
                     const string kMajorList = "Major";
+                    string preferredUiLocale = "en";
 
 					UNSQuestionsDialog formToShow;
 					lock (this)
@@ -194,7 +199,7 @@ namespace SIL.Transcelerator
 						catch (Exception)
 						{
 						}
-						string preferredUiLocale = "en";
+						
 						try
 						{
 							preferredUiLocale = host.GetApplicationSetting("InterfaceLanguageId");
@@ -236,6 +241,9 @@ namespace SIL.Transcelerator
 					{
 						Analytics.Track("Startup", new Dictionary<string, string>
 						{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
+
+						SetUpLocalization(preferredUiLocale);
+
 						formToShow.ShowDialog();
 					}
 					ptHost.WriteLineToLog(this, "Closing " + pluginName);
@@ -289,7 +297,7 @@ namespace SIL.Transcelerator
 		private void InitializeErrorHandling(string projectName)
 		{
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
+			ErrorReport.EmailAddress = emailAddress;
 			ErrorReport.AddStandardProperties();
 			// The version that gets added to the report by default is for the entry assembly, which is
 			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very
@@ -302,6 +310,19 @@ namespace SIL.Transcelerator
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
 			ErrorReport.AddProperty("Project Name", projectName);
 			ExceptionHandler.Init(new WinFormsExceptionHandler());
+		}
+		
+		private static void SetUpLocalization(string desiredUiLangId)
+		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var attributes = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+			var company = attributes.Length == 0 ? "SIL" : ((AssemblyCompanyAttribute)attributes[0]).Company;
+			var installedStringFileFolder = FileLocationUtilities.GetDirectoryDistributedWithApplication("localization");
+			var relativeSettingPathForLocalizationFolder = Path.Combine(company, pluginName);
+			var version = assembly.GetName().Version.ToString();
+			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, version,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(FileLocationUtilities.GetFileDistributedWithApplication("TXL no TXL.ico")), emailAddress,
+				"Transcelerator");
 		}
 	}
 }

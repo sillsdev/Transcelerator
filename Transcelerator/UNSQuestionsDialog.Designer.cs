@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2020, SIL International.   
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -125,7 +125,7 @@ namespace SIL.Transcelerator
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.btnSave = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+			this.toolStripLabelQuestionFilter = new System.Windows.Forms.ToolStripLabel();
 			this.txtFilterByPart = new System.Windows.Forms.ToolStripTextBox();
 			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnSendScrReferences = new System.Windows.Forms.ToolStripButton();
@@ -139,6 +139,7 @@ namespace SIL.Transcelerator
 			this.m_lblComments = new System.Windows.Forms.Label();
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -146,6 +147,7 @@ namespace SIL.Transcelerator
 			this.m_mainMenu.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
 			this.m_pnlAnswersAndComments.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// mnuViewDebugInfo
@@ -153,6 +155,9 @@ namespace SIL.Transcelerator
 			mnuViewDebugInfo.Checked = true;
 			mnuViewDebugInfo.CheckOnClick = true;
 			mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(mnuViewDebugInfo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(mnuViewDebugInfo, null);
+			this.l10NSharpExtender1.SetLocalizingId(mnuViewDebugInfo, "MainWindow.mnuViewDebugInfo");
 			mnuViewDebugInfo.Name = "mnuViewDebugInfo";
 			resources.ApplyResources(mnuViewDebugInfo, "mnuViewDebugInfo");
 			mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
@@ -166,6 +171,9 @@ namespace SIL.Transcelerator
 			// mnuViewAnswers
 			// 
 			this.mnuViewAnswers.CheckOnClick = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewAnswers, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewAnswers, "MainWindow.mnuViewAnswers");
 			this.mnuViewAnswers.Name = "mnuViewAnswers";
 			resources.ApplyResources(this.mnuViewAnswers, "mnuViewAnswers");
 			this.mnuViewAnswers.CheckedChanged += new System.EventHandler(this.mnuViewAnswersColumn_CheckedChanged);
@@ -201,6 +209,9 @@ namespace SIL.Transcelerator
 			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
 			resources.ApplyResources(this.dataGridUns, "dataGridUns");
 			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.dataGridUns, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.dataGridUns, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.dataGridUns, "MainWindow.dataGridUns");
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -281,24 +292,36 @@ namespace SIL.Transcelerator
             this.mnuIncludeQuestion,
             this.mnuEditQuestion,
             this.mnuAddQuestion});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.dataGridContextMenu, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.dataGridContextMenu, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.dataGridContextMenu, "dataGridContextMenu");
 			this.dataGridContextMenu.Name = "dataGridContextMenu";
 			resources.ApplyResources(this.dataGridContextMenu, "dataGridContextMenu");
 			this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
 			// 
 			// cutToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.cutToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.cutToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem, ".cutToolStripMenuItem");
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			resources.ApplyResources(this.cutToolStripMenuItem, "cutToolStripMenuItem");
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
 			// 
 			// copyToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.copyToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.copyToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.copyToolStripMenuItem, ".copyToolStripMenuItem");
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			resources.ApplyResources(this.copyToolStripMenuItem, "copyToolStripMenuItem");
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
 			// 
 			// pasteToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.pasteToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.pasteToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.pasteToolStripMenuItem, ".pasteToolStripMenuItem");
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
@@ -310,24 +333,36 @@ namespace SIL.Transcelerator
 			// 
 			// mnuExcludeQuestion
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuExcludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestion, ".mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Name = "mnuExcludeQuestion";
 			resources.ApplyResources(this.mnuExcludeQuestion, "mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
 			// 
 			// mnuIncludeQuestion
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuIncludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuIncludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuIncludeQuestion, ".mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Name = "mnuIncludeQuestion";
 			resources.ApplyResources(this.mnuIncludeQuestion, "mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
 			// 
 			// mnuEditQuestion
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuEditQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEditQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuEditQuestion, ".mnuEditQuestion");
 			this.mnuEditQuestion.Name = "mnuEditQuestion";
 			resources.ApplyResources(this.mnuEditQuestion, "mnuEditQuestion");
 			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
 			// 
 			// mnuAddQuestion
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAddQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddQuestion, ".mnuAddQuestion");
 			this.mnuAddQuestion.Name = "mnuAddQuestion";
 			resources.ApplyResources(this.mnuAddQuestion, "mnuAddQuestion");
 			this.mnuAddQuestion.Click += new System.EventHandler(this.AddNewQuestion);
@@ -341,6 +376,9 @@ namespace SIL.Transcelerator
             this.viewToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.helpToolStripMenuItem});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_mainMenu, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_mainMenu, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_mainMenu, "MainWindow.m_mainMenu");
 			resources.ApplyResources(this.m_mainMenu, "m_mainMenu");
 			this.m_mainMenu.Name = "m_mainMenu";
 			// 
@@ -357,12 +395,18 @@ namespace SIL.Transcelerator
             this.mnuLoadTranslationsFromTextFile,
             this.toolStripSeparator3,
             this.closeToolStripMenuItem});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.fileToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.fileToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.fileToolStripMenuItem, "MainWindow.fileToolStripMenuItem");
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
 			// 
 			// saveToolStripMenuItem
 			// 
 			resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.saveToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.saveToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.saveToolStripMenuItem, "MainWindow.saveToolStripMenuItem");
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
 			this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save);
 			// 
@@ -371,12 +415,18 @@ namespace SIL.Transcelerator
 			this.mnuAutoSave.Checked = true;
 			this.mnuAutoSave.CheckOnClick = true;
 			this.mnuAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAutoSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAutoSave, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAutoSave, "MainWindow.mnuAutoSave");
 			this.mnuAutoSave.Name = "mnuAutoSave";
 			resources.ApplyResources(this.mnuAutoSave, "mnuAutoSave");
 			this.mnuAutoSave.CheckedChanged += new System.EventHandler(this.mnuAutoSave_CheckedChanged);
 			// 
 			// reloadToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.reloadToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.reloadToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.reloadToolStripMenuItem, "MainWindow.reloadToolStripMenuItem");
 			this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
 			resources.ApplyResources(this.reloadToolStripMenuItem, "reloadToolStripMenuItem");
 			this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
@@ -388,6 +438,9 @@ namespace SIL.Transcelerator
 			// 
 			// mnuGenerate
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuGenerate, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuGenerate, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuGenerate, "MainWindow.mnuGenerate");
 			this.mnuGenerate.Name = "mnuGenerate";
 			resources.ApplyResources(this.mnuGenerate, "mnuGenerate");
 			this.mnuGenerate.Click += new System.EventHandler(this.mnuGenerate_Click);
@@ -396,6 +449,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuProduceScriptureForgeFiles.CheckOnClick = true;
 			this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuProduceScriptureForgeFiles, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.mnuProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			resources.ApplyResources(this.mnuProduceScriptureForgeFiles, "mnuProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
@@ -403,12 +459,18 @@ namespace SIL.Transcelerator
 			// 
 			// generateOutputForArloToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.generateOutputForArloToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.generateOutputForArloToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.generateOutputForArloToolStripMenuItem, "MainWindow.generateOutputForArloToolStripMenuItem");
 			this.generateOutputForArloToolStripMenuItem.Name = "generateOutputForArloToolStripMenuItem";
 			resources.ApplyResources(this.generateOutputForArloToolStripMenuItem, "generateOutputForArloToolStripMenuItem");
 			this.generateOutputForArloToolStripMenuItem.Click += new System.EventHandler(this.generateOutputForArloToolStripMenuItem_Click);
 			// 
 			// mnuLoadTranslationsFromTextFile
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuLoadTranslationsFromTextFile, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLoadTranslationsFromTextFile, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuLoadTranslationsFromTextFile, "MainWindow.mnuLoadTranslationsFromTextFile");
 			this.mnuLoadTranslationsFromTextFile.Name = "mnuLoadTranslationsFromTextFile";
 			resources.ApplyResources(this.mnuLoadTranslationsFromTextFile, "mnuLoadTranslationsFromTextFile");
 			this.mnuLoadTranslationsFromTextFile.Click += new System.EventHandler(this.mnuLoadTranslationsFromTextFile_Click);
@@ -420,6 +482,9 @@ namespace SIL.Transcelerator
 			// 
 			// closeToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.closeToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.closeToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.closeToolStripMenuItem, "MainWindow.closeToolStripMenuItem");
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
 			resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
@@ -436,12 +501,18 @@ namespace SIL.Transcelerator
             this.toolStripSeparatorShiftWords,
             this.mnuShiftWordsRight,
             this.mnuShiftWordsLeft});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.editToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.editToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.editToolStripMenuItem, "MainWindow.editToolStripMenuItem");
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
 			this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
 			// 
 			// cutToolStripMenuItem1
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.cutToolStripMenuItem1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.cutToolStripMenuItem1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem1, "MainWindow.cutToolStripMenuItem1");
 			this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
 			resources.ApplyResources(this.cutToolStripMenuItem1, "cutToolStripMenuItem1");
 			this.cutToolStripMenuItem1.Click += new System.EventHandler(this.cutToolStripMenuItem1_Click);
@@ -450,6 +521,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuCopy.Image = global::SIL.Transcelerator.Properties.Resources.Copy;
 			resources.ApplyResources(this.mnuCopy, "mnuCopy");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuCopy, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCopy, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuCopy, "MainWindow.mnuCopy");
 			this.mnuCopy.Name = "mnuCopy";
 			this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
 			// 
@@ -457,6 +531,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuPaste.Image = global::SIL.Transcelerator.Properties.Resources.Paste;
 			resources.ApplyResources(this.mnuPaste, "mnuPaste");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPaste, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPaste, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuPaste, "MainWindow.mnuPaste");
 			this.mnuPaste.Name = "mnuPaste";
 			this.mnuPaste.Click += new System.EventHandler(this.mnuPaste_Click);
 			// 
@@ -469,6 +546,9 @@ namespace SIL.Transcelerator
 			// 
 			this.previousUntranslatedQuestionToolStripMenuItem.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon;
 			resources.ApplyResources(this.previousUntranslatedQuestionToolStripMenuItem, "previousUntranslatedQuestionToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.previousUntranslatedQuestionToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.previousUntranslatedQuestionToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.previousUntranslatedQuestionToolStripMenuItem, "MainWindow.previousUntranslatedQuestionToolStripMenuItem");
 			this.previousUntranslatedQuestionToolStripMenuItem.Name = "previousUntranslatedQuestionToolStripMenuItem";
 			this.previousUntranslatedQuestionToolStripMenuItem.Click += new System.EventHandler(this.prevUntranslatedQuestionToolStripMenuItem_Click);
 			// 
@@ -476,6 +556,9 @@ namespace SIL.Transcelerator
 			// 
 			this.nextUntranslatedQuestionToolStripMenuItem.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon;
 			resources.ApplyResources(this.nextUntranslatedQuestionToolStripMenuItem, "nextUntranslatedQuestionToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.nextUntranslatedQuestionToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.nextUntranslatedQuestionToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.nextUntranslatedQuestionToolStripMenuItem, "MainWindow.nextUntranslatedQuestionToolStripMenuItem");
 			this.nextUntranslatedQuestionToolStripMenuItem.Name = "nextUntranslatedQuestionToolStripMenuItem";
 			this.nextUntranslatedQuestionToolStripMenuItem.Click += new System.EventHandler(this.nextUntranslatedQuestionToolStripMenuItem_Click);
 			// 
@@ -488,6 +571,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuShiftWordsRight.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Right_icon;
 			resources.ApplyResources(this.mnuShiftWordsRight, "mnuShiftWordsRight");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsRight, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsRight, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsRight, "MainWindow.mnuShiftWordsRight");
 			this.mnuShiftWordsRight.Name = "mnuShiftWordsRight";
 			this.mnuShiftWordsRight.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
 			// 
@@ -495,6 +581,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuShiftWordsLeft.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Left_icon;
 			resources.ApplyResources(this.mnuShiftWordsLeft, "mnuShiftWordsLeft");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsLeft, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsLeft, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsLeft, "MainWindow.mnuShiftWordsLeft");
 			this.mnuShiftWordsLeft.Name = "mnuShiftWordsLeft";
 			this.mnuShiftWordsLeft.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
 			// 
@@ -505,11 +594,17 @@ namespace SIL.Transcelerator
             this.mnuReferenceRange,
             this.mnuKtFilter,
             this.mnuMatchWholeWords});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.filterToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.filterToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.filterToolStripMenuItem, "MainWindow.filterToolStripMenuItem");
 			this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
 			resources.ApplyResources(this.filterToolStripMenuItem, "filterToolStripMenuItem");
 			// 
 			// mnuReferenceRange
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuReferenceRange, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReferenceRange, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuReferenceRange, "MainWindow.mnuReferenceRange");
 			this.mnuReferenceRange.Name = "mnuReferenceRange";
 			resources.ApplyResources(this.mnuReferenceRange, "mnuReferenceRange");
 			this.mnuReferenceRange.Click += new System.EventHandler(this.mnuReferenceRange_Click);
@@ -520,6 +615,9 @@ namespace SIL.Transcelerator
             this.mnuShowAllPhrases,
             this.mnuShowPhrasesWithKtRenderings,
             this.mnuShowPhrasesWithMissingKtRenderings});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuKtFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuKtFilter, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuKtFilter, "MainWindow.mnuKtFilter");
 			this.mnuKtFilter.Name = "mnuKtFilter";
 			resources.ApplyResources(this.mnuKtFilter, "mnuKtFilter");
 			// 
@@ -527,6 +625,9 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuShowAllPhrases.Checked = true;
 			this.mnuShowAllPhrases.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowAllPhrases, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowAllPhrases, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowAllPhrases, "MainWindow.mnuShowAllPhrases");
 			this.mnuShowAllPhrases.Name = "mnuShowAllPhrases";
 			resources.ApplyResources(this.mnuShowAllPhrases, "mnuShowAllPhrases");
 			this.mnuShowAllPhrases.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
@@ -535,6 +636,9 @@ namespace SIL.Transcelerator
 			// mnuShowPhrasesWithKtRenderings
 			// 
 			this.mnuShowPhrasesWithKtRenderings.CheckOnClick = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowPhrasesWithKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithKtRenderings, "MainWindow.mnuShowPhrasesWithKtRenderings");
 			this.mnuShowPhrasesWithKtRenderings.Name = "mnuShowPhrasesWithKtRenderings";
 			resources.ApplyResources(this.mnuShowPhrasesWithKtRenderings, "mnuShowPhrasesWithKtRenderings");
 			this.mnuShowPhrasesWithKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
@@ -543,6 +647,9 @@ namespace SIL.Transcelerator
 			// mnuShowPhrasesWithMissingKtRenderings
 			// 
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckOnClick = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowPhrasesWithMissingKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithMissingKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithMissingKtRenderings, "MainWindow.mnuShowPhrasesWithMissingKtRenderings");
 			this.mnuShowPhrasesWithMissingKtRenderings.Name = "mnuShowPhrasesWithMissingKtRenderings";
 			resources.ApplyResources(this.mnuShowPhrasesWithMissingKtRenderings, "mnuShowPhrasesWithMissingKtRenderings");
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
@@ -553,6 +660,9 @@ namespace SIL.Transcelerator
 			this.mnuMatchWholeWords.Checked = true;
 			this.mnuMatchWholeWords.CheckOnClick = true;
 			this.mnuMatchWholeWords.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuMatchWholeWords, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuMatchWholeWords, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuMatchWholeWords, "MainWindow.mnuMatchWholeWords");
 			this.mnuMatchWholeWords.Name = "mnuMatchWholeWords";
 			resources.ApplyResources(this.mnuMatchWholeWords, "mnuMatchWholeWords");
 			this.mnuMatchWholeWords.CheckedChanged += new System.EventHandler(this.mnuMatchWholeWords_CheckChanged);
@@ -571,6 +681,9 @@ namespace SIL.Transcelerator
             this.mnuViewExcludedQuestions,
             this.toolStripSeparator9,
             this.displayLanguageToolStripMenuItem});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.viewToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.viewToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.viewToolStripMenuItem, "MainWindow.viewToolStripMenuItem");
 			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
 			resources.ApplyResources(this.viewToolStripMenuItem, "viewToolStripMenuItem");
 			this.viewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
@@ -580,6 +693,9 @@ namespace SIL.Transcelerator
 			this.mnuViewToolbar.Checked = true;
 			this.mnuViewToolbar.CheckOnClick = true;
 			this.mnuViewToolbar.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewToolbar, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewToolbar, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewToolbar, "MainWindow.mnuViewToolbar");
 			this.mnuViewToolbar.Name = "mnuViewToolbar";
 			resources.ApplyResources(this.mnuViewToolbar, "mnuViewToolbar");
 			this.mnuViewToolbar.CheckStateChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
@@ -589,6 +705,9 @@ namespace SIL.Transcelerator
 			this.mnuViewBiblicalTermsPane.Checked = true;
 			this.mnuViewBiblicalTermsPane.CheckOnClick = true;
 			this.mnuViewBiblicalTermsPane.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewBiblicalTermsPane, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewBiblicalTermsPane, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewBiblicalTermsPane, "MainWindow.mnuViewBiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.Name = "mnuViewBiblicalTermsPane";
 			resources.ApplyResources(this.mnuViewBiblicalTermsPane, "mnuViewBiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.CheckedChanged += new System.EventHandler(this.mnuViewBiblicalTermsPane_CheckedChanged);
@@ -601,6 +720,9 @@ namespace SIL.Transcelerator
 			// mnuViewExcludedQuestions
 			// 
 			this.mnuViewExcludedQuestions.CheckOnClick = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewExcludedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewExcludedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewExcludedQuestions, "MainWindow.mnuViewExcludedQuestions");
 			this.mnuViewExcludedQuestions.Name = "mnuViewExcludedQuestions";
 			resources.ApplyResources(this.mnuViewExcludedQuestions, "mnuViewExcludedQuestions");
 			this.mnuViewExcludedQuestions.Click += new System.EventHandler(this.ApplyFilter);
@@ -614,6 +736,9 @@ namespace SIL.Transcelerator
 			// 
 			this.displayLanguageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.en_ToolStripMenuItem});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.displayLanguageToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.displayLanguageToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.displayLanguageToolStripMenuItem, "MainWindow.displayLanguageToolStripMenuItem");
 			this.displayLanguageToolStripMenuItem.Name = "displayLanguageToolStripMenuItem";
 			resources.ApplyResources(this.displayLanguageToolStripMenuItem, "displayLanguageToolStripMenuItem");
 			// 
@@ -621,6 +746,9 @@ namespace SIL.Transcelerator
 			// 
 			this.en_ToolStripMenuItem.Checked = true;
 			this.en_ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.en_ToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.en_ToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.en_ToolStripMenuItem, "MainWindow.en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Name = "en_ToolStripMenuItem";
 			resources.ApplyResources(this.en_ToolStripMenuItem, "en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Tag = "en-US";
@@ -631,17 +759,26 @@ namespace SIL.Transcelerator
 			this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.phraseSubstitutionsToolStripMenuItem,
             this.biblicalTermsRenderingSelectionRulesToolStripMenuItem});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.optionsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.optionsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.optionsToolStripMenuItem, "MainWindow.optionsToolStripMenuItem");
 			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
 			resources.ApplyResources(this.optionsToolStripMenuItem, "optionsToolStripMenuItem");
 			// 
 			// phraseSubstitutionsToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.phraseSubstitutionsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.phraseSubstitutionsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.phraseSubstitutionsToolStripMenuItem, "MainWindow.phraseSubstitutionsToolStripMenuItem");
 			this.phraseSubstitutionsToolStripMenuItem.Name = "phraseSubstitutionsToolStripMenuItem";
 			resources.ApplyResources(this.phraseSubstitutionsToolStripMenuItem, "phraseSubstitutionsToolStripMenuItem");
 			this.phraseSubstitutionsToolStripMenuItem.Click += new System.EventHandler(this.phraseSubstitutionsToolStripMenuItem_Click);
 			// 
 			// biblicalTermsRenderingSelectionRulesToolStripMenuItem
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, "MainWindow.biblicalTermsRenderingSelectionRulesToolStripMenuItem");
 			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem.Name = "biblicalTermsRenderingSelectionRulesToolStripMenuItem";
 			resources.ApplyResources(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, "biblicalTermsRenderingSelectionRulesToolStripMenuItem");
 			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem.Click += new System.EventHandler(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem_Click);
@@ -650,11 +787,17 @@ namespace SIL.Transcelerator
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuHelpAbout});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.helpToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.helpToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.helpToolStripMenuItem, "MainWindow.helpToolStripMenuItem");
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
 			// 
 			// mnuHelpAbout
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelpAbout, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelpAbout, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelpAbout, "MainWindow.mnuHelpAbout");
 			this.mnuHelpAbout.Name = "mnuHelpAbout";
 			resources.ApplyResources(this.mnuHelpAbout, "mnuHelpAbout");
 			this.mnuHelpAbout.Click += new System.EventHandler(this.mnuHelpAbout_Click);
@@ -664,7 +807,7 @@ namespace SIL.Transcelerator
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnSave,
             this.toolStripSeparator1,
-            this.toolStripLabel1,
+            this.toolStripLabelQuestionFilter,
             this.txtFilterByPart,
             this.toolStripSeparator4,
             this.btnSendScrReferences,
@@ -672,6 +815,9 @@ namespace SIL.Transcelerator
             this.lblFilterIndicator,
             toolStripSeparator5,
             this.lblRemainingWork});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "MainWindow.toolStrip1");
 			resources.ApplyResources(this.toolStrip1, "toolStrip1");
 			this.toolStrip1.Name = "toolStrip1";
 			// 
@@ -679,6 +825,9 @@ namespace SIL.Transcelerator
 			// 
 			this.btnSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			resources.ApplyResources(this.btnSave, "btnSave");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnSave, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnSave, "MainWindow.btnSave");
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Click += new System.EventHandler(this.Save);
 			// 
@@ -687,14 +836,20 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
 			// 
-			// toolStripLabel1
+			// toolStripLabelQuestionFilter
 			// 
-			this.toolStripLabel1.Name = "toolStripLabel1";
-			resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripLabelQuestionFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripLabelQuestionFilter, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelQuestionFilter, "MainWindow.toolStripLabelQuestionFilter");
+			this.toolStripLabelQuestionFilter.Name = "toolStripLabelQuestionFilter";
+			resources.ApplyResources(this.toolStripLabelQuestionFilter, "toolStripLabelQuestionFilter");
 			// 
 			// txtFilterByPart
 			// 
 			this.txtFilterByPart.AcceptsReturn = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.txtFilterByPart, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.txtFilterByPart, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.txtFilterByPart, "MainWindow.txtFilterByPart");
 			this.txtFilterByPart.Name = "txtFilterByPart";
 			resources.ApplyResources(this.txtFilterByPart, "txtFilterByPart");
 			this.txtFilterByPart.Enter += new System.EventHandler(this.txtFilterByPart_Enter);
@@ -713,6 +868,9 @@ namespace SIL.Transcelerator
 			this.btnSendScrReferences.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.btnSendScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			resources.ApplyResources(this.btnSendScrReferences, "btnSendScrReferences");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSendScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnSendScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnSendScrReferences, "MainWindow.btnSendScrReferences");
 			this.btnSendScrReferences.Name = "btnSendScrReferences";
 			this.btnSendScrReferences.CheckStateChanged += new System.EventHandler(this.btnSendScrReferences_CheckStateChanged);
 			// 
@@ -721,6 +879,9 @@ namespace SIL.Transcelerator
 			this.btnReceiveScrReferences.CheckOnClick = true;
 			this.btnReceiveScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			resources.ApplyResources(this.btnReceiveScrReferences, "btnReceiveScrReferences");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnReceiveScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnReceiveScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnReceiveScrReferences, "MainWindow.btnReceiveScrReferences");
 			this.btnReceiveScrReferences.Name = "btnReceiveScrReferences";
 			this.btnReceiveScrReferences.Click += new System.EventHandler(this.btnReceiveScrReferences_CheckStateChanged);
 			// 
@@ -728,11 +889,17 @@ namespace SIL.Transcelerator
 			// 
 			this.lblFilterIndicator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			resources.ApplyResources(this.lblFilterIndicator, "lblFilterIndicator");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblFilterIndicator, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblFilterIndicator, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblFilterIndicator, "MainWindow.lblFilterIndicator");
 			this.lblFilterIndicator.Name = "lblFilterIndicator";
 			// 
 			// lblRemainingWork
 			// 
 			this.lblRemainingWork.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblRemainingWork, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblRemainingWork, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblRemainingWork, "MainWindow.lblRemainingWork");
 			this.lblRemainingWork.Name = "lblRemainingWork";
 			resources.ApplyResources(this.lblRemainingWork, "lblRemainingWork");
 			// 
@@ -745,22 +912,34 @@ namespace SIL.Transcelerator
 			// m_lblAnswerLabel
 			// 
 			resources.ApplyResources(this.m_lblAnswerLabel, "m_lblAnswerLabel");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswerLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswerLabel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswerLabel, "MainWindow.m_lblAnswerLabel");
 			this.m_lblAnswerLabel.Name = "m_lblAnswerLabel";
 			// 
 			// m_lblAnswers
 			// 
 			resources.ApplyResources(this.m_lblAnswers, "m_lblAnswers");
 			this.m_lblAnswers.BackColor = System.Drawing.SystemColors.Control;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswers, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswers, "MainWindow.m_lblAnswers");
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			// 
 			// m_lblCommentLabel
 			// 
 			resources.ApplyResources(this.m_lblCommentLabel, "m_lblCommentLabel");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCommentLabel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCommentLabel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCommentLabel, "MainWindow.m_lblCommentLabel");
 			this.m_lblCommentLabel.Name = "m_lblCommentLabel";
 			// 
 			// m_lblComments
 			// 
 			resources.ApplyResources(this.m_lblComments, "m_lblComments");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblComments, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblComments, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblComments, "MainWindow.m_lblComments");
 			this.m_lblComments.Name = "m_lblComments";
 			// 
 			// m_pnlAnswersAndComments
@@ -781,6 +960,11 @@ namespace SIL.Transcelerator
 			this.m_hSplitter.TabStop = false;
 			this.m_hSplitter.SplitterMoving += new System.Windows.Forms.SplitterEventHandler(this.m_hSplitter_SplitterMoving);
 			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
+			// 
 			// UNSQuestionsDialog
 			// 
 			resources.ApplyResources(this, "$this");
@@ -791,6 +975,9 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.m_mainMenu);
 			this.Controls.Add(this.m_pnlAnswersAndComments);
 			this.HelpButton = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.Title");
 			this.MainMenuStrip = this.m_mainMenu;
 			this.Name = "UNSQuestionsDialog";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -805,6 +992,7 @@ namespace SIL.Transcelerator
 			this.toolStrip1.PerformLayout();
 			this.m_pnlAnswersAndComments.ResumeLayout(false);
 			this.m_pnlAnswersAndComments.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -824,7 +1012,7 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem mnuShowPhrasesWithMissingKtRenderings;
 		private ToolStripMenuItem viewToolStripMenuItem;
 		private ToolStrip toolStrip1;
-		private ToolStripLabel toolStripLabel1;
+		private ToolStripLabel toolStripLabelQuestionFilter;
 		private ToolStripTextBox txtFilterByPart;
 		private ToolStripMenuItem mnuMatchWholeWords;
 		private ToolStripSeparator toolStripSeparator1;
@@ -886,5 +1074,6 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem displayLanguageToolStripMenuItem;
 		private ToolStripMenuItem en_ToolStripMenuItem;
 		private ToolStripMenuItem mnuProduceScriptureForgeFiles;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 	}
 }

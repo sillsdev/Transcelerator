@@ -30,6 +30,8 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using L10NSharp;
+using SIL.WritingSystems;
 using File = System.IO.File;
 
 namespace SIL.Transcelerator
@@ -419,44 +421,45 @@ namespace SIL.Transcelerator
 		{
 			var locales = new List<Tuple<string, string>>();
 
-			// All the commented-out code here is the "right" way to do this, but it requires adding ICU
-			// to Transcelerator, which seems more bloat than is needed unless/until we really start seeing
-			// a demand for ad-hoc localizations.
-#if UseGlobalWritingSystemRepo
 			Sldr.Initialize();
 			try
 			{
 				var repo = GlobalWritingSystemRepository.Initialize();
-#endif
-			foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
-			{
-				string languageName;
-#if UseGlobalWritingSystemRepo
+				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Union(LocalizationManager.GetAvailableLocalizedLanguages()))
+				{
+					string languageName;
 					if (repo.TryGet(locale, out WritingSystemDefinition wsDef))
 					{
 						languageName = wsDef.Language.Name;
 					}
 					else
-#endif
-				switch (locale)
-				{
-					case "es": languageName = "español"; break;
-					case "fr": languageName = "français"; break;
-					case "en-GB": languageName = "British English"; break;
-					case "en-US":
-					case "en":
-						throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
-					default: languageName = locale; break;
+						switch (locale)
+						{
+							case "es":
+								languageName = "español";
+								break;
+							case "fr":
+								languageName = "français";
+								break;
+							case "en-GB":
+								languageName = "British English";
+								break;
+							case "en-US":
+							case "en":
+								throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
+							default:
+								languageName = locale;
+								break;
+						}
+
+					locales.Add(new Tuple<string, string>(languageName, locale));
 				}
-				locales.Add(new Tuple<string, string>(languageName, locale));
-			}
-#if UseGlobalWritingSystemRepo
 			}
 			finally
 			{
 				Sldr.Cleanup();
 			}
-#endif
+
 			AvailableLocales = locales.OrderBy(l => l.Item1).ToList();
 		}
 
