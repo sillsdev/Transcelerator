@@ -1,16 +1,17 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
-// File: GenerateTemplateDlg.cs
-// Responsibility: Bogle
+// File: GenerateScriptDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {
@@ -30,6 +31,7 @@ namespace SIL.Transcelerator
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing && (components != null))
 			{
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 				components.Dispose();
 			}
 			base.Dispose(disposing);
@@ -48,18 +50,19 @@ namespace SIL.Transcelerator
 		// TODO-Linux: AutoCompletion is not implemented in Mono
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.Label label1;
+			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.Label lblSectionRangeTo;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GenerateScriptDlg));
-			System.Windows.Forms.GroupBox groupBox2;
-			System.Windows.Forms.Label label4;
-			System.Windows.Forms.Label label5;
-			System.Windows.Forms.Label label9;
-			System.Windows.Forms.Label label10;
+			System.Windows.Forms.GroupBox groupBoxDocument;
+			System.Windows.Forms.Label lblFolder;
+			System.Windows.Forms.Label lblUntranslatedQuestions;
+			System.Windows.Forms.Label lblStyleSpecification;
+			System.Windows.Forms.Label lblDetailQuestionsOutOfOrder;
 			this.m_lblFolder = new System.Windows.Forms.Label();
 			this.btnBrowse = new System.Windows.Forms.Button();
 			this.m_txtFilename = new System.Windows.Forms.TextBox();
 			this.m_lbFilename = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
+			this.lblTitle = new System.Windows.Forms.Label();
 			this.m_txtTitle = new System.Windows.Forms.TextBox();
 			this.m_rdoWholeBook = new System.Windows.Forms.RadioButton();
 			this.m_grpRange = new System.Windows.Forms.GroupBox();
@@ -92,7 +95,7 @@ namespace SIL.Transcelerator
 			this.m_numBlankLines = new System.Windows.Forms.NumericUpDown();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.m_chkNumberQuestions = new System.Windows.Forms.CheckBox();
-			this.label7 = new System.Windows.Forms.Label();
+			this.lblExtraAnswerLines = new System.Windows.Forms.Label();
 			this.m_pnlCssOptions = new System.Windows.Forms.Panel();
 			this.m_chkAbsoluteCssPath = new System.Windows.Forms.CheckBox();
 			this.m_chkOverwriteCss = new System.Windows.Forms.CheckBox();
@@ -103,21 +106,22 @@ namespace SIL.Transcelerator
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabGeneral = new System.Windows.Forms.TabPage();
 			this.tabOptions = new System.Windows.Forms.TabPage();
+			this.m_chkIncludeVerseNumbers = new System.Windows.Forms.CheckBox();
 			this.panel3 = new System.Windows.Forms.Panel();
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions = new System.Windows.Forms.RadioButton();
 			this.label8 = new System.Windows.Forms.Label();
 			this.m_rdoOutputPassageForOutOfOrderQuestions = new System.Windows.Forms.RadioButton();
 			this.m_cboUseLWC = new System.Windows.Forms.ComboBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.lblUseLWC = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
-			this.m_chkIncludeVerseNumbers = new System.Windows.Forms.CheckBox();
-			label1 = new System.Windows.Forms.Label();
-			groupBox2 = new System.Windows.Forms.GroupBox();
-			label4 = new System.Windows.Forms.Label();
-			label5 = new System.Windows.Forms.Label();
-			label9 = new System.Windows.Forms.Label();
-			label10 = new System.Windows.Forms.Label();
-			groupBox2.SuspendLayout();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			lblSectionRangeTo = new System.Windows.Forms.Label();
+			groupBoxDocument = new System.Windows.Forms.GroupBox();
+			lblFolder = new System.Windows.Forms.Label();
+			lblUntranslatedQuestions = new System.Windows.Forms.Label();
+			lblStyleSpecification = new System.Windows.Forms.Label();
+			lblDetailQuestionsOutOfOrder = new System.Windows.Forms.Label();
+			groupBoxDocument.SuspendLayout();
 			this.m_grpRange.SuspendLayout();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numBlankLines)).BeginInit();
@@ -128,38 +132,56 @@ namespace SIL.Transcelerator
 			this.tabOptions.SuspendLayout();
 			this.panel3.SuspendLayout();
 			this.tabAppearance.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// label1
+			// lblSectionRangeTo
 			// 
-			resources.ApplyResources(label1, "label1");
-			label1.Name = "label1";
+			resources.ApplyResources(lblSectionRangeTo, "lblSectionRangeTo");
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblSectionRangeTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblSectionRangeTo, null);
+			this.l10NSharpExtender1.SetLocalizingId(lblSectionRangeTo, "GenerateScriptDlg.label1");
+			lblSectionRangeTo.Name = "lblSectionRangeTo";
 			// 
-			// groupBox2
+			// groupBoxDocument
 			// 
-			resources.ApplyResources(groupBox2, "groupBox2");
-			groupBox2.Controls.Add(this.m_lblFolder);
-			groupBox2.Controls.Add(label4);
-			groupBox2.Controls.Add(this.btnBrowse);
-			groupBox2.Controls.Add(this.m_txtFilename);
-			groupBox2.Controls.Add(this.m_lbFilename);
-			groupBox2.Controls.Add(this.label2);
-			groupBox2.Controls.Add(this.m_txtTitle);
-			groupBox2.Name = "groupBox2";
-			groupBox2.TabStop = false;
+			resources.ApplyResources(groupBoxDocument, "groupBoxDocument");
+			groupBoxDocument.Controls.Add(this.m_lblFolder);
+			groupBoxDocument.Controls.Add(lblFolder);
+			groupBoxDocument.Controls.Add(this.btnBrowse);
+			groupBoxDocument.Controls.Add(this.m_txtFilename);
+			groupBoxDocument.Controls.Add(this.m_lbFilename);
+			groupBoxDocument.Controls.Add(this.lblTitle);
+			groupBoxDocument.Controls.Add(this.m_txtTitle);
+			this.l10NSharpExtender1.SetLocalizableToolTip(groupBoxDocument, null);
+			this.l10NSharpExtender1.SetLocalizationComment(groupBoxDocument, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(groupBoxDocument, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(groupBoxDocument, "GenerateScriptDlg.groupBoxDocument");
+			groupBoxDocument.Name = "groupBoxDocument";
+			groupBoxDocument.TabStop = false;
 			// 
 			// m_lblFolder
 			// 
 			resources.ApplyResources(this.m_lblFolder, "m_lblFolder");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblFolder, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblFolder, "GenerateScriptDlg.m_lblFolder");
 			this.m_lblFolder.Name = "m_lblFolder";
 			// 
-			// label4
+			// lblFolder
 			// 
-			resources.ApplyResources(label4, "label4");
-			label4.Name = "label4";
+			resources.ApplyResources(lblFolder, "lblFolder");
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizingId(lblFolder, "GenerateScriptDlg.label4");
+			lblFolder.Name = "lblFolder";
 			// 
 			// btnBrowse
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnBrowse, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnBrowse, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnBrowse, "GenerateScriptDlg.btnBrowse");
 			resources.ApplyResources(this.btnBrowse, "btnBrowse");
 			this.btnBrowse.Name = "btnBrowse";
 			this.btnBrowse.UseVisualStyleBackColor = true;
@@ -167,43 +189,70 @@ namespace SIL.Transcelerator
 			// 
 			// m_txtFilename
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtFilename, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtFilename, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_txtFilename, "GenerateScriptDlg.m_txtFilename");
 			resources.ApplyResources(this.m_txtFilename, "m_txtFilename");
 			this.m_txtFilename.Name = "m_txtFilename";
 			// 
 			// m_lbFilename
 			// 
 			resources.ApplyResources(this.m_lbFilename, "m_lbFilename");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lbFilename, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lbFilename, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lbFilename, "GenerateScriptDlg.m_lbFilename");
 			this.m_lbFilename.Name = "m_lbFilename";
 			// 
-			// label2
+			// lblTitle
 			// 
-			resources.ApplyResources(this.label2, "label2");
-			this.label2.Name = "label2";
+			resources.ApplyResources(this.lblTitle, "lblTitle");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblTitle, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblTitle, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.lblTitle, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblTitle, "GenerateScriptDlg.lblTitle");
+			this.lblTitle.Name = "lblTitle";
 			// 
 			// m_txtTitle
 			// 
 			resources.ApplyResources(this.m_txtTitle, "m_txtTitle");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtTitle, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtTitle, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_txtTitle, "GenerateScriptDlg.m_txtTitle");
 			this.m_txtTitle.Name = "m_txtTitle";
 			// 
-			// label5
+			// lblUntranslatedQuestions
 			// 
-			resources.ApplyResources(label5, "label5");
-			label5.Name = "label5";
+			resources.ApplyResources(lblUntranslatedQuestions, "lblUntranslatedQuestions");
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblUntranslatedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblUntranslatedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(lblUntranslatedQuestions, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(lblUntranslatedQuestions, "GenerateScriptDlg.lblUntranslatedQuestions");
+			lblUntranslatedQuestions.Name = "lblUntranslatedQuestions";
 			// 
-			// label9
+			// lblStyleSpecification
 			// 
-			resources.ApplyResources(label9, "label9");
-			label9.Name = "label9";
+			resources.ApplyResources(lblStyleSpecification, "lblStyleSpecification");
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblStyleSpecification, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblStyleSpecification, null);
+			this.l10NSharpExtender1.SetLocalizingId(lblStyleSpecification, "GenerateScriptDlg.label9");
+			lblStyleSpecification.Name = "lblStyleSpecification";
 			// 
-			// label10
+			// lblDetailQuestionsOutOfOrder
 			// 
-			resources.ApplyResources(label10, "label10");
-			label10.Name = "label10";
+			resources.ApplyResources(lblDetailQuestionsOutOfOrder, "lblDetailQuestionsOutOfOrder");
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblDetailQuestionsOutOfOrder, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblDetailQuestionsOutOfOrder, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(lblDetailQuestionsOutOfOrder, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(lblDetailQuestionsOutOfOrder, "GenerateScriptDlg.lblDetailQuestionsOutOfOrder");
+			lblDetailQuestionsOutOfOrder.Name = "lblDetailQuestionsOutOfOrder";
 			// 
 			// m_rdoWholeBook
 			// 
 			resources.ApplyResources(this.m_rdoWholeBook, "m_rdoWholeBook");
 			this.m_rdoWholeBook.Checked = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoWholeBook, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoWholeBook, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoWholeBook, "GenerateScriptDlg.m_rdoWholeBook");
 			this.m_rdoWholeBook.Name = "m_rdoWholeBook";
 			this.m_rdoWholeBook.TabStop = true;
 			this.m_rdoWholeBook.UseVisualStyleBackColor = true;
@@ -214,12 +263,15 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_grpRange, "m_grpRange");
 			this.m_grpRange.Controls.Add(this.m_cboBooks);
 			this.m_grpRange.Controls.Add(this.m_cboEndSection);
-			this.m_grpRange.Controls.Add(label1);
+			this.m_grpRange.Controls.Add(lblSectionRangeTo);
 			this.m_grpRange.Controls.Add(this.m_cboStartSection);
 			this.m_grpRange.Controls.Add(this.m_rdoSectionRange);
 			this.m_grpRange.Controls.Add(this.m_cboSection);
 			this.m_grpRange.Controls.Add(this.m_rdoSingleSection);
 			this.m_grpRange.Controls.Add(this.m_rdoWholeBook);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_grpRange, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_grpRange, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_grpRange, "GenerateScriptDlg.m_grpRange");
 			this.m_grpRange.Name = "m_grpRange";
 			this.m_grpRange.TabStop = false;
 			// 
@@ -229,6 +281,9 @@ namespace SIL.Transcelerator
 			this.m_cboBooks.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.m_cboBooks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cboBooks.FormattingEnabled = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboBooks, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboBooks, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_cboBooks, "GenerateScriptDlg.m_cboBooks");
 			resources.ApplyResources(this.m_cboBooks, "m_cboBooks");
 			this.m_cboBooks.Name = "m_cboBooks";
 			this.m_cboBooks.SelectedIndexChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSelectedBook);
@@ -242,6 +297,9 @@ namespace SIL.Transcelerator
 			this.m_cboEndSection.DropDownWidth = 250;
 			this.m_cboEndSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboEndSection, "m_cboEndSection");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboEndSection, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboEndSection, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_cboEndSection, "GenerateScriptDlg.m_cboEndSection");
 			this.m_cboEndSection.Name = "m_cboEndSection";
 			this.m_cboEndSection.SelectedIndexChanged += new System.EventHandler(this.m_cboEndSection_SelectedIndexChanged);
 			this.m_cboEndSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
@@ -255,6 +313,9 @@ namespace SIL.Transcelerator
 			this.m_cboStartSection.DropDownWidth = 250;
 			this.m_cboStartSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboStartSection, "m_cboStartSection");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboStartSection, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboStartSection, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_cboStartSection, "GenerateScriptDlg.m_cboStartSection");
 			this.m_cboStartSection.Name = "m_cboStartSection";
 			this.m_cboStartSection.SelectedIndexChanged += new System.EventHandler(this.m_cboStartSection_SelectedIndexChanged);
 			this.m_cboStartSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
@@ -263,6 +324,9 @@ namespace SIL.Transcelerator
 			// m_rdoSectionRange
 			// 
 			resources.ApplyResources(this.m_rdoSectionRange, "m_rdoSectionRange");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSectionRange, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSectionRange, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSectionRange, "GenerateScriptDlg.m_rdoSectionRange");
 			this.m_rdoSectionRange.Name = "m_rdoSectionRange";
 			this.m_rdoSectionRange.UseVisualStyleBackColor = true;
 			this.m_rdoSectionRange.CheckedChanged += new System.EventHandler(this.m_rdoSectionRange_CheckedChanged);
@@ -275,6 +339,9 @@ namespace SIL.Transcelerator
 			this.m_cboSection.DropDownWidth = 250;
 			this.m_cboSection.FormattingEnabled = true;
 			resources.ApplyResources(this.m_cboSection, "m_cboSection");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboSection, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboSection, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_cboSection, "GenerateScriptDlg.m_cboSection");
 			this.m_cboSection.Name = "m_cboSection";
 			this.m_cboSection.SelectedIndexChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
 			this.m_cboSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
@@ -283,6 +350,9 @@ namespace SIL.Transcelerator
 			// m_rdoSingleSection
 			// 
 			resources.ApplyResources(this.m_rdoSingleSection, "m_rdoSingleSection");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSingleSection, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSingleSection, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSingleSection, "GenerateScriptDlg.m_rdoSingleSection");
 			this.m_rdoSingleSection.Name = "m_rdoSingleSection";
 			this.m_rdoSingleSection.UseVisualStyleBackColor = true;
 			this.m_rdoSingleSection.CheckedChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
@@ -292,6 +362,9 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_chkPassageBeforeOverview, "m_chkPassageBeforeOverview");
 			this.m_chkPassageBeforeOverview.Checked = true;
 			this.m_chkPassageBeforeOverview.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkPassageBeforeOverview, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkPassageBeforeOverview, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkPassageBeforeOverview, "GenerateScriptDlg.m_chkPassageBeforeOverview");
 			this.m_chkPassageBeforeOverview.Name = "m_chkPassageBeforeOverview";
 			this.m_chkPassageBeforeOverview.UseVisualStyleBackColor = true;
 			// 
@@ -301,13 +374,16 @@ namespace SIL.Transcelerator
 			this.panel1.Controls.Add(this.m_rdoSkipUntranslated);
 			this.panel1.Controls.Add(this.m_rdoDisplayWarning);
 			this.panel1.Controls.Add(this.label6);
-			this.panel1.Controls.Add(label5);
+			this.panel1.Controls.Add(lblUntranslatedQuestions);
 			this.panel1.Controls.Add(this.m_rdoUseOriginal);
 			this.panel1.Name = "panel1";
 			// 
 			// m_rdoSkipUntranslated
 			// 
 			resources.ApplyResources(this.m_rdoSkipUntranslated, "m_rdoSkipUntranslated");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSkipUntranslated, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSkipUntranslated, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSkipUntranslated, "GenerateScriptDlg.m_rdoSkipUntranslated");
 			this.m_rdoSkipUntranslated.Name = "m_rdoSkipUntranslated";
 			this.m_rdoSkipUntranslated.UseVisualStyleBackColor = true;
 			// 
@@ -315,6 +391,9 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_rdoDisplayWarning, "m_rdoDisplayWarning");
 			this.m_rdoDisplayWarning.Checked = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoDisplayWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayWarning, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoDisplayWarning, "GenerateScriptDlg.m_rdoDisplayWarning");
 			this.m_rdoDisplayWarning.Name = "m_rdoDisplayWarning";
 			this.m_rdoDisplayWarning.TabStop = true;
 			this.m_rdoDisplayWarning.UseVisualStyleBackColor = true;
@@ -323,11 +402,18 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.label6, "label6");
 			this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.label6, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.label6, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.label6, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.label6, "GenerateScriptDlg.label6");
 			this.label6.Name = "label6";
 			// 
 			// m_rdoUseOriginal
 			// 
 			resources.ApplyResources(this.m_rdoUseOriginal, "m_rdoUseOriginal");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUseOriginal, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseOriginal, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUseOriginal, "GenerateScriptDlg.m_rdoUseOriginal");
 			this.m_rdoUseOriginal.Name = "m_rdoUseOriginal";
 			this.m_rdoUseOriginal.UseVisualStyleBackColor = true;
 			// 
@@ -336,6 +422,9 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_chkIncludeLWCComments, "m_chkIncludeLWCComments");
 			this.m_chkIncludeLWCComments.Checked = true;
 			this.m_chkIncludeLWCComments.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCComments, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCComments, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCComments, "GenerateScriptDlg.m_chkIncludeLWCComments");
 			this.m_chkIncludeLWCComments.Name = "m_chkIncludeLWCComments";
 			this.m_chkIncludeLWCComments.UseVisualStyleBackColor = true;
 			this.m_chkIncludeLWCComments.CheckedChanged += new System.EventHandler(this.IncludeOptionCheckedChanged);
@@ -345,6 +434,9 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_chkIncludeLWCAnswers, "m_chkIncludeLWCAnswers");
 			this.m_chkIncludeLWCAnswers.Checked = true;
 			this.m_chkIncludeLWCAnswers.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCAnswers, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCAnswers, "GenerateScriptDlg.m_chkIncludeLWCAnswers");
 			this.m_chkIncludeLWCAnswers.Name = "m_chkIncludeLWCAnswers";
 			this.m_chkIncludeLWCAnswers.UseVisualStyleBackColor = true;
 			this.m_chkIncludeLWCAnswers.CheckedChanged += new System.EventHandler(this.IncludeOptionCheckedChanged);
@@ -354,6 +446,9 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_chkIncludeLWCQuestions, "m_chkIncludeLWCQuestions");
 			this.m_chkIncludeLWCQuestions.Checked = true;
 			this.m_chkIncludeLWCQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCQuestions, "GenerateScriptDlg.m_chkIncludeLWCQuestions");
 			this.m_chkIncludeLWCQuestions.Name = "m_chkIncludeLWCQuestions";
 			this.m_chkIncludeLWCQuestions.UseVisualStyleBackColor = true;
 			this.m_chkIncludeLWCQuestions.CheckedChanged += new System.EventHandler(this.IncludeOptionCheckedChanged);
@@ -362,11 +457,17 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_lblQuestionGroupHeadingsColor, "m_lblQuestionGroupHeadingsColor");
 			this.m_lblQuestionGroupHeadingsColor.ForeColor = System.Drawing.Color.Blue;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblQuestionGroupHeadingsColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblQuestionGroupHeadingsColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblQuestionGroupHeadingsColor, "GenerateScriptDlg.m_lblQuestionGroupHeadingsColor");
 			this.m_lblQuestionGroupHeadingsColor.Name = "m_lblQuestionGroupHeadingsColor";
 			// 
 			// btnChooseQuestionGroupHeadingsColor
 			// 
 			resources.ApplyResources(this.btnChooseQuestionGroupHeadingsColor, "btnChooseQuestionGroupHeadingsColor");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseQuestionGroupHeadingsColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseQuestionGroupHeadingsColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseQuestionGroupHeadingsColor, "GenerateScriptDlg.btnChooseQuestionGroupHeadingsColor");
 			this.btnChooseQuestionGroupHeadingsColor.Name = "btnChooseQuestionGroupHeadingsColor";
 			this.btnChooseQuestionGroupHeadingsColor.UseVisualStyleBackColor = true;
 			this.btnChooseQuestionGroupHeadingsColor.Click += new System.EventHandler(this.ChooseTextColor);
@@ -375,11 +476,17 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_lblCommentTextColor, "m_lblCommentTextColor");
 			this.m_lblCommentTextColor.ForeColor = System.Drawing.Color.Red;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCommentTextColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCommentTextColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCommentTextColor, "GenerateScriptDlg.m_lblCommentTextColor");
 			this.m_lblCommentTextColor.Name = "m_lblCommentTextColor";
 			// 
 			// btnChooserCommentColor
 			// 
 			resources.ApplyResources(this.btnChooserCommentColor, "btnChooserCommentColor");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooserCommentColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooserCommentColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnChooserCommentColor, "GenerateScriptDlg.btnChooserCommentColor");
 			this.btnChooserCommentColor.Name = "btnChooserCommentColor";
 			this.btnChooserCommentColor.UseVisualStyleBackColor = true;
 			this.btnChooserCommentColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
@@ -389,11 +496,17 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_lblEnglishAnswerTextColor, "m_lblEnglishAnswerTextColor");
 			this.m_lblEnglishAnswerTextColor.ForeColor = System.Drawing.Color.Green;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEnglishAnswerTextColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEnglishAnswerTextColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEnglishAnswerTextColor, "GenerateScriptDlg.m_lblEnglishAnswerTextColor");
 			this.m_lblEnglishAnswerTextColor.Name = "m_lblEnglishAnswerTextColor";
 			// 
 			// btnChooseEnglishAnswerColor
 			// 
 			resources.ApplyResources(this.btnChooseEnglishAnswerColor, "btnChooseEnglishAnswerColor");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishAnswerColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishAnswerColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishAnswerColor, "GenerateScriptDlg.btnChooseEnglishAnswerColor");
 			this.btnChooseEnglishAnswerColor.Name = "btnChooseEnglishAnswerColor";
 			this.btnChooseEnglishAnswerColor.UseVisualStyleBackColor = true;
 			this.btnChooseEnglishAnswerColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
@@ -403,11 +516,17 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_lblEnglishQuestionColor, "m_lblEnglishQuestionColor");
 			this.m_lblEnglishQuestionColor.ForeColor = System.Drawing.Color.Gray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEnglishQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEnglishQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEnglishQuestionColor, "GenerateScriptDlg.m_lblEnglishQuestionColor");
 			this.m_lblEnglishQuestionColor.Name = "m_lblEnglishQuestionColor";
 			// 
 			// btnChooseEnglishQuestionColor
 			// 
 			resources.ApplyResources(this.btnChooseEnglishQuestionColor, "btnChooseEnglishQuestionColor");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishQuestionColor, "GenerateScriptDlg.btnChooseEnglishQuestionColor");
 			this.btnChooseEnglishQuestionColor.Name = "btnChooseEnglishQuestionColor";
 			this.btnChooseEnglishQuestionColor.UseVisualStyleBackColor = true;
 			this.btnChooseEnglishQuestionColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
@@ -417,6 +536,9 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.btnOk, "btnOk");
 			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
 			this.btnOk.Name = "btnOk";
 			this.btnOk.UseVisualStyleBackColor = true;
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
@@ -425,6 +547,9 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
 			// 
@@ -435,6 +560,9 @@ namespace SIL.Transcelerator
 			// 
 			// m_numBlankLines
 			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_numBlankLines, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_numBlankLines, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_numBlankLines, "GenerateScriptDlg.m_numBlankLines");
 			resources.ApplyResources(this.m_numBlankLines, "m_numBlankLines");
 			this.m_numBlankLines.Maximum = new decimal(new int[] {
             10,
@@ -447,7 +575,7 @@ namespace SIL.Transcelerator
 			// panel2
 			// 
 			this.panel2.Controls.Add(this.m_chkNumberQuestions);
-			this.panel2.Controls.Add(this.label7);
+			this.panel2.Controls.Add(this.lblExtraAnswerLines);
 			this.panel2.Controls.Add(this.btnChooseQuestionGroupHeadingsColor);
 			this.panel2.Controls.Add(this.m_lblCommentTextColor);
 			this.panel2.Controls.Add(this.m_lblQuestionGroupHeadingsColor);
@@ -465,13 +593,19 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_chkNumberQuestions, "m_chkNumberQuestions");
 			this.m_chkNumberQuestions.Checked = true;
 			this.m_chkNumberQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkNumberQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkNumberQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkNumberQuestions, "GenerateScriptDlg.m_chkNumberQuestions");
 			this.m_chkNumberQuestions.Name = "m_chkNumberQuestions";
 			this.m_chkNumberQuestions.UseVisualStyleBackColor = true;
 			// 
-			// label7
+			// lblExtraAnswerLines
 			// 
-			resources.ApplyResources(this.label7, "label7");
-			this.label7.Name = "label7";
+			resources.ApplyResources(this.lblExtraAnswerLines, "lblExtraAnswerLines");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblExtraAnswerLines, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblExtraAnswerLines, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblExtraAnswerLines, "GenerateScriptDlg.label7");
+			this.lblExtraAnswerLines.Name = "lblExtraAnswerLines";
 			// 
 			// m_pnlCssOptions
 			// 
@@ -485,24 +619,36 @@ namespace SIL.Transcelerator
 			// m_chkAbsoluteCssPath
 			// 
 			resources.ApplyResources(this.m_chkAbsoluteCssPath, "m_chkAbsoluteCssPath");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkAbsoluteCssPath, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkAbsoluteCssPath, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkAbsoluteCssPath, "GenerateScriptDlg.m_chkAbsoluteCssPath");
 			this.m_chkAbsoluteCssPath.Name = "m_chkAbsoluteCssPath";
 			this.m_chkAbsoluteCssPath.UseVisualStyleBackColor = true;
 			// 
 			// m_chkOverwriteCss
 			// 
 			resources.ApplyResources(this.m_chkOverwriteCss, "m_chkOverwriteCss");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkOverwriteCss, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkOverwriteCss, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkOverwriteCss, "GenerateScriptDlg.m_chkOverwriteCss");
 			this.m_chkOverwriteCss.Name = "m_chkOverwriteCss";
 			this.m_chkOverwriteCss.UseVisualStyleBackColor = true;
 			// 
 			// m_txtCssFile
 			// 
 			resources.ApplyResources(this.m_txtCssFile, "m_txtCssFile");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtCssFile, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtCssFile, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_txtCssFile, "GenerateScriptDlg.m_txtCssFile");
 			this.m_txtCssFile.Name = "m_txtCssFile";
 			this.m_txtCssFile.TextChanged += new System.EventHandler(this.m_txtCssFile_TextChanged);
 			// 
 			// btnBrowseCss
 			// 
 			resources.ApplyResources(this.btnBrowseCss, "btnBrowseCss");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnBrowseCss, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnBrowseCss, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnBrowseCss, "GenerateScriptDlg.btnBrowseCss");
 			this.btnBrowseCss.Name = "btnBrowseCss";
 			this.btnBrowseCss.UseVisualStyleBackColor = true;
 			this.btnBrowseCss.Click += new System.EventHandler(this.btnBrowseCss_Click);
@@ -510,6 +656,9 @@ namespace SIL.Transcelerator
 			// m_rdoUseExternalCss
 			// 
 			resources.ApplyResources(this.m_rdoUseExternalCss, "m_rdoUseExternalCss");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUseExternalCss, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseExternalCss, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUseExternalCss, "GenerateScriptDlg.m_rdoUseExternalCss");
 			this.m_rdoUseExternalCss.Name = "m_rdoUseExternalCss";
 			this.m_rdoUseExternalCss.UseVisualStyleBackColor = true;
 			this.m_rdoUseExternalCss.CheckedChanged += new System.EventHandler(this.m_rdoUseExternalCss_CheckedChanged);
@@ -518,6 +667,9 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_rdoEmbedStyleInfo, "m_rdoEmbedStyleInfo");
 			this.m_rdoEmbedStyleInfo.Checked = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoEmbedStyleInfo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoEmbedStyleInfo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoEmbedStyleInfo, "GenerateScriptDlg.m_rdoEmbedStyleInfo");
 			this.m_rdoEmbedStyleInfo.Name = "m_rdoEmbedStyleInfo";
 			this.m_rdoEmbedStyleInfo.TabStop = true;
 			this.m_rdoEmbedStyleInfo.UseVisualStyleBackColor = true;
@@ -534,7 +686,10 @@ namespace SIL.Transcelerator
 			// tabGeneral
 			// 
 			this.tabGeneral.Controls.Add(this.m_grpRange);
-			this.tabGeneral.Controls.Add(groupBox2);
+			this.tabGeneral.Controls.Add(groupBoxDocument);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabGeneral, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.tabGeneral, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.tabGeneral, "GenerateScriptDlg.tabGeneral");
 			resources.ApplyResources(this.tabGeneral, "tabGeneral");
 			this.tabGeneral.Name = "tabGeneral";
 			this.tabGeneral.UseVisualStyleBackColor = true;
@@ -544,22 +699,34 @@ namespace SIL.Transcelerator
 			this.tabOptions.Controls.Add(this.m_chkIncludeVerseNumbers);
 			this.tabOptions.Controls.Add(this.panel3);
 			this.tabOptions.Controls.Add(this.m_cboUseLWC);
-			this.tabOptions.Controls.Add(this.label3);
+			this.tabOptions.Controls.Add(this.lblUseLWC);
 			this.tabOptions.Controls.Add(this.panel1);
 			this.tabOptions.Controls.Add(this.m_chkIncludeLWCComments);
 			this.tabOptions.Controls.Add(this.m_chkPassageBeforeOverview);
 			this.tabOptions.Controls.Add(this.m_chkIncludeLWCAnswers);
 			this.tabOptions.Controls.Add(this.m_chkIncludeLWCQuestions);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabOptions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.tabOptions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.tabOptions, "GenerateScriptDlg.tabOptions");
 			resources.ApplyResources(this.tabOptions, "tabOptions");
 			this.tabOptions.Name = "tabOptions";
 			this.tabOptions.UseVisualStyleBackColor = true;
+			// 
+			// m_chkIncludeVerseNumbers
+			// 
+			resources.ApplyResources(this.m_chkIncludeVerseNumbers, "m_chkIncludeVerseNumbers");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeVerseNumbers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeVerseNumbers, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeVerseNumbers, "GenerateScriptDlg.m_chkIncludeVerseNumbers");
+			this.m_chkIncludeVerseNumbers.Name = "m_chkIncludeVerseNumbers";
+			this.m_chkIncludeVerseNumbers.UseVisualStyleBackColor = true;
 			// 
 			// panel3
 			// 
 			resources.ApplyResources(this.panel3, "panel3");
 			this.panel3.Controls.Add(this.m_rdoDisplayReferenceForOutOfOrderQuestions);
 			this.panel3.Controls.Add(this.label8);
-			this.panel3.Controls.Add(label10);
+			this.panel3.Controls.Add(lblDetailQuestionsOutOfOrder);
 			this.panel3.Controls.Add(this.m_rdoOutputPassageForOutOfOrderQuestions);
 			this.panel3.Name = "panel3";
 			// 
@@ -567,6 +734,9 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.m_rdoDisplayReferenceForOutOfOrderQuestions, "m_rdoDisplayReferenceForOutOfOrderQuestions");
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Checked = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoDisplayReferenceForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayReferenceForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoDisplayReferenceForOutOfOrderQuestions, "GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions");
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Name = "m_rdoDisplayReferenceForOutOfOrderQuestions";
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.TabStop = true;
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.UseVisualStyleBackColor = true;
@@ -575,11 +745,18 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.label8, "label8");
 			this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.label8, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.label8, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.label8, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.label8, "GenerateScriptDlg.label8");
 			this.label8.Name = "label8";
 			// 
 			// m_rdoOutputPassageForOutOfOrderQuestions
 			// 
 			resources.ApplyResources(this.m_rdoOutputPassageForOutOfOrderQuestions, "m_rdoOutputPassageForOutOfOrderQuestions");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoOutputPassageForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoOutputPassageForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoOutputPassageForOutOfOrderQuestions, "GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions");
 			this.m_rdoOutputPassageForOutOfOrderQuestions.Name = "m_rdoOutputPassageForOutOfOrderQuestions";
 			this.m_rdoOutputPassageForOutOfOrderQuestions.UseVisualStyleBackColor = true;
 			// 
@@ -589,32 +766,41 @@ namespace SIL.Transcelerator
 			this.m_cboUseLWC.Items.AddRange(new object[] {
             resources.GetString("m_cboUseLWC.Items"),
             resources.GetString("m_cboUseLWC.Items1")});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboUseLWC, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboUseLWC, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_cboUseLWC, "GenerateScriptDlg.m_cboUseLWC");
 			resources.ApplyResources(this.m_cboUseLWC, "m_cboUseLWC");
 			this.m_cboUseLWC.Name = "m_cboUseLWC";
 			this.m_cboUseLWC.SelectedIndexChanged += new System.EventHandler(this.HandleLWCSelectedIndexChanged);
 			// 
-			// label3
+			// lblUseLWC
 			// 
-			resources.ApplyResources(this.label3, "label3");
-			this.label3.Name = "label3";
+			resources.ApplyResources(this.lblUseLWC, "lblUseLWC");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblUseLWC, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblUseLWC, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.lblUseLWC, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblUseLWC, "GenerateScriptDlg.lblUseLWC");
+			this.lblUseLWC.Name = "lblUseLWC";
 			// 
 			// tabAppearance
 			// 
 			this.tabAppearance.Controls.Add(this.panel2);
 			this.tabAppearance.Controls.Add(this.m_pnlCssOptions);
-			this.tabAppearance.Controls.Add(label9);
+			this.tabAppearance.Controls.Add(lblStyleSpecification);
 			this.tabAppearance.Controls.Add(this.m_rdoEmbedStyleInfo);
 			this.tabAppearance.Controls.Add(this.m_rdoUseExternalCss);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabAppearance, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.tabAppearance, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.tabAppearance, "GenerateScriptDlg.tabAppearance");
 			resources.ApplyResources(this.tabAppearance, "tabAppearance");
 			this.tabAppearance.Name = "tabAppearance";
 			this.tabAppearance.UseVisualStyleBackColor = true;
 			// 
-			// m_chkIncludeVerseNumbers
-			//
-			resources.ApplyResources(this.m_chkIncludeVerseNumbers, "m_chkIncludeVerseNumbers");
-			this.m_chkIncludeVerseNumbers.Name = "m_chkIncludeVerseNumbers";
-			this.m_chkIncludeVerseNumbers.UseVisualStyleBackColor = true;
-			//
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.PrefixForNewItems = null;
+			// 
 			// GenerateScriptDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -625,13 +811,16 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "GenerateScriptDlg.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "GenerateScriptDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			groupBox2.ResumeLayout(false);
-			groupBox2.PerformLayout();
+			groupBoxDocument.ResumeLayout(false);
+			groupBoxDocument.PerformLayout();
 			this.m_grpRange.ResumeLayout(false);
 			this.m_grpRange.PerformLayout();
 			this.panel1.ResumeLayout(false);
@@ -649,6 +838,7 @@ namespace SIL.Transcelerator
 			this.panel3.PerformLayout();
 			this.tabAppearance.ResumeLayout(false);
 			this.tabAppearance.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -656,7 +846,7 @@ namespace SIL.Transcelerator
 		#endregion
 
 		private System.Windows.Forms.GroupBox m_grpRange;
-		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label lblTitle;
 		private System.Windows.Forms.Button btnBrowse;
 		private System.Windows.Forms.Button btnOk;
 		private System.Windows.Forms.Button btnCancel;
@@ -687,7 +877,7 @@ namespace SIL.Transcelerator
 		internal System.Windows.Forms.RadioButton m_rdoDisplayWarning;
 		private System.Windows.Forms.Label label6;
 		internal System.Windows.Forms.NumericUpDown m_numBlankLines;
-		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Label lblExtraAnswerLines;
 		private System.Windows.Forms.RadioButton m_rdoUseExternalCss;
 		internal System.Windows.Forms.RadioButton m_rdoEmbedStyleInfo;
 		private System.Windows.Forms.Button btnBrowseCss;
@@ -703,7 +893,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.TabPage tabGeneral;
 		private System.Windows.Forms.TabPage tabOptions;
 		private System.Windows.Forms.ComboBox m_cboUseLWC;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label lblUseLWC;
 		private System.Windows.Forms.TabPage tabAppearance;
 		internal System.Windows.Forms.RadioButton m_rdoSkipUntranslated;
 		internal System.Windows.Forms.CheckBox m_chkIncludeVerseNumbers;
@@ -711,5 +901,6 @@ namespace SIL.Transcelerator
 		internal System.Windows.Forms.RadioButton m_rdoDisplayReferenceForOutOfOrderQuestions;
 		private System.Windows.Forms.Label label8;
 		internal System.Windows.Forms.RadioButton m_rdoOutputPassageForOutOfOrderQuestions;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 	}
 }

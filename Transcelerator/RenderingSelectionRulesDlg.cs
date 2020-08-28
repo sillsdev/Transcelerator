@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -23,6 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -55,6 +59,8 @@ namespace SIL.Transcelerator
 				m_listRules.SelectedIndex = 0;
 			}
 			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (m_listRules.SelectedIndex >= 0);
+
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 
 		public IEnumerable<RenderingSelectionRule> Rules
@@ -70,11 +76,14 @@ namespace SIL.Transcelerator
 		private void btnNew_Click(object sender, EventArgs e)
 		{
 			int i = 1;
-			string name = string.Format(Properties.Resources.kstidNewSelectionRuleNameTemplate, i);
+			var newSelectionRuleNameTemplate = LocalizationManager.GetString(
+				"RenderingSelectionRulesDlg.NewSelectionRuleNameTemplate",
+				"Selection Rule - {0}", "Param is an integer");
+			string name = Format(newSelectionRuleNameTemplate, i);
 
 			Func<string, bool> nameIsUnique = n => !m_listRules.Items.Cast<RenderingSelectionRule>().Any(r => r.Name == n);
 			while (!nameIsUnique(name))
-				name = string.Format(Properties.Resources.kstidNewSelectionRuleNameTemplate, ++i);
+				name = Format(newSelectionRuleNameTemplate, ++i);
 
 			RenderingSelectionRule rule = new RenderingSelectionRule(name);
 
@@ -130,12 +139,14 @@ namespace SIL.Transcelerator
 			RenderingSelectionRule origRule = m_listRules.SelectedItem as RenderingSelectionRule;
 			RenderingSelectionRule newRule = new RenderingSelectionRule(origRule.QuestionMatchingPattern, origRule.RenderingMatchingPattern);
 
+			var copiedSelectionRuleNameTemplate = LocalizationManager.GetString("RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate",
+				"{0} - Copy{1}", "Param 0: the original rule name; Param 1: an optional numeric suffix to prevent duplicates (if needed)");
 			int i = 1;
-			string name = string.Format(Properties.Resources.kstidCopiedSelectionRuleNameTemplate, origRule.Name, string.Empty);
+			var name = Format(copiedSelectionRuleNameTemplate, origRule.Name, string.Empty);
 
 			Func<string, bool> nameIsUnique = n => !m_listRules.Items.Cast<RenderingSelectionRule>().Any(r => r.Name == n);
 			while (!nameIsUnique(name))
-				name = string.Format(Properties.Resources.kstidCopiedSelectionRuleNameTemplate, origRule.Name, "(" + i++ + ")");
+				name = Format(copiedSelectionRuleNameTemplate, origRule.Name, "(" + i++ + ")");
 
 			newRule.Name = name;
 
@@ -161,6 +172,11 @@ namespace SIL.Transcelerator
 			m_listRules.Items.RemoveAt(i);
 			if (m_listRules.Items.Count > 0)
 				m_listRules.SelectedIndex = m_listRules.Items.Count > i ? i : i - 1;
+		}
+
+		private void HandleStringsLocalized()
+		{
+			m_listRules_SelectedIndexChanged(m_listRules, new EventArgs());
 		}
 
 		private void m_listRules_SelectedIndexChanged(object sender, System.EventArgs e)

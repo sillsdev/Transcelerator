@@ -977,7 +977,7 @@ namespace SIL.Transcelerator
 			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
-			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.Title");
+			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.WindowTitle");
 			this.MainMenuStrip = this.m_mainMenu;
 			this.Name = "UNSQuestionsDialog";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

@@ -473,7 +473,7 @@ namespace SIL.Transcelerator
 			{
 				m_fileAccessor = value;
 				m_termRenderingSelectionRules =
-					ScrTextSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
+					SerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.TermRenderingSelectionRules), true);
 			}
 		}

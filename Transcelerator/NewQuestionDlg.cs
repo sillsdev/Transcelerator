@@ -15,8 +15,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DesktopAnalytics;
+using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 using SIL.ObjectModel;
 using SIL.Scripture;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -183,6 +187,7 @@ namespace SIL.Transcelerator
 			InitializeComponent();
 
 			HandleStringsLocalized();
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
 			var startRef = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
 			m_scrPsgReference.Initialize(new BCVRef(startRef), m_projectVersification, canonicalBookIds);
@@ -235,7 +240,7 @@ namespace SIL.Transcelerator
 		private void HandleStringsLocalized()
 		{
 			m_locationFormat = m_lblSelectLocation.Text;
-			m_lblVernacularQuestion.Text = string.Format(m_lblVernacularQuestion.Text, m_vernLanguage);
+			m_lblVernacularQuestion.Text = Format(m_lblVernacularQuestion.Text, m_vernLanguage);
 			if (IsHandleCreated)
 			{
 				if (InvokeRequired)
@@ -247,8 +252,11 @@ namespace SIL.Transcelerator
 
 		private void UpdateDisplay()
 		{
-			var fmt = (m_dataGridViewExistingQuestions.RowCount > 0) ? m_locationFormat : Properties.Resources.kstidNoExistingQuestions;
-			m_lblSelectLocation.Text = String.Format(fmt, m_cboCategory.SelectedItem, ReferenceInProjectVersification);
+			var fmt = (m_dataGridViewExistingQuestions.RowCount > 0) ? m_locationFormat :
+				LocalizationManager.GetString("NewQuestionDlg.NoExistingQuestions",
+					"There are no existing {0} questions for {1}.",
+					"Param 1: category name; Param 2: Scripture reference");
+			m_lblSelectLocation.Text = Format(fmt, m_cboCategory.SelectedItem, ReferenceInProjectVersification);
 		}
 
 		private void PopulateEndRefComboBox()
@@ -256,7 +264,7 @@ namespace SIL.Transcelerator
 			bool noEndRef = (m_cboEndVerse.Items.Count > 1 && m_cboEndVerse.SelectedIndex == 0) ||
 				(m_cboEndVerse.Items.Count == 0 && m_existingEndVerse == StartVerse);
 			m_cboEndVerse.Items.Clear();
-			m_cboEndVerse.Items.Add(String.Empty);
+			m_cboEndVerse.Items.Add(Empty);
 
 			var lastCoveredVerse = new BCVRef(m_currentSections.Last().Value.EndRef).Verse;
 			for (int i = StartVerse; i <= lastCoveredVerse; i++)
@@ -473,10 +481,15 @@ namespace SIL.Transcelerator
 		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			if (DialogResult.OK ==
-				MessageBox.Show(this, "Sorry this feature is not available yet. But if you are " +
-				"connected to the Internet and have not opted out of transmitting analytics data, " +
-				"this feature will now be requested for you.",
-				"Transcelerator Feature Request", MessageBoxButtons.OKCancel))
+				MessageBox.Show(this, LocalizationManager.GetString(
+					"NewQuestionDlg.RequestAddCategoryFeatureInfo",
+					"Sorry this feature is not available yet. But if you are connected to the " +
+					"Internet and have not opted out of transmitting analytics data, this " +
+					"feature will now be requested for you."),
+					Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
+					"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
+					TxlPlugin.pluginName),
+					MessageBoxButtons.OKCancel))
 			{
 				Analytics.Track("TXL-218", new Dictionary<string, string>
 					{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});

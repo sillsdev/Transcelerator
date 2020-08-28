@@ -14,6 +14,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using L10NSharp;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -42,11 +44,14 @@ namespace SIL.Transcelerator
 			object[] attributes = assembly.GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
-			m_lblCopyright.Text = string.Format(Properties.Resources.kstidCopyrightFmt, m_lblCopyright.Text.Replace("(C)", "©"));
+			m_lblCopyright.Text = Format(LocalizationManager.GetString("TransceleratorInfo.CopyrightFmt",
+					"{0}. Distributable under the terms of the MIT License.",
+					"Param is copyright information. This is display in the Help/About box and the splash screen"),
+				m_lblCopyright.Text.Replace("(C)", "©"));
 
 			string version = assembly.GetName().Version.ToString();
-			m_lblAppVersion.Text = string.Format(m_lblAppVersion.Text, version);
-			lblBuildDate.Text = string.Format(lblBuildDate.Text,
+			m_lblAppVersion.Text = Format(m_lblAppVersion.Text, version);
+			lblBuildDate.Text = Format(lblBuildDate.Text,
 				File.GetLastWriteTime(assembly.Location).ToShortDateString());
 		}
 
@@ -100,7 +105,7 @@ namespace SIL.Transcelerator
 		{
 			var url = e.Url.ToString();
 			e.Cancel = true;
-			if (!string.IsNullOrEmpty(url))
+			if (!IsNullOrEmpty(url))
 				Process.Start(url);
 		}
 

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -25,6 +25,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {
@@ -71,9 +73,8 @@ namespace SIL.Transcelerator
 			PopulateRenderings();
 			term.BestRenderingChanged += term_BestRenderingChanged;
 
-			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
-			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, s_AppName);
-            mnuRefreshRenderingsH.Text = string.Format(mnuRefreshRenderingsH.Text, s_AppName);
+			HandleStringsLocalized();
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 	    #endregion
 
@@ -135,6 +136,13 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Event handlers
+		private void HandleStringsLocalized()
+		{
+			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, s_AppName);
+			mnuRefreshRenderingsH.Text = string.Format(mnuRefreshRenderingsH.Text, s_AppName);
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles a change (probably from another TermRenderingCtrl) to our term's best

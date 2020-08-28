@@ -32,6 +32,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.WritingSystems;
+using static System.String;
 using File = System.IO.File;
 
 namespace SIL.Transcelerator
@@ -318,7 +319,7 @@ namespace SIL.Transcelerator
                 splashScreen = new TxlSplashScreen();
                 splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
             }
-            splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
+            splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgInitializing", "Initializing...");
 
             InitializeComponent();
 
@@ -338,7 +339,7 @@ namespace SIL.Transcelerator
 			m_vernIcuLocale = vernIcuLocale;
 			m_vernLanguageName = vernLanguageName;
 			m_fVernIsRtoL = fVernIsRtoL;
-		    if (string.IsNullOrEmpty(m_vernIcuLocale))
+		    if (IsNullOrEmpty(m_vernIcuLocale))
                 mnuGenerate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
 	        m_getTermOccurrences = getTermOccurrences;
@@ -354,12 +355,12 @@ namespace SIL.Transcelerator
            
             m_startRef = startRef;
             m_endRef = endRef;
-		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
             
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
 
-			if (!String.IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
+			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
 
 			PopulateAvailableLocales();
@@ -368,7 +369,7 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
-			Text = String.Format(Text, projectName);
+			Text = Format(Text, projectName);
 			HelpButton = (m_helpDelegate != null);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
@@ -490,7 +491,7 @@ namespace SIL.Transcelerator
 
 		private LocalizationsFileAccessor GetDataLocalizer(string localeId)
 		{
-			if (localeId == "en" || localeId == "en-US" || String.IsNullOrWhiteSpace(localeId))
+			if (localeId == "en" || localeId == "en-US" || IsNullOrWhiteSpace(localeId))
 				return null;
 
 			if (m_dataLocalizer?.Locale == localeId)
@@ -629,7 +630,7 @@ namespace SIL.Transcelerator
             else if (EditingTranslation)
             {
                 Clipboard.SetDataObject(new DataObject(TextControl.SelectedText));
-                TextControl.SelectedText = string.Empty;
+                TextControl.SelectedText = Empty;
             }
             else
             {
@@ -695,7 +696,7 @@ namespace SIL.Transcelerator
             else if (EditingTranslation)
             {
                 string text = Clipboard.GetText();
-                if (!string.IsNullOrEmpty(text))
+                if (!IsNullOrEmpty(text))
                     TextControl.SelectedText = text;
             }
             else
@@ -721,7 +722,7 @@ namespace SIL.Transcelerator
             CopyToClipboard();
 
             //Clear selected cell
-            dataGridUns.SelectedCells[0].Value = string.Empty;
+            dataGridUns.SelectedCells[0].Value = Empty;
             m_helper[dataGridUns.CurrentCell.RowIndex].HasUserTranslation = false;
             SaveNeeded = true;
             dataGridUns.InvalidateRow(dataGridUns.CurrentCell.RowIndex);
@@ -1206,7 +1207,9 @@ namespace SIL.Transcelerator
                     {
                         int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
                         if (untranslatedQuestions > 0 &&
-                            MessageBox.Show(string.Format(Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
+                            MessageBox.Show(Format(LocalizationManager.GetString("MainWindow.UntranslatedQuestionsWarning",
+		                        "There are {0} questions in the selected range that do not have confirmed translations. Do you " +
+		                        "want to continue? (Untranslated questions will be excluded.)"), untranslatedQuestions),
                             m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
@@ -1616,7 +1619,7 @@ namespace SIL.Transcelerator
 					sPsalm = "Salmo";
 				}
 
-				dlg.FileName = string.Format("Translations of {0} Questions {1}", language, sRef);
+				dlg.FileName = Format("Translations of {0} Questions {1}", language, sRef);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					try
@@ -2067,7 +2070,7 @@ namespace SIL.Transcelerator
 		private void AddNewQuestion(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
+			string language = Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
 			using (var dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
 				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
@@ -2091,7 +2094,7 @@ namespace SIL.Transcelerator
 					if (basePhrase == null)
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
-					if (dlg.Translation != string.Empty)
+					if (dlg.Translation != Empty)
 						newPhrase.Translation = dlg.Translation;
 
 					Save(true, true);
@@ -2395,7 +2398,7 @@ namespace SIL.Transcelerator
 		private BCVRef GetScrRefOfRow(int iRow)
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
-			if (string.IsNullOrEmpty(sRef))
+			if (IsNullOrEmpty(sRef))
 				return null;
 			int ichDash = sRef.IndexOf('-');
 			if (ichDash > 0)
@@ -2411,12 +2414,15 @@ namespace SIL.Transcelerator
 		private void LoadTranslations(IProgressMessage splashScreen)
 	    {
 	        if (splashScreen != null)
-	            splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
+	            splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgLoadingQuestions", "Loading questions...");
 
 			FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
 			if (!finfoMasterQuestions.Exists)
 			{
-				MessageBox.Show("Required file missing: " + m_masterQuestionsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				MessageBox.Show(Format(LocalizationManager.GetString("General.InstalledFileMissing",
+					"Required file missing: {0}. Please re-run the Transcelerator Installer to repair this problem.",
+					"Parameter is filename (for technical support)"),
+					m_masterQuestionsFilename), Text);
 				return;
 			}
 
@@ -2451,11 +2457,12 @@ namespace SIL.Transcelerator
 	        else
 	        {
 	            if (splashScreen != null)
-	                splashScreen.Message = Properties.Resources.kstidSplashMsgParsingQuestions;
+	                splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgParsingQuestions",
+		                "Processing questions using Major Biblical Terms list...");
 
 	            List<PhraseCustomization> customizations = null;
 	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
-	            if (!string.IsNullOrEmpty(phraseCustData))
+	            if (!IsNullOrEmpty(phraseCustData))
 	            {
 	                customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
 	                if (e != null)
@@ -2476,10 +2483,10 @@ namespace SIL.Transcelerator
 	        m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
 		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
-			if (!string.IsNullOrEmpty(translationData))
+			if (!IsNullOrEmpty(translationData))
 			{
 				if (splashScreen != null)
-					splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingTranslations;			
+					splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgLoadingTranslations", "Loading translations...");			
 
 				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromString<List<XmlTranslation>>(translationData, out e);
 				if (e != null)
@@ -2511,7 +2518,7 @@ namespace SIL.Transcelerator
 	        {
 		        if (m_cachedPhraseSubstitutions == null)
 		        {
-					m_cachedPhraseSubstitutions = ScrTextSerializationHelper.LoadOrCreateListFromString<Substitution>(
+					m_cachedPhraseSubstitutions = SerializationHelper.LoadOrCreateListFromString<Substitution>(
 				        m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true);
 		        }
 				return m_cachedPhraseSubstitutions;
@@ -2665,10 +2672,10 @@ namespace SIL.Transcelerator
 			}
 			else
 			{
-				lblFilterIndicator.Text = Properties.Resources.kstidFilteredStatus;
-				lblFilterIndicator.Image = Properties.Resources.Filtered;
+				lblFilterIndicator.Text = LocalizationManager.GetString("MainWindow.FilteredStatus", "Filtered");
+				lblFilterIndicator.Image = Resources.Filtered;
 			}
-			lblRemainingWork.Text = string.Format((string)lblRemainingWork.Tag,
+			lblRemainingWork.Text = Format((string)lblRemainingWork.Tag,
 				m_helper.Phrases.Count(p => !p.HasUserTranslation), m_helper.FilteredPhraseCount);
 			lblRemainingWork.Visible = true;
 		}
@@ -2782,9 +2789,9 @@ namespace SIL.Transcelerator
 		{
 			var question = m_helper[rowIndex].QuestionInfo;
 			PopulateAnswerOrCommentLabel(question, question?.Answers, LocalizableStringType.Answer,
-				m_lblAnswerLabel, m_lblAnswers, Properties.Resources.kstidAnswersLabel);
+				m_lblAnswerLabel, m_lblAnswers, LocalizationManager.GetString("MainWindow.AnswersLabel", "Answers:"));
 			PopulateAnswerOrCommentLabel(question, question?.Notes, LocalizableStringType.Note,
-				m_lblCommentLabel, m_lblComments, Properties.Resources.kstidCommentsLabel);
+				m_lblCommentLabel, m_lblComments, LocalizationManager.GetString("MainWindow.CommentsLabel", "Comments:"));
 		}
 
 		/// ------------------------------------------------------------------------------------

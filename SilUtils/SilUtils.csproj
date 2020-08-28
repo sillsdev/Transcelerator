@@ -135,7 +135,7 @@
     <Compile Include="StringUtils.cs" />
     <Compile Include="TextBoxExtensions.cs" />
     <Compile Include="WaitCursor.cs" />
-    <Compile Include="ScrTextSerializationHelper.cs" />
+    <Compile Include="SerializationHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ConfirmFileOverwriteDlg.resx">
@@ -156,6 +156,14 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="L10NSharp">
+      <Version>4.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="SIL.Core">
+      <Version>8.0.0-beta0077</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

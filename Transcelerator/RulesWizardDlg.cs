@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using L10NSharp;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -26,7 +28,7 @@ namespace SIL.Transcelerator
 		private RenderingSelectionRule m_rule;
 		private readonly Action<bool> m_selectKeyboard;
 
-		private Func<string, bool> ValidateName { get; set; }
+		private Func<string, bool> ValidateName { get; }
 
 		#region Constructors
 		/// ------------------------------------------------------------------------------------
@@ -67,7 +69,8 @@ namespace SIL.Transcelerator
 			switch (m_rule.QuestionMatchCriteriaType)
 			{
 				case RenderingSelectionRule.QuestionMatchType.Undefined:
-					Text = Properties.Resources.kstidEditRuleCaption;
+					Text = LocalizationManager.GetString("RulesWizardDlg.EditRuleCaption",
+						"Edit Rendering Selection Rule");
 					m_rdoSuffix.Checked = true; // default;
 					//SetDetails(m_cboSuffix, string.Empty);
 					return;
@@ -142,7 +145,7 @@ namespace SIL.Transcelerator
 
 	    private static void SetDetails(ComboBox cbo, string details)
 		{
-			if (string.IsNullOrEmpty(details))
+			if (IsNullOrEmpty(details))
 				cbo.SelectedIndex = -1;
 			else
 			{
@@ -261,14 +264,12 @@ namespace SIL.Transcelerator
 
 		private void VernacularTextBox_Enter(object sender, EventArgs e)
 		{
-			if (m_selectKeyboard != null)
-				m_selectKeyboard(true);
+			m_selectKeyboard?.Invoke(true);
 		}
 
 		private void VernacularTextBox_Leave(object sender, EventArgs e)
 		{
-			if (m_selectKeyboard != null)
-				m_selectKeyboard(false);
+			m_selectKeyboard?.Invoke(false);
 		}
 
 		private void m_txtName_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -276,12 +277,15 @@ namespace SIL.Transcelerator
 			string name = m_txtName.Text.Trim();
 			if (name.Length == 0)
 			{
-				MessageBox.Show(Properties.Resources.kstidRuleNameRequired, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(LocalizationManager.GetString("RulesWizardDlg.NameRequired", 
+					"Name is required."), Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				e.Cancel = true;
 			}
 			else if (!ValidateName(name))
 			{
-				MessageBox.Show(Properties.Resources.kstidRuleNameRequired, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBox.Show(Format(LocalizationManager.GetString("RulesWizardDlg.NameMustBeUnique",
+					"There is already a rule named {0}. Rule names must be unique."), name),
+					Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				e.Cancel = true;
 			}
 			m_rule.Name = name;
@@ -292,11 +296,19 @@ namespace SIL.Transcelerator
 			if (!m_rule.Valid)
 			{
 				string errorPartA = (m_rule.ErrorMessageQ != null) ?
-					Properties.Resources.kstidInvalidQuestionCondition + Environment.NewLine + m_rule.ErrorMessageQ :
-					Properties.Resources.kstidInvalidRenderingCondition + Environment.NewLine + m_rule.ErrorMessageR;
+					LocalizationManager.GetString("RulesWizardDlg.InvalidQuestionCondition",
+						"Invalid condition for determining when rule applies.") +
+						Environment.NewLine + m_rule.ErrorMessageQ :
+					LocalizationManager.GetString("RulesWizardDlg.InvalidRenderingCondition",
+						"Invalid condition for determining which rendering to select.") +
+						Environment.NewLine + m_rule.ErrorMessageR;
 
-				switch (MessageBox.Show(errorPartA + Environment.NewLine + Properties.Resources.kstidFixConditionNow,
-					Properties.Resources.kstidInvalidRegularExpressionCaption, MessageBoxButtons.YesNoCancel,
+				switch (MessageBox.Show(errorPartA + Environment.NewLine +
+					LocalizationManager.GetString("RulesWizardDlg.FixConditionNow",
+						"This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?"),
+					LocalizationManager.GetString("RulesWizardDlg.InvalidRegularExpressionCaption",
+						"Regular Expression Invalid"),
+					MessageBoxButtons.YesNoCancel,
 					MessageBoxIcon.Stop))
 				{
 					case DialogResult.Yes:
@@ -317,7 +329,7 @@ namespace SIL.Transcelerator
 		private void UpdateStatus()
 		{
 			m_lblDescription.Text = m_rule.Description;
-			btnOk.Enabled = m_txtName.Text != string.Empty &&
+			btnOk.Enabled = m_txtName.Text != Empty &&
 				m_rule.QuestionMatchCriteriaType != RenderingSelectionRule.QuestionMatchType.Undefined;
 		}
 		#endregion

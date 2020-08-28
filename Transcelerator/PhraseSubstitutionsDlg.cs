@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2014, SIL International.
-// <copyright from='2011' to='2014' company='SIL International'>
-//		Copyright (c) 2014, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using L10NSharp;
 using SilUtils.Controls;
 
 namespace SIL.Transcelerator
@@ -478,7 +479,8 @@ namespace SIL.Transcelerator
 					{
 						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
 						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Goldenrod;
-						row.Cells[colPreviewResult.Index].Value = Properties.Resources.kstidRuleDidNotChangeResult;
+						row.Cells[colPreviewResult.Index].Value = LocalizationManager.GetString(
+							"QuestionAdjustmentsDlg.RuleDidNotChangeResult", "No Change");
 					}
 					else
 					{

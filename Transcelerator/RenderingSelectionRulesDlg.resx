@@ -112,23 +112,26 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>117, 46</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnOk.Location" type="System.Drawing.Point, System.Drawing">
     <value>188, 368</value>
   </data>
   <data name="btnOk.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnOk.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -139,7 +142,7 @@
     <value>btnOk</value>
   </data>
   <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
     <value>$this</value>
@@ -166,7 +169,7 @@
     <value>btnCancel</value>
   </data>
   <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
     <value>$this</value>
@@ -174,31 +177,31 @@
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="lblInstructions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lblInstructions.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 9</value>
   </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lblInstructions.Size" type="System.Drawing.Size, System.Drawing">
     <value>509, 37</value>
   </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblInstructions.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="label1.Text" xml:space="preserve">
+  <data name="lblInstructions.Text" xml:space="preserve">
     <value>Define rules to enable Transcelerator to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</value>
   </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
+  <data name="&gt;&gt;lblInstructions.Name" xml:space="preserve">
+    <value>lblInstructions</value>
   </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;lblInstructions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;lblInstructions.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;lblInstructions.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
   <data name="m_listRules.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -217,7 +220,7 @@
     <value>m_listRules</value>
   </data>
   <data name="&gt;&gt;m_listRules.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_listRules.Parent" xml:space="preserve">
     <value>$this</value>
@@ -225,37 +228,37 @@
   <data name="&gt;&gt;m_listRules.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="lblRuleDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+  <data name="lblRuleDescription.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lblRuleDescription.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 266</value>
   </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="lblRuleDescription.Size" type="System.Drawing.Size, System.Drawing">
     <value>86, 13</value>
   </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblRuleDescription.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="label2.Text" xml:space="preserve">
+  <data name="lblRuleDescription.Text" xml:space="preserve">
     <value>Ru&amp;le description:</value>
   </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
+  <data name="&gt;&gt;lblRuleDescription.Name" xml:space="preserve">
+    <value>lblRuleDescription</value>
   </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;lblRuleDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+  <data name="&gt;&gt;lblRuleDescription.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;lblRuleDescription.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>12, 46</value>
   </metadata>
   <data name="toolStrip1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -273,18 +276,19 @@
   <data name="btnEdit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         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
-        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
+        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
+        QmCC
 </value>
   </data>
   <data name="btnEdit.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -299,18 +303,17 @@
   <data name="btnCopy.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJpSURBVDhPlZP7T1JhHMbP+qW/qb/AZdllVkauQkRqZkUr
-        WyLzhrlE0UKiIYI4bZbZZqRFy2ut7CKBeAGyuAhBnMnlCKZb4zy959RhqFubZ3t2trP3ec7n+e79UjLL
-        IirMLkh7nCg32FH24BPEulmcu/sWZzXTKG0dh6jFhtNNozhVNwJq58OZ01ss1jf/L+7MidqnuwOkpnkw
-        v1hYfWkMLTPYM5HU6OADnpOAYQ/D19kTEdebC0j9Uz7RY0JknEtAM0WjcSwKxUgkJ+58cc0QKAkZ2raA
-        PKIhNwOTPYHOaRqqF1Eon0VySm6wOH5zEJRY92FbwE4igUx4c8Z4hsUa0bHrA6DK9JNIbvzOVdhJlB8g
-        mOk0i9g6i6PyPlAXBgawGPfmAgQiT8KPz/SX3Pd8c5RhwanoshlUhfkROpcbMRayIsis4bz2HV9pjnai
-        zX0LD7+bEGaSPDb3Z84YTv7V4Us9oErVE5iKTKLbr0adsxI3Zmow6OuF6asWxkA7OrxKtCxUYybyPmcO
-        xlkE4lkcumgAdabemuLwRletUDhk6A/p0BPQ8Oa+VS0Mvla0exRocFWh29sFZyzMm0OJLAplelCi5pd8
-        T26qDtoLua0JKpcctSRM902FeysNaFq4gtuuathWZ0idDDLkWr+xB3BQqgNV0jiKk2RJihXDKFE8IYvz
-        inTdxOvwOJoXr6F+vhL9Kxa46RT8a1n+lnr9MWK+zxRIug5s2y2WZfcLRB9jDrQtKTEbdeEHGViQYHPo
-        P5Nb6OidQIFEK961mQD2CUSiOxaUqg38ZTly1YKiKhM/tMIKPQrKuxoE8x90xAmTxr3IHwAAAABJRU5E
-        rkJggg==
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJgSURBVDhPlZP7T1JhHMbf9Ut/U3+By7LLrMxc5QWpmZWt
+        bInOC5pLFC0gGgKK02aZbUZYtLxRK7toIKJCliAQxBm3o5RujfP0noOQUmvz3Z5fzr7Pcz7fd89LxAYH
+        ynvsEOlsKNPMouTeBxSrpnHm9muclk+hqG0Mha1mnJSacKJ+BCT78Ob1TQ5rG/8XP3Os9vHfASL9HNif
+        HIwr6xhaZLFrIpHWKgQ8pQHDTlYw74qI/wsfEN/SdqKHlEg7E4V8kkHTaBCSkUBG/Gx+zRBIKUXcEbCN
+        aGiJhX42iq4pBs3Pgqh7Esgo9oPD0euDIMWqdzsCsomyxRsjCQ5hqiNXB0BK1BP046/MQDbRdqXNzDqH
+        0BqHw1V9IOcGBuCIuDJDaSJn1I2PzKd/moNsSnkXe0B78ABdi00Y9RmxyoZxVvFGCJhhbGhfuoH7X/Xw
+        s7EdZn8spYMXdCBFsnFMBibQ7Zah3laBa5YaDK70Qv9ZAa2nA52uOrTOV8MSeJsxr0Y4eCJJHDivATnV
+        YIzzeCavERKrGP0+FXQeuWDu8yqgWWlDh1OCRnslul1K2EJ+weyLJpErVoMUtjwXduRv1cq4UGWWotle
+        hVoapvrSjDvLjZDOX8JNezXMXgtdJ4EELdGrWQ/2i1QgBU0mHKeVzJcMo0DyiNb0Bd11Ay/9Y2hxXEHD
+        XAX6lw1YYuJwh5NCA13uEDXfZXNKlfu2XkTqcBy3N030PmRF+0IdpoN2fBP2Tgro32Ob6OwdR06ponjL
+        9ucA2JMmKrxlQJFMI5Tl0GUD8ir1wqXllquRU6ZsTDkI+Q10xAmTrrZyuAAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="btnCopy.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
@@ -347,7 +350,7 @@
     <value>toolStrip1</value>
   </data>
   <data name="&gt;&gt;toolStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStrip1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -374,7 +377,7 @@
     <value>m_lblDescription</value>
   </data>
   <data name="&gt;&gt;m_lblDescription.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblDescription.Parent" xml:space="preserve">
     <value>$this</value>
@@ -382,7 +385,7 @@
   <data name="&gt;&gt;m_lblDescription.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
@@ -401,30 +404,36 @@
     <value>btnNew</value>
   </data>
   <data name="&gt;&gt;btnNew.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnEdit.Name" xml:space="preserve">
     <value>btnEdit</value>
   </data>
   <data name="&gt;&gt;btnEdit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnCopy.Name" xml:space="preserve">
     <value>btnCopy</value>
   </data>
   <data name="&gt;&gt;btnCopy.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnDelete.Name" xml:space="preserve">
     <value>btnDelete</value>
   </data>
   <data name="&gt;&gt;btnDelete.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Name" xml:space="preserve">
+    <value>l10NSharpExtender1</value>
+  </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Type" xml:space="preserve">
+    <value>L10NSharp.UI.L10NSharpExtender, L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>RenderingSelectionRulesDlg</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

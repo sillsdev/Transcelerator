@@ -1,16 +1,17 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2012' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2012' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
 // File: NewQuestion.cs
-// Responsibility: Bogle
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {
@@ -30,6 +31,7 @@ namespace SIL.Transcelerator
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing && (components != null))
 			{
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 				components.Dispose();
 			}
 			base.Dispose(disposing);

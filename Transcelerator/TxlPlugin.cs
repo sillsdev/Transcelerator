@@ -114,12 +114,24 @@ namespace SIL.Transcelerator
 #endif
 				ptHost.WriteLineToLog(this, "Starting " + pluginName);
 
+				string preferredUiLocale = "en";
+				try
+				{
+					preferredUiLocale = host.GetApplicationSetting("InterfaceLanguageId");
+					if (String.IsNullOrWhiteSpace(preferredUiLocale))
+						preferredUiLocale = "en";
+				}
+				catch (Exception)
+				{
+				}
+
+				SetUpLocalization(preferredUiLocale);
+
 				Thread mainUIThread = new Thread(() =>
 				{
 					InitializeErrorHandling(projectName);
 
                     const string kMajorList = "Major";
-                    string preferredUiLocale = "en";
 
 					UNSQuestionsDialog formToShow;
 					lock (this)
@@ -127,7 +139,9 @@ namespace SIL.Transcelerator
 						splashScreen = new TxlSplashScreen();
 					    splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
 						splashScreen.Message = string.Format(
-						    Properties.Resources.kstidSplashMsgRetrievingDataFromCaller, host.ApplicationName);
+						    LocalizationManager.GetString("SplashScreen.MsgRetrievingDataFromCaller",
+							    "Retrieving data from {0}...", "Param is host application name (Paratext)"),
+						    host.ApplicationName);
 
 						int currRef = host.GetCurrentRef(TxlCore.kEnglishVersificationName);
 						BCVRef startRef = new BCVRef(currRef);
@@ -200,15 +214,6 @@ namespace SIL.Transcelerator
 						{
 						}
 						
-						try
-						{
-							preferredUiLocale = host.GetApplicationSetting("InterfaceLanguageId");
-							if (String.IsNullOrWhiteSpace(preferredUiLocale))
-								preferredUiLocale = "en";
-						}
-						catch (Exception)
-						{
-						}
 						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
                             termId => host.GetProjectTermRenderings(projectName, termId, true),
@@ -242,8 +247,6 @@ namespace SIL.Transcelerator
 						Analytics.Track("Startup", new Dictionary<string, string>
 						{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
 
-						SetUpLocalization(preferredUiLocale);
-
 						formToShow.ShowDialog();
 					}
 					ptHost.WriteLineToLog(this, "Closing " + pluginName);
@@ -258,7 +261,8 @@ namespace SIL.Transcelerator
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("Error occurred attempting to start Transcelerator: " + e.Message);
+				MessageBox.Show(string.Format(LocalizationManager.GetString("General.ErrorStarting", "Error occurred attempting to start {0}: ",
+					"Param is \"Transcelerator\" (plugin name)"), pluginName) + e.Message);
 				throw;
 			}
 		}
@@ -322,7 +326,7 @@ namespace SIL.Transcelerator
 			var version = assembly.GetName().Version.ToString();
 			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, version,
 				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(FileLocationUtilities.GetFileDistributedWithApplication("TXL no TXL.ico")), emailAddress,
-				"Transcelerator");
+				"SIL.Transcelerator", "SIL.Utils");
 		}
 	}
 }

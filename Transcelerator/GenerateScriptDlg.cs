@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,13 +12,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AddInSideViews;
+using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using static System.String;
 using File = System.IO.File;
 
 namespace SIL.Transcelerator
@@ -44,6 +47,7 @@ namespace SIL.Transcelerator
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
 		private readonly IList<ISectionInfo> m_sections;
+		private readonly string m_projectName;
 		private readonly IScrExtractor m_scrExtractor;
 		private List<string> m_lwcLocaleIds;
 		private LocalizationsFileAccessor m_dataLoc;
@@ -64,25 +68,18 @@ namespace SIL.Transcelerator
             IList<ISectionInfo> sections,
 			IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
 		{
-		    m_scrExtractor = scrExtractor;
+			m_projectName = projectName;
+			m_scrExtractor = scrExtractor;
 			InitializeComponent();
 			m_chkIncludeLWCQuestions.Tag = btnChooseEnglishQuestionColor;
 			m_chkIncludeLWCAnswers.Tag = btnChooseEnglishAnswerColor;
 			m_chkIncludeLWCComments.Tag = btnChooserCommentColor;
-			m_fmtChkEnglishQuestions = m_chkIncludeLWCQuestions.Text;
-			m_fmtChkEnglishAnswers = m_chkIncludeLWCAnswers.Text;
-			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;
 			btnChooseQuestionGroupHeadingsColor.Tag = m_lblQuestionGroupHeadingsColor;
 			btnChooseEnglishQuestionColor.Tag = m_lblEnglishQuestionColor;
 			btnChooseEnglishAnswerColor.Tag = m_lblEnglishAnswerTextColor;
 			btnChooserCommentColor.Tag = m_lblCommentTextColor;
-			m_sTitleTemplate = m_txtTitle.Text;
-			m_sFilenameTemplate = string.Format(m_txtFilename.Text, projectName, "{0}");
-            if (scrExtractor == null)
-            {
-                m_lbFilename.Text = Properties.Resources.kstidTemplateFileNameLabel;
-                m_sFilenameTemplate = Path.ChangeExtension(m_sFilenameTemplate, "lcf");
-            }
+			HandleStringsLocalized();
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
 			LoadBooks(canonicalBookIds);
 			m_sections = sections;
@@ -117,7 +114,7 @@ namespace SIL.Transcelerator
 
 			m_rdoOutputPassageForOutOfOrderQuestions.Checked = Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions;
 
-            m_lblFolder.Text = string.IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
+            m_lblFolder.Text = IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
                 Properties.Settings.Default.GenerateTemplateFolder;
 
 			m_numBlankLines.Value = Properties.Settings.Default.GenerateTemplateBlankLines;
@@ -136,6 +133,21 @@ namespace SIL.Transcelerator
 			{
 				m_txtCssFile.Text = Properties.Settings.Default.GenerateTemplateCssFile;
 				m_chkAbsoluteCssPath.Checked = Properties.Settings.Default.GenerateTemplateAbsoluteCssPath;
+			}
+		}
+
+		private void HandleStringsLocalized()
+		{
+			m_fmtChkEnglishQuestions = m_chkIncludeLWCQuestions.Text;
+			m_fmtChkEnglishAnswers = m_chkIncludeLWCAnswers.Text;
+			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;
+			m_sTitleTemplate = m_txtTitle.Text;
+			m_sFilenameTemplate = Format(m_txtFilename.Text, m_projectName, "{0}");
+			if (m_scrExtractor == null)
+			{
+				m_lbFilename.Text = LocalizationManager.GetString("GenerateScriptDlg.TemplateFileNameLabel",
+					"Template &File name:");
+				m_sFilenameTemplate = Path.ChangeExtension(m_sFilenameTemplate, "lcf");
 			}
 		}
 
@@ -197,7 +209,7 @@ namespace SIL.Transcelerator
 				if (Properties.Settings.Default.GenerateTemplateUseLWC == lwc.Item2)
 					m_cboUseLWC.SelectedIndex = i;
 			}
-			if (String.IsNullOrWhiteSpace(Properties.Settings.Default.GenerateTemplateUseLWC))
+			if (IsNullOrWhiteSpace(Properties.Settings.Default.GenerateTemplateUseLWC))
 				m_cboUseLWC.SelectedIndex = m_cboUseLWC.Items.Count - 1; // None
 			if (m_cboUseLWC.SelectedIndex == -1)
 				m_cboUseLWC.SelectedIndex = 0;
@@ -232,7 +244,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				string path = Path.Combine(m_lblFolder.Text, m_txtFilename.Text);
-				if (string.IsNullOrEmpty(Path.GetExtension(path)))
+				if (IsNullOrEmpty(Path.GetExtension(path)))
 					path = Path.ChangeExtension(path, "lcf");
 				return path;
 			}
@@ -276,9 +288,10 @@ namespace SIL.Transcelerator
 				dlg.AddExtension = true;
 				dlg.CheckPathExists = true;
 				dlg.DefaultExt = "." + Path.GetExtension(m_txtFilename.Text);
-                string description = (m_scrExtractor == null ? Properties.Resources.kstidLectionaryControlFile :
-                    Properties.Resources.kstidHtml);
-                dlg.Filter = String.Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
+                var description = (m_scrExtractor == null ? LocalizationManager.GetString(
+		                "GenerateScriptDlg.LectionaryControlFile", "Lectionary Control File") :
+                    LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page"));
+                dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
 				dlg.FilterIndex = 0;
 				dlg.OverwritePrompt = true;
 				dlg.InitialDirectory = m_lblFolder.Text;
@@ -315,7 +328,7 @@ namespace SIL.Transcelerator
 	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
 		{
 			if (txt.Tag == null || txt.Text == (string)txt.Tag)
-				txt.Tag = txt.Text = string.Format(fmt, passage);
+				txt.Tag = txt.Text = Format(fmt, passage);
 		}
 
 		private void IncludeOptionCheckedChanged(object sender, EventArgs e)
@@ -350,12 +363,12 @@ namespace SIL.Transcelerator
 			using (SaveFileDialog dlg = new SaveFileDialog())
 			{
 				string folder = Path.GetDirectoryName(m_txtCssFile.Text);
-				if (string.IsNullOrEmpty(folder))
+				if (IsNullOrEmpty(folder))
 					folder = m_lblFolder.Text;
 				dlg.AddExtension = true;
 				dlg.CheckPathExists = true;
 				dlg.DefaultExt = ".css";
-				dlg.Filter = String.Format("Cascading Style Sheet ({0})|{0}", "*.css");
+				dlg.Filter = Format("Cascading Style Sheet ({0})|{0}", "*.css");
 				dlg.FilterIndex = 0;
 				dlg.OverwritePrompt = false;
 				dlg.InitialDirectory = folder;
@@ -487,9 +500,9 @@ namespace SIL.Transcelerator
 				m_chkIncludeLWCQuestions.Enabled = m_chkIncludeLWCQuestions.Checked =
 				m_chkIncludeLWCAnswers.Enabled = m_chkIncludeLWCAnswers.Checked =
 				m_chkIncludeLWCComments.Enabled = m_chkIncludeLWCComments.Checked = false;
-				m_chkIncludeLWCQuestions.Text = String.Format(m_fmtChkEnglishQuestions, String.Empty);
-				m_chkIncludeLWCAnswers.Text = String.Format(m_fmtChkEnglishAnswers, String.Empty);
-				m_chkIncludeLWCComments.Text = String.Format(m_fmtChkIncludeComments, String.Empty);
+				m_chkIncludeLWCQuestions.Text = Format(m_fmtChkEnglishQuestions, Empty);
+				m_chkIncludeLWCAnswers.Text = Format(m_fmtChkEnglishAnswers, Empty);
+				m_chkIncludeLWCComments.Text = Format(m_fmtChkIncludeComments, Empty);
 			}
 			else
 			{
@@ -499,9 +512,9 @@ namespace SIL.Transcelerator
 					SetDefaultCheckedStateForLWCOptions();
 				}
 				var languageName = m_cboUseLWC.SelectedItem.ToString();
-				m_chkIncludeLWCQuestions.Text = String.Format(m_fmtChkEnglishQuestions, languageName);
-				m_chkIncludeLWCAnswers.Text = String.Format(m_fmtChkEnglishAnswers, languageName);
-				m_chkIncludeLWCComments.Text = String.Format(m_fmtChkIncludeComments, languageName);
+				m_chkIncludeLWCQuestions.Text = Format(m_fmtChkEnglishQuestions, languageName);
+				m_chkIncludeLWCAnswers.Text = Format(m_fmtChkEnglishAnswers, languageName);
+				m_chkIncludeLWCComments.Text = Format(m_fmtChkIncludeComments, languageName);
 			}
 		}
 		#endregion
