@@ -60,7 +60,7 @@ namespace SIL.Transcelerator
             set
             {
                 m_fileAccessor = value;
-				m_keyTermRenderingInfo = SerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
+				m_keyTermRenderingInfo = ListSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
             }
         }

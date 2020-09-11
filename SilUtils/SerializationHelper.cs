@@ -16,7 +16,7 @@ using SIL.Xml;
 
 namespace SIL.Utils
 {
-	public static class SerializationHelper
+	public static class ListSerializationHelper
 	{
 		/// ------------------------------------------------------------------------------------
         /// <summary>

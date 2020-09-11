@@ -7,7 +7,7 @@
 // </copyright>
 #endregion
 //
-// File: TermRenderingCtrl.cs
+// File: TermRenderingCtrl.Designer.cs
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using L10NSharp.UI;

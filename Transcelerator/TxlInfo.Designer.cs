@@ -1,14 +1,13 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2012' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2012' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
-// File: TxlInfo.cs
-// Responsibility: bogle
+// File: TxlInfo.Designer.cs
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,14 +1,13 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
-// File: ScrReferenceFilterDlg.cs
-// Responsibility: Bogle
+// File: ScrReferenceFilterDlg.Designer.cs
 // ---------------------------------------------------------------------------------------------
 namespace SIL.Transcelerator
 {
@@ -41,20 +40,28 @@ namespace SIL.Transcelerator
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScrReferenceFilterDlg));
+			System.Windows.Forms.Label m_lblFrom;
+			System.Windows.Forms.Label m_lblTo;
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
 			this.scrPsgFrom = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.btnClearFilter = new System.Windows.Forms.Button();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			m_lblFrom = new System.Windows.Forms.Label();
+			m_lblTo = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btnOk
 			// 
 			resources.ApplyResources(this.btnOk, "btnOk");
 			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
 			this.btnOk.Name = "btnOk";
 			this.btnOk.UseVisualStyleBackColor = true;
 			// 
@@ -62,24 +69,38 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.btnCancel, "btnCancel");
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
 			// 
-			// label1
+			// m_lblFrom
 			// 
-			resources.ApplyResources(this.label1, "label1");
-			this.label1.Name = "label1";
+			resources.ApplyResources(m_lblFrom, "m_lblFrom");
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblFrom, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(m_lblFrom, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblFrom, "ScrReferenceFilterDlg.m_lblFrom");
+			m_lblFrom.Name = "m_lblFrom";
 			// 
-			// label2
+			// m_lblTo
 			// 
-			resources.ApplyResources(this.label2, "label2");
-			this.label2.Name = "label2";
+			resources.ApplyResources(m_lblTo, "m_lblTo");
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblTo, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(m_lblTo, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblTo, "ScrReferenceFilterDlg.m_lblTo");
+			m_lblTo.Name = "m_lblTo";
 			// 
 			// scrPsgFrom
 			// 
 			resources.ApplyResources(this.scrPsgFrom, "scrPsgFrom");
 			this.scrPsgFrom.BackColor = System.Drawing.SystemColors.Window;
 			this.scrPsgFrom.ErrorCaption = "From Reference";
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgFrom, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgFrom, "ScrReferenceFilterDlg.ScrPassageControl");
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Reference = "GEN 1:1";
 			this.scrPsgFrom.PassageChanged += new SIL.Windows.Forms.Scripture.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
@@ -88,6 +109,9 @@ namespace SIL.Transcelerator
 			// 
 			this.scrPsgTo.BackColor = System.Drawing.SystemColors.Window;
 			this.scrPsgTo.ErrorCaption = "To Reference";
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgTo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgTo, "ScrReferenceFilterDlg.ScrPassageControl");
 			resources.ApplyResources(this.scrPsgTo, "scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Reference = "REV 22:21";
@@ -97,9 +121,17 @@ namespace SIL.Transcelerator
 			// 
 			resources.ApplyResources(this.btnClearFilter, "btnClearFilter");
 			this.btnClearFilter.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnClearFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnClearFilter, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.btnClearFilter, "ScrReferenceFilterDlg.btnClearFilter");
 			this.btnClearFilter.Name = "btnClearFilter";
 			this.btnClearFilter.UseVisualStyleBackColor = true;
 			this.btnClearFilter.Click += new System.EventHandler(this.btnClearFilter_Click);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
 			// ScrReferenceFilterDlg
 			// 
@@ -110,15 +142,19 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnClearFilter);
 			this.Controls.Add(this.scrPsgTo);
 			this.Controls.Add(this.scrPsgFrom);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(m_lblTo);
+			this.Controls.Add(m_lblFrom);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "ScrReferenceFilterDlg.WindowTitle");
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ScrReferenceFilterDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -128,10 +164,9 @@ namespace SIL.Transcelerator
 
 		private System.Windows.Forms.Button btnOk;
 		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
 		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgFrom;
 		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgTo;
 		private System.Windows.Forms.Button btnClearFilter;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 	}
 }

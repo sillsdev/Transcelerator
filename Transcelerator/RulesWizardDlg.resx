@@ -112,20 +112,419 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <metadata name="m_lblUserDefinedOriginalQuestionCondition.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblUserDefinedOriginalQuestionCondition.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="m_lblUserDefinedOriginalQuestionCondition.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="m_lblUserDefinedOriginalQuestionCondition.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_lblUserDefinedOriginalQuestionCondition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>412, 13</value>
+  </data>
+  <data name="m_lblUserDefinedOriginalQuestionCondition.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_lblUserDefinedOriginalQuestionCondition.Text" xml:space="preserve">
+    <value>Type a regular expression where {0} is the placeholder for the stem of the biblical term:</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedOriginalQuestionCondition.Name" xml:space="preserve">
+    <value>m_lblUserDefinedOriginalQuestionCondition</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedOriginalQuestionCondition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedOriginalQuestionCondition.Parent" xml:space="preserve">
+    <value>m_pnlUserDefinedRuleDetails</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedOriginalQuestionCondition.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="m_lblUserDefinedRenderingCondition.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblUserDefinedRenderingCondition.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblUserDefinedRenderingCondition.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblUserDefinedRenderingCondition.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="m_lblUserDefinedRenderingCondition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>393, 13</value>
+  </data>
+  <data name="m_lblUserDefinedRenderingCondition.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_lblUserDefinedRenderingCondition.Text" xml:space="preserve">
+    <value>Type a regular expression to match vernacular renderings that should be selected:</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedRenderingCondition.Name" xml:space="preserve">
+    <value>m_lblUserDefinedRenderingCondition</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedRenderingCondition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedRenderingCondition.Parent" xml:space="preserve">
+    <value>m_pnlUserDefinedRenderingMatch</value>
+  </data>
+  <data name="&gt;&gt;m_lblUserDefinedRenderingCondition.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="grpSelectRendering.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="grpSelectRendering.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="m_pnlUserDefinedRenderingMatch.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="m_txtRenderingMatchRegEx.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="m_txtRenderingMatchRegEx.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="m_txtRenderingMatchRegEx.Size" type="System.Drawing.Size, System.Drawing">
+    <value>479, 20</value>
+  </data>
+  <data name="m_txtRenderingMatchRegEx.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Name" xml:space="preserve">
+    <value>m_txtRenderingMatchRegEx</value>
+  </data>
+  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Parent" xml:space="preserve">
+    <value>m_pnlUserDefinedRenderingMatch</value>
+  </data>
+  <data name="&gt;&gt;m_txtRenderingMatchRegEx.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_pnlUserDefinedRenderingMatch.Location" type="System.Drawing.Point, System.Drawing">
+    <value>21, 87</value>
+  </data>
+  <data name="m_pnlUserDefinedRenderingMatch.Size" type="System.Drawing.Size, System.Drawing">
+    <value>479, 37</value>
+  </data>
+  <data name="m_pnlUserDefinedRenderingMatch.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="m_pnlUserDefinedRenderingMatch.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Name" xml:space="preserve">
+    <value>m_pnlUserDefinedRenderingMatch</value>
+  </data>
+  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 65</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.Size" type="System.Drawing.Size, System.Drawing">
+    <value>221, 17</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="m_rdoUserDefinedRenderingCriteria.Text" xml:space="preserve">
+    <value>&amp;Rendering meets a user-defined condition</value>
+  </data>
+  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Name" xml:space="preserve">
+    <value>m_rdoUserDefinedRenderingCriteria</value>
+  </data>
+  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_pnlVernacularPrefix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <metadata name="m_lblRenderingConditionVernPrefix.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblRenderingConditionVernPrefix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblRenderingConditionVernPrefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_lblRenderingConditionVernPrefix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 1</value>
+  </data>
+  <data name="m_lblRenderingConditionVernPrefix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>89, 13</value>
+  </data>
+  <data name="m_lblRenderingConditionVernPrefix.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_lblRenderingConditionVernPrefix.Text" xml:space="preserve">
+    <value>&amp;Vernacular prefix:</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernPrefix.Name" xml:space="preserve">
+    <value>m_lblRenderingConditionVernPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernPrefix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernPrefix.Parent" xml:space="preserve">
+    <value>m_pnlVernacularPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernPrefix.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_txtVernacularPrefix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="m_txtVernacularPrefix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>95, 0</value>
+  </data>
+  <data name="m_txtVernacularPrefix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 20</value>
+  </data>
+  <data name="m_txtVernacularPrefix.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularPrefix.Name" xml:space="preserve">
+    <value>m_txtVernacularPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularPrefix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularPrefix.Parent" xml:space="preserve">
+    <value>m_pnlVernacularPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularPrefix.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_pnlVernacularPrefix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>214, 43</value>
+  </data>
+  <data name="m_pnlVernacularPrefix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>286, 25</value>
+  </data>
+  <data name="m_pnlVernacularPrefix.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="m_pnlVernacularPrefix.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularPrefix.Name" xml:space="preserve">
+    <value>m_pnlVernacularPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularPrefix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularPrefix.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularPrefix.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 42</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>170, 17</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="m_rdoRenderingHasPrefix.Text" xml:space="preserve">
+    <value>Rendering has a specific p&amp;refix</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Name" xml:space="preserve">
+    <value>m_rdoRenderingHasPrefix</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasPrefix.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="m_pnlVernacularSuffix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <metadata name="m_lblRenderingConditionVernSuffix.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblRenderingConditionVernSuffix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_lblRenderingConditionVernSuffix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 1</value>
+  </data>
+  <data name="m_lblRenderingConditionVernSuffix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>88, 13</value>
+  </data>
+  <data name="m_lblRenderingConditionVernSuffix.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_lblRenderingConditionVernSuffix.Text" xml:space="preserve">
+    <value>&amp;Vernacular suffix:</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernSuffix.Name" xml:space="preserve">
+    <value>m_lblRenderingConditionVernSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernSuffix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernSuffix.Parent" xml:space="preserve">
+    <value>m_pnlVernacularSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_lblRenderingConditionVernSuffix.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="m_txtVernacularSuffix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="m_txtVernacularSuffix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>95, 0</value>
+  </data>
+  <data name="m_txtVernacularSuffix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 20</value>
+  </data>
+  <data name="m_txtVernacularSuffix.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularSuffix.Name" xml:space="preserve">
+    <value>m_txtVernacularSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularSuffix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularSuffix.Parent" xml:space="preserve">
+    <value>m_pnlVernacularSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_txtVernacularSuffix.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="m_pnlVernacularSuffix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>214, 20</value>
+  </data>
+  <data name="m_pnlVernacularSuffix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>286, 25</value>
+  </data>
+  <data name="m_pnlVernacularSuffix.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularSuffix.Name" xml:space="preserve">
+    <value>m_pnlVernacularSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularSuffix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularSuffix.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_pnlVernacularSuffix.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="m_rdoRenderingHasSuffix.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="m_rdoRenderingHasSuffix.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 19</value>
+  </data>
+  <data name="m_rdoRenderingHasSuffix.Size" type="System.Drawing.Size, System.Drawing">
+    <value>169, 17</value>
+  </data>
+  <data name="m_rdoRenderingHasSuffix.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="m_rdoRenderingHasSuffix.Text" xml:space="preserve">
+    <value>Rendering has a specific s&amp;uffix</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Name" xml:space="preserve">
+    <value>m_rdoRenderingHasSuffix</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Parent" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;m_rdoRenderingHasSuffix.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="grpSelectRendering.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 320</value>
+  </data>
+  <data name="grpSelectRendering.Size" type="System.Drawing.Size, System.Drawing">
+    <value>506, 134</value>
+  </data>
+  <data name="grpSelectRendering.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="grpSelectRendering.Text" xml:space="preserve">
+    <value>Select the rendering of the biblical that meets the following condition:</value>
+  </data>
+  <data name="&gt;&gt;grpSelectRendering.Name" xml:space="preserve">
+    <value>grpSelectRendering</value>
+  </data>
+  <data name="&gt;&gt;grpSelectRendering.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpSelectRendering.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpSelectRendering.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="grpMatchQuestion.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="m_lblFollowingWordExample.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_lblFollowingWordExample.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 11pt</value>
   </data>
@@ -148,7 +547,7 @@
     <value>m_lblFollowingWordExample</value>
   </data>
   <data name="&gt;&gt;m_lblFollowingWordExample.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblFollowingWordExample.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -181,7 +580,7 @@
     <value>m_lblPrecedingWordExample</value>
   </data>
   <data name="&gt;&gt;m_lblPrecedingWordExample.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblPrecedingWordExample.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -214,7 +613,7 @@
     <value>m_lblPrefixExample</value>
   </data>
   <data name="&gt;&gt;m_lblPrefixExample.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblPrefixExample.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -244,7 +643,7 @@
     <value>m_lblSuffixExample</value>
   </data>
   <data name="&gt;&gt;m_lblSuffixExample.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblSuffixExample.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -274,7 +673,7 @@
     <value>m_rdoUserDefinedQuestionCriteria</value>
   </data>
   <data name="&gt;&gt;m_rdoUserDefinedQuestionCriteria.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rdoUserDefinedQuestionCriteria.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -304,7 +703,7 @@
     <value>m_rdoFollowingWord</value>
   </data>
   <data name="&gt;&gt;m_rdoFollowingWord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rdoFollowingWord.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -331,7 +730,7 @@
     <value>m_rdoPreceedingWord</value>
   </data>
   <data name="&gt;&gt;m_rdoPreceedingWord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rdoPreceedingWord.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -361,7 +760,7 @@
     <value>m_rdoPrefix</value>
   </data>
   <data name="&gt;&gt;m_rdoPrefix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rdoPrefix.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -391,7 +790,7 @@
     <value>m_rdoSuffix</value>
   </data>
   <data name="&gt;&gt;m_rdoSuffix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_rdoSuffix.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -412,7 +811,7 @@
     <value>m_cboFollowingWord</value>
   </data>
   <data name="&gt;&gt;m_cboFollowingWord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cboFollowingWord.Parent" xml:space="preserve">
     <value>m_pnlFollowingWordDetails</value>
@@ -420,34 +819,37 @@
   <data name="&gt;&gt;m_cboFollowingWord.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label7.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="m_lblOriginalQuestionConditionFollowingWord.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblOriginalQuestionConditionFollowingWord.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label7.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblOriginalQuestionConditionFollowingWord.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="label7.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionFollowingWord.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 1</value>
   </data>
-  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionFollowingWord.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 13</value>
   </data>
-  <data name="label7.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblOriginalQuestionConditionFollowingWord.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label7.Text" xml:space="preserve">
+  <data name="m_lblOriginalQuestionConditionFollowingWord.Text" xml:space="preserve">
     <value>Following &amp;word:</value>
   </data>
-  <data name="&gt;&gt;label7.Name" xml:space="preserve">
-    <value>label7</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionFollowingWord.Name" xml:space="preserve">
+    <value>m_lblOriginalQuestionConditionFollowingWord</value>
   </data>
-  <data name="&gt;&gt;label7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionFollowingWord.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label7.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionFollowingWord.Parent" xml:space="preserve">
     <value>m_pnlFollowingWordDetails</value>
   </data>
-  <data name="&gt;&gt;label7.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionFollowingWord.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="m_pnlFollowingWordDetails.Location" type="System.Drawing.Point, System.Drawing">
@@ -466,7 +868,7 @@
     <value>m_pnlFollowingWordDetails</value>
   </data>
   <data name="&gt;&gt;m_pnlFollowingWordDetails.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_pnlFollowingWordDetails.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -487,7 +889,7 @@
     <value>m_cboPrecedingWord</value>
   </data>
   <data name="&gt;&gt;m_cboPrecedingWord.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cboPrecedingWord.Parent" xml:space="preserve">
     <value>m_pnlPrecedingWordDetails</value>
@@ -495,34 +897,37 @@
   <data name="&gt;&gt;m_cboPrecedingWord.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label6.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="m_lblOriginalQuestionConditionPrecedingWord.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label6.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="label6.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 1</value>
   </data>
-  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 13</value>
   </data>
-  <data name="label6.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label6.Text" xml:space="preserve">
+  <data name="m_lblOriginalQuestionConditionPrecedingWord.Text" xml:space="preserve">
     <value>Preceding &amp;word:</value>
   </data>
-  <data name="&gt;&gt;label6.Name" xml:space="preserve">
-    <value>label6</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrecedingWord.Name" xml:space="preserve">
+    <value>m_lblOriginalQuestionConditionPrecedingWord</value>
   </data>
-  <data name="&gt;&gt;label6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrecedingWord.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label6.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrecedingWord.Parent" xml:space="preserve">
     <value>m_pnlPrecedingWordDetails</value>
   </data>
-  <data name="&gt;&gt;label6.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrecedingWord.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="m_pnlPrecedingWordDetails.Location" type="System.Drawing.Point, System.Drawing">
@@ -541,7 +946,7 @@
     <value>m_pnlPrecedingWordDetails</value>
   </data>
   <data name="&gt;&gt;m_pnlPrecedingWordDetails.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_pnlPrecedingWordDetails.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -568,7 +973,7 @@
     <value>m_cboPrefix</value>
   </data>
   <data name="&gt;&gt;m_cboPrefix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cboPrefix.Parent" xml:space="preserve">
     <value>m_pnlPrefixDetails</value>
@@ -576,34 +981,37 @@
   <data name="&gt;&gt;m_cboPrefix.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label4.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="m_lblOriginalQuestionConditionPrefix.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblOriginalQuestionConditionPrefix.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label4.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="m_lblOriginalQuestionConditionPrefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="label4.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionPrefix.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 1</value>
   </data>
-  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionPrefix.Size" type="System.Drawing.Size, System.Drawing">
     <value>36, 13</value>
   </data>
-  <data name="label4.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblOriginalQuestionConditionPrefix.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label4.Text" xml:space="preserve">
+  <data name="m_lblOriginalQuestionConditionPrefix.Text" xml:space="preserve">
     <value>Prefi&amp;x:</value>
   </data>
-  <data name="&gt;&gt;label4.Name" xml:space="preserve">
-    <value>label4</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrefix.Name" xml:space="preserve">
+    <value>m_lblOriginalQuestionConditionPrefix</value>
   </data>
-  <data name="&gt;&gt;label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrefix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label4.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrefix.Parent" xml:space="preserve">
     <value>m_pnlPrefixDetails</value>
   </data>
-  <data name="&gt;&gt;label4.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionPrefix.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="m_pnlPrefixDetails.Location" type="System.Drawing.Point, System.Drawing">
@@ -622,7 +1030,7 @@
     <value>m_pnlPrefixDetails</value>
   </data>
   <data name="&gt;&gt;m_pnlPrefixDetails.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_pnlPrefixDetails.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -700,7 +1108,7 @@
     <value>m_cboSuffix</value>
   </data>
   <data name="&gt;&gt;m_cboSuffix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_cboSuffix.Parent" xml:space="preserve">
     <value>m_pnlSuffixDetails</value>
@@ -708,31 +1116,34 @@
   <data name="&gt;&gt;m_cboSuffix.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="label5.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="m_lblOriginalQuestionConditionSuffix.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblOriginalQuestionConditionSuffix.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label5.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionSuffix.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 1</value>
   </data>
-  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblOriginalQuestionConditionSuffix.Size" type="System.Drawing.Size, System.Drawing">
     <value>36, 13</value>
   </data>
-  <data name="label5.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblOriginalQuestionConditionSuffix.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label5.Text" xml:space="preserve">
+  <data name="m_lblOriginalQuestionConditionSuffix.Text" xml:space="preserve">
     <value>Suffi&amp;x:</value>
   </data>
-  <data name="&gt;&gt;label5.Name" xml:space="preserve">
-    <value>label5</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionSuffix.Name" xml:space="preserve">
+    <value>m_lblOriginalQuestionConditionSuffix</value>
   </data>
-  <data name="&gt;&gt;label5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionSuffix.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label5.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionSuffix.Parent" xml:space="preserve">
     <value>m_pnlSuffixDetails</value>
   </data>
-  <data name="&gt;&gt;label5.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblOriginalQuestionConditionSuffix.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="m_pnlSuffixDetails.Location" type="System.Drawing.Point, System.Drawing">
@@ -748,7 +1159,7 @@
     <value>m_pnlSuffixDetails</value>
   </data>
   <data name="&gt;&gt;m_pnlSuffixDetails.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_pnlSuffixDetails.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -758,39 +1169,6 @@
   </data>
   <data name="m_pnlUserDefinedRuleDetails.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
-  </data>
-  <metadata name="label3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>412, 13</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Type a regular expression where {0} is the placeholder for the stem of the biblical term:</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>m_pnlUserDefinedRuleDetails</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="m_txtQuestionMatchRegEx.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -808,7 +1186,7 @@
     <value>m_txtQuestionMatchRegEx</value>
   </data>
   <data name="&gt;&gt;m_txtQuestionMatchRegEx.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_txtQuestionMatchRegEx.Parent" xml:space="preserve">
     <value>m_pnlUserDefinedRuleDetails</value>
@@ -832,7 +1210,7 @@
     <value>m_pnlUserDefinedRuleDetails</value>
   </data>
   <data name="&gt;&gt;m_pnlUserDefinedRuleDetails.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_pnlUserDefinedRuleDetails.Parent" xml:space="preserve">
     <value>grpMatchQuestion</value>
@@ -856,370 +1234,13 @@
     <value>grpMatchQuestion</value>
   </data>
   <data name="&gt;&gt;grpMatchQuestion.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;grpMatchQuestion.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpMatchQuestion.ZOrder" xml:space="preserve">
     <value>4</value>
-  </data>
-  <metadata name="label11.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="label11.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label11.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label11.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
-    <value>393, 13</value>
-  </data>
-  <data name="label11.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label11.Text" xml:space="preserve">
-    <value>Type a regular expression to match vernacular renderings that should be selected:</value>
-  </data>
-  <data name="&gt;&gt;label11.Name" xml:space="preserve">
-    <value>label11</value>
-  </data>
-  <data name="&gt;&gt;label11.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label11.Parent" xml:space="preserve">
-    <value>m_pnlUserDefinedRenderingMatch</value>
-  </data>
-  <data name="&gt;&gt;label11.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <metadata name="grpSelectRendering.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <data name="grpSelectRendering.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="m_pnlUserDefinedRenderingMatch.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="m_txtRenderingMatchRegEx.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Bottom</value>
-  </data>
-  <data name="m_txtRenderingMatchRegEx.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 17</value>
-  </data>
-  <data name="m_txtRenderingMatchRegEx.Size" type="System.Drawing.Size, System.Drawing">
-    <value>479, 20</value>
-  </data>
-  <data name="m_txtRenderingMatchRegEx.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Name" xml:space="preserve">
-    <value>m_txtRenderingMatchRegEx</value>
-  </data>
-  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_txtRenderingMatchRegEx.Parent" xml:space="preserve">
-    <value>m_pnlUserDefinedRenderingMatch</value>
-  </data>
-  <data name="&gt;&gt;m_txtRenderingMatchRegEx.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_pnlUserDefinedRenderingMatch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 87</value>
-  </data>
-  <data name="m_pnlUserDefinedRenderingMatch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>479, 37</value>
-  </data>
-  <data name="m_pnlUserDefinedRenderingMatch.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="m_pnlUserDefinedRenderingMatch.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Name" xml:space="preserve">
-    <value>m_pnlUserDefinedRenderingMatch</value>
-  </data>
-  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_pnlUserDefinedRenderingMatch.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 65</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.Size" type="System.Drawing.Size, System.Drawing">
-    <value>221, 17</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="m_rdoUserDefinedRenderingCriteria.Text" xml:space="preserve">
-    <value>&amp;Rendering meets a user-defined condition</value>
-  </data>
-  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Name" xml:space="preserve">
-    <value>m_rdoUserDefinedRenderingCriteria</value>
-  </data>
-  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_rdoUserDefinedRenderingCriteria.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_pnlVernacularPrefix.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label10.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="label10.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 1</value>
-  </data>
-  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>89, 13</value>
-  </data>
-  <data name="label10.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label10.Text" xml:space="preserve">
-    <value>&amp;Vernacular prefix:</value>
-  </data>
-  <data name="&gt;&gt;label10.Name" xml:space="preserve">
-    <value>label10</value>
-  </data>
-  <data name="&gt;&gt;label10.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label10.Parent" xml:space="preserve">
-    <value>m_pnlVernacularPrefix</value>
-  </data>
-  <data name="&gt;&gt;label10.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_txtVernacularPrefix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="m_txtVernacularPrefix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>95, 0</value>
-  </data>
-  <data name="m_txtVernacularPrefix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 20</value>
-  </data>
-  <data name="m_txtVernacularPrefix.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularPrefix.Name" xml:space="preserve">
-    <value>m_txtVernacularPrefix</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularPrefix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularPrefix.Parent" xml:space="preserve">
-    <value>m_pnlVernacularPrefix</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularPrefix.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_pnlVernacularPrefix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>214, 43</value>
-  </data>
-  <data name="m_pnlVernacularPrefix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>286, 25</value>
-  </data>
-  <data name="m_pnlVernacularPrefix.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="m_pnlVernacularPrefix.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularPrefix.Name" xml:space="preserve">
-    <value>m_pnlVernacularPrefix</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularPrefix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularPrefix.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularPrefix.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 42</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>170, 17</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="m_rdoRenderingHasPrefix.Text" xml:space="preserve">
-    <value>Rendering has a specific p&amp;refix</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Name" xml:space="preserve">
-    <value>m_rdoRenderingHasPrefix</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasPrefix.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasPrefix.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="m_pnlVernacularSuffix.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label9.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label9.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 1</value>
-  </data>
-  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>88, 13</value>
-  </data>
-  <data name="label9.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="label9.Text" xml:space="preserve">
-    <value>&amp;Vernacular suffix:</value>
-  </data>
-  <data name="&gt;&gt;label9.Name" xml:space="preserve">
-    <value>label9</value>
-  </data>
-  <data name="&gt;&gt;label9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label9.Parent" xml:space="preserve">
-    <value>m_pnlVernacularSuffix</value>
-  </data>
-  <data name="&gt;&gt;label9.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="m_txtVernacularSuffix.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
-  </data>
-  <data name="m_txtVernacularSuffix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>95, 0</value>
-  </data>
-  <data name="m_txtVernacularSuffix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 20</value>
-  </data>
-  <data name="m_txtVernacularSuffix.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularSuffix.Name" xml:space="preserve">
-    <value>m_txtVernacularSuffix</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularSuffix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularSuffix.Parent" xml:space="preserve">
-    <value>m_pnlVernacularSuffix</value>
-  </data>
-  <data name="&gt;&gt;m_txtVernacularSuffix.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="m_pnlVernacularSuffix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>214, 20</value>
-  </data>
-  <data name="m_pnlVernacularSuffix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>286, 25</value>
-  </data>
-  <data name="m_pnlVernacularSuffix.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularSuffix.Name" xml:space="preserve">
-    <value>m_pnlVernacularSuffix</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularSuffix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularSuffix.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_pnlVernacularSuffix.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="m_rdoRenderingHasSuffix.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="m_rdoRenderingHasSuffix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>7, 19</value>
-  </data>
-  <data name="m_rdoRenderingHasSuffix.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 17</value>
-  </data>
-  <data name="m_rdoRenderingHasSuffix.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="m_rdoRenderingHasSuffix.Text" xml:space="preserve">
-    <value>Rendering has a specific s&amp;uffix</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Name" xml:space="preserve">
-    <value>m_rdoRenderingHasSuffix</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasSuffix.Parent" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;m_rdoRenderingHasSuffix.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="grpSelectRendering.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 320</value>
-  </data>
-  <data name="grpSelectRendering.Size" type="System.Drawing.Size, System.Drawing">
-    <value>506, 134</value>
-  </data>
-  <data name="grpSelectRendering.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="grpSelectRendering.Text" xml:space="preserve">
-    <value>Select the rendering of the biblical that meets the following condition:</value>
-  </data>
-  <data name="&gt;&gt;grpSelectRendering.Name" xml:space="preserve">
-    <value>grpSelectRendering</value>
-  </data>
-  <data name="&gt;&gt;grpSelectRendering.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;grpSelectRendering.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpSelectRendering.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="btnOk.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
@@ -1243,13 +1264,13 @@
     <value>btnOk</value>
   </data>
   <data name="&gt;&gt;btnOk.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnOk.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnOk.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
   </data>
   <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom</value>
@@ -1270,93 +1291,75 @@
     <value>btnCancel</value>
   </data>
   <data name="&gt;&gt;btnCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;btnCancel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 9</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 13</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="label2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <metadata name="m_lblRuleDescription.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblRuleDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+  <data name="m_lblRuleDescription.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblRuleDescription.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 457</value>
   </data>
-  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblRuleDescription.Size" type="System.Drawing.Size, System.Drawing">
     <value>86, 13</value>
   </data>
-  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblRuleDescription.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
-  <data name="label2.Text" xml:space="preserve">
+  <data name="m_lblRuleDescription.Text" xml:space="preserve">
     <value>Ru&amp;le description:</value>
   </data>
-  <data name="&gt;&gt;label2.Name" xml:space="preserve">
-    <value>label2</value>
+  <data name="&gt;&gt;m_lblRuleDescription.Name" xml:space="preserve">
+    <value>m_lblRuleDescription</value>
   </data>
-  <data name="&gt;&gt;label2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblRuleDescription.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblRuleDescription.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblRuleDescription.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="label12.AutoSize" type="System.Boolean, mscorlib">
+  <metadata name="m_lblRuleName.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="m_lblRuleName.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="label12.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="m_lblRuleName.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 9</value>
   </data>
-  <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="m_lblRuleName.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 13</value>
   </data>
-  <data name="label12.TabIndex" type="System.Int32, mscorlib">
+  <data name="m_lblRuleName.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="label12.Text" xml:space="preserve">
+  <data name="m_lblRuleName.Text" xml:space="preserve">
     <value>Rule name:</value>
   </data>
-  <data name="&gt;&gt;label12.Name" xml:space="preserve">
-    <value>label12</value>
+  <data name="&gt;&gt;m_lblRuleName.Name" xml:space="preserve">
+    <value>m_lblRuleName</value>
   </data>
-  <data name="&gt;&gt;label12.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;m_lblRuleName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;label12.Parent" xml:space="preserve">
+  <data name="&gt;&gt;m_lblRuleName.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;label12.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;m_lblRuleName.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <data name="m_lblDescription.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -1375,7 +1378,7 @@
     <value>m_lblDescription</value>
   </data>
   <data name="&gt;&gt;m_lblDescription.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_lblDescription.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1399,7 +1402,7 @@
     <value>m_txtName</value>
   </data>
   <data name="&gt;&gt;m_txtName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;m_txtName.Parent" xml:space="preserve">
     <value>$this</value>
@@ -1407,7 +1410,7 @@
   <data name="&gt;&gt;m_txtName.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
@@ -1422,10 +1425,16 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Create Rendering Selection Rule</value>
   </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Name" xml:space="preserve">
+    <value>l10NSharpExtender1</value>
+  </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Type" xml:space="preserve">
+    <value>L10NSharp.UI.L10NSharpExtender, L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28</value>
+  </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>RulesWizardDlg</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

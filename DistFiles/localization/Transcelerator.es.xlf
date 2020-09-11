@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:sil="http://sil.org/software/XLiff" version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" product-version="1.4.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+    <body>
+      <trans-unit id=".copyToolStripMenuItem">
+        <source xml:lang="en">Copy</source>
+        <note>ID: .copyToolStripMenuItem</note>
+        <target xml:lang="es-ES" state="translated">Copiar</target>
+      </trans-unit>
+      <trans-unit id=".cutToolStripMenuItem">
+        <source xml:lang="en">Cut</source>
+        <note>ID: .cutToolStripMenuItem</note>
+        <target xml:lang="es-ES" state="translated">Cortar</target>
+      </trans-unit>
+      <trans-unit id=".mnuAddQuestion">
+        <source xml:lang="en">&amp;New Question...</source>
+        <note>ID: .mnuAddQuestion</note>
+        <target xml:lang="es-ES" state="translated">&amp;Nueva pregunta...</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

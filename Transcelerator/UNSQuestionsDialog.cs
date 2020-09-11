@@ -113,7 +113,7 @@ namespace SIL.Transcelerator
 			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
 		}
 
-		private List<Tuple<string, string>> AvailableLocales { get; set; }
+		private SortedDictionary<string, string> AvailableLocales { get; } = new SortedDictionary<string, string>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -420,8 +420,6 @@ namespace SIL.Transcelerator
 
 		private void PopulateAvailableLocales()
 		{
-			var locales = new List<Tuple<string, string>>();
-
 			Sldr.Initialize();
 			try
 			{
@@ -453,15 +451,13 @@ namespace SIL.Transcelerator
 								break;
 						}
 
-					locales.Add(new Tuple<string, string>(languageName, locale));
+					AvailableLocales[languageName] = locale;
 				}
 			}
 			finally
 			{
 				Sldr.Cleanup();
 			}
-
-			AvailableLocales = locales.OrderBy(l => l.Item1).ToList();
 		}
 
 		private void AddAvailableLocalizationsToMenu(string preferredLocale)
@@ -469,13 +465,13 @@ namespace SIL.Transcelerator
 			var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
 			foreach (var availableLocalization in AvailableLocales)
 			{
-				var subItem = new ToolStripMenuItem(availableLocalization.Item1)
+				var subItem = new ToolStripMenuItem(availableLocalization.Key)
 				{
-					Tag = availableLocalization.Item2,
-					Name = availableLocalization.Item2 + menuItemNameSuffix
+					Tag = availableLocalization.Value,
+					Name = availableLocalization.Value + menuItemNameSuffix
 				};
 				displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
-				if (availableLocalization.Item2 == preferredLocale)
+				if (availableLocalization.Value == preferredLocale)
 				{
 					en_ToolStripMenuItem.Checked = false;
 					subItem.Checked = true;
@@ -534,8 +530,11 @@ namespace SIL.Transcelerator
 					Save(true, false);
 					return;
 				}
-				switch (MessageBox.Show(this, "You have made changes. Do you wish to save before closing?",
-					"Save changes?", MessageBoxButtons.YesNoCancel))
+				switch (MessageBox.Show(this,
+					LocalizationManager.GetString("MainWindow.SaveChangesBeforeClosingMessage",
+						"You have made changes. Do you wish to save before closing?"),
+					LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "Save changes?"),
+					MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
 						Save(true, false);
@@ -1732,7 +1731,10 @@ namespace SIL.Transcelerator
 						}
 					}
 					dataGridUns.Invalidate();
-					MessageBox.Show("Finished! See report in " + reportFilename, TxlPlugin.pluginName);
+					MessageBox.Show(Format(
+						LocalizationManager.GetString("MainWindow.FinishedLoadingTranslationsFromTextFile",
+						"Finished! See report in {0}",
+						"Param is a file name"), reportFilename), TxlPlugin.pluginName);
 				}
 			}
 		}
@@ -2406,6 +2408,21 @@ namespace SIL.Transcelerator
 			return new BCVRef(sRef);
 		}
 
+		private void ReportMissingInstalledFile(bool required, string filename)
+		{
+			var fmt = required ?
+				LocalizationManager.GetString("General.RequiredInstalledFileMissing",
+					"Required file missing: {0}.",
+					"Parameter is filename (for technical support)") :
+				LocalizationManager.GetString("General.ExpectedInstalledFileMissing",
+					"Expected file missing: {0}.",
+					"Parameter is filename (for technical support)");
+			var msg = Format(fmt, filename) + " " +
+				LocalizationManager.GetString("General.RerunInstaller",
+					"Please re-run the Transcelerator Installer to repair this problem.");
+			MessageBox.Show(msg, Text);
+		}
+
 	    /// ------------------------------------------------------------------------------------
 	    /// <summary>
 	    /// Loads the translations.
@@ -2419,10 +2436,7 @@ namespace SIL.Transcelerator
 			FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
 			if (!finfoMasterQuestions.Exists)
 			{
-				MessageBox.Show(Format(LocalizationManager.GetString("General.InstalledFileMissing",
-					"Required file missing: {0}. Please re-run the Transcelerator Installer to repair this problem.",
-					"Parameter is filename (for technical support)"),
-					m_masterQuestionsFilename), Text);
+				ReportMissingInstalledFile(true, m_masterQuestionsFilename);
 				return;
 			}
 
@@ -2430,13 +2444,13 @@ namespace SIL.Transcelerator
 
             FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
             if (!finfoKtRules.Exists)
-                MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				ReportMissingInstalledFile(false, keyTermRulesFilename);
 
 			string questionWordsFilename = Path.Combine(m_installDir, TxlCore.kQuestionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
-				MessageBox.Show("Expected file missing: " + questionWordsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				ReportMissingInstalledFile(false, questionWordsFilename);
 
 			FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
 
@@ -2518,7 +2532,7 @@ namespace SIL.Transcelerator
 	        {
 		        if (m_cachedPhraseSubstitutions == null)
 		        {
-					m_cachedPhraseSubstitutions = SerializationHelper.LoadOrCreateListFromString<Substitution>(
+					m_cachedPhraseSubstitutions = ListSerializationHelper.LoadOrCreateListFromString<Substitution>(
 				        m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true);
 		        }
 				return m_cachedPhraseSubstitutions;

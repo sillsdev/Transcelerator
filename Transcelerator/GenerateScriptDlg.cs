@@ -66,7 +66,7 @@ namespace SIL.Transcelerator
 		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
             string defaultFolder, IEnumerable<int> canonicalBookIds,
             IList<ISectionInfo> sections,
-			IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
+			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs)
 		{
 			m_projectName = projectName;
 			m_scrExtractor = scrExtractor;
@@ -198,15 +198,15 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private void LoadLWCCombo(IEnumerable<Tuple<string, string>> availableAdditionalLWCs)
+		private void LoadLWCCombo(IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs)
 		{
 			m_lwcLocaleIds = new List<string>(new [] {"en-US"});
 			int i = 0;
 			foreach (var lwc in availableAdditionalLWCs)
 			{
-				m_cboUseLWC.Items.Insert(++i, lwc.Item1);
-				m_lwcLocaleIds.Add(lwc.Item2);
-				if (Properties.Settings.Default.GenerateTemplateUseLWC == lwc.Item2)
+				m_cboUseLWC.Items.Insert(++i, lwc.Key);
+				m_lwcLocaleIds.Add(lwc.Value);
+				if (Properties.Settings.Default.GenerateTemplateUseLWC == lwc.Value)
 					m_cboUseLWC.SelectedIndex = i;
 			}
 			if (IsNullOrWhiteSpace(Properties.Settings.Default.GenerateTemplateUseLWC))
