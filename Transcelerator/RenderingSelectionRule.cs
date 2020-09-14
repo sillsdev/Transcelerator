@@ -340,12 +340,12 @@ namespace SIL.Transcelerator
 									"Param 0: an English word suffix/ending; Param 1: an English word suffix/ending");
 								break;
 							case RenderingMatchType.Prefix:
-								fmt = LocalizationManager.GetString("RenderingSelectionRule..CriteriaStartsWith",
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaStartsWith",
 									"When the biblical term in the original question {0}, then select the first vernacular rendering that starts with {1}.",
 									"Param 0: an English word suffix/ending; Param 1: an English word prefix/beginning");
 								break;
 							case RenderingMatchType.Custom:
-								fmt = LocalizationManager.GetString("RenderingSelectionRule..CriteriaCustom",
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaCustom",
 									"When the biblical term in the original question {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
 									"Param 0: an English word suffix/ending; Param 1: a \"regular expression\"");
 								break;

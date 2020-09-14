@@ -170,7 +170,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>Right</value>
   </data>
   <data name="m_numTimesToMatch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 84</value>
+    <value>162, 87</value>
   </data>
   <data name="m_numTimesToMatch.Size" type="System.Drawing.Size, System.Drawing">
     <value>107, 20</value>
@@ -230,7 +230,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>NoControl</value>
   </data>
   <data name="lblMaxMatch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 87</value>
+    <value>3, 90</value>
   </data>
   <data name="lblMaxMatch.Size" type="System.Drawing.Size, System.Drawing">
     <value>122, 13</value>
@@ -257,7 +257,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>Right</value>
   </data>
   <data name="m_txtMatchPrefix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 32</value>
+    <value>162, 32</value>
   </data>
   <data name="m_txtMatchPrefix.Size" type="System.Drawing.Size, System.Drawing">
     <value>107, 20</value>
@@ -281,7 +281,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>Right</value>
   </data>
   <data name="m_txtMatchSuffix.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 58</value>
+    <value>162, 58</value>
   </data>
   <data name="m_txtMatchSuffix.Size" type="System.Drawing.Size, System.Drawing">
     <value>107, 20</value>
@@ -377,7 +377,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>4</value>
   </data>
   <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>250, 107</value>
+    <value>272, 113</value>
   </data>
   <data name="tableLayoutPanel1.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -473,7 +473,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>2</value>
   </data>
   <data name="tableLayoutPanel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 27</value>
+    <value>215, 30</value>
   </data>
   <data name="tableLayoutPanel2.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -557,7 +557,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>True</value>
   </metadata>
   <data name="colMatch.HeaderText" xml:space="preserve">
-    <value>Word or Phrase to Replace</value>
+    <value>_L10N_:PhraseSubstitutionsDlg.Replacements!Word or Phrase to Replace</value>
   </data>
   <data name="colMatch.MinimumWidth" type="System.Int32, mscorlib">
     <value>200</value>
@@ -566,13 +566,13 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>Enter text to replace or omit from the original text of the question</value>
   </data>
   <data name="colMatch.Width" type="System.Int32, mscorlib">
-    <value>200</value>
+    <value>293</value>
   </data>
   <metadata name="colReplacement.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="colReplacement.HeaderText" xml:space="preserve">
-    <value>Replacement</value>
+    <value>_L10N_:PhraseSubstitutionsDlg.Replacements!Replacement</value>
   </data>
   <data name="colReplacement.MinimumWidth" type="System.Int32, mscorlib">
     <value>100</value>
@@ -584,31 +584,31 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>True</value>
   </metadata>
   <data name="colIsRegEx.HeaderText" xml:space="preserve">
-    <value>Regular Expression</value>
+    <value>_L10N_:PhraseSubstitutionsDlg.Replacements!Regular Expression</value>
   </data>
   <data name="colIsRegEx.ToolTipText" xml:space="preserve">
     <value>Select to interpret as a regular expression</value>
   </data>
   <data name="colIsRegEx.Width" type="System.Int32, mscorlib">
-    <value>94</value>
+    <value>295</value>
   </data>
   <metadata name="colMatchCase.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="colMatchCase.HeaderText" xml:space="preserve">
-    <value>Match Case</value>
+    <value>_L10N_:PhraseSubstitutionsDlg.Replacements!Match Case</value>
   </data>
   <data name="colMatchCase.ToolTipText" xml:space="preserve">
     <value>Select to indicat that matches should be case-sensitive</value>
   </data>
   <data name="colMatchCase.Width" type="System.Int32, mscorlib">
-    <value>63</value>
+    <value>294</value>
   </data>
   <metadata name="colPreviewResult.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="colPreviewResult.HeaderText" xml:space="preserve">
-    <value>Preview Result</value>
+    <value>_L10N_:PhraseSubstitutionsDlg.Replacements!Preview Result</value>
   </data>
   <data name="colPreviewResult.MinimumWidth" type="System.Int32, mscorlib">
     <value>100</value>
@@ -641,7 +641,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>21, 259</value>
   </data>
   <data name="m_regexMatchHelper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 117</value>
+    <value>278, 119</value>
   </data>
   <data name="m_regexMatchHelper.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -719,7 +719,7 @@ If you select Regular Expression for a row, a regular expression helper pane wil
     <value>287, 259</value>
   </data>
   <data name="m_regexReplacementHelper.Size" type="System.Drawing.Size, System.Drawing">
-    <value>206, 33</value>
+    <value>221, 37</value>
   </data>
   <data name="m_regexReplacementHelper.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -784,9 +784,6 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   <data name="toolStripUpDownButtons.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
-  <data name="toolStripUpDownButtons.Text" xml:space="preserve">
-    <value>toolStrip1</value>
-  </data>
   <data name="&gt;&gt;toolStripUpDownButtons.Name" xml:space="preserve">
     <value>toolStripUpDownButtons</value>
   </data>
@@ -810,6 +807,30 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Question Adjustments</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
+    <value>toolTip1</value>
+  </data>
+  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnUp.Name" xml:space="preserve">
+    <value>btnUp</value>
+  </data>
+  <data name="&gt;&gt;btnUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnDown.Name" xml:space="preserve">
+    <value>btnDown</value>
+  </data>
+  <data name="&gt;&gt;btnDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Name" xml:space="preserve">
+    <value>l10NSharpExtender1</value>
+  </data>
+  <data name="&gt;&gt;l10NSharpExtender1.Type" xml:space="preserve">
+    <value>L10NSharp.UI.L10NSharpExtender, L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28</value>
   </data>
   <data name="&gt;&gt;colMatch.Name" xml:space="preserve">
     <value>colMatch</value>
@@ -840,30 +861,6 @@ If you select Regular Expression for a row, a regular expression helper pane wil
   </data>
   <data name="&gt;&gt;colPreviewResult.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
-    <value>toolTip1</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnUp.Name" xml:space="preserve">
-    <value>btnUp</value>
-  </data>
-  <data name="&gt;&gt;btnUp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnDown.Name" xml:space="preserve">
-    <value>btnDown</value>
-  </data>
-  <data name="&gt;&gt;btnDown.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;l10NSharpExtender1.Name" xml:space="preserve">
-    <value>l10NSharpExtender1</value>
-  </data>
-  <data name="&gt;&gt;l10NSharpExtender1.Type" xml:space="preserve">
-    <value>L10NSharp.UI.L10NSharpExtender, L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>PhraseSubstitutionsDlg</value>

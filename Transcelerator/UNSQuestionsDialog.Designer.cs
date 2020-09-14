@@ -7,17 +7,10 @@
 // </copyright> 
 #endregion
 // 
-// File: UNSQuestionsDialog.cs
+// File: UNSQuestionsDialog.Designer.cs
 // ---------------------------------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace SIL.Transcelerator
 {
@@ -66,11 +59,6 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,46 +69,46 @@ namespace SIL.Transcelerator
 			this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuAddQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_mainMenu = new System.Windows.Forms.MenuStrip();
-			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuSave = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuAutoSave = new System.Windows.Forms.ToolStripMenuItem();
-			this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuReload = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuGenerate = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuProduceScriptureForgeFiles = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateOutputForArloToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLoadTranslationsFromTextFile = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.cutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuClose = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuCut = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuPaste = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-			this.previousUntranslatedQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.nextUntranslatedQuestionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuPreviousUntranslatedQuestion = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuNextUntranslatedQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparatorShiftWords = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuShiftWordsRight = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuShiftWordsLeft = new System.Windows.Forms.ToolStripMenuItem();
-			this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuFilter = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuReferenceRange = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuKtFilter = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuFilterBiblicalTerms = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuShowAllPhrases = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuShowPhrasesWithKtRenderings = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuShowPhrasesWithMissingKtRenderings = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuMatchWholeWords = new System.Windows.Forms.ToolStripMenuItem();
-			this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuView = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewToolbar = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewBiblicalTermsPane = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuViewExcludedQuestions = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-			this.displayLanguageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuDisplayLanguage = new System.Windows.Forms.ToolStripMenuItem();
 			this.en_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.phraseSubstitutionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuAdvanced = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuPhraseSubstitutions = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuBiblicalTermsRenderingSelectionRules = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.btnSave = new System.Windows.Forms.ToolStripButton();
@@ -140,6 +128,11 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
@@ -157,7 +150,7 @@ namespace SIL.Transcelerator
 			mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(mnuViewDebugInfo, null);
 			this.l10NSharpExtender1.SetLocalizationComment(mnuViewDebugInfo, null);
-			this.l10NSharpExtender1.SetLocalizingId(mnuViewDebugInfo, "MainWindow.mnuViewDebugInfo");
+			this.l10NSharpExtender1.SetLocalizingId(mnuViewDebugInfo, "MainWindow.Menu.GeneratedTranslationDetails");
 			mnuViewDebugInfo.Name = "mnuViewDebugInfo";
 			resources.ApplyResources(mnuViewDebugInfo, "mnuViewDebugInfo");
 			mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
@@ -173,7 +166,7 @@ namespace SIL.Transcelerator
 			this.mnuViewAnswers.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewAnswers, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewAnswers, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewAnswers, "MainWindow.mnuViewAnswers");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewAnswers, "MainWindow.Menu.View.AnswersAndComments");
 			this.mnuViewAnswers.Name = "mnuViewAnswers";
 			resources.ApplyResources(this.mnuViewAnswers, "mnuViewAnswers");
 			this.mnuViewAnswers.CheckedChanged += new System.EventHandler(this.mnuViewAnswersColumn_CheckedChanged);
@@ -242,45 +235,6 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridUns_RowPrePaint);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
 			// 
-			// m_colReference
-			// 
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			resources.ApplyResources(this.m_colReference, "m_colReference");
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			// 
-			// m_colEnglish
-			// 
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
-			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			// 
-			// m_colTranslation
-			// 
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colTranslation, "m_colTranslation");
-			this.m_colTranslation.Name = "m_colTranslation";
-			// 
-			// m_colUserTranslated
-			// 
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			resources.ApplyResources(this.m_colUserTranslated, "m_colUserTranslated");
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			// 
-			// m_colDebugInfo
-			// 
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.m_colDebugInfo, "m_colDebugInfo");
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
-			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			// 
 			// dataGridContextMenu
 			// 
 			this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -303,7 +257,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.cutToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.cutToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem, ".cutToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem, "MainWindow.dataGridContextMenu.cutToolStripMenuItem");
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			resources.ApplyResources(this.cutToolStripMenuItem, "cutToolStripMenuItem");
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
@@ -312,7 +266,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.copyToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.copyToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.copyToolStripMenuItem, ".copyToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this.copyToolStripMenuItem, "MainWindow.dataGridContextMenu.copyToolStripMenuItem");
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			resources.ApplyResources(this.copyToolStripMenuItem, "copyToolStripMenuItem");
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
@@ -321,7 +275,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.pasteToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.pasteToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.pasteToolStripMenuItem, ".pasteToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizingId(this.pasteToolStripMenuItem, "MainWindow.dataGridContextMenu.pasteToolStripMenuItem");
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			resources.ApplyResources(this.pasteToolStripMenuItem, "pasteToolStripMenuItem");
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
@@ -335,7 +289,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuExcludeQuestion, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeQuestion, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestion, ".mnuExcludeQuestion");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestion, "MainWindow.dataGridContextMenu.mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Name = "mnuExcludeQuestion";
 			resources.ApplyResources(this.mnuExcludeQuestion, "mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
@@ -344,7 +298,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuIncludeQuestion, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuIncludeQuestion, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuIncludeQuestion, ".mnuIncludeQuestion");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuIncludeQuestion, "MainWindow.dataGridContextMenu.mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Name = "mnuIncludeQuestion";
 			resources.ApplyResources(this.mnuIncludeQuestion, "mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
@@ -353,7 +307,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuEditQuestion, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEditQuestion, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuEditQuestion, ".mnuEditQuestion");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuEditQuestion, "MainWindow.dataGridContextMenu.mnuEditQuestion");
 			this.mnuEditQuestion.Name = "mnuEditQuestion";
 			resources.ApplyResources(this.mnuEditQuestion, "mnuEditQuestion");
 			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
@@ -362,7 +316,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAddQuestion, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddQuestion, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddQuestion, ".mnuAddQuestion");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddQuestion, "MainWindow.dataGridContextMenu.mnuAddQuestion");
 			this.mnuAddQuestion.Name = "mnuAddQuestion";
 			resources.ApplyResources(this.mnuAddQuestion, "mnuAddQuestion");
 			this.mnuAddQuestion.Click += new System.EventHandler(this.AddNewQuestion);
@@ -370,45 +324,46 @@ namespace SIL.Transcelerator
 			// m_mainMenu
 			// 
 			this.m_mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.filterToolStripMenuItem,
-            this.viewToolStripMenuItem,
-            this.optionsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.mnuFile,
+            this.mnuEdit,
+            this.mnuFilter,
+            this.mnuView,
+            this.mnuAdvanced,
+            this.mnuHelp});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_mainMenu, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_mainMenu, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_mainMenu, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_mainMenu, "MainWindow.m_mainMenu");
 			resources.ApplyResources(this.m_mainMenu, "m_mainMenu");
 			this.m_mainMenu.Name = "m_mainMenu";
 			// 
-			// fileToolStripMenuItem
+			// mnuFile
 			// 
-			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
+			this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuSave,
             this.mnuAutoSave,
-            this.reloadToolStripMenuItem,
+            this.mnuReload,
             this.toolStripSeparator2,
             this.mnuGenerate,
             this.mnuProduceScriptureForgeFiles,
             this.generateOutputForArloToolStripMenuItem,
             this.mnuLoadTranslationsFromTextFile,
             this.toolStripSeparator3,
-            this.closeToolStripMenuItem});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.fileToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.fileToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.fileToolStripMenuItem, "MainWindow.fileToolStripMenuItem");
-			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
+            this.mnuClose});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFile, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFile, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuFile, "MainWindow.Menu.File");
+			this.mnuFile.Name = "mnuFile";
+			resources.ApplyResources(this.mnuFile, "mnuFile");
 			// 
-			// saveToolStripMenuItem
+			// mnuSave
 			// 
-			resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.saveToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.saveToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.saveToolStripMenuItem, "MainWindow.saveToolStripMenuItem");
-			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-			this.saveToolStripMenuItem.Click += new System.EventHandler(this.Save);
+			resources.ApplyResources(this.mnuSave, "mnuSave");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuSave, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuSave, "MainWindow.Menu.File.Save");
+			this.mnuSave.Name = "mnuSave";
+			this.mnuSave.Click += new System.EventHandler(this.Save);
 			// 
 			// mnuAutoSave
 			// 
@@ -417,19 +372,19 @@ namespace SIL.Transcelerator
 			this.mnuAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAutoSave, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAutoSave, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuAutoSave, "MainWindow.mnuAutoSave");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAutoSave, "MainWindow.File.mnuAutoSave");
 			this.mnuAutoSave.Name = "mnuAutoSave";
 			resources.ApplyResources(this.mnuAutoSave, "mnuAutoSave");
 			this.mnuAutoSave.CheckedChanged += new System.EventHandler(this.mnuAutoSave_CheckedChanged);
 			// 
-			// reloadToolStripMenuItem
+			// mnuReload
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.reloadToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.reloadToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.reloadToolStripMenuItem, "MainWindow.reloadToolStripMenuItem");
-			this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-			resources.ApplyResources(this.reloadToolStripMenuItem, "reloadToolStripMenuItem");
-			this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuReload, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReload, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuReload, "MainWindow.Menu.File.Reload");
+			this.mnuReload.Name = "mnuReload";
+			resources.ApplyResources(this.mnuReload, "mnuReload");
+			this.mnuReload.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
@@ -440,7 +395,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuGenerate, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuGenerate, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuGenerate, "MainWindow.mnuGenerate");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuGenerate, "MainWindow.Menu.File.GenerateCheckingScript");
 			this.mnuGenerate.Name = "mnuGenerate";
 			resources.ApplyResources(this.mnuGenerate, "mnuGenerate");
 			this.mnuGenerate.Click += new System.EventHandler(this.mnuGenerate_Click);
@@ -451,7 +406,7 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuProduceScriptureForgeFiles, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.mnuProduceScriptureForgeFiles");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.Menu.File.ProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			resources.ApplyResources(this.mnuProduceScriptureForgeFiles, "mnuProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
@@ -461,7 +416,8 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.generateOutputForArloToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.generateOutputForArloToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.generateOutputForArloToolStripMenuItem, "MainWindow.generateOutputForArloToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizationPriority(this.generateOutputForArloToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.generateOutputForArloToolStripMenuItem, "MainWindow.Menu.File.GenerateOutputForArlo");
 			this.generateOutputForArloToolStripMenuItem.Name = "generateOutputForArloToolStripMenuItem";
 			resources.ApplyResources(this.generateOutputForArloToolStripMenuItem, "generateOutputForArloToolStripMenuItem");
 			this.generateOutputForArloToolStripMenuItem.Click += new System.EventHandler(this.generateOutputForArloToolStripMenuItem_Click);
@@ -470,7 +426,7 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuLoadTranslationsFromTextFile, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLoadTranslationsFromTextFile, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuLoadTranslationsFromTextFile, "MainWindow.mnuLoadTranslationsFromTextFile");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuLoadTranslationsFromTextFile, "MainWindow.Menu.File.LoadTranslationsFromTextFile");
 			this.mnuLoadTranslationsFromTextFile.Name = "mnuLoadTranslationsFromTextFile";
 			resources.ApplyResources(this.mnuLoadTranslationsFromTextFile, "mnuLoadTranslationsFromTextFile");
 			this.mnuLoadTranslationsFromTextFile.Click += new System.EventHandler(this.mnuLoadTranslationsFromTextFile_Click);
@@ -480,42 +436,42 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
 			resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
 			// 
-			// closeToolStripMenuItem
+			// mnuClose
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.closeToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.closeToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.closeToolStripMenuItem, "MainWindow.closeToolStripMenuItem");
-			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			resources.ApplyResources(this.closeToolStripMenuItem, "closeToolStripMenuItem");
-			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuClose, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuClose, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuClose, "MainWindow.Menu.File.Close");
+			this.mnuClose.Name = "mnuClose";
+			resources.ApplyResources(this.mnuClose, "mnuClose");
+			this.mnuClose.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
-			// editToolStripMenuItem
+			// mnuEdit
 			// 
-			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cutToolStripMenuItem1,
+			this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuCut,
             this.mnuCopy,
             this.mnuPaste,
             this.toolStripSeparator8,
-            this.previousUntranslatedQuestionToolStripMenuItem,
-            this.nextUntranslatedQuestionToolStripMenuItem,
+            this.mnuPreviousUntranslatedQuestion,
+            this.mnuNextUntranslatedQuestion,
             this.toolStripSeparatorShiftWords,
             this.mnuShiftWordsRight,
             this.mnuShiftWordsLeft});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.editToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.editToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.editToolStripMenuItem, "MainWindow.editToolStripMenuItem");
-			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-			resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
-			this.editToolStripMenuItem.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuEdit, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEdit, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuEdit, "MainWindow.Menu.Edit");
+			this.mnuEdit.Name = "mnuEdit";
+			resources.ApplyResources(this.mnuEdit, "mnuEdit");
+			this.mnuEdit.DropDownOpening += new System.EventHandler(this.editToolStripMenuItem_DropDownOpening);
 			// 
-			// cutToolStripMenuItem1
+			// mnuCut
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.cutToolStripMenuItem1, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.cutToolStripMenuItem1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem1, "MainWindow.cutToolStripMenuItem1");
-			this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
-			resources.ApplyResources(this.cutToolStripMenuItem1, "cutToolStripMenuItem1");
-			this.cutToolStripMenuItem1.Click += new System.EventHandler(this.cutToolStripMenuItem1_Click);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuCut, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCut, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuCut, "MainWindow.Menu.Edit.Cut");
+			this.mnuCut.Name = "mnuCut";
+			resources.ApplyResources(this.mnuCut, "mnuCut");
+			this.mnuCut.Click += new System.EventHandler(this.cutToolStripMenuItem1_Click);
 			// 
 			// mnuCopy
 			// 
@@ -523,7 +479,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.mnuCopy, "mnuCopy");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuCopy, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCopy, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuCopy, "MainWindow.mnuCopy");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuCopy, "MainWindow.Menu.Edit.Copy");
 			this.mnuCopy.Name = "mnuCopy";
 			this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
 			// 
@@ -533,7 +489,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.mnuPaste, "mnuPaste");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPaste, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPaste, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuPaste, "MainWindow.mnuPaste");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuPaste, "MainWindow.Menu.Edit.Paste");
 			this.mnuPaste.Name = "mnuPaste";
 			this.mnuPaste.Click += new System.EventHandler(this.mnuPaste_Click);
 			// 
@@ -542,25 +498,25 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator8.Name = "toolStripSeparator8";
 			resources.ApplyResources(this.toolStripSeparator8, "toolStripSeparator8");
 			// 
-			// previousUntranslatedQuestionToolStripMenuItem
+			// mnuPreviousUntranslatedQuestion
 			// 
-			this.previousUntranslatedQuestionToolStripMenuItem.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon;
-			resources.ApplyResources(this.previousUntranslatedQuestionToolStripMenuItem, "previousUntranslatedQuestionToolStripMenuItem");
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.previousUntranslatedQuestionToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.previousUntranslatedQuestionToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.previousUntranslatedQuestionToolStripMenuItem, "MainWindow.previousUntranslatedQuestionToolStripMenuItem");
-			this.previousUntranslatedQuestionToolStripMenuItem.Name = "previousUntranslatedQuestionToolStripMenuItem";
-			this.previousUntranslatedQuestionToolStripMenuItem.Click += new System.EventHandler(this.prevUntranslatedQuestionToolStripMenuItem_Click);
+			this.mnuPreviousUntranslatedQuestion.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon;
+			resources.ApplyResources(this.mnuPreviousUntranslatedQuestion, "mnuPreviousUntranslatedQuestion");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPreviousUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPreviousUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuPreviousUntranslatedQuestion, "MainWindow.Menu.Edit.PreviousUntranslatedQuestion");
+			this.mnuPreviousUntranslatedQuestion.Name = "mnuPreviousUntranslatedQuestion";
+			this.mnuPreviousUntranslatedQuestion.Click += new System.EventHandler(this.prevUntranslatedQuestionToolStripMenuItem_Click);
 			// 
-			// nextUntranslatedQuestionToolStripMenuItem
+			// mnuNextUntranslatedQuestion
 			// 
-			this.nextUntranslatedQuestionToolStripMenuItem.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon;
-			resources.ApplyResources(this.nextUntranslatedQuestionToolStripMenuItem, "nextUntranslatedQuestionToolStripMenuItem");
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.nextUntranslatedQuestionToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.nextUntranslatedQuestionToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.nextUntranslatedQuestionToolStripMenuItem, "MainWindow.nextUntranslatedQuestionToolStripMenuItem");
-			this.nextUntranslatedQuestionToolStripMenuItem.Name = "nextUntranslatedQuestionToolStripMenuItem";
-			this.nextUntranslatedQuestionToolStripMenuItem.Click += new System.EventHandler(this.nextUntranslatedQuestionToolStripMenuItem_Click);
+			this.mnuNextUntranslatedQuestion.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon;
+			resources.ApplyResources(this.mnuNextUntranslatedQuestion, "mnuNextUntranslatedQuestion");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuNextUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuNextUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuNextUntranslatedQuestion, "MainWindow.Menu.Edit.NextUntranslatedQuestion");
+			this.mnuNextUntranslatedQuestion.Name = "mnuNextUntranslatedQuestion";
+			this.mnuNextUntranslatedQuestion.Click += new System.EventHandler(this.nextUntranslatedQuestionToolStripMenuItem_Click);
 			// 
 			// toolStripSeparatorShiftWords
 			// 
@@ -573,7 +529,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.mnuShiftWordsRight, "mnuShiftWordsRight");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsRight, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsRight, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsRight, "MainWindow.mnuShiftWordsRight");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsRight, "MainWindow.Menu.Edit.ShiftWordsRight");
 			this.mnuShiftWordsRight.Name = "mnuShiftWordsRight";
 			this.mnuShiftWordsRight.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
 			// 
@@ -583,43 +539,43 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.mnuShiftWordsLeft, "mnuShiftWordsLeft");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsLeft, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsLeft, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsLeft, "MainWindow.mnuShiftWordsLeft");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsLeft, "MainWindow.Menu.Edit.ShiftWordsLeft");
 			this.mnuShiftWordsLeft.Name = "mnuShiftWordsLeft";
 			this.mnuShiftWordsLeft.Click += new System.EventHandler(this.HandleShiftWordsMenuClick);
 			// 
-			// filterToolStripMenuItem
+			// mnuFilter
 			// 
-			this.filterToolStripMenuItem.CheckOnClick = true;
-			this.filterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuFilter.CheckOnClick = true;
+			this.mnuFilter.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuReferenceRange,
-            this.mnuKtFilter,
+            this.mnuFilterBiblicalTerms,
             this.mnuMatchWholeWords});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.filterToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.filterToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.filterToolStripMenuItem, "MainWindow.filterToolStripMenuItem");
-			this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-			resources.ApplyResources(this.filterToolStripMenuItem, "filterToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilter, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuFilter, "MainWindow.Menu.Filter");
+			this.mnuFilter.Name = "mnuFilter";
+			resources.ApplyResources(this.mnuFilter, "mnuFilter");
 			// 
 			// mnuReferenceRange
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuReferenceRange, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReferenceRange, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuReferenceRange, "MainWindow.mnuReferenceRange");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuReferenceRange, "MainWindow.Menu.Filter.ReferenceRange");
 			this.mnuReferenceRange.Name = "mnuReferenceRange";
 			resources.ApplyResources(this.mnuReferenceRange, "mnuReferenceRange");
 			this.mnuReferenceRange.Click += new System.EventHandler(this.mnuReferenceRange_Click);
 			// 
-			// mnuKtFilter
+			// mnuFilterBiblicalTerms
 			// 
-			this.mnuKtFilter.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuFilterBiblicalTerms.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuShowAllPhrases,
             this.mnuShowPhrasesWithKtRenderings,
             this.mnuShowPhrasesWithMissingKtRenderings});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuKtFilter, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuKtFilter, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuKtFilter, "MainWindow.mnuKtFilter");
-			this.mnuKtFilter.Name = "mnuKtFilter";
-			resources.ApplyResources(this.mnuKtFilter, "mnuKtFilter");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFilterBiblicalTerms, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilterBiblicalTerms, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuFilterBiblicalTerms, "MainWindow.Menu.Filter.BiblicalTerms");
+			this.mnuFilterBiblicalTerms.Name = "mnuFilterBiblicalTerms";
+			resources.ApplyResources(this.mnuFilterBiblicalTerms, "mnuFilterBiblicalTerms");
 			// 
 			// mnuShowAllPhrases
 			// 
@@ -662,17 +618,17 @@ namespace SIL.Transcelerator
 			this.mnuMatchWholeWords.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuMatchWholeWords, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuMatchWholeWords, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuMatchWholeWords, "MainWindow.mnuMatchWholeWords");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuMatchWholeWords, "MainWindow.Menu.Filter.MatchWholeWords");
 			this.mnuMatchWholeWords.Name = "mnuMatchWholeWords";
 			resources.ApplyResources(this.mnuMatchWholeWords, "mnuMatchWholeWords");
 			this.mnuMatchWholeWords.CheckedChanged += new System.EventHandler(this.mnuMatchWholeWords_CheckChanged);
 			// 
-			// viewToolStripMenuItem
+			// mnuView
 			// 
-			this.viewToolStripMenuItem.Checked = true;
-			this.viewToolStripMenuItem.CheckOnClick = true;
-			this.viewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuView.Checked = true;
+			this.mnuView.CheckOnClick = true;
+			this.mnuView.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.mnuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             mnuViewDebugInfo,
             this.mnuViewAnswers,
             this.mnuViewToolbar,
@@ -680,13 +636,13 @@ namespace SIL.Transcelerator
             this.toolStripSeparator6,
             this.mnuViewExcludedQuestions,
             this.toolStripSeparator9,
-            this.displayLanguageToolStripMenuItem});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.viewToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.viewToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.viewToolStripMenuItem, "MainWindow.viewToolStripMenuItem");
-			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-			resources.ApplyResources(this.viewToolStripMenuItem, "viewToolStripMenuItem");
-			this.viewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
+            this.mnuDisplayLanguage});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuView, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuView, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuView, "MainWindow.Menu.View");
+			this.mnuView.Name = "mnuView";
+			resources.ApplyResources(this.mnuView, "mnuView");
+			this.mnuView.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
 			// 
 			// mnuViewToolbar
 			// 
@@ -695,7 +651,7 @@ namespace SIL.Transcelerator
 			this.mnuViewToolbar.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewToolbar, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewToolbar, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewToolbar, "MainWindow.mnuViewToolbar");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewToolbar, "MainWindow.Menu.View.Toolbar");
 			this.mnuViewToolbar.Name = "mnuViewToolbar";
 			resources.ApplyResources(this.mnuViewToolbar, "mnuViewToolbar");
 			this.mnuViewToolbar.CheckStateChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
@@ -707,7 +663,7 @@ namespace SIL.Transcelerator
 			this.mnuViewBiblicalTermsPane.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewBiblicalTermsPane, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewBiblicalTermsPane, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewBiblicalTermsPane, "MainWindow.mnuViewBiblicalTermsPane");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewBiblicalTermsPane, "MainWindow.Menu.View.BiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.Name = "mnuViewBiblicalTermsPane";
 			resources.ApplyResources(this.mnuViewBiblicalTermsPane, "mnuViewBiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.CheckedChanged += new System.EventHandler(this.mnuViewBiblicalTermsPane_CheckedChanged);
@@ -722,7 +678,7 @@ namespace SIL.Transcelerator
 			this.mnuViewExcludedQuestions.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewExcludedQuestions, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewExcludedQuestions, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewExcludedQuestions, "MainWindow.mnuViewExcludedQuestions");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewExcludedQuestions, "MainWindow.Menu.View.ExcludedQuestions");
 			this.mnuViewExcludedQuestions.Name = "mnuViewExcludedQuestions";
 			resources.ApplyResources(this.mnuViewExcludedQuestions, "mnuViewExcludedQuestions");
 			this.mnuViewExcludedQuestions.Click += new System.EventHandler(this.ApplyFilter);
@@ -732,15 +688,15 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator9.Name = "toolStripSeparator9";
 			resources.ApplyResources(this.toolStripSeparator9, "toolStripSeparator9");
 			// 
-			// displayLanguageToolStripMenuItem
+			// mnuDisplayLanguage
 			// 
-			this.displayLanguageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuDisplayLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.en_ToolStripMenuItem});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.displayLanguageToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.displayLanguageToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.displayLanguageToolStripMenuItem, "MainWindow.displayLanguageToolStripMenuItem");
-			this.displayLanguageToolStripMenuItem.Name = "displayLanguageToolStripMenuItem";
-			resources.ApplyResources(this.displayLanguageToolStripMenuItem, "displayLanguageToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuDisplayLanguage, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDisplayLanguage, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuDisplayLanguage, "MainWindow.Menu.View.DisplayLanguage");
+			this.mnuDisplayLanguage.Name = "mnuDisplayLanguage";
+			resources.ApplyResources(this.mnuDisplayLanguage, "mnuDisplayLanguage");
 			// 
 			// en_ToolStripMenuItem
 			// 
@@ -748,56 +704,57 @@ namespace SIL.Transcelerator
 			this.en_ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.en_ToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.en_ToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.en_ToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.en_ToolStripMenuItem, "MainWindow.en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Name = "en_ToolStripMenuItem";
 			resources.ApplyResources(this.en_ToolStripMenuItem, "en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Tag = "en-US";
 			this.en_ToolStripMenuItem.Click += new System.EventHandler(this.HandleDisplayLanguageSelected);
 			// 
-			// optionsToolStripMenuItem
+			// mnuAdvanced
 			// 
-			this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.phraseSubstitutionsToolStripMenuItem,
-            this.biblicalTermsRenderingSelectionRulesToolStripMenuItem});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.optionsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.optionsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.optionsToolStripMenuItem, "MainWindow.optionsToolStripMenuItem");
-			this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-			resources.ApplyResources(this.optionsToolStripMenuItem, "optionsToolStripMenuItem");
+			this.mnuAdvanced.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuPhraseSubstitutions,
+            this.mnuBiblicalTermsRenderingSelectionRules});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAdvanced, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAdvanced, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAdvanced, "MainWindow.Menu.Advanced");
+			this.mnuAdvanced.Name = "mnuAdvanced";
+			resources.ApplyResources(this.mnuAdvanced, "mnuAdvanced");
 			// 
-			// phraseSubstitutionsToolStripMenuItem
+			// mnuPhraseSubstitutions
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.phraseSubstitutionsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.phraseSubstitutionsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.phraseSubstitutionsToolStripMenuItem, "MainWindow.phraseSubstitutionsToolStripMenuItem");
-			this.phraseSubstitutionsToolStripMenuItem.Name = "phraseSubstitutionsToolStripMenuItem";
-			resources.ApplyResources(this.phraseSubstitutionsToolStripMenuItem, "phraseSubstitutionsToolStripMenuItem");
-			this.phraseSubstitutionsToolStripMenuItem.Click += new System.EventHandler(this.phraseSubstitutionsToolStripMenuItem_Click);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPhraseSubstitutions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPhraseSubstitutions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuPhraseSubstitutions, "MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments");
+			this.mnuPhraseSubstitutions.Name = "mnuPhraseSubstitutions";
+			resources.ApplyResources(this.mnuPhraseSubstitutions, "mnuPhraseSubstitutions");
+			this.mnuPhraseSubstitutions.Click += new System.EventHandler(this.phraseSubstitutionsToolStripMenuItem_Click);
 			// 
-			// biblicalTermsRenderingSelectionRulesToolStripMenuItem
+			// mnuBiblicalTermsRenderingSelectionRules
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, "MainWindow.biblicalTermsRenderingSelectionRulesToolStripMenuItem");
-			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem.Name = "biblicalTermsRenderingSelectionRulesToolStripMenuItem";
-			resources.ApplyResources(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem, "biblicalTermsRenderingSelectionRulesToolStripMenuItem");
-			this.biblicalTermsRenderingSelectionRulesToolStripMenuItem.Click += new System.EventHandler(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem_Click);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuBiblicalTermsRenderingSelectionRules, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuBiblicalTermsRenderingSelectionRules, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuBiblicalTermsRenderingSelectionRules, "MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules");
+			this.mnuBiblicalTermsRenderingSelectionRules.Name = "mnuBiblicalTermsRenderingSelectionRules";
+			resources.ApplyResources(this.mnuBiblicalTermsRenderingSelectionRules, "mnuBiblicalTermsRenderingSelectionRules");
+			this.mnuBiblicalTermsRenderingSelectionRules.Click += new System.EventHandler(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem_Click);
 			// 
-			// helpToolStripMenuItem
+			// mnuHelp
 			// 
-			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuHelpAbout});
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.helpToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.helpToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.helpToolStripMenuItem, "MainWindow.helpToolStripMenuItem");
-			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-			resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelp, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelp, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelp, "MainWindow.Menu.Help");
+			this.mnuHelp.Name = "mnuHelp";
+			resources.ApplyResources(this.mnuHelp, "mnuHelp");
 			// 
 			// mnuHelpAbout
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelpAbout, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelpAbout, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelpAbout, "MainWindow.mnuHelpAbout");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelpAbout, "MainWindow.Menu.Help.About");
 			this.mnuHelpAbout.Name = "mnuHelpAbout";
 			resources.ApplyResources(this.mnuHelpAbout, "mnuHelpAbout");
 			this.mnuHelpAbout.Click += new System.EventHandler(this.mnuHelpAbout_Click);
@@ -817,6 +774,7 @@ namespace SIL.Transcelerator
             this.lblRemainingWork});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStrip1, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "MainWindow.toolStrip1");
 			resources.ApplyResources(this.toolStrip1, "toolStrip1");
 			this.toolStrip1.Name = "toolStrip1";
@@ -847,11 +805,11 @@ namespace SIL.Transcelerator
 			// txtFilterByPart
 			// 
 			this.txtFilterByPart.AcceptsReturn = true;
+			resources.ApplyResources(this.txtFilterByPart, "txtFilterByPart");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.txtFilterByPart, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.txtFilterByPart, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.txtFilterByPart, "MainWindow.txtFilterByPart");
 			this.txtFilterByPart.Name = "txtFilterByPart";
-			resources.ApplyResources(this.txtFilterByPart, "txtFilterByPart");
 			this.txtFilterByPart.Enter += new System.EventHandler(this.txtFilterByPart_Enter);
 			this.txtFilterByPart.Leave += new System.EventHandler(this.txtFilterByPart_Leave);
 			this.txtFilterByPart.TextChanged += new System.EventHandler(this.ApplyFilter);
@@ -923,6 +881,7 @@ namespace SIL.Transcelerator
 			this.m_lblAnswers.BackColor = System.Drawing.SystemColors.Control;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswers, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblAnswers, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswers, "MainWindow.m_lblAnswers");
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			// 
@@ -939,6 +898,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.m_lblComments, "m_lblComments");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblComments, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblComments, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblComments, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblComments, "MainWindow.m_lblComments");
 			this.m_lblComments.Name = "m_lblComments";
 			// 
@@ -962,8 +922,47 @@ namespace SIL.Transcelerator
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
+			// 
+			// m_colReference
+			// 
+			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			resources.ApplyResources(this.m_colReference, "m_colReference");
+			this.m_colReference.Name = "m_colReference";
+			this.m_colReference.ReadOnly = true;
+			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			// 
+			// m_colEnglish
+			// 
+			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			resources.ApplyResources(this.m_colEnglish, "m_colEnglish");
+			this.m_colEnglish.Name = "m_colEnglish";
+			this.m_colEnglish.ReadOnly = true;
+			// 
+			// m_colTranslation
+			// 
+			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.m_colTranslation, "m_colTranslation");
+			this.m_colTranslation.Name = "m_colTranslation";
+			// 
+			// m_colUserTranslated
+			// 
+			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			resources.ApplyResources(this.m_colUserTranslated, "m_colUserTranslated");
+			this.m_colUserTranslated.Name = "m_colUserTranslated";
+			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			// 
+			// m_colDebugInfo
+			// 
+			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.m_colDebugInfo, "m_colDebugInfo");
+			this.m_colDebugInfo.Name = "m_colDebugInfo";
+			this.m_colDebugInfo.ReadOnly = true;
+			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
 			// 
 			// UNSQuestionsDialog
 			// 
@@ -1001,16 +1000,16 @@ namespace SIL.Transcelerator
 
 		private DataGridView dataGridUns;
 		private MenuStrip m_mainMenu;
-		private ToolStripMenuItem fileToolStripMenuItem;
-		private ToolStripMenuItem saveToolStripMenuItem;
-		private ToolStripMenuItem reloadToolStripMenuItem;
-		private ToolStripMenuItem closeToolStripMenuItem;
-		private ToolStripMenuItem filterToolStripMenuItem;
-		private ToolStripMenuItem mnuKtFilter;
+		private ToolStripMenuItem mnuFile;
+		private ToolStripMenuItem mnuSave;
+		private ToolStripMenuItem mnuReload;
+		private ToolStripMenuItem mnuClose;
+		private ToolStripMenuItem mnuFilter;
+		private ToolStripMenuItem mnuFilterBiblicalTerms;
 		private ToolStripMenuItem mnuShowAllPhrases;
 		private ToolStripMenuItem mnuShowPhrasesWithKtRenderings;
 		private ToolStripMenuItem mnuShowPhrasesWithMissingKtRenderings;
-		private ToolStripMenuItem viewToolStripMenuItem;
+		private ToolStripMenuItem mnuView;
 		private ToolStrip toolStrip1;
 		private ToolStripLabel toolStripLabelQuestionFilter;
 		private ToolStripTextBox txtFilterByPart;
@@ -1021,8 +1020,8 @@ namespace SIL.Transcelerator
 		private ToolStripSeparator toolStripSeparator3;
 		private ToolStripMenuItem mnuViewToolbar;
 		private ToolStripMenuItem mnuAutoSave;
-		private ToolStripMenuItem optionsToolStripMenuItem;
-		private ToolStripMenuItem phraseSubstitutionsToolStripMenuItem;
+		private ToolStripMenuItem mnuAdvanced;
+		private ToolStripMenuItem mnuPhraseSubstitutions;
 		private ToolStripButton btnSave;
 		private ToolStripMenuItem mnuReferenceRange;
 		private TableLayoutPanel m_biblicalTermsPane;
@@ -1036,9 +1035,9 @@ namespace SIL.Transcelerator
 		private Label m_lblComments;
 		private TableLayoutPanel m_pnlAnswersAndComments;
 		private ToolStripMenuItem mnuViewAnswers;
-		private ToolStripMenuItem helpToolStripMenuItem;
+		private ToolStripMenuItem mnuHelp;
 		private ToolStripMenuItem mnuHelpAbout;
-		private ToolStripMenuItem biblicalTermsRenderingSelectionRulesToolStripMenuItem;
+		private ToolStripMenuItem mnuBiblicalTermsRenderingSelectionRules;
 		private ToolStripLabel lblFilterIndicator;
 		private ToolStripLabel lblRemainingWork;
 		private ToolStripMenuItem mnuViewExcludedQuestions;
@@ -1048,12 +1047,7 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem mnuIncludeQuestion;
 		private ToolStripMenuItem mnuEditQuestion;
 		private ToolStripMenuItem mnuAddQuestion;
-		private DataGridViewTextBoxColumn m_colReference;
-		private DataGridViewTextBoxColumn m_colEnglish;
-		private DataGridViewTextBoxColumn m_colTranslation;
-		private DataGridViewCheckBoxColumn m_colUserTranslated;
-		private DataGridViewTextBoxColumn m_colDebugInfo;
-		private ToolStripMenuItem editToolStripMenuItem;
+		private ToolStripMenuItem mnuEdit;
 		private ToolStripMenuItem mnuCopy;
 		private ToolStripMenuItem mnuPaste;
         private Splitter m_hSplitter;
@@ -1061,19 +1055,24 @@ namespace SIL.Transcelerator
         private ToolStripMenuItem copyToolStripMenuItem;
         private ToolStripMenuItem pasteToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator7;
-        private ToolStripMenuItem cutToolStripMenuItem1;
+        private ToolStripMenuItem mnuCut;
         private ToolStripSeparator toolStripSeparator8;
-        private ToolStripMenuItem nextUntranslatedQuestionToolStripMenuItem;
-        private ToolStripMenuItem previousUntranslatedQuestionToolStripMenuItem;
+        private ToolStripMenuItem mnuNextUntranslatedQuestion;
+        private ToolStripMenuItem mnuPreviousUntranslatedQuestion;
 		private ToolStripMenuItem generateOutputForArloToolStripMenuItem;
 		private ToolStripMenuItem mnuLoadTranslationsFromTextFile;
 		private ToolStripMenuItem mnuShiftWordsRight;
 		private ToolStripSeparator toolStripSeparatorShiftWords;
 		private ToolStripMenuItem mnuShiftWordsLeft;
 		private ToolStripSeparator toolStripSeparator9;
-		private ToolStripMenuItem displayLanguageToolStripMenuItem;
+		private ToolStripMenuItem mnuDisplayLanguage;
 		private ToolStripMenuItem en_ToolStripMenuItem;
 		private ToolStripMenuItem mnuProduceScriptureForgeFiles;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private DataGridViewTextBoxColumn m_colReference;
+		private DataGridViewTextBoxColumn m_colEnglish;
+		private DataGridViewTextBoxColumn m_colTranslation;
+		private DataGridViewCheckBoxColumn m_colUserTranslated;
+		private DataGridViewTextBoxColumn m_colDebugInfo;
 	}
 }

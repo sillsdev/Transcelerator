@@ -66,9 +66,6 @@ namespace SIL.Transcelerator
 			this.m_cboEndVerse = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.m_dataGridViewExistingQuestions = new System.Windows.Forms.DataGridView();
-			this.colQuestion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colExcluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.m_lblSelectLocation = new System.Windows.Forms.Label();
 			this.m_txtVernacularQuestion = new System.Windows.Forms.TextBox();
 			this.m_insertionPointArrow = new System.Windows.Forms.PictureBox();
@@ -82,6 +79,9 @@ namespace SIL.Transcelerator
 			this.m_cboCategory = new System.Windows.Forms.ComboBox();
 			this.m_linklblWishForTxl218 = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.colQuestion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colExcluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			m_lblEnglishQuestion = new System.Windows.Forms.Label();
 			m_lblAnswer = new System.Windows.Forms.Label();
 			m_lblCategory = new System.Windows.Forms.Label();
@@ -269,33 +269,6 @@ namespace SIL.Transcelerator
 			this.m_dataGridViewExistingQuestions.ShowRowErrors = false;
 			this.m_dataGridViewExistingQuestions.Scroll += new System.Windows.Forms.ScrollEventHandler(this.m_dataGridViewExistingQuestions_Scroll);
 			// 
-			// colQuestion
-			// 
-			this.colQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colQuestion.DataPropertyName = "PhraseToDisplayInUI";
-			this.colQuestion.FillWeight = 200F;
-			resources.ApplyResources(this.colQuestion, "colQuestion");
-			this.colQuestion.Name = "colQuestion";
-			this.colQuestion.ReadOnly = true;
-			this.colQuestion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colTranslation
-			// 
-			this.colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colTranslation.DataPropertyName = "Translation";
-			resources.ApplyResources(this.colTranslation, "colTranslation");
-			this.colTranslation.Name = "colTranslation";
-			this.colTranslation.ReadOnly = true;
-			this.colTranslation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colExcluded
-			// 
-			this.colExcluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.colExcluded.DataPropertyName = "IsExcluded";
-			resources.ApplyResources(this.colExcluded, "colExcluded");
-			this.colExcluded.Name = "colExcluded";
-			this.colExcluded.ReadOnly = true;
-			// 
 			// m_lblSelectLocation
 			// 
 			resources.ApplyResources(this.m_lblSelectLocation, "m_lblSelectLocation");
@@ -420,8 +393,35 @@ namespace SIL.Transcelerator
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
+			// 
+			// colQuestion
+			// 
+			this.colQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colQuestion.DataPropertyName = "PhraseToDisplayInUI";
+			this.colQuestion.FillWeight = 200F;
+			resources.ApplyResources(this.colQuestion, "colQuestion");
+			this.colQuestion.Name = "colQuestion";
+			this.colQuestion.ReadOnly = true;
+			this.colQuestion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colTranslation
+			// 
+			this.colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colTranslation.DataPropertyName = "Translation";
+			resources.ApplyResources(this.colTranslation, "colTranslation");
+			this.colTranslation.Name = "colTranslation";
+			this.colTranslation.ReadOnly = true;
+			this.colTranslation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colExcluded
+			// 
+			this.colExcluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.colExcluded.DataPropertyName = "IsExcluded";
+			resources.ApplyResources(this.colExcluded, "colExcluded");
+			this.colExcluded.Name = "colExcluded";
+			this.colExcluded.ReadOnly = true;
 			// 
 			// NewQuestionDlg
 			// 
@@ -487,12 +487,12 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Button m_btnUp;
 		private System.Windows.Forms.Button m_btnDown;
 		private System.Windows.Forms.Label m_lblVernacularQuestionIsOptional;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
-		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
 		private System.Windows.Forms.TableLayoutPanel m_pnlEnglishQuestionControls;
 		private System.Windows.Forms.Label m_lblIdenticalQuestion;
 		private System.Windows.Forms.LinkLabel m_linklblWishForTxl218;
 		private L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
+		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
 	}
 }

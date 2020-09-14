@@ -73,11 +73,6 @@ namespace SIL.Transcelerator
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGridView = new System.Windows.Forms.DataGridView();
-			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.m_regexMatchHelper = new System.Windows.Forms.Panel();
 			this.m_grpPreview = new System.Windows.Forms.GroupBox();
 			this.m_cboPreviewQuestion = new System.Windows.Forms.ComboBox();
@@ -87,6 +82,11 @@ namespace SIL.Transcelerator
 			this.btnUp = new System.Windows.Forms.ToolStripButton();
 			this.btnDown = new System.Windows.Forms.ToolStripButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			lblInstructions = new System.Windows.Forms.Label();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			lblMaxMatch = new System.Windows.Forms.Label();
@@ -268,46 +268,6 @@ namespace SIL.Transcelerator
 			this.m_dataGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.m_dataGridView_EditingControlShowing);
 			this.m_dataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_RowEnter);
 			// 
-			// colMatch
-			// 
-			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			resources.ApplyResources(this.colMatch, "colMatch");
-			this.colMatch.Name = "colMatch";
-			this.colMatch.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colReplacement
-			// 
-			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.colReplacement, "colReplacement");
-			this.colReplacement.Name = "colReplacement";
-			this.colReplacement.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colIsRegEx
-			// 
-			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
-			resources.ApplyResources(this.colIsRegEx, "colIsRegEx");
-			this.colIsRegEx.Name = "colIsRegEx";
-			// 
-			// colMatchCase
-			// 
-			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
-			resources.ApplyResources(this.colMatchCase, "colMatchCase");
-			this.colMatchCase.Name = "colMatchCase";
-			// 
-			// colPreviewResult
-			// 
-			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			resources.ApplyResources(this.colPreviewResult, "colPreviewResult");
-			this.colPreviewResult.Name = "colPreviewResult";
-			this.colPreviewResult.ReadOnly = true;
-			this.colPreviewResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
 			// m_regexMatchHelper
 			// 
 			this.m_regexMatchHelper.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
@@ -357,6 +317,7 @@ namespace SIL.Transcelerator
 			this.toolStripUpDownButtons.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripUpDownButtons, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripUpDownButtons, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStripUpDownButtons, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripUpDownButtons, "PhraseSubstitutionsDlg.toolStripUpDownButtons");
 			this.toolStripUpDownButtons.Name = "toolStripUpDownButtons";
 			// 
@@ -385,8 +346,48 @@ namespace SIL.Transcelerator
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
+			// 
+			// colMatch
+			// 
+			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			resources.ApplyResources(this.colMatch, "colMatch");
+			this.colMatch.Name = "colMatch";
+			this.colMatch.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colReplacement
+			// 
+			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.colReplacement, "colReplacement");
+			this.colReplacement.Name = "colReplacement";
+			this.colReplacement.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colIsRegEx
+			// 
+			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
+			resources.ApplyResources(this.colIsRegEx, "colIsRegEx");
+			this.colIsRegEx.Name = "colIsRegEx";
+			// 
+			// colMatchCase
+			// 
+			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
+			resources.ApplyResources(this.colMatchCase, "colMatchCase");
+			this.colMatchCase.Name = "colMatchCase";
+			// 
+			// colPreviewResult
+			// 
+			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			resources.ApplyResources(this.colPreviewResult, "colPreviewResult");
+			this.colPreviewResult.Name = "colPreviewResult";
+			this.colPreviewResult.ReadOnly = true;
+			this.colPreviewResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// PhraseSubstitutionsDlg
 			// 
@@ -447,11 +448,11 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ToolStrip toolStripUpDownButtons;
 		private System.Windows.Forms.ToolStripButton btnUp;
 		private System.Windows.Forms.ToolStripButton btnDown;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colMatch;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colReplacement;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colIsRegEx;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colMatchCase;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colPreviewResult;
-		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 	}
 }

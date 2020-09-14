@@ -59,8 +59,6 @@ namespace SIL.Transcelerator
 				m_listRules.SelectedIndex = 0;
 			}
 			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (m_listRules.SelectedIndex >= 0);
-
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 
 		public IEnumerable<RenderingSelectionRule> Rules
@@ -172,11 +170,6 @@ namespace SIL.Transcelerator
 			m_listRules.Items.RemoveAt(i);
 			if (m_listRules.Items.Count > 0)
 				m_listRules.SelectedIndex = m_listRules.Items.Count > i ? i : i - 1;
-		}
-
-		private void HandleStringsLocalized()
-		{
-			m_listRules_SelectedIndexChanged(m_listRules, new EventArgs());
 		}
 
 		private void m_listRules_SelectedIndexChanged(object sender, System.EventArgs e)

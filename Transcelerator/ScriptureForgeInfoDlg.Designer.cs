@@ -142,7 +142,7 @@
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
 			// ScriptureForgeInfoDlg

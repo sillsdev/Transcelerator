@@ -467,6 +467,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnChooseQuestionGroupHeadingsColor, "btnChooseQuestionGroupHeadingsColor");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseQuestionGroupHeadingsColor, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseQuestionGroupHeadingsColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooseQuestionGroupHeadingsColor, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseQuestionGroupHeadingsColor, "GenerateScriptDlg.btnChooseQuestionGroupHeadingsColor");
 			this.btnChooseQuestionGroupHeadingsColor.Name = "btnChooseQuestionGroupHeadingsColor";
 			this.btnChooseQuestionGroupHeadingsColor.UseVisualStyleBackColor = true;
@@ -486,6 +487,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnChooserCommentColor, "btnChooserCommentColor");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooserCommentColor, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooserCommentColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooserCommentColor, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnChooserCommentColor, "GenerateScriptDlg.btnChooserCommentColor");
 			this.btnChooserCommentColor.Name = "btnChooserCommentColor";
 			this.btnChooserCommentColor.UseVisualStyleBackColor = true;
@@ -506,6 +508,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnChooseEnglishAnswerColor, "btnChooseEnglishAnswerColor");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishAnswerColor, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishAnswerColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooseEnglishAnswerColor, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishAnswerColor, "GenerateScriptDlg.btnChooseEnglishAnswerColor");
 			this.btnChooseEnglishAnswerColor.Name = "btnChooseEnglishAnswerColor";
 			this.btnChooseEnglishAnswerColor.UseVisualStyleBackColor = true;
@@ -526,6 +529,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnChooseEnglishQuestionColor, "btnChooseEnglishQuestionColor");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishQuestionColor, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooseEnglishQuestionColor, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishQuestionColor, "GenerateScriptDlg.btnChooseEnglishQuestionColor");
 			this.btnChooseEnglishQuestionColor.Name = "btnChooseEnglishQuestionColor";
 			this.btnChooseEnglishQuestionColor.UseVisualStyleBackColor = true;
@@ -648,6 +652,7 @@ namespace SIL.Transcelerator
 			resources.ApplyResources(this.btnBrowseCss, "btnBrowseCss");
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnBrowseCss, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnBrowseCss, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.btnBrowseCss, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnBrowseCss, "GenerateScriptDlg.btnBrowseCss");
 			this.btnBrowseCss.Name = "btnBrowseCss";
 			this.btnBrowseCss.UseVisualStyleBackColor = true;
@@ -798,7 +803,7 @@ namespace SIL.Transcelerator
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
 			// GenerateScriptDlg

@@ -137,11 +137,11 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				return (PhraseTranslationHelper.KeyTermFilterType)mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
+				return (PhraseTranslationHelper.KeyTermFilterType)mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
 			}
 			private set
 			{
-				mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().First(
+				mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(
                     menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).Checked = true;
 				ApplyFilter();
 			}
@@ -155,7 +155,7 @@ namespace SIL.Transcelerator
 				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
 					Save(true, false);
 				else
-					saveToolStripMenuItem.Enabled = btnSave.Enabled = value;
+					mnuSave.Enabled = btnSave.Enabled = value;
 			}
 		}
 
@@ -470,7 +470,7 @@ namespace SIL.Transcelerator
 					Tag = availableLocalization.Value,
 					Name = availableLocalization.Value + menuItemNameSuffix
 				};
-				displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
+				mnuDisplayLanguage.DropDownItems.Add(subItem);
 				if (availableLocalization.Value == preferredLocale)
 				{
 					en_ToolStripMenuItem.Checked = false;
@@ -1092,7 +1092,7 @@ namespace SIL.Transcelerator
 			ToolStripMenuItem clickedMenu = (ToolStripMenuItem)sender;
 			if (clickedMenu.Checked)
 			{
-				foreach (ToolStripMenuItem menu in mnuKtFilter.DropDownItems)
+				foreach (ToolStripMenuItem menu in mnuFilterBiblicalTerms.DropDownItems)
 				{
 					if (menu != clickedMenu)
 						menu.Checked = false;
@@ -2375,7 +2375,7 @@ namespace SIL.Transcelerator
 			if (clickedMenu.Checked)
 				return;
 			clickedMenu.Checked = true;
-			foreach (ToolStripMenuItem subMenu in displayLanguageToolStripMenuItem.DropDownItems)
+			foreach (ToolStripMenuItem subMenu in mnuDisplayLanguage.DropDownItems)
 			{
 				if (subMenu != clickedMenu)
 					subMenu.Checked = false;
@@ -2388,6 +2388,7 @@ namespace SIL.Transcelerator
 			else
 				dataGridUns.Invalidate();
 			LoadAnswersAndCommentsIfShowing(null, null);
+			LocalizationManager.SetUILanguage(localeId, true);
 		}
 #endregion
 

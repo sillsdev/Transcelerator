@@ -30,7 +30,6 @@ namespace SIL.Transcelerator
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing && (components != null))
 			{
-				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 				components.Dispose();
 			}
 			base.Dispose(disposing);
@@ -121,6 +120,7 @@ namespace SIL.Transcelerator
             this.btnDelete});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStrip1, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "RenderingSelectionRulesDlg.toolStrip1");
 			this.toolStrip1.Name = "toolStrip1";
 			// 
@@ -172,12 +172,13 @@ namespace SIL.Transcelerator
 			this.m_lblDescription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblDescription, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblDescription, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblDescription, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblDescription, "RenderingSelectionRulesDlg.m_lblDescription");
 			this.m_lblDescription.Name = "m_lblDescription";
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
 			// RenderingSelectionRulesDlg
