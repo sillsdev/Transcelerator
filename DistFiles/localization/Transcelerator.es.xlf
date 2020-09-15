@@ -2,6 +2,11 @@
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" product-version="1.4.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
+      <trans-unit id="AddRenderingDlg.WindowTitle">
+        <source xml:lang="en">Add Rendering</source>
+        <note>ID: AddRenderingDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Add Rendering</target>
+      </trans-unit>
       <trans-unit id="BiblicalTerm.RenderingExists">
         <source xml:lang="en">Rendering already exists.</source>
         <note>ID: BiblicalTerm.RenderingExists</note>
@@ -16,6 +21,11 @@
         <source xml:lang="en">OK</source>
         <note>ID: Common.OK</note>
         <target xml:lang="es-ES" state="translated">OK</target>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.WindowTitle">
+        <source xml:lang="en">Edit Question</source>
+        <note>ID: EditQuestionDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Edit Question</target>
       </trans-unit>
       <trans-unit id="EditQuestionDlg.btnReset">
         <source xml:lang="en">&amp;Reset</source>
@@ -69,6 +79,11 @@
         <source xml:lang="en">Template &amp;File name:</source>
         <note>ID: GenerateScriptDlg.TemplateFileNameLabel</note>
         <target xml:lang="es-ES" state="needs-translation">Template &amp;File name:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.WindowTitle">
+        <source xml:lang="en">Generate Checking Script Template</source>
+        <note>ID: GenerateScriptDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Generate Checking Script Template</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.btnBrowse">
         <source xml:lang="en">&amp;Browse...</source>
@@ -312,7 +327,7 @@
         <target xml:lang="es-ES" state="translated">Mover palabra(s) a la &amp;izquierda</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.ShiftWordsRight">
-        <source xml:lang="en">Shift Word(s) Right</source>
+        <source xml:lang="en">Shift Word(s) &amp;Right</source>
         <note>ID: MainWindow.Menu.Edit.ShiftWordsRight</note>
         <target xml:lang="es-ES" state="translated">Mover palabra(s) al &amp;derecho</target>
       </trans-unit>
@@ -411,6 +426,31 @@
         <note>ID: MainWindow.Menu.View.Toolbar</note>
         <target xml:lang="es-ES" state="translated">&amp;Barra de herramientas</target>
       </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Confirmed">
+        <source xml:lang="en">Confirmed</source>
+        <note>ID: MainWindow.QuestionsGrid.Confirmed</note>
+        <target xml:lang="es-ES" state="translated">Confirmado</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.EnglishQuestion">
+        <source xml:lang="en">English Question</source>
+        <note>ID: MainWindow.QuestionsGrid.EnglishQuestion</note>
+        <target xml:lang="es-ES" state="translated">Pregunta en español</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.GeneratedTranslationDetails">
+        <source xml:lang="en">Generated Translation Details</source>
+        <note>ID: MainWindow.QuestionsGrid.GeneratedTranslationDetails</note>
+        <target xml:lang="es-ES" state="translated">Detalles de la traducción generada</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Reference">
+        <source xml:lang="en">Reference</source>
+        <note>ID: MainWindow.QuestionsGrid.Reference</note>
+        <target xml:lang="es-ES" state="translated">Referencia</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Translation">
+        <source xml:lang="en">Translation</source>
+        <note>ID: MainWindow.QuestionsGrid.Translation</note>
+        <target xml:lang="es-ES" state="translated">Traduccion</target>
+      </trans-unit>
       <trans-unit id="MainWindow.SaveChangesBeforeClosingMessage">
         <source xml:lang="en">You have made changes. Do you wish to save before closing?</source>
         <note>ID: MainWindow.SaveChangesBeforeClosingMessage</note>
@@ -425,6 +465,11 @@
         <source xml:lang="en">There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</source>
         <note>ID: MainWindow.UntranslatedQuestionsWarning</note>
         <target xml:lang="es-ES" state="needs-translation">There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.WindowTitle">
+        <source xml:lang="en">{0} - Transcelerator</source>
+        <note>ID: MainWindow.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">{0} - Transcelerator</target>
       </trans-unit>
       <trans-unit id="MainWindow.btnReceiveScrReferences">
         <source xml:lang="en">Receive Scripture References</source>
@@ -470,11 +515,6 @@
         <source xml:lang="en">Paste</source>
         <note>ID: MainWindow.dataGridContextMenu.pasteToolStripMenuItem</note>
         <target xml:lang="es-ES" state="translated">Pegar</target>
-      </trans-unit>
-      <trans-unit id="MainWindow.en_ToolStripMenuItem">
-        <source xml:lang="en">American English</source>
-        <note>ID: MainWindow.en_ToolStripMenuItem</note>
-        <target xml:lang="es-ES" state="needs-translation">American English</target>
       </trans-unit>
       <trans-unit id="MainWindow.lblFilterIndicator">
         <source xml:lang="en">Unfiltered</source>
@@ -533,10 +573,15 @@
         <note>Parameter is "Transcelerator" (plugin name)</note>
         <target xml:lang="es-ES" state="needs-translation">{0} Feature Request</target>
       </trans-unit>
+      <trans-unit id="NewQuestionDlg.WindowTitle">
+        <source xml:lang="en">New Question</source>
+        <note>ID: NewQuestionDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Nueva pregunta</target>
+      </trans-unit>
       <trans-unit id="NewQuestionDlg.label3">
         <source xml:lang="en">End Verse:</source>
         <note>ID: NewQuestionDlg.label3</note>
-        <target xml:lang="es-ES" state="needs-translation">End Verse:</target>
+        <target xml:lang="es-ES" state="translated">Versículo final:</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.lblReference">
         <source xml:lang="en">Scripture Reference:</source>
@@ -561,7 +606,7 @@
       <trans-unit id="NewQuestionDlg.m_lblVernacularQuestion">
         <source xml:lang="en">Question in {0}:</source>
         <note>ID: NewQuestionDlg.m_lblVernacularQuestion</note>
-        <target xml:lang="es-ES" state="needs-translation">Question in {0}:</target>
+        <target xml:lang="es-ES" state="translated">Pregunta en {0}:</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.m_lblVernacularQuestionIsOptional">
         <source xml:lang="en">optional</source>
@@ -572,6 +617,51 @@
         <source xml:lang="en">I wish I could add this category.</source>
         <note>ID: NewQuestionDlg.m_linklblWishForTxl218</note>
         <target xml:lang="es-ES" state="needs-translation">I wish I could add this category.</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Excluded">
+        <source xml:lang="en">Excluded</source>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Excluded</note>
+        <target xml:lang="es-ES" state="translated">Excluido</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Question">
+        <source xml:lang="en">Question</source>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Question</note>
+        <target xml:lang="es-ES" state="translated">Pregunta</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Translation">
+        <source xml:lang="en">Translation</source>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Translation</note>
+        <target xml:lang="es-ES" state="translated">Traduccion</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.MatchCase">
+        <source xml:lang="en">Match Case</source>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.MatchCase</note>
+        <target xml:lang="es-ES" state="translated">Coincidir mayúsculas/minúsculas</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.PreviewResult">
+        <source xml:lang="en">Preview Result</source>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.PreviewResult</note>
+        <target xml:lang="es-ES" state="needs-translation">Preview Result</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.RegularExpression">
+        <source xml:lang="en">Regular Expression</source>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.RegularExpression</note>
+        <target xml:lang="es-ES" state="translated">Expresión regular</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.Replacement">
+        <source xml:lang="en">Replacement</source>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.Replacement</note>
+        <target xml:lang="es-ES" state="needs-translation">Replacement</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace">
+        <source xml:lang="en">Word or Phrase to Replace</source>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace</note>
+        <target xml:lang="es-ES" state="needs-translation">Word or Phrase to Replace</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.WindowTitle">
+        <source xml:lang="en">Question Adjustments</source>
+        <note>ID: PhraseSubstitutionsDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Question Adjustments</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.btnDown">
         <source xml:lang="en">Down</source>
@@ -705,6 +795,11 @@
         <note>Param is an integer</note>
         <target xml:lang="es-ES" state="needs-translation">Selection Rule - {0}</target>
       </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.WindowTitle">
+        <source xml:lang="en">Biblical Terms Rendering Selection Rules</source>
+        <note>ID: RenderingSelectionRulesDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Biblical Terms Rendering Selection Rules</target>
+      </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.btnCopy">
         <source xml:lang="en">Copy...</source>
         <note>ID: RenderingSelectionRulesDlg.btnCopy</note>
@@ -769,6 +864,11 @@
         <source xml:lang="en">Name is required.</source>
         <note>ID: RulesWizardDlg.NameRequired</note>
         <target xml:lang="es-ES" state="translated">Se requiere un nombre.</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.WindowTitle">
+        <source xml:lang="en">Create Rendering Selection Rule</source>
+        <note>ID: RulesWizardDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Create Rendering Selection Rule</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.grpMatchQuestion">
         <source xml:lang="en">This rule applies when the biblical term in the original question meets the following condition:</source>
@@ -835,6 +935,11 @@
         <note>ID: RulesWizardDlg.m_rdoUserDefinedRenderingCriteria</note>
         <target xml:lang="es-ES" state="needs-translation">&amp;Rendering meets a user-defined condition</target>
       </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.WindowTitle">
+        <source xml:lang="en">Filter by Reference</source>
+        <note>ID: ScrReferenceFilterDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="needs-translation">Filter by Reference</target>
+      </trans-unit>
       <trans-unit id="ScrReferenceFilterDlg.btnClearFilter">
         <source xml:lang="en">&amp;Clear Filter</source>
         <note>ID: ScrReferenceFilterDlg.btnClearFilter</note>
@@ -886,6 +991,11 @@
         <note>ID: TransceleratorInfo.CopyrightFmt</note>
         <note>Param is copyright information. This is display in the Help/About box and the splash screen</note>
         <target xml:lang="es-ES" state="needs-translation">{0}. Distributable under the terms of the MIT License.</target>
+      </trans-unit>
+      <trans-unit id="m_lblAlternative">
+        <source xml:lang="en">#</source>
+        <note>ID: m_lblAlternative</note>
+        <target xml:lang="es-ES" state="needs-translation">#</target>
       </trans-unit>
     </body>
   </file>
