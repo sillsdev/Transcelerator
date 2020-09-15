@@ -49,7 +49,6 @@ namespace SIL.Transcelerator
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label m_lblUserDefinedOriginalQuestionCondition;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RulesWizardDlg));
 			System.Windows.Forms.Label m_lblUserDefinedRenderingCondition;
 			System.Windows.Forms.GroupBox grpSelectRendering;
 			System.Windows.Forms.Label m_lblRenderingConditionVernPrefix;
@@ -120,24 +119,37 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblUserDefinedOriginalQuestionCondition
 			// 
-			resources.ApplyResources(m_lblUserDefinedOriginalQuestionCondition, "m_lblUserDefinedOriginalQuestionCondition");
+			m_lblUserDefinedOriginalQuestionCondition.AutoSize = true;
+			m_lblUserDefinedOriginalQuestionCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblUserDefinedOriginalQuestionCondition, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblUserDefinedOriginalQuestionCondition, "Note: {0} is literal text that will be displayed to the user. It must be preserve" +
         "d verbatim in the translation, but it will not be replaced by the program.");
 			this.l10NSharpExtender1.SetLocalizingId(m_lblUserDefinedOriginalQuestionCondition, "RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition");
+			m_lblUserDefinedOriginalQuestionCondition.Location = new System.Drawing.Point(0, 0);
 			m_lblUserDefinedOriginalQuestionCondition.Name = "m_lblUserDefinedOriginalQuestionCondition";
+			m_lblUserDefinedOriginalQuestionCondition.Size = new System.Drawing.Size(412, 13);
+			m_lblUserDefinedOriginalQuestionCondition.TabIndex = 0;
+			m_lblUserDefinedOriginalQuestionCondition.Text = "Type a regular expression where {0} is the placeholder for the stem of the biblic" +
+    "al term:";
 			// 
 			// m_lblUserDefinedRenderingCondition
 			// 
-			resources.ApplyResources(m_lblUserDefinedRenderingCondition, "m_lblUserDefinedRenderingCondition");
+			m_lblUserDefinedRenderingCondition.AutoSize = true;
+			m_lblUserDefinedRenderingCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblUserDefinedRenderingCondition, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblUserDefinedRenderingCondition, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblUserDefinedRenderingCondition, "RulesWizardDlg.m_lblUserDefinedRenderingCondition");
+			m_lblUserDefinedRenderingCondition.Location = new System.Drawing.Point(0, 0);
 			m_lblUserDefinedRenderingCondition.Name = "m_lblUserDefinedRenderingCondition";
+			m_lblUserDefinedRenderingCondition.Size = new System.Drawing.Size(393, 13);
+			m_lblUserDefinedRenderingCondition.TabIndex = 0;
+			m_lblUserDefinedRenderingCondition.Text = "Type a regular expression to match vernacular renderings that should be selected:" +
+    "";
 			// 
 			// grpSelectRendering
 			// 
-			resources.ApplyResources(grpSelectRendering, "grpSelectRendering");
+			grpSelectRendering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			grpSelectRendering.Controls.Add(this.m_pnlUserDefinedRenderingMatch);
 			grpSelectRendering.Controls.Add(this.m_rdoUserDefinedRenderingCriteria);
 			grpSelectRendering.Controls.Add(this.m_pnlVernacularPrefix);
@@ -147,115 +159,241 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(grpSelectRendering, null);
 			this.l10NSharpExtender1.SetLocalizationComment(grpSelectRendering, null);
 			this.l10NSharpExtender1.SetLocalizingId(grpSelectRendering, "RulesWizardDlg.grpSelectRendering");
+			grpSelectRendering.Location = new System.Drawing.Point(15, 320);
 			grpSelectRendering.Name = "grpSelectRendering";
+			grpSelectRendering.Size = new System.Drawing.Size(506, 134);
+			grpSelectRendering.TabIndex = 3;
 			grpSelectRendering.TabStop = false;
+			grpSelectRendering.Text = "Select the rendering of the biblical that meets the following condition:";
 			// 
 			// m_pnlUserDefinedRenderingMatch
 			// 
-			resources.ApplyResources(this.m_pnlUserDefinedRenderingMatch, "m_pnlUserDefinedRenderingMatch");
+			this.m_pnlUserDefinedRenderingMatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_pnlUserDefinedRenderingMatch.Controls.Add(m_lblUserDefinedRenderingCondition);
 			this.m_pnlUserDefinedRenderingMatch.Controls.Add(this.m_txtRenderingMatchRegEx);
+			this.m_pnlUserDefinedRenderingMatch.Location = new System.Drawing.Point(21, 87);
 			this.m_pnlUserDefinedRenderingMatch.Name = "m_pnlUserDefinedRenderingMatch";
+			this.m_pnlUserDefinedRenderingMatch.Size = new System.Drawing.Size(479, 37);
+			this.m_pnlUserDefinedRenderingMatch.TabIndex = 15;
+			this.m_pnlUserDefinedRenderingMatch.Visible = false;
 			this.m_pnlUserDefinedRenderingMatch.VisibleChanged += new System.EventHandler(this.m_pnlUserDefinedRenderingMatch_VisibleChanged);
 			// 
 			// m_txtRenderingMatchRegEx
 			// 
-			resources.ApplyResources(this.m_txtRenderingMatchRegEx, "m_txtRenderingMatchRegEx");
+			this.m_txtRenderingMatchRegEx.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtRenderingMatchRegEx, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtRenderingMatchRegEx, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtRenderingMatchRegEx, "RulesWizardDlg.m_txtRenderingMatchRegEx");
+			this.m_txtRenderingMatchRegEx.Location = new System.Drawing.Point(0, 17);
 			this.m_txtRenderingMatchRegEx.Name = "m_txtRenderingMatchRegEx";
+			this.m_txtRenderingMatchRegEx.Size = new System.Drawing.Size(479, 20);
+			this.m_txtRenderingMatchRegEx.TabIndex = 1;
 			this.m_txtRenderingMatchRegEx.TextChanged += new System.EventHandler(this.m_txtRenderingMatchRegEx_TextChanged);
 			// 
 			// m_rdoUserDefinedRenderingCriteria
 			// 
-			resources.ApplyResources(this.m_rdoUserDefinedRenderingCriteria, "m_rdoUserDefinedRenderingCriteria");
+			this.m_rdoUserDefinedRenderingCriteria.AutoSize = true;
+			this.m_rdoUserDefinedRenderingCriteria.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUserDefinedRenderingCriteria, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedRenderingCriteria, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUserDefinedRenderingCriteria, "RulesWizardDlg.m_rdoUserDefinedRenderingCriteria");
+			this.m_rdoUserDefinedRenderingCriteria.Location = new System.Drawing.Point(7, 65);
 			this.m_rdoUserDefinedRenderingCriteria.Name = "m_rdoUserDefinedRenderingCriteria";
+			this.m_rdoUserDefinedRenderingCriteria.Size = new System.Drawing.Size(221, 17);
+			this.m_rdoUserDefinedRenderingCriteria.TabIndex = 2;
+			this.m_rdoUserDefinedRenderingCriteria.Text = "&Rendering meets a user-defined condition";
 			this.m_rdoUserDefinedRenderingCriteria.UseVisualStyleBackColor = true;
 			this.m_rdoUserDefinedRenderingCriteria.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_pnlVernacularPrefix
 			// 
-			resources.ApplyResources(this.m_pnlVernacularPrefix, "m_pnlVernacularPrefix");
+			this.m_pnlVernacularPrefix.AutoSize = true;
 			this.m_pnlVernacularPrefix.Controls.Add(m_lblRenderingConditionVernPrefix);
 			this.m_pnlVernacularPrefix.Controls.Add(this.m_txtVernacularPrefix);
+			this.m_pnlVernacularPrefix.Location = new System.Drawing.Point(214, 43);
 			this.m_pnlVernacularPrefix.Name = "m_pnlVernacularPrefix";
+			this.m_pnlVernacularPrefix.Size = new System.Drawing.Size(286, 25);
+			this.m_pnlVernacularPrefix.TabIndex = 10;
+			this.m_pnlVernacularPrefix.Visible = false;
 			this.m_pnlVernacularPrefix.VisibleChanged += new System.EventHandler(this.m_pnlVernacularPrefix_VisibleChanged);
 			// 
 			// m_lblRenderingConditionVernPrefix
 			// 
-			resources.ApplyResources(m_lblRenderingConditionVernPrefix, "m_lblRenderingConditionVernPrefix");
+			m_lblRenderingConditionVernPrefix.AutoSize = true;
+			m_lblRenderingConditionVernPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRenderingConditionVernPrefix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblRenderingConditionVernPrefix, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblRenderingConditionVernPrefix, "RulesWizardDlg.m_lblRenderingConditionVernPrefix");
+			m_lblRenderingConditionVernPrefix.Location = new System.Drawing.Point(0, 1);
 			m_lblRenderingConditionVernPrefix.Name = "m_lblRenderingConditionVernPrefix";
+			m_lblRenderingConditionVernPrefix.Size = new System.Drawing.Size(89, 13);
+			m_lblRenderingConditionVernPrefix.TabIndex = 0;
+			m_lblRenderingConditionVernPrefix.Text = "&Vernacular prefix:";
 			// 
 			// m_txtVernacularPrefix
 			// 
-			resources.ApplyResources(this.m_txtVernacularPrefix, "m_txtVernacularPrefix");
+			this.m_txtVernacularPrefix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtVernacularPrefix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtVernacularPrefix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtVernacularPrefix, "RulesWizardDlg.m_txtVernacularPrefix");
+			this.m_txtVernacularPrefix.Location = new System.Drawing.Point(95, 0);
 			this.m_txtVernacularPrefix.Name = "m_txtVernacularPrefix";
+			this.m_txtVernacularPrefix.Size = new System.Drawing.Size(191, 20);
+			this.m_txtVernacularPrefix.TabIndex = 1;
 			this.m_txtVernacularPrefix.TextChanged += new System.EventHandler(this.m_txtVernacularPrefix_TextChanged);
 			this.m_txtVernacularPrefix.Enter += new System.EventHandler(this.VernacularTextBox_Enter);
 			this.m_txtVernacularPrefix.Leave += new System.EventHandler(this.VernacularTextBox_Leave);
 			// 
 			// m_rdoRenderingHasPrefix
 			// 
-			resources.ApplyResources(this.m_rdoRenderingHasPrefix, "m_rdoRenderingHasPrefix");
+			this.m_rdoRenderingHasPrefix.AutoSize = true;
+			this.m_rdoRenderingHasPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoRenderingHasPrefix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasPrefix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoRenderingHasPrefix, "RulesWizardDlg.m_rdoRenderingHasPrefix");
+			this.m_rdoRenderingHasPrefix.Location = new System.Drawing.Point(7, 42);
 			this.m_rdoRenderingHasPrefix.Name = "m_rdoRenderingHasPrefix";
+			this.m_rdoRenderingHasPrefix.Size = new System.Drawing.Size(170, 17);
+			this.m_rdoRenderingHasPrefix.TabIndex = 1;
+			this.m_rdoRenderingHasPrefix.Text = "Rendering has a specific p&refix";
 			this.m_rdoRenderingHasPrefix.UseVisualStyleBackColor = true;
 			this.m_rdoRenderingHasPrefix.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_pnlVernacularSuffix
 			// 
-			resources.ApplyResources(this.m_pnlVernacularSuffix, "m_pnlVernacularSuffix");
+			this.m_pnlVernacularSuffix.AutoSize = true;
 			this.m_pnlVernacularSuffix.Controls.Add(m_lblRenderingConditionVernSuffix);
 			this.m_pnlVernacularSuffix.Controls.Add(this.m_txtVernacularSuffix);
+			this.m_pnlVernacularSuffix.Location = new System.Drawing.Point(214, 20);
 			this.m_pnlVernacularSuffix.Name = "m_pnlVernacularSuffix";
+			this.m_pnlVernacularSuffix.Size = new System.Drawing.Size(286, 25);
+			this.m_pnlVernacularSuffix.TabIndex = 9;
 			this.m_pnlVernacularSuffix.VisibleChanged += new System.EventHandler(this.m_pnlVernacularSuffix_VisibleChanged);
 			// 
 			// m_lblRenderingConditionVernSuffix
 			// 
-			resources.ApplyResources(m_lblRenderingConditionVernSuffix, "m_lblRenderingConditionVernSuffix");
+			m_lblRenderingConditionVernSuffix.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRenderingConditionVernSuffix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblRenderingConditionVernSuffix, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblRenderingConditionVernSuffix, "RulesWizardDlg.m_lblRenderingConditionVernSuffix");
+			m_lblRenderingConditionVernSuffix.Location = new System.Drawing.Point(0, 1);
 			m_lblRenderingConditionVernSuffix.Name = "m_lblRenderingConditionVernSuffix";
+			m_lblRenderingConditionVernSuffix.Size = new System.Drawing.Size(88, 13);
+			m_lblRenderingConditionVernSuffix.TabIndex = 0;
+			m_lblRenderingConditionVernSuffix.Text = "&Vernacular suffix:";
 			// 
 			// m_txtVernacularSuffix
 			// 
-			resources.ApplyResources(this.m_txtVernacularSuffix, "m_txtVernacularSuffix");
+			this.m_txtVernacularSuffix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtVernacularSuffix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtVernacularSuffix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtVernacularSuffix, "RulesWizardDlg.m_txtVernacularSuffix");
+			this.m_txtVernacularSuffix.Location = new System.Drawing.Point(95, 0);
 			this.m_txtVernacularSuffix.Name = "m_txtVernacularSuffix";
+			this.m_txtVernacularSuffix.Size = new System.Drawing.Size(191, 20);
+			this.m_txtVernacularSuffix.TabIndex = 1;
 			this.m_txtVernacularSuffix.TextChanged += new System.EventHandler(this.m_txtVernacularSuffix_TextChanged);
 			this.m_txtVernacularSuffix.Enter += new System.EventHandler(this.VernacularTextBox_Enter);
 			this.m_txtVernacularSuffix.Leave += new System.EventHandler(this.VernacularTextBox_Leave);
 			// 
 			// m_rdoRenderingHasSuffix
 			// 
-			resources.ApplyResources(this.m_rdoRenderingHasSuffix, "m_rdoRenderingHasSuffix");
+			this.m_rdoRenderingHasSuffix.AutoSize = true;
 			this.m_rdoRenderingHasSuffix.Checked = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoRenderingHasSuffix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasSuffix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoRenderingHasSuffix, "RulesWizardDlg.m_rdoRenderingHasSuffix");
+			this.m_rdoRenderingHasSuffix.Location = new System.Drawing.Point(7, 19);
 			this.m_rdoRenderingHasSuffix.Name = "m_rdoRenderingHasSuffix";
+			this.m_rdoRenderingHasSuffix.Size = new System.Drawing.Size(169, 17);
+			this.m_rdoRenderingHasSuffix.TabIndex = 0;
 			this.m_rdoRenderingHasSuffix.TabStop = true;
+			this.m_rdoRenderingHasSuffix.Text = "Rendering has a specific s&uffix";
 			this.m_rdoRenderingHasSuffix.UseVisualStyleBackColor = true;
 			this.m_rdoRenderingHasSuffix.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
+			// m_lblOriginalQuestionConditionFollowingWord
+			// 
+			m_lblOriginalQuestionConditionFollowingWord.AutoSize = true;
+			m_lblOriginalQuestionConditionFollowingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionFollowingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionFollowingWord, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionFollowingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord");
+			m_lblOriginalQuestionConditionFollowingWord.Location = new System.Drawing.Point(0, 1);
+			m_lblOriginalQuestionConditionFollowingWord.Name = "m_lblOriginalQuestionConditionFollowingWord";
+			m_lblOriginalQuestionConditionFollowingWord.Size = new System.Drawing.Size(80, 13);
+			m_lblOriginalQuestionConditionFollowingWord.TabIndex = 0;
+			m_lblOriginalQuestionConditionFollowingWord.Text = "Following &word:";
+			// 
+			// m_lblOriginalQuestionConditionPrecedingWord
+			// 
+			m_lblOriginalQuestionConditionPrecedingWord.AutoSize = true;
+			m_lblOriginalQuestionConditionPrecedingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrecedingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrecedingWord, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrecedingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord");
+			m_lblOriginalQuestionConditionPrecedingWord.Location = new System.Drawing.Point(0, 1);
+			m_lblOriginalQuestionConditionPrecedingWord.Name = "m_lblOriginalQuestionConditionPrecedingWord";
+			m_lblOriginalQuestionConditionPrecedingWord.Size = new System.Drawing.Size(84, 13);
+			m_lblOriginalQuestionConditionPrecedingWord.TabIndex = 0;
+			m_lblOriginalQuestionConditionPrecedingWord.Text = "Preceding &word:";
+			// 
+			// m_lblOriginalQuestionConditionPrefix
+			// 
+			m_lblOriginalQuestionConditionPrefix.AutoSize = true;
+			m_lblOriginalQuestionConditionPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrefix, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrefix, "RulesWizardDlg.m_lblOriginalQuestionConditionPrefix");
+			m_lblOriginalQuestionConditionPrefix.Location = new System.Drawing.Point(0, 1);
+			m_lblOriginalQuestionConditionPrefix.Name = "m_lblOriginalQuestionConditionPrefix";
+			m_lblOriginalQuestionConditionPrefix.Size = new System.Drawing.Size(36, 13);
+			m_lblOriginalQuestionConditionPrefix.TabIndex = 0;
+			m_lblOriginalQuestionConditionPrefix.Text = "Prefi&x:";
+			// 
+			// m_lblOriginalQuestionConditionSuffix
+			// 
+			m_lblOriginalQuestionConditionSuffix.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionSuffix, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionSuffix, "RulesWizardDlg.m_lblOriginalQuestionConditionSuffix");
+			m_lblOriginalQuestionConditionSuffix.Location = new System.Drawing.Point(0, 1);
+			m_lblOriginalQuestionConditionSuffix.Name = "m_lblOriginalQuestionConditionSuffix";
+			m_lblOriginalQuestionConditionSuffix.Size = new System.Drawing.Size(36, 13);
+			m_lblOriginalQuestionConditionSuffix.TabIndex = 0;
+			m_lblOriginalQuestionConditionSuffix.Text = "Suffi&x:";
+			// 
+			// m_lblRuleDescription
+			// 
+			m_lblRuleDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			m_lblRuleDescription.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleDescription, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleDescription, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleDescription, "RulesWizardDlg.m_lblRuleDescription");
+			m_lblRuleDescription.Location = new System.Drawing.Point(12, 457);
+			m_lblRuleDescription.Name = "m_lblRuleDescription";
+			m_lblRuleDescription.Size = new System.Drawing.Size(86, 13);
+			m_lblRuleDescription.TabIndex = 4;
+			m_lblRuleDescription.Text = "Ru&le description:";
+			// 
+			// m_lblRuleName
+			// 
+			m_lblRuleName.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleName, null);
+			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleName, null);
+			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleName, "RulesWizardDlg.m_lblRuleName");
+			m_lblRuleName.Location = new System.Drawing.Point(12, 9);
+			m_lblRuleName.Name = "m_lblRuleName";
+			m_lblRuleName.Size = new System.Drawing.Size(61, 13);
+			m_lblRuleName.TabIndex = 0;
+			m_lblRuleName.Text = "Rule name:";
+			// 
 			// grpMatchQuestion
 			// 
-			resources.ApplyResources(this.grpMatchQuestion, "grpMatchQuestion");
+			this.grpMatchQuestion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.grpMatchQuestion.Controls.Add(this.m_lblFollowingWordExample);
 			this.grpMatchQuestion.Controls.Add(this.m_lblPrecedingWordExample);
 			this.grpMatchQuestion.Controls.Add(this.m_lblPrefixExample);
@@ -273,94 +411,146 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.grpMatchQuestion, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.grpMatchQuestion, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.grpMatchQuestion, "RulesWizardDlg.grpMatchQuestion");
+			this.grpMatchQuestion.Location = new System.Drawing.Point(15, 42);
 			this.grpMatchQuestion.Name = "grpMatchQuestion";
+			this.grpMatchQuestion.Size = new System.Drawing.Size(506, 265);
+			this.grpMatchQuestion.TabIndex = 2;
 			this.grpMatchQuestion.TabStop = false;
+			this.grpMatchQuestion.Text = "This rule applies when the biblical term in the original question meets the follo" +
+    "wing condition:";
 			// 
 			// m_lblFollowingWordExample
 			// 
-			resources.ApplyResources(this.m_lblFollowingWordExample, "m_lblFollowingWordExample");
+			this.m_lblFollowingWordExample.AutoSize = true;
+			this.m_lblFollowingWordExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+			this.m_lblFollowingWordExample.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblFollowingWordExample, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblFollowingWordExample, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblFollowingWordExample, "RulesWizardDlg.m_lblFollowingWordExample");
+			this.m_lblFollowingWordExample.Location = new System.Drawing.Point(22, 168);
 			this.m_lblFollowingWordExample.Name = "m_lblFollowingWordExample";
+			this.m_lblFollowingWordExample.Size = new System.Drawing.Size(73, 18);
+			this.m_lblFollowingWordExample.TabIndex = 22;
 			this.m_lblFollowingWordExample.Tag = "slave \\b\\i girl";
+			this.m_lblFollowingWordExample.Text = "Example: ";
 			// 
 			// m_lblPrecedingWordExample
 			// 
-			resources.ApplyResources(this.m_lblPrecedingWordExample, "m_lblPrecedingWordExample");
+			this.m_lblPrecedingWordExample.AutoSize = true;
+			this.m_lblPrecedingWordExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+			this.m_lblPrecedingWordExample.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblPrecedingWordExample, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblPrecedingWordExample, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblPrecedingWordExample, "RulesWizardDlg.m_lblPrecedingWordExample");
+			this.m_lblPrecedingWordExample.Location = new System.Drawing.Point(22, 125);
 			this.m_lblPrecedingWordExample.Name = "m_lblPrecedingWordExample";
+			this.m_lblPrecedingWordExample.Size = new System.Drawing.Size(73, 18);
+			this.m_lblPrecedingWordExample.TabIndex = 21;
 			this.m_lblPrecedingWordExample.Tag = "\\b\\i for\\b0\\i0  Abraham";
+			this.m_lblPrecedingWordExample.Text = "Example: ";
 			// 
 			// m_lblPrefixExample
 			// 
-			resources.ApplyResources(this.m_lblPrefixExample, "m_lblPrefixExample");
+			this.m_lblPrefixExample.AutoSize = true;
+			this.m_lblPrefixExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+			this.m_lblPrefixExample.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblPrefixExample, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblPrefixExample, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblPrefixExample, "RulesWizardDlg.m_lblPrefixExample");
+			this.m_lblPrefixExample.Location = new System.Drawing.Point(22, 82);
 			this.m_lblPrefixExample.Name = "m_lblPrefixExample";
+			this.m_lblPrefixExample.Size = new System.Drawing.Size(73, 18);
+			this.m_lblPrefixExample.TabIndex = 20;
 			this.m_lblPrefixExample.Tag = "\\b\\i un\\b0\\i0 believer";
+			this.m_lblPrefixExample.Text = "Example: ";
 			// 
 			// m_lblSuffixExample
 			// 
-			resources.ApplyResources(this.m_lblSuffixExample, "m_lblSuffixExample");
+			this.m_lblSuffixExample.AutoSize = true;
+			this.m_lblSuffixExample.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblSuffixExample, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSuffixExample, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblSuffixExample, "RulesWizardDlg.m_lblSuffixExample");
+			this.m_lblSuffixExample.Location = new System.Drawing.Point(22, 39);
 			this.m_lblSuffixExample.Name = "m_lblSuffixExample";
+			this.m_lblSuffixExample.Size = new System.Drawing.Size(73, 18);
+			this.m_lblSuffixExample.TabIndex = 19;
 			this.m_lblSuffixExample.Tag = "bless\\b\\i ing";
+			this.m_lblSuffixExample.Text = "Example: ";
 			// 
 			// m_rdoUserDefinedQuestionCriteria
 			// 
-			resources.ApplyResources(this.m_rdoUserDefinedQuestionCriteria, "m_rdoUserDefinedQuestionCriteria");
+			this.m_rdoUserDefinedQuestionCriteria.AutoSize = true;
+			this.m_rdoUserDefinedQuestionCriteria.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUserDefinedQuestionCriteria, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedQuestionCriteria, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUserDefinedQuestionCriteria, "RulesWizardDlg.m_rdoUserDefinedQuestionCriteria");
+			this.m_rdoUserDefinedQuestionCriteria.Location = new System.Drawing.Point(7, 191);
 			this.m_rdoUserDefinedQuestionCriteria.Name = "m_rdoUserDefinedQuestionCriteria";
+			this.m_rdoUserDefinedQuestionCriteria.Size = new System.Drawing.Size(131, 17);
+			this.m_rdoUserDefinedQuestionCriteria.TabIndex = 8;
+			this.m_rdoUserDefinedQuestionCriteria.Text = "&User-defined condition";
 			this.m_rdoUserDefinedQuestionCriteria.UseVisualStyleBackColor = true;
 			this.m_rdoUserDefinedQuestionCriteria.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_rdoFollowingWord
 			// 
-			resources.ApplyResources(this.m_rdoFollowingWord, "m_rdoFollowingWord");
+			this.m_rdoFollowingWord.AutoSize = true;
+			this.m_rdoFollowingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoFollowingWord, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoFollowingWord, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoFollowingWord, "RulesWizardDlg.m_rdoFollowingWord");
+			this.m_rdoFollowingWord.Location = new System.Drawing.Point(6, 148);
 			this.m_rdoFollowingWord.Name = "m_rdoFollowingWord";
+			this.m_rdoFollowingWord.Size = new System.Drawing.Size(246, 17);
+			this.m_rdoFollowingWord.TabIndex = 6;
+			this.m_rdoFollowingWord.Text = "Term is immediately &followed by a specific word";
 			this.m_rdoFollowingWord.UseVisualStyleBackColor = true;
 			this.m_rdoFollowingWord.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_rdoPreceedingWord
 			// 
-			resources.ApplyResources(this.m_rdoPreceedingWord, "m_rdoPreceedingWord");
+			this.m_rdoPreceedingWord.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoPreceedingWord, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPreceedingWord, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoPreceedingWord, "RulesWizardDlg.m_rdoPreceedingWord");
+			this.m_rdoPreceedingWord.Location = new System.Drawing.Point(6, 105);
 			this.m_rdoPreceedingWord.Name = "m_rdoPreceedingWord";
+			this.m_rdoPreceedingWord.Size = new System.Drawing.Size(252, 17);
+			this.m_rdoPreceedingWord.TabIndex = 4;
+			this.m_rdoPreceedingWord.Text = "Term is immediately &preceded by a specific word";
 			this.m_rdoPreceedingWord.UseVisualStyleBackColor = true;
 			this.m_rdoPreceedingWord.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_rdoPrefix
 			// 
-			resources.ApplyResources(this.m_rdoPrefix, "m_rdoPrefix");
+			this.m_rdoPrefix.AutoSize = true;
+			this.m_rdoPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoPrefix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPrefix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoPrefix, "RulesWizardDlg.m_rdoPrefix");
+			this.m_rdoPrefix.Location = new System.Drawing.Point(6, 62);
 			this.m_rdoPrefix.Name = "m_rdoPrefix";
+			this.m_rdoPrefix.Size = new System.Drawing.Size(145, 17);
+			this.m_rdoPrefix.TabIndex = 2;
+			this.m_rdoPrefix.Text = "Term has a specific &prefix";
 			this.m_rdoPrefix.UseVisualStyleBackColor = true;
 			this.m_rdoPrefix.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
 			// m_rdoSuffix
 			// 
-			resources.ApplyResources(this.m_rdoSuffix, "m_rdoSuffix");
+			this.m_rdoSuffix.AutoSize = true;
 			this.m_rdoSuffix.Checked = true;
+			this.m_rdoSuffix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSuffix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSuffix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSuffix, "RulesWizardDlg.m_rdoSuffix");
+			this.m_rdoSuffix.Location = new System.Drawing.Point(7, 19);
 			this.m_rdoSuffix.Name = "m_rdoSuffix";
+			this.m_rdoSuffix.Size = new System.Drawing.Size(144, 17);
+			this.m_rdoSuffix.TabIndex = 0;
 			this.m_rdoSuffix.TabStop = true;
+			this.m_rdoSuffix.Text = "Term has a specific &suffix";
 			this.m_rdoSuffix.UseVisualStyleBackColor = true;
 			this.m_rdoSuffix.CheckedChanged += new System.EventHandler(this.OptionCheckedChanged);
 			// 
@@ -368,8 +558,11 @@ namespace SIL.Transcelerator
 			// 
 			this.m_pnlFollowingWordDetails.Controls.Add(this.m_cboFollowingWord);
 			this.m_pnlFollowingWordDetails.Controls.Add(m_lblOriginalQuestionConditionFollowingWord);
-			resources.ApplyResources(this.m_pnlFollowingWordDetails, "m_pnlFollowingWordDetails");
+			this.m_pnlFollowingWordDetails.Location = new System.Drawing.Point(283, 149);
 			this.m_pnlFollowingWordDetails.Name = "m_pnlFollowingWordDetails";
+			this.m_pnlFollowingWordDetails.Size = new System.Drawing.Size(217, 26);
+			this.m_pnlFollowingWordDetails.TabIndex = 18;
+			this.m_pnlFollowingWordDetails.Visible = false;
 			this.m_pnlFollowingWordDetails.VisibleChanged += new System.EventHandler(this.m_pnlFollowingWordDetails_VisibleChanged);
 			// 
 			// m_cboFollowingWord
@@ -380,24 +573,21 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboFollowingWord, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboFollowingWord, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_cboFollowingWord, "RulesWizardDlg.m_cboFollowingWord");
-			resources.ApplyResources(this.m_cboFollowingWord, "m_cboFollowingWord");
+			this.m_cboFollowingWord.Location = new System.Drawing.Point(90, 0);
 			this.m_cboFollowingWord.Name = "m_cboFollowingWord";
+			this.m_cboFollowingWord.Size = new System.Drawing.Size(127, 21);
+			this.m_cboFollowingWord.TabIndex = 1;
 			this.m_cboFollowingWord.TextChanged += new System.EventHandler(this.m_cboFollowingWord_TextChanged);
-			// 
-			// m_lblOriginalQuestionConditionFollowingWord
-			// 
-			resources.ApplyResources(m_lblOriginalQuestionConditionFollowingWord, "m_lblOriginalQuestionConditionFollowingWord");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionFollowingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionFollowingWord, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionFollowingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord");
-			m_lblOriginalQuestionConditionFollowingWord.Name = "m_lblOriginalQuestionConditionFollowingWord";
 			// 
 			// m_pnlPrecedingWordDetails
 			// 
 			this.m_pnlPrecedingWordDetails.Controls.Add(this.m_cboPrecedingWord);
 			this.m_pnlPrecedingWordDetails.Controls.Add(m_lblOriginalQuestionConditionPrecedingWord);
-			resources.ApplyResources(this.m_pnlPrecedingWordDetails, "m_pnlPrecedingWordDetails");
+			this.m_pnlPrecedingWordDetails.Location = new System.Drawing.Point(283, 106);
 			this.m_pnlPrecedingWordDetails.Name = "m_pnlPrecedingWordDetails";
+			this.m_pnlPrecedingWordDetails.Size = new System.Drawing.Size(217, 26);
+			this.m_pnlPrecedingWordDetails.TabIndex = 17;
+			this.m_pnlPrecedingWordDetails.Visible = false;
 			this.m_pnlPrecedingWordDetails.VisibleChanged += new System.EventHandler(this.m_pnlPrecedingWordDetails_VisibleChanged);
 			// 
 			// m_cboPrecedingWord
@@ -408,24 +598,21 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboPrecedingWord, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboPrecedingWord, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_cboPrecedingWord, "RulesWizardDlg.m_cboPrecedingWord");
-			resources.ApplyResources(this.m_cboPrecedingWord, "m_cboPrecedingWord");
+			this.m_cboPrecedingWord.Location = new System.Drawing.Point(90, 0);
 			this.m_cboPrecedingWord.Name = "m_cboPrecedingWord";
+			this.m_cboPrecedingWord.Size = new System.Drawing.Size(127, 21);
+			this.m_cboPrecedingWord.TabIndex = 1;
 			this.m_cboPrecedingWord.TextChanged += new System.EventHandler(this.m_cboPrecedingWord_TextChanged);
-			// 
-			// m_lblOriginalQuestionConditionPrecedingWord
-			// 
-			resources.ApplyResources(m_lblOriginalQuestionConditionPrecedingWord, "m_lblOriginalQuestionConditionPrecedingWord");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrecedingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrecedingWord, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrecedingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord");
-			m_lblOriginalQuestionConditionPrecedingWord.Name = "m_lblOriginalQuestionConditionPrecedingWord";
 			// 
 			// m_pnlPrefixDetails
 			// 
 			this.m_pnlPrefixDetails.Controls.Add(this.m_cboPrefix);
 			this.m_pnlPrefixDetails.Controls.Add(m_lblOriginalQuestionConditionPrefix);
-			resources.ApplyResources(this.m_pnlPrefixDetails, "m_pnlPrefixDetails");
+			this.m_pnlPrefixDetails.Location = new System.Drawing.Point(283, 63);
 			this.m_pnlPrefixDetails.Name = "m_pnlPrefixDetails";
+			this.m_pnlPrefixDetails.Size = new System.Drawing.Size(217, 26);
+			this.m_pnlPrefixDetails.TabIndex = 16;
+			this.m_pnlPrefixDetails.Visible = false;
 			this.m_pnlPrefixDetails.VisibleChanged += new System.EventHandler(this.m_pnlPrefixDetails_VisibleChanged);
 			// 
 			// m_cboPrefix
@@ -433,29 +620,25 @@ namespace SIL.Transcelerator
 			this.m_cboPrefix.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_cboPrefix.FormattingEnabled = true;
 			this.m_cboPrefix.Items.AddRange(new object[] {
-            resources.GetString("m_cboPrefix.Items"),
-            resources.GetString("m_cboPrefix.Items1")});
+            "un",
+            "inter"});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboPrefix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboPrefix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_cboPrefix, "RulesWizardDlg.m_cboPrefix");
-			resources.ApplyResources(this.m_cboPrefix, "m_cboPrefix");
+			this.m_cboPrefix.Location = new System.Drawing.Point(42, 0);
 			this.m_cboPrefix.Name = "m_cboPrefix";
+			this.m_cboPrefix.Size = new System.Drawing.Size(124, 21);
+			this.m_cboPrefix.TabIndex = 1;
 			this.m_cboPrefix.TextChanged += new System.EventHandler(this.m_cboPrefix_TextChanged);
-			// 
-			// m_lblOriginalQuestionConditionPrefix
-			// 
-			resources.ApplyResources(m_lblOriginalQuestionConditionPrefix, "m_lblOriginalQuestionConditionPrefix");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrefix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrefix, "RulesWizardDlg.m_lblOriginalQuestionConditionPrefix");
-			m_lblOriginalQuestionConditionPrefix.Name = "m_lblOriginalQuestionConditionPrefix";
 			// 
 			// m_pnlSuffixDetails
 			// 
 			this.m_pnlSuffixDetails.Controls.Add(this.m_cboSuffix);
 			this.m_pnlSuffixDetails.Controls.Add(m_lblOriginalQuestionConditionSuffix);
-			resources.ApplyResources(this.m_pnlSuffixDetails, "m_pnlSuffixDetails");
+			this.m_pnlSuffixDetails.Location = new System.Drawing.Point(283, 20);
 			this.m_pnlSuffixDetails.Name = "m_pnlSuffixDetails";
+			this.m_pnlSuffixDetails.Size = new System.Drawing.Size(217, 26);
+			this.m_pnlSuffixDetails.TabIndex = 15;
 			this.m_pnlSuffixDetails.VisibleChanged += new System.EventHandler(this.m_pnlSuffixDetails_VisibleChanged);
 			// 
 			// m_cboSuffix
@@ -464,110 +647,113 @@ namespace SIL.Transcelerator
 			this.m_cboSuffix.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
 			this.m_cboSuffix.FormattingEnabled = true;
 			this.m_cboSuffix.Items.AddRange(new object[] {
-            resources.GetString("m_cboSuffix.Items"),
-            resources.GetString("m_cboSuffix.Items1"),
-            resources.GetString("m_cboSuffix.Items2"),
-            resources.GetString("m_cboSuffix.Items3"),
-            resources.GetString("m_cboSuffix.Items4"),
-            resources.GetString("m_cboSuffix.Items5"),
-            resources.GetString("m_cboSuffix.Items6"),
-            resources.GetString("m_cboSuffix.Items7"),
-            resources.GetString("m_cboSuffix.Items8"),
-            resources.GetString("m_cboSuffix.Items9"),
-            resources.GetString("m_cboSuffix.Items10"),
-            resources.GetString("m_cboSuffix.Items11"),
-            resources.GetString("m_cboSuffix.Items12"),
-            resources.GetString("m_cboSuffix.Items13"),
-            resources.GetString("m_cboSuffix.Items14"),
-            resources.GetString("m_cboSuffix.Items15"),
-            resources.GetString("m_cboSuffix.Items16"),
-            resources.GetString("m_cboSuffix.Items17"),
-            resources.GetString("m_cboSuffix.Items18")});
+            "al",
+            "ate",
+            "ble",
+            "ed",
+            "en",
+            "er",
+            "ful",
+            "ic",
+            "ing",
+            "ive",
+            "ize",
+            "less",
+            "ly",
+            "ment",
+            "ness",
+            "ous",
+            "s",
+            "tion",
+            "y"});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_cboSuffix, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_cboSuffix, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_cboSuffix, "RulesWizardDlg.m_cboSuffix");
-			resources.ApplyResources(this.m_cboSuffix, "m_cboSuffix");
+			this.m_cboSuffix.Location = new System.Drawing.Point(42, 0);
 			this.m_cboSuffix.Name = "m_cboSuffix";
+			this.m_cboSuffix.Size = new System.Drawing.Size(124, 21);
+			this.m_cboSuffix.TabIndex = 1;
 			this.m_cboSuffix.TextChanged += new System.EventHandler(this.m_cboSuffix_TextChanged);
-			// 
-			// m_lblOriginalQuestionConditionSuffix
-			// 
-			resources.ApplyResources(m_lblOriginalQuestionConditionSuffix, "m_lblOriginalQuestionConditionSuffix");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionSuffix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionSuffix, "RulesWizardDlg.m_lblOriginalQuestionConditionSuffix");
-			m_lblOriginalQuestionConditionSuffix.Name = "m_lblOriginalQuestionConditionSuffix";
 			// 
 			// m_pnlUserDefinedRuleDetails
 			// 
-			resources.ApplyResources(this.m_pnlUserDefinedRuleDetails, "m_pnlUserDefinedRuleDetails");
+			this.m_pnlUserDefinedRuleDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_pnlUserDefinedRuleDetails.Controls.Add(m_lblUserDefinedOriginalQuestionCondition);
 			this.m_pnlUserDefinedRuleDetails.Controls.Add(this.m_txtQuestionMatchRegEx);
+			this.m_pnlUserDefinedRuleDetails.Location = new System.Drawing.Point(21, 214);
 			this.m_pnlUserDefinedRuleDetails.Name = "m_pnlUserDefinedRuleDetails";
+			this.m_pnlUserDefinedRuleDetails.Size = new System.Drawing.Size(479, 37);
+			this.m_pnlUserDefinedRuleDetails.TabIndex = 14;
+			this.m_pnlUserDefinedRuleDetails.Visible = false;
 			this.m_pnlUserDefinedRuleDetails.VisibleChanged += new System.EventHandler(this.m_pnlUserDefinedRuleDetails_VisibleChanged);
 			// 
 			// m_txtQuestionMatchRegEx
 			// 
-			resources.ApplyResources(this.m_txtQuestionMatchRegEx, "m_txtQuestionMatchRegEx");
+			this.m_txtQuestionMatchRegEx.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtQuestionMatchRegEx, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtQuestionMatchRegEx, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtQuestionMatchRegEx, "RulesWizardDlg.m_txtQuestionMatchRegEx");
+			this.m_txtQuestionMatchRegEx.Location = new System.Drawing.Point(0, 17);
 			this.m_txtQuestionMatchRegEx.Name = "m_txtQuestionMatchRegEx";
+			this.m_txtQuestionMatchRegEx.Size = new System.Drawing.Size(479, 20);
+			this.m_txtQuestionMatchRegEx.TabIndex = 1;
 			this.m_txtQuestionMatchRegEx.TextChanged += new System.EventHandler(this.m_txtQuestionMatchRegEx_TextChanged);
 			// 
 			// btnOk
 			// 
-			resources.ApplyResources(this.btnOk, "btnOk");
+			this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+			this.btnOk.Enabled = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
+			this.btnOk.Location = new System.Drawing.Point(188, 562);
 			this.btnOk.Name = "btnOk";
+			this.btnOk.Size = new System.Drawing.Size(75, 23);
+			this.btnOk.TabIndex = 6;
+			this.btnOk.Text = "OK";
 			this.btnOk.UseVisualStyleBackColor = true;
 			this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
 			// 
 			// btnCancel
 			// 
-			resources.ApplyResources(this.btnCancel, "btnCancel");
+			this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
+			this.btnCancel.Location = new System.Drawing.Point(269, 562);
 			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.btnCancel.TabIndex = 7;
+			this.btnCancel.Text = "Cancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
-			// 
-			// m_lblRuleDescription
-			// 
-			resources.ApplyResources(m_lblRuleDescription, "m_lblRuleDescription");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleDescription, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleDescription, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleDescription, "RulesWizardDlg.m_lblRuleDescription");
-			m_lblRuleDescription.Name = "m_lblRuleDescription";
-			// 
-			// m_lblRuleName
-			// 
-			resources.ApplyResources(m_lblRuleName, "m_lblRuleName");
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleName, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleName, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleName, "RulesWizardDlg.m_lblRuleName");
-			m_lblRuleName.Name = "m_lblRuleName";
 			// 
 			// m_lblDescription
 			// 
-			resources.ApplyResources(this.m_lblDescription, "m_lblDescription");
+			this.m_lblDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_lblDescription.BackColor = System.Drawing.SystemColors.Window;
 			this.m_lblDescription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblDescription, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblDescription, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblDescription, "RulesWizardDlg.m_lblDescription");
+			this.m_lblDescription.Location = new System.Drawing.Point(12, 479);
 			this.m_lblDescription.Name = "m_lblDescription";
+			this.m_lblDescription.Size = new System.Drawing.Size(509, 69);
+			this.m_lblDescription.TabIndex = 5;
 			// 
 			// m_txtName
 			// 
-			resources.ApplyResources(this.m_txtName, "m_txtName");
+			this.m_txtName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtName, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtName, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtName, "RulesWizardDlg.m_txtName");
+			this.m_txtName.Location = new System.Drawing.Point(79, 9);
 			this.m_txtName.Name = "m_txtName";
+			this.m_txtName.Size = new System.Drawing.Size(442, 20);
+			this.m_txtName.TabIndex = 1;
 			this.m_txtName.Validating += new System.ComponentModel.CancelEventHandler(this.m_txtName_Validating);
 			// 
 			// l10NSharpExtender1
@@ -578,9 +764,10 @@ namespace SIL.Transcelerator
 			// RulesWizardDlg
 			// 
 			this.AcceptButton = this.btnOk;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
+			this.ClientSize = new System.Drawing.Size(533, 597);
 			this.Controls.Add(this.m_txtName);
 			this.Controls.Add(this.m_lblDescription);
 			this.Controls.Add(m_lblRuleName);
@@ -598,6 +785,8 @@ namespace SIL.Transcelerator
 			this.Name = "RulesWizardDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Create Rendering Selection Rule";
 			grpSelectRendering.ResumeLayout(false);
 			grpSelectRendering.PerformLayout();
 			this.m_pnlUserDefinedRenderingMatch.ResumeLayout(false);

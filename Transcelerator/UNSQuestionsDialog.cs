@@ -361,7 +361,17 @@ namespace SIL.Transcelerator
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
 
 			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
+			{
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
+				if (preferredUiLocale.Length > 2 && LocalizationManager.UILanguageId.Length >= 2 &&
+					preferredUiLocale.Substring(0, 2) != LocalizationManager.UILanguageId.Substring(0, 2))
+				{
+					// Unless/until we ship different variants of the same language, there is no need
+					// to try to tell the localization manager to load a different variant. It's already
+					// smart enough to fallback to another variant of thre language anyway.
+					LocalizationManager.SetUILanguage(preferredUiLocale, true);
+				}
+			}
 
 			PopulateAvailableLocales();
 			AddAvailableLocalizationsToMenu(preferredUiLocale);

@@ -46,7 +46,6 @@ namespace SIL.Transcelerator
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label m_lblOriginalText;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditQuestionDlg));
 			System.Windows.Forms.Label m_lblAlternatives;
 			System.Windows.Forms.Label m_lblQuestionToUse;
 			this.m_txtOriginal = new System.Windows.Forms.TextBox();
@@ -70,45 +69,69 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblOriginalText
 			// 
-			resources.ApplyResources(m_lblOriginalText, "m_lblOriginalText");
+			m_lblOriginalText.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalText, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalText, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalText, "EditQuestionDlg.m_lblOriginalText");
+			m_lblOriginalText.Location = new System.Drawing.Point(12, 9);
 			m_lblOriginalText.Name = "m_lblOriginalText";
+			m_lblOriginalText.Size = new System.Drawing.Size(126, 13);
+			m_lblOriginalText.TabIndex = 0;
+			m_lblOriginalText.Text = "Text of Original Question:";
 			// 
 			// m_lblAlternatives
 			// 
-			resources.ApplyResources(m_lblAlternatives, "m_lblAlternatives");
+			m_lblAlternatives.AutoSize = true;
 			this.m_pnlAlternatives.SetFlowBreak(m_lblAlternatives, true);
+			m_lblAlternatives.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblAlternatives, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblAlternatives, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblAlternatives, "EditQuestionDlg.m_lblAlternatives");
+			m_lblAlternatives.Location = new System.Drawing.Point(3, 0);
 			m_lblAlternatives.Name = "m_lblAlternatives";
+			m_lblAlternatives.Size = new System.Drawing.Size(119, 13);
+			m_lblAlternatives.TabIndex = 2;
+			m_lblAlternatives.Text = "Suggested Alternatives:";
 			// 
 			// m_lblQuestionToUse
 			// 
-			resources.ApplyResources(m_lblQuestionToUse, "m_lblQuestionToUse");
+			m_lblQuestionToUse.AutoSize = true;
+			m_lblQuestionToUse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblQuestionToUse, null);
 			this.l10NSharpExtender1.SetLocalizationComment(m_lblQuestionToUse, null);
 			this.l10NSharpExtender1.SetLocalizingId(m_lblQuestionToUse, "EditQuestionDlg.m_lblQuestionToUse");
+			m_lblQuestionToUse.Location = new System.Drawing.Point(3, 44);
 			m_lblQuestionToUse.Name = "m_lblQuestionToUse";
+			m_lblQuestionToUse.Size = new System.Drawing.Size(86, 13);
+			m_lblQuestionToUse.TabIndex = 5;
+			m_lblQuestionToUse.Text = "Question to Use:";
 			// 
 			// m_txtOriginal
 			// 
-			resources.ApplyResources(this.m_txtOriginal, "m_txtOriginal");
+			this.m_txtOriginal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.m_txtOriginal.Enabled = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtOriginal, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtOriginal, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtOriginal, "EditQuestionDlg.m_txtOriginal");
+			this.m_txtOriginal.Location = new System.Drawing.Point(144, 6);
+			this.m_txtOriginal.Multiline = true;
 			this.m_txtOriginal.Name = "m_txtOriginal";
+			this.m_txtOriginal.Size = new System.Drawing.Size(550, 57);
+			this.m_txtOriginal.TabIndex = 1;
 			// 
 			// m_rdoAlternative
 			// 
-			resources.ApplyResources(this.m_rdoAlternative, "m_rdoAlternative");
+			this.m_rdoAlternative.AutoSize = true;
 			this.m_pnlAlternatives.SetFlowBreak(this.m_rdoAlternative, true);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoAlternative, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoAlternative, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoAlternative, "EditQuestionDlg.m_rdoAlternative");
+			this.m_rdoAlternative.Location = new System.Drawing.Point(3, 22);
 			this.m_rdoAlternative.Name = "m_rdoAlternative";
+			this.m_rdoAlternative.Padding = new System.Windows.Forms.Padding(8, 0, 0, 0);
+			this.m_rdoAlternative.Size = new System.Drawing.Size(22, 13);
+			this.m_rdoAlternative.TabIndex = 3;
 			this.m_rdoAlternative.TabStop = true;
 			this.m_rdoAlternative.Tag = "0";
 			this.m_rdoAlternative.UseVisualStyleBackColor = true;
@@ -116,55 +139,79 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblAlternative
 			// 
-			resources.ApplyResources(this.m_lblAlternative, "m_lblAlternative");
+			this.m_lblAlternative.AutoSize = true;
+			this.m_lblAlternative.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAlternative, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAlternative, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAlternative, "m_lblAlternative");
+			this.m_lblAlternative.Location = new System.Drawing.Point(148, 0);
 			this.m_lblAlternative.Name = "m_lblAlternative";
+			this.m_lblAlternative.Size = new System.Drawing.Size(14, 19);
+			this.m_lblAlternative.TabIndex = 4;
+			this.m_lblAlternative.Text = "#";
 			// 
 			// m_txtModified
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtModified, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtModified, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtModified, "EditQuestionDlg.m_txtModified");
-			resources.ApplyResources(this.m_txtModified, "m_txtModified");
+			this.m_txtModified.Location = new System.Drawing.Point(92, 44);
+			this.m_txtModified.Margin = new System.Windows.Forms.Padding(0);
+			this.m_txtModified.Multiline = true;
 			this.m_txtModified.Name = "m_txtModified";
+			this.m_txtModified.Size = new System.Drawing.Size(587, 64);
+			this.m_txtModified.TabIndex = 4;
 			this.m_txtModified.TextChanged += new System.EventHandler(this.m_txtModified_TextChanged);
 			// 
 			// flowLayoutPanel1
 			// 
-			resources.ApplyResources(this.flowLayoutPanel1, "flowLayoutPanel1");
+			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.Controls.Add(this.m_pnlAlternatives);
 			this.flowLayoutPanel1.Controls.Add(m_lblQuestionToUse);
 			this.flowLayoutPanel1.Controls.Add(this.m_txtModified);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(15, 79);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(679, 170);
+			this.flowLayoutPanel1.TabIndex = 5;
 			// 
 			// m_pnlAlternatives
 			// 
-			resources.ApplyResources(this.m_pnlAlternatives, "m_pnlAlternatives");
+			this.m_pnlAlternatives.AutoSize = true;
 			this.m_pnlAlternatives.Controls.Add(m_lblAlternatives);
 			this.m_pnlAlternatives.Controls.Add(this.m_rdoAlternative);
 			this.flowLayoutPanel1.SetFlowBreak(this.m_pnlAlternatives, true);
+			this.m_pnlAlternatives.Location = new System.Drawing.Point(3, 3);
 			this.m_pnlAlternatives.Name = "m_pnlAlternatives";
+			this.m_pnlAlternatives.Size = new System.Drawing.Size(153, 38);
+			this.m_pnlAlternatives.TabIndex = 6;
 			// 
 			// btnOk
 			// 
-			resources.ApplyResources(this.btnOk, "btnOk");
+			this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.btnOk.Enabled = false;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
+			this.btnOk.Location = new System.Drawing.Point(275, 274);
 			this.btnOk.Name = "btnOk";
+			this.btnOk.Size = new System.Drawing.Size(75, 23);
+			this.btnOk.TabIndex = 6;
+			this.btnOk.Text = "OK";
 			this.btnOk.UseVisualStyleBackColor = true;
 			// 
 			// btnCancel
 			// 
-			resources.ApplyResources(this.btnCancel, "btnCancel");
+			this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
+			this.btnCancel.Location = new System.Drawing.Point(356, 274);
 			this.btnCancel.Name = "btnCancel";
+			this.btnCancel.Size = new System.Drawing.Size(75, 23);
+			this.btnCancel.TabIndex = 7;
+			this.btnCancel.Text = "Cancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
 			// 
 			// btnReset
@@ -172,19 +219,27 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnReset, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnReset, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnReset, "EditQuestionDlg.btnReset");
-			resources.ApplyResources(this.btnReset, "btnReset");
+			this.btnReset.Location = new System.Drawing.Point(38, 28);
 			this.btnReset.Name = "btnReset";
+			this.btnReset.Size = new System.Drawing.Size(75, 23);
+			this.btnReset.TabIndex = 8;
+			this.btnReset.Text = "&Reset";
 			this.btnReset.UseVisualStyleBackColor = true;
 			this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
 			// 
 			// m_lblQuestionAlreadyExists
 			// 
-			resources.ApplyResources(this.m_lblQuestionAlreadyExists, "m_lblQuestionAlreadyExists");
+			this.m_lblQuestionAlreadyExists.AutoSize = true;
 			this.m_lblQuestionAlreadyExists.ForeColor = System.Drawing.Color.Red;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblQuestionAlreadyExists, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblQuestionAlreadyExists, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblQuestionAlreadyExists, "EditQuestionDlg.m_lblQuestionAlreadyExists");
+			this.m_lblQuestionAlreadyExists.Location = new System.Drawing.Point(18, 279);
 			this.m_lblQuestionAlreadyExists.Name = "m_lblQuestionAlreadyExists";
+			this.m_lblQuestionAlreadyExists.Size = new System.Drawing.Size(118, 13);
+			this.m_lblQuestionAlreadyExists.TabIndex = 9;
+			this.m_lblQuestionAlreadyExists.Text = "Question already exists!";
+			this.m_lblQuestionAlreadyExists.Visible = false;
 			// 
 			// l10NSharpExtender1
 			// 
@@ -194,9 +249,10 @@ namespace SIL.Transcelerator
 			// EditQuestionDlg
 			// 
 			this.AcceptButton = this.btnOk;
-			resources.ApplyResources(this, "$this");
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
+			this.ClientSize = new System.Drawing.Size(706, 309);
 			this.Controls.Add(this.m_lblQuestionAlreadyExists);
 			this.Controls.Add(this.btnReset);
 			this.Controls.Add(this.btnCancel);
@@ -212,6 +268,8 @@ namespace SIL.Transcelerator
 			this.Name = "EditQuestionDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.Text = "Edit Question";
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
 			this.m_pnlAlternatives.ResumeLayout(false);
