@@ -620,29 +620,20 @@
    @echo Copying files from: $(TargetDir)..\..\..\..\DistFiles\localization\
    xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName)\localization /y /i
    goto :done)
-IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext"
-   goto :done
-@REM This is messy, but BAT script interprets the closing parenthesis in Program Files x86
-@REM as the closer for a compound if statement, so to avoid really messy goto's
-@REM I am repeating the conditional for every statement
-IF EXIST "C:\Program Files (x86)\Paratext 7"
+IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
+
+IF EXIST "C:\Program Files (x86)\Paratext 7" (
    @echo Copying Transcelerator plugin files to Paratext 7 plugin folder...
-IF EXIST "C:\Program Files (x86)\Paratext 7"
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i
-IF EXIST "C:\Program Files (x86)\Paratext 7"
-   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)\localization" /y /i
-IF EXIST "C:\Program Files (x86)\Paratext 8"
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)\localization" /y /i)
+IF EXIST "C:\Program Files (x86)\Paratext 8" (
    @echo Copying Transcelerator plugin files to Paratext 8 plugin folder...
-IF EXIST "C:\Program Files (x86)\Paratext 8"
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i
-IF EXIST "C:\Program Files (x86)\Paratext 8"
-   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)\localization" /y /i
-IF EXIST "C:\Program Files (x86)\Paratext 9"
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)\localization" /y /i)
+IF EXIST "C:\Program Files (x86)\Paratext 9" (
    @echo Copying Transcelerator plugin files to Paratext 9 plugin folder...
-IF EXIST "C:\Program Files (x86)\Paratext 9"
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /y /i
-IF EXIST "C:\Program Files (x86)\Paratext 9"
-   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)\localization" /y /i
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)\localization" /y /i)
 
 :done</PostBuildEvent>
   </PropertyGroup>

@@ -83,11 +83,11 @@ namespace SIL.Transcelerator
 			this.m_lblQuestionGroupHeadingsColor = new System.Windows.Forms.Label();
 			this.btnChooseQuestionGroupHeadingsColor = new System.Windows.Forms.Button();
 			this.m_lblCommentTextColor = new System.Windows.Forms.Label();
-			this.btnChooserCommentColor = new System.Windows.Forms.Button();
-			this.m_lblEnglishAnswerTextColor = new System.Windows.Forms.Label();
-			this.btnChooseEnglishAnswerColor = new System.Windows.Forms.Button();
-			this.m_lblEnglishQuestionColor = new System.Windows.Forms.Label();
-			this.btnChooseEnglishQuestionColor = new System.Windows.Forms.Button();
+			this.m_btnChooseCommentColor = new System.Windows.Forms.Button();
+			this.m_lblLWCAnswerTextColor = new System.Windows.Forms.Label();
+			this.m_btnChooseLWCAnswerColor = new System.Windows.Forms.Button();
+			this.m_lblLWCQuestionColor = new System.Windows.Forms.Label();
+			this.m_btnChooseLWCQuestionColor = new System.Windows.Forms.Button();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.colorDlg = new System.Windows.Forms.ColorDialog();
@@ -212,7 +212,7 @@ namespace SIL.Transcelerator
 			// m_txtFilename
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtFilename, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtFilename, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtFilename, "Param 0: project name; Param 1: Scripture book or reference range");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtFilename, "GenerateScriptDlg.m_txtFilename");
 			this.m_txtFilename.Location = new System.Drawing.Point(141, 48);
 			this.m_txtFilename.Name = "m_txtFilename";
@@ -250,7 +250,7 @@ namespace SIL.Transcelerator
 			this.m_txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_txtTitle, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtTitle, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_txtTitle, "Param is a Scripture book or reference range");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_txtTitle, "GenerateScriptDlg.m_txtTitle");
 			this.m_txtTitle.Location = new System.Drawing.Point(141, 19);
 			this.m_txtTitle.Name = "m_txtTitle";
@@ -536,7 +536,7 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCComments.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCComments.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCComments, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCComments, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCComments, "Param is the name of a language");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCComments, "GenerateScriptDlg.m_chkIncludeLWCComments");
 			this.m_chkIncludeLWCComments.Location = new System.Drawing.Point(10, 173);
 			this.m_chkIncludeLWCComments.Name = "m_chkIncludeLWCComments";
@@ -553,7 +553,7 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCAnswers.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCAnswers.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCAnswers, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCAnswers, "Param is the name of a language");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCAnswers, "GenerateScriptDlg.m_chkIncludeLWCAnswers");
 			this.m_chkIncludeLWCAnswers.Location = new System.Drawing.Point(10, 150);
 			this.m_chkIncludeLWCAnswers.Name = "m_chkIncludeLWCAnswers";
@@ -571,7 +571,7 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCQuestions, "Param is the name of a language");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCQuestions, "GenerateScriptDlg.m_chkIncludeLWCQuestions");
 			this.m_chkIncludeLWCQuestions.Location = new System.Drawing.Point(10, 127);
 			this.m_chkIncludeLWCQuestions.Name = "m_chkIncludeLWCQuestions";
@@ -624,80 +624,80 @@ namespace SIL.Transcelerator
 			this.m_lblCommentTextColor.TabIndex = 8;
 			this.m_lblCommentTextColor.Text = "Comment Text Color";
 			// 
-			// btnChooserCommentColor
+			// m_btnChooseCommentColor
 			// 
-			this.btnChooserCommentColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooserCommentColor, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooserCommentColor, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooserCommentColor, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.btnChooserCommentColor, "GenerateScriptDlg.btnChooserCommentColor");
-			this.btnChooserCommentColor.Location = new System.Drawing.Point(201, 96);
-			this.btnChooserCommentColor.Name = "btnChooserCommentColor";
-			this.btnChooserCommentColor.Size = new System.Drawing.Size(25, 23);
-			this.btnChooserCommentColor.TabIndex = 9;
-			this.btnChooserCommentColor.Text = "...";
-			this.btnChooserCommentColor.UseVisualStyleBackColor = true;
-			this.btnChooserCommentColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
-			this.btnChooserCommentColor.Click += new System.EventHandler(this.ChooseTextColor);
+			this.m_btnChooseCommentColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_btnChooseCommentColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_btnChooseCommentColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_btnChooseCommentColor, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_btnChooseCommentColor, "GenerateScriptDlg.m_btnChooseCommentColor");
+			this.m_btnChooseCommentColor.Location = new System.Drawing.Point(201, 96);
+			this.m_btnChooseCommentColor.Name = "m_btnChooseCommentColor";
+			this.m_btnChooseCommentColor.Size = new System.Drawing.Size(25, 23);
+			this.m_btnChooseCommentColor.TabIndex = 9;
+			this.m_btnChooseCommentColor.Text = "...";
+			this.m_btnChooseCommentColor.UseVisualStyleBackColor = true;
+			this.m_btnChooseCommentColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
+			this.m_btnChooseCommentColor.Click += new System.EventHandler(this.ChooseTextColor);
 			// 
-			// m_lblEnglishAnswerTextColor
+			// m_lblLWCAnswerTextColor
 			// 
-			this.m_lblEnglishAnswerTextColor.AutoSize = true;
-			this.m_lblEnglishAnswerTextColor.ForeColor = System.Drawing.Color.Green;
-			this.m_lblEnglishAnswerTextColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEnglishAnswerTextColor, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEnglishAnswerTextColor, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEnglishAnswerTextColor, "GenerateScriptDlg.m_lblEnglishAnswerTextColor");
-			this.m_lblEnglishAnswerTextColor.Location = new System.Drawing.Point(0, 78);
-			this.m_lblEnglishAnswerTextColor.Name = "m_lblEnglishAnswerTextColor";
-			this.m_lblEnglishAnswerTextColor.Size = new System.Drawing.Size(130, 13);
-			this.m_lblEnglishAnswerTextColor.TabIndex = 6;
-			this.m_lblEnglishAnswerTextColor.Text = "English Answer Text Color";
+			this.m_lblLWCAnswerTextColor.AutoSize = true;
+			this.m_lblLWCAnswerTextColor.ForeColor = System.Drawing.Color.Green;
+			this.m_lblLWCAnswerTextColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblLWCAnswerTextColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblLWCAnswerTextColor, "Param is the name of a language of wider communication");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblLWCAnswerTextColor, "GenerateScriptDlg.m_lblLWCAnswerTextColor");
+			this.m_lblLWCAnswerTextColor.Location = new System.Drawing.Point(0, 78);
+			this.m_lblLWCAnswerTextColor.Name = "m_lblLWCAnswerTextColor";
+			this.m_lblLWCAnswerTextColor.Size = new System.Drawing.Size(110, 13);
+			this.m_lblLWCAnswerTextColor.TabIndex = 6;
+			this.m_lblLWCAnswerTextColor.Text = "{0} Answer Text Color";
 			// 
-			// btnChooseEnglishAnswerColor
+			// m_btnChooseLWCAnswerColor
 			// 
-			this.btnChooseEnglishAnswerColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishAnswerColor, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishAnswerColor, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooseEnglishAnswerColor, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishAnswerColor, "GenerateScriptDlg.btnChooseEnglishAnswerColor");
-			this.btnChooseEnglishAnswerColor.Location = new System.Drawing.Point(201, 73);
-			this.btnChooseEnglishAnswerColor.Name = "btnChooseEnglishAnswerColor";
-			this.btnChooseEnglishAnswerColor.Size = new System.Drawing.Size(25, 23);
-			this.btnChooseEnglishAnswerColor.TabIndex = 7;
-			this.btnChooseEnglishAnswerColor.Text = "...";
-			this.btnChooseEnglishAnswerColor.UseVisualStyleBackColor = true;
-			this.btnChooseEnglishAnswerColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
-			this.btnChooseEnglishAnswerColor.Click += new System.EventHandler(this.ChooseTextColor);
+			this.m_btnChooseLWCAnswerColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_btnChooseLWCAnswerColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_btnChooseLWCAnswerColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_btnChooseLWCAnswerColor, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_btnChooseLWCAnswerColor, "GenerateScriptDlg.m_btnChooseLWCAnswerColor");
+			this.m_btnChooseLWCAnswerColor.Location = new System.Drawing.Point(201, 73);
+			this.m_btnChooseLWCAnswerColor.Name = "m_btnChooseLWCAnswerColor";
+			this.m_btnChooseLWCAnswerColor.Size = new System.Drawing.Size(25, 23);
+			this.m_btnChooseLWCAnswerColor.TabIndex = 7;
+			this.m_btnChooseLWCAnswerColor.Text = "...";
+			this.m_btnChooseLWCAnswerColor.UseVisualStyleBackColor = true;
+			this.m_btnChooseLWCAnswerColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
+			this.m_btnChooseLWCAnswerColor.Click += new System.EventHandler(this.ChooseTextColor);
 			// 
-			// m_lblEnglishQuestionColor
+			// m_lblLWCQuestionColor
 			// 
-			this.m_lblEnglishQuestionColor.AutoSize = true;
-			this.m_lblEnglishQuestionColor.ForeColor = System.Drawing.Color.Gray;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEnglishQuestionColor, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEnglishQuestionColor, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEnglishQuestionColor, "GenerateScriptDlg.m_lblEnglishQuestionColor");
-			this.m_lblEnglishQuestionColor.Location = new System.Drawing.Point(0, 55);
-			this.m_lblEnglishQuestionColor.Name = "m_lblEnglishQuestionColor";
-			this.m_lblEnglishQuestionColor.Size = new System.Drawing.Size(137, 13);
-			this.m_lblEnglishQuestionColor.TabIndex = 4;
-			this.m_lblEnglishQuestionColor.Text = "English Question Text Color";
+			this.m_lblLWCQuestionColor.AutoSize = true;
+			this.m_lblLWCQuestionColor.ForeColor = System.Drawing.Color.Gray;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblLWCQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblLWCQuestionColor, "Param is the name of a language of wider communication");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblLWCQuestionColor, "GenerateScriptDlg.m_lblLWCQuestionColor");
+			this.m_lblLWCQuestionColor.Location = new System.Drawing.Point(0, 55);
+			this.m_lblLWCQuestionColor.Name = "m_lblLWCQuestionColor";
+			this.m_lblLWCQuestionColor.Size = new System.Drawing.Size(117, 13);
+			this.m_lblLWCQuestionColor.TabIndex = 4;
+			this.m_lblLWCQuestionColor.Text = "{0} Question Text Color";
 			// 
-			// btnChooseEnglishQuestionColor
+			// m_btnChooseLWCQuestionColor
 			// 
-			this.btnChooseEnglishQuestionColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnChooseEnglishQuestionColor, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnChooseEnglishQuestionColor, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.btnChooseEnglishQuestionColor, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.btnChooseEnglishQuestionColor, "GenerateScriptDlg.btnChooseEnglishQuestionColor");
-			this.btnChooseEnglishQuestionColor.Location = new System.Drawing.Point(201, 50);
-			this.btnChooseEnglishQuestionColor.Name = "btnChooseEnglishQuestionColor";
-			this.btnChooseEnglishQuestionColor.Size = new System.Drawing.Size(25, 23);
-			this.btnChooseEnglishQuestionColor.TabIndex = 5;
-			this.btnChooseEnglishQuestionColor.Text = "...";
-			this.btnChooseEnglishQuestionColor.UseVisualStyleBackColor = true;
-			this.btnChooseEnglishQuestionColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
-			this.btnChooseEnglishQuestionColor.Click += new System.EventHandler(this.ChooseTextColor);
+			this.m_btnChooseLWCQuestionColor.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_btnChooseLWCQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_btnChooseLWCQuestionColor, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_btnChooseLWCQuestionColor, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_btnChooseLWCQuestionColor, "GenerateScriptDlg.m_btnChooseLWCQuestionColor");
+			this.m_btnChooseLWCQuestionColor.Location = new System.Drawing.Point(201, 50);
+			this.m_btnChooseLWCQuestionColor.Name = "m_btnChooseLWCQuestionColor";
+			this.m_btnChooseLWCQuestionColor.Size = new System.Drawing.Size(25, 23);
+			this.m_btnChooseLWCQuestionColor.TabIndex = 5;
+			this.m_btnChooseLWCQuestionColor.Text = "...";
+			this.m_btnChooseLWCQuestionColor.UseVisualStyleBackColor = true;
+			this.m_btnChooseLWCQuestionColor.EnabledChanged += new System.EventHandler(this.ColorSelectionButtonEnabledStateChanged);
+			this.m_btnChooseLWCQuestionColor.Click += new System.EventHandler(this.ChooseTextColor);
 			// 
 			// btnOk
 			// 
@@ -757,12 +757,12 @@ namespace SIL.Transcelerator
 			this.panel2.Controls.Add(this.btnChooseQuestionGroupHeadingsColor);
 			this.panel2.Controls.Add(this.m_lblCommentTextColor);
 			this.panel2.Controls.Add(this.m_lblQuestionGroupHeadingsColor);
-			this.panel2.Controls.Add(this.btnChooserCommentColor);
-			this.panel2.Controls.Add(this.m_lblEnglishAnswerTextColor);
-			this.panel2.Controls.Add(this.btnChooseEnglishAnswerColor);
+			this.panel2.Controls.Add(this.m_btnChooseCommentColor);
+			this.panel2.Controls.Add(this.m_lblLWCAnswerTextColor);
+			this.panel2.Controls.Add(this.m_btnChooseLWCAnswerColor);
 			this.panel2.Controls.Add(this.m_numBlankLines);
-			this.panel2.Controls.Add(this.m_lblEnglishQuestionColor);
-			this.panel2.Controls.Add(this.btnChooseEnglishQuestionColor);
+			this.panel2.Controls.Add(this.m_lblLWCQuestionColor);
+			this.panel2.Controls.Add(this.m_btnChooseLWCQuestionColor);
 			this.panel2.Location = new System.Drawing.Point(250, 6);
 			this.panel2.Name = "panel2";
 			this.panel2.Size = new System.Drawing.Size(248, 152);
@@ -1122,10 +1122,10 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Button btnBrowse;
 		private System.Windows.Forms.Button btnOk;
 		private System.Windows.Forms.Button btnCancel;
-		private System.Windows.Forms.Button btnChooseEnglishQuestionColor;
+		private System.Windows.Forms.Button m_btnChooseLWCQuestionColor;
 		private System.Windows.Forms.ColorDialog colorDlg;
-		private System.Windows.Forms.Button btnChooserCommentColor;
-		private System.Windows.Forms.Button btnChooseEnglishAnswerColor;
+		private System.Windows.Forms.Button m_btnChooseCommentColor;
+		private System.Windows.Forms.Button m_btnChooseLWCAnswerColor;
 		private System.Windows.Forms.RadioButton m_rdoWholeBook;
 		private System.Windows.Forms.ComboBox m_cboSection;
 		private System.Windows.Forms.RadioButton m_rdoSingleSection;
@@ -1138,9 +1138,9 @@ namespace SIL.Transcelerator
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCQuestions;
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCAnswers;
 		internal System.Windows.Forms.CheckBox m_chkIncludeLWCComments;
-		internal System.Windows.Forms.Label m_lblEnglishQuestionColor;
+		internal System.Windows.Forms.Label m_lblLWCQuestionColor;
 		internal System.Windows.Forms.Label m_lblCommentTextColor;
-		internal System.Windows.Forms.Label m_lblEnglishAnswerTextColor;
+		internal System.Windows.Forms.Label m_lblLWCAnswerTextColor;
 		internal System.Windows.Forms.Label m_lblFolder;
 		private System.Windows.Forms.ComboBox m_cboBooks;
 		internal System.Windows.Forms.Label m_lblQuestionGroupHeadingsColor;

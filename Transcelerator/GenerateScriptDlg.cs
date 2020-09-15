@@ -28,8 +28,7 @@ namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dialog to present user with options for generating an LCF file to use for generating a
-	/// printable script to do comprehension checking.
+	/// Dialog to present user with options to generate a script to do comprehension checking.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class GenerateScriptDlg : Form
@@ -54,6 +53,8 @@ namespace SIL.Transcelerator
 		private string m_fmtChkEnglishQuestions;
 		private string m_fmtChkEnglishAnswers;
 		private string m_fmtChkIncludeComments;
+		private string m_fmLWCAnswerTextColor;
+		private string m_fmLWCQuestionTextColor;
 
 		#endregion
 
@@ -71,13 +72,13 @@ namespace SIL.Transcelerator
 			m_projectName = projectName;
 			m_scrExtractor = scrExtractor;
 			InitializeComponent();
-			m_chkIncludeLWCQuestions.Tag = btnChooseEnglishQuestionColor;
-			m_chkIncludeLWCAnswers.Tag = btnChooseEnglishAnswerColor;
-			m_chkIncludeLWCComments.Tag = btnChooserCommentColor;
+			m_chkIncludeLWCQuestions.Tag = m_btnChooseLWCQuestionColor;
+			m_chkIncludeLWCAnswers.Tag = m_btnChooseLWCAnswerColor;
+			m_chkIncludeLWCComments.Tag = m_btnChooseCommentColor;
 			btnChooseQuestionGroupHeadingsColor.Tag = m_lblQuestionGroupHeadingsColor;
-			btnChooseEnglishQuestionColor.Tag = m_lblEnglishQuestionColor;
-			btnChooseEnglishAnswerColor.Tag = m_lblEnglishAnswerTextColor;
-			btnChooserCommentColor.Tag = m_lblCommentTextColor;
+			m_btnChooseLWCQuestionColor.Tag = m_lblLWCQuestionColor;
+			m_btnChooseLWCAnswerColor.Tag = m_lblLWCAnswerTextColor;
+			m_btnChooseCommentColor.Tag = m_lblCommentTextColor;
 			HandleStringsLocalized();
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
@@ -121,9 +122,9 @@ namespace SIL.Transcelerator
 			if (!Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor.IsEmpty)
 				m_lblQuestionGroupHeadingsColor.ForeColor = Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor;
 			if (!Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor.IsEmpty)
-				m_lblEnglishQuestionColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
+				m_lblLWCQuestionColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
 			if (!Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor.IsEmpty)
-				m_lblEnglishAnswerTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor;
+				m_lblLWCAnswerTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor;
 			if (!Properties.Settings.Default.GenerateTemplateCommentTextColor.IsEmpty)
 				m_lblCommentTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateCommentTextColor;
 			m_chkNumberQuestions.Checked = Properties.Settings.Default.GenerateTemplateNumberQuestions;
@@ -143,12 +144,8 @@ namespace SIL.Transcelerator
 			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;
 			m_sTitleTemplate = m_txtTitle.Text;
 			m_sFilenameTemplate = Format(m_txtFilename.Text, m_projectName, "{0}");
-			if (m_scrExtractor == null)
-			{
-				m_lbFilename.Text = LocalizationManager.GetString("GenerateScriptDlg.TemplateFileNameLabel",
-					"Template &File name:");
-				m_sFilenameTemplate = Path.ChangeExtension(m_sFilenameTemplate, "lcf");
-			}
+			m_fmLWCAnswerTextColor = m_lblLWCAnswerTextColor.Text;
+			m_fmLWCQuestionTextColor = m_lblLWCQuestionColor.Text;
 		}
 
 		private void SetDefaultCheckedStateForLWCOptions()
@@ -245,7 +242,7 @@ namespace SIL.Transcelerator
 			{
 				string path = Path.Combine(m_lblFolder.Text, m_txtFilename.Text);
 				if (IsNullOrEmpty(Path.GetExtension(path)))
-					path = Path.ChangeExtension(path, "lcf");
+					path = Path.ChangeExtension(path, "htm");
 				return path;
 			}
 		}
@@ -288,9 +285,7 @@ namespace SIL.Transcelerator
 				dlg.AddExtension = true;
 				dlg.CheckPathExists = true;
 				dlg.DefaultExt = "." + Path.GetExtension(m_txtFilename.Text);
-                var description = (m_scrExtractor == null ? LocalizationManager.GetString(
-		                "GenerateScriptDlg.LectionaryControlFile", "Lectionary Control File") :
-                    LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page"));
+                var description = LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page");
                 dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
 				dlg.FilterIndex = 0;
 				dlg.OverwritePrompt = true;
@@ -472,8 +467,8 @@ namespace SIL.Transcelerator
 
             Properties.Settings.Default.GenerateTemplateBlankLines = (int)m_numBlankLines.Value;
             Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = m_lblEnglishQuestionColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = m_lblEnglishAnswerTextColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
+            Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
             Properties.Settings.Default.GenerateTemplateCommentTextColor = m_lblCommentTextColor.ForeColor;
             Properties.Settings.Default.GenerateTemplateNumberQuestions = m_chkNumberQuestions.Checked;
 
@@ -515,6 +510,8 @@ namespace SIL.Transcelerator
 				m_chkIncludeLWCQuestions.Text = Format(m_fmtChkEnglishQuestions, languageName);
 				m_chkIncludeLWCAnswers.Text = Format(m_fmtChkEnglishAnswers, languageName);
 				m_chkIncludeLWCComments.Text = Format(m_fmtChkIncludeComments, languageName);
+				m_lblLWCQuestionColor.Text = Format(m_fmLWCQuestionTextColor, languageName);
+				m_lblLWCAnswerTextColor.Text = Format(m_fmLWCAnswerTextColor, languageName);
 			}
 		}
 		#endregion

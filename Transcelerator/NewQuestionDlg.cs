@@ -255,7 +255,7 @@ namespace SIL.Transcelerator
 			var fmt = (m_dataGridViewExistingQuestions.RowCount > 0) ? m_locationFormat :
 				LocalizationManager.GetString("NewQuestionDlg.NoExistingQuestions",
 					"There are no existing {0} questions for {1}.",
-					"Param 1: category name; Param 2: Scripture reference");
+					"Param 1: Currently selected category name; Param 2: Currently selected Scripture reference");
 			m_lblSelectLocation.Text = Format(fmt, m_cboCategory.SelectedItem, ReferenceInProjectVersification);
 		}
 

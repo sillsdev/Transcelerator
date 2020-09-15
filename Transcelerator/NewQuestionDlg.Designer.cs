@@ -372,7 +372,8 @@ namespace SIL.Transcelerator
 			this.m_lblSelectLocation.AutoSize = true;
 			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblSelectLocation, 5);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblSelectLocation, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, "Param 1: Currently selected category name; " +
+				"Param 2: Currently selected Scripture reference");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblSelectLocation, "NewQuestionDlg.m_lblSelectLocation");
 			this.m_lblSelectLocation.Location = new System.Drawing.Point(3, 0);
 			this.m_lblSelectLocation.Name = "m_lblSelectLocation";

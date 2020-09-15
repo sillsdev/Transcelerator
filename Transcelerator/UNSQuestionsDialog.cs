@@ -64,7 +64,7 @@ namespace SIL.Transcelerator
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
-		private readonly string m_defaultLcfFolder = null;
+		private readonly string m_defaultBibleModuleFolder = null;
         private readonly IScrExtractor m_scrExtractor;
 	    private readonly Func<string> m_getCss;
 	    private readonly string m_appName;
@@ -368,7 +368,7 @@ namespace SIL.Transcelerator
 				{
 					// Unless/until we ship different variants of the same language, there is no need
 					// to try to tell the localization manager to load a different variant. It's already
-					// smart enough to fallback to another variant of thre language anyway.
+					// smart enough to fallback to another variant of the language anyway.
 					LocalizationManager.SetUILanguage(preferredUiLocale, true);
 				}
 			}
@@ -1176,7 +1176,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            GenerateScript(m_scrExtractor == null ? m_defaultLcfFolder :
+            GenerateScript(m_scrExtractor == null ? m_defaultBibleModuleFolder :
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
 
@@ -1218,7 +1218,8 @@ namespace SIL.Transcelerator
                         if (untranslatedQuestions > 0 &&
                             MessageBox.Show(Format(LocalizationManager.GetString("MainWindow.UntranslatedQuestionsWarning",
 		                        "There are {0} questions in the selected range that do not have confirmed translations. Do you " +
-		                        "want to continue? (Untranslated questions will be excluded.)"), untranslatedQuestions),
+		                        "want to continue? (Untranslated questions will be excluded.)",
+								"Param is a number."), untranslatedQuestions),
                             m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
@@ -1241,7 +1242,7 @@ namespace SIL.Transcelerator
                                     using (StreamWriter css = new StreamWriter(dlg.FullCssPath))
                                     {
                                         WriteCssStyleInfo(css, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-                                            dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                            dlg.m_lblLWCQuestionColor.ForeColor, dlg.m_lblLWCAnswerTextColor.ForeColor,
                                             dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
                                             dlg.m_chkNumberQuestions.Checked);
                                     }
@@ -1257,7 +1258,7 @@ namespace SIL.Transcelerator
                         if (dlg.m_rdoEmbedStyleInfo.Checked)
                         {
                             WriteCssStyleInfo(sw, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-                                dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                dlg.m_lblLWCQuestionColor.ForeColor, dlg.m_lblLWCAnswerTextColor.ForeColor,
                                 dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
                                 dlg.m_chkNumberQuestions.Checked);
                         }
@@ -2429,8 +2430,9 @@ namespace SIL.Transcelerator
 					"Expected file missing: {0}.",
 					"Parameter is filename (for technical support)");
 			var msg = Format(fmt, filename) + " " +
-				LocalizationManager.GetString("General.RerunInstaller",
-					"Please re-run the Transcelerator Installer to repair this problem.");
+				Format(LocalizationManager.GetString("General.RerunInstaller",
+					"Please re-run the {0} Installer to repair this problem.",
+					"Parameter is \"Transcelerator\" (plugin name)"), TxlPlugin.pluginName);
 			MessageBox.Show(msg, Text);
 		}
 
