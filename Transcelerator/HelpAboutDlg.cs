@@ -9,7 +9,10 @@
 //
 // File: HelpAboutDlg.cs
 // ---------------------------------------------------------------------------------------------
+using System.Drawing;
 using System.Windows.Forms;
+using SIL.IO;
+using SIL.Windows.Forms.ReleaseNotes;
 
 namespace SIL.Transcelerator
 {
@@ -25,9 +28,10 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:Form1"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public HelpAboutDlg()
+		public HelpAboutDlg(Icon icon)
 		{
 			InitializeComponent();
+			Icon = icon;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -35,6 +39,13 @@ namespace SIL.Transcelerator
 		{
 			base.OnHandleCreated(e);
 			m_txlInfo.ShowCreditsAndLicense = true;
+		}
+
+		private void m_linkLabelReleaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			var path = FileLocationUtilities.GetFileDistributedWithApplication("ReleaseNotes.md");
+			using (var dlg = new ShowReleaseNotesDialog(Icon, path))
+				dlg.ShowDialog();
 		}
 	}
 }

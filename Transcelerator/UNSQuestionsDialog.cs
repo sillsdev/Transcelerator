@@ -2374,7 +2374,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuHelpAbout_Click(object sender, EventArgs e)
 		{
-			using (HelpAboutDlg dlg = new HelpAboutDlg())
+			using (HelpAboutDlg dlg = new HelpAboutDlg(Icon))
 			{
 				dlg.ShowDialog();
 			}

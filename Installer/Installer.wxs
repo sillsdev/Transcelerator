@@ -233,6 +233,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P7" ShortName="gzmrl3nd.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P7" Guid="{D4E25452-E407-4E91-986C-F095FE315443}">
+                <File Id="ReleaseNotes.md_P7" ShortName="bt3y9try.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP7PLUGIN_es" Directory="INSTALLDIR7" Source="..\Transcelerator\bin\x86\Release">
@@ -345,6 +348,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P7Test" ShortName="eemr572z.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P7Test" Guid="{CE56E106-A897-4BA5-88C2-D00A02DA4EB8}">
+                <File Id="ReleaseNotes.md_P7Test" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP7TestPLUGIN_es" Directory="INSTALLDIR7TEST"
@@ -453,6 +459,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P8" ShortName="cs4ptmez.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P8" Guid="{9FA8100E-5ED7-4781-8680-F4DA24A1D44F}">
+                <File Id="ReleaseNotes.md_P8" ShortName="rwg9gmna.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP8PLUGIN_es" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\x86\Release">
@@ -557,6 +566,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="Transcelerator.dll.config_P9" Guid="{fdac374a-d977-4734-ac50-2f80918e094e}">
                 <File Id="Transcelerator.dll.config_P9" ShortName="abh9z0kp.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
+            </Component>
+            <Component Id="ReleaseNotes.md_P9" Guid="{3C68F9A6-22DA-4909-9AA1-8A15279183DA}">
+                <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
             </Component>
         </ComponentGroup>
 
