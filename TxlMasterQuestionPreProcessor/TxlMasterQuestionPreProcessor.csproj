@@ -293,21 +293,34 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>IF "$(ConfigurationName)" == "Debug - Copy To Paratext" (
-xcopy $(TargetDir)*.* ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
+    <PostBuildEvent>IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
+IF NOT EXIST "..\..\..\..\..\Paratext\" goto copytoparatext
+
+robocopy $(TargetDir) ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
+goto copytoparatext
+
+:release
+IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
+
+:copytoparatext
 IF EXIST "C:\Program Files (x86)\Paratext 7" (
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
+robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed)
+
 IF EXIST "C:\Program Files (x86)\Paratext 8" (
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
-)
-IF "$(ConfigurationName)" == "Release - Copy To Paratext" (
-IF EXIST "C:\Program Files (x86)\Paratext 7" (
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
-IF EXIST "C:\Program Files (x86)\Paratext 8" (
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
+robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed)
+
 IF EXIST "C:\Program Files (x86)\Paratext 9" (
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /y /i)
-)</PostBuildEvent>
+robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed)
+
+:done
+exit 0
+
+:failed
+exit 1</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
