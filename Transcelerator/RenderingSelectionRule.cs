@@ -17,6 +17,7 @@ using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using static System.String;
 using SIL.Utils;
+using L10NSharp;
 
 namespace SIL.Transcelerator
 {
@@ -98,7 +99,8 @@ namespace SIL.Transcelerator
 				}
 				m_questionMatchingPattern = value.Normalize(NormalizationForm.FormC);
 				if (!m_questionMatchingPattern.Contains("{0}"))
-					ErrorMessageQ = Properties.Resources.kstidKeyTermPlaceHolderMissing;
+					ErrorMessageQ = LocalizationManager.GetString("RenderingSelectionRule.KeyTermPlaceHolderMissing",
+						"Question-matching pattern must have a place holder for the key term.");
 				else
 				{
 					try
@@ -326,46 +328,124 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				string questionMatchCriteria, renderingMatchCriteria;
+				string fmt;
 				switch (QuestionMatchCriteriaType)
 				{
 					case QuestionMatchType.Suffix:
-						questionMatchCriteria = Properties.Resources.kstidRenderingSelectionRuleQuestionConditionEndsWith;
+						switch (RenderingMatchCriteriaType)
+						{
+							case RenderingMatchType.Suffix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith",
+									"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.",
+									"Param 0: an English word suffix/ending; Param 1: an English word suffix/ending");
+								break;
+							case RenderingMatchType.Prefix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaStartsWith",
+									"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that starts with {1}.",
+									"Param 0: an English word suffix/ending; Param 1: an English word prefix/beginning");
+								break;
+							case RenderingMatchType.Custom:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaCustom",
+									"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+									"Param 0: an English word suffix/ending; Param 1: a \"regular expression\"");
+								break;
+							default:
+								return Empty;
+						}
 						break;
 					case QuestionMatchType.Prefix:
-						questionMatchCriteria = Properties.Resources.kstidRenderingSelectionRuleQuestionConditionStartsWith;
+						switch (RenderingMatchCriteriaType)
+						{
+							case RenderingMatchType.Suffix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith",
+									"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.",
+									"Param 0: an English word prefix/beginning; Param 1: an English word suffix/ending");
+								break;
+							case RenderingMatchType.Prefix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith",
+									"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.",
+									"Param 0: an English word prefix/beginning; Param 1: an English word prefix/beginning");
+								break;
+							case RenderingMatchType.Custom:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom",
+									"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+									"Param 0: an English word prefix/beginning; Param 1: a \"regular expression\"");
+								break;
+							default:
+								return Empty;
+						}
 						break;
 					case QuestionMatchType.PrecedingWord:
-						questionMatchCriteria = Properties.Resources.kstidRenderingSelectionRuleQuestionConditionPrecededBy;
+						switch (RenderingMatchCriteriaType)
+						{
+							case RenderingMatchType.Suffix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith",
+									"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.",
+									"Param 0: an English word (or phrase); Param 1: an English word suffix/ending");
+								break;
+							case RenderingMatchType.Prefix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith",
+									"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.",
+									"Param 0: an English word (or phrase); Param 1: an English word prefix/beginning");
+								break;
+							case RenderingMatchType.Custom:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom",
+									"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+									"Param 0: an English word (or phrase); Param 1: a \"regular expression\"");
+								break;
+							default:
+								return Empty;
+						}
 						break;
 					case QuestionMatchType.FollowingWord:
-						questionMatchCriteria = Properties.Resources.kstidRenderingSelectionRuleQuestionConditionFollowedBy;
+						switch (RenderingMatchCriteriaType)
+						{
+							case RenderingMatchType.Suffix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith",
+									"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.",
+									"Param 0: an English word (or phrase); Param 1: an English word suffix/ending");
+								break;
+							case RenderingMatchType.Prefix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith",
+									"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.",
+									"Param 0: an English word (or phrase); Param 1: an English word prefix/beginning");
+								break;
+							case RenderingMatchType.Custom:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom",
+									"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+									"Param 0: an English word (or phrase); Param 1: a \"regular expression\"");
+								break;
+							default:
+								return Empty;
+						}
 						break;
 					case QuestionMatchType.Custom:
-						questionMatchCriteria = Properties.Resources.kstidRenderingSelectionRuleQuestionConditionCustom;
+						switch (RenderingMatchCriteriaType)
+						{
+							case RenderingMatchType.Suffix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith",
+									"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that ends with {1}.",
+									"Param 0: a \"regular expression\"; Param 1: an English word suffix/ending");
+								break;
+							case RenderingMatchType.Prefix:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith",
+									"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that starts with {1}.",
+									"Param 0: a \"regular expression\"; Param 1: an English word prefix/beginning");
+								break;
+							case RenderingMatchType.Custom:
+								fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaCustom",
+									"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that matches the regular expression \"{1}\".",
+									"Param 0: a \"regular expression\"; Param 1: a \"regular expression\"");
+								break;
+							default:
+								return Empty;
+						}
 						break;
 					default:
-						return string.Empty;
+						return Empty;
 				}
-				questionMatchCriteria = string.Format(questionMatchCriteria, m_qVariable);
-				switch (RenderingMatchCriteriaType)
-				{
-					case RenderingMatchType.Suffix:
-						renderingMatchCriteria = Properties.Resources.kstidRenderingSelectionCriteriaEndsWith;
-						break;
-					case RenderingMatchType.Prefix:
-						renderingMatchCriteria = Properties.Resources.kstidRenderingSelectionCriteriaStartsWith;
-						break;
-					case RenderingMatchType.Custom:
-						renderingMatchCriteria = Properties.Resources.kstidRenderingSelectionCriteriaCustom;
-						break;
-					default:
-						return string.Empty;
-				}
-				renderingMatchCriteria = string.Format(renderingMatchCriteria, m_rVariable);
 
-				return string.Format(Properties.Resources.kstidRenderingSelectionConditionResultFrame,
-					questionMatchCriteria, renderingMatchCriteria);
+				return Format(fmt, m_qVariable, m_rVariable);
 			}
 		}
 

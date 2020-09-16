@@ -30,6 +30,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using L10NSharp;
+using SIL.WritingSystems;
+using static System.String;
 using File = System.IO.File;
 
 namespace SIL.Transcelerator
@@ -61,7 +64,7 @@ namespace SIL.Transcelerator
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
-		private readonly string m_defaultLcfFolder = null;
+		private readonly string m_defaultBibleModuleFolder = null;
         private readonly IScrExtractor m_scrExtractor;
 	    private readonly Func<string> m_getCss;
 	    private readonly string m_appName;
@@ -110,7 +113,7 @@ namespace SIL.Transcelerator
 			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
 		}
 
-		private List<Tuple<string, string>> AvailableLocales { get; set; }
+		private SortedDictionary<string, string> AvailableLocales { get; } = new SortedDictionary<string, string>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -134,11 +137,11 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				return (PhraseTranslationHelper.KeyTermFilterType)mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
+				return (PhraseTranslationHelper.KeyTermFilterType)mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
 			}
 			private set
 			{
-				mnuKtFilter.DropDownItems.Cast<ToolStripMenuItem>().First(
+				mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(
                     menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).Checked = true;
 				ApplyFilter();
 			}
@@ -152,7 +155,7 @@ namespace SIL.Transcelerator
 				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
 					Save(true, false);
 				else
-					saveToolStripMenuItem.Enabled = btnSave.Enabled = value;
+					mnuSave.Enabled = btnSave.Enabled = value;
 			}
 		}
 
@@ -316,7 +319,7 @@ namespace SIL.Transcelerator
                 splashScreen = new TxlSplashScreen();
                 splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
             }
-            splashScreen.Message = Properties.Resources.kstidSplashMsgInitializing;
+            splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgInitializing", "Initializing...");
 
             InitializeComponent();
 
@@ -336,7 +339,7 @@ namespace SIL.Transcelerator
 			m_vernIcuLocale = vernIcuLocale;
 			m_vernLanguageName = vernLanguageName;
 			m_fVernIsRtoL = fVernIsRtoL;
-		    if (string.IsNullOrEmpty(m_vernIcuLocale))
+		    if (IsNullOrEmpty(m_vernIcuLocale))
                 mnuGenerate.Enabled = false;
 			m_selectKeyboard = selectKeyboard;
 	        m_getTermOccurrences = getTermOccurrences;
@@ -352,13 +355,23 @@ namespace SIL.Transcelerator
            
             m_startRef = startRef;
             m_endRef = endRef;
-		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
             
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
 
-			if (!String.IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
+			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
+			{
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
+				if (preferredUiLocale.Length > 2 && LocalizationManager.UILanguageId.Length >= 2 &&
+					preferredUiLocale.Substring(0, 2) != LocalizationManager.UILanguageId.Substring(0, 2))
+				{
+					// Unless/until we ship different variants of the same language, there is no need
+					// to try to tell the localization manager to load a different variant. It's already
+					// smart enough to fallback to another variant of the language anyway.
+					LocalizationManager.SetUILanguage(preferredUiLocale, true);
+				}
+			}
 
 			PopulateAvailableLocales();
 			AddAvailableLocalizationsToMenu(preferredUiLocale);
@@ -366,7 +379,7 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
-			Text = String.Format(Text, projectName);
+			Text = Format(Text, projectName);
 			HelpButton = (m_helpDelegate != null);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
@@ -417,47 +430,44 @@ namespace SIL.Transcelerator
 
 		private void PopulateAvailableLocales()
 		{
-			var locales = new List<Tuple<string, string>>();
-
-			// All the commented-out code here is the "right" way to do this, but it requires adding ICU
-			// to Transcelerator, which seems more bloat than is needed unless/until we really start seeing
-			// a demand for ad-hoc localizations.
-#if UseGlobalWritingSystemRepo
 			Sldr.Initialize();
 			try
 			{
 				var repo = GlobalWritingSystemRepository.Initialize();
-#endif
-			foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
-			{
-				string languageName;
-#if UseGlobalWritingSystemRepo
+				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Union(LocalizationManager.GetAvailableLocalizedLanguages()))
+				{
+					string languageName;
 					if (repo.TryGet(locale, out WritingSystemDefinition wsDef))
 					{
 						languageName = wsDef.Language.Name;
 					}
 					else
-#endif
-				switch (locale)
-				{
-					case "es": languageName = "español"; break;
-					case "fr": languageName = "français"; break;
-					case "en-GB": languageName = "British English"; break;
-					case "en-US":
-					case "en":
-						throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
-					default: languageName = locale; break;
+						switch (locale)
+						{
+							case "es":
+								languageName = "español";
+								break;
+							case "fr":
+								languageName = "français";
+								break;
+							case "en-GB":
+								languageName = "British English";
+								break;
+							case "en-US":
+							case "en":
+								throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
+							default:
+								languageName = locale;
+								break;
+						}
+
+					AvailableLocales[languageName] = locale;
 				}
-				locales.Add(new Tuple<string, string>(languageName, locale));
-			}
-#if UseGlobalWritingSystemRepo
 			}
 			finally
 			{
 				Sldr.Cleanup();
 			}
-#endif
-			AvailableLocales = locales.OrderBy(l => l.Item1).ToList();
 		}
 
 		private void AddAvailableLocalizationsToMenu(string preferredLocale)
@@ -465,13 +475,13 @@ namespace SIL.Transcelerator
 			var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
 			foreach (var availableLocalization in AvailableLocales)
 			{
-				var subItem = new ToolStripMenuItem(availableLocalization.Item1)
+				var subItem = new ToolStripMenuItem(availableLocalization.Key)
 				{
-					Tag = availableLocalization.Item2,
-					Name = availableLocalization.Item2 + menuItemNameSuffix
+					Tag = availableLocalization.Value,
+					Name = availableLocalization.Value + menuItemNameSuffix
 				};
-				displayLanguageToolStripMenuItem.DropDownItems.Add(subItem);
-				if (availableLocalization.Item2 == preferredLocale)
+				mnuDisplayLanguage.DropDownItems.Add(subItem);
+				if (availableLocalization.Value == preferredLocale)
 				{
 					en_ToolStripMenuItem.Checked = false;
 					subItem.Checked = true;
@@ -487,7 +497,7 @@ namespace SIL.Transcelerator
 
 		private LocalizationsFileAccessor GetDataLocalizer(string localeId)
 		{
-			if (localeId == "en" || localeId == "en-US" || String.IsNullOrWhiteSpace(localeId))
+			if (localeId == "en" || localeId == "en-US" || IsNullOrWhiteSpace(localeId))
 				return null;
 
 			if (m_dataLocalizer?.Locale == localeId)
@@ -530,8 +540,11 @@ namespace SIL.Transcelerator
 					Save(true, false);
 					return;
 				}
-				switch (MessageBox.Show(this, "You have made changes. Do you wish to save before closing?",
-					"Save changes?", MessageBoxButtons.YesNoCancel))
+				switch (MessageBox.Show(this,
+					LocalizationManager.GetString("MainWindow.SaveChangesBeforeClosingMessage",
+						"You have made changes. Do you wish to save before closing?"),
+					LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "Save changes?"),
+					MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
 						Save(true, false);
@@ -626,7 +639,7 @@ namespace SIL.Transcelerator
             else if (EditingTranslation)
             {
                 Clipboard.SetDataObject(new DataObject(TextControl.SelectedText));
-                TextControl.SelectedText = string.Empty;
+                TextControl.SelectedText = Empty;
             }
             else
             {
@@ -692,7 +705,7 @@ namespace SIL.Transcelerator
             else if (EditingTranslation)
             {
                 string text = Clipboard.GetText();
-                if (!string.IsNullOrEmpty(text))
+                if (!IsNullOrEmpty(text))
                     TextControl.SelectedText = text;
             }
             else
@@ -718,7 +731,7 @@ namespace SIL.Transcelerator
             CopyToClipboard();
 
             //Clear selected cell
-            dataGridUns.SelectedCells[0].Value = string.Empty;
+            dataGridUns.SelectedCells[0].Value = Empty;
             m_helper[dataGridUns.CurrentCell.RowIndex].HasUserTranslation = false;
             SaveNeeded = true;
             dataGridUns.InvalidateRow(dataGridUns.CurrentCell.RowIndex);
@@ -1089,7 +1102,7 @@ namespace SIL.Transcelerator
 			ToolStripMenuItem clickedMenu = (ToolStripMenuItem)sender;
 			if (clickedMenu.Checked)
 			{
-				foreach (ToolStripMenuItem menu in mnuKtFilter.DropDownItems)
+				foreach (ToolStripMenuItem menu in mnuFilterBiblicalTerms.DropDownItems)
 				{
 					if (menu != clickedMenu)
 						menu.Checked = false;
@@ -1163,7 +1176,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            GenerateScript(m_scrExtractor == null ? m_defaultLcfFolder :
+            GenerateScript(m_scrExtractor == null ? m_defaultBibleModuleFolder :
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
 
@@ -1203,7 +1216,10 @@ namespace SIL.Transcelerator
                     {
                         int untranslatedQuestions = allPhrasesInRange.Count(p => !p.HasUserTranslation);
                         if (untranslatedQuestions > 0 &&
-                            MessageBox.Show(string.Format(Resources.kstidUntranslatedQuestionsWarning, untranslatedQuestions),
+                            MessageBox.Show(Format(LocalizationManager.GetString("MainWindow.UntranslatedQuestionsWarning",
+		                        "There are {0} questions in the selected range that do not have confirmed translations. Do you " +
+		                        "want to continue? (Untranslated questions will be excluded.)",
+								"Param is a number."), untranslatedQuestions),
                             m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
@@ -1226,7 +1242,7 @@ namespace SIL.Transcelerator
                                     using (StreamWriter css = new StreamWriter(dlg.FullCssPath))
                                     {
                                         WriteCssStyleInfo(css, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-                                            dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                            dlg.m_lblLWCQuestionColor.ForeColor, dlg.m_lblLWCAnswerTextColor.ForeColor,
                                             dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
                                             dlg.m_chkNumberQuestions.Checked);
                                     }
@@ -1242,7 +1258,7 @@ namespace SIL.Transcelerator
                         if (dlg.m_rdoEmbedStyleInfo.Checked)
                         {
                             WriteCssStyleInfo(sw, dlg.m_lblQuestionGroupHeadingsColor.ForeColor,
-                                dlg.m_lblEnglishQuestionColor.ForeColor, dlg.m_lblEnglishAnswerTextColor.ForeColor,
+                                dlg.m_lblLWCQuestionColor.ForeColor, dlg.m_lblLWCAnswerTextColor.ForeColor,
                                 dlg.m_lblCommentTextColor.ForeColor, (int)dlg.m_numBlankLines.Value,
                                 dlg.m_chkNumberQuestions.Checked);
                         }
@@ -1613,7 +1629,7 @@ namespace SIL.Transcelerator
 					sPsalm = "Salmo";
 				}
 
-				dlg.FileName = string.Format("Translations of {0} Questions {1}", language, sRef);
+				dlg.FileName = Format("Translations of {0} Questions {1}", language, sRef);
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
 					try
@@ -1726,7 +1742,10 @@ namespace SIL.Transcelerator
 						}
 					}
 					dataGridUns.Invalidate();
-					MessageBox.Show("Finished! See report in " + reportFilename, TxlPlugin.pluginName);
+					MessageBox.Show(Format(
+						LocalizationManager.GetString("MainWindow.FinishedLoadingTranslationsFromTextFile",
+						"Finished! See report in {0}",
+						"Param is a file name"), reportFilename), TxlPlugin.pluginName);
 				}
 			}
 		}
@@ -2064,7 +2083,7 @@ namespace SIL.Transcelerator
 		private void AddNewQuestion(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			string language = string.Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
+			string language = Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
 			using (var dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
 				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
@@ -2088,7 +2107,7 @@ namespace SIL.Transcelerator
 					if (basePhrase == null)
 						m_helper.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
-					if (dlg.Translation != string.Empty)
+					if (dlg.Translation != Empty)
 						newPhrase.Translation = dlg.Translation;
 
 					Save(true, true);
@@ -2367,7 +2386,7 @@ namespace SIL.Transcelerator
 			if (clickedMenu.Checked)
 				return;
 			clickedMenu.Checked = true;
-			foreach (ToolStripMenuItem subMenu in displayLanguageToolStripMenuItem.DropDownItems)
+			foreach (ToolStripMenuItem subMenu in mnuDisplayLanguage.DropDownItems)
 			{
 				if (subMenu != clickedMenu)
 					subMenu.Checked = false;
@@ -2380,6 +2399,7 @@ namespace SIL.Transcelerator
 			else
 				dataGridUns.Invalidate();
 			LoadAnswersAndCommentsIfShowing(null, null);
+			LocalizationManager.SetUILanguage(localeId, true);
 		}
 #endregion
 
@@ -2392,12 +2412,28 @@ namespace SIL.Transcelerator
 		private BCVRef GetScrRefOfRow(int iRow)
 		{
 			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
-			if (string.IsNullOrEmpty(sRef))
+			if (IsNullOrEmpty(sRef))
 				return null;
 			int ichDash = sRef.IndexOf('-');
 			if (ichDash > 0)
 				sRef = sRef.Substring(0, ichDash);
 			return new BCVRef(sRef);
+		}
+
+		private void ReportMissingInstalledFile(bool required, string filename)
+		{
+			var fmt = required ?
+				LocalizationManager.GetString("General.RequiredInstalledFileMissing",
+					"Required file missing: {0}.",
+					"Parameter is filename (for technical support)") :
+				LocalizationManager.GetString("General.ExpectedInstalledFileMissing",
+					"Expected file missing: {0}.",
+					"Parameter is filename (for technical support)");
+			var msg = Format(fmt, filename) + " " +
+				Format(LocalizationManager.GetString("General.RerunInstaller",
+					"Please re-run the {0} Installer to repair this problem.",
+					"Parameter is \"Transcelerator\" (plugin name)"), TxlPlugin.pluginName);
+			MessageBox.Show(msg, Text);
 		}
 
 	    /// ------------------------------------------------------------------------------------
@@ -2408,12 +2444,12 @@ namespace SIL.Transcelerator
 		private void LoadTranslations(IProgressMessage splashScreen)
 	    {
 	        if (splashScreen != null)
-	            splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingQuestions;
+	            splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgLoadingQuestions", "Loading questions...");
 
 			FileInfo finfoMasterQuestions = new FileInfo(m_masterQuestionsFilename);
 			if (!finfoMasterQuestions.Exists)
 			{
-				MessageBox.Show("Required file missing: " + m_masterQuestionsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				ReportMissingInstalledFile(true, m_masterQuestionsFilename);
 				return;
 			}
 
@@ -2421,13 +2457,13 @@ namespace SIL.Transcelerator
 
             FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
             if (!finfoKtRules.Exists)
-                MessageBox.Show("Expected file missing: " + keyTermRulesFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				ReportMissingInstalledFile(false, keyTermRulesFilename);
 
 			string questionWordsFilename = Path.Combine(m_installDir, TxlCore.kQuestionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
-				MessageBox.Show("Expected file missing: " + questionWordsFilename + ". Please re-run the Transcelerator installer to repair this problem.", Text);
+				ReportMissingInstalledFile(false, questionWordsFilename);
 
 			FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
 
@@ -2448,11 +2484,12 @@ namespace SIL.Transcelerator
 	        else
 	        {
 	            if (splashScreen != null)
-	                splashScreen.Message = Properties.Resources.kstidSplashMsgParsingQuestions;
+	                splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgParsingQuestions",
+		                "Processing questions using Major Biblical Terms list...");
 
 	            List<PhraseCustomization> customizations = null;
 	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
-	            if (!string.IsNullOrEmpty(phraseCustData))
+	            if (!IsNullOrEmpty(phraseCustData))
 	            {
 	                customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
 	                if (e != null)
@@ -2473,10 +2510,10 @@ namespace SIL.Transcelerator
 	        m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
 		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
-			if (!string.IsNullOrEmpty(translationData))
+			if (!IsNullOrEmpty(translationData))
 			{
 				if (splashScreen != null)
-					splashScreen.Message = Properties.Resources.kstidSplashMsgLoadingTranslations;			
+					splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgLoadingTranslations", "Loading translations...");			
 
 				List<XmlTranslation> translations = XmlSerializationHelper.DeserializeFromString<List<XmlTranslation>>(translationData, out e);
 				if (e != null)
@@ -2508,7 +2545,7 @@ namespace SIL.Transcelerator
 	        {
 		        if (m_cachedPhraseSubstitutions == null)
 		        {
-					m_cachedPhraseSubstitutions = ScrTextSerializationHelper.LoadOrCreateListFromString<Substitution>(
+					m_cachedPhraseSubstitutions = ListSerializationHelper.LoadOrCreateListFromString<Substitution>(
 				        m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true);
 		        }
 				return m_cachedPhraseSubstitutions;
@@ -2662,10 +2699,10 @@ namespace SIL.Transcelerator
 			}
 			else
 			{
-				lblFilterIndicator.Text = Properties.Resources.kstidFilteredStatus;
-				lblFilterIndicator.Image = Properties.Resources.Filtered;
+				lblFilterIndicator.Text = LocalizationManager.GetString("MainWindow.FilteredStatus", "Filtered");
+				lblFilterIndicator.Image = Resources.Filtered;
 			}
-			lblRemainingWork.Text = string.Format((string)lblRemainingWork.Tag,
+			lblRemainingWork.Text = Format((string)lblRemainingWork.Tag,
 				m_helper.Phrases.Count(p => !p.HasUserTranslation), m_helper.FilteredPhraseCount);
 			lblRemainingWork.Visible = true;
 		}
@@ -2779,9 +2816,9 @@ namespace SIL.Transcelerator
 		{
 			var question = m_helper[rowIndex].QuestionInfo;
 			PopulateAnswerOrCommentLabel(question, question?.Answers, LocalizableStringType.Answer,
-				m_lblAnswerLabel, m_lblAnswers, Properties.Resources.kstidAnswersLabel);
+				m_lblAnswerLabel, m_lblAnswers, LocalizationManager.GetString("MainWindow.AnswersLabel", "Answers:"));
 			PopulateAnswerOrCommentLabel(question, question?.Notes, LocalizableStringType.Note,
-				m_lblCommentLabel, m_lblComments, Properties.Resources.kstidCommentsLabel);
+				m_lblCommentLabel, m_lblComments, LocalizationManager.GetString("MainWindow.CommentsLabel", "Comments:"));
 		}
 
 		/// ------------------------------------------------------------------------------------

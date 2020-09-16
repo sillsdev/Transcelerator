@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using L10NSharp;
 using SIL.Utils;
 using SIL.Xml;
 
@@ -59,7 +60,7 @@ namespace SIL.Transcelerator
             set
             {
                 m_fileAccessor = value;
-				m_keyTermRenderingInfo = ScrTextSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
+				m_keyTermRenderingInfo = ListSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
                     m_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
             }
         }
@@ -213,7 +214,8 @@ namespace SIL.Transcelerator
         {
             string normalizedForm = rendering.Normalize(NormalizationForm.FormC);
             if (Renderings.Contains(normalizedForm))
-                throw new ArgumentException(Properties.Resources.kstidRenderingExists);
+                throw new ArgumentException(LocalizationManager.GetString("BiblicalTerm.RenderingExists",
+	                "Rendering already exists."), nameof(rendering));
             KeyTermRenderingInfo info = RenderingInfo;
             if (info == null)
             {

@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using L10NSharp;
 using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
@@ -190,14 +191,11 @@ namespace SIL.Transcelerator
 		/// question (if the UI is being presented in a locale other than U.S. English.) 
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string PhraseToDisplayInUI
-		{
-			get
-			{
-				return (m_type == TypeOfPhrase.NoEnglishVersion) ? Properties.Resources.kstidUserAddedEmptyPhrase :
-					PhraseInUse;
-			}
-		}
+		public string PhraseToDisplayInUI =>
+			(m_type == TypeOfPhrase.NoEnglishVersion) ?
+				LocalizationManager.GetString("General.UserAddedEmptyPhrase",
+					"User-added question with no English version") :
+				PhraseInUse;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

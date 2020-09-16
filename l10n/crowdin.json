@@ -1,0 +1,11 @@
+{
+  "project_identifier": "transcelerator",
+  "api_key_env": "CROWDIN_TRANSCELERATOR_KEY",
+  "base_path": ".",
+  "files": [
+    {
+      "source": "Transcelerator.en.xlf",
+      "translation": "%local%/Transcelerator.%locale%.xlf",
+    }
+  ]
+}

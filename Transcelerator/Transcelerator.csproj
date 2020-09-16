@@ -212,8 +212,8 @@
     <Reference Include="icu.net, Version=2.6.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
       <HintPath>..\packages\icu.net.2.6.0\lib\net451\icu.net.dll</HintPath>
     </Reference>
-    <Reference Include="L10NSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
-      <HintPath>..\packages\L10NSharp.4.0.2\lib\net461\L10NSharp.dll</HintPath>
+    <Reference Include="L10NSharp, Version=4.1.0.0, Culture=neutral, PublicKeyToken=fd0b3e309a5b7c28, processorArchitecture=MSIL">
+      <HintPath>..\packages\L10NSharp.4.1.0-beta0047\lib\net461\L10NSharp.dll</HintPath>
     </Reference>
     <Reference Include="MarkdownDeep, Version=1.5.6607.21413, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MarkdownDeep.NET.Patched.1.5.0.1\lib\net35\MarkdownDeep.dll</HintPath>
@@ -615,19 +615,27 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>IF "$(ConfigurationName)" == "Debug - Copy To Paratext" (
-xcopy $(TargetDir)*.* ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
-)
-IF "$(ConfigurationName)" == "Release - Copy To Paratext" (
+   @echo Copying files from: $(TargetDir) to ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName)
+   xcopy $(TargetDir)*.* ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /y /i
+   @echo Copying files from: $(TargetDir)..\..\..\..\DistFiles\localization\
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName)\localization /y /i
+   goto :done)
+IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
+
 IF EXIST "C:\Program Files (x86)\Paratext 7" (
    @echo Copying Transcelerator plugin files to Paratext 7 plugin folder...
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i)
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /y /i
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)\localization" /y /i)
 IF EXIST "C:\Program Files (x86)\Paratext 8" (
    @echo Copying Transcelerator plugin files to Paratext 8 plugin folder...
-   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i)
+   xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /y /i
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)\localization" /y /i)
 IF EXIST "C:\Program Files (x86)\Paratext 9" (
    @echo Copying Transcelerator plugin files to Paratext 9 plugin folder...
    xcopy $(TargetDir)*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /y /i
-))</PostBuildEvent>
+   xcopy $(TargetDir)..\..\..\..\DistFiles\localization\*.* "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)\localization" /y /i)
+
+:done</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets" Condition="Exists('..\packages\Mono.Posix.5.4.0.201\build\net45\Mono.Posix.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
