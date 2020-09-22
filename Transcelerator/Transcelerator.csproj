@@ -620,6 +620,8 @@ IF NOT EXIST ..\..\..\..\..\Paratext goto done
    
 robocopy $(TargetDir) ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /S *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 goto done
@@ -631,6 +633,8 @@ IF EXIST "C:\Program Files (x86)\Paratext 7" (
 @echo Copying Transcelerator plugin files to Paratext 7 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
 
@@ -638,12 +642,16 @@ IF EXIST "C:\Program Files (x86)\Paratext 8" (
 @echo Copying Transcelerator plugin files to Paratext 8 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
    
 IF EXIST "C:\Program Files (x86)\Paratext 9" (
 @echo Copying Transcelerator plugin files to Paratext 9 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
