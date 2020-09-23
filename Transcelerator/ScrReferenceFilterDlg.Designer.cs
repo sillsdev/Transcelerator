@@ -41,45 +41,41 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label m_lblFrom;
-			System.Windows.Forms.Label m_lblTo;
+			this.m_lblFrom = new System.Windows.Forms.Label();
+			this.m_lblTo = new System.Windows.Forms.Label();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.scrPsgFrom = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.btnClearFilter = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			m_lblFrom = new System.Windows.Forms.Label();
-			m_lblTo = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// m_lblFrom
 			// 
-			m_lblFrom.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblFrom, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblFrom, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(m_lblFrom, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblFrom, "ScrReferenceFilterDlg.m_lblFrom");
-			m_lblFrom.Location = new System.Drawing.Point(13, 17);
-			m_lblFrom.Name = "m_lblFrom";
-			m_lblFrom.Size = new System.Drawing.Size(33, 13);
-			m_lblFrom.TabIndex = 0;
-			m_lblFrom.Text = "From:";
+			this.m_lblFrom.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblFrom, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblFrom, "ScrReferenceFilterDlg.m_lblFrom");
+			this.m_lblFrom.Location = new System.Drawing.Point(13, 17);
+			this.m_lblFrom.Name = "m_lblFrom";
+			this.m_lblFrom.Size = new System.Drawing.Size(33, 13);
+			this.m_lblFrom.TabIndex = 0;
+			this.m_lblFrom.Text = "From:";
 			// 
 			// m_lblTo
 			// 
-			m_lblTo.AutoSize = true;
-			m_lblTo.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblTo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblTo, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(m_lblTo, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblTo, "ScrReferenceFilterDlg.m_lblTo");
-			m_lblTo.Location = new System.Drawing.Point(184, 17);
-			m_lblTo.Name = "m_lblTo";
-			m_lblTo.Size = new System.Drawing.Size(23, 13);
-			m_lblTo.TabIndex = 2;
-			m_lblTo.Text = "To:";
+			this.m_lblTo.AutoSize = true;
+			this.m_lblTo.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblTo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblTo, "ScrReferenceFilterDlg.m_lblTo");
+			this.m_lblTo.Location = new System.Drawing.Point(184, 17);
+			this.m_lblTo.Name = "m_lblTo";
+			this.m_lblTo.Size = new System.Drawing.Size(23, 13);
+			this.m_lblTo.TabIndex = 2;
+			this.m_lblTo.Text = "To:";
 			// 
 			// btnOk
 			// 
@@ -147,7 +143,8 @@ namespace SIL.Transcelerator
 			this.btnClearFilter.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.btnClearFilter.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnClearFilter, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnClearFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnClearFilter, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnClearFilter, "ScrReferenceFilterDlg.btnClearFilter");
 			this.btnClearFilter.Location = new System.Drawing.Point(52, 52);
 			this.btnClearFilter.Name = "btnClearFilter";
@@ -172,8 +169,8 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnClearFilter);
 			this.Controls.Add(this.scrPsgTo);
 			this.Controls.Add(this.scrPsgFrom);
-			this.Controls.Add(m_lblTo);
-			this.Controls.Add(m_lblFrom);
+			this.Controls.Add(this.m_lblTo);
+			this.Controls.Add(this.m_lblFrom);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
@@ -200,5 +197,7 @@ namespace SIL.Transcelerator
 		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgTo;
 		private System.Windows.Forms.Button btnClearFilter;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.Label m_lblFrom;
+		private System.Windows.Forms.Label m_lblTo;
 	}
 }

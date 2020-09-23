@@ -45,9 +45,9 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label m_lblOriginalText;
-			System.Windows.Forms.Label m_lblAlternatives;
-			System.Windows.Forms.Label m_lblQuestionToUse;
+			this.m_lblOriginalText = new System.Windows.Forms.Label();
+			this.m_lblAlternatives = new System.Windows.Forms.Label();
+			this.m_lblQuestionToUse = new System.Windows.Forms.Label();
 			this.m_txtOriginal = new System.Windows.Forms.TextBox();
 			this.m_rdoAlternative = new System.Windows.Forms.RadioButton();
 			this.m_lblAlternative = new System.Windows.Forms.Label();
@@ -59,9 +59,6 @@ namespace SIL.Transcelerator
 			this.btnReset = new System.Windows.Forms.Button();
 			this.m_lblQuestionAlreadyExists = new System.Windows.Forms.Label();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			m_lblOriginalText = new System.Windows.Forms.Label();
-			m_lblAlternatives = new System.Windows.Forms.Label();
-			m_lblQuestionToUse = new System.Windows.Forms.Label();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.m_pnlAlternatives.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
@@ -69,42 +66,42 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblOriginalText
 			// 
-			m_lblOriginalText.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalText, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalText, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalText, "EditQuestionDlg.m_lblOriginalText");
-			m_lblOriginalText.Location = new System.Drawing.Point(12, 9);
-			m_lblOriginalText.Name = "m_lblOriginalText";
-			m_lblOriginalText.Size = new System.Drawing.Size(126, 13);
-			m_lblOriginalText.TabIndex = 0;
-			m_lblOriginalText.Text = "Text of Original Question:";
+			this.m_lblOriginalText.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblOriginalText, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblOriginalText, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblOriginalText, "EditQuestionDlg.m_lblOriginalText");
+			this.m_lblOriginalText.Location = new System.Drawing.Point(12, 9);
+			this.m_lblOriginalText.Name = "m_lblOriginalText";
+			this.m_lblOriginalText.Size = new System.Drawing.Size(126, 13);
+			this.m_lblOriginalText.TabIndex = 0;
+			this.m_lblOriginalText.Text = "Text of Original Question:";
 			// 
 			// m_lblAlternatives
 			// 
-			m_lblAlternatives.AutoSize = true;
-			this.m_pnlAlternatives.SetFlowBreak(m_lblAlternatives, true);
-			m_lblAlternatives.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblAlternatives, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblAlternatives, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblAlternatives, "EditQuestionDlg.m_lblAlternatives");
-			m_lblAlternatives.Location = new System.Drawing.Point(3, 0);
-			m_lblAlternatives.Name = "m_lblAlternatives";
-			m_lblAlternatives.Size = new System.Drawing.Size(119, 13);
-			m_lblAlternatives.TabIndex = 2;
-			m_lblAlternatives.Text = "Suggested Alternatives:";
+			this.m_lblAlternatives.AutoSize = true;
+			this.m_pnlAlternatives.SetFlowBreak(this.m_lblAlternatives, true);
+			this.m_lblAlternatives.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAlternatives, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAlternatives, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAlternatives, "EditQuestionDlg.m_lblAlternatives");
+			this.m_lblAlternatives.Location = new System.Drawing.Point(3, 0);
+			this.m_lblAlternatives.Name = "m_lblAlternatives";
+			this.m_lblAlternatives.Size = new System.Drawing.Size(119, 13);
+			this.m_lblAlternatives.TabIndex = 2;
+			this.m_lblAlternatives.Text = "Suggested Alternatives:";
 			// 
 			// m_lblQuestionToUse
 			// 
-			m_lblQuestionToUse.AutoSize = true;
-			m_lblQuestionToUse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblQuestionToUse, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblQuestionToUse, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblQuestionToUse, "EditQuestionDlg.m_lblQuestionToUse");
-			m_lblQuestionToUse.Location = new System.Drawing.Point(3, 44);
-			m_lblQuestionToUse.Name = "m_lblQuestionToUse";
-			m_lblQuestionToUse.Size = new System.Drawing.Size(86, 13);
-			m_lblQuestionToUse.TabIndex = 5;
-			m_lblQuestionToUse.Text = "Question to Use:";
+			this.m_lblQuestionToUse.AutoSize = true;
+			this.m_lblQuestionToUse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblQuestionToUse, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblQuestionToUse, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblQuestionToUse, "EditQuestionDlg.m_lblQuestionToUse");
+			this.m_lblQuestionToUse.Location = new System.Drawing.Point(3, 44);
+			this.m_lblQuestionToUse.Name = "m_lblQuestionToUse";
+			this.m_lblQuestionToUse.Size = new System.Drawing.Size(86, 13);
+			this.m_lblQuestionToUse.TabIndex = 5;
+			this.m_lblQuestionToUse.Text = "Question to Use:";
 			// 
 			// m_txtOriginal
 			// 
@@ -167,7 +164,7 @@ namespace SIL.Transcelerator
 			// 
 			this.flowLayoutPanel1.AutoSize = true;
 			this.flowLayoutPanel1.Controls.Add(this.m_pnlAlternatives);
-			this.flowLayoutPanel1.Controls.Add(m_lblQuestionToUse);
+			this.flowLayoutPanel1.Controls.Add(this.m_lblQuestionToUse);
 			this.flowLayoutPanel1.Controls.Add(this.m_txtModified);
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(15, 79);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -177,7 +174,7 @@ namespace SIL.Transcelerator
 			// m_pnlAlternatives
 			// 
 			this.m_pnlAlternatives.AutoSize = true;
-			this.m_pnlAlternatives.Controls.Add(m_lblAlternatives);
+			this.m_pnlAlternatives.Controls.Add(this.m_lblAlternatives);
 			this.m_pnlAlternatives.Controls.Add(this.m_rdoAlternative);
 			this.flowLayoutPanel1.SetFlowBreak(this.m_pnlAlternatives, true);
 			this.m_pnlAlternatives.Location = new System.Drawing.Point(3, 3);
@@ -217,7 +214,8 @@ namespace SIL.Transcelerator
 			// btnReset
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnReset, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnReset, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnReset, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnReset, "EditQuestionDlg.btnReset");
 			this.btnReset.Location = new System.Drawing.Point(38, 28);
 			this.btnReset.Name = "btnReset";
@@ -259,7 +257,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Controls.Add(this.m_txtOriginal);
-			this.Controls.Add(m_lblOriginalText);
+			this.Controls.Add(this.m_lblOriginalText);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "EditQuestionDlg.WindowTitle");
@@ -293,5 +291,8 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.FlowLayoutPanel m_pnlAlternatives;
 		private System.Windows.Forms.Label m_lblQuestionAlreadyExists;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.Label m_lblOriginalText;
+		private System.Windows.Forms.Label m_lblAlternatives;
+		private System.Windows.Forms.Label m_lblQuestionToUse;
 	}
 }

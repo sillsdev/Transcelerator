@@ -51,18 +51,18 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label lblSectionRangeTo;
-			System.Windows.Forms.GroupBox groupBoxDocument;
-			System.Windows.Forms.Label lblFolder;
-			System.Windows.Forms.Label lblUntranslatedQuestions;
-			System.Windows.Forms.Label lblStyleSpecification;
-			System.Windows.Forms.Label lblDetailQuestionsOutOfOrder;
+			this.lblSectionRangeTo = new System.Windows.Forms.Label();
+			this.groupBoxDocument = new System.Windows.Forms.GroupBox();
 			this.m_lblFolder = new System.Windows.Forms.Label();
+			this.lblFolder = new System.Windows.Forms.Label();
 			this.btnBrowse = new System.Windows.Forms.Button();
 			this.m_txtFilename = new System.Windows.Forms.TextBox();
 			this.m_lbFilename = new System.Windows.Forms.Label();
 			this.lblTitle = new System.Windows.Forms.Label();
 			this.m_txtTitle = new System.Windows.Forms.TextBox();
+			this.lblUntranslatedQuestions = new System.Windows.Forms.Label();
+			this.lblStyleSpecification = new System.Windows.Forms.Label();
+			this.lblDetailQuestionsOutOfOrder = new System.Windows.Forms.Label();
 			this.m_rdoWholeBook = new System.Windows.Forms.RadioButton();
 			this.m_grpRange = new System.Windows.Forms.GroupBox();
 			this.m_cboBooks = new System.Windows.Forms.ComboBox();
@@ -114,13 +114,7 @@ namespace SIL.Transcelerator
 			this.lblUseLWC = new System.Windows.Forms.Label();
 			this.tabAppearance = new System.Windows.Forms.TabPage();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			lblSectionRangeTo = new System.Windows.Forms.Label();
-			groupBoxDocument = new System.Windows.Forms.GroupBox();
-			lblFolder = new System.Windows.Forms.Label();
-			lblUntranslatedQuestions = new System.Windows.Forms.Label();
-			lblStyleSpecification = new System.Windows.Forms.Label();
-			lblDetailQuestionsOutOfOrder = new System.Windows.Forms.Label();
-			groupBoxDocument.SuspendLayout();
+			this.groupBoxDocument.SuspendLayout();
 			this.m_grpRange.SuspendLayout();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numBlankLines)).BeginInit();
@@ -136,38 +130,37 @@ namespace SIL.Transcelerator
 			// 
 			// lblSectionRangeTo
 			// 
-			lblSectionRangeTo.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblSectionRangeTo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblSectionRangeTo, null);
-			this.l10NSharpExtender1.SetLocalizingId(lblSectionRangeTo, "GenerateScriptDlg.label1");
-			lblSectionRangeTo.Location = new System.Drawing.Point(310, 67);
-			lblSectionRangeTo.Name = "lblSectionRangeTo";
-			lblSectionRangeTo.Size = new System.Drawing.Size(16, 13);
-			lblSectionRangeTo.TabIndex = 6;
-			lblSectionRangeTo.Text = "to";
+			this.lblSectionRangeTo.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblSectionRangeTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblSectionRangeTo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblSectionRangeTo, "GenerateScriptDlg.lblSectionRangeTo");
+			this.lblSectionRangeTo.Location = new System.Drawing.Point(310, 67);
+			this.lblSectionRangeTo.Name = "lblSectionRangeTo";
+			this.lblSectionRangeTo.Size = new System.Drawing.Size(16, 13);
+			this.lblSectionRangeTo.TabIndex = 6;
+			this.lblSectionRangeTo.Text = "to";
 			// 
 			// groupBoxDocument
 			// 
-			groupBoxDocument.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.groupBoxDocument.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			groupBoxDocument.Controls.Add(this.m_lblFolder);
-			groupBoxDocument.Controls.Add(lblFolder);
-			groupBoxDocument.Controls.Add(this.btnBrowse);
-			groupBoxDocument.Controls.Add(this.m_txtFilename);
-			groupBoxDocument.Controls.Add(this.m_lbFilename);
-			groupBoxDocument.Controls.Add(this.lblTitle);
-			groupBoxDocument.Controls.Add(this.m_txtTitle);
-			this.l10NSharpExtender1.SetLocalizableToolTip(groupBoxDocument, null);
-			this.l10NSharpExtender1.SetLocalizationComment(groupBoxDocument, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(groupBoxDocument, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(groupBoxDocument, "GenerateScriptDlg.groupBoxDocument");
-			groupBoxDocument.Location = new System.Drawing.Point(6, 109);
-			groupBoxDocument.Name = "groupBoxDocument";
-			groupBoxDocument.Size = new System.Drawing.Size(503, 99);
-			groupBoxDocument.TabIndex = 3;
-			groupBoxDocument.TabStop = false;
-			groupBoxDocument.Text = "Document";
+			this.groupBoxDocument.Controls.Add(this.m_lblFolder);
+			this.groupBoxDocument.Controls.Add(this.lblFolder);
+			this.groupBoxDocument.Controls.Add(this.btnBrowse);
+			this.groupBoxDocument.Controls.Add(this.m_txtFilename);
+			this.groupBoxDocument.Controls.Add(this.m_lbFilename);
+			this.groupBoxDocument.Controls.Add(this.lblTitle);
+			this.groupBoxDocument.Controls.Add(this.m_txtTitle);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.groupBoxDocument, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.groupBoxDocument, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.groupBoxDocument, "GenerateScriptDlg.groupBoxDocument");
+			this.groupBoxDocument.Location = new System.Drawing.Point(6, 109);
+			this.groupBoxDocument.Name = "groupBoxDocument";
+			this.groupBoxDocument.Size = new System.Drawing.Size(503, 99);
+			this.groupBoxDocument.TabIndex = 3;
+			this.groupBoxDocument.TabStop = false;
+			this.groupBoxDocument.Text = "Document";
 			// 
 			// m_lblFolder
 			// 
@@ -185,21 +178,22 @@ namespace SIL.Transcelerator
 			// 
 			// lblFolder
 			// 
-			lblFolder.AutoSize = true;
-			lblFolder.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblFolder, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblFolder, null);
-			this.l10NSharpExtender1.SetLocalizingId(lblFolder, "GenerateScriptDlg.label4");
-			lblFolder.Location = new System.Drawing.Point(6, 70);
-			lblFolder.Name = "lblFolder";
-			lblFolder.Size = new System.Drawing.Size(39, 13);
-			lblFolder.TabIndex = 5;
-			lblFolder.Text = "Folder:";
+			this.lblFolder.AutoSize = true;
+			this.lblFolder.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblFolder, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblFolder, "GenerateScriptDlg.lblFolder");
+			this.lblFolder.Location = new System.Drawing.Point(6, 70);
+			this.lblFolder.Name = "lblFolder";
+			this.lblFolder.Size = new System.Drawing.Size(39, 13);
+			this.lblFolder.TabIndex = 5;
+			this.lblFolder.Text = "Folder:";
 			// 
 			// btnBrowse
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnBrowse, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnBrowse, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnBrowse, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnBrowse, "GenerateScriptDlg.btnBrowse");
 			this.btnBrowse.Location = new System.Drawing.Point(419, 46);
 			this.btnBrowse.Name = "btnBrowse";
@@ -224,7 +218,8 @@ namespace SIL.Transcelerator
 			// 
 			this.m_lbFilename.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lbFilename, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lbFilename, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lbFilename, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lbFilename, "GenerateScriptDlg.m_lbFilename");
 			this.m_lbFilename.Location = new System.Drawing.Point(6, 48);
 			this.m_lbFilename.Name = "m_lbFilename";
@@ -243,7 +238,7 @@ namespace SIL.Transcelerator
 			this.lblTitle.Name = "lblTitle";
 			this.lblTitle.Size = new System.Drawing.Size(30, 13);
 			this.lblTitle.TabIndex = 0;
-			this.lblTitle.Text = "&Title:";
+			this.lblTitle.Text = "Title:";
 			// 
 			// m_txtTitle
 			// 
@@ -260,51 +255,50 @@ namespace SIL.Transcelerator
 			// 
 			// lblUntranslatedQuestions
 			// 
-			lblUntranslatedQuestions.AutoSize = true;
-			lblUntranslatedQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblUntranslatedQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblUntranslatedQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(lblUntranslatedQuestions, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(lblUntranslatedQuestions, "GenerateScriptDlg.lblUntranslatedQuestions");
-			lblUntranslatedQuestions.Location = new System.Drawing.Point(0, 8);
-			lblUntranslatedQuestions.Name = "lblUntranslatedQuestions";
-			lblUntranslatedQuestions.Size = new System.Drawing.Size(194, 13);
-			lblUntranslatedQuestions.TabIndex = 17;
-			lblUntranslatedQuestions.Text = "How to Handle Untranslated Questions:";
+			this.lblUntranslatedQuestions.AutoSize = true;
+			this.lblUntranslatedQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblUntranslatedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblUntranslatedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblUntranslatedQuestions, "GenerateScriptDlg.lblUntranslatedQuestions");
+			this.lblUntranslatedQuestions.Location = new System.Drawing.Point(0, 8);
+			this.lblUntranslatedQuestions.Name = "lblUntranslatedQuestions";
+			this.lblUntranslatedQuestions.Size = new System.Drawing.Size(194, 13);
+			this.lblUntranslatedQuestions.TabIndex = 17;
+			this.lblUntranslatedQuestions.Text = "How to Handle Untranslated Questions:";
 			// 
 			// lblStyleSpecification
 			// 
-			lblStyleSpecification.AutoSize = true;
-			lblStyleSpecification.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblStyleSpecification, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblStyleSpecification, null);
-			this.l10NSharpExtender1.SetLocalizingId(lblStyleSpecification, "GenerateScriptDlg.label9");
-			lblStyleSpecification.Location = new System.Drawing.Point(12, 15);
-			lblStyleSpecification.Name = "lblStyleSpecification";
-			lblStyleSpecification.Size = new System.Drawing.Size(123, 13);
-			lblStyleSpecification.TabIndex = 0;
-			lblStyleSpecification.Text = "Where to Specify Styles:";
+			this.lblStyleSpecification.AutoSize = true;
+			this.lblStyleSpecification.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblStyleSpecification, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblStyleSpecification, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblStyleSpecification, "GenerateScriptDlg.lblStyleSpecification");
+			this.lblStyleSpecification.Location = new System.Drawing.Point(12, 15);
+			this.lblStyleSpecification.Name = "lblStyleSpecification";
+			this.lblStyleSpecification.Size = new System.Drawing.Size(123, 13);
+			this.lblStyleSpecification.TabIndex = 0;
+			this.lblStyleSpecification.Text = "Where to Specify Styles:";
 			// 
 			// lblDetailQuestionsOutOfOrder
 			// 
-			lblDetailQuestionsOutOfOrder.AutoSize = true;
-			lblDetailQuestionsOutOfOrder.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblDetailQuestionsOutOfOrder, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblDetailQuestionsOutOfOrder, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(lblDetailQuestionsOutOfOrder, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(lblDetailQuestionsOutOfOrder, "GenerateScriptDlg.lblDetailQuestionsOutOfOrder");
-			lblDetailQuestionsOutOfOrder.Location = new System.Drawing.Point(0, 8);
-			lblDetailQuestionsOutOfOrder.Name = "lblDetailQuestionsOutOfOrder";
-			lblDetailQuestionsOutOfOrder.Size = new System.Drawing.Size(196, 13);
-			lblDetailQuestionsOutOfOrder.TabIndex = 17;
-			lblDetailQuestionsOutOfOrder.Text = "When Detail Questions are out of Order:";
+			this.lblDetailQuestionsOutOfOrder.AutoSize = true;
+			this.lblDetailQuestionsOutOfOrder.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblDetailQuestionsOutOfOrder, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblDetailQuestionsOutOfOrder, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblDetailQuestionsOutOfOrder, "GenerateScriptDlg.lblDetailQuestionsOutOfOrder");
+			this.lblDetailQuestionsOutOfOrder.Location = new System.Drawing.Point(0, 8);
+			this.lblDetailQuestionsOutOfOrder.Name = "lblDetailQuestionsOutOfOrder";
+			this.lblDetailQuestionsOutOfOrder.Size = new System.Drawing.Size(196, 13);
+			this.lblDetailQuestionsOutOfOrder.TabIndex = 17;
+			this.lblDetailQuestionsOutOfOrder.Text = "When Detail Questions are out of Order:";
 			// 
 			// m_rdoWholeBook
 			// 
 			this.m_rdoWholeBook.AutoSize = true;
 			this.m_rdoWholeBook.Checked = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoWholeBook, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoWholeBook, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoWholeBook, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoWholeBook, "GenerateScriptDlg.m_rdoWholeBook");
 			this.m_rdoWholeBook.Location = new System.Drawing.Point(6, 19);
 			this.m_rdoWholeBook.Name = "m_rdoWholeBook";
@@ -321,7 +315,7 @@ namespace SIL.Transcelerator
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_grpRange.Controls.Add(this.m_cboBooks);
 			this.m_grpRange.Controls.Add(this.m_cboEndSection);
-			this.m_grpRange.Controls.Add(lblSectionRangeTo);
+			this.m_grpRange.Controls.Add(this.lblSectionRangeTo);
 			this.m_grpRange.Controls.Add(this.m_cboStartSection);
 			this.m_grpRange.Controls.Add(this.m_rdoSectionRange);
 			this.m_grpRange.Controls.Add(this.m_cboSection);
@@ -398,7 +392,8 @@ namespace SIL.Transcelerator
 			this.m_rdoSectionRange.AutoSize = true;
 			this.m_rdoSectionRange.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSectionRange, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSectionRange, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSectionRange, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSectionRange, "GenerateScriptDlg.m_rdoSectionRange");
 			this.m_rdoSectionRange.Location = new System.Drawing.Point(6, 65);
 			this.m_rdoSectionRange.Name = "m_rdoSectionRange";
@@ -433,7 +428,8 @@ namespace SIL.Transcelerator
 			this.m_rdoSingleSection.AutoSize = true;
 			this.m_rdoSingleSection.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSingleSection, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSingleSection, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSingleSection, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSingleSection, "GenerateScriptDlg.m_rdoSingleSection");
 			this.m_rdoSingleSection.Location = new System.Drawing.Point(6, 42);
 			this.m_rdoSingleSection.Name = "m_rdoSingleSection";
@@ -449,7 +445,8 @@ namespace SIL.Transcelerator
 			this.m_chkPassageBeforeOverview.Checked = true;
 			this.m_chkPassageBeforeOverview.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkPassageBeforeOverview, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkPassageBeforeOverview, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkPassageBeforeOverview, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkPassageBeforeOverview, "GenerateScriptDlg.m_chkPassageBeforeOverview");
 			this.m_chkPassageBeforeOverview.Location = new System.Drawing.Point(8, 14);
 			this.m_chkPassageBeforeOverview.Name = "m_chkPassageBeforeOverview";
@@ -465,7 +462,7 @@ namespace SIL.Transcelerator
 			this.panel1.Controls.Add(this.m_rdoSkipUntranslated);
 			this.panel1.Controls.Add(this.m_rdoDisplayWarning);
 			this.panel1.Controls.Add(this.label6);
-			this.panel1.Controls.Add(lblUntranslatedQuestions);
+			this.panel1.Controls.Add(this.lblUntranslatedQuestions);
 			this.panel1.Controls.Add(this.m_rdoUseOriginal);
 			this.panel1.Location = new System.Drawing.Point(256, 6);
 			this.panel1.Name = "panel1";
@@ -477,7 +474,8 @@ namespace SIL.Transcelerator
 			this.m_rdoSkipUntranslated.AutoSize = true;
 			this.m_rdoSkipUntranslated.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSkipUntranslated, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSkipUntranslated, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSkipUntranslated, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSkipUntranslated, "GenerateScriptDlg.m_rdoSkipUntranslated");
 			this.m_rdoSkipUntranslated.Location = new System.Drawing.Point(3, 74);
 			this.m_rdoSkipUntranslated.Name = "m_rdoSkipUntranslated";
@@ -491,7 +489,8 @@ namespace SIL.Transcelerator
 			this.m_rdoDisplayWarning.AutoSize = true;
 			this.m_rdoDisplayWarning.Checked = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoDisplayWarning, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayWarning, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoDisplayWarning, "GenerateScriptDlg.m_rdoDisplayWarning");
 			this.m_rdoDisplayWarning.Location = new System.Drawing.Point(3, 29);
 			this.m_rdoDisplayWarning.Name = "m_rdoDisplayWarning";
@@ -520,7 +519,8 @@ namespace SIL.Transcelerator
 			this.m_rdoUseOriginal.AutoSize = true;
 			this.m_rdoUseOriginal.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUseOriginal, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseOriginal, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseOriginal, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUseOriginal, "GenerateScriptDlg.m_rdoUseOriginal");
 			this.m_rdoUseOriginal.Location = new System.Drawing.Point(3, 52);
 			this.m_rdoUseOriginal.Name = "m_rdoUseOriginal";
@@ -536,7 +536,9 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCComments.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCComments.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCComments, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCComments, "Param is the name of a language");
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCComments, "Param is the name of a language. To control which character will be the mnemonic " +
+        "key (underlined when the user presses the ALT key), put the ampersand before the" +
+        " desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCComments, "GenerateScriptDlg.m_chkIncludeLWCComments");
 			this.m_chkIncludeLWCComments.Location = new System.Drawing.Point(10, 173);
 			this.m_chkIncludeLWCComments.Name = "m_chkIncludeLWCComments";
@@ -553,7 +555,9 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCAnswers.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCAnswers.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCAnswers, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCAnswers, "Param is the name of a language");
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCAnswers, "Param is the name of a language. To control which character will be the mnemonic " +
+        "key (underlined when the user presses the ALT key), put the ampersand before the" +
+        " desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCAnswers, "GenerateScriptDlg.m_chkIncludeLWCAnswers");
 			this.m_chkIncludeLWCAnswers.Location = new System.Drawing.Point(10, 150);
 			this.m_chkIncludeLWCAnswers.Name = "m_chkIncludeLWCAnswers";
@@ -571,7 +575,9 @@ namespace SIL.Transcelerator
 			this.m_chkIncludeLWCQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.m_chkIncludeLWCQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeLWCQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCQuestions, "Param is the name of a language");
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeLWCQuestions, "Param is the name of a language. To control which character will be the mnemonic " +
+        "key (underlined when the user presses the ALT key), put the ampersand before the" +
+        " desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeLWCQuestions, "GenerateScriptDlg.m_chkIncludeLWCQuestions");
 			this.m_chkIncludeLWCQuestions.Location = new System.Drawing.Point(10, 127);
 			this.m_chkIncludeLWCQuestions.Name = "m_chkIncludeLWCQuestions";
@@ -774,7 +780,8 @@ namespace SIL.Transcelerator
 			this.m_chkNumberQuestions.Checked = true;
 			this.m_chkNumberQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkNumberQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkNumberQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkNumberQuestions, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkNumberQuestions, "GenerateScriptDlg.m_chkNumberQuestions");
 			this.m_chkNumberQuestions.Location = new System.Drawing.Point(0, 127);
 			this.m_chkNumberQuestions.Name = "m_chkNumberQuestions";
@@ -787,7 +794,8 @@ namespace SIL.Transcelerator
 			// 
 			this.lblExtraAnswerLines.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblExtraAnswerLines, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblExtraAnswerLines, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblExtraAnswerLines, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.lblExtraAnswerLines, "GenerateScriptDlg.label7");
 			this.lblExtraAnswerLines.Location = new System.Drawing.Point(0, 9);
 			this.lblExtraAnswerLines.Name = "lblExtraAnswerLines";
@@ -812,7 +820,8 @@ namespace SIL.Transcelerator
 			this.m_chkAbsoluteCssPath.AutoSize = true;
 			this.m_chkAbsoluteCssPath.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkAbsoluteCssPath, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkAbsoluteCssPath, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkAbsoluteCssPath, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkAbsoluteCssPath, "GenerateScriptDlg.m_chkAbsoluteCssPath");
 			this.m_chkAbsoluteCssPath.Location = new System.Drawing.Point(0, 27);
 			this.m_chkAbsoluteCssPath.Name = "m_chkAbsoluteCssPath";
@@ -825,7 +834,8 @@ namespace SIL.Transcelerator
 			// 
 			this.m_chkOverwriteCss.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkOverwriteCss, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkOverwriteCss, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_chkOverwriteCss, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_chkOverwriteCss, "GenerateScriptDlg.m_chkOverwriteCss");
 			this.m_chkOverwriteCss.Location = new System.Drawing.Point(0, 50);
 			this.m_chkOverwriteCss.Name = "m_chkOverwriteCss";
@@ -869,7 +879,8 @@ namespace SIL.Transcelerator
 			this.m_rdoUseExternalCss.AutoSize = true;
 			this.m_rdoUseExternalCss.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUseExternalCss, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseExternalCss, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUseExternalCss, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUseExternalCss, "GenerateScriptDlg.m_rdoUseExternalCss");
 			this.m_rdoUseExternalCss.Location = new System.Drawing.Point(15, 63);
 			this.m_rdoUseExternalCss.Name = "m_rdoUseExternalCss";
@@ -885,7 +896,8 @@ namespace SIL.Transcelerator
 			this.m_rdoEmbedStyleInfo.Checked = true;
 			this.m_rdoEmbedStyleInfo.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoEmbedStyleInfo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoEmbedStyleInfo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoEmbedStyleInfo, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoEmbedStyleInfo, "GenerateScriptDlg.m_rdoEmbedStyleInfo");
 			this.m_rdoEmbedStyleInfo.Location = new System.Drawing.Point(15, 40);
 			this.m_rdoEmbedStyleInfo.Name = "m_rdoEmbedStyleInfo";
@@ -912,7 +924,7 @@ namespace SIL.Transcelerator
 			// tabGeneral
 			// 
 			this.tabGeneral.Controls.Add(this.m_grpRange);
-			this.tabGeneral.Controls.Add(groupBoxDocument);
+			this.tabGeneral.Controls.Add(this.groupBoxDocument);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabGeneral, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.tabGeneral, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.tabGeneral, "GenerateScriptDlg.tabGeneral");
@@ -966,7 +978,7 @@ namespace SIL.Transcelerator
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.panel3.Controls.Add(this.m_rdoDisplayReferenceForOutOfOrderQuestions);
 			this.panel3.Controls.Add(this.label8);
-			this.panel3.Controls.Add(lblDetailQuestionsOutOfOrder);
+			this.panel3.Controls.Add(this.lblDetailQuestionsOutOfOrder);
 			this.panel3.Controls.Add(this.m_rdoOutputPassageForOutOfOrderQuestions);
 			this.panel3.Location = new System.Drawing.Point(256, 114);
 			this.panel3.Name = "panel3";
@@ -979,7 +991,8 @@ namespace SIL.Transcelerator
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Checked = true;
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoDisplayReferenceForOutOfOrderQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayReferenceForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoDisplayReferenceForOutOfOrderQuestions, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoDisplayReferenceForOutOfOrderQuestions, "GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions");
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Location = new System.Drawing.Point(3, 29);
 			this.m_rdoDisplayReferenceForOutOfOrderQuestions.Name = "m_rdoDisplayReferenceForOutOfOrderQuestions";
@@ -1009,7 +1022,8 @@ namespace SIL.Transcelerator
 			this.m_rdoOutputPassageForOutOfOrderQuestions.AutoSize = true;
 			this.m_rdoOutputPassageForOutOfOrderQuestions.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoOutputPassageForOutOfOrderQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoOutputPassageForOutOfOrderQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoOutputPassageForOutOfOrderQuestions, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoOutputPassageForOutOfOrderQuestions, "GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions");
 			this.m_rdoOutputPassageForOutOfOrderQuestions.Location = new System.Drawing.Point(3, 52);
 			this.m_rdoOutputPassageForOutOfOrderQuestions.Name = "m_rdoOutputPassageForOutOfOrderQuestions";
@@ -1037,8 +1051,8 @@ namespace SIL.Transcelerator
 			// 
 			this.lblUseLWC.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblUseLWC, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblUseLWC, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.lblUseLWC, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblUseLWC, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.lblUseLWC, "GenerateScriptDlg.lblUseLWC");
 			this.lblUseLWC.Location = new System.Drawing.Point(6, 84);
 			this.lblUseLWC.Name = "lblUseLWC";
@@ -1050,7 +1064,7 @@ namespace SIL.Transcelerator
 			// 
 			this.tabAppearance.Controls.Add(this.panel2);
 			this.tabAppearance.Controls.Add(this.m_pnlCssOptions);
-			this.tabAppearance.Controls.Add(lblStyleSpecification);
+			this.tabAppearance.Controls.Add(this.lblStyleSpecification);
 			this.tabAppearance.Controls.Add(this.m_rdoEmbedStyleInfo);
 			this.tabAppearance.Controls.Add(this.m_rdoUseExternalCss);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.tabAppearance, null);
@@ -1091,8 +1105,8 @@ namespace SIL.Transcelerator
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Generate Checking Script Template";
-			groupBoxDocument.ResumeLayout(false);
-			groupBoxDocument.PerformLayout();
+			this.groupBoxDocument.ResumeLayout(false);
+			this.groupBoxDocument.PerformLayout();
 			this.m_grpRange.ResumeLayout(false);
 			this.m_grpRange.PerformLayout();
 			this.panel1.ResumeLayout(false);
@@ -1174,5 +1188,11 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label label8;
 		internal System.Windows.Forms.RadioButton m_rdoOutputPassageForOutOfOrderQuestions;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.Label lblSectionRangeTo;
+		private System.Windows.Forms.GroupBox groupBoxDocument;
+		private System.Windows.Forms.Label lblFolder;
+		private System.Windows.Forms.Label lblUntranslatedQuestions;
+		private System.Windows.Forms.Label lblStyleSpecification;
+		private System.Windows.Forms.Label lblDetailQuestionsOutOfOrder;
 	}
 }

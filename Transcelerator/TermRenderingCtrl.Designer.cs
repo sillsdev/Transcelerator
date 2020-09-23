@@ -48,8 +48,9 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ToolStripMenuItem mnuAddRenderingC;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TermRenderingCtrl));
+			this.mnuAddRenderingC = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuSetAsDefault = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_lblKeyTermColHead = new System.Windows.Forms.Label();
 			this.headerContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -60,19 +61,24 @@ namespace SIL.Transcelerator
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mnuDeleteRendering = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLookUpTermC = new System.Windows.Forms.ToolStripMenuItem();
-			mnuAddRenderingC = new System.Windows.Forms.ToolStripMenuItem();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.headerContextMenuStrip.SuspendLayout();
 			this.contextMenuStrip.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// mnuAddRenderingC
 			// 
-			mnuAddRenderingC.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
-			mnuAddRenderingC.Name = "mnuAddRenderingC";
-			mnuAddRenderingC.Size = new System.Drawing.Size(198, 22);
-			mnuAddRenderingC.Text = "&Add rendering...";
-			mnuAddRenderingC.Click += new System.EventHandler(this.mnuAddRendering_Click);
+			this.mnuAddRenderingC.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAddRenderingC, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddRenderingC, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddRenderingC, "TermRenderingCtrl.mnuAddRenderingC");
+			this.mnuAddRenderingC.Name = "mnuAddRenderingC";
+			this.mnuAddRenderingC.Size = new System.Drawing.Size(198, 22);
+			this.mnuAddRenderingC.Text = "&Add rendering...";
+			this.mnuAddRenderingC.Click += new System.EventHandler(this.mnuAddRendering_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -82,6 +88,10 @@ namespace SIL.Transcelerator
 			// mnuSetAsDefault
 			// 
 			this.mnuSetAsDefault.Image = global::SIL.Transcelerator.Properties.Resources.check_circle;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuSetAsDefault, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuSetAsDefault, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuSetAsDefault, "TermRenderingCtrl.mnuSetAsDefault");
 			this.mnuSetAsDefault.Name = "mnuSetAsDefault";
 			this.mnuSetAsDefault.Size = new System.Drawing.Size(198, 22);
 			this.mnuSetAsDefault.Text = "&Set as default rendering";
@@ -94,6 +104,10 @@ namespace SIL.Transcelerator
 			this.m_lblKeyTermColHead.Dock = System.Windows.Forms.DockStyle.Top;
 			this.m_lblKeyTermColHead.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold);
 			this.m_lblKeyTermColHead.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblKeyTermColHead, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblKeyTermColHead, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblKeyTermColHead, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblKeyTermColHead, "TermRenderingCtrl.m_lblKeyTermColHead");
 			this.m_lblKeyTermColHead.Location = new System.Drawing.Point(0, 0);
 			this.m_lblKeyTermColHead.Name = "m_lblKeyTermColHead";
 			this.m_lblKeyTermColHead.Size = new System.Drawing.Size(100, 20);
@@ -107,12 +121,20 @@ namespace SIL.Transcelerator
             this.mnuAddRenderingH,
             this.mnuLookUpTermH,
             this.mnuRefreshRenderingsH});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.headerContextMenuStrip, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.headerContextMenuStrip, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.headerContextMenuStrip, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.headerContextMenuStrip, "TermRenderingCtrl.contextMenuStrip1");
 			this.headerContextMenuStrip.Name = "contextMenuStrip1";
 			this.headerContextMenuStrip.Size = new System.Drawing.Size(222, 70);
 			// 
 			// mnuAddRenderingH
 			// 
 			this.mnuAddRenderingH.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAddRenderingH, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddRenderingH, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddRenderingH, "TermRenderingCtrl.mnuAddRenderingH");
 			this.mnuAddRenderingH.Name = "mnuAddRenderingH";
 			this.mnuAddRenderingH.Size = new System.Drawing.Size(221, 22);
 			this.mnuAddRenderingH.Text = "&Add rendering...";
@@ -121,6 +143,9 @@ namespace SIL.Transcelerator
 			// mnuLookUpTermH
 			// 
 			this.mnuLookUpTermH.Image = global::SIL.Transcelerator.Properties.Resources._1330980033_search_button;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuLookUpTermH, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLookUpTermH, resources.GetString("mnuLookUpTermH.LocalizationComment"));
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuLookUpTermH, "TermRenderingCtrl.mnuLookUpTermH");
 			this.mnuLookUpTermH.Name = "mnuLookUpTermH";
 			this.mnuLookUpTermH.Size = new System.Drawing.Size(221, 22);
 			this.mnuLookUpTermH.Text = "Find &Term in {0}";
@@ -129,6 +154,9 @@ namespace SIL.Transcelerator
 			// mnuRefreshRenderingsH
 			// 
 			this.mnuRefreshRenderingsH.Image = global::SIL.Transcelerator.Properties.Resources.Refresh;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuRefreshRenderingsH, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuRefreshRenderingsH, resources.GetString("mnuRefreshRenderingsH.LocalizationComment"));
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuRefreshRenderingsH, "TermRenderingCtrl.mnuRefreshRenderingsH");
 			this.mnuRefreshRenderingsH.Name = "mnuRefreshRenderingsH";
 			this.mnuRefreshRenderingsH.Size = new System.Drawing.Size(221, 22);
 			this.mnuRefreshRenderingsH.Text = "Refresh Renderings from {0}";
@@ -145,20 +173,24 @@ namespace SIL.Transcelerator
 			this.m_lbRenderings.Size = new System.Drawing.Size(100, 20);
 			this.m_lbRenderings.Sorted = true;
 			this.m_lbRenderings.TabIndex = 2;
-			this.m_lbRenderings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lbRenderings_MouseUp);
 			this.m_lbRenderings.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.m_lbRenderings_DrawItem);
-			this.m_lbRenderings.Resize += new System.EventHandler(this.m_lbRenderings_Resize);
 			this.m_lbRenderings.SelectedIndexChanged += new System.EventHandler(this.m_lbRenderings_SelectedIndexChanged);
 			this.m_lbRenderings.MouseDown += new System.Windows.Forms.MouseEventHandler(this.m_lbRenderings_MouseDown);
+			this.m_lbRenderings.MouseUp += new System.Windows.Forms.MouseEventHandler(this.m_lbRenderings_MouseUp);
+			this.m_lbRenderings.Resize += new System.EventHandler(this.m_lbRenderings_Resize);
 			// 
 			// contextMenuStrip
 			// 
 			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuSetAsDefault,
-            mnuAddRenderingC,
+            this.mnuAddRenderingC,
             this.mnuDeleteRendering,
             toolStripSeparator1,
             this.mnuLookUpTermC});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.contextMenuStrip, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.contextMenuStrip, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.contextMenuStrip, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.contextMenuStrip, "TermRenderingCtrl.contextMenuStrip.contextMenuStrip1");
 			this.contextMenuStrip.Name = "contextMenuStrip1";
 			this.contextMenuStrip.Size = new System.Drawing.Size(199, 98);
 			this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
@@ -166,6 +198,10 @@ namespace SIL.Transcelerator
 			// mnuDeleteRendering
 			// 
 			this.mnuDeleteRendering.Image = global::SIL.Transcelerator.Properties.Resources._20130910100219692_easyicon_net_16;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuDeleteRendering, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDeleteRendering, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuDeleteRendering, "TermRenderingCtrl.mnuDeleteRendering");
 			this.mnuDeleteRendering.Name = "mnuDeleteRendering";
 			this.mnuDeleteRendering.Size = new System.Drawing.Size(198, 22);
 			this.mnuDeleteRendering.Text = "&Delete this rendering";
@@ -174,10 +210,19 @@ namespace SIL.Transcelerator
 			// mnuLookUpTermC
 			// 
 			this.mnuLookUpTermC.Image = global::SIL.Transcelerator.Properties.Resources._1330980033_search_button;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuLookUpTermC, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLookUpTermC, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuLookUpTermC, "TermRenderingCtrl.mnuLookUpTermC");
 			this.mnuLookUpTermC.Name = "mnuLookUpTermC";
 			this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
 			this.mnuLookUpTermC.Text = "Find &Term in {0}";
 			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
+			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.PrefixForNewItems = "TermRenderingCtrl";
 			// 
 			// TermRenderingCtrl
 			// 
@@ -187,6 +232,9 @@ namespace SIL.Transcelerator
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.m_lbRenderings);
 			this.Controls.Add(this.m_lblKeyTermColHead);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "TermRenderingCtrl");
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.MinimumSize = new System.Drawing.Size(100, 40);
 			this.Name = "TermRenderingCtrl";
@@ -195,6 +243,7 @@ namespace SIL.Transcelerator
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.TermRenderingCtrl_DragEnter);
 			this.headerContextMenuStrip.ResumeLayout(false);
 			this.contextMenuStrip.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -211,5 +260,7 @@ namespace SIL.Transcelerator
         private System.Windows.Forms.ToolStripMenuItem mnuAddRenderingH;
         private System.Windows.Forms.ToolStripMenuItem mnuRefreshRenderingsH;
         private System.Windows.Forms.ToolStripMenuItem mnuSetAsDefault;
+		private L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.ToolStripMenuItem mnuAddRenderingC;
 	}
 }

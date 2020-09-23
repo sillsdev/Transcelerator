@@ -55,24 +55,29 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label lblInstructions;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-			System.Windows.Forms.Label lblMaxMatch;
-			System.Windows.Forms.Label lblSuffix;
-			System.Windows.Forms.Label lblMatchPrefix;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-			System.Windows.Forms.Label lblMatchGroup;
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			this.lblInstructions = new System.Windows.Forms.Label();
 			this.m_numTimesToMatch = new System.Windows.Forms.NumericUpDown();
 			this.m_btnMatchSingleWord = new System.Windows.Forms.Button();
+			this.lblMaxMatch = new System.Windows.Forms.Label();
 			this.m_txtMatchPrefix = new System.Windows.Forms.TextBox();
 			this.m_txtMatchSuffix = new System.Windows.Forms.TextBox();
+			this.lblSuffix = new System.Windows.Forms.Label();
+			this.lblMatchPrefix = new System.Windows.Forms.Label();
+			this.lblMatchGroup = new System.Windows.Forms.Label();
 			this.m_cboMatchGroup = new System.Windows.Forms.ComboBox();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGridView = new System.Windows.Forms.DataGridView();
+			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.m_regexMatchHelper = new System.Windows.Forms.Panel();
 			this.m_grpPreview = new System.Windows.Forms.GroupBox();
 			this.m_cboPreviewQuestion = new System.Windows.Forms.ComboBox();
@@ -82,18 +87,8 @@ namespace SIL.Transcelerator
 			this.btnUp = new System.Windows.Forms.ToolStripButton();
 			this.btnDown = new System.Windows.Forms.ToolStripButton();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.colMatch = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colReplacement = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colIsRegEx = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colMatchCase = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.colPreviewResult = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			lblInstructions = new System.Windows.Forms.Label();
 			tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			lblMaxMatch = new System.Windows.Forms.Label();
-			lblSuffix = new System.Windows.Forms.Label();
-			lblMatchPrefix = new System.Windows.Forms.Label();
 			tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			lblMatchGroup = new System.Windows.Forms.Label();
 			tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTimesToMatch)).BeginInit();
 			tableLayoutPanel2.SuspendLayout();
@@ -107,17 +102,16 @@ namespace SIL.Transcelerator
 			// 
 			// lblInstructions
 			// 
-			lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(lblInstructions, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(lblInstructions, "PhraseSubstitutionsDlg.lblInstructions");
-			lblInstructions.Location = new System.Drawing.Point(12, 9);
-			lblInstructions.Name = "lblInstructions";
-			lblInstructions.Size = new System.Drawing.Size(744, 103);
-			lblInstructions.TabIndex = 8;
-			lblInstructions.Text = resources.GetString("lblInstructions.Text");
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblInstructions, "PhraseSubstitutionsDlg.lblInstructions");
+			this.lblInstructions.Location = new System.Drawing.Point(12, 9);
+			this.lblInstructions.Name = "lblInstructions";
+			this.lblInstructions.Size = new System.Drawing.Size(744, 103);
+			this.lblInstructions.TabIndex = 8;
+			this.lblInstructions.Text = resources.GetString("lblInstructions.Text");
 			// 
 			// tableLayoutPanel1
 			// 
@@ -127,11 +121,11 @@ namespace SIL.Transcelerator
 			tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			tableLayoutPanel1.Controls.Add(this.m_numTimesToMatch, 1, 3);
 			tableLayoutPanel1.Controls.Add(this.m_btnMatchSingleWord, 0, 0);
-			tableLayoutPanel1.Controls.Add(lblMaxMatch, 0, 3);
+			tableLayoutPanel1.Controls.Add(this.lblMaxMatch, 0, 3);
 			tableLayoutPanel1.Controls.Add(this.m_txtMatchPrefix, 1, 1);
 			tableLayoutPanel1.Controls.Add(this.m_txtMatchSuffix, 1, 2);
-			tableLayoutPanel1.Controls.Add(lblSuffix, 0, 2);
-			tableLayoutPanel1.Controls.Add(lblMatchPrefix, 0, 1);
+			tableLayoutPanel1.Controls.Add(this.lblSuffix, 0, 2);
+			tableLayoutPanel1.Controls.Add(this.lblMatchPrefix, 0, 1);
 			tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
 			tableLayoutPanel1.Name = "tableLayoutPanel1";
 			tableLayoutPanel1.RowCount = 4;
@@ -182,18 +176,17 @@ namespace SIL.Transcelerator
 			// 
 			// lblMaxMatch
 			// 
-			lblMaxMatch.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			lblMaxMatch.AutoSize = true;
-			lblMaxMatch.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblMaxMatch, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblMaxMatch, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(lblMaxMatch, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(lblMaxMatch, "PhraseSubstitutionsDlg.lblMaxMatch");
-			lblMaxMatch.Location = new System.Drawing.Point(3, 90);
-			lblMaxMatch.Name = "lblMaxMatch";
-			lblMaxMatch.Size = new System.Drawing.Size(122, 13);
-			lblMaxMatch.TabIndex = 5;
-			lblMaxMatch.Text = "Maximum times to match";
+			this.lblMaxMatch.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.lblMaxMatch.AutoSize = true;
+			this.lblMaxMatch.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblMaxMatch, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblMaxMatch, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblMaxMatch, "PhraseSubstitutionsDlg.lblMaxMatch");
+			this.lblMaxMatch.Location = new System.Drawing.Point(3, 90);
+			this.lblMaxMatch.Name = "lblMaxMatch";
+			this.lblMaxMatch.Size = new System.Drawing.Size(122, 13);
+			this.lblMaxMatch.TabIndex = 5;
+			this.lblMaxMatch.Text = "Maximum times to match";
 			// 
 			// m_txtMatchPrefix
 			// 
@@ -222,31 +215,30 @@ namespace SIL.Transcelerator
 			// 
 			// lblSuffix
 			// 
-			lblSuffix.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			lblSuffix.AutoSize = true;
-			lblSuffix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblSuffix, null);
-			this.l10NSharpExtender1.SetLocalizingId(lblSuffix, "PhraseSubstitutionsDlg.lblSuffix");
-			lblSuffix.Location = new System.Drawing.Point(3, 61);
-			lblSuffix.Name = "lblSuffix";
-			lblSuffix.Size = new System.Drawing.Size(73, 13);
-			lblSuffix.TabIndex = 3;
-			lblSuffix.Text = "Match a suffix";
+			this.lblSuffix.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.lblSuffix.AutoSize = true;
+			this.lblSuffix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblSuffix, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblSuffix, "PhraseSubstitutionsDlg.lblSuffix");
+			this.lblSuffix.Location = new System.Drawing.Point(3, 61);
+			this.lblSuffix.Name = "lblSuffix";
+			this.lblSuffix.Size = new System.Drawing.Size(73, 13);
+			this.lblSuffix.TabIndex = 3;
+			this.lblSuffix.Text = "Match a suffix";
 			// 
 			// lblMatchPrefix
 			// 
-			lblMatchPrefix.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			lblMatchPrefix.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblMatchPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblMatchPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(lblMatchPrefix, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(lblMatchPrefix, "PhraseSubstitutionsDlg.lblMatchPrefix");
-			lblMatchPrefix.Location = new System.Drawing.Point(3, 35);
-			lblMatchPrefix.Name = "lblMatchPrefix";
-			lblMatchPrefix.Size = new System.Drawing.Size(74, 13);
-			lblMatchPrefix.TabIndex = 1;
-			lblMatchPrefix.Text = "Match a prefix";
+			this.lblMatchPrefix.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.lblMatchPrefix.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblMatchPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblMatchPrefix, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblMatchPrefix, "PhraseSubstitutionsDlg.lblMatchPrefix");
+			this.lblMatchPrefix.Location = new System.Drawing.Point(3, 35);
+			this.lblMatchPrefix.Name = "lblMatchPrefix";
+			this.lblMatchPrefix.Size = new System.Drawing.Size(74, 13);
+			this.lblMatchPrefix.TabIndex = 1;
+			this.lblMatchPrefix.Text = "Match a prefix";
 			// 
 			// tableLayoutPanel2
 			// 
@@ -254,7 +246,7 @@ namespace SIL.Transcelerator
 			tableLayoutPanel2.ColumnCount = 2;
 			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			tableLayoutPanel2.Controls.Add(lblMatchGroup, 0, 0);
+			tableLayoutPanel2.Controls.Add(this.lblMatchGroup, 0, 0);
 			tableLayoutPanel2.Controls.Add(this.m_cboMatchGroup, 1, 0);
 			tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -267,17 +259,18 @@ namespace SIL.Transcelerator
 			// 
 			// lblMatchGroup
 			// 
-			lblMatchGroup.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			lblMatchGroup.AutoSize = true;
-			lblMatchGroup.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(lblMatchGroup, null);
-			this.l10NSharpExtender1.SetLocalizationComment(lblMatchGroup, null);
-			this.l10NSharpExtender1.SetLocalizingId(lblMatchGroup, "PhraseSubstitutionsDlg.label4");
-			lblMatchGroup.Location = new System.Drawing.Point(3, 7);
-			lblMatchGroup.Name = "lblMatchGroup";
-			lblMatchGroup.Size = new System.Drawing.Size(67, 13);
-			lblMatchGroup.TabIndex = 5;
-			lblMatchGroup.Text = "Match group";
+			this.lblMatchGroup.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.lblMatchGroup.AutoSize = true;
+			this.lblMatchGroup.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblMatchGroup, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblMatchGroup, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.lblMatchGroup, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblMatchGroup, "PhraseSubstitutionsDlg.lblMatchGroup");
+			this.lblMatchGroup.Location = new System.Drawing.Point(3, 7);
+			this.lblMatchGroup.Name = "lblMatchGroup";
+			this.lblMatchGroup.Size = new System.Drawing.Size(67, 13);
+			this.lblMatchGroup.TabIndex = 5;
+			this.lblMatchGroup.Text = "Match group";
 			// 
 			// m_cboMatchGroup
 			// 
@@ -347,6 +340,58 @@ namespace SIL.Transcelerator
 			this.m_dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_CellValueChanged);
 			this.m_dataGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.m_dataGridView_EditingControlShowing);
 			this.m_dataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_RowEnter);
+			// 
+			// colMatch
+			// 
+			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.colMatch.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace!Word or Phrase t" +
+    "o Replace";
+			this.colMatch.MinimumWidth = 200;
+			this.colMatch.Name = "colMatch";
+			this.colMatch.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.colMatch.ToolTipText = "Enter text to replace or omit from the original text of the question";
+			this.colMatch.Width = 396;
+			// 
+			// colReplacement
+			// 
+			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colReplacement.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.Replacement!Replacement";
+			this.colReplacement.MinimumWidth = 100;
+			this.colReplacement.Name = "colReplacement";
+			this.colReplacement.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.colReplacement.ToolTipText = "Enter replacement text or expression (leave blank to omit the word or phrase enti" +
+    "rely)";
+			// 
+			// colIsRegEx
+			// 
+			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
+			this.colIsRegEx.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.RegularExpression!Regular Expression";
+			this.colIsRegEx.Name = "colIsRegEx";
+			this.colIsRegEx.ToolTipText = "Select to interpret as a regular expression";
+			this.colIsRegEx.Width = 377;
+			// 
+			// colMatchCase
+			// 
+			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
+			this.colMatchCase.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.MatchCase!Match Case";
+			this.colMatchCase.Name = "colMatchCase";
+			this.colMatchCase.ToolTipText = "Select to indicat that matches should be case-sensitive";
+			this.colMatchCase.Width = 351;
+			// 
+			// colPreviewResult
+			// 
+			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colPreviewResult.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.PreviewResult!Preview Result";
+			this.colPreviewResult.MinimumWidth = 100;
+			this.colPreviewResult.Name = "colPreviewResult";
+			this.colPreviewResult.ReadOnly = true;
+			this.colPreviewResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// m_regexMatchHelper
 			// 
@@ -456,58 +501,6 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
-			// colMatch
-			// 
-			this.colMatch.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.colMatch.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace!Word or Phrase t" +
-    "o Replace";
-			this.colMatch.MinimumWidth = 200;
-			this.colMatch.Name = "colMatch";
-			this.colMatch.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.colMatch.ToolTipText = "Enter text to replace or omit from the original text of the question";
-			this.colMatch.Width = 396;
-			// 
-			// colReplacement
-			// 
-			this.colReplacement.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colReplacement.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.Replacement!Replacement";
-			this.colReplacement.MinimumWidth = 100;
-			this.colReplacement.Name = "colReplacement";
-			this.colReplacement.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.colReplacement.ToolTipText = "Enter replacement text or expression (leave blank to omit the word or phrase enti" +
-    "rely)";
-			// 
-			// colIsRegEx
-			// 
-			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
-			this.colIsRegEx.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.RegularExpression!Regular Expression";
-			this.colIsRegEx.Name = "colIsRegEx";
-			this.colIsRegEx.ToolTipText = "Select to interpret as a regular expression";
-			this.colIsRegEx.Width = 377;
-			// 
-			// colMatchCase
-			// 
-			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
-			this.colMatchCase.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.MatchCase!Match Case";
-			this.colMatchCase.Name = "colMatchCase";
-			this.colMatchCase.ToolTipText = "Select to indicat that matches should be case-sensitive";
-			this.colMatchCase.Width = 351;
-			// 
-			// colPreviewResult
-			// 
-			this.colPreviewResult.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colPreviewResult.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.PreviewResult!Preview Result";
-			this.colPreviewResult.MinimumWidth = 100;
-			this.colPreviewResult.Name = "colPreviewResult";
-			this.colPreviewResult.ReadOnly = true;
-			this.colPreviewResult.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
 			// PhraseSubstitutionsDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -520,7 +513,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.m_grpPreview);
 			this.Controls.Add(this.m_regexMatchHelper);
 			this.Controls.Add(this.m_dataGridView);
-			this.Controls.Add(lblInstructions);
+			this.Controls.Add(this.lblInstructions);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
@@ -575,5 +568,10 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colIsRegEx;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colMatchCase;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colPreviewResult;
+		private System.Windows.Forms.Label lblInstructions;
+		private System.Windows.Forms.Label lblMaxMatch;
+		private System.Windows.Forms.Label lblSuffix;
+		private System.Windows.Forms.Label lblMatchPrefix;
+		private System.Windows.Forms.Label lblMatchGroup;
 	}
 }

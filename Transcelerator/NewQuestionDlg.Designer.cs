@@ -48,10 +48,10 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label m_lblEnglishQuestion;
-			System.Windows.Forms.Label m_lblAnswer;
-			System.Windows.Forms.Label m_lblCategory;
-			System.Windows.Forms.Label m_lblAnswerIsOptional;
+			this.m_lblEnglishQuestion = new System.Windows.Forms.Label();
+			this.m_lblAnswer = new System.Windows.Forms.Label();
+			this.m_lblCategory = new System.Windows.Forms.Label();
+			this.m_lblAnswerIsOptional = new System.Windows.Forms.Label();
 			this.m_lblVernacularQuestionIsOptional = new System.Windows.Forms.Label();
 			this.m_lblVernacularQuestion = new System.Windows.Forms.Label();
 			this.lblReference = new System.Windows.Forms.Label();
@@ -63,8 +63,11 @@ namespace SIL.Transcelerator
 			this.m_txtAnswer = new System.Windows.Forms.TextBox();
 			this.m_scrPsgReference = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.m_cboEndVerse = new System.Windows.Forms.ComboBox();
-			this.label3 = new System.Windows.Forms.Label();
+			this.m_lblEndVerse = new System.Windows.Forms.Label();
 			this.m_dataGridViewExistingQuestions = new System.Windows.Forms.DataGridView();
+			this.colQuestion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.colExcluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.m_lblSelectLocation = new System.Windows.Forms.Label();
 			this.m_txtVernacularQuestion = new System.Windows.Forms.TextBox();
 			this.m_insertionPointArrow = new System.Windows.Forms.PictureBox();
@@ -78,13 +81,6 @@ namespace SIL.Transcelerator
 			this.m_cboCategory = new System.Windows.Forms.ComboBox();
 			this.m_linklblWishForTxl218 = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.colQuestion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.colExcluded = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			m_lblEnglishQuestion = new System.Windows.Forms.Label();
-			m_lblAnswer = new System.Windows.Forms.Label();
-			m_lblCategory = new System.Windows.Forms.Label();
-			m_lblAnswerIsOptional = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.m_dataGridViewExistingQuestions)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_insertionPointArrow)).BeginInit();
 			this.m_tableLayoutPanel.SuspendLayout();
@@ -96,64 +92,64 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblEnglishQuestion
 			// 
-			m_lblEnglishQuestion.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			m_lblEnglishQuestion.AutoSize = true;
-			this.m_tableLayoutPanel.SetColumnSpan(m_lblEnglishQuestion, 3);
-			m_lblEnglishQuestion.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblEnglishQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblEnglishQuestion, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblEnglishQuestion, "NewQuestionDlg.m_lblEnglishQuestion");
-			m_lblEnglishQuestion.Location = new System.Drawing.Point(3, 136);
-			m_lblEnglishQuestion.Name = "m_lblEnglishQuestion";
-			m_lblEnglishQuestion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 4);
-			m_lblEnglishQuestion.Size = new System.Drawing.Size(100, 27);
-			m_lblEnglishQuestion.TabIndex = 0;
-			m_lblEnglishQuestion.Text = "Question in English:";
+			this.m_lblEnglishQuestion.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.m_lblEnglishQuestion.AutoSize = true;
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblEnglishQuestion, 3);
+			this.m_lblEnglishQuestion.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEnglishQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEnglishQuestion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEnglishQuestion, "NewQuestionDlg.m_lblEnglishQuestion");
+			this.m_lblEnglishQuestion.Location = new System.Drawing.Point(3, 136);
+			this.m_lblEnglishQuestion.Name = "m_lblEnglishQuestion";
+			this.m_lblEnglishQuestion.Padding = new System.Windows.Forms.Padding(0, 10, 0, 4);
+			this.m_lblEnglishQuestion.Size = new System.Drawing.Size(100, 27);
+			this.m_lblEnglishQuestion.TabIndex = 0;
+			this.m_lblEnglishQuestion.Text = "Question in English:";
 			// 
 			// m_lblAnswer
 			// 
-			m_lblAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			m_lblAnswer.AutoSize = true;
-			this.m_tableLayoutPanel.SetColumnSpan(m_lblAnswer, 4);
-			m_lblAnswer.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblAnswer, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblAnswer, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblAnswer, "NewQuestionDlg.m_lblAnswer");
-			m_lblAnswer.Location = new System.Drawing.Point(3, 308);
-			m_lblAnswer.Name = "m_lblAnswer";
-			m_lblAnswer.Padding = new System.Windows.Forms.Padding(0, 10, 0, 4);
-			m_lblAnswer.Size = new System.Drawing.Size(45, 27);
-			m_lblAnswer.TabIndex = 4;
-			m_lblAnswer.Text = "Answer:";
+			this.m_lblAnswer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.m_lblAnswer.AutoSize = true;
+			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblAnswer, 4);
+			this.m_lblAnswer.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswer, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswer, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswer, "NewQuestionDlg.m_lblAnswer");
+			this.m_lblAnswer.Location = new System.Drawing.Point(3, 308);
+			this.m_lblAnswer.Name = "m_lblAnswer";
+			this.m_lblAnswer.Padding = new System.Windows.Forms.Padding(0, 10, 0, 4);
+			this.m_lblAnswer.Size = new System.Drawing.Size(45, 27);
+			this.m_lblAnswer.TabIndex = 4;
+			this.m_lblAnswer.Text = "Answer:";
 			// 
 			// m_lblCategory
 			// 
-			m_lblCategory.AutoSize = true;
-			m_lblCategory.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblCategory, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblCategory, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblCategory, "NewQuestionDlg.m_lblCategory");
-			m_lblCategory.Location = new System.Drawing.Point(12, 44);
-			m_lblCategory.Name = "m_lblCategory";
-			m_lblCategory.Size = new System.Drawing.Size(52, 13);
-			m_lblCategory.TabIndex = 7;
-			m_lblCategory.Text = "Category:";
+			this.m_lblCategory.AutoSize = true;
+			this.m_lblCategory.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCategory, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCategory, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCategory, "NewQuestionDlg.m_lblCategory");
+			this.m_lblCategory.Location = new System.Drawing.Point(12, 44);
+			this.m_lblCategory.Name = "m_lblCategory";
+			this.m_lblCategory.Size = new System.Drawing.Size(52, 13);
+			this.m_lblCategory.TabIndex = 7;
+			this.m_lblCategory.Text = "Category:";
 			// 
 			// m_lblAnswerIsOptional
 			// 
-			m_lblAnswerIsOptional.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			m_lblAnswerIsOptional.AutoSize = true;
-			m_lblAnswerIsOptional.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
-			m_lblAnswerIsOptional.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblAnswerIsOptional, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblAnswerIsOptional, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblAnswerIsOptional, "NewQuestionDlg.m_lblAnswerIsOptional");
-			m_lblAnswerIsOptional.Location = new System.Drawing.Point(444, 318);
-			m_lblAnswerIsOptional.Name = "m_lblAnswerIsOptional";
-			m_lblAnswerIsOptional.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
-			m_lblAnswerIsOptional.Size = new System.Drawing.Size(44, 17);
-			m_lblAnswerIsOptional.TabIndex = 8;
-			m_lblAnswerIsOptional.Text = "optional";
+			this.m_lblAnswerIsOptional.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.m_lblAnswerIsOptional.AutoSize = true;
+			this.m_lblAnswerIsOptional.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic);
+			this.m_lblAnswerIsOptional.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswerIsOptional, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswerIsOptional, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswerIsOptional, "NewQuestionDlg.m_lblAnswerIsOptional");
+			this.m_lblAnswerIsOptional.Location = new System.Drawing.Point(444, 318);
+			this.m_lblAnswerIsOptional.Name = "m_lblAnswerIsOptional";
+			this.m_lblAnswerIsOptional.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.m_lblAnswerIsOptional.Size = new System.Drawing.Size(44, 17);
+			this.m_lblAnswerIsOptional.TabIndex = 8;
+			this.m_lblAnswerIsOptional.Text = "optional";
 			// 
 			// m_lblVernacularQuestionIsOptional
 			// 
@@ -319,18 +315,19 @@ namespace SIL.Transcelerator
 			this.m_cboEndVerse.Size = new System.Drawing.Size(62, 21);
 			this.m_cboEndVerse.TabIndex = 6;
 			// 
-			// label3
+			// m_lblEndVerse
 			// 
-			this.label3.AutoSize = true;
-			this.label3.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.label3, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.label3, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.label3, "NewQuestionDlg.label3");
-			this.label3.Location = new System.Drawing.Point(290, 9);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(59, 13);
-			this.label3.TabIndex = 5;
-			this.label3.Text = "End Verse:";
+			this.m_lblEndVerse.AutoSize = true;
+			this.m_lblEndVerse.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblEndVerse, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblEndVerse, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblEndVerse, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblEndVerse, "NewQuestionDlg.m_lblEndVerse");
+			this.m_lblEndVerse.Location = new System.Drawing.Point(290, 9);
+			this.m_lblEndVerse.Name = "m_lblEndVerse";
+			this.m_lblEndVerse.Size = new System.Drawing.Size(59, 13);
+			this.m_lblEndVerse.TabIndex = 5;
+			this.m_lblEndVerse.Text = "End Verse:";
 			// 
 			// m_dataGridViewExistingQuestions
 			// 
@@ -367,13 +364,42 @@ namespace SIL.Transcelerator
 			this.m_dataGridViewExistingQuestions.TabIndex = 11;
 			this.m_dataGridViewExistingQuestions.Scroll += new System.Windows.Forms.ScrollEventHandler(this.m_dataGridViewExistingQuestions_Scroll);
 			// 
+			// colQuestion
+			// 
+			this.colQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colQuestion.DataPropertyName = "PhraseToDisplayInUI";
+			this.colQuestion.FillWeight = 200F;
+			this.colQuestion.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Question!Question";
+			this.colQuestion.Name = "colQuestion";
+			this.colQuestion.ReadOnly = true;
+			this.colQuestion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colTranslation
+			// 
+			this.colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.colTranslation.DataPropertyName = "Translation";
+			this.colTranslation.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Translation!Translation";
+			this.colTranslation.Name = "colTranslation";
+			this.colTranslation.ReadOnly = true;
+			this.colTranslation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// colExcluded
+			// 
+			this.colExcluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.colExcluded.DataPropertyName = "IsExcluded";
+			this.colExcluded.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Excluded!Excluded";
+			this.colExcluded.MinimumWidth = 15;
+			this.colExcluded.Name = "colExcluded";
+			this.colExcluded.ReadOnly = true;
+			this.colExcluded.Visible = false;
+			// 
 			// m_lblSelectLocation
 			// 
 			this.m_lblSelectLocation.AutoSize = true;
 			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblSelectLocation, 5);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblSelectLocation, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, "Param 1: Currently selected category name; " +
-				"Param 2: Currently selected Scripture reference");
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, "Param 1: Currently selected category name; Param 2: Currently selected Scripture " +
+        "reference");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblSelectLocation, "NewQuestionDlg.m_lblSelectLocation");
 			this.m_lblSelectLocation.Location = new System.Drawing.Point(3, 0);
 			this.m_lblSelectLocation.Name = "m_lblSelectLocation";
@@ -427,7 +453,7 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.m_tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlEnglishQuestionControls, 3, 2);
-			this.m_tableLayoutPanel.Controls.Add(m_lblEnglishQuestion, 0, 2);
+			this.m_tableLayoutPanel.Controls.Add(this.m_lblEnglishQuestion, 0, 2);
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlArrow, 1, 1);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestion, 0, 4);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblSelectLocation, 0, 0);
@@ -435,10 +461,10 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.Controls.Add(this.m_dataGridViewExistingQuestions, 2, 1);
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtEnglishQuestion, 0, 3);
 			this.m_tableLayoutPanel.Controls.Add(this.m_txtAnswer, 0, 7);
-			this.m_tableLayoutPanel.Controls.Add(m_lblAnswer, 0, 6);
+			this.m_tableLayoutPanel.Controls.Add(this.m_lblAnswer, 0, 6);
 			this.m_tableLayoutPanel.Controls.Add(this.m_pnlUpDownArrows, 0, 1);
 			this.m_tableLayoutPanel.Controls.Add(this.m_lblVernacularQuestionIsOptional, 4, 4);
-			this.m_tableLayoutPanel.Controls.Add(m_lblAnswerIsOptional, 4, 6);
+			this.m_tableLayoutPanel.Controls.Add(this.m_lblAnswerIsOptional, 4, 6);
 			this.m_tableLayoutPanel.Location = new System.Drawing.Point(15, 79);
 			this.m_tableLayoutPanel.Name = "m_tableLayoutPanel";
 			this.m_tableLayoutPanel.RowCount = 8;
@@ -572,36 +598,6 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
-			// colQuestion
-			// 
-			this.colQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colQuestion.DataPropertyName = "PhraseToDisplayInUI";
-			this.colQuestion.FillWeight = 200F;
-			this.colQuestion.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Question!Question";
-			this.colQuestion.Name = "colQuestion";
-			this.colQuestion.ReadOnly = true;
-			this.colQuestion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colTranslation
-			// 
-			this.colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.colTranslation.DataPropertyName = "Translation";
-			this.colTranslation.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Translation!Translation";
-			this.colTranslation.Name = "colTranslation";
-			this.colTranslation.ReadOnly = true;
-			this.colTranslation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// colExcluded
-			// 
-			this.colExcluded.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.colExcluded.DataPropertyName = "IsExcluded";
-			this.colExcluded.HeaderText = "_L10N_:NewQuestionsDlg.ExistingQuestions.Excluded!Excluded";
-			this.colExcluded.MinimumWidth = 15;
-			this.colExcluded.Name = "colExcluded";
-			this.colExcluded.ReadOnly = true;
-			this.colExcluded.Visible = false;
-			this.colExcluded.Width = 319;
-			// 
 			// NewQuestionDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -611,9 +607,9 @@ namespace SIL.Transcelerator
 			this.ClientSize = new System.Drawing.Size(518, 499);
 			this.Controls.Add(this.m_linklblWishForTxl218);
 			this.Controls.Add(this.m_cboCategory);
-			this.Controls.Add(m_lblCategory);
+			this.Controls.Add(this.m_lblCategory);
 			this.Controls.Add(this.m_tableLayoutPanel);
-			this.Controls.Add(this.label3);
+			this.Controls.Add(this.m_lblEndVerse);
 			this.Controls.Add(this.m_cboEndVerse);
 			this.Controls.Add(this.m_scrPsgReference);
 			this.Controls.Add(this.btnCancel);
@@ -657,7 +653,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.TextBox m_txtAnswer;
 		private Windows.Forms.Scripture.ScrPassageControl m_scrPsgReference;
 		private System.Windows.Forms.ComboBox m_cboEndVerse;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label m_lblEndVerse;
 		private System.Windows.Forms.DataGridView m_dataGridViewExistingQuestions;
 		private System.Windows.Forms.Label m_lblSelectLocation;
 		private System.Windows.Forms.TextBox m_txtVernacularQuestion;
@@ -677,5 +673,9 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.DataGridViewTextBoxColumn colQuestion;
 		private System.Windows.Forms.DataGridViewTextBoxColumn colTranslation;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn colExcluded;
+		private System.Windows.Forms.Label m_lblEnglishQuestion;
+		private System.Windows.Forms.Label m_lblAnswer;
+		private System.Windows.Forms.Label m_lblAnswerIsOptional;
+		private System.Windows.Forms.Label m_lblCategory;
 	}
 }

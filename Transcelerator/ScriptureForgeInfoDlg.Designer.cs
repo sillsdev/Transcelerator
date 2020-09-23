@@ -29,48 +29,46 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label m_lblExplanation;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptureForgeInfoDlg));
-			System.Windows.Forms.Label m_lblMoreInfoOnline;
+			this.m_lblExplanation = new System.Windows.Forms.Label();
+			this.m_lblMoreInfoOnline = new System.Windows.Forms.Label();
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_linkLabelWorkingWithScriptureForge = new System.Windows.Forms.LinkLabel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.m_linkLabelScriptureForge = new System.Windows.Forms.LinkLabel();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			m_lblExplanation = new System.Windows.Forms.Label();
-			m_lblMoreInfoOnline = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// m_lblExplanation
 			// 
-			m_lblExplanation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.m_lblExplanation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			m_lblExplanation.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblExplanation, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblExplanation, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblExplanation, "ScriptureForgeInfoDlg.m_lblExplanation");
-			m_lblExplanation.Location = new System.Drawing.Point(3, 0);
-			m_lblExplanation.Name = "m_lblExplanation";
-			m_lblExplanation.Size = new System.Drawing.Size(442, 39);
-			m_lblExplanation.TabIndex = 3;
-			m_lblExplanation.Text = resources.GetString("m_lblExplanation.Text");
+			this.m_lblExplanation.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblExplanation, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblExplanation, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblExplanation, "ScriptureForgeInfoDlg.m_lblExplanation");
+			this.m_lblExplanation.Location = new System.Drawing.Point(3, 0);
+			this.m_lblExplanation.Name = "m_lblExplanation";
+			this.m_lblExplanation.Size = new System.Drawing.Size(442, 39);
+			this.m_lblExplanation.TabIndex = 3;
+			this.m_lblExplanation.Text = resources.GetString("m_lblExplanation.Text");
 			// 
 			// m_lblMoreInfoOnline
 			// 
-			m_lblMoreInfoOnline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.m_lblMoreInfoOnline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			m_lblMoreInfoOnline.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblMoreInfoOnline, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblMoreInfoOnline, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblMoreInfoOnline, "ScriptureForgeInfoDlg.m_lblMoreInfoOnline");
-			m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 42);
-			m_lblMoreInfoOnline.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
-			m_lblMoreInfoOnline.Name = "m_lblMoreInfoOnline";
-			m_lblMoreInfoOnline.Size = new System.Drawing.Size(442, 13);
-			m_lblMoreInfoOnline.TabIndex = 4;
-			m_lblMoreInfoOnline.Text = "More information is available on-line:";
+			this.m_lblMoreInfoOnline.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblMoreInfoOnline, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblMoreInfoOnline, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblMoreInfoOnline, "ScriptureForgeInfoDlg.m_lblMoreInfoOnline");
+			this.m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 42);
+			this.m_lblMoreInfoOnline.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this.m_lblMoreInfoOnline.Name = "m_lblMoreInfoOnline";
+			this.m_lblMoreInfoOnline.Size = new System.Drawing.Size(442, 13);
+			this.m_lblMoreInfoOnline.TabIndex = 4;
+			this.m_lblMoreInfoOnline.Text = "More information is available on-line:";
 			// 
 			// m_btnOk
 			// 
@@ -111,9 +109,9 @@
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this.m_linkLabelScriptureForge, 0, 3);
-			this.tableLayoutPanel1.Controls.Add(m_lblExplanation, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.m_lblExplanation, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.m_linkLabelWorkingWithScriptureForge, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(m_lblMoreInfoOnline, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.m_lblMoreInfoOnline, 0, 1);
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 4;
@@ -176,5 +174,7 @@
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.LinkLabel m_linkLabelScriptureForge;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.Label m_lblExplanation;
+		private System.Windows.Forms.Label m_lblMoreInfoOnline;
 	}
 }
