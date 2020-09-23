@@ -124,13 +124,13 @@ namespace SIL.Transcelerator
 			this.lblRuleDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.lblRuleDescription.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblRuleDescription, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblRuleDescription, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblRuleDescription, "");
 			this.l10NSharpExtender1.SetLocalizingId(this.lblRuleDescription, "RenderingSelectionRulesDlg.lblRuleDescription");
 			this.lblRuleDescription.Location = new System.Drawing.Point(12, 266);
 			this.lblRuleDescription.Name = "lblRuleDescription";
 			this.lblRuleDescription.Size = new System.Drawing.Size(86, 13);
 			this.lblRuleDescription.TabIndex = 4;
-			this.lblRuleDescription.Text = "Ru&le description:";
+			this.lblRuleDescription.Text = "Rule description:";
 			// 
 			// toolStrip1
 			// 

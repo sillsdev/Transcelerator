@@ -527,6 +527,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="icu4c.readme.txt" />
     <Content Include="keyTermRules.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -619,6 +620,8 @@ IF NOT EXIST ..\..\..\..\..\Paratext goto done
    
 robocopy $(TargetDir) ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) /S *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 goto done
@@ -630,6 +633,8 @@ IF EXIST "C:\Program Files (x86)\Paratext 7" (
 @echo Copying Transcelerator plugin files to Paratext 7 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
 
@@ -637,12 +642,16 @@ IF EXIST "C:\Program Files (x86)\Paratext 8" (
 @echo Copying Transcelerator plugin files to Paratext 8 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
    
 IF EXIST "C:\Program Files (x86)\Paratext 9" (
 @echo Copying Transcelerator plugin files to Paratext 9 plugin folder...
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+if %25ERRORLEVEL%25 GEQ 8 goto failed
+robocopy $(TargetDir)lib\win-x86 "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 robocopy $(TargetDir)..\..\..\..\DistFiles "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
@@ -662,7 +671,9 @@ exit 1</PostBuildEvent>
     <Error Condition="!Exists('..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets'))" />
     <Error Condition="!Exists('..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.props'))" />
     <Error Condition="!Exists('..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.targets'))" />
+    <Error Condition="!Exists('..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets'))" />
   </Target>
   <Import Project="..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets" Condition="Exists('..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets')" />
   <Import Project="..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.targets" Condition="Exists('..\packages\SIL.ReleaseTasks.2.2.0\build\net461\SIL.ReleaseTasks.targets')" />
+  <Import Project="..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets')" />
 </Project>

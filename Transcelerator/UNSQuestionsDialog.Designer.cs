@@ -11,6 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {
@@ -28,9 +30,11 @@ namespace SIL.Transcelerator
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
 		}
@@ -50,13 +54,13 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ToolStripMenuItem mnuViewDebugInfo;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
+			this.mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
 			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -133,7 +137,6 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -143,30 +146,32 @@ namespace SIL.Transcelerator
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// mnuViewDebugInfo
-			// 
-			mnuViewDebugInfo.Checked = true;
-			mnuViewDebugInfo.CheckOnClick = true;
-			mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.l10NSharpExtender1.SetLocalizableToolTip(mnuViewDebugInfo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(mnuViewDebugInfo, null);
-			this.l10NSharpExtender1.SetLocalizingId(mnuViewDebugInfo, "MainWindow.Menu.GeneratedTranslationDetails");
-			mnuViewDebugInfo.Name = "mnuViewDebugInfo";
-			mnuViewDebugInfo.Size = new System.Drawing.Size(226, 22);
-			mnuViewDebugInfo.Text = "&Generated Translation Details";
-			mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
-			// 
 			// toolStripSeparator5
 			// 
 			toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			toolStripSeparator5.Name = "toolStripSeparator5";
 			toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
 			// 
+			// mnuViewDebugInfo
+			// 
+			this.mnuViewDebugInfo.Checked = true;
+			this.mnuViewDebugInfo.CheckOnClick = true;
+			this.mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewDebugInfo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewDebugInfo, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewDebugInfo, "MainWindow.Menu.GeneratedTranslationDetails");
+			this.mnuViewDebugInfo.Name = "mnuViewDebugInfo";
+			this.mnuViewDebugInfo.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewDebugInfo.Text = "&Generated Translation Details";
+			this.mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
+			// 
 			// mnuViewAnswers
 			// 
 			this.mnuViewAnswers.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewAnswers, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewAnswers, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewAnswers, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewAnswers, "MainWindow.Menu.View.AnswersAndComments");
 			this.mnuViewAnswers.Name = "mnuViewAnswers";
 			this.mnuViewAnswers.Size = new System.Drawing.Size(226, 22);
@@ -179,14 +184,14 @@ namespace SIL.Transcelerator
 			this.dataGridUns.AllowUserToDeleteRows = false;
 			this.dataGridUns.AllowUserToResizeRows = false;
 			this.dataGridUns.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.dataGridUns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dataGridUns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.m_colReference,
@@ -194,14 +199,14 @@ namespace SIL.Transcelerator
             this.m_colTranslation,
             this.m_colUserTranslated,
             this.m_colDebugInfo});
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
 			this.dataGridUns.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.dataGridUns, null);
@@ -212,14 +217,14 @@ namespace SIL.Transcelerator
 			this.dataGridUns.Margin = new System.Windows.Forms.Padding(8);
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.dataGridUns.RowHeadersVisible = false;
 			this.dataGridUns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
 			this.dataGridUns.Size = new System.Drawing.Size(792, 227);
@@ -255,8 +260,8 @@ namespace SIL.Transcelerator
 			// m_colEnglish
 			// 
 			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
 			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
 			this.m_colEnglish.MinimumWidth = 100;
 			this.m_colEnglish.Name = "m_colEnglish";
@@ -346,7 +351,8 @@ namespace SIL.Transcelerator
 			// mnuExcludeQuestion
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuExcludeQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestion, "MainWindow.dataGridContextMenu.mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Name = "mnuExcludeQuestion";
 			this.mnuExcludeQuestion.Size = new System.Drawing.Size(166, 22);
@@ -356,7 +362,8 @@ namespace SIL.Transcelerator
 			// mnuIncludeQuestion
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuIncludeQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuIncludeQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuIncludeQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuIncludeQuestion, "MainWindow.dataGridContextMenu.mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Name = "mnuIncludeQuestion";
 			this.mnuIncludeQuestion.Size = new System.Drawing.Size(166, 22);
@@ -367,7 +374,8 @@ namespace SIL.Transcelerator
 			// mnuEditQuestion
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuEditQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEditQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEditQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuEditQuestion, "MainWindow.dataGridContextMenu.mnuEditQuestion");
 			this.mnuEditQuestion.Name = "mnuEditQuestion";
 			this.mnuEditQuestion.Size = new System.Drawing.Size(166, 22);
@@ -377,7 +385,8 @@ namespace SIL.Transcelerator
 			// mnuAddQuestion
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAddQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAddQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddQuestion, "MainWindow.dataGridContextMenu.mnuAddQuestion");
 			this.mnuAddQuestion.Name = "mnuAddQuestion";
 			this.mnuAddQuestion.Size = new System.Drawing.Size(166, 22);
@@ -416,7 +425,8 @@ namespace SIL.Transcelerator
             this.toolStripSeparator3,
             this.mnuClose});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFile, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFile, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFile, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuFile, "MainWindow.Menu.File");
 			this.mnuFile.Name = "mnuFile";
 			this.mnuFile.Size = new System.Drawing.Size(37, 20);
@@ -427,7 +437,8 @@ namespace SIL.Transcelerator
 			this.mnuSave.Enabled = false;
 			this.mnuSave.Image = ((System.Drawing.Image)(resources.GetObject("mnuSave.Image")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuSave, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuSave, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuSave, "MainWindow.Menu.File.Save");
 			this.mnuSave.Name = "mnuSave";
 			this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
@@ -441,7 +452,8 @@ namespace SIL.Transcelerator
 			this.mnuAutoSave.CheckOnClick = true;
 			this.mnuAutoSave.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAutoSave, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAutoSave, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAutoSave, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAutoSave, "MainWindow.File.mnuAutoSave");
 			this.mnuAutoSave.Name = "mnuAutoSave";
 			this.mnuAutoSave.Size = new System.Drawing.Size(277, 22);
@@ -451,7 +463,8 @@ namespace SIL.Transcelerator
 			// mnuReload
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuReload, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReload, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReload, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuReload, "MainWindow.Menu.File.Reload");
 			this.mnuReload.Name = "mnuReload";
 			this.mnuReload.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
@@ -467,7 +480,8 @@ namespace SIL.Transcelerator
 			// mnuGenerate
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuGenerate, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuGenerate, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuGenerate, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuGenerate, "MainWindow.Menu.File.GenerateCheckingScript");
 			this.mnuGenerate.Name = "mnuGenerate";
 			this.mnuGenerate.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
@@ -480,11 +494,11 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.CheckOnClick = true;
 			this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuProduceScriptureForgeFiles, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, "Param is \"Scripture Forge\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.Menu.File.ProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(277, 22);
-			this.mnuProduceScriptureForgeFiles.Text = "Produce Scripture Forge Files";
+			this.mnuProduceScriptureForgeFiles.Text = "Produce {0} Files";
 			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
 			this.mnuProduceScriptureForgeFiles.Click += new System.EventHandler(this.mnuProduceScriptureForgeFiles_Clicked);
 			// 
@@ -519,7 +533,8 @@ namespace SIL.Transcelerator
 			// mnuClose
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuClose, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuClose, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuClose, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuClose, "MainWindow.Menu.File.Close");
 			this.mnuClose.Name = "mnuClose";
 			this.mnuClose.Size = new System.Drawing.Size(277, 22);
@@ -539,7 +554,8 @@ namespace SIL.Transcelerator
             this.mnuShiftWordsRight,
             this.mnuShiftWordsLeft});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuEdit, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEdit, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuEdit, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuEdit, "MainWindow.Menu.Edit");
 			this.mnuEdit.Name = "mnuEdit";
 			this.mnuEdit.Size = new System.Drawing.Size(39, 20);
@@ -549,7 +565,8 @@ namespace SIL.Transcelerator
 			// mnuCut
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuCut, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCut, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCut, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuCut, "MainWindow.Menu.Edit.Cut");
 			this.mnuCut.Name = "mnuCut";
 			this.mnuCut.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
@@ -562,7 +579,8 @@ namespace SIL.Transcelerator
 			this.mnuCopy.Image = global::SIL.Transcelerator.Properties.Resources.Copy;
 			this.mnuCopy.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuCopy, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCopy, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuCopy, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuCopy, "MainWindow.Menu.Edit.Copy");
 			this.mnuCopy.Name = "mnuCopy";
 			this.mnuCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
@@ -575,7 +593,8 @@ namespace SIL.Transcelerator
 			this.mnuPaste.Image = global::SIL.Transcelerator.Properties.Resources.Paste;
 			this.mnuPaste.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPaste, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPaste, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPaste, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuPaste, "MainWindow.Menu.Edit.Paste");
 			this.mnuPaste.Name = "mnuPaste";
 			this.mnuPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
@@ -593,7 +612,8 @@ namespace SIL.Transcelerator
 			this.mnuPreviousUntranslatedQuestion.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon;
 			this.mnuPreviousUntranslatedQuestion.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPreviousUntranslatedQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPreviousUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPreviousUntranslatedQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuPreviousUntranslatedQuestion, "MainWindow.Menu.Edit.PreviousUntranslatedQuestion");
 			this.mnuPreviousUntranslatedQuestion.Name = "mnuPreviousUntranslatedQuestion";
 			this.mnuPreviousUntranslatedQuestion.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
@@ -606,7 +626,8 @@ namespace SIL.Transcelerator
 			this.mnuNextUntranslatedQuestion.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon;
 			this.mnuNextUntranslatedQuestion.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuNextUntranslatedQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuNextUntranslatedQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuNextUntranslatedQuestion, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuNextUntranslatedQuestion, "MainWindow.Menu.Edit.NextUntranslatedQuestion");
 			this.mnuNextUntranslatedQuestion.Name = "mnuNextUntranslatedQuestion";
 			this.mnuNextUntranslatedQuestion.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
@@ -625,7 +646,8 @@ namespace SIL.Transcelerator
 			this.mnuShiftWordsRight.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Right_icon;
 			this.mnuShiftWordsRight.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsRight, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsRight, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsRight, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsRight, "MainWindow.Menu.Edit.ShiftWordsRight");
 			this.mnuShiftWordsRight.Name = "mnuShiftWordsRight";
 			this.mnuShiftWordsRight.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift) 
@@ -640,7 +662,8 @@ namespace SIL.Transcelerator
 			this.mnuShiftWordsLeft.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Left_icon;
 			this.mnuShiftWordsLeft.ImageTransparentColor = System.Drawing.Color.Fuchsia;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShiftWordsLeft, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsLeft, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShiftWordsLeft, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShiftWordsLeft, "MainWindow.Menu.Edit.ShiftWordsLeft");
 			this.mnuShiftWordsLeft.Name = "mnuShiftWordsLeft";
 			this.mnuShiftWordsLeft.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.Shift) 
@@ -658,7 +681,8 @@ namespace SIL.Transcelerator
             this.mnuFilterBiblicalTerms,
             this.mnuMatchWholeWords});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFilter, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilter, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilter, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuFilter, "MainWindow.Menu.Filter");
 			this.mnuFilter.Name = "mnuFilter";
 			this.mnuFilter.Size = new System.Drawing.Size(45, 20);
@@ -667,7 +691,8 @@ namespace SIL.Transcelerator
 			// mnuReferenceRange
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuReferenceRange, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReferenceRange, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuReferenceRange, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuReferenceRange, "MainWindow.Menu.Filter.ReferenceRange");
 			this.mnuReferenceRange.Name = "mnuReferenceRange";
 			this.mnuReferenceRange.Size = new System.Drawing.Size(307, 22);
@@ -681,7 +706,8 @@ namespace SIL.Transcelerator
             this.mnuShowPhrasesWithKtRenderings,
             this.mnuShowPhrasesWithMissingKtRenderings});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuFilterBiblicalTerms, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilterBiblicalTerms, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuFilterBiblicalTerms, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuFilterBiblicalTerms, "MainWindow.Menu.Filter.BiblicalTerms");
 			this.mnuFilterBiblicalTerms.Name = "mnuFilterBiblicalTerms";
 			this.mnuFilterBiblicalTerms.Size = new System.Drawing.Size(307, 22);
@@ -692,12 +718,13 @@ namespace SIL.Transcelerator
 			this.mnuShowAllPhrases.Checked = true;
 			this.mnuShowAllPhrases.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowAllPhrases, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowAllPhrases, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowAllPhrases, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowAllPhrases, "MainWindow.mnuShowAllPhrases");
 			this.mnuShowAllPhrases.Name = "mnuShowAllPhrases";
 			this.mnuShowAllPhrases.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.mnuShowAllPhrases.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowAllPhrases.Text = "Show &All Phrases";
+			this.mnuShowAllPhrases.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowAllPhrases.Text = "Show &All (no filter)";
 			this.mnuShowAllPhrases.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowAllPhrases.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 
@@ -705,12 +732,13 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuShowPhrasesWithKtRenderings.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowPhrasesWithKtRenderings, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithKtRenderings, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithKtRenderings, "MainWindow.mnuShowPhrasesWithKtRenderings");
 			this.mnuShowPhrasesWithKtRenderings.Name = "mnuShowPhrasesWithKtRenderings";
 			this.mnuShowPhrasesWithKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowPhrasesWithKtRenderings.Text = "Show Phrases Where All Key Terms Have &Renderings";
+			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithKtRenderings.Text = "Show Questions Where All Terms Have &Renderings";
 			this.mnuShowPhrasesWithKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 
@@ -718,12 +746,13 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuShowPhrasesWithMissingKtRenderings, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithMissingKtRenderings, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuShowPhrasesWithMissingKtRenderings, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithMissingKtRenderings, "MainWindow.mnuShowPhrasesWithMissingKtRenderings");
 			this.mnuShowPhrasesWithMissingKtRenderings.Name = "mnuShowPhrasesWithMissingKtRenderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowPhrasesWithMissingKtRenderings.Text = "Show Phrases With Key Terms &Missing Renderings";
+			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithMissingKtRenderings.Text = "Show Questions with Terms &Missing Renderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithMissingKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 
@@ -733,7 +762,8 @@ namespace SIL.Transcelerator
 			this.mnuMatchWholeWords.CheckOnClick = true;
 			this.mnuMatchWholeWords.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuMatchWholeWords, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuMatchWholeWords, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuMatchWholeWords, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuMatchWholeWords, "MainWindow.Menu.Filter.MatchWholeWords");
 			this.mnuMatchWholeWords.Name = "mnuMatchWholeWords";
 			this.mnuMatchWholeWords.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
@@ -747,7 +777,7 @@ namespace SIL.Transcelerator
 			this.mnuView.CheckOnClick = true;
 			this.mnuView.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.mnuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            mnuViewDebugInfo,
+            this.mnuViewDebugInfo,
             this.mnuViewAnswers,
             this.mnuViewToolbar,
             this.mnuViewBiblicalTermsPane,
@@ -756,7 +786,8 @@ namespace SIL.Transcelerator
             this.toolStripSeparator9,
             this.mnuDisplayLanguage});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuView, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuView, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuView, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuView, "MainWindow.Menu.View");
 			this.mnuView.Name = "mnuView";
 			this.mnuView.Size = new System.Drawing.Size(44, 20);
@@ -769,7 +800,8 @@ namespace SIL.Transcelerator
 			this.mnuViewToolbar.CheckOnClick = true;
 			this.mnuViewToolbar.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewToolbar, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewToolbar, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewToolbar, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewToolbar, "MainWindow.Menu.View.Toolbar");
 			this.mnuViewToolbar.Name = "mnuViewToolbar";
 			this.mnuViewToolbar.Size = new System.Drawing.Size(226, 22);
@@ -782,7 +814,8 @@ namespace SIL.Transcelerator
 			this.mnuViewBiblicalTermsPane.CheckOnClick = true;
 			this.mnuViewBiblicalTermsPane.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewBiblicalTermsPane, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewBiblicalTermsPane, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewBiblicalTermsPane, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewBiblicalTermsPane, "MainWindow.Menu.View.BiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.Name = "mnuViewBiblicalTermsPane";
 			this.mnuViewBiblicalTermsPane.Size = new System.Drawing.Size(226, 22);
@@ -798,7 +831,8 @@ namespace SIL.Transcelerator
 			// 
 			this.mnuViewExcludedQuestions.CheckOnClick = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewExcludedQuestions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewExcludedQuestions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewExcludedQuestions, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewExcludedQuestions, "MainWindow.Menu.View.ExcludedQuestions");
 			this.mnuViewExcludedQuestions.Name = "mnuViewExcludedQuestions";
 			this.mnuViewExcludedQuestions.Size = new System.Drawing.Size(226, 22);
@@ -815,7 +849,8 @@ namespace SIL.Transcelerator
 			this.mnuDisplayLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.en_ToolStripMenuItem});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuDisplayLanguage, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDisplayLanguage, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDisplayLanguage, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuDisplayLanguage, "MainWindow.Menu.View.DisplayLanguage");
 			this.mnuDisplayLanguage.Name = "mnuDisplayLanguage";
 			this.mnuDisplayLanguage.Size = new System.Drawing.Size(226, 22);
@@ -841,7 +876,8 @@ namespace SIL.Transcelerator
             this.mnuPhraseSubstitutions,
             this.mnuBiblicalTermsRenderingSelectionRules});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuAdvanced, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAdvanced, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuAdvanced, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAdvanced, "MainWindow.Menu.Advanced");
 			this.mnuAdvanced.Name = "mnuAdvanced";
 			this.mnuAdvanced.Size = new System.Drawing.Size(72, 20);
@@ -850,7 +886,8 @@ namespace SIL.Transcelerator
 			// mnuPhraseSubstitutions
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuPhraseSubstitutions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPhraseSubstitutions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuPhraseSubstitutions, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuPhraseSubstitutions, "MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments");
 			this.mnuPhraseSubstitutions.Name = "mnuPhraseSubstitutions";
 			this.mnuPhraseSubstitutions.Size = new System.Drawing.Size(294, 22);
@@ -860,7 +897,8 @@ namespace SIL.Transcelerator
 			// mnuBiblicalTermsRenderingSelectionRules
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuBiblicalTermsRenderingSelectionRules, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuBiblicalTermsRenderingSelectionRules, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuBiblicalTermsRenderingSelectionRules, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuBiblicalTermsRenderingSelectionRules, "MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules");
 			this.mnuBiblicalTermsRenderingSelectionRules.Name = "mnuBiblicalTermsRenderingSelectionRules";
 			this.mnuBiblicalTermsRenderingSelectionRules.Size = new System.Drawing.Size(294, 22);
@@ -872,7 +910,8 @@ namespace SIL.Transcelerator
 			this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuHelpAbout});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelp, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelp, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelp, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelp, "MainWindow.Menu.Help");
 			this.mnuHelp.Name = "mnuHelp";
 			this.mnuHelp.Size = new System.Drawing.Size(44, 20);
@@ -881,7 +920,8 @@ namespace SIL.Transcelerator
 			// mnuHelpAbout
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelpAbout, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelpAbout, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelpAbout, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelpAbout, "MainWindow.Menu.Help.About");
 			this.mnuHelpAbout.Name = "mnuHelpAbout";
 			this.mnuHelpAbout.Size = new System.Drawing.Size(183, 22);
@@ -1239,5 +1279,6 @@ namespace SIL.Transcelerator
 		private DataGridViewTextBoxColumn m_colTranslation;
 		private DataGridViewCheckBoxColumn m_colUserTranslated;
 		private DataGridViewTextBoxColumn m_colDebugInfo;
+		private ToolStripMenuItem mnuViewDebugInfo;
 	}
 }

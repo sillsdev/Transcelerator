@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="1.4.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="1.5.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
         <note>ID: AddRenderingDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Add Rendering</target>
+        <target xml:lang="es-ES" state="translated">Agregar traducción</target>
       </trans-unit>
       <trans-unit id="BiblicalTerm.RenderingExists">
         <source xml:lang="en">Rendering already exists.</source>
         <note>ID: BiblicalTerm.RenderingExists</note>
-        <target xml:lang="es-ES" state="needs-translation">Rendering already exists.</target>
+        <target xml:lang="es-ES" state="translated">Esa traducción ya está representada en la lista.</target>
       </trans-unit>
       <trans-unit id="Common.Cancel">
         <source xml:lang="en">Cancel</source>
@@ -25,60 +25,67 @@
       <trans-unit id="EditQuestionDlg.WindowTitle">
         <source xml:lang="en">Edit Question</source>
         <note>ID: EditQuestionDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Edit Question</target>
+        <target xml:lang="es-ES" state="translated">Editar pregunta</target>
       </trans-unit>
       <trans-unit id="EditQuestionDlg.btnReset">
         <source xml:lang="en">&amp;Reset</source>
         <note>ID: EditQuestionDlg.btnReset</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Reset</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Reiniciar</target>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblAlternatives">
+        <source xml:lang="en">Suggested Alternatives:</source>
+        <note>ID: EditQuestionDlg.m_lblAlternatives</note>
+        <target xml:lang="es-ES" state="translated">Alternativos sugeridos:</target>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblOriginalText">
+        <source xml:lang="en">Text of Original Question:</source>
+        <note>ID: EditQuestionDlg.m_lblOriginalText</note>
+        <target xml:lang="es-ES" state="translated">Texto de la pregunta original:</target>
       </trans-unit>
       <trans-unit id="EditQuestionDlg.m_lblQuestionAlreadyExists">
         <source xml:lang="en">Question already exists!</source>
         <note>ID: EditQuestionDlg.m_lblQuestionAlreadyExists</note>
         <target xml:lang="es-ES" state="translated">¡La pregunta ya existe!</target>
       </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblQuestionToUse">
+        <source xml:lang="en">Question to Use:</source>
+        <note>ID: EditQuestionDlg.m_lblQuestionToUse</note>
+        <target xml:lang="es-ES" state="needs-translation">Question to Use:</target>
+      </trans-unit>
       <trans-unit id="General.ErrorStarting">
         <source xml:lang="en">Error occurred attempting to start {0}: </source>
         <note>ID: General.ErrorStarting</note>
         <note>Param is "Transcelerator" (plugin name)</note>
-        <target xml:lang="es-ES" state="needs-translation">Error occurred attempting to start {0}: </target>
+        <target xml:lang="es-ES" state="translated">Ocurrió un error al intentar iniciar {0}: </target>
       </trans-unit>
       <trans-unit id="General.ExpectedInstalledFileMissing">
         <source xml:lang="en">Expected file missing: {0}.</source>
         <note>ID: General.ExpectedInstalledFileMissing</note>
         <note>Parameter is filename (for technical support)</note>
-        <target xml:lang="es-ES" state="needs-translation">Expected file missing: {0}.</target>
+        <target xml:lang="es-ES" state="translated">Hace falta un archivo esperado: {0}.</target>
       </trans-unit>
       <trans-unit id="General.RequiredInstalledFileMissing">
         <source xml:lang="en">Required file missing: {0}.</source>
         <note>ID: General.RequiredInstalledFileMissing</note>
         <note>Parameter is filename (for technical support)</note>
-        <target xml:lang="es-ES" state="needs-translation">Required file missing: {0}.</target>
+        <target xml:lang="es-ES" state="translated">Hace falta un archivo requerido: {0}.</target>
       </trans-unit>
       <trans-unit id="General.RerunInstaller">
-        <source xml:lang="en">Please re-run the Transcelerator Installer to repair this problem.</source>
+        <source xml:lang="en">Please re-run the {0} Installer to repair this problem.</source>
         <note>ID: General.RerunInstaller</note>
-        <target xml:lang="es-ES" state="needs-translation">Please re-run the Transcelerator Installer to repair this problem.</target>
+        <note>Parameter is "Transcelerator" (plugin name)</note>
+        <target xml:lang="es-ES" state="translated">Por favor, vuelva a instalar {0} para reparar este problema.</target>
       </trans-unit>
       <trans-unit id="General.UserAddedEmptyPhrase">
         <source xml:lang="en">User-added question with no English version</source>
         <note>ID: General.UserAddedEmptyPhrase</note>
-        <target xml:lang="es-ES" state="needs-translation">User-added question with no English version</target>
+        <target xml:lang="es-ES" state="translated">Pregunta añadida por el usuario sin versión en inglés</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.HtmlFileDescription">
         <source xml:lang="en">Web Page</source>
         <note>ID: GenerateScriptDlg.HtmlFileDescription</note>
-        <target xml:lang="es-ES" state="needs-translation">Web Page</target>
-      </trans-unit>
-      <trans-unit id="GenerateScriptDlg.LectionaryControlFile">
-        <source xml:lang="en">Lectionary Control File</source>
-        <note>ID: GenerateScriptDlg.LectionaryControlFile</note>
-        <target xml:lang="es-ES" state="needs-translation">Lectionary Control File</target>
-      </trans-unit>
-      <trans-unit id="GenerateScriptDlg.TemplateFileNameLabel">
-        <source xml:lang="en">Template &amp;File name:</source>
-        <note>ID: GenerateScriptDlg.TemplateFileNameLabel</note>
-        <target xml:lang="es-ES" state="needs-translation">Template &amp;File name:</target>
+        <target xml:lang="es-ES" state="translated">Página Web</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.WindowTitle">
         <source xml:lang="en">Generate Checking Script Template</source>
@@ -88,61 +95,107 @@
       <trans-unit id="GenerateScriptDlg.btnBrowse">
         <source xml:lang="en">&amp;Browse...</source>
         <note>ID: GenerateScriptDlg.btnBrowse</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Navegar...</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.groupBoxDocument">
+        <source xml:lang="en">Document</source>
+        <note>ID: GenerateScriptDlg.groupBoxDocument</note>
+        <target xml:lang="es-ES" state="translated">Documento</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.label7">
         <source xml:lang="en">Extra &amp;Lines for Recording Answers:</source>
         <note>ID: GenerateScriptDlg.label7</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Extra &amp;Lines for Recording Answers:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblDetailQuestionsOutOfOrder">
+        <source xml:lang="en">When Detail Questions are out of Order:</source>
+        <note>ID: GenerateScriptDlg.lblDetailQuestionsOutOfOrder</note>
+        <target xml:lang="es-ES" state="translated">Cuando las preguntas de detalles están no están en el orden natural:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblFolder">
+        <source xml:lang="en">Folder:</source>
+        <note>ID: GenerateScriptDlg.lblFolder</note>
+        <target xml:lang="es-ES" state="translated">Carpeta:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblSectionRangeTo">
+        <source xml:lang="en">to</source>
+        <note>ID: GenerateScriptDlg.lblSectionRangeTo</note>
+        <target xml:lang="es-ES" state="translated">a</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblStyleSpecification">
+        <source xml:lang="en">Where to Specify Styles:</source>
+        <note>ID: GenerateScriptDlg.lblStyleSpecification</note>
+        <target xml:lang="es-ES" state="needs-translation">Where to Specify Styles:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblUntranslatedQuestions">
+        <source xml:lang="en">How to Handle Untranslated Questions:</source>
+        <note>ID: GenerateScriptDlg.lblUntranslatedQuestions</note>
+        <target xml:lang="es-ES" state="translated">Cómo manejar preguntas no traducidas:</target>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblUseLWC">
+        <source xml:lang="en">Use &amp;Language of Wider Communication:</source>
+        <note>ID: GenerateScriptDlg.lblUseLWC</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Usar &amp;lenguaje de comunicación más amplia:</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkAbsoluteCssPath">
         <source xml:lang="en">Make &amp;Path Absolute</source>
         <note>ID: GenerateScriptDlg.m_chkAbsoluteCssPath</note>
-        <target xml:lang="es-ES" state="needs-translation">Make &amp;Path Absolute</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Hacer absoluta la &amp;ruta</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCAnswers">
         <source xml:lang="en">Include &amp;Answers (in {0}) </source>
         <note>ID: GenerateScriptDlg.m_chkIncludeLWCAnswers</note>
-        <target xml:lang="es-ES" state="needs-translation">Include &amp;Answers (in {0}) </target>
+        <note>Param is the name of a language. To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Incluir &amp;Respuestas (en {0}) </target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCComments">
         <source xml:lang="en">Include &amp;Comments (in {0})</source>
         <note>ID: GenerateScriptDlg.m_chkIncludeLWCComments</note>
-        <target xml:lang="es-ES" state="needs-translation">Include &amp;Comments (in {0})</target>
+        <note>Param is the name of a language. To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Incluir &amp;Notas (en {0})</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCQuestions">
         <source xml:lang="en">Include &amp;Questions in {0}</source>
         <note>ID: GenerateScriptDlg.m_chkIncludeLWCQuestions</note>
-        <target xml:lang="es-ES" state="needs-translation">Include &amp;Questions in {0}</target>
+        <note>Param is the name of a language. To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Incluir &amp;Preguntas en {0}</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkIncludeVerseNumbers">
         <source xml:lang="en">Include verse numbers</source>
         <note>ID: GenerateScriptDlg.m_chkIncludeVerseNumbers</note>
-        <target xml:lang="es-ES" state="needs-translation">Include verse numbers</target>
+        <target xml:lang="es-ES" state="translated">Incluye los números de los versículos</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkNumberQuestions">
         <source xml:lang="en">&amp;Number questions</source>
         <note>ID: GenerateScriptDlg.m_chkNumberQuestions</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Number questions</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Numerar las preguntas</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkOverwriteCss">
         <source xml:lang="en">O&amp;verwrite Existing CSS File</source>
         <note>ID: GenerateScriptDlg.m_chkOverwriteCss</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">O&amp;verwrite Existing CSS File</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkPassageBeforeOverview">
         <source xml:lang="en">&amp;Include Entire Passage at the Start of Section</source>
         <note>ID: GenerateScriptDlg.m_chkPassageBeforeOverview</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Include Entire Passage at the Start of Section</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Incluir pasaje completo al inicio de la sección</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_grpRange">
         <source xml:lang="en">Range</source>
         <note>ID: GenerateScriptDlg.m_grpRange</note>
-        <target xml:lang="es-ES" state="needs-translation">Range</target>
+        <target xml:lang="es-ES" state="translated">Rango</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_lbFilename">
         <source xml:lang="en">Script &amp;File name:</source>
         <note>ID: GenerateScriptDlg.m_lbFilename</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Script &amp;File name:</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_lblCommentTextColor">
@@ -150,15 +203,17 @@
         <note>ID: GenerateScriptDlg.m_lblCommentTextColor</note>
         <target xml:lang="es-ES" state="needs-translation">Comment Text Color</target>
       </trans-unit>
-      <trans-unit id="GenerateScriptDlg.m_lblEnglishAnswerTextColor">
-        <source xml:lang="en">English Answer Text Color</source>
-        <note>ID: GenerateScriptDlg.m_lblEnglishAnswerTextColor</note>
-        <target xml:lang="es-ES" state="needs-translation">English Answer Text Color</target>
+      <trans-unit id="GenerateScriptDlg.m_lblLWCAnswerTextColor">
+        <source xml:lang="en">{0} Answer Text Color</source>
+        <note>ID: GenerateScriptDlg.m_lblLWCAnswerTextColor</note>
+        <note>Param is the name of a language of wider communication</note>
+        <target xml:lang="es-ES" state="translated">Color del texto de la respuesta en {0}</target>
       </trans-unit>
-      <trans-unit id="GenerateScriptDlg.m_lblEnglishQuestionColor">
-        <source xml:lang="en">English Question Text Color</source>
-        <note>ID: GenerateScriptDlg.m_lblEnglishQuestionColor</note>
-        <target xml:lang="es-ES" state="needs-translation">English Question Text Color</target>
+      <trans-unit id="GenerateScriptDlg.m_lblLWCQuestionColor">
+        <source xml:lang="en">{0} Question Text Color</source>
+        <note>ID: GenerateScriptDlg.m_lblLWCQuestionColor</note>
+        <note>Param is the name of a language of wider communication</note>
+        <target xml:lang="es-ES" state="translated">Color del texto de la pregunta en {0}</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_lblQuestionGroupHeadingsColor">
         <source xml:lang="en">Question Group Headings Color</source>
@@ -168,67 +223,79 @@
       <trans-unit id="GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions">
         <source xml:lang="en">&amp;Just Display the Reference</source>
         <note>ID: GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Just Display the Reference</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Solo mostrar la cita</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoDisplayWarning">
         <source xml:lang="en">&amp;Display a Warning Message</source>
         <note>ID: GenerateScriptDlg.m_rdoDisplayWarning</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Display a Warning Message</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Mostrar un mensaje de advertencia</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoEmbedStyleInfo">
         <source xml:lang="en">&amp;Embed in Script (Maximum Portability)</source>
         <note>ID: GenerateScriptDlg.m_rdoEmbedStyleInfo</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Embed in Script (Maximum Portability)</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Insertar en script (portabilidad máxima)</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions">
         <source xml:lang="en">&amp;Output the Text of the Passage</source>
         <note>ID: GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Output the Text of the Passage</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Generar el texto del pasaje</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoSectionRange">
         <source xml:lang="en">&amp;Range of Sections</source>
         <note>ID: GenerateScriptDlg.m_rdoSectionRange</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Range of Sections</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Rango de secciones</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoSingleSection">
         <source xml:lang="en">&amp;Single Section</source>
         <note>ID: GenerateScriptDlg.m_rdoSingleSection</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Single Section</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Una &amp;sola sección</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoSkipUntranslated">
         <source xml:lang="en">Do &amp;Not Include in Script</source>
         <note>ID: GenerateScriptDlg.m_rdoSkipUntranslated</note>
-        <target xml:lang="es-ES" state="needs-translation">Do &amp;Not Include in Script</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Excluir del Script</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoUseExternalCss">
         <source xml:lang="en">Use an E&amp;xternal CSS File</source>
         <note>ID: GenerateScriptDlg.m_rdoUseExternalCss</note>
-        <target xml:lang="es-ES" state="needs-translation">Use an E&amp;xternal CSS File</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Usar un archivo E&amp;xternal CSS</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoUseOriginal">
         <source xml:lang="en">&amp;Use the Original Untranslated Question</source>
         <note>ID: GenerateScriptDlg.m_rdoUseOriginal</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Use the Original Untranslated Question</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Usar la pregunta original sin traducir</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_rdoWholeBook">
         <source xml:lang="en">&amp;Whole Book</source>
         <note>ID: GenerateScriptDlg.m_rdoWholeBook</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Libro completo</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_txtCssFile">
         <source xml:lang="en">ComprehensionChecking.css</source>
         <note>ID: GenerateScriptDlg.m_txtCssFile</note>
-        <target xml:lang="es-ES" state="needs-translation">ComprehensionChecking.css</target>
+        <target xml:lang="es-ES" state="translated">ComprehensionChecking.css</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_txtFilename">
         <source xml:lang="en">{0} Comprehension Check for {1}.htm</source>
         <note>ID: GenerateScriptDlg.m_txtFilename</note>
-        <target xml:lang="es-ES" state="needs-translation">{0} Comprehension Check for {1}.htm</target>
+        <note>Param 0: project name; Param 1: Scripture book or reference range</note>
+        <target xml:lang="es-ES" state="translated">{0} - Comprobación de comprensión de {1}.htm</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_txtTitle">
         <source xml:lang="en">Comprehension Checking Questions for {0}</source>
         <note>ID: GenerateScriptDlg.m_txtTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Comprehension Checking Questions for {0}</target>
+        <note>Param is a Scripture book or reference range</note>
+        <target xml:lang="es-ES" state="translated">Preguntas de comprobación de comprensión de {0}</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.tabAppearance">
         <source xml:lang="en">Appearance</source>
@@ -250,6 +317,11 @@
         <note>ID: HelpAboutDlg.WindowTitle</note>
         <target xml:lang="es-ES" state="translated">Acerca de Transcelerator</target>
       </trans-unit>
+      <trans-unit id="HelpAboutDlg.m_linkLabelReleaseNotes">
+        <source xml:lang="en">Release notes...</source>
+        <note>ID: HelpAboutDlg.m_linkLabelReleaseNotes</note>
+        <target xml:lang="es-ES" state="translated">Notas de la versión (inglés)...</target>
+      </trans-unit>
       <trans-unit id="MainWindow.AnswersLabel">
         <source xml:lang="en">Answers:</source>
         <note>ID: MainWindow.AnswersLabel</note>
@@ -258,93 +330,108 @@
       <trans-unit id="MainWindow.CommentsLabel">
         <source xml:lang="en">Comments:</source>
         <note>ID: MainWindow.CommentsLabel</note>
-        <target xml:lang="es-ES" state="needs-translation">Comments:</target>
+        <target xml:lang="es-ES" state="translated">Notas:</target>
       </trans-unit>
       <trans-unit id="MainWindow.File.mnuAutoSave">
         <source xml:lang="en">&amp;Auto Save</source>
         <note>ID: MainWindow.File.mnuAutoSave</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Auto guardar</target>
       </trans-unit>
       <trans-unit id="MainWindow.FilteredStatus">
         <source xml:lang="en">Filtered</source>
         <note>ID: MainWindow.FilteredStatus</note>
-        <target xml:lang="es-ES" state="needs-translation">Filtered</target>
+        <target xml:lang="es-ES" state="translated">Filtro activado</target>
       </trans-unit>
       <trans-unit id="MainWindow.FinishedLoadingTranslationsFromTextFile">
         <source xml:lang="en">Finished! See report in {0}</source>
         <note>ID: MainWindow.FinishedLoadingTranslationsFromTextFile</note>
         <note>Param is a file name</note>
-        <target xml:lang="es-ES" state="needs-translation">Finished! See report in {0}</target>
+        <target xml:lang="es-ES" state="translated">¡Finalizado! Ver reporte en {0}</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced">
         <source xml:lang="en">&amp;Advanced</source>
         <note>ID: MainWindow.Menu.Advanced</note>
-        <target xml:lang="es-ES" state="translated">A&amp;vanzado</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Avanzado</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules">
         <source xml:lang="en">Biblical Terms &amp;Rendering Selection Rules...</source>
         <note>ID: MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Biblical Terms &amp;Rendering Selection Rules...</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments">
         <source xml:lang="en">Preprocessing &amp;Question Adjustments...</source>
         <note>ID: MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Preprocessing &amp;Question Adjustments...</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit">
         <source xml:lang="en">&amp;Edit</source>
         <note>ID: MainWindow.Menu.Edit</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Editar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.Copy">
         <source xml:lang="en">&amp;Copy</source>
         <note>ID: MainWindow.Menu.Edit.Copy</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Copiar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.Cut">
         <source xml:lang="en">Cu&amp;t</source>
         <note>ID: MainWindow.Menu.Edit.Cut</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Cortar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.NextUntranslatedQuestion">
         <source xml:lang="en">&amp;Next Untranslated Question</source>
         <note>ID: MainWindow.Menu.Edit.NextUntranslatedQuestion</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Next Untranslated Question</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Siguiente pregunta sin traducir</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.Paste">
         <source xml:lang="en">&amp;Paste</source>
         <note>ID: MainWindow.Menu.Edit.Paste</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Paste</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Pegar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.PreviousUntranslatedQuestion">
         <source xml:lang="en">Previous &amp;Untranslated Question</source>
         <note>ID: MainWindow.Menu.Edit.PreviousUntranslatedQuestion</note>
-        <target xml:lang="es-ES" state="needs-translation">Previous &amp;Untranslated Question</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Pregunta &amp;anterior no traducido</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.ShiftWordsLeft">
         <source xml:lang="en">Shift Word(s) &amp;Left</source>
         <note>ID: MainWindow.Menu.Edit.ShiftWordsLeft</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">Mover palabra(s) a la &amp;izquierda</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.ShiftWordsRight">
         <source xml:lang="en">Shift Word(s) &amp;Right</source>
         <note>ID: MainWindow.Menu.Edit.ShiftWordsRight</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">Mover palabra(s) al &amp;derecho</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File">
         <source xml:lang="en">&amp;File</source>
         <note>ID: MainWindow.Menu.File</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Archivo</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.Close">
         <source xml:lang="en">&amp;Close</source>
         <note>ID: MainWindow.Menu.File.Close</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Cerrar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.GenerateCheckingScript">
         <source xml:lang="en">&amp;Generate Checking Script...</source>
         <note>ID: MainWindow.Menu.File.GenerateCheckingScript</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Generate Checking Script...</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Generar script de verificación...</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.LoadTranslationsFromTextFile">
         <source xml:lang="en">Load Translations from Plain Text File...</source>
@@ -352,78 +439,99 @@
         <target xml:lang="es-ES" state="translated">Cargar traducciones de un archivo de texto sin formato...</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.ProduceScriptureForgeFiles">
-        <source xml:lang="en">Produce Scripture Forge Files</source>
+        <source xml:lang="en">Produce {0} Files</source>
         <note>ID: MainWindow.Menu.File.ProduceScriptureForgeFiles</note>
-        <target xml:lang="es-ES" state="translated">Producir archivos para Scripture Forge</target>
+        <note>Param is "Scripture Forge" (product name)</note>
+        <target xml:lang="es-ES" state="translated">Producir archivos para {0}</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.Reload">
         <source xml:lang="en">&amp;Reload</source>
         <note>ID: MainWindow.Menu.File.Reload</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Reload</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Recargar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.File.Save">
         <source xml:lang="en">&amp;Save</source>
         <note>ID: MainWindow.Menu.File.Save</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Guardar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Filter">
         <source xml:lang="en">&amp;Filter</source>
         <note>ID: MainWindow.Menu.Filter</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Filter</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Filtro</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Filter.BiblicalTerms">
         <source xml:lang="en">Biblical &amp;Terms</source>
         <note>ID: MainWindow.Menu.Filter.BiblicalTerms</note>
-        <target xml:lang="es-ES" state="needs-translation">Biblical &amp;Terms</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Vocablos bíblicos</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Filter.MatchWholeWords">
         <source xml:lang="en">Match &amp;Whole Words When Filtering</source>
         <note>ID: MainWindow.Menu.Filter.MatchWholeWords</note>
-        <target xml:lang="es-ES" state="needs-translation">Match &amp;Whole Words When Filtering</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Coincidir palabras completas al filtrar</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Filter.ReferenceRange">
         <source xml:lang="en">&amp;Set Reference Range...</source>
         <note>ID: MainWindow.Menu.Filter.ReferenceRange</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Set Reference Range...</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Establecer rango de referencia...</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.GeneratedTranslationDetails">
+        <source xml:lang="en">&amp;Generated Translation Details</source>
+        <note>ID: MainWindow.Menu.GeneratedTranslationDetails</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="needs-translation">&amp;Generated Translation Details</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Help">
         <source xml:lang="en">&amp;Help</source>
         <note>ID: MainWindow.Menu.Help</note>
-        <target xml:lang="es-ES" state="translated">A&amp;yuda</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Ayuda</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Help.About">
         <source xml:lang="en">&amp;About Transcelerator</source>
         <note>ID: MainWindow.Menu.Help.About</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;About Transcelerator</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Acerca de Transcelerator</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View">
         <source xml:lang="en">&amp;View</source>
         <note>ID: MainWindow.Menu.View</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Ver</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.AnswersAndComments">
         <source xml:lang="en">&amp;Answers and Comments</source>
         <note>ID: MainWindow.Menu.View.AnswersAndComments</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Answers and Comments</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Respuestas y notas</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.BiblicalTermsPane">
         <source xml:lang="en">&amp;Biblical Terms Pane</source>
         <note>ID: MainWindow.Menu.View.BiblicalTermsPane</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Biblical Terms Pane</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Panel de vocablos bíblicos</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.DisplayLanguage">
         <source xml:lang="en">&amp;Display Language</source>
         <note>ID: MainWindow.Menu.View.DisplayLanguage</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Display Language</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Idioma de interfaz</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.ExcludedQuestions">
         <source xml:lang="en">&amp;Excluded Questions</source>
         <note>ID: MainWindow.Menu.View.ExcludedQuestions</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Preguntas excluidas</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.Toolbar">
         <source xml:lang="en">&amp;Toolbar</source>
         <note>ID: MainWindow.Menu.View.Toolbar</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Barra de herramientas</target>
       </trans-unit>
       <trans-unit id="MainWindow.QuestionsGrid.Confirmed">
@@ -444,7 +552,7 @@
       <trans-unit id="MainWindow.QuestionsGrid.Reference">
         <source xml:lang="en">Reference</source>
         <note>ID: MainWindow.QuestionsGrid.Reference</note>
-        <target xml:lang="es-ES" state="translated">Referencia</target>
+        <target xml:lang="es-ES" state="translated">Cita</target>
       </trans-unit>
       <trans-unit id="MainWindow.QuestionsGrid.Translation">
         <source xml:lang="en">Translation</source>
@@ -454,7 +562,7 @@
       <trans-unit id="MainWindow.SaveChangesBeforeClosingMessage">
         <source xml:lang="en">You have made changes. Do you wish to save before closing?</source>
         <note>ID: MainWindow.SaveChangesBeforeClosingMessage</note>
-        <target xml:lang="es-ES" state="needs-translation">You have made changes. Do you wish to save before closing?</target>
+        <target xml:lang="es-ES" state="translated">Ha realizado cambios. ¿Desea guardar antes de cerrar?</target>
       </trans-unit>
       <trans-unit id="MainWindow.SaveChangesMessageCaption">
         <source xml:lang="en">Save changes?</source>
@@ -464,22 +572,18 @@
       <trans-unit id="MainWindow.UntranslatedQuestionsWarning">
         <source xml:lang="en">There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</source>
         <note>ID: MainWindow.UntranslatedQuestionsWarning</note>
-        <target xml:lang="es-ES" state="needs-translation">There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</target>
-      </trans-unit>
-      <trans-unit id="MainWindow.WindowTitle">
-        <source xml:lang="en">{0} - Transcelerator</source>
-        <note>ID: MainWindow.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">{0} - Transcelerator</target>
+        <note>Param is a number.</note>
+        <target xml:lang="es-ES" state="translated">Hay {0} preguntas en el rango seleccionado que no tienen traducciones confirmadas. ¿Quiere continuar? (Las preguntas sin traducir serán excluidas.)</target>
       </trans-unit>
       <trans-unit id="MainWindow.btnReceiveScrReferences">
         <source xml:lang="en">Receive Scripture References</source>
         <note>ID: MainWindow.btnReceiveScrReferences</note>
-        <target xml:lang="es-ES" state="needs-translation">Receive Scripture References</target>
+        <target xml:lang="es-ES" state="translated">Recibir citas bíblicas</target>
       </trans-unit>
       <trans-unit id="MainWindow.btnSendScrReferences">
         <source xml:lang="en">Send Scripture References</source>
         <note>ID: MainWindow.btnSendScrReferences</note>
-        <target xml:lang="es-ES" state="needs-translation">Send Scripture References</target>
+        <target xml:lang="es-ES" state="translated">Enviar citas bíblicas</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.copyToolStripMenuItem" approved="yes">
         <source xml:lang="en">Copy</source>
@@ -494,21 +598,25 @@
       <trans-unit id="MainWindow.dataGridContextMenu.mnuAddQuestion" approved="yes">
         <source xml:lang="en">&amp;New Question...</source>
         <note>ID: MainWindow.dataGridContextMenu.mnuAddQuestion</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="final">&amp;Nueva pregunta...</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.mnuEditQuestion">
         <source xml:lang="en">&amp;Edit Question...</source>
         <note>ID: MainWindow.dataGridContextMenu.mnuEditQuestion</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Editar pregunta...</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.mnuExcludeQuestion">
         <source xml:lang="en">E&amp;xclude Question</source>
         <note>ID: MainWindow.dataGridContextMenu.mnuExcludeQuestion</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">E&amp;xcluir pregunta</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.mnuIncludeQuestion">
         <source xml:lang="en">&amp;Include Question</source>
         <note>ID: MainWindow.dataGridContextMenu.mnuIncludeQuestion</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="translated">&amp;Incluir pregunta</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.pasteToolStripMenuItem">
@@ -519,12 +627,13 @@
       <trans-unit id="MainWindow.lblFilterIndicator">
         <source xml:lang="en">Unfiltered</source>
         <note>ID: MainWindow.lblFilterIndicator</note>
-        <target xml:lang="es-ES" state="needs-translation">Unfiltered</target>
+        <target xml:lang="es-ES" state="translated">Sin filtro</target>
       </trans-unit>
       <trans-unit id="MainWindow.lblRemainingWork">
         <source xml:lang="en">Untranslated Questions: {0}/{1}</source>
         <note>ID: MainWindow.lblRemainingWork</note>
-        <target xml:lang="es-ES" state="needs-translation">Untranslated Questions: {0}/{1}</target>
+        <note>Parameters are numbers: untranslated/total</note>
+        <target xml:lang="es-ES" state="translated">Preguntas sin traducir: {0}/{1}</target>
       </trans-unit>
       <trans-unit id="MainWindow.m_lblAnswerLabel">
         <source xml:lang="en">Answer:</source>
@@ -534,74 +643,93 @@
       <trans-unit id="MainWindow.m_lblCommentLabel">
         <source xml:lang="en">Comment:</source>
         <note>ID: MainWindow.m_lblCommentLabel</note>
-        <target xml:lang="es-ES" state="needs-translation">Comment:</target>
+        <target xml:lang="es-ES" state="translated">Nota:</target>
       </trans-unit>
       <trans-unit id="MainWindow.mnuShowAllPhrases">
-        <source xml:lang="en">Show &amp;All Phrases</source>
+        <source xml:lang="en">Show &amp;All (no filter)</source>
         <note>ID: MainWindow.mnuShowAllPhrases</note>
-        <target xml:lang="es-ES" state="needs-translation">Show &amp;All Phrases</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Mostrar &amp;todas (sin filtro)</target>
       </trans-unit>
       <trans-unit id="MainWindow.mnuShowPhrasesWithKtRenderings">
-        <source xml:lang="en">Show Phrases Where All Key Terms Have &amp;Renderings</source>
+        <source xml:lang="en">Show Questions Where All Terms Have &amp;Renderings</source>
         <note>ID: MainWindow.mnuShowPhrasesWithKtRenderings</note>
-        <target xml:lang="es-ES" state="needs-translation">Show Phrases Where All Key Terms Have &amp;Renderings</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Mostrar preguntas donde todos los vocablos tienen t&amp;raducciones</target>
       </trans-unit>
       <trans-unit id="MainWindow.mnuShowPhrasesWithMissingKtRenderings">
-        <source xml:lang="en">Show Phrases With Key Terms &amp;Missing Renderings</source>
+        <source xml:lang="en">Show Questions with Terms &amp;Missing Renderings</source>
         <note>ID: MainWindow.mnuShowPhrasesWithMissingKtRenderings</note>
-        <target xml:lang="es-ES" state="needs-translation">Show Phrases With Key Terms &amp;Missing Renderings</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Mostrar preguntas con vocablos sin traduccion</target>
       </trans-unit>
       <trans-unit id="MainWindow.toolStripLabelQuestionFilter">
         <source xml:lang="en">Question Filter:</source>
         <note>ID: MainWindow.toolStripLabelQuestionFilter</note>
-        <target xml:lang="es-ES" state="needs-translation">Question Filter:</target>
+        <target xml:lang="es-ES" state="translated">Filtro de preguntas:</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.NoExistingQuestions">
         <source xml:lang="en">There are no existing {0} questions for {1}.</source>
         <note>ID: NewQuestionDlg.NoExistingQuestions</note>
-        <note>Param 1: category name; Param 2: Scripture reference</note>
-        <target xml:lang="es-ES" state="needs-translation">There are no existing {0} questions for {1}.</target>
+        <note>Param 1: Currently selected category name; Param 2: Currently selected Scripture reference</note>
+        <target xml:lang="es-ES" state="translated">No hay preguntas existentes de categoría "{0}" para {1}.</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.RequestAddCategoryFeatureInfo">
         <source xml:lang="en">Sorry this feature is not available yet. But if you are connected to the Internet and have not opted out of transmitting analytics data, this feature will now be requested for you.</source>
         <note>ID: NewQuestionDlg.RequestAddCategoryFeatureInfo</note>
-        <target xml:lang="es-ES" state="needs-translation">Sorry this feature is not available yet. But if you are connected to the Internet and have not opted out of transmitting analytics data, this feature will now be requested for you.</target>
+        <target xml:lang="es-ES" state="translated">Lo sentimos, esta característica no está disponible todavía. Pero si usted está conectado a Internet y no ha optado por no transmitir datos analíticos, esta característica ahora será solicitada de su parte.</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.RequestFeatureCaption">
         <source xml:lang="en">{0} Feature Request</source>
         <note>ID: NewQuestionDlg.RequestFeatureCaption</note>
         <note>Parameter is "Transcelerator" (plugin name)</note>
-        <target xml:lang="es-ES" state="needs-translation">{0} Feature Request</target>
+        <target xml:lang="es-ES" state="translated">Solicitud de característica de {0}</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.WindowTitle">
         <source xml:lang="en">New Question</source>
         <note>ID: NewQuestionDlg.WindowTitle</note>
         <target xml:lang="es-ES" state="translated">Nueva pregunta</target>
       </trans-unit>
-      <trans-unit id="NewQuestionDlg.label3">
-        <source xml:lang="en">End Verse:</source>
-        <note>ID: NewQuestionDlg.label3</note>
-        <target xml:lang="es-ES" state="translated">Versículo final:</target>
-      </trans-unit>
       <trans-unit id="NewQuestionDlg.lblReference">
         <source xml:lang="en">Scripture Reference:</source>
         <note>ID: NewQuestionDlg.lblReference</note>
-        <target xml:lang="es-ES" state="needs-translation">Scripture Reference:</target>
+        <target xml:lang="es-ES" state="translated">Cita biblica:</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.m_chkNoEnglish">
         <source xml:lang="en">I just want to add a question without providing an English version.</source>
         <note>ID: NewQuestionDlg.m_chkNoEnglish</note>
-        <target xml:lang="es-ES" state="needs-translation">I just want to add a question without providing an English version.</target>
+        <target xml:lang="es-ES" state="translated">Sólo quiero añadir una pregunta sin escribirla en inglés.</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblAnswer">
+        <source xml:lang="en">Answer:</source>
+        <note>ID: NewQuestionDlg.m_lblAnswer</note>
+        <target xml:lang="es-ES" state="translated">Respuesta:</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblAnswerIsOptional">
+        <source xml:lang="en">optional</source>
+        <note>ID: NewQuestionDlg.m_lblAnswerIsOptional</note>
+        <target xml:lang="es-ES" state="translated">opcional</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblCategory">
+        <source xml:lang="en">Category:</source>
+        <note>ID: NewQuestionDlg.m_lblCategory</note>
+        <target xml:lang="es-ES" state="translated">Categoría:</target>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblEnglishQuestion">
+        <source xml:lang="en">Question in English:</source>
+        <note>ID: NewQuestionDlg.m_lblEnglishQuestion</note>
+        <target xml:lang="es-ES" state="translated">Pregunta en inglés:</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.m_lblIdenticalQuestion">
         <source xml:lang="en">This question already exists (see above).</source>
         <note>ID: NewQuestionDlg.m_lblIdenticalQuestion</note>
-        <target xml:lang="es-ES" state="needs-translation">This question already exists (see above).</target>
+        <target xml:lang="es-ES" state="translated">Esta pregunta ya existe (ver arriba).</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.m_lblSelectLocation">
         <source xml:lang="en">Select location in list of existing {0} questions for {1}.</source>
         <note>ID: NewQuestionDlg.m_lblSelectLocation</note>
-        <target xml:lang="es-ES" state="needs-translation">Select location in list of existing {0} questions for {1}.</target>
+        <note>Param 1: Currently selected category name; Param 2: Currently selected Scripture reference</note>
+        <target xml:lang="es-ES" state="translated">Seleccione la ubicación para la nueva pregunta en la lista de preguntas de {0} existentes de {1}.</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.m_lblVernacularQuestion">
         <source xml:lang="en">Question in {0}:</source>
@@ -616,7 +744,7 @@
       <trans-unit id="NewQuestionDlg.m_linklblWishForTxl218">
         <source xml:lang="en">I wish I could add this category.</source>
         <note>ID: NewQuestionDlg.m_linklblWishForTxl218</note>
-        <target xml:lang="es-ES" state="needs-translation">I wish I could add this category.</target>
+        <target xml:lang="es-ES" state="translated">Quisiera poder añadir esta categoría.</target>
       </trans-unit>
       <trans-unit id="NewQuestionsDlg.ExistingQuestions.Excluded">
         <source xml:lang="en">Excluded</source>
@@ -641,7 +769,7 @@
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.PreviewResult">
         <source xml:lang="en">Preview Result</source>
         <note>ID: PhraseSubstitutionsDlg.Replacements.PreviewResult</note>
-        <target xml:lang="es-ES" state="needs-translation">Preview Result</target>
+        <target xml:lang="es-ES" state="translated">Vista previa del resultado</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.RegularExpression">
         <source xml:lang="en">Regular Expression</source>
@@ -651,7 +779,7 @@
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.Replacement">
         <source xml:lang="en">Replacement</source>
         <note>ID: PhraseSubstitutionsDlg.Replacements.Replacement</note>
-        <target xml:lang="es-ES" state="needs-translation">Replacement</target>
+        <target xml:lang="es-ES" state="translated">Reemplazo</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace">
         <source xml:lang="en">Word or Phrase to Replace</source>
@@ -661,7 +789,7 @@
       <trans-unit id="PhraseSubstitutionsDlg.WindowTitle">
         <source xml:lang="en">Question Adjustments</source>
         <note>ID: PhraseSubstitutionsDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Question Adjustments</target>
+        <target xml:lang="es-ES" state="translated">Ajustes de preguntas</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.btnDown">
         <source xml:lang="en">Down</source>
@@ -672,6 +800,26 @@
         <source xml:lang="en">Up</source>
         <note>ID: PhraseSubstitutionsDlg.btnUp</note>
         <target xml:lang="es-ES" state="translated">Arriba</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblInstructions">
+        <source xml:lang="en">Phrase substitutions can be used to pre-process the original comprehension checking questions to align the grammar more closely with that of the target language. For example, adjust word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</source>
+        <note>ID: PhraseSubstitutionsDlg.lblInstructions</note>
+        <target xml:lang="es-ES" state="needs-translation">Phrase substitutions can be used to pre-process the original comprehension checking questions to align the grammar more closely with that of the target language. For example, adjust word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMatchPrefix">
+        <source xml:lang="en">Match a prefix</source>
+        <note>ID: PhraseSubstitutionsDlg.lblMatchPrefix</note>
+        <target xml:lang="es-ES" state="needs-translation">Match a prefix</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMaxMatch">
+        <source xml:lang="en">Maximum times to match</source>
+        <note>ID: PhraseSubstitutionsDlg.lblMaxMatch</note>
+        <target xml:lang="es-ES" state="needs-translation">Maximum times to match</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblSuffix">
+        <source xml:lang="en">Match a suffix</source>
+        <note>ID: PhraseSubstitutionsDlg.lblSuffix</note>
+        <target xml:lang="es-ES" state="needs-translation">Match a suffix</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.m_btnMatchSingleWord">
         <source xml:lang="en">Match any single word</source>
@@ -689,16 +837,16 @@
         <target xml:lang="es-ES" state="translated">Ningún cambio</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.CriteriaCustom">
-        <source xml:lang="en">When the biblical term in the original question {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
         <note>ID: RenderingSelectionRule.CriteriaCustom</note>
         <note>Param 0: an English word suffix/ending; Param 1: a "regular expression"</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original termina con {0}, se selecciona la primera traducción vernácula que coincida con la expresión regular "{1}".</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.CriteriaStartsWith">
-        <source xml:lang="en">When the biblical term in the original question {0}, then select the first vernacular rendering that starts with {1}.</source>
+        <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that starts with {1}.</source>
         <note>ID: RenderingSelectionRule.CriteriaStartsWith</note>
         <note>Param 0: an English word suffix/ending; Param 1: an English word prefix/beginning</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original termina con {0}, se selecciona la primera traducción vernácula que comienza con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.KeyTermPlaceHolderMissing">
         <source xml:lang="en">Question-matching pattern must have a place holder for the key term.</source>
@@ -709,91 +857,91 @@
         <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that matches the regular expression "{1}".</source>
         <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaCustom</note>
         <note>Param 0: a "regular expression"; Param 1: a "regular expression"</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original coincide con la expresión regular "{0}", se selecciona la primera traducción vernácula que coincida con la expresión regular "{1}".</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith">
         <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that ends with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith</note>
         <note>Param 0: a "regular expression"; Param 1: an English word suffix/ending</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that ends with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original coincide con la expresión regular "{0}", se selecciona la primera traducción vernácula que termina con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith">
         <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that starts with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith</note>
         <note>Param 0: a "regular expression"; Param 1: an English word prefix/beginning</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that starts with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original coincide con la expresión regular "{0}", se selecciona la primera traducción vernácula que comienza con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith">
         <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith</note>
         <note>Param 0: an English word suffix/ending; Param 1: an English word suffix/ending</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original termina con {0}, se selecciona la primera traducción vernácula que termina con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom">
         <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
         <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom</note>
         <note>Param 0: an English word (or phrase); Param 1: a "regular expression"</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente después del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que coincida con la expresión regular "{1}".</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith">
         <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith</note>
         <note>Param 0: an English word (or phrase); Param 1: an English word suffix/ending</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente después del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que termina con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith">
         <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith</note>
         <note>Param 0: an English word (or phrase); Param 1: an English word prefix/beginning</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente después del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que comienza con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom">
         <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
         <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom</note>
         <note>Param 0: an English word (or phrase); Param 1: a "regular expression"</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente antes del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que coincida con la expresión regular "{1}".</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith">
         <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith</note>
         <note>Param 0: an English word (or phrase); Param 1: an English word suffix/ending</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente antes del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que termina con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith">
         <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith</note>
         <note>Param 0: an English word (or phrase); Param 1: an English word prefix/beginning</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando "{0}" ocurre inmediatamente antes del vocablo bíblico en la pregunta original, se selecciona la primera traducción vernácula que comienza con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom">
         <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
         <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom</note>
         <note>Param 0: an English word prefix/beginning; Param 1: a "regular expression"</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original comienza con {0}, se selecciona la primera traducción vernácula que coincida con la expresión regular "{1}".</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith">
         <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith</note>
         <note>Param 0: an English word prefix/beginning; Param 1: an English word suffix/ending</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original comienza con {0}, se selecciona la primera traducción vernácula que termina con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith">
         <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.</source>
         <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith</note>
         <note>Param 0: an English word prefix/beginning; Param 1: an English word prefix/beginning</note>
-        <target xml:lang="es-ES" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <target xml:lang="es-ES" state="translated">Cuando el vocablo bíblico en la pregunta original comienza con {0}, se selecciona la primera traducción vernácula que que comienza con {1}.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate">
         <source xml:lang="en">{0} - Copy{1}</source>
         <note>ID: RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate</note>
         <note>Param 0: the original rule name; Param 1: an optional numeric suffix to prevent duplicates (if needed)</note>
-        <target xml:lang="es-ES" state="needs-translation">{0} - Copy{1}</target>
+        <target xml:lang="es-ES" state="translated">{0} - Copia{1}</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.NewSelectionRuleNameTemplate">
         <source xml:lang="en">Selection Rule - {0}</source>
         <note>ID: RenderingSelectionRulesDlg.NewSelectionRuleNameTemplate</note>
         <note>Param is an integer</note>
-        <target xml:lang="es-ES" state="needs-translation">Selection Rule - {0}</target>
+        <target xml:lang="es-ES" state="translated">Regla de selección - {0}</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.WindowTitle">
         <source xml:lang="en">Biblical Terms Rendering Selection Rules</source>
@@ -803,7 +951,7 @@
       <trans-unit id="RenderingSelectionRulesDlg.btnCopy">
         <source xml:lang="en">Copy...</source>
         <note>ID: RenderingSelectionRulesDlg.btnCopy</note>
-        <target xml:lang="es-ES" state="needs-translation">Copy...</target>
+        <target xml:lang="es-ES" state="translated">Copiar...</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.btnDelete">
         <source xml:lang="en">Delete</source>
@@ -826,9 +974,9 @@
         <target xml:lang="es-ES" state="needs-translation">Define rules to enable Transcelerator to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</target>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.lblRuleDescription">
-        <source xml:lang="en">Ru&amp;le description:</source>
+        <source xml:lang="en">Rule description:</source>
         <note>ID: RenderingSelectionRulesDlg.lblRuleDescription</note>
-        <target xml:lang="es-ES" state="needs-translation">Ru&amp;le description:</target>
+        <target xml:lang="es-ES" state="translated">Descripción de la regla:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.EditRuleCaption">
         <source xml:lang="en">Edit Rendering Selection Rule</source>
@@ -838,7 +986,7 @@
       <trans-unit id="RulesWizardDlg.FixConditionNow">
         <source xml:lang="en">This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</source>
         <note>ID: RulesWizardDlg.FixConditionNow</note>
-        <target xml:lang="es-ES" state="needs-translation">This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</target>
+        <target xml:lang="es-ES" state="translated">Esta regla se puede guardar pero no se usará hasta que se corrija el error. ¿Desea arreglarla ahora?</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.InvalidQuestionCondition">
         <source xml:lang="en">Invalid condition for determining when rule applies.</source>
@@ -858,7 +1006,7 @@
       <trans-unit id="RulesWizardDlg.NameMustBeUnique">
         <source xml:lang="en">There is already a rule named {0}. Rule names must be unique.</source>
         <note>ID: RulesWizardDlg.NameMustBeUnique</note>
-        <target xml:lang="es-ES" state="needs-translation">There is already a rule named {0}. Rule names must be unique.</target>
+        <target xml:lang="es-ES" state="translated">Ya existe una regla llamada {0}. Los nombres de las reglas deben ser únicos.</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.NameRequired">
         <source xml:lang="en">Name is required.</source>
@@ -868,97 +1016,191 @@
       <trans-unit id="RulesWizardDlg.WindowTitle">
         <source xml:lang="en">Create Rendering Selection Rule</source>
         <note>ID: RulesWizardDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Create Rendering Selection Rule</target>
+        <target xml:lang="es-ES" state="translated">Crear regla para seleccionar la mejor traducción</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.grpMatchQuestion">
         <source xml:lang="en">This rule applies when the biblical term in the original question meets the following condition:</source>
         <note>ID: RulesWizardDlg.grpMatchQuestion</note>
-        <target xml:lang="es-ES" state="needs-translation">This rule applies when the biblical term in the original question meets the following condition:</target>
+        <target xml:lang="es-ES" state="translated">Esta regla se aplica cuando el término bíblico en la pregunta original cumple la siguiente condición:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.grpSelectRendering">
+        <source xml:lang="en">Select the rendering of the biblical term that meets the following condition:</source>
+        <note>ID: RulesWizardDlg.grpSelectRendering</note>
+        <target xml:lang="es-ES" state="needs-translation">Select the rendering of the biblical term that meets the following condition:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblFollowingWordExample">
         <source xml:lang="en">Example: </source>
         <note>ID: RulesWizardDlg.m_lblFollowingWordExample</note>
-        <target xml:lang="es-ES" state="needs-translation">Example: </target>
+        <target xml:lang="es-ES" state="translated">Ejemplo: </target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord">
+        <source xml:lang="en">Following &amp;word:</source>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Palabra siguiente:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord">
+        <source xml:lang="en">Preceding &amp;word:</source>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord</note>
+        <target xml:lang="es-ES" state="translated">&amp;Palabra anterior:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionPrefix">
+        <source xml:lang="en">Prefi&amp;x:</source>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionPrefix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Prefi&amp;jo:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionSuffix">
+        <source xml:lang="en">Suffi&amp;x:</source>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionSuffix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Sufijo:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblPrecedingWordExample">
         <source xml:lang="en">Example: </source>
         <note>ID: RulesWizardDlg.m_lblPrecedingWordExample</note>
-        <target xml:lang="es-ES" state="needs-translation">Example: </target>
+        <target xml:lang="es-ES" state="translated">Ejemplo: </target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblPrefixExample">
         <source xml:lang="en">Example: </source>
         <note>ID: RulesWizardDlg.m_lblPrefixExample</note>
-        <target xml:lang="es-ES" state="needs-translation">Example: </target>
+        <target xml:lang="es-ES" state="translated">Ejemplo: </target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRenderingConditionVernPrefix">
+        <source xml:lang="en">&amp;Vernacular prefix:</source>
+        <note>ID: RulesWizardDlg.m_lblRenderingConditionVernPrefix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="needs-translation">&amp;Vernacular prefix:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRenderingConditionVernSuffix">
+        <source xml:lang="en">&amp;Vernacular suffix:</source>
+        <note>ID: RulesWizardDlg.m_lblRenderingConditionVernSuffix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="needs-translation">&amp;Vernacular suffix:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRuleDescription">
+        <source xml:lang="en">Rule description:</source>
+        <note>ID: RulesWizardDlg.m_lblRuleDescription</note>
+        <target xml:lang="es-ES" state="translated">Descripción de la regla:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRuleName">
+        <source xml:lang="en">Rule name:</source>
+        <note>ID: RulesWizardDlg.m_lblRuleName</note>
+        <target xml:lang="es-ES" state="translated">Nombre de la regla:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblSuffixExample">
         <source xml:lang="en">Example: </source>
         <note>ID: RulesWizardDlg.m_lblSuffixExample</note>
-        <target xml:lang="es-ES" state="needs-translation">Example: </target>
+        <target xml:lang="es-ES" state="translated">Ejemplo: </target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition">
+        <source xml:lang="en">Type a regular expression where {0} is the placeholder for the stem of the biblical term:</source>
+        <note>ID: RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition</note>
+        <note>Note: {0} is literal text that will be displayed to the user. It must be preserved verbatim in the translation, but it will not be replaced by the program.</note>
+        <target xml:lang="es-ES" state="needs-translation">Type a regular expression where {0} is the placeholder for the stem of the biblical term:</target>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblUserDefinedRenderingCondition">
+        <source xml:lang="en">Type a regular expression to match vernacular renderings that should be selected:</source>
+        <note>ID: RulesWizardDlg.m_lblUserDefinedRenderingCondition</note>
+        <target xml:lang="es-ES" state="needs-translation">Type a regular expression to match vernacular renderings that should be selected:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoFollowingWord">
         <source xml:lang="en">Term is immediately &amp;followed by a specific word</source>
         <note>ID: RulesWizardDlg.m_rdoFollowingWord</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Term is immediately &amp;followed by a specific word</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoPreceedingWord">
         <source xml:lang="en">Term is immediately &amp;preceded by a specific word</source>
         <note>ID: RulesWizardDlg.m_rdoPreceedingWord</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Term is immediately &amp;preceded by a specific word</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoPrefix">
         <source xml:lang="en">Term has a specific &amp;prefix</source>
         <note>ID: RulesWizardDlg.m_rdoPrefix</note>
-        <target xml:lang="es-ES" state="translated">El término tiene un prefijo &amp;específico</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">El vocablo tiene un prefijo &amp;específico</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoRenderingHasPrefix">
         <source xml:lang="en">Rendering has a specific p&amp;refix</source>
         <note>ID: RulesWizardDlg.m_rdoRenderingHasPrefix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Rendering has a specific p&amp;refix</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoRenderingHasSuffix">
         <source xml:lang="en">Rendering has a specific s&amp;uffix</source>
         <note>ID: RulesWizardDlg.m_rdoRenderingHasSuffix</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">Rendering has a specific s&amp;uffix</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoSuffix">
         <source xml:lang="en">Term has a specific &amp;suffix</source>
         <note>ID: RulesWizardDlg.m_rdoSuffix</note>
-        <target xml:lang="es-ES" state="translated">El término tiene un sufijo &amp;específico</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">El vocablo tiene un sufijo &amp;específico</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoUserDefinedQuestionCriteria">
         <source xml:lang="en">&amp;User-defined condition</source>
         <note>ID: RulesWizardDlg.m_rdoUserDefinedQuestionCriteria</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;User-defined condition</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Condición definida por el &amp;usuario</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoUserDefinedRenderingCriteria">
         <source xml:lang="en">&amp;Rendering meets a user-defined condition</source>
         <note>ID: RulesWizardDlg.m_rdoUserDefinedRenderingCriteria</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
         <target xml:lang="es-ES" state="needs-translation">&amp;Rendering meets a user-defined condition</target>
       </trans-unit>
       <trans-unit id="ScrReferenceFilterDlg.WindowTitle">
         <source xml:lang="en">Filter by Reference</source>
         <note>ID: ScrReferenceFilterDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Filter by Reference</target>
+        <target xml:lang="es-ES" state="translated">Filtrar por referencia</target>
       </trans-unit>
       <trans-unit id="ScrReferenceFilterDlg.btnClearFilter">
         <source xml:lang="en">&amp;Clear Filter</source>
         <note>ID: ScrReferenceFilterDlg.btnClearFilter</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Clear Filter</target>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Eliminar filtro</target>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.m_lblFrom">
+        <source xml:lang="en">From:</source>
+        <note>ID: ScrReferenceFilterDlg.m_lblFrom</note>
+        <target xml:lang="es-ES" state="translated">De:</target>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.m_lblTo">
+        <source xml:lang="en">To:</source>
+        <note>ID: ScrReferenceFilterDlg.m_lblTo</note>
+        <target xml:lang="es-ES" state="translated">a:</target>
       </trans-unit>
       <trans-unit id="ScriptureForgeInfoDlg.WindowTitle">
-        <source xml:lang="en">Scripture Forge Integration</source>
+        <source xml:lang="en">{0} Integration</source>
         <note>ID: ScriptureForgeInfoDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="needs-translation">Scripture Forge Integration</target>
+        <note>Param is "Scripture Forge" (product name)</note>
+        <target xml:lang="es-ES" state="translated">Integración con {0}</target>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_lblExplanation">
+        <source xml:lang="en">By selecting the option to produce {0} files, {1} will automatically generate output that {0} will be able to use. These files will be synchronized using Send/Receive Projects in {2}.</source>
+        <note>ID: ScriptureForgeInfoDlg.m_lblExplanation</note>
+        <note>Params are product names: 0) "Scripture Forge"; 1) "Transcelerator"; 2) "Paratext".  Consult localized version of Paratext to ensure that "Send/Receive Projects" is translated in a consistent fashion.</note>
+        <target xml:lang="es-ES" state="translated">Al seleccionar la opción de producir archivos para {0}, {1} los generará automáticamente. Estos archivos se sincronizarán usando Enviar/Recibir proyectos en {2}.</target>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_lblMoreInfoOnline">
+        <source xml:lang="en">More information is available on-line:</source>
+        <note>ID: ScriptureForgeInfoDlg.m_lblMoreInfoOnline</note>
+        <target xml:lang="es-ES" state="translated">Más información disponible en línea:</target>
       </trans-unit>
       <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelScriptureForge">
-        <source xml:lang="en">Scripture Forge website</source>
+        <source xml:lang="en">{0} website</source>
         <note>ID: ScriptureForgeInfoDlg.m_linkLabelScriptureForge</note>
-        <target xml:lang="es-ES" state="needs-translation">Scripture Forge website</target>
+        <note>Param is "Scripture Forge" (product name)</note>
+        <target xml:lang="es-ES" state="translated">Sitio web de {0}</target>
       </trans-unit>
       <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge">
-        <source xml:lang="en">Transcelerator: Working With Scripture Forge</source>
+        <source xml:lang="en">{1}: Working With {0}</source>
         <note>ID: ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge</note>
-        <target xml:lang="es-ES" state="needs-translation">Transcelerator: Working With Scripture Forge</target>
+        <note>Params are product names 0) "Scripture Forge"; 1) "Transcelerator"</note>
+        <target xml:lang="es-ES" state="translated">Transcelerador: Interoperando con {0}</target>
       </trans-unit>
       <trans-unit id="SplashScreen.MsgInitializing">
         <source xml:lang="en">Initializing...</source>
@@ -973,12 +1215,12 @@
       <trans-unit id="SplashScreen.MsgLoadingTranslations">
         <source xml:lang="en">Loading translations...</source>
         <note>ID: SplashScreen.MsgLoadingTranslations</note>
-        <target xml:lang="es-ES" state="needs-translation">Loading translations...</target>
+        <target xml:lang="es-ES" state="translated">Cargando traducciones...</target>
       </trans-unit>
       <trans-unit id="SplashScreen.MsgParsingQuestions">
         <source xml:lang="en">Processing questions using Major Biblical Terms list...</source>
         <note>ID: SplashScreen.MsgParsingQuestions</note>
-        <target xml:lang="es-ES" state="needs-translation">Processing questions using Major Biblical Terms list...</target>
+        <target xml:lang="es-ES" state="translated">Procesando preguntas usando la lista de Principales vocablos bíblicos...</target>
       </trans-unit>
       <trans-unit id="SplashScreen.MsgRetrievingDataFromCaller">
         <source xml:lang="en">Retrieving data from {0}...</source>
@@ -986,16 +1228,66 @@
         <note>Param is host application name (Paratext)</note>
         <target xml:lang="es-ES" state="translated">Obteniendo datos del {0}...</target>
       </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuAddRenderingC">
+        <source xml:lang="en">&amp;Add rendering...</source>
+        <note>ID: TermRenderingCtrl.mnuAddRenderingC</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Agregar traducción...</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuAddRenderingH">
+        <source xml:lang="en">&amp;Add rendering...</source>
+        <note>ID: TermRenderingCtrl.mnuAddRenderingH</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Agregar traducción...</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuDeleteRendering">
+        <source xml:lang="en">&amp;Delete this rendering</source>
+        <note>ID: TermRenderingCtrl.mnuDeleteRendering</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Eliminar esta traducción</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuLookUpTermC">
+        <source xml:lang="en">Find &amp;Term in {0}...</source>
+        <note>ID: TermRenderingCtrl.mnuLookUpTermC</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">Buscar &amp;vocablo en {0}...</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuLookUpTermH">
+        <source xml:lang="en">Find &amp;Term in {0}...</source>
+        <note>ID: TermRenderingCtrl.mnuLookUpTermH</note>
+        <target xml:lang="es-ES" state="translated">Buscar &amp;vocablo en {0}...</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuRefreshRenderingsH">
+        <source xml:lang="en">Refresh Renderings from {0}</source>
+        <note>ID: TermRenderingCtrl.mnuRefreshRenderingsH</note>
+        <target xml:lang="es-ES" state="translated">Actualizar las traducciones de {0}</target>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuSetAsDefault">
+        <source xml:lang="en">&amp;Set as default rendering</source>
+        <note>ID: TermRenderingCtrl.mnuSetAsDefault</note>
+        <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
+        <target xml:lang="es-ES" state="translated">&amp;Establecer como traducción predeterminada</target>
+      </trans-unit>
       <trans-unit id="TransceleratorInfo.CopyrightFmt">
         <source xml:lang="en">{0}. Distributable under the terms of the MIT License.</source>
         <note>ID: TransceleratorInfo.CopyrightFmt</note>
         <note>Param is copyright information. This is display in the Help/About box and the splash screen</note>
-        <target xml:lang="es-ES" state="needs-translation">{0}. Distributable under the terms of the MIT License.</target>
+        <target xml:lang="es-ES" state="translated">{0}. Distribuible bajo los términos de la licencia MIT.</target>
+      </trans-unit>
+      <trans-unit id="TxlInfo.m_lblAppVersion">
+        <source xml:lang="en">Version {0}</source>
+        <note>ID: TxlInfo.m_lblAppVersion</note>
+        <target xml:lang="es-ES" state="translated">Versión {0}</target>
+      </trans-unit>
+      <trans-unit id="TxlInfo.m_lblCopyright">
+        <source xml:lang="en">(C) 2011-2020, SIL International.</source>
+        <note>ID: TxlInfo.m_lblCopyright</note>
+        <target xml:lang="es-ES" state="translated">(C) 2011-2020, SIL Internacional.</target>
       </trans-unit>
       <trans-unit id="m_lblAlternative">
         <source xml:lang="en">#</source>
         <note>ID: m_lblAlternative</note>
-        <target xml:lang="es-ES" state="needs-translation">#</target>
+        <target xml:lang="es-ES" state="translated">#</target>
       </trans-unit>
     </body>
   </file>

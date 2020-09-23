@@ -130,22 +130,30 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Directory Id="ProgramFilesFolder">
                 <Directory Id="PARATEXT7" Name="ParatextDir">
                     <Directory Id="PLUGINDIR7" Name="plugins">
-                        <Directory Id="INSTALLDIR7" Name="Transcelerator" />
+                        <Directory Id="INSTALLDIR7" Name="Transcelerator">
+							<Directory Id="INSTALLDIR7_LOCALIZATION" Name="localization"/>
+						</Directory>
                     </Directory>
                 </Directory>
                 <Directory Id="PARATEXT7TEST" Name="ParatextDir7Test">
                     <Directory Id="PLUGINDIR7TEST" Name="plugins">
-                        <Directory Id="INSTALLDIR7TEST" Name="Transcelerator" />
+                        <Directory Id="INSTALLDIR7TEST" Name="Transcelerator">
+							<Directory Id="INSTALLDIR7TEST_LOCALIZATION" Name="localization"/>
+						</Directory>
                     </Directory>
                 </Directory>
                 <Directory Id="PARATEXT8" Name="ParatextDir8">
                     <Directory Id="PLUGINDIR8" Name="plugins">
-                        <Directory Id="INSTALLDIR8" Name="Transcelerator" />
+                        <Directory Id="INSTALLDIR8" Name="Transcelerator">
+							<Directory Id="INSTALLDIR8_LOCALIZATION" Name="localization"/>
+						</Directory>
                     </Directory>
                 </Directory>
                 <Directory Id="PARATEXT9" Name="ParatextDir9">
                     <Directory Id="PLUGINDIR9" Name="plugins">
-                        <Directory Id="INSTALLDIR9" Name="Transcelerator" />
+                        <Directory Id="INSTALLDIR9" Name="Transcelerator">
+							<Directory Id="INSTALLDIR9_LOCALIZATION" Name="localization"/>
+						</Directory>
                     </Directory>
                 </Directory>
             </Directory>
@@ -179,6 +187,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{9FDCE013-5249-4D5E-857D-AFFD9C28DBA6}">
                 <File Id="TxlCore.dll_P7" ShortName="i8is0i8q.dll" KeyPath="yes" Name="TxlCore.dll" />
             </Component>
+            <Component Guid="{82B5432A-E177-48A9-BD74-151663F425D7}">
+                <File Id="L10NSharp.dll_P7" ShortName="ci709lyw.dll" KeyPath="yes"
+                      Name="L10NSharp.dll" />
+            </Component>
             <Component Guid="{ECA02522-194A-4694-B90B-C760595D24C5}">
                 <File Id="SilUtils.dll_P7" ShortName="z98fwb2a.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
@@ -186,6 +198,25 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="SIL.WritingSystems.dll_P7" ShortName="pfznpucn.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
             </Component>
+			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+				But the code would also need to be made to handle the case of no icu.net.dll (by catching
+				exception?)-->
+			<Component Guid="{83BC835F-A887-4403-BD06-276BA2BA8D3D}">
+				<File Id="icu.net.dll_P7" ShortName="icunetp7.dll" KeyPath="yes" Name="icu.net.dll" />
+			</Component>
+			<Component Guid="{0BD04ABB-22CC-4089-898D-D8A99A63E85D}">
+				<File Id="Microsoft.Extensions.DependencyModel.dll_P7" ShortName="msedmp7.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+			</Component>
+			<Component Guid="{9250480A-37FA-42FB-9306-48FC98E58E92}">
+				<File Id="icudt62.dll_86_P7" ShortName="dt62p7.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icudt62.dll" />
+			</Component>
+			<Component Guid="{ECA49D11-50B4-4079-A7F7-8F268F3DC112}">
+				<File Id="icuin62.dll_86_P7" ShortName="in62p7.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuin62.dll" />
+			</Component>
+			<Component Guid="{9254AF40-F003-4495-A925-75A31DB6D40B}">
+				<File Id="icuuc62.dll_86_P7" ShortName="uc62p7.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuuc62.dll" />
+			</Component>
+			<!-- End ICU -->
             <Component Guid="{22416287-2AA6-469C-8240-2B5DB18C984E}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P7" ShortName="k1dzcjen.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
@@ -233,12 +264,22 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P7" ShortName="gzmrl3nd.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P7" Guid="{D4E25452-E407-4E91-986C-F095FE315443}">
+                <File Id="ReleaseNotes.md_P7" ShortName="bt3y9try.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP7PLUGIN_es" Directory="INSTALLDIR7" Source="..\Transcelerator\bin\x86\Release">
             <Component Id="LocalizedPhrases_es.xlf_P7" Guid="{5B673BB8-C35B-458C-A7F6-F9F4EF533041}">
                 <File Id="LocalizedPhrases_es.xlf_P7" ShortName="6i9lrqdm.xlf" KeyPath="yes"
                       Name="LocalizedPhrases-es.xlf" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="COMPONENTSFORP7PLUGINLOCALIZATION_es" Directory="INSTALLDIR7_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.es.xlf_P7" Guid="{28A57EDE-C26D-4FF0-8887-FBB15A00D598}">
+                <File Id="Transcelerator.es.xlf_P7" ShortName="esp7.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
             </Component>
         </ComponentGroup>
 
@@ -288,6 +329,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{ec4ac5d5-ea1d-42df-aeb7-26892f238393}">
                 <File Id="TxlCore.dll_P7Test" ShortName="uk0wei71.dll" KeyPath="yes" Name="TxlCore.dll" />
             </Component>
+            <Component Guid="{FB96C095-5C66-4C10-9983-356AA78FA4A9}">
+                <File Id="L10NSharp.dll_P7Test" ShortName="qywkwk5r.dll" KeyPath="yes"
+                      Name="L10NSharp.dll" />
+            </Component>
             <Component Guid="{2981fd86-551d-4239-b504-53b48e5cc89e}">
                 <File Id="SilUtils.dll_P7Test" ShortName="t5lk78ie.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
@@ -295,6 +340,25 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="SIL.WritingSystems.dll_P7Test" ShortName="0dmsdv4y.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
             </Component>
+			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+				But the code would also need to be made to handle the case of no icu.net.dll (by catching
+				exception?)-->
+			<Component Guid="{74FDA6F2-66D1-444D-ADF2-1C9BC5800705}">
+				<File Id="icu.net.dll_P7Test" ShortName="icunet7t.dll" KeyPath="yes" Name="icu.net.dll" />
+			</Component>
+			<Component Guid="{DD59F363-DF63-4FD9-B7A7-9979C8D27C59}">
+				<File Id="Microsoft.Extensions.DependencyModel.dll_P7Test" ShortName="msedmp7t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+			</Component>
+			<Component Guid="{D527ECF7-4376-4CDC-AB71-4000FB39C7AE}">
+				<File Id="icudt62.dll_86_P7Test" ShortName="dt62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icudt62.dll" />
+			</Component>
+			<Component Guid="{001EB1B9-19F0-4FA9-B894-BE35C73029E8}">
+				<File Id="icuin62.dll_86_P7Test" ShortName="in62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuin62.dll" />
+			</Component>
+			<Component Guid="{4AC1619B-14D0-4107-BA30-0FB6ED7153E7}">
+				<File Id="icuuc62.dll_86_P7Test" ShortName="uc62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuuc62.dll" />
+			</Component>
+			<!-- End ICU -->
             <Component Guid="{0e576195-dcd9-4cf6-8b44-3d0056f65c5b}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P7Test" ShortName="ww6bl0mp.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
@@ -345,6 +409,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P7Test" ShortName="eemr572z.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P7Test" Guid="{CE56E106-A897-4BA5-88C2-D00A02DA4EB8}">
+                <File Id="ReleaseNotes.md_P7Test" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP7TestPLUGIN_es" Directory="INSTALLDIR7TEST"
@@ -352,6 +419,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="LocalizedPhrases_es.xlf_P7Test" Guid="{3C31EA3F-3B5A-4934-81FE-121E61B60FFF}">
                 <File Id="LocalizedPhrases_es.xlf_P7Test" ShortName="ejoysqre.xlf" KeyPath="yes"
                       Name="LocalizedPhrases-es.xlf" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="COMPONENTSFORP7TestPLUGINLOCALIZATION_es" Directory="INSTALLDIR7TEST_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.es.xlf_P7Test" Guid="{23B7A6B8-D07B-4655-B549-776D0AC1FB77}">
+                <File Id="Transcelerator.es.xlf_P7Test" ShortName="esp7test.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
             </Component>
         </ComponentGroup>
 
@@ -399,13 +473,36 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{ecc0909d-02ef-40fd-91e5-346fd772c596}">
                 <File Id="TxlCore.dll_P8" ShortName="e63sjme6.dll" KeyPath="yes" Name="TxlCore.dll" />
             </Component>
+            <Component Guid="{E8D1C4EE-3E4B-443E-9540-0EB2DF84D174}">
+                <File Id="L10NSharp.dll_P8" ShortName="drsbaet7.dll" KeyPath="yes"
+                      Name="L10NSharp.dll" />
+            </Component>
             <Component Guid="{17af00ab-d8e4-48a5-84f3-22a500f55686}">
                 <File Id="SilUtils.dll_P8" ShortName="yyatkagv.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
             <Component Guid="{8da65678-990f-4d26-b30b-f9a0b3ab384e}">
                 <File Id="SIL.WritingSystems.dll_P8" ShortName="q2jcchib.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-            </Component>
+            </Component>			
+			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+				But the code would also need to be made to handle the case of no icu.net.dll (by catching
+				exception?)-->
+			<Component Guid="{F1DFBB91-A7C9-44B4-901D-340D802761E5}">
+				<File Id="icu.net.dll_P8" ShortName="icunetp8.dll" KeyPath="yes" Name="icu.net.dll" />
+			</Component>
+			<Component Guid="{E17EC065-33F8-4B95-8411-38849F15E341}">
+				<File Id="Microsoft.Extensions.DependencyModel.dll_P8" ShortName="msedmp8.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+			</Component>
+			<Component Guid="{6FC24F1A-0EC2-4E75-AF92-35FD5A976C3B}">
+				<File Id="icudt62.dll_86_P8" ShortName="dt62p8.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icudt62.dll" />
+			</Component>
+			<Component Guid="{23379D58-B4A7-482D-81A2-668137B058EE}">
+				<File Id="icuin62.dll_86_P8" ShortName="in62p8.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuin62.dll" />
+			</Component>
+			<Component Guid="{32CA13C0-D7C5-44C9-963E-70D826BFDDF5}">
+				<File Id="icuuc62.dll_86_P8" ShortName="uc62p8.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuuc62.dll" />
+			</Component>
+			<!-- End ICU -->			
             <Component Guid="{425041c5-2c46-426b-9be1-1fda9ce60666}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P8" ShortName="ochr89pt.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
@@ -453,12 +550,22 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P8" ShortName="cs4ptmez.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P8" Guid="{9FA8100E-5ED7-4781-8680-F4DA24A1D44F}">
+                <File Id="ReleaseNotes.md_P8" ShortName="rwg9gmna.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP8PLUGIN_es" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\x86\Release">
             <Component Id="LocalizedPhrases_es.xlf_P8" Guid="{116D4A05-3D7E-4964-AC27-36DC38EE66B8}">
                 <File Id="LocalizedPhrases_es.xlf_P8" ShortName="64emy0yg.xlf" KeyPath="yes"
                       Name="LocalizedPhrases-es.xlf" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="COMPONENTSFORP8PLUGINLOCALIZATION_es" Directory="INSTALLDIR8_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.es.xlf_P8" Guid="{C14381E7-0914-4C03-8788-D98F6F7C4680}">
+                <File Id="Transcelerator.es.xlf_P8" ShortName="esp8.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
             </Component>
         </ComponentGroup>
 
@@ -504,6 +611,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="{5b1717bb-3c96-4878-851a-549ba426f161}">
                 <File Id="TxlCore.dll_P9" ShortName="47v9a799.dll" KeyPath="yes" Name="TxlCore.dll" />
             </Component>
+            <Component Guid="{c02ca858-87c5-414c-904e-e62a05908133}">
+                <File Id="L10NSharp.dll_P9" ShortName="apdq6l10.dll" KeyPath="yes"
+                      Name="L10NSharp.dll" />
+            </Component>
             <Component Guid="{3a8365ef-22d5-4ac8-8a7e-53fb263128e7}">
                 <File Id="SilUtils.dll_P9" ShortName="mdx6az21.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
@@ -511,6 +622,25 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="SIL.WritingSystems.dll_P9" ShortName="u3wozlbp.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
             </Component>
+			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+				But the code would also need to be made to handle the case of no icu.net.dll (by catching
+				exception?)-->
+			<Component Guid="{01DAB42C-5099-4F9B-A4DE-6F99CFC2F62D}">
+				<File Id="icu.net.dll_P9" ShortName="icunetp9.dll" KeyPath="yes" Name="icu.net.dll" />
+			</Component>			
+			<Component Guid="{FB8A9CD3-49F2-498C-B95D-9453C2FA35DC}">
+				<File Id="Microsoft.Extensions.DependencyModel.dll_P9" ShortName="msedmp9.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+			</Component>
+			<Component Guid="{06D5B7F8-781D-4E87-9D5D-DAECCC0612C4}">
+				<File Id="icudt62.dll_86_P9" ShortName="dt62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icudt62.dll" />
+			</Component>
+			<Component Guid="{1B004F36-F585-483F-A14F-CE29A3C561B2}">
+				<File Id="icuin62.dll_86_P9" ShortName="in62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuin62.dll" />
+			</Component>
+			<Component Guid="{2BA7A208-3444-40FC-815A-C47E89069376}">
+				<File Id="icuuc62.dll_86_P9" ShortName="uc62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x86\Release\lib\win-x86\icuuc62.dll" />
+			</Component>
+			<!-- End ICU -->
             <Component Guid="{c11029f6-7032-41c4-a707-9ead7b0a7cbe}">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P9" ShortName="tp04hoif.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
@@ -558,12 +688,22 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.dll.config_P9" ShortName="abh9z0kp.cfg" KeyPath="yes"
                       Name="Transcelerator.dll.config" />
             </Component>
+            <Component Id="ReleaseNotes.md_P9" Guid="{3C68F9A6-22DA-4909-9AA1-8A15279183DA}">
+                <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP9PLUGIN_es" Directory="INSTALLDIR9" Source="..\Transcelerator\bin\x86\Release">
             <Component Id="LocalizedPhrases_es.xlf_P9" Guid="{7aeaa697-9d1b-45fd-a073-42f5c41c0961}">
                 <File Id="LocalizedPhrases_es.xlf_P9" ShortName="t6ijnnzt.xlf" KeyPath="yes"
                       Name="LocalizedPhrases-es.xlf" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="COMPONENTSFORP9PLUGINLOCALIZATION_es" Directory="INSTALLDIR9_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.es.xlf_P9" Guid="{3B676781-DAC3-4F23-BDE8-06AAE6FEE211}">
+                <File Id="Transcelerator.es.xlf_P9" ShortName="esp9.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
             </Component>
         </ComponentGroup>
 
@@ -589,6 +729,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P7_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN_es" />
+                    <ComponentGroupRef Id="COMPONENTSFORP7PLUGINLOCALIZATION_es" />
                 </Feature>
                 <Feature Id="Localization_P7_enGB" Level="1" Title="British English" InstallDefault="followParent"
                          AllowAdvertise="no">
@@ -609,6 +750,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P7Test_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN_es" />
+                    <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGINLOCALIZATION_es" />
                 </Feature>
                 <Feature Id="Localization_P7Test_enGB" Level="1" Title="British English" InstallDefault="followParent"
                          AllowAdvertise="no">
@@ -629,6 +771,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P8_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN_es" />
+                    <ComponentGroupRef Id="COMPONENTSFORP8PLUGINLOCALIZATION_es" />
                 </Feature>
                 <Feature Id="Localization_P8_enGB" Level="1" Title="British English" InstallDefault="followParent"
                          AllowAdvertise="no">
@@ -649,6 +792,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P9_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_es" />
+                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_es" />
                 </Feature>
                 <Feature Id="Localization_P9_enGB" Level="1" Title="British English" InstallDefault="followParent"
                          AllowAdvertise="no">

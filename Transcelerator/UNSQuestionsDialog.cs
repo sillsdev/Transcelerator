@@ -31,6 +31,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 using SIL.WritingSystems;
 using static System.String;
 using File = System.IO.File;
@@ -47,6 +49,7 @@ namespace SIL.Transcelerator
 	{
 		#region Constants
 		private const string kKeyTermRulesFilename = "keyTermRules.xml";
+		public const string kScriptureForgeProductName = "Scripture Forge";
 		#endregion
 
 		#region Member Data
@@ -385,10 +388,7 @@ namespace SIL.Transcelerator
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
-			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
-			lblFilterIndicator.Tag = lblFilterIndicator.Text;
-			lblRemainingWork.Tag = lblRemainingWork.Text;
+			SetControlTagsToFormatStrings();
 
             Location = Properties.Settings.Default.WindowLocation;
 			WindowState = Properties.Settings.Default.DefaultWindowState;
@@ -424,8 +424,23 @@ namespace SIL.Transcelerator
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
 			splashScreen.Close();
+		}			
+		
+		private void HandleStringsLocalized()
+		{
+			SetControlTagsToFormatStrings();
+			UpdateCountsAndFilterStatus();
+		}			
+		
+		private void SetControlTagsToFormatStrings()
+		{
+			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
+			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
+			lblFilterIndicator.Tag = lblFilterIndicator.Text;
+			lblRemainingWork.Tag = lblRemainingWork.Text;
 		}
 
 		private void PopulateAvailableLocales()
@@ -657,7 +672,7 @@ namespace SIL.Transcelerator
 	        {
 		        mnuProduceScriptureForgeFiles.Tag = "shown";
 
-				using (var dlg = new ScriptureForgeInfoDlg())
+				using (var dlg = new ScriptureForgeInfoDlg(m_appName))
 		        {
 			        dlg.ShowDialog(this);
 		        }
@@ -2374,7 +2389,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuHelpAbout_Click(object sender, EventArgs e)
 		{
-			using (HelpAboutDlg dlg = new HelpAboutDlg())
+			using (HelpAboutDlg dlg = new HelpAboutDlg(Icon))
 			{
 				dlg.ShowDialog();
 			}
@@ -2715,7 +2730,12 @@ namespace SIL.Transcelerator
 		private void ClearBiblicalTermsPane()
 		{
 			foreach (TermRenderingCtrl ctrl in m_biblicalTermsPane.Controls.OfType<TermRenderingCtrl>())
+			{
 				ctrl.SelectedRenderingChanged -= KeyTermRenderingSelected;
+				ctrl.BestRenderingsChanged -= KeyTermBestRenderingsChanged;
+				ctrl.Dispose();
+			}
+
 			m_biblicalTermsPane.Controls.Clear();
 			m_biblicalTermsPane.ColumnCount = 0;
 		}

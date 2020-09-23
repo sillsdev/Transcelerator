@@ -30,20 +30,22 @@ namespace SIL.Transcelerator
 			Justification="Controls get added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Label lblProductName;
-			System.Windows.Forms.PictureBox pictLogo;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TxlInfo));
+			this.pictLogo = new System.Windows.Forms.PictureBox();
 			this.m_lblAppVersion = new System.Windows.Forms.Label();
 			this.m_lblCopyright = new System.Windows.Forms.Label();
 			this.m_picLogo = new System.Windows.Forms.PictureBox();
 			this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.lblBuildDate = new System.Windows.Forms.Label();
 			this.panelBrowser = new System.Windows.Forms.Panel();
+			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			lblProductName = new System.Windows.Forms.Label();
-			pictLogo = new System.Windows.Forms.PictureBox();
+			((System.ComponentModel.ISupportInitialize)(this.pictLogo)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_picLogo)).BeginInit();
 			this.tableLayoutPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(pictLogo)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// lblProductName
@@ -56,6 +58,10 @@ namespace SIL.Transcelerator
 			this.tableLayoutPanel.SetColumnSpan(lblProductName, 2);
 			lblProductName.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			lblProductName.ForeColor = System.Drawing.Color.Black;
+			this.l10NSharpExtender1.SetLocalizableToolTip(lblProductName, null);
+			this.l10NSharpExtender1.SetLocalizationComment(lblProductName, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(lblProductName, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(lblProductName, "TxlInfo.lblProductName");
 			lblProductName.Location = new System.Drawing.Point(386, 0);
 			lblProductName.Name = "lblProductName";
 			lblProductName.Padding = new System.Windows.Forms.Padding(0, 14, 0, 10);
@@ -65,6 +71,21 @@ namespace SIL.Transcelerator
 			lblProductName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			lblProductName.UseMnemonic = false;
 			// 
+			// pictLogo
+			// 
+			this.pictLogo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.pictLogo.Image = ((System.Drawing.Image)(resources.GetObject("pictLogo.Image")));
+			this.pictLogo.InitialImage = null;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.pictLogo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.pictLogo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.pictLogo, "TxlInfo.pictLogo");
+			this.pictLogo.Location = new System.Drawing.Point(567, 108);
+			this.pictLogo.Name = "pictLogo";
+			this.pictLogo.Size = new System.Drawing.Size(101, 113);
+			this.pictLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			this.pictLogo.TabIndex = 27;
+			this.pictLogo.TabStop = false;
+			// 
 			// m_lblAppVersion
 			// 
 			this.m_lblAppVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -73,6 +94,9 @@ namespace SIL.Transcelerator
 			this.m_lblAppVersion.AutoSize = true;
 			this.m_lblAppVersion.BackColor = System.Drawing.Color.Transparent;
 			this.tableLayoutPanel.SetColumnSpan(this.m_lblAppVersion, 2);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAppVersion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAppVersion, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAppVersion, "TxlInfo.m_lblAppVersion");
 			this.m_lblAppVersion.Location = new System.Drawing.Point(386, 66);
 			this.m_lblAppVersion.Name = "m_lblAppVersion";
 			this.m_lblAppVersion.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
@@ -90,6 +114,9 @@ namespace SIL.Transcelerator
 			this.m_lblCopyright.AutoSize = true;
 			this.m_lblCopyright.BackColor = System.Drawing.Color.Transparent;
 			this.m_lblCopyright.ForeColor = System.Drawing.Color.Black;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCopyright, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCopyright, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCopyright, "TxlInfo.m_lblCopyright");
 			this.m_lblCopyright.Location = new System.Drawing.Point(386, 105);
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(175, 119);
@@ -100,6 +127,9 @@ namespace SIL.Transcelerator
 			// m_picLogo
 			// 
 			this.m_picLogo.Image = global::SIL.Transcelerator.Properties.Resources.Transcelerator;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_picLogo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_picLogo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_picLogo, "TxlInfo.m_picLogo");
 			this.m_picLogo.Location = new System.Drawing.Point(3, 3);
 			this.m_picLogo.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this.m_picLogo.Name = "m_picLogo";
@@ -119,7 +149,7 @@ namespace SIL.Transcelerator
 			this.tableLayoutPanel.Controls.Add(this.m_picLogo, 0, 0);
 			this.tableLayoutPanel.Controls.Add(this.m_lblAppVersion, 1, 1);
 			this.tableLayoutPanel.Controls.Add(this.m_lblCopyright, 1, 3);
-			this.tableLayoutPanel.Controls.Add(pictLogo, 2, 3);
+			this.tableLayoutPanel.Controls.Add(this.pictLogo, 2, 3);
 			this.tableLayoutPanel.Controls.Add(this.lblBuildDate, 1, 2);
 			this.tableLayoutPanel.Controls.Add(this.panelBrowser, 1, 4);
 			this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -135,23 +165,15 @@ namespace SIL.Transcelerator
 			this.tableLayoutPanel.Size = new System.Drawing.Size(671, 368);
 			this.tableLayoutPanel.TabIndex = 27;
 			// 
-			// pictLogo
-			// 
-			pictLogo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			pictLogo.Image = SIL.Windows.Forms.Properties.Resources.SILLogoBlue101x113;
-			pictLogo.InitialImage = null;
-			pictLogo.Location = new System.Drawing.Point(567, 108);
-			pictLogo.Name = "pictLogo";
-			pictLogo.Size = new System.Drawing.Size(101, 113);
-			pictLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			pictLogo.TabIndex = 27;
-			pictLogo.TabStop = false;
-			// 
 			// lblBuildDate
 			// 
 			this.lblBuildDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.lblBuildDate.AutoSize = true;
 			this.tableLayoutPanel.SetColumnSpan(this.lblBuildDate, 2);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblBuildDate, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblBuildDate, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.lblBuildDate, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblBuildDate, "TxlInfo.lblBuildDate");
 			this.lblBuildDate.Location = new System.Drawing.Point(386, 85);
 			this.lblBuildDate.Name = "lblBuildDate";
 			this.lblBuildDate.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
@@ -172,6 +194,11 @@ namespace SIL.Transcelerator
 			this.panelBrowser.Size = new System.Drawing.Size(282, 132);
 			this.panelBrowser.TabIndex = 29;
 			// 
+			// l10NSharpExtender1
+			// 
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
+			this.l10NSharpExtender1.PrefixForNewItems = "";
+			// 
 			// TxlInfo
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -179,12 +206,16 @@ namespace SIL.Transcelerator
 			this.AutoSize = true;
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.Controls.Add(this.tableLayoutPanel);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizingId(this, "TxlInfo.TxlInfo");
 			this.Name = "TxlInfo";
 			this.Size = new System.Drawing.Size(671, 368);
+			((System.ComponentModel.ISupportInitialize)(this.pictLogo)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_picLogo)).EndInit();
 			this.tableLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(pictLogo)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -197,5 +228,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
 		private System.Windows.Forms.Label lblBuildDate;
 		private System.Windows.Forms.Panel panelBrowser;
+		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.PictureBox pictLogo;
 	}
 }

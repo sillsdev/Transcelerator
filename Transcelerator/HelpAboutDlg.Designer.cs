@@ -41,11 +41,27 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			this.m_linkLabelReleaseNotes = new System.Windows.Forms.LinkLabel();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
+			// 
+			// m_linkLabelReleaseNotes
+			// 
+			this.m_linkLabelReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.m_linkLabelReleaseNotes.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelReleaseNotes, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelReleaseNotes, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelReleaseNotes, "HelpAboutDlg.m_linkLabelReleaseNotes");
+			this.m_linkLabelReleaseNotes.Location = new System.Drawing.Point(12, 397);
+			this.m_linkLabelReleaseNotes.Name = "m_linkLabelReleaseNotes";
+			this.m_linkLabelReleaseNotes.Size = new System.Drawing.Size(84, 13);
+			this.m_linkLabelReleaseNotes.TabIndex = 2;
+			this.m_linkLabelReleaseNotes.TabStop = true;
+			this.m_linkLabelReleaseNotes.Text = "Release notes...";
+			this.m_linkLabelReleaseNotes.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkLabelReleaseNotes_LinkClicked);
 			// 
 			// btnOk
 			// 
@@ -88,6 +104,7 @@ namespace SIL.Transcelerator
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ClientSize = new System.Drawing.Size(674, 427);
+			this.Controls.Add(this.m_linkLabelReleaseNotes);
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.m_txlInfo);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
@@ -110,5 +127,6 @@ namespace SIL.Transcelerator
 		private TxlInfo m_txlInfo;
 		private System.Windows.Forms.Button btnOk;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.LinkLabel m_linkLabelReleaseNotes;
 	}
 }

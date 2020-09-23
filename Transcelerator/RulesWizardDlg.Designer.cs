@@ -48,26 +48,26 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.Label m_lblUserDefinedOriginalQuestionCondition;
-			System.Windows.Forms.Label m_lblUserDefinedRenderingCondition;
-			System.Windows.Forms.GroupBox grpSelectRendering;
-			System.Windows.Forms.Label m_lblRenderingConditionVernPrefix;
-			System.Windows.Forms.Label m_lblRenderingConditionVernSuffix;
-			System.Windows.Forms.Label m_lblOriginalQuestionConditionFollowingWord;
-			System.Windows.Forms.Label m_lblOriginalQuestionConditionPrecedingWord;
-			System.Windows.Forms.Label m_lblOriginalQuestionConditionPrefix;
-			System.Windows.Forms.Label m_lblOriginalQuestionConditionSuffix;
-			System.Windows.Forms.Label m_lblRuleDescription;
-			System.Windows.Forms.Label m_lblRuleName;
+			this.m_lblUserDefinedOriginalQuestionCondition = new System.Windows.Forms.Label();
+			this.m_lblUserDefinedRenderingCondition = new System.Windows.Forms.Label();
+			this.grpSelectRendering = new System.Windows.Forms.GroupBox();
 			this.m_pnlUserDefinedRenderingMatch = new System.Windows.Forms.Panel();
 			this.m_txtRenderingMatchRegEx = new System.Windows.Forms.TextBox();
 			this.m_rdoUserDefinedRenderingCriteria = new System.Windows.Forms.RadioButton();
 			this.m_pnlVernacularPrefix = new System.Windows.Forms.Panel();
+			this.m_lblRenderingConditionVernPrefix = new System.Windows.Forms.Label();
 			this.m_txtVernacularPrefix = new System.Windows.Forms.TextBox();
 			this.m_rdoRenderingHasPrefix = new System.Windows.Forms.RadioButton();
 			this.m_pnlVernacularSuffix = new System.Windows.Forms.Panel();
+			this.m_lblRenderingConditionVernSuffix = new System.Windows.Forms.Label();
 			this.m_txtVernacularSuffix = new System.Windows.Forms.TextBox();
 			this.m_rdoRenderingHasSuffix = new System.Windows.Forms.RadioButton();
+			this.m_lblOriginalQuestionConditionFollowingWord = new System.Windows.Forms.Label();
+			this.m_lblOriginalQuestionConditionPrecedingWord = new System.Windows.Forms.Label();
+			this.m_lblOriginalQuestionConditionPrefix = new System.Windows.Forms.Label();
+			this.m_lblOriginalQuestionConditionSuffix = new System.Windows.Forms.Label();
+			this.m_lblRuleDescription = new System.Windows.Forms.Label();
+			this.m_lblRuleName = new System.Windows.Forms.Label();
 			this.grpMatchQuestion = new System.Windows.Forms.GroupBox();
 			this.m_lblFollowingWordExample = new System.Windows.Forms.Label();
 			this.m_lblPrecedingWordExample = new System.Windows.Forms.Label();
@@ -93,18 +93,7 @@ namespace SIL.Transcelerator
 			this.m_lblDescription = new System.Windows.Forms.Label();
 			this.m_txtName = new System.Windows.Forms.TextBox();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			m_lblUserDefinedOriginalQuestionCondition = new System.Windows.Forms.Label();
-			m_lblUserDefinedRenderingCondition = new System.Windows.Forms.Label();
-			grpSelectRendering = new System.Windows.Forms.GroupBox();
-			m_lblRenderingConditionVernPrefix = new System.Windows.Forms.Label();
-			m_lblRenderingConditionVernSuffix = new System.Windows.Forms.Label();
-			m_lblOriginalQuestionConditionFollowingWord = new System.Windows.Forms.Label();
-			m_lblOriginalQuestionConditionPrecedingWord = new System.Windows.Forms.Label();
-			m_lblOriginalQuestionConditionPrefix = new System.Windows.Forms.Label();
-			m_lblOriginalQuestionConditionSuffix = new System.Windows.Forms.Label();
-			m_lblRuleDescription = new System.Windows.Forms.Label();
-			m_lblRuleName = new System.Windows.Forms.Label();
-			grpSelectRendering.SuspendLayout();
+			this.grpSelectRendering.SuspendLayout();
 			this.m_pnlUserDefinedRenderingMatch.SuspendLayout();
 			this.m_pnlVernacularPrefix.SuspendLayout();
 			this.m_pnlVernacularSuffix.SuspendLayout();
@@ -119,58 +108,58 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblUserDefinedOriginalQuestionCondition
 			// 
-			m_lblUserDefinedOriginalQuestionCondition.AutoSize = true;
-			m_lblUserDefinedOriginalQuestionCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblUserDefinedOriginalQuestionCondition, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblUserDefinedOriginalQuestionCondition, "Note: {0} is literal text that will be displayed to the user. It must be preserve" +
+			this.m_lblUserDefinedOriginalQuestionCondition.AutoSize = true;
+			this.m_lblUserDefinedOriginalQuestionCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblUserDefinedOriginalQuestionCondition, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblUserDefinedOriginalQuestionCondition, "Note: {0} is literal text that will be displayed to the user. It must be preserve" +
         "d verbatim in the translation, but it will not be replaced by the program.");
-			this.l10NSharpExtender1.SetLocalizingId(m_lblUserDefinedOriginalQuestionCondition, "RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition");
-			m_lblUserDefinedOriginalQuestionCondition.Location = new System.Drawing.Point(0, 0);
-			m_lblUserDefinedOriginalQuestionCondition.Name = "m_lblUserDefinedOriginalQuestionCondition";
-			m_lblUserDefinedOriginalQuestionCondition.Size = new System.Drawing.Size(412, 13);
-			m_lblUserDefinedOriginalQuestionCondition.TabIndex = 0;
-			m_lblUserDefinedOriginalQuestionCondition.Text = "Type a regular expression where {0} is the placeholder for the stem of the biblic" +
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblUserDefinedOriginalQuestionCondition, "RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition");
+			this.m_lblUserDefinedOriginalQuestionCondition.Location = new System.Drawing.Point(0, 0);
+			this.m_lblUserDefinedOriginalQuestionCondition.Name = "m_lblUserDefinedOriginalQuestionCondition";
+			this.m_lblUserDefinedOriginalQuestionCondition.Size = new System.Drawing.Size(412, 13);
+			this.m_lblUserDefinedOriginalQuestionCondition.TabIndex = 0;
+			this.m_lblUserDefinedOriginalQuestionCondition.Text = "Type a regular expression where {0} is the placeholder for the stem of the biblic" +
     "al term:";
 			// 
 			// m_lblUserDefinedRenderingCondition
 			// 
-			m_lblUserDefinedRenderingCondition.AutoSize = true;
-			m_lblUserDefinedRenderingCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblUserDefinedRenderingCondition, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblUserDefinedRenderingCondition, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblUserDefinedRenderingCondition, "RulesWizardDlg.m_lblUserDefinedRenderingCondition");
-			m_lblUserDefinedRenderingCondition.Location = new System.Drawing.Point(0, 0);
-			m_lblUserDefinedRenderingCondition.Name = "m_lblUserDefinedRenderingCondition";
-			m_lblUserDefinedRenderingCondition.Size = new System.Drawing.Size(393, 13);
-			m_lblUserDefinedRenderingCondition.TabIndex = 0;
-			m_lblUserDefinedRenderingCondition.Text = "Type a regular expression to match vernacular renderings that should be selected:" +
+			this.m_lblUserDefinedRenderingCondition.AutoSize = true;
+			this.m_lblUserDefinedRenderingCondition.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblUserDefinedRenderingCondition, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblUserDefinedRenderingCondition, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblUserDefinedRenderingCondition, "RulesWizardDlg.m_lblUserDefinedRenderingCondition");
+			this.m_lblUserDefinedRenderingCondition.Location = new System.Drawing.Point(0, 0);
+			this.m_lblUserDefinedRenderingCondition.Name = "m_lblUserDefinedRenderingCondition";
+			this.m_lblUserDefinedRenderingCondition.Size = new System.Drawing.Size(393, 13);
+			this.m_lblUserDefinedRenderingCondition.TabIndex = 0;
+			this.m_lblUserDefinedRenderingCondition.Text = "Type a regular expression to match vernacular renderings that should be selected:" +
     "";
 			// 
 			// grpSelectRendering
 			// 
-			grpSelectRendering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.grpSelectRendering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			grpSelectRendering.Controls.Add(this.m_pnlUserDefinedRenderingMatch);
-			grpSelectRendering.Controls.Add(this.m_rdoUserDefinedRenderingCriteria);
-			grpSelectRendering.Controls.Add(this.m_pnlVernacularPrefix);
-			grpSelectRendering.Controls.Add(this.m_rdoRenderingHasPrefix);
-			grpSelectRendering.Controls.Add(this.m_pnlVernacularSuffix);
-			grpSelectRendering.Controls.Add(this.m_rdoRenderingHasSuffix);
-			this.l10NSharpExtender1.SetLocalizableToolTip(grpSelectRendering, null);
-			this.l10NSharpExtender1.SetLocalizationComment(grpSelectRendering, null);
-			this.l10NSharpExtender1.SetLocalizingId(grpSelectRendering, "RulesWizardDlg.grpSelectRendering");
-			grpSelectRendering.Location = new System.Drawing.Point(15, 320);
-			grpSelectRendering.Name = "grpSelectRendering";
-			grpSelectRendering.Size = new System.Drawing.Size(506, 134);
-			grpSelectRendering.TabIndex = 3;
-			grpSelectRendering.TabStop = false;
-			grpSelectRendering.Text = "Select the rendering of the biblical that meets the following condition:";
+			this.grpSelectRendering.Controls.Add(this.m_pnlUserDefinedRenderingMatch);
+			this.grpSelectRendering.Controls.Add(this.m_rdoUserDefinedRenderingCriteria);
+			this.grpSelectRendering.Controls.Add(this.m_pnlVernacularPrefix);
+			this.grpSelectRendering.Controls.Add(this.m_rdoRenderingHasPrefix);
+			this.grpSelectRendering.Controls.Add(this.m_pnlVernacularSuffix);
+			this.grpSelectRendering.Controls.Add(this.m_rdoRenderingHasSuffix);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.grpSelectRendering, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.grpSelectRendering, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.grpSelectRendering, "RulesWizardDlg.grpSelectRendering");
+			this.grpSelectRendering.Location = new System.Drawing.Point(15, 320);
+			this.grpSelectRendering.Name = "grpSelectRendering";
+			this.grpSelectRendering.Size = new System.Drawing.Size(506, 134);
+			this.grpSelectRendering.TabIndex = 3;
+			this.grpSelectRendering.TabStop = false;
+			this.grpSelectRendering.Text = "Select the rendering of the biblical term that meets the following condition:";
 			// 
 			// m_pnlUserDefinedRenderingMatch
 			// 
 			this.m_pnlUserDefinedRenderingMatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_pnlUserDefinedRenderingMatch.Controls.Add(m_lblUserDefinedRenderingCondition);
+			this.m_pnlUserDefinedRenderingMatch.Controls.Add(this.m_lblUserDefinedRenderingCondition);
 			this.m_pnlUserDefinedRenderingMatch.Controls.Add(this.m_txtRenderingMatchRegEx);
 			this.m_pnlUserDefinedRenderingMatch.Location = new System.Drawing.Point(21, 87);
 			this.m_pnlUserDefinedRenderingMatch.Name = "m_pnlUserDefinedRenderingMatch";
@@ -196,7 +185,8 @@ namespace SIL.Transcelerator
 			this.m_rdoUserDefinedRenderingCriteria.AutoSize = true;
 			this.m_rdoUserDefinedRenderingCriteria.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUserDefinedRenderingCriteria, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedRenderingCriteria, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedRenderingCriteria, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUserDefinedRenderingCriteria, "RulesWizardDlg.m_rdoUserDefinedRenderingCriteria");
 			this.m_rdoUserDefinedRenderingCriteria.Location = new System.Drawing.Point(7, 65);
 			this.m_rdoUserDefinedRenderingCriteria.Name = "m_rdoUserDefinedRenderingCriteria";
@@ -209,7 +199,7 @@ namespace SIL.Transcelerator
 			// m_pnlVernacularPrefix
 			// 
 			this.m_pnlVernacularPrefix.AutoSize = true;
-			this.m_pnlVernacularPrefix.Controls.Add(m_lblRenderingConditionVernPrefix);
+			this.m_pnlVernacularPrefix.Controls.Add(this.m_lblRenderingConditionVernPrefix);
 			this.m_pnlVernacularPrefix.Controls.Add(this.m_txtVernacularPrefix);
 			this.m_pnlVernacularPrefix.Location = new System.Drawing.Point(214, 43);
 			this.m_pnlVernacularPrefix.Name = "m_pnlVernacularPrefix";
@@ -220,16 +210,17 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblRenderingConditionVernPrefix
 			// 
-			m_lblRenderingConditionVernPrefix.AutoSize = true;
-			m_lblRenderingConditionVernPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRenderingConditionVernPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRenderingConditionVernPrefix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRenderingConditionVernPrefix, "RulesWizardDlg.m_lblRenderingConditionVernPrefix");
-			m_lblRenderingConditionVernPrefix.Location = new System.Drawing.Point(0, 1);
-			m_lblRenderingConditionVernPrefix.Name = "m_lblRenderingConditionVernPrefix";
-			m_lblRenderingConditionVernPrefix.Size = new System.Drawing.Size(89, 13);
-			m_lblRenderingConditionVernPrefix.TabIndex = 0;
-			m_lblRenderingConditionVernPrefix.Text = "&Vernacular prefix:";
+			this.m_lblRenderingConditionVernPrefix.AutoSize = true;
+			this.m_lblRenderingConditionVernPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblRenderingConditionVernPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblRenderingConditionVernPrefix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblRenderingConditionVernPrefix, "RulesWizardDlg.m_lblRenderingConditionVernPrefix");
+			this.m_lblRenderingConditionVernPrefix.Location = new System.Drawing.Point(0, 1);
+			this.m_lblRenderingConditionVernPrefix.Name = "m_lblRenderingConditionVernPrefix";
+			this.m_lblRenderingConditionVernPrefix.Size = new System.Drawing.Size(89, 13);
+			this.m_lblRenderingConditionVernPrefix.TabIndex = 0;
+			this.m_lblRenderingConditionVernPrefix.Text = "&Vernacular prefix:";
 			// 
 			// m_txtVernacularPrefix
 			// 
@@ -250,7 +241,8 @@ namespace SIL.Transcelerator
 			this.m_rdoRenderingHasPrefix.AutoSize = true;
 			this.m_rdoRenderingHasPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoRenderingHasPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasPrefix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoRenderingHasPrefix, "RulesWizardDlg.m_rdoRenderingHasPrefix");
 			this.m_rdoRenderingHasPrefix.Location = new System.Drawing.Point(7, 42);
 			this.m_rdoRenderingHasPrefix.Name = "m_rdoRenderingHasPrefix";
@@ -263,7 +255,7 @@ namespace SIL.Transcelerator
 			// m_pnlVernacularSuffix
 			// 
 			this.m_pnlVernacularSuffix.AutoSize = true;
-			this.m_pnlVernacularSuffix.Controls.Add(m_lblRenderingConditionVernSuffix);
+			this.m_pnlVernacularSuffix.Controls.Add(this.m_lblRenderingConditionVernSuffix);
 			this.m_pnlVernacularSuffix.Controls.Add(this.m_txtVernacularSuffix);
 			this.m_pnlVernacularSuffix.Location = new System.Drawing.Point(214, 20);
 			this.m_pnlVernacularSuffix.Name = "m_pnlVernacularSuffix";
@@ -273,15 +265,16 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblRenderingConditionVernSuffix
 			// 
-			m_lblRenderingConditionVernSuffix.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRenderingConditionVernSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRenderingConditionVernSuffix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRenderingConditionVernSuffix, "RulesWizardDlg.m_lblRenderingConditionVernSuffix");
-			m_lblRenderingConditionVernSuffix.Location = new System.Drawing.Point(0, 1);
-			m_lblRenderingConditionVernSuffix.Name = "m_lblRenderingConditionVernSuffix";
-			m_lblRenderingConditionVernSuffix.Size = new System.Drawing.Size(88, 13);
-			m_lblRenderingConditionVernSuffix.TabIndex = 0;
-			m_lblRenderingConditionVernSuffix.Text = "&Vernacular suffix:";
+			this.m_lblRenderingConditionVernSuffix.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblRenderingConditionVernSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblRenderingConditionVernSuffix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblRenderingConditionVernSuffix, "RulesWizardDlg.m_lblRenderingConditionVernSuffix");
+			this.m_lblRenderingConditionVernSuffix.Location = new System.Drawing.Point(0, 1);
+			this.m_lblRenderingConditionVernSuffix.Name = "m_lblRenderingConditionVernSuffix";
+			this.m_lblRenderingConditionVernSuffix.Size = new System.Drawing.Size(88, 13);
+			this.m_lblRenderingConditionVernSuffix.TabIndex = 0;
+			this.m_lblRenderingConditionVernSuffix.Text = "&Vernacular suffix:";
 			// 
 			// m_txtVernacularSuffix
 			// 
@@ -302,7 +295,8 @@ namespace SIL.Transcelerator
 			this.m_rdoRenderingHasSuffix.AutoSize = true;
 			this.m_rdoRenderingHasSuffix.Checked = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoRenderingHasSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoRenderingHasSuffix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoRenderingHasSuffix, "RulesWizardDlg.m_rdoRenderingHasSuffix");
 			this.m_rdoRenderingHasSuffix.Location = new System.Drawing.Point(7, 19);
 			this.m_rdoRenderingHasSuffix.Name = "m_rdoRenderingHasSuffix";
@@ -315,80 +309,83 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblOriginalQuestionConditionFollowingWord
 			// 
-			m_lblOriginalQuestionConditionFollowingWord.AutoSize = true;
-			m_lblOriginalQuestionConditionFollowingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionFollowingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionFollowingWord, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionFollowingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord");
-			m_lblOriginalQuestionConditionFollowingWord.Location = new System.Drawing.Point(0, 1);
-			m_lblOriginalQuestionConditionFollowingWord.Name = "m_lblOriginalQuestionConditionFollowingWord";
-			m_lblOriginalQuestionConditionFollowingWord.Size = new System.Drawing.Size(80, 13);
-			m_lblOriginalQuestionConditionFollowingWord.TabIndex = 0;
-			m_lblOriginalQuestionConditionFollowingWord.Text = "Following &word:";
+			this.m_lblOriginalQuestionConditionFollowingWord.AutoSize = true;
+			this.m_lblOriginalQuestionConditionFollowingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblOriginalQuestionConditionFollowingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblOriginalQuestionConditionFollowingWord, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblOriginalQuestionConditionFollowingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord");
+			this.m_lblOriginalQuestionConditionFollowingWord.Location = new System.Drawing.Point(0, 1);
+			this.m_lblOriginalQuestionConditionFollowingWord.Name = "m_lblOriginalQuestionConditionFollowingWord";
+			this.m_lblOriginalQuestionConditionFollowingWord.Size = new System.Drawing.Size(80, 13);
+			this.m_lblOriginalQuestionConditionFollowingWord.TabIndex = 0;
+			this.m_lblOriginalQuestionConditionFollowingWord.Text = "Following &word:";
 			// 
 			// m_lblOriginalQuestionConditionPrecedingWord
 			// 
-			m_lblOriginalQuestionConditionPrecedingWord.AutoSize = true;
-			m_lblOriginalQuestionConditionPrecedingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrecedingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrecedingWord, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrecedingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord");
-			m_lblOriginalQuestionConditionPrecedingWord.Location = new System.Drawing.Point(0, 1);
-			m_lblOriginalQuestionConditionPrecedingWord.Name = "m_lblOriginalQuestionConditionPrecedingWord";
-			m_lblOriginalQuestionConditionPrecedingWord.Size = new System.Drawing.Size(84, 13);
-			m_lblOriginalQuestionConditionPrecedingWord.TabIndex = 0;
-			m_lblOriginalQuestionConditionPrecedingWord.Text = "Preceding &word:";
+			this.m_lblOriginalQuestionConditionPrecedingWord.AutoSize = true;
+			this.m_lblOriginalQuestionConditionPrecedingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblOriginalQuestionConditionPrecedingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblOriginalQuestionConditionPrecedingWord, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblOriginalQuestionConditionPrecedingWord, "RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord");
+			this.m_lblOriginalQuestionConditionPrecedingWord.Location = new System.Drawing.Point(0, 1);
+			this.m_lblOriginalQuestionConditionPrecedingWord.Name = "m_lblOriginalQuestionConditionPrecedingWord";
+			this.m_lblOriginalQuestionConditionPrecedingWord.Size = new System.Drawing.Size(84, 13);
+			this.m_lblOriginalQuestionConditionPrecedingWord.TabIndex = 0;
+			this.m_lblOriginalQuestionConditionPrecedingWord.Text = "Preceding &word:";
 			// 
 			// m_lblOriginalQuestionConditionPrefix
 			// 
-			m_lblOriginalQuestionConditionPrefix.AutoSize = true;
-			m_lblOriginalQuestionConditionPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionPrefix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionPrefix, "RulesWizardDlg.m_lblOriginalQuestionConditionPrefix");
-			m_lblOriginalQuestionConditionPrefix.Location = new System.Drawing.Point(0, 1);
-			m_lblOriginalQuestionConditionPrefix.Name = "m_lblOriginalQuestionConditionPrefix";
-			m_lblOriginalQuestionConditionPrefix.Size = new System.Drawing.Size(36, 13);
-			m_lblOriginalQuestionConditionPrefix.TabIndex = 0;
-			m_lblOriginalQuestionConditionPrefix.Text = "Prefi&x:";
+			this.m_lblOriginalQuestionConditionPrefix.AutoSize = true;
+			this.m_lblOriginalQuestionConditionPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblOriginalQuestionConditionPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblOriginalQuestionConditionPrefix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblOriginalQuestionConditionPrefix, "RulesWizardDlg.m_lblOriginalQuestionConditionPrefix");
+			this.m_lblOriginalQuestionConditionPrefix.Location = new System.Drawing.Point(0, 1);
+			this.m_lblOriginalQuestionConditionPrefix.Name = "m_lblOriginalQuestionConditionPrefix";
+			this.m_lblOriginalQuestionConditionPrefix.Size = new System.Drawing.Size(36, 13);
+			this.m_lblOriginalQuestionConditionPrefix.TabIndex = 0;
+			this.m_lblOriginalQuestionConditionPrefix.Text = "Prefi&x:";
 			// 
 			// m_lblOriginalQuestionConditionSuffix
 			// 
-			m_lblOriginalQuestionConditionSuffix.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblOriginalQuestionConditionSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblOriginalQuestionConditionSuffix, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblOriginalQuestionConditionSuffix, "RulesWizardDlg.m_lblOriginalQuestionConditionSuffix");
-			m_lblOriginalQuestionConditionSuffix.Location = new System.Drawing.Point(0, 1);
-			m_lblOriginalQuestionConditionSuffix.Name = "m_lblOriginalQuestionConditionSuffix";
-			m_lblOriginalQuestionConditionSuffix.Size = new System.Drawing.Size(36, 13);
-			m_lblOriginalQuestionConditionSuffix.TabIndex = 0;
-			m_lblOriginalQuestionConditionSuffix.Text = "Suffi&x:";
+			this.m_lblOriginalQuestionConditionSuffix.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblOriginalQuestionConditionSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblOriginalQuestionConditionSuffix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblOriginalQuestionConditionSuffix, "RulesWizardDlg.m_lblOriginalQuestionConditionSuffix");
+			this.m_lblOriginalQuestionConditionSuffix.Location = new System.Drawing.Point(0, 1);
+			this.m_lblOriginalQuestionConditionSuffix.Name = "m_lblOriginalQuestionConditionSuffix";
+			this.m_lblOriginalQuestionConditionSuffix.Size = new System.Drawing.Size(36, 13);
+			this.m_lblOriginalQuestionConditionSuffix.TabIndex = 0;
+			this.m_lblOriginalQuestionConditionSuffix.Text = "Suffi&x:";
 			// 
 			// m_lblRuleDescription
 			// 
-			m_lblRuleDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.m_lblRuleDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			m_lblRuleDescription.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleDescription, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleDescription, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleDescription, "RulesWizardDlg.m_lblRuleDescription");
-			m_lblRuleDescription.Location = new System.Drawing.Point(12, 457);
-			m_lblRuleDescription.Name = "m_lblRuleDescription";
-			m_lblRuleDescription.Size = new System.Drawing.Size(86, 13);
-			m_lblRuleDescription.TabIndex = 4;
-			m_lblRuleDescription.Text = "Ru&le description:";
+			this.m_lblRuleDescription.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblRuleDescription, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblRuleDescription, "");
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblRuleDescription, "RulesWizardDlg.m_lblRuleDescription");
+			this.m_lblRuleDescription.Location = new System.Drawing.Point(12, 457);
+			this.m_lblRuleDescription.Name = "m_lblRuleDescription";
+			this.m_lblRuleDescription.Size = new System.Drawing.Size(86, 13);
+			this.m_lblRuleDescription.TabIndex = 4;
+			this.m_lblRuleDescription.Text = "Rule description:";
 			// 
 			// m_lblRuleName
 			// 
-			m_lblRuleName.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(m_lblRuleName, null);
-			this.l10NSharpExtender1.SetLocalizationComment(m_lblRuleName, null);
-			this.l10NSharpExtender1.SetLocalizingId(m_lblRuleName, "RulesWizardDlg.m_lblRuleName");
-			m_lblRuleName.Location = new System.Drawing.Point(12, 9);
-			m_lblRuleName.Name = "m_lblRuleName";
-			m_lblRuleName.Size = new System.Drawing.Size(61, 13);
-			m_lblRuleName.TabIndex = 0;
-			m_lblRuleName.Text = "Rule name:";
+			this.m_lblRuleName.AutoSize = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblRuleName, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblRuleName, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblRuleName, "RulesWizardDlg.m_lblRuleName");
+			this.m_lblRuleName.Location = new System.Drawing.Point(12, 9);
+			this.m_lblRuleName.Name = "m_lblRuleName";
+			this.m_lblRuleName.Size = new System.Drawing.Size(61, 13);
+			this.m_lblRuleName.TabIndex = 0;
+			this.m_lblRuleName.Text = "Rule name:";
 			// 
 			// grpMatchQuestion
 			// 
@@ -483,7 +480,8 @@ namespace SIL.Transcelerator
 			this.m_rdoUserDefinedQuestionCriteria.AutoSize = true;
 			this.m_rdoUserDefinedQuestionCriteria.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoUserDefinedQuestionCriteria, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedQuestionCriteria, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoUserDefinedQuestionCriteria, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoUserDefinedQuestionCriteria, "RulesWizardDlg.m_rdoUserDefinedQuestionCriteria");
 			this.m_rdoUserDefinedQuestionCriteria.Location = new System.Drawing.Point(7, 191);
 			this.m_rdoUserDefinedQuestionCriteria.Name = "m_rdoUserDefinedQuestionCriteria";
@@ -498,7 +496,8 @@ namespace SIL.Transcelerator
 			this.m_rdoFollowingWord.AutoSize = true;
 			this.m_rdoFollowingWord.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoFollowingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoFollowingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoFollowingWord, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoFollowingWord, "RulesWizardDlg.m_rdoFollowingWord");
 			this.m_rdoFollowingWord.Location = new System.Drawing.Point(6, 148);
 			this.m_rdoFollowingWord.Name = "m_rdoFollowingWord";
@@ -512,7 +511,8 @@ namespace SIL.Transcelerator
 			// 
 			this.m_rdoPreceedingWord.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoPreceedingWord, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPreceedingWord, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPreceedingWord, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoPreceedingWord, "RulesWizardDlg.m_rdoPreceedingWord");
 			this.m_rdoPreceedingWord.Location = new System.Drawing.Point(6, 105);
 			this.m_rdoPreceedingWord.Name = "m_rdoPreceedingWord";
@@ -527,7 +527,8 @@ namespace SIL.Transcelerator
 			this.m_rdoPrefix.AutoSize = true;
 			this.m_rdoPrefix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoPrefix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPrefix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoPrefix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoPrefix, "RulesWizardDlg.m_rdoPrefix");
 			this.m_rdoPrefix.Location = new System.Drawing.Point(6, 62);
 			this.m_rdoPrefix.Name = "m_rdoPrefix";
@@ -543,7 +544,8 @@ namespace SIL.Transcelerator
 			this.m_rdoSuffix.Checked = true;
 			this.m_rdoSuffix.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSuffix, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSuffix, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSuffix, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSuffix, "RulesWizardDlg.m_rdoSuffix");
 			this.m_rdoSuffix.Location = new System.Drawing.Point(7, 19);
 			this.m_rdoSuffix.Name = "m_rdoSuffix";
@@ -557,7 +559,7 @@ namespace SIL.Transcelerator
 			// m_pnlFollowingWordDetails
 			// 
 			this.m_pnlFollowingWordDetails.Controls.Add(this.m_cboFollowingWord);
-			this.m_pnlFollowingWordDetails.Controls.Add(m_lblOriginalQuestionConditionFollowingWord);
+			this.m_pnlFollowingWordDetails.Controls.Add(this.m_lblOriginalQuestionConditionFollowingWord);
 			this.m_pnlFollowingWordDetails.Location = new System.Drawing.Point(283, 149);
 			this.m_pnlFollowingWordDetails.Name = "m_pnlFollowingWordDetails";
 			this.m_pnlFollowingWordDetails.Size = new System.Drawing.Size(217, 26);
@@ -582,7 +584,7 @@ namespace SIL.Transcelerator
 			// m_pnlPrecedingWordDetails
 			// 
 			this.m_pnlPrecedingWordDetails.Controls.Add(this.m_cboPrecedingWord);
-			this.m_pnlPrecedingWordDetails.Controls.Add(m_lblOriginalQuestionConditionPrecedingWord);
+			this.m_pnlPrecedingWordDetails.Controls.Add(this.m_lblOriginalQuestionConditionPrecedingWord);
 			this.m_pnlPrecedingWordDetails.Location = new System.Drawing.Point(283, 106);
 			this.m_pnlPrecedingWordDetails.Name = "m_pnlPrecedingWordDetails";
 			this.m_pnlPrecedingWordDetails.Size = new System.Drawing.Size(217, 26);
@@ -607,7 +609,7 @@ namespace SIL.Transcelerator
 			// m_pnlPrefixDetails
 			// 
 			this.m_pnlPrefixDetails.Controls.Add(this.m_cboPrefix);
-			this.m_pnlPrefixDetails.Controls.Add(m_lblOriginalQuestionConditionPrefix);
+			this.m_pnlPrefixDetails.Controls.Add(this.m_lblOriginalQuestionConditionPrefix);
 			this.m_pnlPrefixDetails.Location = new System.Drawing.Point(283, 63);
 			this.m_pnlPrefixDetails.Name = "m_pnlPrefixDetails";
 			this.m_pnlPrefixDetails.Size = new System.Drawing.Size(217, 26);
@@ -634,7 +636,7 @@ namespace SIL.Transcelerator
 			// m_pnlSuffixDetails
 			// 
 			this.m_pnlSuffixDetails.Controls.Add(this.m_cboSuffix);
-			this.m_pnlSuffixDetails.Controls.Add(m_lblOriginalQuestionConditionSuffix);
+			this.m_pnlSuffixDetails.Controls.Add(this.m_lblOriginalQuestionConditionSuffix);
 			this.m_pnlSuffixDetails.Location = new System.Drawing.Point(283, 20);
 			this.m_pnlSuffixDetails.Name = "m_pnlSuffixDetails";
 			this.m_pnlSuffixDetails.Size = new System.Drawing.Size(217, 26);
@@ -679,7 +681,7 @@ namespace SIL.Transcelerator
 			// 
 			this.m_pnlUserDefinedRuleDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_pnlUserDefinedRuleDetails.Controls.Add(m_lblUserDefinedOriginalQuestionCondition);
+			this.m_pnlUserDefinedRuleDetails.Controls.Add(this.m_lblUserDefinedOriginalQuestionCondition);
 			this.m_pnlUserDefinedRuleDetails.Controls.Add(this.m_txtQuestionMatchRegEx);
 			this.m_pnlUserDefinedRuleDetails.Location = new System.Drawing.Point(21, 214);
 			this.m_pnlUserDefinedRuleDetails.Name = "m_pnlUserDefinedRuleDetails";
@@ -770,10 +772,10 @@ namespace SIL.Transcelerator
 			this.ClientSize = new System.Drawing.Size(533, 597);
 			this.Controls.Add(this.m_txtName);
 			this.Controls.Add(this.m_lblDescription);
-			this.Controls.Add(m_lblRuleName);
-			this.Controls.Add(grpSelectRendering);
+			this.Controls.Add(this.m_lblRuleName);
+			this.Controls.Add(this.grpSelectRendering);
 			this.Controls.Add(this.grpMatchQuestion);
-			this.Controls.Add(m_lblRuleDescription);
+			this.Controls.Add(this.m_lblRuleDescription);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -787,8 +789,8 @@ namespace SIL.Transcelerator
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Create Rendering Selection Rule";
-			grpSelectRendering.ResumeLayout(false);
-			grpSelectRendering.PerformLayout();
+			this.grpSelectRendering.ResumeLayout(false);
+			this.grpSelectRendering.PerformLayout();
 			this.m_pnlUserDefinedRenderingMatch.ResumeLayout(false);
 			this.m_pnlUserDefinedRenderingMatch.PerformLayout();
 			this.m_pnlVernacularPrefix.ResumeLayout(false);
@@ -849,5 +851,16 @@ namespace SIL.Transcelerator
         private System.Windows.Forms.Label m_lblFollowingWordExample;
         private System.Windows.Forms.Label m_lblPrecedingWordExample;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
+		private System.Windows.Forms.Label m_lblRuleDescription;
+		private System.Windows.Forms.Label m_lblUserDefinedOriginalQuestionCondition;
+		private System.Windows.Forms.Label m_lblUserDefinedRenderingCondition;
+		private System.Windows.Forms.GroupBox grpSelectRendering;
+		private System.Windows.Forms.Label m_lblRenderingConditionVernPrefix;
+		private System.Windows.Forms.Label m_lblRenderingConditionVernSuffix;
+		private System.Windows.Forms.Label m_lblOriginalQuestionConditionFollowingWord;
+		private System.Windows.Forms.Label m_lblOriginalQuestionConditionPrecedingWord;
+		private System.Windows.Forms.Label m_lblOriginalQuestionConditionPrefix;
+		private System.Windows.Forms.Label m_lblOriginalQuestionConditionSuffix;
+		private System.Windows.Forms.Label m_lblRuleName;
 	}
 }

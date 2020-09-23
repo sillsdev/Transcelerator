@@ -84,7 +84,7 @@
 			// 
 			this.chkApplyToAll.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.chkApplyToAll, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.chkApplyToAll, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.chkApplyToAll, "To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.chkApplyToAll, "ConfirmFileOverwriteDlg.chkApplyToAll");
 			this.chkApplyToAll.Location = new System.Drawing.Point(16, 69);
 			this.chkApplyToAll.Name = "chkApplyToAll";
@@ -98,7 +98,7 @@
 			this.btnYes.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnYes.DialogResult = System.Windows.Forms.DialogResult.Yes;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnYes, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnYes, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnYes, "To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnYes, "Common.Yes");
 			this.btnYes.Location = new System.Drawing.Point(130, 97);
 			this.btnYes.Name = "btnYes";
@@ -112,7 +112,7 @@
 			this.btnNo.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.btnNo.DialogResult = System.Windows.Forms.DialogResult.No;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnNo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.btnNo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.btnNo, "To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnNo, "Common.No");
 			this.btnNo.Location = new System.Drawing.Point(211, 97);
 			this.btnNo.Name = "btnNo";
