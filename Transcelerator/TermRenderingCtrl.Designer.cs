@@ -68,6 +68,11 @@ namespace SIL.Transcelerator
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
+			// toolStripSeparator1
+			// 
+			toolStripSeparator1.Name = "toolStripSeparator1";
+			toolStripSeparator1.Size = new System.Drawing.Size(195, 6);
+			// 
 			// mnuAddRenderingC
 			// 
 			this.mnuAddRenderingC.Image = global::SIL.Transcelerator.Properties.Resources._1321382935_plus;
@@ -79,11 +84,6 @@ namespace SIL.Transcelerator
 			this.mnuAddRenderingC.Size = new System.Drawing.Size(198, 22);
 			this.mnuAddRenderingC.Text = "&Add rendering...";
 			this.mnuAddRenderingC.Click += new System.EventHandler(this.mnuAddRendering_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(195, 6);
 			// 
 			// mnuSetAsDefault
 			// 
@@ -148,7 +148,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuLookUpTermH, "TermRenderingCtrl.mnuLookUpTermH");
 			this.mnuLookUpTermH.Name = "mnuLookUpTermH";
 			this.mnuLookUpTermH.Size = new System.Drawing.Size(221, 22);
-			this.mnuLookUpTermH.Text = "Find &Term in {0}";
+			this.mnuLookUpTermH.Text = "Find &Term in {0}...";
 			this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
 			// 
 			// mnuRefreshRenderingsH
@@ -216,12 +216,12 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuLookUpTermC, "TermRenderingCtrl.mnuLookUpTermC");
 			this.mnuLookUpTermC.Name = "mnuLookUpTermC";
 			this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
-			this.mnuLookUpTermC.Text = "Find &Term in {0}";
+			this.mnuLookUpTermC.Text = "Find &Term in {0}...";
 			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "TermRenderingCtrl";
 			// 
 			// TermRenderingCtrl

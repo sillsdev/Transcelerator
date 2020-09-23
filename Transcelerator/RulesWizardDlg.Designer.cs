@@ -153,7 +153,7 @@ namespace SIL.Transcelerator
 			this.grpSelectRendering.Size = new System.Drawing.Size(506, 134);
 			this.grpSelectRendering.TabIndex = 3;
 			this.grpSelectRendering.TabStop = false;
-			this.grpSelectRendering.Text = "Select the rendering of the biblical that meets the following condition:";
+			this.grpSelectRendering.Text = "Select the rendering of the biblical term that meets the following condition:";
 			// 
 			// m_pnlUserDefinedRenderingMatch
 			// 

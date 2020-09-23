@@ -11,6 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using System.Windows.Forms;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {
@@ -28,9 +30,11 @@ namespace SIL.Transcelerator
 		protected override void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
 		}
@@ -142,6 +146,12 @@ namespace SIL.Transcelerator
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
 			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+			// 
 			// mnuViewDebugInfo
 			// 
 			this.mnuViewDebugInfo.Checked = true;
@@ -155,12 +165,6 @@ namespace SIL.Transcelerator
 			this.mnuViewDebugInfo.Size = new System.Drawing.Size(226, 22);
 			this.mnuViewDebugInfo.Text = "&Generated Translation Details";
 			this.mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
-			// 
-			// toolStripSeparator5
-			// 
-			toolStripSeparator5.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
 			// 
 			// mnuViewAnswers
 			// 
@@ -490,11 +494,11 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.CheckOnClick = true;
 			this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuProduceScriptureForgeFiles, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, "Param is \"Scripture Forge\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.Menu.File.ProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(277, 22);
-			this.mnuProduceScriptureForgeFiles.Text = "Produce Scripture Forge Files";
+			this.mnuProduceScriptureForgeFiles.Text = "Produce {0} Files";
 			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
 			this.mnuProduceScriptureForgeFiles.Click += new System.EventHandler(this.mnuProduceScriptureForgeFiles_Clicked);
 			// 
@@ -719,8 +723,8 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowAllPhrases, "MainWindow.mnuShowAllPhrases");
 			this.mnuShowAllPhrases.Name = "mnuShowAllPhrases";
 			this.mnuShowAllPhrases.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.mnuShowAllPhrases.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowAllPhrases.Text = "Show &All Phrases";
+			this.mnuShowAllPhrases.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowAllPhrases.Text = "Show &All (no filter)";
 			this.mnuShowAllPhrases.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowAllPhrases.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 
@@ -733,8 +737,8 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithKtRenderings, "MainWindow.mnuShowPhrasesWithKtRenderings");
 			this.mnuShowPhrasesWithKtRenderings.Name = "mnuShowPhrasesWithKtRenderings";
 			this.mnuShowPhrasesWithKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowPhrasesWithKtRenderings.Text = "Show Phrases Where All Key Terms Have &Renderings";
+			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithKtRenderings.Text = "Show Questions Where All Terms Have &Renderings";
 			this.mnuShowPhrasesWithKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 
@@ -747,8 +751,8 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithMissingKtRenderings, "MainWindow.mnuShowPhrasesWithMissingKtRenderings");
 			this.mnuShowPhrasesWithMissingKtRenderings.Name = "mnuShowPhrasesWithMissingKtRenderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(389, 22);
-			this.mnuShowPhrasesWithMissingKtRenderings.Text = "Show Phrases With Key Terms &Missing Renderings";
+			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithMissingKtRenderings.Text = "Show Questions with Terms &Missing Renderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithMissingKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
 			// 

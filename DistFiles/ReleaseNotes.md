@@ -1,4 +1,4 @@
-﻿## 1.5.0 22 September 2020
+﻿## 1.5.0 23 September 2020
 * Added ability to localize the user interface. (Includes partial localization into Spanish.)
 
 ## 1.4.18 31 July 2020

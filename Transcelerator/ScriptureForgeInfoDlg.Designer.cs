@@ -1,4 +1,7 @@
-﻿namespace SIL.Transcelerator
+﻿using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
+
+namespace SIL.Transcelerator
 {
 	partial class ScriptureForgeInfoDlg
 	{
@@ -13,9 +16,11 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				if (components != null)
+					components.Dispose();
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
 		}
@@ -29,7 +34,6 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptureForgeInfoDlg));
 			this.m_lblExplanation = new System.Windows.Forms.Label();
 			this.m_lblMoreInfoOnline = new System.Windows.Forms.Label();
 			this.m_btnOk = new System.Windows.Forms.Button();
@@ -47,13 +51,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_lblExplanation.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblExplanation, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblExplanation, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblExplanation, "Params are product names: 0) \"Scripture Forge\"; 1) \"Transcelerator\"; 2) \"Paratext" +
+        "\".  Consult localized version of Paratext to ensure that \"Send/Receive Projects\"" +
+        " is translated in a consistent fashion.");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblExplanation, "ScriptureForgeInfoDlg.m_lblExplanation");
 			this.m_lblExplanation.Location = new System.Drawing.Point(3, 0);
 			this.m_lblExplanation.Name = "m_lblExplanation";
-			this.m_lblExplanation.Size = new System.Drawing.Size(442, 39);
+			this.m_lblExplanation.Size = new System.Drawing.Size(442, 26);
 			this.m_lblExplanation.TabIndex = 3;
-			this.m_lblExplanation.Text = resources.GetString("m_lblExplanation.Text");
+			this.m_lblExplanation.Text = "By selecting the option to produce {0} files, {1} will automatically generate out" +
+    "put that {0} will be able to use. These files will be synchronized using Send/Re" +
+    "ceive Projects in {2}.";
 			// 
 			// m_lblMoreInfoOnline
 			// 
@@ -63,7 +71,7 @@
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblMoreInfoOnline, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblMoreInfoOnline, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblMoreInfoOnline, "ScriptureForgeInfoDlg.m_lblMoreInfoOnline");
-			this.m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 42);
+			this.m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 29);
 			this.m_lblMoreInfoOnline.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
 			this.m_lblMoreInfoOnline.Name = "m_lblMoreInfoOnline";
 			this.m_lblMoreInfoOnline.Size = new System.Drawing.Size(442, 13);
@@ -89,16 +97,16 @@
 			this.m_linkLabelWorkingWithScriptureForge.AutoSize = true;
 			this.m_linkLabelWorkingWithScriptureForge.LinkArea = new System.Windows.Forms.LinkArea(16, 44);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelWorkingWithScriptureForge, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelWorkingWithScriptureForge, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelWorkingWithScriptureForge, "Params are product names 0) \"Scripture Forge\"; 1) \"Transcelerator\"");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelWorkingWithScriptureForge, "ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge");
-			this.m_linkLabelWorkingWithScriptureForge.Location = new System.Drawing.Point(3, 61);
+			this.m_linkLabelWorkingWithScriptureForge.Location = new System.Drawing.Point(3, 48);
 			this.m_linkLabelWorkingWithScriptureForge.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
 			this.m_linkLabelWorkingWithScriptureForge.Name = "m_linkLabelWorkingWithScriptureForge";
-			this.m_linkLabelWorkingWithScriptureForge.Size = new System.Drawing.Size(232, 17);
+			this.m_linkLabelWorkingWithScriptureForge.Size = new System.Drawing.Size(108, 17);
 			this.m_linkLabelWorkingWithScriptureForge.TabIndex = 2;
 			this.m_linkLabelWorkingWithScriptureForge.TabStop = true;
 			this.m_linkLabelWorkingWithScriptureForge.Tag = "https://software.sil.org/transcelerator/working-with-scripture-forge/";
-			this.m_linkLabelWorkingWithScriptureForge.Text = "Transcelerator: Working With Scripture Forge";
+			this.m_linkLabelWorkingWithScriptureForge.Text = "{1}: Working With {0}";
 			this.m_linkLabelWorkingWithScriptureForge.UseCompatibleTextRendering = true;
 			this.m_linkLabelWorkingWithScriptureForge.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HandleLinkClicked);
 			// 
@@ -126,16 +134,16 @@
 			// 
 			this.m_linkLabelScriptureForge.AutoSize = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelScriptureForge, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelScriptureForge, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelScriptureForge, "Param is \"Scripture Forge\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelScriptureForge, "ScriptureForgeInfoDlg.m_linkLabelScriptureForge");
-			this.m_linkLabelScriptureForge.Location = new System.Drawing.Point(3, 84);
+			this.m_linkLabelScriptureForge.Location = new System.Drawing.Point(3, 71);
 			this.m_linkLabelScriptureForge.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
 			this.m_linkLabelScriptureForge.Name = "m_linkLabelScriptureForge";
-			this.m_linkLabelScriptureForge.Size = new System.Drawing.Size(118, 13);
+			this.m_linkLabelScriptureForge.Size = new System.Drawing.Size(60, 13);
 			this.m_linkLabelScriptureForge.TabIndex = 5;
 			this.m_linkLabelScriptureForge.TabStop = true;
 			this.m_linkLabelScriptureForge.Tag = "http://scriptureforge.org/";
-			this.m_linkLabelScriptureForge.Text = "Scripture Forge website";
+			this.m_linkLabelScriptureForge.Text = "{0} website";
 			this.m_linkLabelScriptureForge.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HandleLinkClicked);
 			// 
 			// l10NSharpExtender1
@@ -152,7 +160,7 @@
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Controls.Add(this.m_btnOk);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this, "Param is \"Scripture Forge\" (product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this, "ScriptureForgeInfoDlg.WindowTitle");
 			this.MaximizeBox = false;
 			this.MaximumSize = new System.Drawing.Size(491, 217);
@@ -160,7 +168,7 @@
 			this.Name = "ScriptureForgeInfoDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			this.Text = "Scripture Forge Integration";
+			this.Text = "{0} Integration";
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
