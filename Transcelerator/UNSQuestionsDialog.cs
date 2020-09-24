@@ -448,35 +448,40 @@ namespace SIL.Transcelerator
 			Sldr.Initialize();
 			try
 			{
-				var repo = GlobalWritingSystemRepository.Initialize();
-				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Union(LocalizationManager.GetAvailableLocalizedLanguages()))
+				void AddToAvailableLocales(string name, string locale)
 				{
-					string languageName;
-					if (repo.TryGet(locale, out WritingSystemDefinition wsDef))
+					if (AvailableLocales.ContainsValue(locale))
+						return;
+					switch (locale)
 					{
-						languageName = wsDef.Language.Name;
+						case "es":
+						case "es-ES":
+							// Unfortunately, the "native name" includes "alfabetización internacional".
+							// We're aiming for something short and sweet.
+							name = "español";
+							break;
+						case "en-GB":
+							name = "British English";
+							break;
+						case "en-US":
+						case "en":
+							// English (US) is the default. No need to add it.
+							return;
 					}
-					else
-						switch (locale)
-						{
-							case "es":
-								languageName = "español";
-								break;
-							case "fr":
-								languageName = "français";
-								break;
-							case "en-GB":
-								languageName = "British English";
-								break;
-							case "en-US":
-							case "en":
-								throw new ApplicationException("English (US) is the default. There should not be a localization for this language!");
-							default:
-								languageName = locale;
-								break;
-						}
 
-					AvailableLocales[languageName] = locale;
+					AvailableLocales[name] = locale;
+				}
+
+				var repo = GlobalWritingSystemRepository.Initialize();
+				// First add the locales from L10nSharp, since it uses CultureInfo (plus a few hard-coded names)
+				// to provide the native name of the language in some cases.
+				foreach (var lang in LocalizationManager.GetUILanguages(true))
+					AddToAvailableLocales(lang.NativeName, lang.IetfLanguageTag);
+				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
+				{
+					string languageName = repo.TryGet(locale, out WritingSystemDefinition wsDef) ?
+						wsDef.Language.Name : locale;
+					AddToAvailableLocales(languageName, locale);
 				}
 			}
 			finally
