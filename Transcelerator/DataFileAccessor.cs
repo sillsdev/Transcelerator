@@ -44,6 +44,8 @@ namespace SIL.Transcelerator
 			}
 		}
 
+        public static string ReplaceUTF16WithUtf8Encoding(string data) => data.Replace("encoding=\"utf-16\"", "encoding=\"utf-8\"");
+
 		public abstract void Write(DataFileId fileId, string data);
 
 		public abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
@@ -95,12 +97,12 @@ namespace SIL.Transcelerator
 
         public override void Write(DataFileId fileId, string data)
         {
-            m_putPlugInData(GetFileName(fileId), data);
+            m_putPlugInData(GetFileName(fileId), ReplaceUTF16WithUtf8Encoding(data));
         }
 
 	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
-	    {
-			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), data);
+		{
+			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), ReplaceUTF16WithUtf8Encoding(data));
 		}
 
 	    public override string Read(DataFileId fileId)

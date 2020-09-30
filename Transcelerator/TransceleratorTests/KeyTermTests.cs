@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -190,7 +190,7 @@ namespace SIL.Transcelerator
 
     internal class TestKeyTermRenderingDataFileAccessor : DataFileAccessor
     {
-        internal string Data { get; set; }
+        private string Data { get; set; }
 
         public override void Write(DataFileId fileId, string data)
         {
