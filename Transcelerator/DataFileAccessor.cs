@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using AddInSideViews;
+using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
@@ -44,9 +46,10 @@ namespace SIL.Transcelerator
 			}
 		}
 
-        public static string ReplaceUTF16WithUtf8Encoding(string data) => data.Replace("encoding=\"utf-16\"", "encoding=\"utf-8\"");
-
 		public abstract void Write(DataFileId fileId, string data);
+
+		public void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, object data) =>
+			WriteBookSpecificData(fileId, bookId, XmlSerializationHelper.SerializeToString(data, Encoding.UTF8));
 
 		public abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
 
@@ -97,12 +100,12 @@ namespace SIL.Transcelerator
 
         public override void Write(DataFileId fileId, string data)
         {
-            m_putPlugInData(GetFileName(fileId), ReplaceUTF16WithUtf8Encoding(data));
+            m_putPlugInData(GetFileName(fileId), data);
         }
 
 	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
 		{
-			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), ReplaceUTF16WithUtf8Encoding(data));
+			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), data);
 		}
 
 	    public override string Read(DataFileId fileId)

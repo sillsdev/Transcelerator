@@ -1471,7 +1471,7 @@ namespace SIL.Transcelerator
 					if (currentBookQuestions != null)
 					{
 						m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-							currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+							currentBookQuestions.BookId, currentBookQuestions);
 					}
 					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
 					{
@@ -1506,7 +1506,7 @@ namespace SIL.Transcelerator
 			if (currentBookQuestions != null)
 			{
 				m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-					currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+					currentBookQuestions.BookId, currentBookQuestions);
 			}
 		}
 
