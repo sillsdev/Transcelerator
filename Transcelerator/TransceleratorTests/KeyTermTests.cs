@@ -192,14 +192,14 @@ namespace SIL.Transcelerator
     {
         private string Data { get; set; }
 
-        public override void Write(DataFileId fileId, string data)
+        protected override void Write(DataFileId fileId, string data)
         {
             if (fileId != DataFileId.KeyTermRenderingInfo)
                 throw new ArgumentException("Unexpected DataFileId '" + fileId + "'passed to Write method.", "fileId");
             Data = data;
         }
 
-	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
+		protected override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
 	    {
 		    throw new NotImplementedException();
 	    }

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2011' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -18,7 +18,6 @@ using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
 using SIL.Scripture;
-using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
@@ -313,7 +312,7 @@ namespace SIL.Transcelerator
 			{
 				m_termRenderingSelectionRules = value;
 				m_fileAccessor?.Write(DataFileAccessor.DataFileId.TermRenderingSelectionRules,
-					XmlSerializationHelper.SerializeToString(m_termRenderingSelectionRules));
+					m_termRenderingSelectionRules);
 			}
 		}
 
