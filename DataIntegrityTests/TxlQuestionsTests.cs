@@ -492,6 +492,32 @@ namespace DataIntegrityTests
 			}
 		}
 
+		// Test that no more than one Alternative form is marked as the "key"
+		[Test]
+		public void DataIntegrity_Alternatives_NoMoreThanOneKeyPerQuestion()
+		{
+			MatchedXmlLine currentQuestion = null;
+			bool foundKey = false;
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("<Alternative(?<iskey>( key\\s*=\\s*\"true\")?)", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						currentQuestion = matchedLine;
+						foundKey = false;
+						break;
+					case 1:
+						if (matchedLine.Match.Groups["iskey"].Value != Empty)
+						{
+							Assert.IsFalse(foundKey,
+								$"Found two Alternatives marked as keys for question {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+							foundKey = true;
+						}
+						break;
+				}
+			}
+		}
+
 		private IEnumerable<MatchedXmlLine> GetMatchingLines(Regex regexLevel0, Regex regexLevel1 = null)
 		{
 			var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);

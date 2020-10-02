@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2012' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2012' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,11 +9,11 @@
 //
 // File: QuestionKey.cs
 // ---------------------------------------------------------------------------------------------
-
 using System;
 using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -23,6 +23,11 @@ namespace SIL.Transcelerator
 		/// <summary>Text of the question in COMPOSED form</summary>
 		string Text { get; }
 		string PhraseInUse { get; }
+		/// <summary>Immutable unique ID that can be used as a key. This allows
+		/// the text to be corrected/modified in ways that do not result in a
+		/// fundamentally *different* question/phrase without breaking the
+		/// association with the original text.</summary>
+		string Id { get; }
 	}
 
 	public static class QuestionKeyExtensions
@@ -69,19 +74,20 @@ namespace SIL.Transcelerator
 			// Only questions added that do not correspond to any existing question could be compared. But generally, only one such "free" addition can happen for any given
 			// reference (range). Any subsequent additions would be an insertion before that one or an addition after. Possible exception would be if two users independently
 			// added questions.
-			return String.Compare(me.Text, ((IQuestionKey)obj).Text, StringComparison.Ordinal);
+			return Compare(me.Text, ((IQuestionKey)obj).Text, StringComparison.Ordinal);
 		}
 	}
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Simple base class to encapsulate the information needed to (more-or-less uniquely)
-	/// identify a Scripture checking question.
+	/// Simple base class to encapsulate the information needed to uniquely identify a
+	/// Scripture checking question.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public abstract class QuestionKey : IQuestionKey, IComparable
 	{
 		private string m_text;
+		private string m_id;
 
 		[XmlAttribute("scrref")]
 		public abstract string ScriptureReference { get; set; }
@@ -90,14 +96,39 @@ namespace SIL.Transcelerator
 		[XmlAttribute("endref")]
 		public abstract int EndRef { get; set; }
 
+		[XmlAttribute("id")]
+		public string ImmutableKey_PublicForSerializationOnly
+		{
+			get => Id == Text ? null : Id;
+			set => Id = value;
+		}
+
+		[XmlIgnore]
+		public string Id
+		{
+			get => m_id ?? Text;
+			private set => m_id = value;
+		}
+
 		[XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
 		public virtual string Text
 		{
 			get => m_text;
-			set => m_text = value.Normalize(NormalizationForm.FormC);
+			set
+			{
+				var newValue = value.Normalize(NormalizationForm.FormC);
+				EnsureKeySetWhenChangingText(newValue);
+				m_text = value.Normalize(NormalizationForm.FormC); 
+			}
 		}
 
-	    /// ------------------------------------------------------------------------------------
+		protected void EnsureKeySetWhenChangingText(string newValue)
+		{
+			if (Text != null && m_id == null && Text != newValue)
+				m_id = Text;
+		}
+
+		/// ------------------------------------------------------------------------------------
 	    /// <summary>
 	    /// Gets the text to use for processing & comparison purposes
 	    /// </summary>
@@ -109,8 +140,11 @@ namespace SIL.Transcelerator
 		{
 		}
 
-		protected QuestionKey(string text, string scriptureReference, int startRef, int endRef)
+		protected QuestionKey(string text, string scriptureReference, int startRef, int endRef, string key = null)
 		{
+			if (IsNullOrEmpty(text) && IsNullOrEmpty(key))
+				throw new ArgumentNullException("If the text is not specified, then a non-null key must be provided.", nameof(key));
+			Id = key;
 			Text = text;
 			ScriptureReference = scriptureReference;
 			StartRef = startRef;
@@ -157,11 +191,12 @@ namespace SIL.Transcelerator
 			Text = text.Normalize(NormalizationForm.FormC);
 		}
 
-		public string ScriptureReference => string.Empty;
+		public string ScriptureReference => Empty;
 		public int StartRef => 01001001;
 		public int EndRef => 66022021;
 		public string Text { get; }
 		public string PhraseInUse => Text;
+		public string Id => Text;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

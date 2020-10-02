@@ -48,7 +48,7 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
-		public void Constructor_ModifiedPhrase_ModifiedPhraseSet()
+		public void ModifiedPhrase_Set_ModifiedPhraseAndFlagSetAndOriginalPhraseUnchanged()
 		{
 			var qk = new Question();
 			qk.Text = "What doe\u0301s the fox say?";
@@ -62,27 +62,32 @@ namespace SIL.Transcelerator
 		[Test]
 		public void Constructor_UserAddedPhraseWithEnglishVersion_OriginalSetToGuid()
 		{
-			var qk = new Question();
-			qk.IsUserAdded = true;
-			qk.Text = null;
+			// This demonstrates that setting the ModifiedPhrase property of a
+			// question that did not start with an English version does
+			// not prevent a TranslatablePhrase based on that question from
+			// correctly basing itself on the original (GUID-based) question.
+			var qk = new Question("TST 5:6", 100005006, 100005006, null, null);
+			var id = qk.Id;
 			qk.ModifiedPhrase = "What's up with the\u0301 fox?";
 			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.ModifiedPhrase);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
-			Assert.IsTrue(phrase.OriginalPhrase.StartsWith(Question.kGuidPrefix));
+			Assert.AreEqual(id, phrase.OriginalPhrase);
 			Assert.AreEqual(TypeOfPhrase.Question, phrase.TypeOfPhrase);
 		}
 
 		[Test]
 		public void Constructor_UserAddedPhraseWithNoEnglishVersion_OriginalSetToEmpty()
 		{
-			var qk = new Question();
-			qk.IsUserAdded = true;
-			qk.Text = null;
-			var id = qk.Text;
+			// This is the scenario when the constructor is called in the NewQuestionDlg when
+			// the user has selected the option to not provide an English version of the
+			// question.
+			var qk = new Question("TST 5:6", 100005006, 100005006, null, "answer");
+			var id = qk.Id;
 			Assert.IsTrue(id.StartsWith(Question.kGuidPrefix));
+			Assert.AreEqual(id, qk.Text);
 			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
 			Assert.AreEqual(string.Empty, phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);

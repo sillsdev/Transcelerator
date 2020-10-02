@@ -95,7 +95,7 @@ namespace SIL.Transcelerator
 		/// which case it will be a GUID, prefaced by Question.kGuidPrefix) </param>
 		/// <param name="modifiedPhrase">The modified phrase.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(string originalPhrase, string modifiedPhrase)
+		private TranslatablePhrase(string originalPhrase, string modifiedPhrase)
 		{
 			OriginalPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
 			if (!IsNullOrEmpty(modifiedPhrase))

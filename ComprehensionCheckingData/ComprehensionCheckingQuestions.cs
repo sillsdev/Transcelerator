@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2018' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -48,7 +49,7 @@ namespace SIL.ComprehensionCheckingData
 		[XmlAttribute("book")]
 		public string BookId { get; set; }
 
-		[XmlElement(ElementName = "Question")]
+		[XmlElement]
 		public List<ComprehensionCheckingQuestion> Questions { get; set; }
 	}
 
@@ -61,6 +62,17 @@ namespace SIL.ComprehensionCheckingData
 	{
 		private int m_endChapter;
 		private int m_endVerse;
+		private string m_id;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		[XmlAttribute("id")]
+		public string Id
+		{
+			get => m_id ?? Question.Single(q => q.Lang == "en-US" || q.Lang == "en").Text;
+			set => m_id = value; 
+		}
 
 		[XmlAttribute("overview")]
 		[DefaultValue(false)]

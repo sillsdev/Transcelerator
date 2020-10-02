@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2013' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -137,14 +137,14 @@ namespace SIL.Transcelerator
 				if (insertion != null)
 				{
 					question.InsertedQuestionBefore = new Question(insertion.Reference, insertion.ScrStartReference,
-						insertion.ScrEndReference, insertion.ModifiedPhrase, insertion.Answer);
+						insertion.ScrEndReference, insertion.ModifiedPhrase, insertion.Answer, insertion.ImmutableKey);
 				}
 
 				var addition = AdditionsAndInsertions.SingleOrDefault(a => a.Type == PhraseCustomization.CustomizationType.AdditionAfter);
 				if (addition != null)
 				{
 					question.AddedQuestionAfter = new Question(addition.Reference, addition.ScrStartReference,
-						addition.ScrEndReference, addition.ModifiedPhrase, addition.Answer);
+						addition.ScrEndReference, addition.ModifiedPhrase, addition.Answer, addition.ImmutableKey);
 				}
 			}
 
@@ -291,7 +291,7 @@ namespace SIL.Transcelerator
 				}
 				AdditionsAndInsertions.RemoveAt(0);
 				var newQ = new Question(keyToUseForReference.ScriptureReference, keyToUseForReference.StartRef, keyToUseForReference.EndRef,
-					questionToInsert.ModifiedPhrase ?? questionToInsert.OriginalPhrase, questionToInsert.Answer);
+					questionToInsert.ModifiedPhrase ?? questionToInsert.OriginalPhrase, questionToInsert.Answer, questionToInsert.ImmutableKey);
 				SetExcludedAndModified(newQ);
 				if (AllAnswers != null && AllAnswers.Any()) // Note: If there are any, there are at least 2
 					newQ.Answers = AllAnswers.ToArray();

@@ -1778,9 +1778,11 @@ namespace SIL.Transcelerator
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			var origId = phraseToModify.QuestionInfo.Id;
 			pth.ModifyQuestion(phraseToModify, "That dog wishes this Paul, and what is say radish?", mp);
 
 			Assert.AreEqual("That dog wishes this Paul, and what is say radish?", phraseToModify.PhraseInUse);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[2]);
 
 			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
@@ -1818,9 +1820,11 @@ namespace SIL.Transcelerator
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			var origId = phraseToModify.QuestionInfo.Id;
 			pth.ModifyQuestion(phraseToModify, "that dog fur wishes this have and what is say radishes", mp);
 
 			Assert.AreEqual("that dog fur wishes this have and what is say radishes", phraseToModify.PhraseInUse);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[2]);
 
 			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
@@ -1856,6 +1860,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
+			var origId = phraseToModify.QuestionInfo.Id;
 
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -1863,6 +1868,7 @@ namespace SIL.Transcelerator
 			pth.ModifyQuestion(phraseToModify, "What did that dog wish Paul would say to the radish?", mp);
 
 			Assert.AreEqual("What did that dog wish Paul would say to the radish?", phraseToModify.QuestionInfo.Text);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[3]);
 
 			var translatableParts = phraseToModify.TranslatableParts.ToList();

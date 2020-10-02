@@ -1484,6 +1484,9 @@ namespace SIL.Transcelerator
 
 				var q = new ComprehensionCheckingQuestion
 				{
+					Id = phrase.IsUserAdded ?
+						phrase.QuestionInfo.Id :
+						phrase.QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text,
 					Question = GetQuestionAlternates(phrase, allAvailableLocalizers),
 					IsOverview = !phrase.IsDetail,
 					Chapter = startRef.Chapter,

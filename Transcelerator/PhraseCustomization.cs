@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2011' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -17,7 +17,8 @@ namespace SIL.Transcelerator
 	#region class PhraseCustomization
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
-	/// Little class to support XML serialization of customizations (additions/changes/deletions
+	/// Little class to support XML serialization of customizations (additions/changes/
+	/// deletions)
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	[XmlType("PhraseCustomization")]
@@ -26,7 +27,7 @@ namespace SIL.Transcelerator
 	    private BCVRef m_scrStartReference;
 	    private BCVRef m_scrEndReference;
 
-        #region CustomizationType enumeration
+		#region CustomizationType enumeration
         public enum CustomizationType
 		{
 			Modification,
@@ -67,23 +68,49 @@ namespace SIL.Transcelerator
 
         /// --------------------------------------------------------------------------------
         /// <summary>
-        /// Gets or sets the reference.
+        /// Gets or sets the reference. Setter is needed for deserialization, but do
+		/// not use in production code.
         /// </summary>
         /// --------------------------------------------------------------------------------
         [XmlAttribute("ref")]
 		public string Reference { get; set; }
+
+		[XmlAttribute("id")]
+		public string ImmutableKey_PublicForSerializationOnly
+		{
+			get => ImmutableKey == ModifiedPhrase ? null : ImmutableKey;
+			set => ImmutableKey = value;
+		}
+
+		[XmlIgnore]
+		public string ImmutableKey { get; private set; }
+
+		private void SetKeyBasedOn(TranslatablePhrase tpBase)
+		{
+			SetKeyBasedOn(tpBase.PhraseKey);
+		}
+
+		private void SetKeyBasedOn(IQuestionKey baseQuestionKey)
+		{
+			ImmutableKey = baseQuestionKey.Id;
+		}
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the original phrase.
+		/// Gets or sets the original phrase. Setter is needed for deserialization, but do
+		/// not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public string OriginalPhrase { get; set; }
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the edited/customized phrase.
+		/// Gets or sets the edited/customized phrase. Setter is needed for deserialization,
+		/// but do not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public string ModifiedPhrase { get; set; }
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the answer (probably mostly used for added questions).
@@ -92,7 +119,8 @@ namespace SIL.Transcelerator
 		public string Answer { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the translation.
+		/// Gets or sets the translation. Setter is needed for deserialization, but do
+		/// not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute("type")]
@@ -107,17 +135,19 @@ namespace SIL.Transcelerator
 		{
 		}
 
-        /// --------------------------------------------------------------------------------
+		/// --------------------------------------------------------------------------------
         /// <summary>
         /// Initializes a new instance of the <see cref="PhraseCustomization"/> class.
         /// </summary>
         /// --------------------------------------------------------------------------------
-        public PhraseCustomization(TranslatablePhrase tp)
+        public PhraseCustomization(TranslatablePhrase tp) : this()
 		{
 			Reference = tp.Reference;
 			OriginalPhrase = tp.OriginalPhrase;
 			ModifiedPhrase = tp.ModifiedPhrase;
 			Type = tp.IsExcluded ? CustomizationType.Deletion : CustomizationType.Modification;
+			if (Type == CustomizationType.Modification)
+				SetKeyBasedOn(tp);
 		}
 
         /// --------------------------------------------------------------------------------
@@ -127,14 +157,15 @@ namespace SIL.Transcelerator
         /// </summary>
         /// --------------------------------------------------------------------------------
         public PhraseCustomization(string basePhrase, Question addedPhrase,
-			CustomizationType type)
+			CustomizationType type) : this()
 		{
 			Reference = addedPhrase.ScriptureReference;
 			OriginalPhrase = basePhrase;
 			ModifiedPhrase = addedPhrase.Text;
-			if (addedPhrase.Answers != null && addedPhrase.Answers.Length == 1)
+			if (addedPhrase.Answers?.Length == 1)
 				Answer = addedPhrase.Answers[0];
 			Type = type;
+			SetKeyBasedOn(addedPhrase);
 		}
 	}
 	#endregion
@@ -145,12 +176,9 @@ namespace SIL.Transcelerator
 		public override string ScriptureReference { get; set; }
 		public override int StartRef { get; set; }
 		public override int EndRef { get; set; }
-		internal CustomQuestionKey(PhraseCustomization pc)
+		internal CustomQuestionKey(PhraseCustomization pc) :
+			base(pc.OriginalPhrase, pc.Reference, pc.ScrStartReference, pc.ScrEndReference, pc.ImmutableKey)
 		{
-			Text = pc.OriginalPhrase;
-			ScriptureReference = pc.Reference;
-			StartRef = pc.ScrStartReference;
-			EndRef = pc.ScrEndReference;
 		}
 	}
 	#endregion
