@@ -67,19 +67,19 @@ namespace SIL.Transcelerator
 		/// throw an exception, but by dealing with it here, it will be obvious what
 		/// went wrong.
         /// </summary>
-		private object CheckDataIsXmlSerializable(object data)
+		private T CheckDataIsXmlSerializable<T>(T data)
         {
 			if (data is IConvertible)
 				throw new ArgumentException($"This method serializes the data provided to an XML string. Doing that for a {data.GetType()} does not make sense.", nameof(data));
 			return data;
 		}
 
-		public void Write(DataFileId fileId, object data) => 
+		public void Write<T>(DataFileId fileId, T data) => 
 			Write(fileId, XmlSerializationHelper.SerializeToString(CheckDataIsXmlSerializable(data), Encoding.UTF8));
 
 		protected abstract void Write(DataFileId fileId, string data);
 
-		public void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, object data) =>
+		public void WriteBookSpecificData<T>(BookSpecificDataFileId fileId, string bookId, T data) =>
 			WriteBookSpecificData(fileId, bookId, XmlSerializationHelper.SerializeToString(
 				CheckDataIsXmlSerializable(data), Encoding.UTF8));
 
