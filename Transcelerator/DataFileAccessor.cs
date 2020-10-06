@@ -1,6 +1,19 @@
-﻿using System;
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
+//    
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright> 
+#endregion
+// 
+// File: DataFileAccessor.cs
+// ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
+using System.Text;
 using AddInSideViews;
+using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
@@ -43,10 +56,34 @@ namespace SIL.Transcelerator
 					throw new ArgumentException("Bogus", nameof(fileId));
 			}
 		}
+		
+		/// <summary>
+		/// Since "string" is also an object, this fluent method checks whether
+		/// data is a IConvertible object (which string is) and throws an exception.
+		/// This prevents a caller accidentally serializing an object (perhaps with
+		/// an encoding other than UTF-8) and then calling a Write method in this
+		/// that is expecting a "normal" XML-serializable object with the serialized
+		/// string and having it get re-serialized. Not sure if that would work or
+		/// throw an exception, but by dealing with it here, it will be obvious what
+		/// went wrong.
+        /// </summary>
+		private T CheckDataIsXmlSerializable<T>(T data)
+        {
+			if (data is IConvertible)
+				throw new ArgumentException($"This method serializes the data provided to an XML string. Doing that for a {data.GetType()} does not make sense.", nameof(data));
+			return data;
+		}
 
-		public abstract void Write(DataFileId fileId, string data);
+		public void Write<T>(DataFileId fileId, T data) => 
+			Write(fileId, XmlSerializationHelper.SerializeToString(CheckDataIsXmlSerializable(data), Encoding.UTF8));
 
-		public abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
+		protected abstract void Write(DataFileId fileId, string data);
+
+		public void WriteBookSpecificData<T>(BookSpecificDataFileId fileId, string bookId, T data) =>
+			WriteBookSpecificData(fileId, bookId, XmlSerializationHelper.SerializeToString(
+				CheckDataIsXmlSerializable(data), Encoding.UTF8));
+
+		protected abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
 
 		public abstract string Read(DataFileId fileId);
 
@@ -93,13 +130,13 @@ namespace SIL.Transcelerator
             return specs;
         }
 
-        public override void Write(DataFileId fileId, string data)
+        protected override void Write(DataFileId fileId, string data)
         {
             m_putPlugInData(GetFileName(fileId), data);
         }
 
-	    public override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
-	    {
+		protected override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
+		{
 			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), data);
 		}
 

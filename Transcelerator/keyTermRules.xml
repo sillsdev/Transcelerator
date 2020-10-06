@@ -607,6 +607,7 @@
   </KeyTermRule>
   <KeyTermRule id="official; judge; magistrate" rule="MatchForRefOnly"/>
   <KeyTermRule id="tool; instrument; means" rule="MatchForRefOnly" />
+  <KeyTermRule id="property; means" rule="MatchForRefOnly" />
   <KeyTermRule id="plan, purpose, device, scheme" rule="MatchForRefOnly" />
   <KeyTermRule id="one one who shows favoritism; respecter of persons" rule="Exclude">
     <Alternate name="one who shows favoritism"/>
