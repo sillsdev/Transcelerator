@@ -245,7 +245,7 @@ namespace SIL.Transcelerator
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
-        /// Determines whether the specified rendering can be deleted.
+        /// Deletes the specified rendering.
         /// </summary>
         /// ------------------------------------------------------------------------------------
         public void DeleteRendering(string rendering)
