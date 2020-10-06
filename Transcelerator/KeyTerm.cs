@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2013' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2013' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -15,7 +15,6 @@ using System.Linq;
 using System.Text;
 using L10NSharp;
 using SIL.Utils;
-using SIL.Xml;
 
 namespace SIL.Transcelerator
 {
@@ -33,8 +32,8 @@ namespace SIL.Transcelerator
         #endregion
 
         #region Data members
-        private static DataFileAccessor m_fileAccessor;
-        private static List<KeyTermRenderingInfo> m_keyTermRenderingInfo;
+        private static DataFileAccessor s_fileAccessor;
+        private static List<KeyTermRenderingInfo> s_keyTermRenderingInfo;
         private readonly KeyTermMatchSurrogate m_termSurrogate;
         private readonly List<Word> m_words;
         private HashSet<string> m_allRenderings = null;
@@ -59,9 +58,9 @@ namespace SIL.Transcelerator
         {
             set
             {
-                m_fileAccessor = value;
-				m_keyTermRenderingInfo = ListSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
-                    m_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
+                s_fileAccessor = value;
+				s_keyTermRenderingInfo = ListSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
+                    s_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
             }
         }
 
@@ -173,7 +172,7 @@ namespace SIL.Transcelerator
         {
             get
             {
-                return m_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == m_termSurrogate.TermId);
+                return s_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == m_termSurrogate.TermId);
             }
         }
 
@@ -193,7 +192,7 @@ namespace SIL.Transcelerator
                 if (info == null)
                 {
                     info = new KeyTermRenderingInfo(m_termSurrogate.TermId, m_bestTranslation);
-                    m_keyTermRenderingInfo.Add(info);
+                    s_keyTermRenderingInfo.Add(info);
                 }
                 else
                     info.PreferredRendering = m_bestTranslation;
@@ -220,7 +219,7 @@ namespace SIL.Transcelerator
             if (info == null)
             {
                 info = new KeyTermRenderingInfo(m_termSurrogate.TermId, BestRendering);
-                m_keyTermRenderingInfo.Add(info);
+                s_keyTermRenderingInfo.Add(info);
             }
             info.AddlRenderings.Add(rendering);
             m_allRenderings.Add(normalizedForm);
@@ -355,15 +354,14 @@ namespace SIL.Transcelerator
 
         // ---------------------------------------------------------------------------------------------
         /// <summary>
-        /// 
+        /// Persists the current biblical term rendering info (defaults and additions made by user).
         /// </summary>
         // ---------------------------------------------------------------------------------------------
-        private void UpdateRenderingInfoFile()
-        {
-            if (m_fileAccessor != null)
-                m_fileAccessor.Write(DataFileAccessor.DataFileId.KeyTermRenderingInfo,
-                   XmlSerializationHelper.SerializeToString(m_keyTermRenderingInfo));
-        }
+        private static void UpdateRenderingInfoFile()
+		{
+			s_fileAccessor?.Write(DataFileAccessor.DataFileId.KeyTermRenderingInfo,
+				s_keyTermRenderingInfo);
+		}
         #endregion
     }
 }
