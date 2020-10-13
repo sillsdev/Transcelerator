@@ -349,7 +349,7 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				var customizations = new List<PhraseCustomization>();
+				var customizations = new HashSet<PhraseCustomization>(new DuplicateCustomizationPreventer());
 				var allPhrases = UnfilteredPhrases;
 				for (var i = 0; i < allPhrases.Count; i++)
 				{
@@ -366,13 +366,23 @@ namespace SIL.Transcelerator
 					}
 					if (translatablePhrase.IsUserAdded)
 					{
-						if ((i == 0 || allPhrases[i - 1].AddedPhraseAfter != translatablePhrase.QuestionInfo) &&
+						var precedingPhrase = i > 0 ? allPhrases[i - 1] : null;
+						if (precedingPhrase?.IsCategoryName == true)
+							precedingPhrase = null;
+						if (translatablePhrase.InsertedPhraseBefore == precedingPhrase?.QuestionInfo)
+						{
+							precedingPhrase = null;
+							for (var p = i - 2; p >= 0 && !allPhrases[p].IsCategoryName; p--)
+								if (!allPhrases[p].IsUserAdded)
+									precedingPhrase = allPhrases[p];
+						}
+						if (precedingPhrase?.AddedPhraseAfter != translatablePhrase.QuestionInfo &&
 							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
 						{
 							// This is a "previous" addition or insertion, so it is not explicitly attached to the
 							// adjacent question that is its base.
 							customizations.Add(GetPhraseCustomization(translatablePhrase,
-								i == 0 || allPhrases[i - 1].IsCategoryName ? null : allPhrases[i - 1],
+								precedingPhrase,
 								allPhrases.Skip(i + 1).FirstOrDefault(q => !q.IsUserAdded)));
 						}
 					}
@@ -383,7 +393,7 @@ namespace SIL.Transcelerator
 							PhraseCustomization.CustomizationType.AdditionAfter));
 					}
 				}
-				return customizations;
+				return customizations.ToList();
 			}
 		}
 

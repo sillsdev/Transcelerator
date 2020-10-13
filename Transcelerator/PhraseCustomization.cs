@@ -9,6 +9,7 @@
 //
 // File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using SIL.Scripture;
 
@@ -179,6 +180,53 @@ namespace SIL.Transcelerator
 		internal CustomQuestionKey(PhraseCustomization pc) :
 			base(pc.OriginalPhrase, pc.Reference, pc.ScrStartReference, pc.ScrEndReference, pc.ImmutableKey)
 		{
+		}
+	}
+
+	/// <summary>
+	/// This might seem like a loose or inadequate definition of equality, but
+	/// its purpose is to prevent duplicates. For any given reference, no customization
+	/// is allowed that would result in a duplicate (modified) form of the question. Since
+	/// customizations include deletions (excluded questions), we have to take type into
+	/// consideration because deletions do not have ModifiedPhrase set.
+	/// </summary>
+	internal class DuplicateCustomizationPreventer : IEqualityComparer<PhraseCustomization>
+	{
+		public bool Equals(PhraseCustomization x, PhraseCustomization y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+			if (ReferenceEquals(x, null))
+				return false;
+			if (ReferenceEquals(y, null))
+				return false;
+			if (x.GetType() != y.GetType())
+				return false;
+			if (!x.Reference.Equals(y.Reference))
+				return false;
+			if (x.Type == PhraseCustomization.CustomizationType.Deletion)
+			{
+				return y.Type == PhraseCustomization.CustomizationType.Deletion &&
+					x.OriginalPhrase == y.OriginalPhrase;
+			}
+			return x.ModifiedPhrase == y.ModifiedPhrase;
+		}
+
+		public int GetHashCode(PhraseCustomization cust)
+		{
+			unchecked
+			{
+				var hashCode = cust.Reference.GetHashCode();
+				if (cust.ModifiedPhrase != null)
+					hashCode = (hashCode * 397) ^ cust.ModifiedPhrase.GetHashCode();
+				else
+				{
+					hashCode = (hashCode * 397) ^ cust.OriginalPhrase.GetHashCode();
+					hashCode = (hashCode * 397) ^ (int)cust.Type;
+				}
+
+				return hashCode;
+			}
 		}
 	}
 	#endregion
