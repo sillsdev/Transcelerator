@@ -19,6 +19,7 @@ using System.Threading;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.Extensions;
 using SIL.Reflection;
 using SIL.Scripture;
 using static System.Int32;
@@ -1218,6 +1219,7 @@ namespace SIL.Transcelerator
 		    var qBase2 = pth.UnfilteredPhrases[2];
 			Assert.AreEqual("What happenes if I cange this base question later?",
 				qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+            // And the last shall be first...
 			newQuestion = new Question("LUK 10.13-14", 42010013, 42010014, null, null);
 			var immutableKeyOfSecondAddedQuestion = newQuestion.Id;
 			qBase2.InsertedPhraseBefore = newQuestion;
@@ -1232,16 +1234,21 @@ namespace SIL.Transcelerator
             // VERIFY
 		    Assert.AreEqual(2, customizations.Count);
 
-			var cust = customizations.Single(c => c.OriginalPhrase == "What happenes if I cange this base question later?");
-            Assert.AreEqual(immutableKeyOfSecondAddedQuestion, cust.ModifiedPhrase);
+			var cust = customizations.Single(c => c.ModifiedPhrase == immutableKeyOfSecondAddedQuestion);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type,
+				"Although it was inserted before the following question, we actually want it to be" +
+				"persisted as an addition after the following one. (This makes the logic simpler and less error prone.)");
+            Assert.AreEqual("How did Jesus compare these two towns, Chorazin and Bethsaida with other cities?", cust.OriginalPhrase);
             Assert.IsNull(cust.Answer);
-            Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, cust.Type);
 			Assert.AreEqual(immutableKeyOfSecondAddedQuestion, cust.ImmutableKey);
 
-			cust = customizations.Single(c => c.OriginalPhrase == "How did Jesus compare these two towns, Chorazin and Bethsaida with other cities?");
-            Assert.AreEqual("What happenes if I cange this base question later?", cust.ModifiedPhrase);
+			cust = customizations.Single(c => c.ModifiedPhrase == "What happenes if I cange this base question later?");
+            Assert.AreEqual(immutableKeyOfSecondAddedQuestion, cust.OriginalPhrase);
             Assert.AreEqual("No one knows the future.", cust.Answer);
             Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			Assert.AreEqual(pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Id == immutableKeyOfSecondAddedQuestion) + 1,
+				pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "What happenes if I cange this base question later?"));
         }
 
 	    /// <summary>
@@ -1308,16 +1315,39 @@ namespace SIL.Transcelerator
             // VERIFY
 		    Assert.AreEqual(5, customizations.Count);
 
-			Assert.AreEqual(immutableKeyOfQuestion1_1, customizations.Single(
-				c => c.ModifiedPhrase == "Are we going to cook anything besides just roasting marshmallows?").ImmutableKey);
-			Assert.AreEqual(immutableKeyOfQuestion1_2, customizations.Single(
-				c => c.ModifiedPhrase == "Does this have an English version?").ImmutableKey);
-			Assert.AreEqual(immutableKeyOfQuestion2_1, customizations.Single(
-				c => c.ModifiedPhrase == "Is this an English question after the other one?").ImmutableKey);
-			Assert.AreEqual(immutableKeyOfQuestion2_2, customizations.Single(
-				c => c.ModifiedPhrase == "Could this perhaps be a preceding English question then?").ImmutableKey);
-			Assert.AreEqual(immutableKeyOfQuestion2_3, customizations.Single(
-				c => c.ModifiedPhrase.StartsWith(Question.kGuidPrefix)).ImmutableKey);
+			var i = 0;
+            var cust = customizations[i];
+			Assert.AreEqual(immutableKeyOfQuestion1_1, cust.ImmutableKey);
+			Assert.AreEqual("Are we going to cook anything besides just roasting marshmallows?", cust.ModifiedPhrase);
+			Assert.AreEqual("What was the purpose of John's ministry?", cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, cust.Type);
+			
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_3, cust.ImmutableKey);
+			Assert.AreEqual("Quien sabe", cust.Answer);
+			Assert.AreEqual("What was the purpose of John's ministry?", cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_2, cust.ImmutableKey);
+			Assert.AreEqual("Could this perhaps be a preceding English question then?", cust.ModifiedPhrase);
+			Assert.AreEqual("Mesmamente", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion1_2, cust.ImmutableKey);
+			Assert.AreEqual("Does this have an English version?", cust.ModifiedPhrase);
+			Assert.AreEqual("Claro qu sí", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_1, cust.ImmutableKey);
+			Assert.AreEqual("Is this an English question after the other one?", cust.ModifiedPhrase);
+			Assert.AreEqual("Parece que sí", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
 
 			foreach (var customization in customizations)
 			{
@@ -1344,15 +1374,21 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
 			    "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
-		    var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
 		    qBase.InsertedPhraseBefore = addedQuestion;
 
 			var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(1, customizations.Count);
-		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type,
+                "Although it was inserted before the following question, we actually want it to be" +
+				"persisted as an addition after the following one. (This makes the logic simpler and less error prone.)");
+		    Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?",
+				customizations[0].OriginalPhrase);
 		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
 		    Assert.AreEqual("No", customizations[0].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+
+            Assert.AreEqual(pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "Had anyone else tried to help this man and his boy?") - 1,
+				pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "Is this in order?"));
 		}
 
 	    [Test]

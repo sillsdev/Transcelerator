@@ -358,7 +358,7 @@ namespace SIL.Transcelerator
 						continue;
 					if (translatablePhrase.IsExcludedOrModified)
 						customizations.Add(new PhraseCustomization(translatablePhrase));
-					if (translatablePhrase.InsertedPhraseBefore != null)
+					if (translatablePhrase.InsertedPhraseBefore != null && !translatablePhrase.IsUserAdded)
 					{
 						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
 							translatablePhrase.InsertedPhraseBefore,
@@ -369,28 +369,9 @@ namespace SIL.Transcelerator
 						var precedingPhrase = i > 0 ? allPhrases[i - 1] : null;
 						if (precedingPhrase?.IsCategoryName == true)
 							precedingPhrase = null;
-						if (translatablePhrase.InsertedPhraseBefore == precedingPhrase?.QuestionInfo)
-						{
-							precedingPhrase = null;
-							for (var p = i - 2; p >= 0 && !allPhrases[p].IsCategoryName; p--)
-								if (!allPhrases[p].IsUserAdded)
-									precedingPhrase = allPhrases[p];
-						}
-						if (precedingPhrase?.AddedPhraseAfter != translatablePhrase.QuestionInfo &&
-							(i == allPhrases.Count - 1 || allPhrases[i + 1].InsertedPhraseBefore != translatablePhrase.QuestionInfo))
-						{
-							// This is a "previous" addition or insertion, so it is not explicitly attached to the
-							// adjacent question that is its base.
-							customizations.Add(GetPhraseCustomization(translatablePhrase,
-								precedingPhrase,
-								allPhrases.Skip(i + 1).FirstOrDefault(q => !q.IsUserAdded)));
-						}
-					}
-					if (translatablePhrase.AddedPhraseAfter != null)
-					{
-						customizations.Add(new PhraseCustomization(translatablePhrase.QuestionInfo.Text,
-							translatablePhrase.AddedPhraseAfter,
-							PhraseCustomization.CustomizationType.AdditionAfter));
+						//i < allPhrases.Count - 1 && !allPhrases[i + 1].IsUserAdded && allPhrases[i + 1].InsertedPhraseBefore == translatablePhrase.QuestionInfo
+						customizations.Add(GetPhraseCustomization(translatablePhrase, precedingPhrase,
+							allPhrases.Skip(i + 1).FirstOrDefault(q => !q.IsUserAdded)));
 					}
 				}
 				return customizations.ToList();
@@ -400,7 +381,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets a PhraseCustomization for the addedPhrase by determining whether to hang it as
 		/// an addition off the phraseBefore or as an insertion off the phraseAfter. (TXL-218: Or
-		/// in rare cases, hang it off itself.) We make this determination by first looking at
+		/// in rare cases, hang it off itself?) We make this determination by first looking at
 		/// the section/category, then by considering the reference. If both of the adjacent phrases
 		/// have the same section and category, but neither has the same reference, we arbitrarily
 		/// treat it as an addition hanging off the phraseBefore.
