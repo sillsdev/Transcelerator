@@ -388,7 +388,7 @@ namespace SIL.Transcelerator
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			SetControlTagsToFormatStrings();
+			SetControlTagsToFormatStringsAndFormatMenus();
 
             Location = Properties.Settings.Default.WindowLocation;
 			WindowState = Properties.Settings.Default.DefaultWindowState;
@@ -431,16 +431,18 @@ namespace SIL.Transcelerator
 		
 		private void HandleStringsLocalized()
 		{
-			SetControlTagsToFormatStrings();
+			SetControlTagsToFormatStringsAndFormatMenus();
 			UpdateCountsAndFilterStatus();
-		}			
-		
-		private void SetControlTagsToFormatStrings()
+		}
+
+		private void SetControlTagsToFormatStringsAndFormatMenus()
 		{
 			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
 			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
 			lblFilterIndicator.Tag = lblFilterIndicator.Text;
 			lblRemainingWork.Tag = lblRemainingWork.Text;
+
+			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text, kScriptureForgeProductName);
 		}
 
 		private void PopulateAvailableLocales()
@@ -1159,10 +1161,10 @@ namespace SIL.Transcelerator
 			m_lastSaveTime = DateTime.Now;
 			if (dataGridUns.IsCurrentCellInEditMode && !m_preventReEntrantCommitEditDuringSave)
 				dataGridUns.EndEdit();
-			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations, XmlSerializationHelper.SerializeToString(
+			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations,
 				(from translatablePhrase in m_helper.UnfilteredPhrases
 				where translatablePhrase.HasUserTranslation
-				select new XmlTranslation(translatablePhrase)).ToList()));
+				select new XmlTranslation(translatablePhrase)).ToList());
 
 			if (fSaveCustomizations)
 			{
@@ -1171,7 +1173,7 @@ namespace SIL.Transcelerator
 				if (customizations.Count > 0 || m_fileAccessor.Exists(DataFileAccessor.DataFileId.QuestionCustomizations))
 				{
 					m_fileAccessor.Write(DataFileAccessor.DataFileId.QuestionCustomizations,
-						XmlSerializationHelper.SerializeToString(customizations));
+						customizations);
 				}
 			}
 			m_saving = false;
@@ -1471,7 +1473,7 @@ namespace SIL.Transcelerator
 					if (currentBookQuestions != null)
 					{
 						m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-							currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+							currentBookQuestions.BookId, currentBookQuestions);
 					}
 					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
 					{
@@ -1509,7 +1511,7 @@ namespace SIL.Transcelerator
 			if (currentBookQuestions != null)
 			{
 				m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-					currentBookQuestions.BookId, XmlSerializationHelper.SerializeToString(currentBookQuestions));
+					currentBookQuestions.BookId, currentBookQuestions);
 			}
 		}
 
@@ -1861,7 +1863,7 @@ namespace SIL.Transcelerator
 					PhraseSubstitutions.Clear();
 					PhraseSubstitutions.AddRange(dlg.Substitutions);
                     m_fileAccessor.Write(DataFileAccessor.DataFileId.PhraseSubstitutions,
-						XmlSerializationHelper.SerializeToString(PhraseSubstitutions));
+						PhraseSubstitutions);
 
 					Reload(false);
 				}
