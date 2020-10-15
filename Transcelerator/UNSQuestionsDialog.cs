@@ -388,7 +388,7 @@ namespace SIL.Transcelerator
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			SetControlTagsToFormatStrings();
+			SetControlTagsToFormatStringsAndFormatMenus();
 
             Location = Properties.Settings.Default.WindowLocation;
 			WindowState = Properties.Settings.Default.DefaultWindowState;
@@ -431,16 +431,18 @@ namespace SIL.Transcelerator
 		
 		private void HandleStringsLocalized()
 		{
-			SetControlTagsToFormatStrings();
+			SetControlTagsToFormatStringsAndFormatMenus();
 			UpdateCountsAndFilterStatus();
-		}			
-		
-		private void SetControlTagsToFormatStrings()
+		}
+
+		private void SetControlTagsToFormatStringsAndFormatMenus()
 		{
 			m_lblAnswerLabel.Tag = m_lblAnswerLabel.Text.Trim();
 			m_lblCommentLabel.Tag = m_lblCommentLabel.Text.Trim();
 			lblFilterIndicator.Tag = lblFilterIndicator.Text;
 			lblRemainingWork.Tag = lblRemainingWork.Text;
+
+			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text, kScriptureForgeProductName);
 		}
 
 		private void PopulateAvailableLocales()
