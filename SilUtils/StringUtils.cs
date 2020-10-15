@@ -12,9 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
+using static System.Char;
+using static System.IO.Path;
 
 namespace SIL.Utils
 {
@@ -106,33 +107,65 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		public static string FilterForFileName(string sName)
 		{
-			return FilterForFileName(sName, new string(Path.GetInvalidFileNameChars()));
+			return FilterForFileName(sName, new string(GetInvalidFileNameChars()));
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Produce a version of the given name that can be used as a file name. This is done
-		/// by replacing invalid characters with underscores '_'.
+		/// by replacing invalid characters with underscores '_' and trimming any leading spaces
+		/// or trailing periods or spaces.
 		/// </summary>
 		/// <param name="sName">Name to be filtered</param>
 		/// <param name="invalidChars">characters to filter out</param>
-		/// <param name="replaceNbsp"></param>
-		/// <returns>the filtered name</returns>
+		/// <param name="replaceNbsp">Replace non-breaking spaces with normal spaces</param>
+		/// <returns>The filtered name. (A single underscore will be returned if the given name
+		/// consists entirely of removed spaces and periods.)</returns>
 		/// ------------------------------------------------------------------------------------
 		public static string FilterForFileName(string sName, string invalidChars, bool replaceNbsp = true)
 		{
-			StringBuilder cleanName = new StringBuilder(sName);
+			var cleanName = new StringBuilder(sName);
+			while (cleanName.Length > 0 && cleanName[0].IsInvalidFilenameLeadingOrTrailingSpaceChar())
+				cleanName.Remove(0, 1);
+			while (cleanName.Length > 0)
+			{
+				var lastCharPos = cleanName.Length - 1;
+				var lastChar = cleanName[lastCharPos];
+				if (lastChar == '.' || lastChar.IsInvalidFilenameLeadingOrTrailingSpaceChar())
+					cleanName.Remove(lastCharPos, 1);
+				else
+					break;
+			}
+
+			if (cleanName.Length == 0)
+				return "_";
 
 			// replace all invalid characters with an '_'
-			for (int i = 0; i < sName.Length; i++)
+			for (var i = 0; i < sName.Length; i++)
 			{
 				if (invalidChars.IndexOf(sName[i]) >= 0 || sName[i] < ' ') // eliminate all control characters too
 					cleanName[i] = '_';
 			}
+			
 			if (replaceNbsp)
 				cleanName.Replace('\u00A0', ' ');
+
 			return cleanName.ToString();
 		}
+
+		/// <summary>
+		/// In addition to all the "normal" space characters covered by Char.IsWhitespace, this
+		/// also returns true for certain formatting characters which have no visible effect on
+		/// a string when used as a leading or trailing character and would likely be confusing
+		/// if allowed at the start or end of a filename. 
+		/// </summary>
+		/// <remarks>Originally, I implemented the second check as
+		/// GetUnicodeCategory(c) == UnicodeCategory.Format, but this seemed to be too aggressive
+		/// since significant formatting marks such as those used to control bidi text could be
+		/// removed.
+		/// </remarks>
+		private static bool IsInvalidFilenameLeadingOrTrailingSpaceChar(this char c) =>
+			IsWhiteSpace(c) || c == '\uFEFF' || c == '\u200B' || c == '\u200C' || c == '\u200D';
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -146,7 +179,7 @@ namespace SIL.Utils
 		private static string GetNextCharWithModifiers(string source, int start)
 		{
 			int end = start + 1;
-			while (end < source.Length && Char.GetUnicodeCategory(source, end) == UnicodeCategory.NonSpacingMark)
+			while (end < source.Length && GetUnicodeCategory(source, end) == UnicodeCategory.NonSpacingMark)
 				end++;
 			return source.Substring(start, end - start);
 		}
@@ -189,7 +222,7 @@ namespace SIL.Utils
 			StringBuilder sb = new StringBuilder(len);
 			foreach (char c in s)
 			{
-				if (!char.IsWhiteSpace(c))
+				if (!IsWhiteSpace(c))
 					sb.Append(c);
 			}
 			return sb.ToString();
@@ -230,9 +263,9 @@ namespace SIL.Utils
 			int ichMatch = useThisMatch = s.IndexOf(toRemove, StringComparison.Ordinal);
 			while (ichMatch >= 0)
 			{
-				bool wordBreakAtStart = (ichMatch == 0 || !Char.IsLetter(s[ichMatch - 1]));
+				bool wordBreakAtStart = (ichMatch == 0 || !IsLetter(s[ichMatch - 1]));
 				int ichLim = ichMatch + toRemove.Length;
-				bool wordBreakAtEnd = (ichLim == s.Length || !Char.IsLetter(s[ichLim]));
+				bool wordBreakAtEnd = (ichLim == s.Length || !IsLetter(s[ichLim]));
 				if (wordBreakAtStart && wordBreakAtEnd)
 				{
 					useThisMatch = ichMatch;
@@ -277,7 +310,7 @@ namespace SIL.Utils
 			string bestMatch = string.Empty;
 			for (int ich = 0; ich + bestMatch.Length < s1.Length; ich++)
 			{
-				if (s1[ich] == kChObject || char.IsWhiteSpace(s1[ich]))
+				if (s1[ich] == kChObject || IsWhiteSpace(s1[ich]))
 					continue;
 
 				int cchMatch = bestMatch.Trim().Length;
@@ -287,7 +320,7 @@ namespace SIL.Utils
 				{
 					cchMatch++;
 				}
-				while (ich + cchMatch < s1.Length && char.IsLetter(s1[ich + cchMatch])); // Need CPE?
+				while (ich + cchMatch < s1.Length && IsLetter(s1[ich + cchMatch])); // Need CPE?
 
 				//if (cchMatch > maxLength)
 				//{
@@ -310,9 +343,9 @@ namespace SIL.Utils
 					bestCandidate = candidate;
 					if (ich + cchMatch == s1.Length || s1[ich + cchMatch] == kChObject)
 						break;
-					if (!Char.IsLetter(s1[ich + cchMatch]))
+					if (!IsLetter(s1[ich + cchMatch]))
 					{
-						if (!Char.IsWhiteSpace(s1[ich + cchMatch]))
+						if (!IsWhiteSpace(s1[ich + cchMatch]))
 							candidate = s1.Substring(ich, cchMatch + 1); // include punctuation
 						cchMatch++;
 						//if (cchMatch > maxLength)
@@ -324,7 +357,7 @@ namespace SIL.Utils
 						{
 							cchMatch++;
 						}
-						while (ich + cchMatch < s1.Length && char.IsLetter(s1[ich + cchMatch])); // Need CPE?
+						while (ich + cchMatch < s1.Length && IsLetter(s1[ich + cchMatch])); // Need CPE?
 						//if (cchMatch > maxLength)
 						//    break;
 						candidate = s1.Substring(ich, cchMatch);
@@ -332,7 +365,7 @@ namespace SIL.Utils
 				} while (true);
 				if (bestCandidate.Trim().Length > bestMatch.Trim().Length)
 					bestMatch = bestCandidate;
-				if (char.IsLetter(s1[ich]))
+				if (IsLetter(s1[ich]))
 				{
 					ich = s1.IndexOf(" ", ich, StringComparison.Ordinal);
 					if (ich < 0)
@@ -383,7 +416,7 @@ namespace SIL.Utils
                         break;
 					candidate = shortestStr.Substring(ich, ++cchMatch);
 				} while (true);
-				if (cchMatch > cchBestMatch && bestCandidate.Any(c => !Char.IsWhiteSpace(c)))
+				if (cchMatch > cchBestMatch && bestCandidate.Any(c => !IsWhiteSpace(c)))
 				{
 					cchMinUsefulMatch = cchBestMatch = cchMatch;
 					bestMatch = bestCandidate;

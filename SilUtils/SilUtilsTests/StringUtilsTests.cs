@@ -60,12 +60,85 @@ namespace SIL.Utils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[SuppressMessage("Gendarme.Rules.Portability", "NewLineLiteralRule",
-			Justification = "Unit test")]
 		public void FilterForFileName_NoBreakSpace_NbspReplacedWithNormalSpace()
 		{
 			Assert.AreEqual("My File Dude.txt",
 				StringUtils.FilterForFileName("My File\u00A0Dude.txt"));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that final periods and spaces are stripped.
+		/// (See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN#naming_conventions)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(".")]
+		[TestCase(". ")]
+		[TestCase(" .")]
+		[TestCase("..")]
+		[TestCase(". .")]
+		[TestCase("\u2002")]
+		[TestCase("\u2000")]
+		[TestCase("\u200A")]
+		[TestCase("\u200C")]
+		[TestCase("\u200D")]
+		public void FilterForFileName_EndsWithAndContainsPeriodsAndOrSpaces_TrailingPeriodsAndSpacesRemoved(string trailing)
+		{
+			Assert.AreEqual($"My best{trailing}File", StringUtils.FilterForFileName($"My best{trailing}File" + trailing));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that final periods and spaces are stripped.
+		/// (See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN#naming_conventions)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(".\u00A0.")]
+		[TestCase("\u00A0")]
+		public void FilterForFileName_EndsWithPeriodsAndOrSpaces_TrailingPeriodsAndSpacesRemoved(string trailing)
+		{
+			Assert.AreEqual("My best.File", StringUtils.FilterForFileName("My best.File" + trailing));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that leading spaces and formatting characters are stripped.
+		/// (See https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file?redirectedfrom=MSDN#naming_conventions)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(" ")]
+		[TestCase("  ")]
+		[TestCase("\u00A0")]
+		[TestCase("\uFEFF")]
+		[TestCase("\u200B")]
+		[TestCase("\u200A")]
+		public void FilterForFileName_StartsWithSpaces_LeadingPeriodsAndSpacesRemoved(string leading)
+		{
+			Assert.AreEqual("My best.File", StringUtils.FilterForFileName(leading + "My best.File"));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests that an empty filename or one consisting only of spaces and dots results in
+		/// a single underscore (which is a legal - albeit not very nice) filename. Note:
+		/// Originally I was going to have it throw an exception since it's a really weird edge
+		/// case, but knowing that it is used to come up with a default filename, if ever it
+		/// were to be passed junk like this (which it probably never will), neither crashing
+		/// nor having to deal with it in a try-catch would be helpful.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase(".")]
+		[TestCase(". ")]
+		[TestCase(" .")]
+		[TestCase("..")]
+		[TestCase(". .")]
+		[TestCase(" ")]
+		[TestCase("")]
+		[TestCase("\u00A0")]
+		[TestCase("\u00A0.")]
+		public void FilterForFileName_StringContainsNothingButPeriodsAndOrSpaces_ReturnsSingleUnderscore(string orig)
+		{
+			Assert.AreEqual("_", StringUtils.FilterForFileName(orig));
 		}
 
 		#region FindStringDifference tests
