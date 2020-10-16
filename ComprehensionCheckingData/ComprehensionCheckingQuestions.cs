@@ -38,10 +38,10 @@ namespace SIL.ComprehensionCheckingData
 		[XmlAttribute("version")]
 		public string Version
 		{
-			get => "1.0";
+			get => "1.1";
 			set // Setter only used for deserialization
 			{
-				if (value != null && value != "1.0")
+				if (value != null && value != "1.1" && value != "1.0")
 					throw new XmlException($"Unexpected version number in localization file: {value}");
 			}
 		}
