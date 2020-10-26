@@ -152,7 +152,9 @@ namespace SIL.Transcelerator
 				default:
 					throw new ArgumentException("Unexpected sorting method", "by");
 			}
-			phrases.Sort(how);
+
+			int ReferentiallyEqualElseHow(TranslatablePhrase a, TranslatablePhrase b) => a == b ? 0 : how(a, b);
+			phrases.Sort(ReferentiallyEqualElseHow);
 		}
 
 		private static Comparison<TranslatablePhrase> NaturalOrderComparison() => ComparePhrasesByIndexedOrder;
