@@ -242,7 +242,7 @@ namespace SIL.Transcelerator
 
                     const string key = "3iuv313n8t";
 #endif
-					using (new Analytics(key, GetuserInfo(), allowTracking))
+					using (new Analytics(key, GetUserInfo(), allowTracking))
 					{
 						Analytics.Track("Startup", new Dictionary<string, string>
 						{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
@@ -267,7 +267,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private UserInfo GetuserInfo()
+		private UserInfo GetUserInfo()
 		{
 			string lastName = host.UserName;
 			string firstName = "";

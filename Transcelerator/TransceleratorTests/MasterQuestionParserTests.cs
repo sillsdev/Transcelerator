@@ -2332,18 +2332,23 @@ namespace SIL.Transcelerator
 	    /// <summary>
 	    /// Tests that user questions are properly added/inserted into the correct location when
 	    /// they are for a verse (or range) that does not match any existing question.
+	    /// Note: Out-of-order test cases added for TXL-222
 	    /// </summary>
 	    ///--------------------------------------------------------------------------------------
-	    [Test]
-	    public void GetResult_InsertedQuestionWithVerseRangeThatDoesNotMatchExistingQuestion_InsertedPhraseIncludedInCorrectPlace()
+		[TestCase(PhraseCustomization.CustomizationType.InsertionBefore, "13-20")]
+		[TestCase(PhraseCustomization.CustomizationType.AdditionAfter, "13-20")]
+		[TestCase(PhraseCustomization.CustomizationType.InsertionBefore, "16-20")] //TXL-222
+		[TestCase(PhraseCustomization.CustomizationType.AdditionAfter, "10-20")] //TXL-222
+	    public void GetResult_AddedQuestionWithVerseRangeThatDoesNotMatchExistingQuestion_InsertedPhraseIncludedInCorrectPlace(
+			PhraseCustomization.CustomizationType type, string verses)
 	    {
 	        List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 	        PhraseCustomization pc = new PhraseCustomization();
-	        pc.Reference = "PRO 3.13-20";
+	        pc.Reference = $"PRO 3.{verses}";
 	        pc.OriginalPhrase = "What man is happy?";
 	        pc.ModifiedPhrase = "Are there any words in this section whose meaning is not clear?";
-	        pc.Answer = "[Make a list of the words not understood](13 - 20)";
-	        pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+	        pc.Answer = $"[Make a list of the words not understood]({verses})";
+	        pc.Type = type;
 	        customizations.Add(pc);
 
 	        MasterQuestionParser qp = new MasterQuestionParser(GenerateProverbsQuestionSections(),
@@ -2356,7 +2361,21 @@ namespace SIL.Transcelerator
 	        int excludedQuestions = 0;
 	        int iQuestion = 0;
 
-	        for (int iS = 0; iS < sections.Length; iS++)
+			void VerifyHappyQuestion(Question q)
+			{
+				Assert.IsFalse(q.IsUserAdded);
+				Assert.AreEqual("What man is happy?", q.PhraseInUse);
+			}
+
+			void VerifyAnyWordsQuestion(Question q)
+			{
+				Assert.IsTrue(q.IsUserAdded);
+				Assert.AreEqual(pc.Reference, q.ScriptureReference);
+				Assert.AreEqual("Are there any words in this section whose meaning is not clear?", q.PhraseInUse);
+				Assert.AreEqual(pc.Answer, q.Answers.Single());
+			}
+
+			for (int iS = 0; iS < sections.Length; iS++)
 	        {
 	            Section actSection = sections[iS];
 	            for (int iC = 0; iC < actSection.Categories.Length; iC++)
@@ -2387,15 +2406,17 @@ namespace SIL.Transcelerator
 	                                Assert.AreEqual("How many words are there?", actQuestion.PhraseInUse);
 	                                break;
 	                            case 3:
-	                                Assert.IsTrue(actQuestion.IsUserAdded);
-	                                Assert.AreEqual("PRO 3.13-20", actQuestion.ScriptureReference);
-	                                Assert.AreEqual("Are there any words in this section whose meaning is not clear?", actQuestion.PhraseInUse);
-	                                Assert.AreEqual("[Make a list of the words not understood](13 - 20)", actQuestion.Answers.Single());
+									if (type == PhraseCustomization.CustomizationType.AdditionAfter)
+										VerifyHappyQuestion(actQuestion);
+									else
+										VerifyAnyWordsQuestion(actQuestion);
 	                                break;
-	                            case 4:
-	                                Assert.IsFalse(actQuestion.IsUserAdded);
-	                                Assert.AreEqual("What man is happy?", actQuestion.PhraseInUse);
-	                                break;
+								case 4:
+									if (type == PhraseCustomization.CustomizationType.InsertionBefore)
+										VerifyHappyQuestion(actQuestion);
+									else
+										VerifyAnyWordsQuestion(actQuestion);
+									break;
 	                            case 5:
 	                                Assert.IsFalse(actQuestion.IsUserAdded);
 	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
