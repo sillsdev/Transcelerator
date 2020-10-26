@@ -10,6 +10,7 @@
 // File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml.Serialization;
 using SIL.Scripture;
 
@@ -188,7 +189,14 @@ namespace SIL.Transcelerator
 	/// its purpose is to prevent duplicates. For any given reference, no customization
 	/// is allowed that would result in a duplicate (modified) form of the question. Since
 	/// customizations include deletions (excluded questions), we have to take type into
-	/// consideration because deletions do not have ModifiedPhrase set.
+	/// consideration so that a deletion is not confused with one of the other types
+	/// because deletions do not have ModifiedPhrase set but two different questions
+	/// could be deleted in the same verse.
+	/// So:
+	/// 1) Two deletions are "equal" if they are for the same question in the same verse(s)
+	/// 2) A deletion is never equal to a modification, insertion, or addition. (duh)
+	/// 3) Two modifications, insertions or additions (regardless of type) are "equal" if
+	/// they would result in the creation of a duplicate question in the same verse(s).
 	/// </summary>
 	internal class DuplicateCustomizationPreventer : IEqualityComparer<PhraseCustomization>
 	{
@@ -221,6 +229,7 @@ namespace SIL.Transcelerator
 					hashCode = (hashCode * 397) ^ cust.ModifiedPhrase.GetHashCode();
 				else
 				{
+					Debug.Assert(cust.Type == PhraseCustomization.CustomizationType.Deletion);
 					hashCode = (hashCode * 397) ^ cust.OriginalPhrase.GetHashCode();
 					hashCode = (hashCode * 397) ^ (int)cust.Type;
 				}

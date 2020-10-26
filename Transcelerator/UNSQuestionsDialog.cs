@@ -1529,6 +1529,9 @@ namespace SIL.Transcelerator
 
 				var q = new ComprehensionCheckingQuestion
 				{
+					// Note: If Id is set to null here, it's okay. The getter will use the
+					// English version of the question as the (immutable) key. That is actually
+					// the common case.
 					Id = phrase.IsUserAdded ?
 						phrase.QuestionInfo.Id :
 						phrase.QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text,

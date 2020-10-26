@@ -49,7 +49,7 @@ namespace SIL.ComprehensionCheckingData
 		[XmlAttribute("book")]
 		public string BookId { get; set; }
 
-		[XmlElement]
+		[XmlElement("Question")]
 		public List<ComprehensionCheckingQuestion> Questions { get; set; }
 	}
 
