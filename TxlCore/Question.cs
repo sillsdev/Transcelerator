@@ -77,13 +77,16 @@ namespace SIL.Transcelerator
 						// true anyway.
 					    IsUserAdded = true;
 				    }
-				    if (IsUserAdded)
-			            m_text = kGuidPrefix + Guid.NewGuid();
-                    else
+					if (IsUserAdded)
+						m_text = Id;
+					else
                         throw new ArgumentException("Factory-supplied questions must not be empty.");
 			    }
-			    else
-			        m_text = value.Trim();
+				else
+				{
+					EnsureKeySetWhenChangingText(value);
+					m_text = value.Trim();
+				}
 			}
 		}
 
@@ -132,7 +135,8 @@ namespace SIL.Transcelerator
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Question"/> class, needed
-		/// for XML serialization.
+		/// for XML serialization, tests, and the question pre-processor. Never use this for
+		/// user-added questions
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public Question()
@@ -141,12 +145,12 @@ namespace SIL.Transcelerator
 
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Constructor to make a new (user-added) Question.
+		/// Constructor to make a new user-added Question (used only in tests).
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public Question(IQuestionKey baseQuestion, string newQuestion, string answer) :
 			this(baseQuestion.ScriptureReference, baseQuestion.StartRef, 
-			baseQuestion.EndRef, newQuestion, answer)
+			baseQuestion.EndRef, newQuestion, answer, newQuestion)
 		{
 		}
 		
@@ -167,10 +171,12 @@ namespace SIL.Transcelerator
 		/// Constructor to make a new (user-added) Question.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
-		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion, string answer) :
-			base(newQuestion, scrRefAsString, startRef, endRef)
+		public Question(string scrRefAsString, int startRef, int endRef, string newQuestion, string answer, string key = null) :
+			base(newQuestion, scrRefAsString, startRef, endRef, key ?? newQuestion ?? kGuidPrefix + Guid.NewGuid())
 		{
 			IsUserAdded = true;
+			if (m_text == null)
+				m_text = Id;
 
 			if (!string.IsNullOrEmpty(answer))
 				Answers = new[] { answer };

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2011' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
+//		Copyright (c) 2020, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,6 +9,8 @@
 //
 // File: PhraseCustomization.cs
 // ---------------------------------------------------------------------------------------------
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Xml.Serialization;
 using SIL.Scripture;
 
@@ -17,7 +19,8 @@ namespace SIL.Transcelerator
 	#region class PhraseCustomization
 	/// ------------------------------------------------------------------------------------
 	/// <summary>
-	/// Little class to support XML serialization of customizations (additions/changes/deletions
+	/// Little class to support XML serialization of customizations (additions/changes/
+	/// deletions)
 	/// </summary>
 	/// ------------------------------------------------------------------------------------
 	[XmlType("PhraseCustomization")]
@@ -26,7 +29,7 @@ namespace SIL.Transcelerator
 	    private BCVRef m_scrStartReference;
 	    private BCVRef m_scrEndReference;
 
-        #region CustomizationType enumeration
+		#region CustomizationType enumeration
         public enum CustomizationType
 		{
 			Modification,
@@ -67,23 +70,49 @@ namespace SIL.Transcelerator
 
         /// --------------------------------------------------------------------------------
         /// <summary>
-        /// Gets or sets the reference.
+        /// Gets or sets the reference. Setter is needed for deserialization, but do
+		/// not use in production code.
         /// </summary>
         /// --------------------------------------------------------------------------------
         [XmlAttribute("ref")]
 		public string Reference { get; set; }
+
+		[XmlAttribute("id")]
+		public string ImmutableKey_PublicForSerializationOnly
+		{
+			get => ImmutableKey == ModifiedPhrase ? null : ImmutableKey;
+			set => ImmutableKey = value;
+		}
+
+		[XmlIgnore]
+		public string ImmutableKey { get; private set; }
+
+		private void SetKeyBasedOn(TranslatablePhrase tpBase)
+		{
+			SetKeyBasedOn(tpBase.PhraseKey);
+		}
+
+		private void SetKeyBasedOn(IQuestionKey baseQuestionKey)
+		{
+			ImmutableKey = baseQuestionKey.Id;
+		}
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the original phrase.
+		/// Gets or sets the original phrase. Setter is needed for deserialization, but do
+		/// not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public string OriginalPhrase { get; set; }
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the edited/customized phrase.
+		/// Gets or sets the edited/customized phrase. Setter is needed for deserialization,
+		/// but do not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		public string ModifiedPhrase { get; set; }
+
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets the answer (probably mostly used for added questions).
@@ -92,7 +121,8 @@ namespace SIL.Transcelerator
 		public string Answer { get; set; }
 		/// --------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the translation.
+		/// Gets or sets the translation. Setter is needed for deserialization, but do
+		/// not use in production code.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
 		[XmlAttribute("type")]
@@ -107,17 +137,19 @@ namespace SIL.Transcelerator
 		{
 		}
 
-        /// --------------------------------------------------------------------------------
+		/// --------------------------------------------------------------------------------
         /// <summary>
         /// Initializes a new instance of the <see cref="PhraseCustomization"/> class.
         /// </summary>
         /// --------------------------------------------------------------------------------
-        public PhraseCustomization(TranslatablePhrase tp)
+        public PhraseCustomization(TranslatablePhrase tp) : this()
 		{
 			Reference = tp.Reference;
 			OriginalPhrase = tp.OriginalPhrase;
 			ModifiedPhrase = tp.ModifiedPhrase;
 			Type = tp.IsExcluded ? CustomizationType.Deletion : CustomizationType.Modification;
+			if (Type == CustomizationType.Modification)
+				SetKeyBasedOn(tp);
 		}
 
         /// --------------------------------------------------------------------------------
@@ -127,14 +159,15 @@ namespace SIL.Transcelerator
         /// </summary>
         /// --------------------------------------------------------------------------------
         public PhraseCustomization(string basePhrase, Question addedPhrase,
-			CustomizationType type)
+			CustomizationType type) : this()
 		{
 			Reference = addedPhrase.ScriptureReference;
 			OriginalPhrase = basePhrase;
 			ModifiedPhrase = addedPhrase.Text;
-			if (addedPhrase.Answers != null && addedPhrase.Answers.Length == 1)
+			if (addedPhrase.Answers?.Length == 1)
 				Answer = addedPhrase.Answers[0];
 			Type = type;
+			SetKeyBasedOn(addedPhrase);
 		}
 	}
 	#endregion
@@ -145,12 +178,64 @@ namespace SIL.Transcelerator
 		public override string ScriptureReference { get; set; }
 		public override int StartRef { get; set; }
 		public override int EndRef { get; set; }
-		internal CustomQuestionKey(PhraseCustomization pc)
+		internal CustomQuestionKey(PhraseCustomization pc) :
+			base(pc.OriginalPhrase, pc.Reference, pc.ScrStartReference, pc.ScrEndReference, pc.ImmutableKey)
 		{
-			Text = pc.OriginalPhrase;
-			ScriptureReference = pc.Reference;
-			StartRef = pc.ScrStartReference;
-			EndRef = pc.ScrEndReference;
+		}
+	}
+
+	/// <summary>
+	/// This might seem like a loose or inadequate definition of equality, but
+	/// its purpose is to prevent duplicates. For any given reference, no customization
+	/// is allowed that would result in a duplicate (modified) form of the question. Since
+	/// customizations include deletions (excluded questions), we have to take type into
+	/// consideration so that a deletion is not confused with one of the other types
+	/// because deletions do not have ModifiedPhrase set but two different questions
+	/// could be deleted in the same verse.
+	/// So:
+	/// 1) Two deletions are "equal" if they are for the same question in the same verse(s)
+	/// 2) A deletion is never equal to a modification, insertion, or addition. (duh)
+	/// 3) Two modifications, insertions or additions (regardless of type) are "equal" if
+	/// they would result in the creation of a duplicate question in the same verse(s).
+	/// </summary>
+	internal class DuplicateCustomizationPreventer : IEqualityComparer<PhraseCustomization>
+	{
+		public bool Equals(PhraseCustomization x, PhraseCustomization y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+			if (ReferenceEquals(x, null))
+				return false;
+			if (ReferenceEquals(y, null))
+				return false;
+			if (x.GetType() != y.GetType())
+				return false;
+			if (!x.Reference.Equals(y.Reference))
+				return false;
+			if (x.Type == PhraseCustomization.CustomizationType.Deletion)
+			{
+				return y.Type == PhraseCustomization.CustomizationType.Deletion &&
+					x.OriginalPhrase == y.OriginalPhrase;
+			}
+			return x.ModifiedPhrase == y.ModifiedPhrase;
+		}
+
+		public int GetHashCode(PhraseCustomization cust)
+		{
+			unchecked
+			{
+				var hashCode = cust.Reference.GetHashCode();
+				if (cust.ModifiedPhrase != null)
+					hashCode = (hashCode * 397) ^ cust.ModifiedPhrase.GetHashCode();
+				else
+				{
+					Debug.Assert(cust.Type == PhraseCustomization.CustomizationType.Deletion);
+					hashCode = (hashCode * 397) ^ cust.OriginalPhrase.GetHashCode();
+					hashCode = (hashCode * 397) ^ (int)cust.Type;
+				}
+
+				return hashCode;
+			}
 		}
 	}
 	#endregion

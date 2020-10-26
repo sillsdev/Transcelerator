@@ -69,6 +69,7 @@ namespace SIL.Transcelerator
 						Assert.IsFalse(actQuestion.IsExcluded);
 						Assert.IsFalse(actQuestion.IsUserAdded);
 						Assert.AreEqual(actQuestion.Text, actQuestion.PhraseInUse);
+						Assert.AreEqual(actQuestion.Text, actQuestion.Id);
 					}
 				}
 			}
@@ -1906,6 +1907,7 @@ namespace SIL.Transcelerator
 							Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts[0].Type);
 							Assert.AreEqual(actQuestion.Text, actQuestion.PhraseInUse);
 						}
+						Assert.AreEqual(actQuestion.Id, actQuestion.Text);
 					}
 				}
 			}
@@ -1915,7 +1917,8 @@ namespace SIL.Transcelerator
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests that questions that have modifications are properly noted.
+		/// Tests that questions that have modifications are properly noted and that the
+		/// immutable Id of the original question is retained.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
@@ -1935,7 +1938,11 @@ namespace SIL.Transcelerator
 			pc.Type = PhraseCustomization.CustomizationType.Modification;
 			customizations.Add(pc);
 
-			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
+			var qs = GenerateStandardQuestionSections();
+			var origQuestions = qs.Items.SelectMany(actSection => actSection.Categories)
+				.SelectMany(c => c.Questions).Select(q => q.Text).ToList();
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs,
 				new List<string>(), null, null, customizations, null);
 
 			ParsedQuestions pq = qp.Result;
@@ -1955,6 +1962,7 @@ namespace SIL.Transcelerator
 					Assert.AreEqual(1, actQuestion.ParsedParts.Count);
 					Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts[0].Type);
 					Assert.IsFalse(actQuestion.IsUserAdded);
+					Assert.AreEqual(origQuestions[iQuestion], actQuestion.Id);
 					switch (iQuestion)
 					{
 						case 1:
@@ -1970,6 +1978,7 @@ namespace SIL.Transcelerator
 							Assert.AreEqual(actQuestion.Text, actQuestion.PhraseInUse);
 							break;
 					}
+					Assert.AreEqual(actQuestion.Id, actQuestion.Text);
 				}
 			}
 			Assert.IsNull(pq.KeyTerms);
@@ -1981,8 +1990,9 @@ namespace SIL.Transcelerator
 		/// Tests that user questions are properly added/inserted into the correct location.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[Test]
-		public void GetResult_SimpleAdditionAndInsertionOfPhrases_PhrasesAreInCorrectOrder()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetResult_SimpleAdditionAndInsertionOfPhrases_PhrasesAreInCorrectOrder(bool useGuidKeys)
 		{
 			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
 			PhraseCustomization pc = new PhraseCustomization();
@@ -1991,12 +2001,22 @@ namespace SIL.Transcelerator
 			pc.ModifiedPhrase = "Is this question before the one about the meaning of apostle?";
 			pc.Answer = "Yup";
 			pc.Type = PhraseCustomization.CustomizationType.InsertionBefore;
+			string origAddedPhraseKey1;
+			if (useGuidKeys)
+				pc.ImmutableKey_PublicForSerializationOnly = origAddedPhraseKey1 = Question.kGuidPrefix + Guid.NewGuid();
+			else
+				origAddedPhraseKey1 = pc.ModifiedPhrase;
 			customizations.Add(pc);
 			pc = new PhraseCustomization();
 			pc.Reference = "ACT 1.6";
 			pc.OriginalPhrase = "What question did the apostles ask Jesus about his kingdom?";
 			pc.ModifiedPhrase = "What did He answer?";
 			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			string origAddedPhraseKey6;
+			if (useGuidKeys)
+				pc.ImmutableKey_PublicForSerializationOnly = origAddedPhraseKey6 = Question.kGuidPrefix + Guid.NewGuid();
+			else
+				origAddedPhraseKey6 = pc.ModifiedPhrase;
 			customizations.Add(pc);
 
 			MasterQuestionParser qp = new MasterQuestionParser(GenerateStandardQuestionSections(),
@@ -2028,10 +2048,12 @@ namespace SIL.Transcelerator
 							case 1:
 								Assert.IsTrue(actQuestion.IsUserAdded);
 								Assert.AreEqual("Is this question before the one about the meaning of apostle?", actQuestion.PhraseInUse);
+								Assert.AreEqual(origAddedPhraseKey1, actQuestion.Id);
 								break;
 							case 6:
 								Assert.IsTrue(actQuestion.IsUserAdded);
 								Assert.AreEqual("What did He answer?", actQuestion.PhraseInUse);
+								Assert.AreEqual(origAddedPhraseKey6, actQuestion.Id);
 								break;
 							default:
 								Assert.AreEqual(actQuestion.Text, actQuestion.PhraseInUse);
@@ -2177,6 +2199,7 @@ namespace SIL.Transcelerator
 	                        iQuestion++;
 	                        Assert.IsNull(actQuestion.ModifiedPhrase);
 	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        Assert.AreEqual(actQuestion.PhraseInUse, actQuestion.Id);
 	                        switch (iQuestion)
 	                        {
 	                            case 1:
@@ -2371,6 +2394,7 @@ namespace SIL.Transcelerator
 	                        iQuestion++;
 	                        Assert.IsNull(actQuestion.ModifiedPhrase);
 	                        Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                        Assert.AreEqual(actQuestion.PhraseInUse, actQuestion.Id);
 	                        switch (iQuestion)
 	                        {
 	                            case 1:
@@ -2517,7 +2541,10 @@ namespace SIL.Transcelerator
 								case 3:
 	                                Assert.AreEqual("What person is happy?", actQuestion.PhraseInUse);
 									Assert.AreEqual("The person over there", actQuestion.Answers.Single());
-	                                Assert.IsTrue(actQuestion.IsUserAdded);
+									Assert.AreEqual(actQuestion.PhraseInUse, actQuestion.Id,
+										"Because this was done as an addition after (plus a deletion) instead of a modification, the Id of the" +
+										"original question is lost and the Id ends up being the text of the added question.");
+									Assert.IsTrue(actQuestion.IsUserAdded);
 	                                break;
 								case 4:
 	                                Assert.AreEqual("What pictures describe wisdom?", actQuestion.PhraseInUse);
@@ -2595,7 +2622,7 @@ namespace SIL.Transcelerator
 		[TestCase(true, true, PhraseCustomization.CustomizationType.InsertionBefore)]
 	    [TestCase(true, true, PhraseCustomization.CustomizationType.AdditionAfter)]
         [TestCase(false, true, PhraseCustomization.CustomizationType.AdditionAfter)]   // Not sure these two cases make sense. Why would you ever replace
-        [TestCase(false, true, PhraseCustomization.CustomizationType.InsertionBefore)] // and existing question with an identical one w/o an answer?
+        [TestCase(false, true, PhraseCustomization.CustomizationType.InsertionBefore)] // an existing question with an identical one w/o an answer?
 	    [TestCase(true, false, PhraseCustomization.CustomizationType.InsertionBefore)]
 	    [TestCase(true, false, PhraseCustomization.CustomizationType.AdditionAfter)]
 	    [TestCase(false, false, PhraseCustomization.CustomizationType.AdditionAfter)]
@@ -2644,6 +2671,7 @@ namespace SIL.Transcelerator
 						}
 						iQuestion++;
 	                    Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                    Assert.AreEqual(actQuestion.PhraseInUse, actQuestion.Id);
 	                    switch (iQuestion)
 	                    {
 	                        case 1:
@@ -2802,6 +2830,7 @@ namespace SIL.Transcelerator
 						Assert.IsFalse(actQuestion.IsExcluded);
 						iQuestion++;
 						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+	                    Assert.AreEqual(actQuestion.PhraseInUse, actQuestion.Id);
 						switch (iQuestion)
 						{
 							case 1:

@@ -19,6 +19,7 @@ using System.Threading;
 using AddInSideViews;
 using NUnit.Framework;
 using Rhino.Mocks;
+using SIL.Extensions;
 using SIL.Reflection;
 using SIL.Scripture;
 using static System.Int32;
@@ -1065,7 +1066,7 @@ namespace SIL.Transcelerator
 		    var qp = new QuestionProvider(GetParsedQuestions());
 		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
-			Assert.AreEqual(0, pth.CustomizedPhrases.Count);
+			Assert.IsFalse(pth.CustomizedPhrases.Any());
 		}
 
 	    [Test]
@@ -1164,9 +1165,9 @@ namespace SIL.Transcelerator
 
 			var qBase1 = pth[0];
 			var insertedQuestionBefore = new Question(qBase1.QuestionInfo, "Was this question inserted before only question in Genesis 22:13?", "Yes");
-			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, categoryForNewQuestions, qBase1.SequenceNumber, mp);
-		   var customizations = pth.CustomizedPhrases;
-		   Assert.AreEqual(1, customizations.Count);
+			pth.AddQuestion(insertedQuestionBefore, qBase1.SectionId, categoryForNewQuestions, qBase1.SequenceNumber, mp); 
+			var customizations = pth.CustomizedPhrases;
+			Assert.AreEqual(1, customizations.Count);
 
 		    var qBase2 = pth[0];
 		    Assert.AreEqual("Was this question inserted before only question in Genesis 22:13?",
@@ -1190,6 +1191,171 @@ namespace SIL.Transcelerator
             Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
 	    }
 
+	    /// <summary>
+	    /// TXL-221: A question should be able to be inserted after an added question without causing them
+	    /// to get cross-linked such that a duplicate results.
+	    /// </summary>
+	    [Test]
+	    public void CustomizedPhrases_NewlyInsertedBeforeAddition_NewQuestionsAreInCorrectOrderWithoutDuplicate()
+	    {
+            // SETUP
+		    var cat = m_sections.Items[0].Categories[0];
+		    AddTestQuestion(cat, "What do you understand it is that makes something be called \"a miracle\"?", "LUK 10:13", 42010013, 42010013);
+		    AddTestQuestion(cat, "How did Jesus compare these two towns, Chorazin and Bethsaida with other cities?", "LUK 10:13-14", 42010013, 42010014);
+		    AddTestQuestion(cat, "What do you think it would have meant if the people of Chorazin and Bethsaida had sat in sackcloth and ashes?", "LUK 10:13", 42010013, 42010013);
+			
+		    var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			var qBase1 = pth[1];
+			var newQuestion = new Question("LUK 10.13-14", 42010013, 42010014, "What happenes if I cange this base question later?", "No one knows the future.");
+			qBase1.AddedPhraseAfter = newQuestion;
+			var newPhrase = pth.AddQuestion(newQuestion, qBase1.SectionId, qBase1.Category, qBase1.SequenceNumber + 1, mp);
+			newPhrase.Translation = "¿Qué sucede si cambio esta pregunta de base luego?";
+
+			Assert.AreEqual(1, pth.CustomizedPhrases.Count);
+
+		    var qBase2 = pth.UnfilteredPhrases[2];
+			Assert.AreEqual("What happenes if I cange this base question later?",
+				qBase2.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+            // And the last shall be first...
+			newQuestion = new Question("LUK 10.13-14", 42010013, 42010014, null, null);
+			var immutableKeyOfSecondAddedQuestion = newQuestion.Id;
+			qBase2.InsertedPhraseBefore = newQuestion;
+			newPhrase = pth.AddQuestion(newQuestion, qBase2.SectionId, qBase2.Category, qBase2.SequenceNumber, mp);
+			newPhrase.Translation = "Añadí esta frase antes de cambiar la pregunta de base.";
+
+			Assert.AreEqual(5, pth.UnfilteredPhraseCount);
+
+            // SUT
+			var customizations = pth.CustomizedPhrases;
+
+            // VERIFY
+		    Assert.AreEqual(2, customizations.Count);
+
+			var cust = customizations.Single(c => c.ModifiedPhrase == immutableKeyOfSecondAddedQuestion);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type,
+				"Although it was inserted before the following question, we actually want it to be" +
+				"persisted as an addition after the following one. (This makes the logic simpler and less error prone.)");
+            Assert.AreEqual("How did Jesus compare these two towns, Chorazin and Bethsaida with other cities?", cust.OriginalPhrase);
+            Assert.IsNull(cust.Answer);
+			Assert.AreEqual(immutableKeyOfSecondAddedQuestion, cust.ImmutableKey);
+
+			cust = customizations.Single(c => c.ModifiedPhrase == "What happenes if I cange this base question later?");
+            Assert.AreEqual(immutableKeyOfSecondAddedQuestion, cust.OriginalPhrase);
+            Assert.AreEqual("No one knows the future.", cust.Answer);
+            Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			Assert.AreEqual(pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Id == immutableKeyOfSecondAddedQuestion) + 1,
+				pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "What happenes if I cange this base question later?"));
+        }
+
+	    /// <summary>
+	    /// TXL-221: A question should be able to be inserted after an added question without causing them
+	    /// to get cross-linked such that a duplicate results.
+	    /// </summary>
+	    [Test]
+	    public void CustomizedPhrases_NewAdditionsAndInsertionsHangingOffPrevAdditionAndOrig_NewQuestionsAreInCorrectOrderWithoutCircularReferences()
+	    {
+            // SETUP
+            var cat = m_sections.Items[0].Categories[0];
+            AddTestQuestion(cat, "In what ways was John not like a man in fine clothes?", "LUK 7:25", 42007025, 42007025);
+            var insertedBefore = AddTestQuestion(cat, "Are we going to cook anything besides just roasting marshmallows?", "LUK 7:27", 42007027, 42007027);
+            var immutableKeyOfQuestion1_1 = insertedBefore.Id;
+            insertedBefore.IsUserAdded = true;
+            insertedBefore.Answers = new[] { "Depende de la lluvia." };
+            AddTestQuestion(cat, "What was the purpose of John's ministry?", "LUK 7:27", 42007027, 42007027);
+            var addedAfter = AddTestQuestion(cat, "Does this have an English version?", "LUK 7:27", 42007027, 42007027);
+            var immutableKeyOfQuestion1_2 = addedAfter.Id;
+            addedAfter.IsUserAdded = true;
+            addedAfter.Answers = new[] { "Claro qu sí" };
+            AddTestQuestion(cat, "What do you think was the reason that Jesus said that John was greater than anyone else ever born?", "LUK 7:28", 42007028, 42007028);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			pth.UnfilteredPhrases.Single(p => p.QuestionInfo.Id == immutableKeyOfQuestion1_1)
+				.Translation = "¿Vamos a cocinar comida aparte de los besitos?";
+			var baseFor2_1And2 = pth.UnfilteredPhrases.Single(p => p.QuestionInfo.Id == immutableKeyOfQuestion1_2);
+			baseFor2_1And2.Translation = "¿Tiene ésta una versión en inglés?";
+			var baseFor2_3 = pth.UnfilteredPhrases.Single(p => p.QuestionInfo.Text == "What was the purpose of John's ministry?");
+
+			var customizations = pth.CustomizedPhrases;
+			Assert.AreEqual(2, customizations.Count, "Sanity check");
+			Assert.AreEqual("Are we going to cook anything besides just roasting marshmallows?",
+				customizations[0].ModifiedPhrase, "Sanity check");
+			Assert.AreEqual("Does this have an English version?",
+				customizations[1].ModifiedPhrase, "Sanity check");
+
+			var newQuestion = new Question("LUK 7.27", 42007027, 42007027, "Is this an English question after the other one?", "Parece que sí");
+			var immutableKeyOfQuestion2_1 = newQuestion.Id;
+			baseFor2_1And2.AddedPhraseAfter = newQuestion;
+			pth.AddQuestion(newQuestion, baseFor2_1And2.SectionId, baseFor2_1And2.Category, baseFor2_1And2.SequenceNumber + 1, mp)
+				.Translation = "¿Es ésta una pregunta en inglés que viene después de la otra?";
+
+			newQuestion = new Question("LUK 7.27", 42007027, 42007027, "Could this perhaps be a preceding English question then?", "Mesmamente");
+			var immutableKeyOfQuestion2_2 = newQuestion.Id;
+			baseFor2_1And2.InsertedPhraseBefore = newQuestion;
+			pth.AddQuestion(newQuestion, baseFor2_1And2.SectionId, baseFor2_1And2.Category, baseFor2_1And2.SequenceNumber, mp)
+				.Translation = "¿Acaso sería posible que ésta sea una pregunta anterior en inglés entonces?";
+
+			newQuestion = new Question("LUK 7.27", 42007027, 42007027, null, "Quien sabe");
+			var immutableKeyOfQuestion2_3 = newQuestion.Id;
+			baseFor2_3.AddedPhraseAfter = newQuestion;
+			pth.AddQuestion(newQuestion, baseFor2_3.SectionId, baseFor2_3.Category, baseFor2_3.SequenceNumber + 1, mp)
+				.Translation = "¿Funcionaría pegarle otra pregunta sin inglés después de la pregunta original?";
+
+			Assert.AreEqual(8, pth.UnfilteredPhraseCount, "Sanity check");
+
+            // SUT
+			customizations = pth.CustomizedPhrases;
+
+            // VERIFY
+		    Assert.AreEqual(5, customizations.Count);
+
+			var i = 0;
+            var cust = customizations[i];
+			Assert.AreEqual(immutableKeyOfQuestion1_1, cust.ImmutableKey);
+			Assert.AreEqual("Are we going to cook anything besides just roasting marshmallows?", cust.ModifiedPhrase);
+			Assert.AreEqual("What was the purpose of John's ministry?", cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, cust.Type);
+			
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_3, cust.ImmutableKey);
+			Assert.AreEqual("Quien sabe", cust.Answer);
+			Assert.AreEqual("What was the purpose of John's ministry?", cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_2, cust.ImmutableKey);
+			Assert.AreEqual("Could this perhaps be a preceding English question then?", cust.ModifiedPhrase);
+			Assert.AreEqual("Mesmamente", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion1_2, cust.ImmutableKey);
+			Assert.AreEqual("Does this have an English version?", cust.ModifiedPhrase);
+			Assert.AreEqual("Claro qu sí", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			cust = customizations[++i];
+			Assert.AreEqual(immutableKeyOfQuestion2_1, cust.ImmutableKey);
+			Assert.AreEqual("Is this an English question after the other one?", cust.ModifiedPhrase);
+			Assert.AreEqual("Parece que sí", cust.Answer);
+			Assert.AreEqual(customizations[i - 1].ModifiedPhrase, cust.OriginalPhrase);
+			Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, cust.Type);
+
+			foreach (var customization in customizations)
+			{
+				Assert.IsFalse(customizations.Any(c => c.ModifiedPhrase == customization.OriginalPhrase &&
+					c.OriginalPhrase == customization.ModifiedPhrase), $"Circular dependency between {customization.ModifiedPhrase} and {customization.OriginalPhrase}");
+			}
+		}
+
 	    [Test]
 	    public void CustomizedPhrases_InsertedQuestionWithLaterReference_NewQuestionComesBeforeBase()
 	    {
@@ -1208,19 +1374,21 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", qBase.OriginalPhrase,
 			    "Sanity check to make sure we grabbed the correct base question.");
 		    var addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
-		    var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
+		    pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
 		    qBase.InsertedPhraseBefore = addedQuestion;
-		    //qBase = added;
-		    //addedQuestion = new Question("LUK 9.43", 42009043, 42009043, "Is this in order?", "No");
-		    //var added = pth.AddQuestion(addedQuestion, qBase.SectionId, qBase.Category, qBase.SequenceNumber, mp);
-		    //qBase.InsertedPhraseBefore = addedQuestion;
 
 			var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(1, customizations.Count);
-		    Assert.AreEqual("Had anyone else tried to help this man and his boy?", customizations[0].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[0].Type,
+                "Although it was inserted before the following question, we actually want it to be" +
+				"persisted as an addition after the following one. (This makes the logic simpler and less error prone.)");
+		    Assert.AreEqual("One man in the crowd was shouting to Jesus. About what was he shouting?",
+				customizations[0].OriginalPhrase);
 		    Assert.AreEqual("Is this in order?", customizations[0].ModifiedPhrase);
 		    Assert.AreEqual("No", customizations[0].Answer);
-		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[0].Type);
+
+            Assert.AreEqual(pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "Had anyone else tried to help this man and his boy?") - 1,
+				pth.UnfilteredPhrases.IndexOf(p => p.QuestionInfo.Text == "Is this in order?"));
 		}
 
 	    [Test]
@@ -1778,9 +1946,11 @@ namespace SIL.Transcelerator
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			var origId = phraseToModify.QuestionInfo.Id;
 			pth.ModifyQuestion(phraseToModify, "That dog wishes this Paul, and what is say radish?", mp);
 
 			Assert.AreEqual("That dog wishes this Paul, and what is say radish?", phraseToModify.PhraseInUse);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[2]);
 
 			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
@@ -1818,9 +1988,11 @@ namespace SIL.Transcelerator
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
 			var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+			var origId = phraseToModify.QuestionInfo.Id;
 			pth.ModifyQuestion(phraseToModify, "that dog fur wishes this have and what is say radishes", mp);
 
 			Assert.AreEqual("that dog fur wishes this have and what is say radishes", phraseToModify.PhraseInUse);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[2]);
 
 			Assert.IsTrue(phraseToModify.TranslatableParts.SequenceEqual(originalTranslatablePartsSequence));
@@ -1856,6 +2028,7 @@ namespace SIL.Transcelerator
 			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
 
 			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
+			var origId = phraseToModify.QuestionInfo.Id;
 
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -1863,6 +2036,7 @@ namespace SIL.Transcelerator
 			pth.ModifyQuestion(phraseToModify, "What did that dog wish Paul would say to the radish?", mp);
 
 			Assert.AreEqual("What did that dog wish Paul would say to the radish?", phraseToModify.QuestionInfo.Text);
+			Assert.AreEqual(origId, phraseToModify.QuestionInfo.Id);
 			Assert.AreEqual(phraseToModify, pth[3]);
 
 			var translatableParts = phraseToModify.TranslatableParts.ToList();

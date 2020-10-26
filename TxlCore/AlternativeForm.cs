@@ -31,6 +31,14 @@ namespace SIL.Transcelerator
 		[XmlAttribute("hide")]
 		public bool Hide { get; set; }
 
+		/// <summary>
+		/// Indicates whether this is the alternative which represents the original (as of
+		/// October 1 2020) form of this question that can be treated as an immutable key.
+		/// Only one AlternativeForm per question should have this flag set.
+		/// </summary>
+		[XmlAttribute("key")]
+		public bool IsKey { get; set; }
+
 		[XmlText]
 		public string Text { get; set; }
 
