@@ -268,8 +268,10 @@ namespace SIL.Transcelerator
 					AllAnswers.Add(answer);
 			}
 
-			public bool IsInsertionAtOrBeforeReference(IQuestionKey keyToUseForReference, IEnumerable<Question> existingQuestionsInCategory, bool inclusive)
+			public bool IsOrphanedInsertionAtOrBeforeReference(IQuestionKey keyToUseForReference, IEnumerable<Question> existingQuestionsInCategory, bool inclusive)
 			{
+				if (!AdditionsAndInsertions.Any(a => a.OriginalPhrase == a.ModifiedPhrase))
+					return false; // Not an orphan - even if it is for an earlier reference, we expect to find it hanging off a real question.
 				var addition = AdditionsAndInsertions.FirstOrDefault();
 				return addition != null && addition.Key.IsAtOrBeforeReference(keyToUseForReference, inclusive) &&
 					!existingQuestionsInCategory.Any(q => q.Matches(addition.Key));
@@ -573,16 +575,11 @@ namespace SIL.Transcelerator
 			}
 			if (q.InsertedQuestionBefore == null)
 			{
-				var insertionForPreviousReference = customizations.LastOrDefault(c => c.Value.IsInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef) &&
+				var insertionForPreviousReference = customizations.LastOrDefault(c => c.Value.IsOrphanedInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef) &&
 					customizations.All(other => other.Value == c.Value || !other.Key.Matches(c.Key)));
 				var key = insertionForPreviousReference.Key;
-				if (key == null)
-				{
-					Debug.Assert(!customizations.Any(c => c.Value.IsInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef)));
-					// Clean up any preceding deletions/modifications that didn't match anything
-					customizations.RemoveAll(c => c.Key.IsAtOrBeforeReference(q, processAllAdditionsForRef));
-				}
-				else
+				Debug.Assert(key != null || !customizations.Any(c => c.Value.IsOrphanedInsertionAtOrBeforeReference(q, category.Questions, processAllAdditionsForRef)));
+				if (key != null)
 				{
 					var newQ = q.InsertedQuestionBefore = insertionForPreviousReference.Value.PopQuestion(key);
 					category.Questions.Insert(index, newQ);
@@ -598,7 +595,7 @@ namespace SIL.Transcelerator
 				}
 			}
 
-	        yield return q;
+			yield return q;
 			
 	        if (q.AddedQuestionAfter != null)
 	        {
