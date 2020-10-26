@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using DesktopAnalytics;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
@@ -659,9 +660,9 @@ namespace SIL.Transcelerator
             if (txtFilterByPart.Focused)
                 txtFilterByPart.Copy();
             else if (EditingTranslation)
-            {
-                Clipboard.SetDataObject(new DataObject(TextControl.SelectedText));
-                TextControl.SelectedText = Empty;
+			{
+				TrySetClipboardData(TextControl.SelectedText);
+				TextControl.SelectedText = Empty;
             }
             else
             {
@@ -707,7 +708,7 @@ namespace SIL.Transcelerator
             {
                 string text = TextControl.SelectedText;
                 if (text != null)
-                    Clipboard.SetText(text);
+                    TrySetClipboardData(text);
             }
             else
             {
@@ -726,8 +727,8 @@ namespace SIL.Transcelerator
                 txtFilterByPart.Paste();
             else if (EditingTranslation)
             {
-                string text = Clipboard.GetText();
-                if (!IsNullOrEmpty(text))
+                var text = TryGetClipboardText();
+                if (text != null)
                     TextControl.SelectedText = text;
             }
             else
@@ -768,10 +769,10 @@ namespace SIL.Transcelerator
         private void CopyToClipboard()
         {
             //Copy to clipboard
-            DataObject dataObj = dataGridUns.GetClipboardContent();
-            if (dataObj != null)
-                Clipboard.SetDataObject(dataObj);
-        }
+            var dataObj = dataGridUns.GetClipboardContent();
+			if (dataObj != null)
+				TrySetClipboardData(dataObj);
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -786,12 +787,54 @@ namespace SIL.Transcelerator
                 dataGridUns.SelectedCells.Count > 1)
                 return;
 
-            string clipboardText = Clipboard.GetText();
-            if (!clipboardText.Contains('\n'))
-                dataGridUns.CurrentCell.Value = clipboardText;
-
+            var clipboardText = TryGetClipboardText();
+			if (clipboardText == null)
+				return;
+            
+			dataGridUns.CurrentCell.Value = clipboardText;
             SaveNeeded = true;
         }
+		
+		private bool TrySetClipboardData(string data) => TrySetClipboardData(new DataObject(data));
+
+		private bool TrySetClipboardData(DataObject data)
+		{
+			do
+			{
+				try
+				{
+					Clipboard.SetDataObject(data, true, 2, 200);
+					return true;
+				}
+				catch (Exception e)
+				{
+					Analytics.Track("ClipboardSetDataObjectException", new Dictionary<string, string>
+						{{"Message", e.Message}});
+					if (DialogResult.Cancel == MessageBox.Show(this, e.Message, TxlPlugin.pluginName,
+						MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning))
+					{
+						return false;
+					}
+				}
+			} while (true);
+		}
+
+		private static string TryGetClipboardText(bool allowNewlines = false)
+		{
+			string text;
+			try
+			{
+				text = Clipboard.GetText();
+			}
+			catch (Exception e)
+			{
+				Analytics.Track("ClipboardGetTextException", new Dictionary<string, string>
+					{{"Message", e.Message}});
+				return null;
+			}
+
+			return !IsNullOrWhiteSpace(text) && (allowNewlines || !text.Contains('\n')) ? text : null;
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
