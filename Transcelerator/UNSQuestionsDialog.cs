@@ -1503,95 +1503,11 @@ namespace SIL.Transcelerator
 		{
 			var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
 
-			int prevBook = -1;
-			ComprehensionCheckingQuestionsForBook currentBookQuestions = null; 
-
-			foreach (TranslatablePhrase phrase in m_helper.AllActivePhrasesWhere(p => p.HasUserTranslation))
-			{
-				var question = phrase.QuestionInfo;
-				var startRef = new BCVRef(phrase.StartRef);
-				int currBook = startRef.Book;
-				if (currBook != prevBook)
-				{
-					if (currentBookQuestions != null)
-					{
-						m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-							currentBookQuestions.BookId, currentBookQuestions);
-					}
-					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
-					{
-						Lang = m_vernIcuLocale,
-						BookId = BCVRef.NumberToBookCode(currBook),
-						Questions = new List<ComprehensionCheckingQuestion>()
-					};
-					prevBook = currBook;
-				}
-
-				var q = new ComprehensionCheckingQuestion
-				{
-					// Note: If Id is set to null here, it's okay. The getter will use the
-					// English version of the question as the (immutable) key. That is actually
-					// the common case.
-					Id = phrase.IsUserAdded ?
-						phrase.QuestionInfo.Id :
-						phrase.QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text,
-					Question = GetQuestionAlternates(phrase, allAvailableLocalizers),
-					IsOverview = !phrase.IsDetail,
-					Chapter = startRef.Chapter,
-					StartVerse = startRef.Verse,
-					Answers = GetMultilingualStrings(question, LocalizableStringType.Answer, allAvailableLocalizers),
-					Notes = GetMultilingualStrings(question, LocalizableStringType.Note, allAvailableLocalizers)
-				};
-
-				if (phrase.StartRef != phrase.EndRef)
-				{
-					var endRef = new BCVRef(phrase.EndRef);
-					if (startRef.Chapter != endRef.Chapter)
-						q.EndChapter = endRef.Chapter;
-					q.EndVerse = endRef.Verse;
-				}
-				
-				currentBookQuestions.Questions.Add(q);
-			}
-			// Now output the final book's questions.
-			if (currentBookQuestions != null)
+			foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers))
 			{
 				m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-					currentBookQuestions.BookId, currentBookQuestions);
+					questionsForBook.BookId, questionsForBook);
 			}
-		}
-
-		private StringAlt[] GetQuestionAlternates(TranslatablePhrase question, IReadOnlyList<LocalizationsFileAccessor> localizers)
-		{
-			var list = new List<StringAlt> {new StringAlt {Lang = m_vernIcuLocale, Text = question.Translation}};
-			string variant = null;
-			var locKey = question.ToUIDataString();
-			list.Add(new StringAlt { Lang = "en-US", Text = locKey.SourceUIString });
-			list.AddRange(from loc in localizers.Where(l => l.Locale != m_vernIcuLocale)
-				where loc.TryGetLocalizedString(locKey, out variant)
-				select new StringAlt { Lang = loc.Locale, Text = variant });
-				
-			return list.ToArray();
-		}
-
-		private StringAlt[][] GetMultilingualStrings(Question question, LocalizableStringType type, IReadOnlyList<LocalizationsFileAccessor> localizers)
-		{
-			string[] sourceStrings = type == LocalizableStringType.Answer ? question.Answers : question.Notes;
-			if (sourceStrings == null)
-				return null;
-			string variant;
-			var ms = new StringAlt[sourceStrings.Length][];
-			for (var i = 0; i < sourceStrings.Length; i++)
-			{
-				var locKey = new UIAnswerOrNoteDataString(question, type, i);
-				variant = null;
-				List<StringAlt> list = new List<StringAlt> {new StringAlt {Lang = "en-US", Text = sourceStrings[i]}};
-				list.AddRange(from loc in localizers
-							  where loc.TryGetLocalizedString(locKey, out variant)
-							  select new StringAlt {Lang = loc.Locale, Text = variant});
-				ms[i] = list.ToArray();
-			}
-			return ms;
 		}
 
 		/// ------------------------------------------------------------------------------------

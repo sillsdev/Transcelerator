@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using AddInSideViews;
@@ -22,6 +21,7 @@ using Rhino.Mocks;
 using SIL.Extensions;
 using SIL.Reflection;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 using static System.Int32;
 
 namespace SIL.Transcelerator
@@ -4243,7 +4243,67 @@ namespace SIL.Transcelerator
         }
         #endregion
 
-        #region Private helper methods
+        [TestCase("en-US")]
+        [TestCase("es")]
+        [TestCase("oth")]
+		public void GetQuestionsForBooks_TwoBooks_QuestionsReturnedForCorrectBooksAndIdsAreBasedOnOriginalQuestion(string vernLocale)
+		{
+			var frenchLocalizations = MockRepository.GenerateMock<ILocalizationsProvider>();
+			frenchLocalizations.Stub(l => l.Locale).Return("fr");
+			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q1"),
+				out Arg<string>.Out("frQ1").Dummy)).Return(true);
+			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q2"),
+				out Arg<string>.Out("frQ2").Dummy)).Return(true);
+			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q3"),
+				out Arg<string>.Out("frQ3").Dummy)).Return(true);
+            
+			var spanishLocalizations = MockRepository.GenerateMock<ILocalizationsProvider>();
+			spanishLocalizations.Stub(l => l.Locale).Return("es");
+			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q1"),
+				out Arg<string>.Out("esQ1").Dummy)).Return(true);
+			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q2"),
+				out Arg<string>.Out("esQ2").Dummy)).Return(true);
+			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q3"),
+				out Arg<string>.Out("esQ3").Dummy)).Return(true);
+
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2.2", 40002002, 40002002, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2.2", 40002002, 40002002, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6.4-5", 66006004, 66006005, "Q2");
+
+			var qp = new QuestionProvider(GetParsedQuestions());
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			pth.GetPhrase("MAT 2:2", "Q1").Translation = $"{vernLocale} Why so many frogs?";
+			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
+			pth.GetPhrase("REV 6:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
+
+			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}).ToList();
+            Assert.AreEqual(2, result.Count);
+
+            // Verify MAT questions
+			var mat = result[0];
+            Assert.AreEqual("MAT", mat.BookId);
+            Assert.AreEqual(2, mat.Questions.Count);
+			var q1 = mat.Questions[0];
+            Assert.AreEqual("Q1", q1.Id);
+            Assert.AreEqual($"{vernLocale} Why so many frogs?", q1.Question.Single(q => q.Lang == vernLocale).Text);
+			var q2 = mat.Questions[1];
+            Assert.AreEqual("Q2", q2.Id);
+			pth.GetPhrase("MAT 2:2", "Q2").ModifiedPhrase = "This should not be the ID";
+			Assert.AreEqual("Q2", q2.Id);
+            Assert.AreEqual($"{vernLocale} What was her name?", q2.Question.Single(q => q.Lang == vernLocale).Text);
+			Assert.IsTrue(mat.Questions.All(q => q.Question.Length == (vernLocale == "oth" ? 4 : 3)));
+
+            // Verify REV questions
+			var rev = result[1];
+			Assert.AreEqual("REV", rev.BookId);
+			var q3 = rev.Questions[0];
+            Assert.AreEqual("Q3", q3.Id);
+            Assert.AreEqual($"{vernLocale} Who ate the pizza?", q3.Question.Single(q => q.Lang == vernLocale).Text);
+            Assert.AreEqual(vernLocale == "oth" ? 4 : 3, rev.Questions.Single().Question.Length);
+		}
+
+		#region Private helper methods
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Adds a test question to the given category and adds info about key terms and parts
