@@ -19,7 +19,7 @@ using System.Xml.Serialization;
 
 namespace SIL.Transcelerator.Localization
 {
-	public class LocalizationsFileAccessor
+	public class LocalizationsFileAccessor : ILocalizationsProvider
 	{
 		private Localizations m_xliffRoot;
 		protected Localizations XliffRoot => m_xliffRoot;

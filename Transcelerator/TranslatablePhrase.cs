@@ -570,6 +570,9 @@ namespace SIL.Transcelerator
 
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternativeForms;
+
+		public string ImmutableKey => IsUserAdded ? QuestionInfo.Id :
+			QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text ?? OriginalPhrase;
 		#endregion
 
 		#region Public/internal methods (and the indexer which is really more like a property, but Tim wants it in this region)

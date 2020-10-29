@@ -62,17 +62,12 @@ namespace SIL.ComprehensionCheckingData
 	{
 		private int m_endChapter;
 		private int m_endVerse;
-		private string m_id;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[XmlAttribute("id")]
-		public string Id
-		{
-			get => m_id ?? Question.Single(q => q.Lang == "en-US" || q.Lang == "en").Text;
-			set => m_id = value; 
-		}
+		public string Id { get; set; }
 
 		[XmlAttribute("overview")]
 		[DefaultValue(false)]

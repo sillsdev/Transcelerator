@@ -17,7 +17,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
+using SIL.ComprehensionCheckingData;
 using SIL.Scripture;
+using SIL.Transcelerator.Localization;
 
 namespace SIL.Transcelerator
 {
@@ -336,6 +338,93 @@ namespace SIL.Transcelerator
 		internal IEnumerable<TranslatablePhrase> AllActivePhrasesWhere(Func<TranslatablePhrase, bool> include)
 		{
 			return UnfilteredPhrases.Where(tp => tp.Category > -1 && include(tp) && !tp.IsExcluded);
+		}
+
+		public IEnumerable<ComprehensionCheckingQuestionsForBook> GetQuestionsForBooks(
+			string vernIcuLocale, IReadOnlyCollection<ILocalizationsProvider> localizations)
+		{
+			var prevBook = -1;
+			ComprehensionCheckingQuestionsForBook currentBookQuestions = null; 
+
+			foreach (TranslatablePhrase phrase in AllActivePhrasesWhere(p => p.HasUserTranslation))
+			{
+				var question = phrase.QuestionInfo;
+				var startRef = new BCVRef(phrase.StartRef);
+				var currBook = startRef.Book;
+				if (currBook != prevBook)
+				{
+					if (currentBookQuestions != null)
+						yield return currentBookQuestions;
+					
+					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
+					{
+						Lang = vernIcuLocale,
+						BookId = BCVRef.NumberToBookCode(currBook),
+						Questions = new List<ComprehensionCheckingQuestion>()
+					};
+					prevBook = currBook;
+				}
+
+				var q = new ComprehensionCheckingQuestion
+				{
+					Id = phrase.ImmutableKey,
+					Question = GetQuestionAlternates(phrase, vernIcuLocale, localizations),
+					IsOverview = !phrase.IsDetail,
+					Chapter = startRef.Chapter,
+					StartVerse = startRef.Verse,
+					Answers = GetMultilingualStrings(question, LocalizableStringType.Answer, localizations),
+					Notes = GetMultilingualStrings(question, LocalizableStringType.Note, localizations)
+				};
+
+				if (phrase.StartRef != phrase.EndRef)
+				{
+					var endRef = new BCVRef(phrase.EndRef);
+					if (startRef.Chapter != endRef.Chapter)
+						q.EndChapter = endRef.Chapter;
+					q.EndVerse = endRef.Verse;
+				}
+				
+				currentBookQuestions.Questions.Add(q);
+			}
+
+			if (currentBookQuestions != null)
+				yield return currentBookQuestions;
+		}
+
+		private StringAlt[] GetQuestionAlternates(TranslatablePhrase question, string vernIcuLocale,
+			IReadOnlyCollection<ILocalizationsProvider> localizers)
+		{
+			var list = new List<StringAlt> {new StringAlt {Lang = vernIcuLocale, Text = question.Translation}};
+			string variant = null;
+			var locKey = question.ToUIDataString();
+			if (vernIcuLocale != "en-US")
+				list.Add(new StringAlt { Lang = "en-US", Text = locKey.SourceUIString });
+			list.AddRange(from loc in localizers.Where(l => l.Locale != vernIcuLocale)
+				where loc.TryGetLocalizedString(locKey, out variant)
+				select new StringAlt { Lang = loc.Locale, Text = variant });
+				
+			return list.ToArray();
+		}
+		
+		private static StringAlt[][] GetMultilingualStrings(Question question, LocalizableStringType type,
+			IReadOnlyCollection<ILocalizationsProvider> localizers)
+		{
+			string[] sourceStrings = type == LocalizableStringType.Answer ? question.Answers : question.Notes;
+			if (sourceStrings == null)
+				return null;
+			string variant;
+			var ms = new StringAlt[sourceStrings.Length][];
+			for (var i = 0; i < sourceStrings.Length; i++)
+			{
+				var locKey = new UIAnswerOrNoteDataString(question, type, i);
+				variant = null;
+				List<StringAlt> list = new List<StringAlt> {new StringAlt {Lang = "en-US", Text = sourceStrings[i]}};
+				list.AddRange(from loc in localizers
+					where loc.TryGetLocalizedString(locKey, out variant)
+					select new StringAlt {Lang = loc.Locale, Text = variant});
+				ms[i] = list.ToArray();
+			}
+			return ms;
 		}
 
 		/// ------------------------------------------------------------------------------------

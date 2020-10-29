@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 using AddInSideViews;
 using SIL.Xml;
@@ -79,9 +80,14 @@ namespace SIL.Transcelerator
 
 		protected abstract void Write(DataFileId fileId, string data);
 
-		public void WriteBookSpecificData<T>(BookSpecificDataFileId fileId, string bookId, T data) =>
-			WriteBookSpecificData(fileId, bookId, XmlSerializationHelper.SerializeToString(
-				CheckDataIsXmlSerializable(data), Encoding.UTF8));
+		public void WriteBookSpecificData<T>(BookSpecificDataFileId fileId, string bookId, T data)
+		{
+			var serializedData = XmlSerializationHelper.SerializeToString(
+				CheckDataIsXmlSerializable(data), Encoding.UTF8);
+            if (serializedData == null)
+                throw new SerializationException($"An error occurred serializing {bookId} data for {fileId}.");
+			WriteBookSpecificData(fileId, bookId, serializedData);
+		}
 
 		protected abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
 
