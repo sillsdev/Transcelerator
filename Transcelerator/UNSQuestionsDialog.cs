@@ -34,6 +34,7 @@ using DesktopAnalytics;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using SIL.IO;
 using SIL.WritingSystems;
 using static System.String;
 using File = System.IO.File;
@@ -2365,6 +2366,16 @@ namespace SIL.Transcelerator
 			{
 				dlg.ShowDialog();
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the browseTopicsToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void browseTopicsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start(FileLocationUtilities.GetFileDistributedWithApplication("docs", "Home.htm"));
 		}
 
 		private void HandleDisplayLanguageSelected(object sender, EventArgs e)

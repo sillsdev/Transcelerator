@@ -137,6 +137,7 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.browseTopicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -908,6 +909,7 @@ namespace SIL.Transcelerator
 			// mnuHelp
 			// 
 			this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.browseTopicsToolStripMenuItem,
             this.mnuHelpAbout});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuHelp, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuHelp, "To control which character will be the mnemonic key (underlined when the user pre" +
@@ -1161,6 +1163,16 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
 			// 
+			// browseTopicsToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.browseTopicsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.browseTopicsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.browseTopicsToolStripMenuItem, "MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem");
+			this.browseTopicsToolStripMenuItem.Name = "browseTopicsToolStripMenuItem";
+			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+			this.browseTopicsToolStripMenuItem.Text = "Browse Topics...";
+			this.browseTopicsToolStripMenuItem.Click += new System.EventHandler(this.browseTopicsToolStripMenuItem_Click);
+			// 
 			// UNSQuestionsDialog
 			// 
 			this.AccessibleName = "Transcelerator Main Window";
@@ -1280,5 +1292,6 @@ namespace SIL.Transcelerator
 		private DataGridViewCheckBoxColumn m_colUserTranslated;
 		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripMenuItem mnuViewDebugInfo;
+		private ToolStripMenuItem browseTopicsToolStripMenuItem;
 	}
 }
