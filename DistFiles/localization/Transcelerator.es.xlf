@@ -685,7 +685,7 @@
         <target xml:lang="es-ES" state="translated">Más Idiomas de interfaz</target>
       </trans-unit>
       <trans-unit id="MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller">
-        <source xml:lang="en">If the langauge you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</source>
+        <source xml:lang="en">If the language you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</source>
         <note>ID: MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller</note>
         <note>Param is the name (as localized) of the "Display Language" menu</note>
         <target xml:lang="es-ES" state="translated">Si el idioma que desea ver no está disponible en el menú {0}, utilice el último instalador para ver si está disponible para seleccionar.</target>

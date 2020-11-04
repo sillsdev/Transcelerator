@@ -97,13 +97,13 @@
 			this.m_linkLabelAddDisplayLanguageUsingInstaller.Size = new System.Drawing.Size(617, 32);
 			this.m_linkLabelAddDisplayLanguageUsingInstaller.TabIndex = 2;
 			this.m_linkLabelAddDisplayLanguageUsingInstaller.Tag = "https://software.sil.org/transcelerator/download/";
-			this.m_linkLabelAddDisplayLanguageUsingInstaller.Text = "If the langauge you would like to see is not available on the {0} menu, use the l" +
+			this.m_linkLabelAddDisplayLanguageUsingInstaller.Text = "If the language you would like to see is not available on the {0} menu, use the l" +
     "atest Installer to see if it is available to select.";
 			this.m_linkLabelAddDisplayLanguageUsingInstaller.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HandleLinkClicked);
 			// 
 			// l10NSharpExtender1
 			// 
-			this.l10NSharpExtender1.LocalizationManagerId = null;
+			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
 			// MoreUiLanguagesDlg
