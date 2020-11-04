@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="1.5.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="1.5.4" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
@@ -51,7 +51,7 @@
       <trans-unit id="EditQuestionDlg.m_lblQuestionToUse">
         <source xml:lang="en">Question to Use:</source>
         <note>ID: EditQuestionDlg.m_lblQuestionToUse</note>
-        <target xml:lang="es-ES" state="needs-translation">Question to Use:</target>
+        <target xml:lang="es-ES" state="translated">Pregunta a usar:</target>
       </trans-unit>
       <trans-unit id="General.ErrorStarting">
         <source xml:lang="en">Error occurred attempting to start {0}: </source>
@@ -127,7 +127,7 @@
       <trans-unit id="GenerateScriptDlg.lblStyleSpecification">
         <source xml:lang="en">Where to Specify Styles:</source>
         <note>ID: GenerateScriptDlg.lblStyleSpecification</note>
-        <target xml:lang="es-ES" state="needs-translation">Where to Specify Styles:</target>
+        <target xml:lang="es-ES" state="translated">Dónde especificar los estilos:</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.lblUntranslatedQuestions">
         <source xml:lang="en">How to Handle Untranslated Questions:</source>
@@ -353,7 +353,7 @@
         <source xml:lang="en">&amp;Advanced</source>
         <note>ID: MainWindow.Menu.Advanced</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">&amp;Avanzado</target>
+        <target xml:lang="es-ES" state="translated">A&amp;vanzado</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules">
         <source xml:lang="en">Biblical Terms &amp;Rendering Selection Rules...</source>
@@ -389,7 +389,7 @@
         <source xml:lang="en">&amp;Next Untranslated Question</source>
         <note>ID: MainWindow.Menu.Edit.NextUntranslatedQuestion</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">&amp;Siguiente pregunta sin traducir</target>
+        <target xml:lang="es-ES" state="translated">Pregunta &amp;siguiente no traducido</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Edit.Paste">
         <source xml:lang="en">&amp;Paste</source>
@@ -484,13 +484,13 @@
         <source xml:lang="en">&amp;Generated Translation Details</source>
         <note>ID: MainWindow.Menu.GeneratedTranslationDetails</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Generated Translation Details</target>
+        <target xml:lang="es-ES" state="translated">&amp;Detalles de la traducción generados</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Help">
         <source xml:lang="en">&amp;Help</source>
         <note>ID: MainWindow.Menu.Help</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">&amp;Ayuda</target>
+        <target xml:lang="es-ES" state="translated">A&amp;yuda</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Help.About">
         <source xml:lang="en">&amp;About Transcelerator</source>
@@ -514,7 +514,7 @@
         <source xml:lang="en">&amp;Biblical Terms Pane</source>
         <note>ID: MainWindow.Menu.View.BiblicalTermsPane</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">&amp;Panel de vocablos bíblicos</target>
+        <target xml:lang="es-ES" state="translated">Panel de vocablos &amp;bíblicos</target>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View.DisplayLanguage">
         <source xml:lang="en">&amp;Display Language</source>
@@ -568,6 +568,11 @@
         <source xml:lang="en">Save changes?</source>
         <note>ID: MainWindow.SaveChangesMessageCaption</note>
         <target xml:lang="es-ES" state="translated">¿Guardar cambios?</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.toolStripMenuItem1">
+        <source xml:lang="en">&amp;More...</source>
+        <note>ID: MainWindow.UNSQuestionsDialog.toolStripMenuItem1</note>
+        <target xml:lang="es-ES" state="translated">&amp;Más...</target>
       </trans-unit>
       <trans-unit id="MainWindow.UntranslatedQuestionsWarning">
         <source xml:lang="en">There are {0} questions in the selected range that do not have confirmed translations. Do you want to continue? (Untranslated questions will be excluded.)</source>
@@ -661,12 +666,35 @@
         <source xml:lang="en">Show Questions with Terms &amp;Missing Renderings</source>
         <note>ID: MainWindow.mnuShowPhrasesWithMissingKtRenderings</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">&amp;Mostrar preguntas con vocablos sin traduccion</target>
+        <target xml:lang="es-ES" state="translated">&amp;Mostrar preguntas con vocablos sin traducción</target>
       </trans-unit>
       <trans-unit id="MainWindow.toolStripLabelQuestionFilter">
         <source xml:lang="en">Question Filter:</source>
         <note>ID: MainWindow.toolStripLabelQuestionFilter</note>
         <target xml:lang="es-ES" state="translated">Filtro de preguntas:</target>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.Download">
+        <source xml:lang="en">Download the latest Installer.</source>
+        <note>ID: MoreUiLanguagesDlg.Download</note>
+        <note>Sentence that will be formatted as a hyperlink and appended to "MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller"</note>
+        <target xml:lang="es-ES" state="translated">Descarga el último instalador.</target>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.WindowTitle">
+        <source xml:lang="en">More Display Languages</source>
+        <note>ID: MoreUiLanguagesDlg.WindowTitle</note>
+        <target xml:lang="es-ES" state="translated">Más Idiomas de interfaz</target>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller">
+        <source xml:lang="en">If the langauge you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</source>
+        <note>ID: MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller</note>
+        <note>Param is the name (as localized) of the "Display Language" menu</note>
+        <target xml:lang="es-ES" state="translated">Si el idioma que desea ver no está disponible en el menú {0}, utilice el último instalador para ver si está disponible para seleccionar.</target>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.m_linkLabelCrowdinInformation">
+        <source xml:lang="en">{0} uses {1} to manage the localization effort for strings displayed in its user interface and for the source questions to be translated. If you would like to contribute translations or request the addition of another display language, please make your request via {1}.</source>
+        <note>ID: MoreUiLanguagesDlg.m_linkLabelCrowdinInformation</note>
+        <note>Param 0: "Transcelerator" (plugin name); Param 1: "Crowdin" (website) - will be formatted as a hyperlink to crowdin.com</note>
+        <target xml:lang="es-ES" state="translated">{0} usa {1} para administrar la obra de localizar su interfaz de usuario y para traducir las preguntas de fuente. Si desea contribuir con las traducciones o solicitar la adición de otro idioma de interfaz, por favor haga su solicitud a través de {1}.</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.NoExistingQuestions">
         <source xml:lang="en">There are no existing {0} questions for {1}.</source>
@@ -784,7 +812,7 @@
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace">
         <source xml:lang="en">Word or Phrase to Replace</source>
         <note>ID: PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace</note>
-        <target xml:lang="es-ES" state="needs-translation">Word or Phrase to Replace</target>
+        <target xml:lang="es-ES" state="translated">Palabra o frase a reemplazar</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.WindowTitle">
         <source xml:lang="en">Question Adjustments</source>
@@ -809,22 +837,22 @@
       <trans-unit id="PhraseSubstitutionsDlg.lblMatchPrefix">
         <source xml:lang="en">Match a prefix</source>
         <note>ID: PhraseSubstitutionsDlg.lblMatchPrefix</note>
-        <target xml:lang="es-ES" state="needs-translation">Match a prefix</target>
+        <target xml:lang="es-ES" state="translated">Coincide con un prefijo</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.lblMaxMatch">
         <source xml:lang="en">Maximum times to match</source>
         <note>ID: PhraseSubstitutionsDlg.lblMaxMatch</note>
-        <target xml:lang="es-ES" state="needs-translation">Maximum times to match</target>
+        <target xml:lang="es-ES" state="translated">Las veces máximas para coincidir</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.lblSuffix">
         <source xml:lang="en">Match a suffix</source>
         <note>ID: PhraseSubstitutionsDlg.lblSuffix</note>
-        <target xml:lang="es-ES" state="needs-translation">Match a suffix</target>
+        <target xml:lang="es-ES" state="translated">Coincide con un sufijo</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.m_btnMatchSingleWord">
         <source xml:lang="en">Match any single word</source>
         <note>ID: PhraseSubstitutionsDlg.m_btnMatchSingleWord</note>
-        <target xml:lang="es-ES" state="needs-translation">Match any single word</target>
+        <target xml:lang="es-ES" state="translated">Coincide con cualquier palabra</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.m_grpPreview">
         <source xml:lang="en">Preview Sample Question</source>
@@ -1026,7 +1054,7 @@
       <trans-unit id="RulesWizardDlg.grpSelectRendering">
         <source xml:lang="en">Select the rendering of the biblical term that meets the following condition:</source>
         <note>ID: RulesWizardDlg.grpSelectRendering</note>
-        <target xml:lang="es-ES" state="needs-translation">Select the rendering of the biblical term that meets the following condition:</target>
+        <target xml:lang="es-ES" state="translated">Seleccione la traducción del término bíblico que cumpla con la siguiente condición:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblFollowingWordExample">
         <source xml:lang="en">Example: </source>
@@ -1070,13 +1098,13 @@
         <source xml:lang="en">&amp;Vernacular prefix:</source>
         <note>ID: RulesWizardDlg.m_lblRenderingConditionVernPrefix</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Vernacular prefix:</target>
+        <target xml:lang="es-ES" state="translated">&amp; Prefijo vernacular:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblRenderingConditionVernSuffix">
         <source xml:lang="en">&amp;Vernacular suffix:</source>
         <note>ID: RulesWizardDlg.m_lblRenderingConditionVernSuffix</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="needs-translation">&amp;Vernacular suffix:</target>
+        <target xml:lang="es-ES" state="translated">&amp; Subfijo vernacular:</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_lblRuleDescription">
         <source xml:lang="en">Rule description:</source>
@@ -1120,7 +1148,7 @@
         <source xml:lang="en">Term has a specific &amp;prefix</source>
         <note>ID: RulesWizardDlg.m_rdoPrefix</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">El vocablo tiene un prefijo &amp;específico</target>
+        <target xml:lang="es-ES" state="translated">El vocablo tiene un &amp;prefijo específico</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoRenderingHasPrefix">
         <source xml:lang="en">Rendering has a specific p&amp;refix</source>
@@ -1138,7 +1166,7 @@
         <source xml:lang="en">Term has a specific &amp;suffix</source>
         <note>ID: RulesWizardDlg.m_rdoSuffix</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="translated">El vocablo tiene un sufijo &amp;específico</target>
+        <target xml:lang="es-ES" state="translated">El vocablo tiene un &amp;sufijo específico</target>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.m_rdoUserDefinedQuestionCriteria">
         <source xml:lang="en">&amp;User-defined condition</source>
