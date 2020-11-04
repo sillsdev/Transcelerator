@@ -17,7 +17,7 @@
 		2) If dynamic strings or other localizable strings that cannot be detected
 		by ExtractXliff are ever needed, create and check in a Transcelerator.en.xlf file
 		with them, and add this parameter: -b ..\DistFiles\localization\Transcelerator.en.xlf -->
-	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.Transcelerator -o Transcelerator.dll -x Transcelerator.en.xlf -p 1.5.0 ../output/$(Configuration)/Transcelerator.dll" />
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.Transcelerator -o Transcelerator.dll -x Transcelerator.en.xlf -p 1.5.4 ../output/$(Configuration)/Transcelerator.dll" />
 	<!-- <Exec Command="overcrowdin updatefiles" /> -->
   </Target>
 </Project>

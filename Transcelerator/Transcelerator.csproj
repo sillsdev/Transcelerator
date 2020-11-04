@@ -319,6 +319,12 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="MoreUiLanguagesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MoreUiLanguagesDlg.Designer.cs">
+      <DependentUpon>MoreUiLanguagesDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Number.cs" />
     <Compile Include="IProgressMessage.cs" />
     <Compile Include="KeyTerm.cs" />
@@ -437,6 +443,9 @@
     <EmbeddedResource Include="HelpAboutDlg.resx">
       <DependentUpon>HelpAboutDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MoreUiLanguagesDlg.resx">
+      <DependentUpon>MoreUiLanguagesDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewQuestionDlg.resx">
       <DependentUpon>NewQuestionDlg.cs</DependentUpon>

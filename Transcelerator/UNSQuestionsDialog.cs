@@ -368,12 +368,13 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
 			{
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
-				if (preferredUiLocale.Length > 2 && LocalizationManager.UILanguageId.Length >= 2 &&
+				if (preferredUiLocale.Length >= 2 && LocalizationManager.UILanguageId.Length >= 2 &&
 					preferredUiLocale.Substring(0, 2) != LocalizationManager.UILanguageId.Substring(0, 2))
 				{
-					// Unless/until we ship different variants of the same language, there is no need
-					// to try to tell the localization manager to load a different variant. It's already
-					// smart enough to fallback to another variant of the language anyway.
+					// Unless/until we ship UI strings for different variants of the same language,
+					// there is no need to try to tell the LocalizationManager to load a different
+					// variant. It's already smart enough to fallback to another variant of the
+					// language anyway.
 					LocalizationManager.SetUILanguage(preferredUiLocale, true);
 				}
 			}
@@ -497,6 +498,7 @@ namespace SIL.Transcelerator
 		private void AddAvailableLocalizationsToMenu(string preferredLocale)
 		{
 			var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
+			int insertAt = mnuDisplayLanguage.DropDownItems.IndexOf(en_ToolStripMenuItem) + 1;
 			foreach (var availableLocalization in AvailableLocales)
 			{
 				var subItem = new ToolStripMenuItem(availableLocalization.Key)
@@ -504,7 +506,7 @@ namespace SIL.Transcelerator
 					Tag = availableLocalization.Value,
 					Name = availableLocalization.Value + menuItemNameSuffix
 				};
-				mnuDisplayLanguage.DropDownItems.Add(subItem);
+				mnuDisplayLanguage.DropDownItems.Insert(insertAt++, subItem);
 				if (availableLocalization.Value == preferredLocale)
 				{
 					en_ToolStripMenuItem.Checked = false;
@@ -2384,7 +2386,7 @@ namespace SIL.Transcelerator
 			if (clickedMenu.Checked)
 				return;
 			clickedMenu.Checked = true;
-			foreach (ToolStripMenuItem subMenu in mnuDisplayLanguage.DropDownItems)
+			foreach (var subMenu in mnuDisplayLanguage.DropDownItems.OfType<ToolStripMenuItem>().Where(i => i.Tag != null))
 			{
 				if (subMenu != clickedMenu)
 					subMenu.Checked = false;
@@ -2398,6 +2400,14 @@ namespace SIL.Transcelerator
 				dataGridUns.Invalidate();
 			LoadAnswersAndCommentsIfShowing(null, null);
 			LocalizationManager.SetUILanguage(localeId, true);
+		}
+		
+		private void toolStripMenuItemMoreLanguages_Click(object sender, EventArgs e)
+		{
+			using (var dlg = new MoreUiLanguagesDlg(mnuDisplayLanguage))
+			{
+				dlg.ShowDialog(this);
+			}
 		}
 #endregion
 
@@ -3026,6 +3036,7 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
+
 	}
 	#endregion
 
