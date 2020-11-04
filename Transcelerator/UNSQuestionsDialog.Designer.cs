@@ -114,6 +114,8 @@ namespace SIL.Transcelerator
 			this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuDisplayLanguage = new System.Windows.Forms.ToolStripMenuItem();
 			this.en_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripMenuItemMoreLanguages = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuAdvanced = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuPhraseSubstitutions = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuBiblicalTermsRenderingSelectionRules = new System.Windows.Forms.ToolStripMenuItem();
@@ -227,7 +229,7 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.dataGridUns.RowHeadersVisible = false;
 			this.dataGridUns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-			this.dataGridUns.Size = new System.Drawing.Size(792, 227);
+			this.dataGridUns.Size = new System.Drawing.Size(792, 203);
 			this.dataGridUns.TabIndex = 7;
 			this.dataGridUns.VirtualMode = true;
 			this.dataGridUns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellClick);
@@ -847,7 +849,9 @@ namespace SIL.Transcelerator
 			// mnuDisplayLanguage
 			// 
 			this.mnuDisplayLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.en_ToolStripMenuItem});
+            this.en_ToolStripMenuItem,
+            this.toolStripSeparator10,
+            this.toolStripMenuItemMoreLanguages});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuDisplayLanguage, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDisplayLanguage, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
@@ -865,10 +869,25 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationPriority(this.en_ToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.en_ToolStripMenuItem, "MainWindow.en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Name = "en_ToolStripMenuItem";
-			this.en_ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+			this.en_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.en_ToolStripMenuItem.Tag = "en-US";
 			this.en_ToolStripMenuItem.Text = "American English";
 			this.en_ToolStripMenuItem.Click += new System.EventHandler(this.HandleDisplayLanguageSelected);
+			// 
+			// toolStripSeparator10
+			// 
+			this.toolStripSeparator10.Name = "toolStripSeparator10";
+			this.toolStripSeparator10.Size = new System.Drawing.Size(177, 6);
+			// 
+			// toolStripMenuItemMoreLanguages
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripMenuItemMoreLanguages, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripMenuItemMoreLanguages, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripMenuItemMoreLanguages, "MainWindow.UNSQuestionsDialog.toolStripMenuItem1");
+			this.toolStripMenuItemMoreLanguages.Name = "toolStripMenuItemMoreLanguages";
+			this.toolStripMenuItemMoreLanguages.Size = new System.Drawing.Size(180, 22);
+			this.toolStripMenuItemMoreLanguages.Text = "&More...";
+			this.toolStripMenuItemMoreLanguages.Click += new System.EventHandler(this.toolStripMenuItemMoreLanguages_Click);
 			// 
 			// mnuAdvanced
 			// 
@@ -986,7 +1005,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.txtFilterByPart, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.txtFilterByPart, "MainWindow.txtFilterByPart");
 			this.txtFilterByPart.Name = "txtFilterByPart";
-			this.txtFilterByPart.Size = new System.Drawing.Size(200, 25);
+			this.txtFilterByPart.Size = new System.Drawing.Size(240, 25);
 			this.txtFilterByPart.ToolTipText = "Type an English word or phrase to filter the list of questions.";
 			this.txtFilterByPart.Enter += new System.EventHandler(this.txtFilterByPart_Enter);
 			this.txtFilterByPart.Leave += new System.EventHandler(this.txtFilterByPart_Leave);
@@ -1058,12 +1077,12 @@ namespace SIL.Transcelerator
 			this.m_biblicalTermsPane.ColumnCount = 1;
 			this.m_biblicalTermsPane.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.m_biblicalTermsPane.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_biblicalTermsPane.Location = new System.Drawing.Point(3, 282);
+			this.m_biblicalTermsPane.Location = new System.Drawing.Point(3, 258);
 			this.m_biblicalTermsPane.MinimumSize = new System.Drawing.Size(100, 40);
 			this.m_biblicalTermsPane.Name = "m_biblicalTermsPane";
 			this.m_biblicalTermsPane.RowCount = 1;
 			this.m_biblicalTermsPane.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.m_biblicalTermsPane.Size = new System.Drawing.Size(792, 117);
+			this.m_biblicalTermsPane.Size = new System.Drawing.Size(792, 135);
 			this.m_biblicalTermsPane.TabIndex = 17;
 			this.m_biblicalTermsPane.Resize += new System.EventHandler(this.m_biblicalTermsPane_Resize);
 			// 
@@ -1076,7 +1095,7 @@ namespace SIL.Transcelerator
 			this.m_lblAnswerLabel.Location = new System.Drawing.Point(3, 0);
 			this.m_lblAnswerLabel.Name = "m_lblAnswerLabel";
 			this.m_lblAnswerLabel.Padding = new System.Windows.Forms.Padding(1, 3, 1, 3);
-			this.m_lblAnswerLabel.Size = new System.Drawing.Size(67, 19);
+			this.m_lblAnswerLabel.Size = new System.Drawing.Size(80, 22);
 			this.m_lblAnswerLabel.TabIndex = 0;
 			this.m_lblAnswerLabel.Text = "Answer:";
 			// 
@@ -1088,10 +1107,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswers, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblAnswers, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswers, "MainWindow.m_lblAnswers");
-			this.m_lblAnswers.Location = new System.Drawing.Point(76, 0);
+			this.m_lblAnswers.Location = new System.Drawing.Point(89, 0);
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			this.m_lblAnswers.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-			this.m_lblAnswers.Size = new System.Drawing.Size(14, 19);
+			this.m_lblAnswers.Size = new System.Drawing.Size(15, 22);
 			this.m_lblAnswers.TabIndex = 2;
 			this.m_lblAnswers.Text = "#";
 			// 
@@ -1101,10 +1120,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCommentLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCommentLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCommentLabel, "MainWindow.m_lblCommentLabel");
-			this.m_lblCommentLabel.Location = new System.Drawing.Point(3, 19);
+			this.m_lblCommentLabel.Location = new System.Drawing.Point(3, 22);
 			this.m_lblCommentLabel.Name = "m_lblCommentLabel";
 			this.m_lblCommentLabel.Padding = new System.Windows.Forms.Padding(1, 3, 1, 3);
-			this.m_lblCommentLabel.Size = new System.Drawing.Size(67, 19);
+			this.m_lblCommentLabel.Size = new System.Drawing.Size(80, 22);
 			this.m_lblCommentLabel.TabIndex = 1;
 			this.m_lblCommentLabel.Text = "Comment:";
 			// 
@@ -1116,10 +1135,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblComments, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblComments, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblComments, "MainWindow.m_lblComments");
-			this.m_lblComments.Location = new System.Drawing.Point(76, 19);
+			this.m_lblComments.Location = new System.Drawing.Point(89, 22);
 			this.m_lblComments.Name = "m_lblComments";
 			this.m_lblComments.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-			this.m_lblComments.Size = new System.Drawing.Size(14, 19);
+			this.m_lblComments.Size = new System.Drawing.Size(15, 22);
 			this.m_lblComments.TabIndex = 3;
 			this.m_lblComments.Text = "#";
 			// 
@@ -1135,12 +1154,12 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments.Controls.Add(this.m_lblAnswerLabel, 0, 0);
 			this.m_pnlAnswersAndComments.Controls.Add(this.m_lblCommentLabel, 0, 1);
 			this.m_pnlAnswersAndComments.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_pnlAnswersAndComments.Location = new System.Drawing.Point(3, 399);
+			this.m_pnlAnswersAndComments.Location = new System.Drawing.Point(3, 393);
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.RowCount = 2;
 			this.m_pnlAnswersAndComments.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.m_pnlAnswersAndComments.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.m_pnlAnswersAndComments.Size = new System.Drawing.Size(792, 38);
+			this.m_pnlAnswersAndComments.Size = new System.Drawing.Size(792, 44);
 			this.m_pnlAnswersAndComments.TabIndex = 19;
 			this.m_pnlAnswersAndComments.Visible = false;
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.LoadAnswersAndCommentsIfShowing);
@@ -1149,7 +1168,7 @@ namespace SIL.Transcelerator
 			// 
 			this.m_hSplitter.Cursor = System.Windows.Forms.Cursors.HSplit;
 			this.m_hSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_hSplitter.Location = new System.Drawing.Point(3, 279);
+			this.m_hSplitter.Location = new System.Drawing.Point(3, 255);
 			this.m_hSplitter.Name = "m_hSplitter";
 			this.m_hSplitter.Size = new System.Drawing.Size(792, 3);
 			this.m_hSplitter.TabIndex = 20;
@@ -1164,7 +1183,7 @@ namespace SIL.Transcelerator
 			// UNSQuestionsDialog
 			// 
 			this.AccessibleName = "Transcelerator Main Window";
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
 			this.ClientSize = new System.Drawing.Size(798, 440);
 			this.Controls.Add(this.dataGridUns);
 			this.Controls.Add(this.m_hSplitter);
@@ -1179,7 +1198,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.WindowTitle");
 			this.MainMenuStrip = this.m_mainMenu;
-			this.MinimumSize = new System.Drawing.Size(180, 150);
+			this.MinimumSize = new System.Drawing.Size(216, 173);
 			this.Name = "UNSQuestionsDialog";
 			this.Padding = new System.Windows.Forms.Padding(3);
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -1280,5 +1299,7 @@ namespace SIL.Transcelerator
 		private DataGridViewCheckBoxColumn m_colUserTranslated;
 		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripMenuItem mnuViewDebugInfo;
+		private ToolStripSeparator toolStripSeparator10;
+		private ToolStripMenuItem toolStripMenuItemMoreLanguages;
 	}
 }

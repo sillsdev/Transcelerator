@@ -297,6 +297,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
         </ComponentGroup>
 
+        <ComponentGroup Id="COMPONENTSFORP7PLUGINLOCALIZATION_fr" Directory="INSTALLDIR7_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.fr.xlf_P7" Guid="{217F9470-C16F-4B1D-9DD4-98AD5A4288CC}">
+                <File Id="Transcelerator.fr.xlf_P7" ShortName="frp8.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
+            </Component>
+        </ComponentGroup>
+
         <ComponentGroup Id="COMPONENTSFORP7TestPLUGIN" Directory="INSTALLDIR7TEST"
                         Source="..\Transcelerator\bin\x86\Release">
             <Component Guid="{6517fe81-0e7f-42ed-bdbc-0d5041bf6f46}">
@@ -445,6 +452,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
         </ComponentGroup>
 
+        <ComponentGroup Id="COMPONENTSFORP7TestPLUGINLOCALIZATION_fr" Directory="INSTALLDIR7TEST_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.fr.xlf_P7Test" Guid="{3BC8ABAF-7CE4-41E6-80AD-8EFE86D13D89}">
+                <File Id="Transcelerator.fr.xlf_P7Test" ShortName="frp8.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
+            </Component>
+        </ComponentGroup>
+
         <ComponentGroup Id="COMPONENTSFORP8PLUGIN" Directory="INSTALLDIR8" Source="..\Transcelerator\bin\x86\Release">
             <Component Guid="{91562ae0-0a28-4f0c-9345-95464e109314}">
                 <File Id="Transcelerator.dll_P8" ShortName="c9c8ckpm.dll" KeyPath="yes" Name="Transcelerator.dll" />
@@ -580,6 +594,13 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="LocalizedPhrases_fr.xlf_P8" Guid="{6515FF29-1D71-4EF2-8F6D-11193EC263D3}">
                 <File Id="LocalizedPhrases_fr.xlf_P8" ShortName="hsbywryt.xlf" KeyPath="yes"
                       Name="LocalizedPhrases-fr.xlf" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="COMPONENTSFORP8PLUGINLOCALIZATION_fr" Directory="INSTALLDIR8_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.fr.xlf_P8" Guid="{EA03A58B-1A90-4F98-9601-9B8B30A4B6A7}">
+                <File Id="Transcelerator.fr.xlf_P8" ShortName="frp8.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
             </Component>
         </ComponentGroup>
 
@@ -721,9 +742,19 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
         </ComponentGroup>
 
+        <ComponentGroup Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" Directory="INSTALLDIR9_LOCALIZATION"
+                        Source="..\DistFiles\localization">
+            <Component Id="Transcelerator.fr.xlf_P9" Guid="{416F2724-5F68-46E8-9D60-647BFCEEF769}">
+                <File Id="Transcelerator.fr.xlf_P9" ShortName="frp9.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
+            </Component>
+        </ComponentGroup>
+
         <Feature Id="PluginFeature_P7" Level="0" Title="Plugin for Paratext 7.5" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT75100ORGREATER AND UPDATEP7PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN" />
+            <Component Id="CreateP7LocalizationFolder" Directory="INSTALLDIR7_LOCALIZATION" Guid="{4C5A3D2E-13AD-4CE1-8496-35D8D37D4C95}">
+				<CreateFolder />
+			</Component>
             <Feature Id="Localization_P7" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <Feature Id="Localization_P7_es" Level="1" Title="español" InstallDefault="followParent"
@@ -738,6 +769,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P7_fr" Level="1" Title="français" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP7PLUGIN_fr" />
+					<ComponentGroupRef Id="COMPONENTSFORP7PLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
         </Feature>
@@ -745,6 +777,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Feature Id="PluginFeature_P7Test" Level="0" Title="Plugin for Paratext 7.6 (pre-release)" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT7TEST AND UPDATEP7TESTPLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN" />
+			<Component Id="CreateP7TestLocalizationFolder" Directory="INSTALLDIR7TEST_LOCALIZATION" Guid="{08E9C8E8-18F1-48C3-AA5C-9E65C0D1F2E3}">
+				<CreateFolder />
+			</Component>
             <Feature Id="Localization_P7Test" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <Feature Id="Localization_P7Test_es" Level="1" Title="español" InstallDefault="followParent"
@@ -759,6 +794,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P7Test_fr" Level="1" Title="français" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP7TestPLUGIN_fr" />
+					<ComponentGroupRef Id="COMPONENTSFORP7TestPLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
         </Feature>
@@ -766,6 +802,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Feature Id="PluginFeature_P8" Level="0" Title="Plugin for Paratext 8" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT8 AND UPDATEP8PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN" />
+			<Component Id="CreateP8LocalizationFolder" Directory="INSTALLDIR8_LOCALIZATION" Guid="{6747B599-E88C-42F0-8742-316CC633125A}">
+				<CreateFolder />
+			</Component>
             <Feature Id="Localization_P8" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <Feature Id="Localization_P8_es" Level="1" Title="español" InstallDefault="followParent"
@@ -780,6 +819,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P8_fr" Level="1" Title="français" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP8PLUGIN_fr" />
+                    <ComponentGroupRef Id="COMPONENTSFORP8PLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
         </Feature>
@@ -787,6 +827,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT9 AND UPDATEP9PLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
+			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
+				<CreateFolder />
+			</Component>
             <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <Feature Id="Localization_P9_es" Level="1" Title="español" InstallDefault="followParent"
@@ -801,6 +844,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <Feature Id="Localization_P9_fr" Level="1" Title="français" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_fr" />
+                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
         </Feature>
