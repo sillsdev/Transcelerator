@@ -1,2 +1,36 @@
 body
-h4 {font-style:italic;}
+h4.hint {
+	margin-bottom: 2px;
+}
+p.hint {
+	margin-top: 2px;
+}
+.keyname {
+  font-weight:bold;
+  font-family: "Courier New", Courier, monospace;
+}
+.ui {
+  font-weight:bold;
+}
+.hint {
+  font-style:italic;
+}
+.note {
+  font-style:italic;
+}
+.frame-placeholder {
+  font-style:underline;
+}
+.material-icons {
+  position: relative;
+  top: 5px;
+  margin-right: 1px;
+}
+ul.icon-list {
+  list-style: none;
+}
+img {
+  margin-left: 3px;
+  margin-top: 5px;
+  margin-right: 3px;
+}

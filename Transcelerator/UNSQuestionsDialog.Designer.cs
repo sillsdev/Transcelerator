@@ -120,6 +120,7 @@ namespace SIL.Transcelerator
 			this.mnuPhraseSubstitutions = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuBiblicalTermsRenderingSelectionRules = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
+			this.browseTopicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.btnSave = new System.Windows.Forms.ToolStripButton();
@@ -870,7 +871,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationPriority(this.en_ToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.en_ToolStripMenuItem, "MainWindow.en_ToolStripMenuItem");
 			this.en_ToolStripMenuItem.Name = "en_ToolStripMenuItem";
-			this.en_ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.en_ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
 			this.en_ToolStripMenuItem.Tag = "en-US";
 			this.en_ToolStripMenuItem.Text = "American English";
 			this.en_ToolStripMenuItem.Click += new System.EventHandler(this.HandleDisplayLanguageSelected);
@@ -878,15 +879,15 @@ namespace SIL.Transcelerator
 			// toolStripSeparator10
 			// 
 			this.toolStripSeparator10.Name = "toolStripSeparator10";
-			this.toolStripSeparator10.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator10.Size = new System.Drawing.Size(163, 6);
 			// 
 			// toolStripMenuItemMoreLanguages
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripMenuItemMoreLanguages, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripMenuItemMoreLanguages, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripMenuItemMoreLanguages, "MainWindow.UNSQuestionsDialog.toolStripMenuItem1");
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripMenuItemMoreLanguages, "MainWindow.UNSQuestionsDialog.toolStripMenuItemMoreLanguages");
 			this.toolStripMenuItemMoreLanguages.Name = "toolStripMenuItemMoreLanguages";
-			this.toolStripMenuItemMoreLanguages.Size = new System.Drawing.Size(180, 22);
+			this.toolStripMenuItemMoreLanguages.Size = new System.Drawing.Size(166, 22);
 			this.toolStripMenuItemMoreLanguages.Text = "&More...";
 			this.toolStripMenuItemMoreLanguages.Click += new System.EventHandler(this.toolStripMenuItemMoreLanguages_Click);
 			// 
@@ -937,6 +938,16 @@ namespace SIL.Transcelerator
 			this.mnuHelp.Name = "mnuHelp";
 			this.mnuHelp.Size = new System.Drawing.Size(44, 20);
 			this.mnuHelp.Text = "&Help";
+			// 
+			// browseTopicsToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.browseTopicsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.browseTopicsToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.browseTopicsToolStripMenuItem, "MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem");
+			this.browseTopicsToolStripMenuItem.Name = "browseTopicsToolStripMenuItem";
+			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+			this.browseTopicsToolStripMenuItem.Text = "Browse Topics...";
+			this.browseTopicsToolStripMenuItem.Click += new System.EventHandler(this.browseTopicsToolStripMenuItem_Click);
 			// 
 			// mnuHelpAbout
 			// 
@@ -1181,16 +1192,6 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
-			// 
-			// browseTopicsToolStripMenuItem
-			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.browseTopicsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.browseTopicsToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.browseTopicsToolStripMenuItem, "MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem");
-			this.browseTopicsToolStripMenuItem.Name = "browseTopicsToolStripMenuItem";
-			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-			this.browseTopicsToolStripMenuItem.Text = "Browse Topics...";
-			this.browseTopicsToolStripMenuItem.Click += new System.EventHandler(this.browseTopicsToolStripMenuItem_Click);
 			// 
 			// UNSQuestionsDialog
 			// 
