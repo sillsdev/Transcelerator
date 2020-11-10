@@ -685,6 +685,21 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
+		/// real evil data.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void RealData16()
+		{
+			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("laurustinus; or, pine tree"));
+			Assert.AreEqual(2, bldr.Matches.Count());
+			VerifyKeyTermMatch(bldr, 0, "laurustinus");
+			VerifyKeyTermMatch(bldr, 1, "pine", "tree");
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the KeyTermMatchBuilder class in the case of a key term from the world of
 		/// real evil data: "or" separating two words
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
