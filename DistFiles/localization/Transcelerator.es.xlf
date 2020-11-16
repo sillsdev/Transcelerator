@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="1.5.4" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="1.5.5" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
@@ -179,7 +179,7 @@
         <source xml:lang="en">O&amp;verwrite Existing CSS File</source>
         <note>ID: GenerateScriptDlg.m_chkOverwriteCss</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="needs-translation">O&amp;verwrite Existing CSS File</target>
+        <target xml:lang="es-ES" state="translated">Reemplazar el archi&amp;vo CSS existente</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkPassageBeforeOverview">
         <source xml:lang="en">&amp;Include Entire Passage at the Start of Section</source>
@@ -196,7 +196,7 @@
         <source xml:lang="en">Script &amp;File name:</source>
         <note>ID: GenerateScriptDlg.m_lbFilename</note>
         <note>To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</note>
-        <target xml:lang="es-ES" state="needs-translation">Script &amp;File name:</target>
+        <target xml:lang="es-ES" state="translated">&amp;Nombre del archivo del guión:</target>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_lblCommentTextColor">
         <source xml:lang="en">Comment Text Color</source>
@@ -585,9 +585,24 @@
         <note>ID: MainWindow.btnReceiveScrReferences</note>
         <target xml:lang="es-ES" state="translated">Recibir citas bíblicas</target>
       </trans-unit>
+      <trans-unit id="MainWindow.btnReceiveScrReferences_ToolTip_">
+        <source xml:lang="en">Receive Scripture References</source>
+        <note>ID: MainWindow.btnReceiveScrReferences_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Recibir citas bíblicas</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnSave_ToolTip_">
+        <source xml:lang="en">Save (Ctrl+S)</source>
+        <note>ID: MainWindow.btnSave_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Guardar (Ctrl+S)</target>
+      </trans-unit>
       <trans-unit id="MainWindow.btnSendScrReferences">
         <source xml:lang="en">Send Scripture References</source>
         <note>ID: MainWindow.btnSendScrReferences</note>
+        <target xml:lang="es-ES" state="translated">Enviar citas bíblicas</target>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnSendScrReferences_ToolTip_">
+        <source xml:lang="en">Send Scripture References</source>
+        <note>ID: MainWindow.btnSendScrReferences_ToolTip_</note>
         <target xml:lang="es-ES" state="translated">Enviar citas bíblicas</target>
       </trans-unit>
       <trans-unit id="MainWindow.dataGridContextMenu.copyToolStripMenuItem" approved="yes">
@@ -673,16 +688,21 @@
         <note>ID: MainWindow.toolStripLabelQuestionFilter</note>
         <target xml:lang="es-ES" state="translated">Filtro de preguntas:</target>
       </trans-unit>
+      <trans-unit id="MainWindow.txtFilterByPart_ToolTip_">
+        <source xml:lang="en">Type an English word or phrase to filter the list of questions.</source>
+        <note>ID: MainWindow.txtFilterByPart_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Escriba una palabra o frase en español para filtrar la lista de preguntas.</target>
+      </trans-unit>
       <trans-unit id="MoreUiLanguagesDlg.Download">
         <source xml:lang="en">Download the latest Installer.</source>
         <note>ID: MoreUiLanguagesDlg.Download</note>
         <note>Sentence that will be formatted as a hyperlink and appended to "MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller"</note>
-        <target xml:lang="es-ES" state="translated">Descarga el último instalador.</target>
+        <target xml:lang="es-ES" state="translated">Descargue el último instalador.</target>
       </trans-unit>
       <trans-unit id="MoreUiLanguagesDlg.WindowTitle">
         <source xml:lang="en">More Display Languages</source>
         <note>ID: MoreUiLanguagesDlg.WindowTitle</note>
-        <target xml:lang="es-ES" state="translated">Más Idiomas de interfaz</target>
+        <target xml:lang="es-ES" state="translated">Mostrar en otros idiomas</target>
       </trans-unit>
       <trans-unit id="MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller">
         <source xml:lang="en">If the language you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</source>
@@ -694,7 +714,7 @@
         <source xml:lang="en">{0} uses {1} to manage the localization effort for strings displayed in its user interface and for the source questions to be translated. If you would like to contribute translations or request the addition of another display language, please make your request via {1}.</source>
         <note>ID: MoreUiLanguagesDlg.m_linkLabelCrowdinInformation</note>
         <note>Param 0: "Transcelerator" (plugin name); Param 1: "Crowdin" (website) - will be formatted as a hyperlink to crowdin.com</note>
-        <target xml:lang="es-ES" state="translated">{0} usa {1} para administrar la obra de localizar su interfaz de usuario y para traducir las preguntas de fuente. Si desea contribuir con las traducciones o solicitar la adición de otro idioma de interfaz, por favor haga su solicitud a través de {1}.</target>
+        <target xml:lang="es-ES" state="translated">{0} usa {1} para administrar el esfuerzo de localización de las cadenas mostradas en su interfaz de usuario y para traducir las preguntas de origen. Si desea contribuir con las traducciones o solicitar la adición de otro idioma de visualización, por favor haga su solicitud a través de {1}.</target>
       </trans-unit>
       <trans-unit id="NewQuestionDlg.NoExistingQuestions">
         <source xml:lang="en">There are no existing {0} questions for {1}.</source>
