@@ -44,7 +44,7 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// <param name="keyTerm">The key term.</param>
 	    /// <param name="rules">Optional dictionary of (English) key terms to rules indicating
-	    /// special handling neeeded.</param>
+	    /// special handling needed.</param>
         /// <param name="regexRules">regular-expression-based rules. If any term matches a
 	    /// regular expression in this collection, terms will be extracted using the variable
 	    /// "term". If the term variable is not present in the regular expression, this term
@@ -54,9 +54,8 @@ namespace SIL.Transcelerator
             IEnumerable<Regex> regexRules)
 		{
 			string normalizedLcTerm = keyTerm.Term.ToLowerInvariant().Normalize(NormalizationForm.FormC);
-			KeyTermRule ktRule;
-            bool fMatchForRefOnly = false;
-            if (rules != null && rules.TryGetValue(normalizedLcTerm, out ktRule))
+			bool fMatchForRefOnly = false;
+            if (rules != null && rules.TryGetValue(normalizedLcTerm, out var ktRule))
 			{
                 ktRule.Used = true;
 				bool fExcludeMainTerm = false;
@@ -94,7 +93,7 @@ namespace SIL.Transcelerator
                         return;
                 }
             }
-            foreach (string phrase in normalizedLcTerm.Split(new[] { ", or ", ",", ";", "=" }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string phrase in normalizedLcTerm.Split(new[] { "; or, ", ", or ", ",", ";", "=" }, StringSplitOptions.RemoveEmptyEntries))
 				ProcessKeyTermPhrase(keyTerm, phrase, fMatchForRefOnly);
 		}
 
