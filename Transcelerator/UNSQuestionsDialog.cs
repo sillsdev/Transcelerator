@@ -10,7 +10,6 @@
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
 using AddInSideViews;
-using SIL.ComprehensionCheckingData;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Transcelerator.Properties;
