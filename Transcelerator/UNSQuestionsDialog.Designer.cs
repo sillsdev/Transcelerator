@@ -975,12 +975,11 @@ namespace SIL.Transcelerator
 			this.btnSave.Enabled = false;
 			this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
 			this.btnSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSave, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSave, "Save (Ctrl+S)");
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnSave, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnSave, "MainWindow.btnSave");
 			this.btnSave.Name = "btnSave";
 			this.btnSave.Size = new System.Drawing.Size(23, 22);
-			this.btnSave.ToolTipText = "Save (Ctrl+S)";
 			this.btnSave.Click += new System.EventHandler(this.Save);
 			// 
 			// toolStripSeparator1
@@ -1001,12 +1000,11 @@ namespace SIL.Transcelerator
 			// 
 			this.txtFilterByPart.AcceptsReturn = true;
 			this.txtFilterByPart.Font = new System.Drawing.Font("Segoe UI", 9F);
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.txtFilterByPart, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.txtFilterByPart, "Type an English word or phrase to filter the list of questions.");
 			this.l10NSharpExtender1.SetLocalizationComment(this.txtFilterByPart, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.txtFilterByPart, "MainWindow.txtFilterByPart");
 			this.txtFilterByPart.Name = "txtFilterByPart";
 			this.txtFilterByPart.Size = new System.Drawing.Size(240, 25);
-			this.txtFilterByPart.ToolTipText = "Type an English word or phrase to filter the list of questions.";
 			this.txtFilterByPart.Enter += new System.EventHandler(this.txtFilterByPart_Enter);
 			this.txtFilterByPart.Leave += new System.EventHandler(this.txtFilterByPart_Leave);
 			this.txtFilterByPart.TextChanged += new System.EventHandler(this.ApplyFilter);
@@ -1024,13 +1022,12 @@ namespace SIL.Transcelerator
 			this.btnSendScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnSendScrReferences.Image = ((System.Drawing.Image)(resources.GetObject("btnSendScrReferences.Image")));
 			this.btnSendScrReferences.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSendScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnSendScrReferences, "Send Scripture References");
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnSendScrReferences, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnSendScrReferences, "MainWindow.btnSendScrReferences");
 			this.btnSendScrReferences.Name = "btnSendScrReferences";
 			this.btnSendScrReferences.Size = new System.Drawing.Size(23, 22);
 			this.btnSendScrReferences.Text = "Send Scripture References";
-			this.btnSendScrReferences.ToolTipText = "Send Scripture References";
 			this.btnSendScrReferences.CheckStateChanged += new System.EventHandler(this.btnSendScrReferences_CheckStateChanged);
 			// 
 			// btnReceiveScrReferences
@@ -1039,13 +1036,12 @@ namespace SIL.Transcelerator
 			this.btnReceiveScrReferences.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnReceiveScrReferences.Image = ((System.Drawing.Image)(resources.GetObject("btnReceiveScrReferences.Image")));
 			this.btnReceiveScrReferences.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnReceiveScrReferences, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnReceiveScrReferences, "Receive Scripture References");
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnReceiveScrReferences, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnReceiveScrReferences, "MainWindow.btnReceiveScrReferences");
 			this.btnReceiveScrReferences.Name = "btnReceiveScrReferences";
 			this.btnReceiveScrReferences.Size = new System.Drawing.Size(23, 22);
 			this.btnReceiveScrReferences.Text = "Receive Scripture References";
-			this.btnReceiveScrReferences.ToolTipText = "Receive Scripture References";
 			this.btnReceiveScrReferences.Click += new System.EventHandler(this.btnReceiveScrReferences_CheckStateChanged);
 			// 
 			// lblFilterIndicator
