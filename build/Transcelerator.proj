@@ -118,13 +118,11 @@
   	<Target Name="RunNUnit" DependsOnTargets ="SetTestAssemblies">
 		<NUnit3
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(NunitConsoleRunnerDir)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"
 			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="false"
 			Verbose="true"
-			OutputXmlFile="$(TestOutputXmlFile)"
-			UseNUnit3Xml = "true"
 			TeamCity="$(TeamCity)"/>
 	</Target>
 

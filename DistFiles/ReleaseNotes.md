@@ -1,4 +1,7 @@
-﻿## 1.5.0 23 September 2020
+﻿## 2.0.0 3 December 2020
+* 64-bit version of Transcelerator for use with Paratext 9.1 and later.
+
+## 1.5.0 23 September 2020
 * Added ability to localize the user interface. (Includes partial localization into Spanish.)
 
 ## 1.4.18 31 July 2020
