@@ -103,19 +103,7 @@
 			 Properties="Configuration=%(Configurations.Identity)" />
 	</Target>
 
-	<Target Name="Test" DependsOnTargets="Build">
-		<CallTarget Targets="RunNUnit"/>
-	</Target>
-
-	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
-
-	<Target Name="SetTestAssemblies">
-		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
-			<Output ItemName="TestAssemblies" TaskParameter="Include" />
-		</CreateItem>
-	</Target>
-  
-  	<Target Name="RunNUnit" DependsOnTargets ="SetTestAssemblies">
+	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
 		<NUnit3
 			Assemblies="@(TestAssemblies)"
 			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"
@@ -124,6 +112,12 @@
 			Force32Bit="false"
 			Verbose="true"
 			TeamCity="$(TeamCity)"/>
+	</Target>
+
+	<Target Name="SetTestAssemblies">
+		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
+			<Output ItemName="TestAssemblies" TaskParameter="Include" />
+		</CreateItem>
 	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers; Build ">
