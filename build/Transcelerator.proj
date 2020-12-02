@@ -3,8 +3,6 @@
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
-    <useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
-    <useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<PackagesDir>$(RootDir)/packages</PackagesDir>
 		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner/tools</NunitConsoleRunnerDir>
 		<BuildTasksDll>$(PackagesDir)/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
@@ -42,7 +40,7 @@
 		<Message Text="BuildHash: $(BuildHash)" Importance="high"/>
 
 		<!-- Mimicking Bloom's strategy of updating the version number here (not on TeamCity, not in the assemblies). -->
-		<CreateProperty Value="1.5.$(BuildCounter)">
+		<CreateProperty Value="2.0.$(BuildCounter)">
 			<Output PropertyName="Version" TaskParameter="Value"/>
 		</CreateProperty>
 		<CreateProperty Value="$(Version).$(BuildHash)">
@@ -123,7 +121,7 @@
 			ToolPath="$(NunitConsoleRunnerDir)"
 			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
-			Force32Bit="$(useNUnit-x86)"
+			Force32Bit="false"
 			Verbose="true"
 			OutputXmlFile="$(TestOutputXmlFile)"
 			UseNUnit3Xml = "true"
