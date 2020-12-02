@@ -104,6 +104,7 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
+		<Message Text="Running NUnit 3 from $(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"/>
 		<NUnit3
 			Assemblies="@(TestAssemblies)"
 			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"
