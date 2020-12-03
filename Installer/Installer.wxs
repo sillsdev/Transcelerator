@@ -430,7 +430,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Feature>
         </Feature>
 
-        <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 7.6 (pre-release)" AllowAdvertise="no">
+        <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 9 Beta" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT9BETA AND UPDATEP9BETAPLUGINCACHE]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN" />
 			<Component Id="CreateP9BetaLocalizationFolder" Directory="INSTALLDIR9BETA_LOCALIZATION" Guid="{CFB970EC-655A-49AA-8D35-FD3F437CAD4B}">
