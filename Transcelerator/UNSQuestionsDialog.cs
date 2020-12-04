@@ -1287,7 +1287,7 @@ namespace SIL.Transcelerator
 		                        "There are {0} questions in the selected range that do not have confirmed translations. Do you " +
 		                        "want to continue? (Untranslated questions will be excluded.)",
 								"Param is a number."), untranslatedQuestions),
-                            m_appName, MessageBoxButtons.YesNo) == DialogResult.No)
+								TxlPlugin.pluginName, MessageBoxButtons.YesNo) == DialogResult.No)
                         {
                             return;
                         }
