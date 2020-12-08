@@ -146,6 +146,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                     <Directory Id="PLUGINDIR8" Name="plugins">
                         <Directory Id="INSTALLDIR8" Name="Transcelerator">
 							<Directory Id="INSTALLDIR8_LOCALIZATION" Name="localization"/>
+							<Directory Id="DocsDirP8" Name="docs"/>
 						</Directory>
                     </Directory>
                 </Directory>
@@ -153,6 +154,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                     <Directory Id="PLUGINDIR9" Name="plugins">
                         <Directory Id="INSTALLDIR9" Name="Transcelerator">
 							<Directory Id="INSTALLDIR9_LOCALIZATION" Name="localization"/>
+							<Directory Id="DocsDirP9" Name="docs"/>
 						</Directory>
                     </Directory>
                 </Directory>
@@ -822,6 +824,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                     <ComponentGroupRef Id="COMPONENTSFORP8PLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
+			<Feature Id="Documentation_P8" Level="1" Title="Documentation" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP8Documentation_en" />
+            </Feature>
         </Feature>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
@@ -846,6 +852,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_fr" />
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
                 </Feature>
+            </Feature>
+			<Feature Id="Documentation_P9" Level="1" Title="Documentation" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9Documentation_en" />
             </Feature>
         </Feature>
 

@@ -1,0 +1,33 @@
+<html>
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+  <title>Preprocessing Question Adjustments</title>
+  <link rel="icon" href="../TXL no TXL.ico">
+  <link rel="stylesheet" type="text/css" href= "TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Advanced: Preprocessing Question Adjustments</h2>
+
+<p> -------- DRAFT DRAFT DRAFT -------- When Transcelerator generates guessed translations, the guesses are based on its ability to statistically match parts of previously translated questions with parts of the English question. These “parts” typically consist of words or short phrases, sometimes even partial words. Since many of the English questions are fairly short, a relatively high percentage of the text of the question is sometimes grammatical fluff (e.g., helping words such as “did” or “does”) that might not be reflected in the vernacular grammar. Additionally, the basic word order used in English questions and the vernacular questions might differ. These kinds of differences might slow Transcelerator down in its ability to figure out what vernacular parts correspond to what English parts. Writing effective Preprocessing Question Adjustments is not particularly intuitive, but if you can figure out a few phrase substitution rules that help align the English to the vernacular, it might speed things up, especially in the early stages of using Transcelerator. If your team does not have anyone with the skills to analyze the differences or you can’t figure out how to convey the necessary adjustment via a rule, do not worry. Transcelerator can still be used successfully without defining any preprocessing question adjustments.</p>
+
+<p>The easiest way to know when a question adjustment is needed is when you are looking at a question and see that the guessed translation is mostly correct but has messed up word order, repeated words, or extra words that don’t make sense. When that happens, on the <span class="ui">Advanced</span> menu, select <span class="ui">Preprocessing Question Adjustments</span>, and then do the following:</p>
+<p>In the <span class="ui">Biblical Terms Rendering Selection Rules</span> dialog box, do any of the following:</p>
+<ol>
+  <li>Note that the question you had selected in the main window is displayed in the <span class="ui">Preview Sample Question</span>. You will probably want to refer to that when writing your rule.</li>
+  <li>To begin to create a new rule, click in the blank line at the bottom of the list of rules.</li>
+  <li>In the column <span class="ui">Word or Phrase to Replace</span>, type the portion of the English question that you want to adjust by reordering, deleting, adding, etc.</li>
+  <li>In the <span class="ui">Replacement</span> column, type the words or phrase as you want them to be adjusted. Note that these should not be translations into the target language. To delete the entire word or phrase you typed in step 3 (e.g., to remove an auxiliary verb), just leave this cell blank.</li>
+  <li>If the rule is case-sensitive, select that check box. (Most rules probably don’t need to be.)</li>
+  <li>In the <span class="ui">Preview Result</span> column, look to see whether your new rule produced a change for the currently selected sample question. If not, then you probably made a mistake in step 3. Or you accidentally typed the same thing in the Replacement box.</li>
+</ol>
+
+<p>If you have other rules, an earlier rule may have also changed the text. If the two changes are completely independent and are likely to be independent for other questions to which they both apply, then the order does not matter. If it is important for the rules to be considered and applied in a particular order, you can move a rule up or down in the list by selecting it and clicking the green up or down arrow to the right of the grid. The <span class="ui">Preview Result</span> column will adjust dynamically as the order of the rules changes.</p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Home</a>
+</body>
+
+</html>

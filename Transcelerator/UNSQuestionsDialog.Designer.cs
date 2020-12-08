@@ -1213,7 +1213,7 @@ namespace SIL.Transcelerator
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "{0} - Transcelerator";
-			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.UNSQuestionsDialog_HelpButtonClicked);
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.browseTopicsToolStripMenuItem_Click);
 			this.Activated += new System.EventHandler(this.UNSQuestionsDialog_Activated);
 			this.Resize += new System.EventHandler(this.UNSQuestionsDialog_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();

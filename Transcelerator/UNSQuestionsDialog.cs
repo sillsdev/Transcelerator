@@ -62,7 +62,7 @@ namespace SIL.Transcelerator
 		private readonly bool m_fVernIsRtoL;
 		private readonly Action<bool> m_selectKeyboard;
 	    private readonly Func<string, IList<int>> m_getTermOccurrences;
-	    private readonly Action m_helpDelegate;
+	    private readonly string m_helpHome;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
 		private LocalizationsFileAccessor m_dataLocalizer;
@@ -385,7 +385,8 @@ namespace SIL.Transcelerator
 			ClearBiblicalTermsPane();
 
 			Text = Format(Text, projectName);
-			HelpButton = (m_helpDelegate != null);
+			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
+			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
@@ -1175,16 +1176,6 @@ namespace SIL.Transcelerator
 						menu.Checked = false;
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the HelpButtonClicked event of the UNSQuestionsDialog control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void UNSQuestionsDialog_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			m_helpDelegate();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2376,7 +2367,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void browseTopicsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Process.Start(FileLocationUtilities.GetFileDistributedWithApplication("docs", "Home.htm"));
+			Process.Start(m_helpHome);
 		}
 
 		private void HandleDisplayLanguageSelected(object sender, EventArgs e)
