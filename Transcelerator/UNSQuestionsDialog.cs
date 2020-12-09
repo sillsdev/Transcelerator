@@ -2516,7 +2516,7 @@ namespace SIL.Transcelerator
 					MessageBox.Show(e.ToString());
 				else
 				{
-					foreach (XmlTranslation unsTranslation in translations)
+					foreach (XmlTranslation unsTranslation in translations.Where(t => !IsNullOrWhiteSpace(t.Translation)))
 					{
 						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.PhraseKey);
 						if (phrase != null && !phrase.IsExcluded)
