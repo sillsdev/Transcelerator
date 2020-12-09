@@ -1,0 +1,11 @@
+{
+  "name": "Transcelerator",
+  "version": "_VERSION_",
+  "date": "_DATE_",
+  "platform": "resource",
+  "platform_version": "",
+  "architecture": "",
+  "file": "ReleaseNotes.md",
+  "type": "md",
+  "build": ""
+}

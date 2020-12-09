@@ -1,6 +1,9 @@
 ﻿## 2.0.0 3 December 2020
 * 64-bit version of Transcelerator for use with Paratext 9.1 and later.
 
+## 1.5.2 27 October 2020
+* Minimum version needed to produce compatible files to import into Scripture Forge.
+
 ## 1.5.0 23 September 2020
 * Added ability to localize the user interface. (Includes partial localization into Spanish.)
 
