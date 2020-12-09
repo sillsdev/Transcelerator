@@ -619,8 +619,15 @@ namespace SIL.Transcelerator
 		        return true;
 	        }
 
+			// In theory questions cannot be added that span multiple sections, but it used to
+			// be possible (and may become possible again in the future?). In any case, if we
+			// find a question that does, we want to keep it with the section that contains the
+			// base question rather than having it get left to be processed totally out of order
+			// in GetTrailingCustomizations. Therefore, rather than strictly checking that the
+			// custom question is wholly contained in the sectionRange (using &&), we just make
+			// sure it at least partially pertains to the sectionRange (using ||).
 	        foreach (var kvpCustomization in customizations
-		        .TakeWhile(c => c.Key.EndRef <= sectionRange.EndRef && c.Key.StartRef >= sectionRange.StartRef)
+		        .TakeWhile(c => c.Key.EndRef <= sectionRange.EndRef || c.Key.StartRef >= sectionRange.StartRef)
 		        .Where(c => c.Value.IsAdditionOfDifferentPhrase)) // If user just changed the reference, it gets dealt with elsewhere.
 			{
 				if (kvpCustomization.Key.Text == question.PhraseInUse)

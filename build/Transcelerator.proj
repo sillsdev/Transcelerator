@@ -154,6 +154,14 @@
 			Regex='_VERSION_'
 			ReplacementText ="$(Version)" />
 			
+		<Copy SourceFiles ="$(RootDir)\DistFiles\template.releasenotes.download_info"
+			DestinationFiles ="$(RootDir)\output\releasenotes.download_info"/>
+
+		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
+			DatePlaceHolder='_DATE_'
+			DateFormat='yyyy-MM-dd'
+			Regex='_VERSION_'
+			ReplacementText ="$(Version)" />
 	</Target>
 
 	<!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one
