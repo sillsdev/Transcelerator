@@ -16,16 +16,39 @@
 <p>To work with rendering selection rules, on the <span class="ui">Advanced</span> menu, select <span class="ui">Biblical Terms Rendering Selection Rules</span>.</p>
 <p>In the <span class="ui">Biblical Terms Rendering Selection Rules</span> dialog box, do any of the following:</p>
 <ul>
-  <li>-------- DRAFT DRAFT DRAFT -------- Create a new rule by clicking <i class="material-icons">Add a <span class="ui">New Rule</span></li>
-  <li><a href="addingquestions.htm"><i class="material-icons">add</i>Adding Questions</a></li>
-  <li><a href="filtering.htm"><i class="material-icons">filter_alt</i>Filtering</a></li>
-  <li><a href="reorderingwords.htm"><i class="material-icons">compare_arrows</i>Reordering Words in a Translation</a></li>
-  <li><a href="adjustments.htm"><i class="material-icons">settings</i>Preprocessing Question Adjustments</a></li>
-  <li><a href="renderingselectionrules.htm"><i class="material-icons">rule</i>Biblical Terms Rendering Selection Rules</a></li>
+  <li><i class="material-icons">add</i>Create a <span class="ui">New Rule</span></li>
+  <li><i class="material-icons">settings</i><span class="ui">Edit</span> the selected rule</li>
+  <li><i class="material-icons">content_copy</i><span class="ui">Copy</span> the selected rule as a starting place to create a new one</li>
+  <li><i class="material-icons">clear</i><span class="ui">Delete</span> the selected rule</li>
+  <li><i class="material-icons">check</i>Select or clear the check box to enable or disable a rule</li>
 </ul>
 
-<h3>Creating or Editing Biblical Terms Rendering Selection Rules</h2>
-<p>-------- DRAFT DRAFT DRAFT -------- </P>
+<h3>Creating or Editing Biblical Terms Rendering Selection Rules</h3>
+<p>When using the <span class="ui">New Rule</span>/<span class="ui">Edit</span><span class="ui"> Rendering Selection Rule</span> dialog box to define a rule, there are two parts to the process:</p>
+<ol>
+  <li>Describe the <span class="emphasis">condition</span> that a biblical term in the original English question must meet in order for a rule to apply. Select the appropriate type of condition:
+    <ul>
+	  <li><span class="ui">Term has a specific suffix</span> - especially useful when an English inflectional suffix (e.g., <span class="literal">-ed</span> or <span class="literal">-ing</span>) corresponds to an inflectional affix in the vernacular target language. Similarly, they can be used when an English derivational suffix (e.g., <span class="literal">-tion</span> or <span class="literal">-ly</span>) consistently results in a particular word class that is easily identified by affixation or some other recognizable feature in the vernacular target language. They might also be useful for terms which have multiple senses, where the desired sense can be inferred from a derivational suffix. However, in these cases, it may prove difficult to define a succinct rule to select the correct rendering.</li>
+	  <li><span class="ui">Term has a specific prefix</span> - generally less useful, since English prefixes seldom correspond to a single word class. However in the case of very productive English prefixes (e.g., <span class="literal">un-</span> or <span class="literal">re-</span>), if the vernacular target language has a corresponding affix, these can be used to define helpful rules.</li>
+	  <li><span class="ui">Term is immediately preceded by a specific word</span> - probably most likely to be useful with English prepositions (e.g., <span class="literal">for</span>, <span class="literal">from</span>, etc.), when the vernacular target language uses a specific case for objects of a proposition and that case can be easily identified by affixation.</li>
+	  <li><span class="ui">Term is immediately followed by a specific word</span> - useful for English terms that are frequently paired with a word such as <span class="literal">girl</span> that conveys gender or some other meaning that is marked in a regular way in the vernacular target language.</li>
+	  <li><span class="ui">User-defined condition</span> - the most flexible option, for any condition you can find a way to express using a regular expression. <span class="note">Note: If you select this option, the <span class="ui">OK</span> button will be unavailable until an expression is entered that contains the <span class="literal">{0}</span> placeholder the represents the biblical term. (This will be the entire surface form of the English term as it occurs in a question.) After clicking <span class="ui">OK</span>, if the regular expression seems to be invalid, a message will appear describing the apparent problem.</span></li>
+	</ul>
+  </li>
+  <li>Define the rule that will be used to select the appropriate term <span class="emphasis">rendering</span> when the condition is satisfied. Select the appropriate type of selection rule:
+    <ul>
+	  <li><span class="ui">Rendering has a specific suffix</span> or <span class="ui">Rendering has a specific prefix</span> - Enter a suffix or prefix in the target vernacular language that corresponds to the inflected form, word class, etc. of the renderings likely to be most useful for the condition defined in step 1.</li>
+	  <li><span class="ui">Rendering meets a user-defined condition</span> - Unlike the regular expression describe above, this regular expression is a <span class="emphasis">selector</span> for a <span class="emphasis">vernacular</span> rendering. So there is no placeholder. Rather, if a question matches the condition defined in step 1, the known renderings will be tested using the regular expression and the first one that is a match will be used as the default. Most often, the regular expression will just need to define a partial match. If you want the expression to be regarded as a match only when it is a full match of the rendering, then be sure to use a start anchor (<span class="literal">^</span>) and end anchor (<span class="literal">$</span>) in your regular expression. See examples below.</li>
+	</ul>
+  </li>
+</ol>
+
+<h3>Examples</h3>
+<p class="example">For a rule that matches an English biblical term ending in <span class="literal">ing</span> and then chooses a vernacular verb ending in <span class="literal">ndo</span>:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">Term has a specific suffix</span> and type <span class="literal">ing</span> in the <span class="ui">Suffix</span> box.</li>
+	<li class="example">Select <span class="ui">Rendering has a specific suffix</span> and type <span class="literal">ndo</span> in the <span class="ui">Vernacular suffix</span> box.</li>
+</ol>
 
 <a href="Home.htm"><i class="material-icons">home</i>Home</a>
 </body>

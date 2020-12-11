@@ -5,6 +5,19 @@ h4.hint {
 p.hint {
 	margin-top: 2px;
 }
+p.example {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	background-color: lightgray;
+}
+ol.example {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+li.example {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
 .keyname {
   font-weight:bold;
   font-family: "Courier New", Courier, monospace;
@@ -16,6 +29,12 @@ p.hint {
   font-style:italic;
 }
 .note {
+  font-style:italic;
+}
+.emphasis {
+  font-style:italic;
+}
+.literal {
   font-style:italic;
 }
 .frame-placeholder {
