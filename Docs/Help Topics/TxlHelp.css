@@ -39,11 +39,18 @@ p.example {
 .literal {
   font-style:italic;
 }
+.note .literal, .hint .literal {
+  font-style:normal;
+}
+.note .emphasis, .hint .emphasis {
+  text-decoration: underline;
+}
 .literal:lang(ml) {
   font-style:normal;
 }
 .text-to-type {
   font-family: "Courier New", Courier, monospace;
+  font-style:normal;
 }
 .frame-placeholder {
   font-style:underline;
