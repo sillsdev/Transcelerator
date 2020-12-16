@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="1.5.5" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="1.5.7" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
@@ -844,15 +844,30 @@
         <note>ID: PhraseSubstitutionsDlg.btnDown</note>
         <target xml:lang="es-ES" state="translated">Abajo</target>
       </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnDown_ToolTip_">
+        <source xml:lang="en">Move Down</source>
+        <note>ID: PhraseSubstitutionsDlg.btnDown_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Mover hacia abajo</target>
+      </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.btnUp">
         <source xml:lang="en">Up</source>
         <note>ID: PhraseSubstitutionsDlg.btnUp</note>
         <target xml:lang="es-ES" state="translated">Arriba</target>
       </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnUp_ToolTip_">
+        <source xml:lang="en">Move Up</source>
+        <note>ID: PhraseSubstitutionsDlg.btnUp_ToolTip_</note>
+        <target xml:lang="es-ES" state="translated">Mover hacia arriba</target>
+      </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.lblInstructions">
-        <source xml:lang="en">Phrase substitutions can be used to pre-process the original comprehension checking questions to align the grammar more closely with that of the target language. For example, adjust word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</source>
+        <source xml:lang="en">Question adjustment rules can be used to pre-process the original English comprehension checking questions to substitute words or phrases and to align the grammar more closely with that of the target language. For example, adjustment rules can alter word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</source>
         <note>ID: PhraseSubstitutionsDlg.lblInstructions</note>
-        <target xml:lang="es-ES" state="needs-translation">Phrase substitutions can be used to pre-process the original comprehension checking questions to align the grammar more closely with that of the target language. For example, adjust word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</target>
+        <target xml:lang="es-ES" state="needs-translation">Question adjustment rules can be used to pre-process the original English comprehension checking questions to substitute words or phrases and to align the grammar more closely with that of the target language. For example, adjustment rules can alter word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the Replacement column blank.\n\nIf you select Regular Expression for a row, a regular expression helper pane will appear when you edit the Word or Phrase to Replace or Replacement cells.</target>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMatchGroup">
+        <source xml:lang="en">Match group</source>
+        <note>ID: PhraseSubstitutionsDlg.lblMatchGroup</note>
+        <target xml:lang="es-ES" state="translated">Grupo de coincidencias</target>
       </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.lblMatchPrefix">
         <source xml:lang="en">Match a prefix</source>
