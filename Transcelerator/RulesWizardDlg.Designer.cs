@@ -779,6 +779,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "RulesWizardDlg.WindowTitle");
@@ -789,6 +790,7 @@ namespace SIL.Transcelerator
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Create Rendering Selection Rule";
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
 			this.grpSelectRendering.ResumeLayout(false);
 			this.grpSelectRendering.PerformLayout();
 			this.m_pnlUserDefinedRenderingMatch.ResumeLayout(false);

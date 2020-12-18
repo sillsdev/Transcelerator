@@ -55,12 +55,11 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			this.lblInstructions = new System.Windows.Forms.Label();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.m_numTimesToMatch = new System.Windows.Forms.NumericUpDown();
 			this.m_btnMatchSingleWord = new System.Windows.Forms.Button();
 			this.lblMaxMatch = new System.Windows.Forms.Label();
@@ -70,6 +69,7 @@ namespace SIL.Transcelerator
 			this.lblMatchPrefix = new System.Windows.Forms.Label();
 			this.lblMatchGroup = new System.Windows.Forms.Label();
 			this.m_cboMatchGroup = new System.Windows.Forms.ComboBox();
+			this.lblInstructions = new System.Windows.Forms.Label();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGridView = new System.Windows.Forms.DataGridView();
@@ -99,19 +99,6 @@ namespace SIL.Transcelerator
 			this.toolStripUpDownButtons.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// lblInstructions
-			// 
-			this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.lblInstructions, "PhraseSubstitutionsDlg.lblInstructions");
-			this.lblInstructions.Location = new System.Drawing.Point(12, 9);
-			this.lblInstructions.Name = "lblInstructions";
-			this.lblInstructions.Size = new System.Drawing.Size(744, 103);
-			this.lblInstructions.TabIndex = 8;
-			this.lblInstructions.Text = resources.GetString("lblInstructions.Text");
 			// 
 			// tableLayoutPanel1
 			// 
@@ -287,6 +274,19 @@ namespace SIL.Transcelerator
 			this.m_cboMatchGroup.TabIndex = 6;
 			this.m_cboMatchGroup.SelectedIndexChanged += new System.EventHandler(this.m_cboMatchGroup_SelectedIndexChanged);
 			// 
+			// lblInstructions
+			// 
+			this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.lblInstructions, "PhraseSubstitutionsDlg.lblInstructions");
+			this.lblInstructions.Location = new System.Drawing.Point(12, 9);
+			this.lblInstructions.Name = "lblInstructions";
+			this.lblInstructions.Size = new System.Drawing.Size(744, 103);
+			this.lblInstructions.TabIndex = 8;
+			this.lblInstructions.Text = resources.GetString("lblInstructions.Text");
+			// 
 			// btnOk
 			// 
 			this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -365,9 +365,9 @@ namespace SIL.Transcelerator
 			// colIsRegEx
 			// 
 			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle3;
 			this.colIsRegEx.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.RegularExpression!Regular Expression";
 			this.colIsRegEx.Name = "colIsRegEx";
 			this.colIsRegEx.ToolTipText = "Select to interpret as a regular expression";
@@ -376,9 +376,9 @@ namespace SIL.Transcelerator
 			// colMatchCase
 			// 
 			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle2.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle4;
 			this.colMatchCase.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.MatchCase!Match Case";
 			this.colMatchCase.Name = "colMatchCase";
 			this.colMatchCase.ToolTipText = "Select to indicat that matches should be case-sensitive";
@@ -516,6 +516,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.lblInstructions);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
+			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "PhraseSubstitutionsDlg.WindowTitle");
@@ -525,6 +526,7 @@ namespace SIL.Transcelerator
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Question Adjustments";
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTimesToMatch)).EndInit();
