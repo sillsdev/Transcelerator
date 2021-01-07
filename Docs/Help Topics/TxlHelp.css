@@ -51,6 +51,7 @@ p.example {
 .text-to-type {
   font-family: "Courier New", Courier, monospace;
   font-style:normal;
+  border: 1px solid green ;
 }
 .frame-placeholder {
   font-style:underline;

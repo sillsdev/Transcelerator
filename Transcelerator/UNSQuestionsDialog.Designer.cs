@@ -58,16 +58,11 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,6 +102,7 @@ namespace SIL.Transcelerator
 			this.mnuShowPhrasesWithMissingKtRenderings = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuMatchWholeWords = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuView = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuViewEditQuestionColumn = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewToolbar = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewBiblicalTermsPane = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -140,7 +136,12 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.browseTopicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEditQuestion = new System.Windows.Forms.DataGridViewImageColumn();
+			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -201,6 +202,7 @@ namespace SIL.Transcelerator
             this.m_colReference,
             this.m_colEnglish,
             this.m_colTranslation,
+            this.m_colEditQuestion,
             this.m_colUserTranslated,
             this.m_colDebugInfo});
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -231,7 +233,7 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.dataGridUns.RowHeadersVisible = false;
 			this.dataGridUns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-			this.dataGridUns.Size = new System.Drawing.Size(792, 203);
+			this.dataGridUns.Size = new System.Drawing.Size(792, 227);
 			this.dataGridUns.TabIndex = 7;
 			this.dataGridUns.VirtualMode = true;
 			this.dataGridUns.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_CellClick);
@@ -250,51 +252,6 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridUns_RowPrePaint);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
-			// 
-			// m_colReference
-			// 
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-			this.m_colReference.Width = 310;
-			// 
-			// m_colEnglish
-			// 
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
-			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
-			this.m_colEnglish.MinimumWidth = 100;
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			// 
-			// m_colTranslation
-			// 
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
-			this.m_colTranslation.MinimumWidth = 100;
-			this.m_colTranslation.Name = "m_colTranslation";
-			// 
-			// m_colUserTranslated
-			// 
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.m_colUserTranslated.Width = 304;
-			// 
-			// m_colDebugInfo
-			// 
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
-    " Details";
-			this.m_colDebugInfo.MinimumWidth = 100;
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
-			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
 			// 
 			// dataGridContextMenu
 			// 
@@ -782,6 +739,7 @@ namespace SIL.Transcelerator
 			this.mnuView.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.mnuView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuViewDebugInfo,
+            this.mnuViewEditQuestionColumn,
             this.mnuViewAnswers,
             this.mnuViewToolbar,
             this.mnuViewBiblicalTermsPane,
@@ -797,6 +755,17 @@ namespace SIL.Transcelerator
 			this.mnuView.Size = new System.Drawing.Size(44, 20);
 			this.mnuView.Text = "&View";
 			this.mnuView.CheckedChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
+			// 
+			// mnuViewEditQuestionColumn
+			// 
+			this.mnuViewEditQuestionColumn.CheckOnClick = true;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewEditQuestionColumn, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewEditQuestionColumn, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewEditQuestionColumn, "MainWindow.UNSQuestionsDialog.editQuestionColumnToolStripMenuItem");
+			this.mnuViewEditQuestionColumn.Name = "mnuViewEditQuestionColumn";
+			this.mnuViewEditQuestionColumn.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewEditQuestionColumn.Text = "Edit &Question Column";
+			this.mnuViewEditQuestionColumn.Click += new System.EventHandler(this.mnuViewEditQuestionColumn_CheckedChanged);
 			// 
 			// mnuViewToolbar
 			// 
@@ -1017,7 +986,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.txtFilterByPart, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.txtFilterByPart, "MainWindow.txtFilterByPart");
 			this.txtFilterByPart.Name = "txtFilterByPart";
-			this.txtFilterByPart.Size = new System.Drawing.Size(240, 25);
+			this.txtFilterByPart.Size = new System.Drawing.Size(200, 25);
 			this.txtFilterByPart.Enter += new System.EventHandler(this.txtFilterByPart_Enter);
 			this.txtFilterByPart.Leave += new System.EventHandler(this.txtFilterByPart_Leave);
 			this.txtFilterByPart.TextChanged += new System.EventHandler(this.ApplyFilter);
@@ -1086,12 +1055,12 @@ namespace SIL.Transcelerator
 			this.m_biblicalTermsPane.ColumnCount = 1;
 			this.m_biblicalTermsPane.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.m_biblicalTermsPane.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_biblicalTermsPane.Location = new System.Drawing.Point(3, 258);
+			this.m_biblicalTermsPane.Location = new System.Drawing.Point(3, 282);
 			this.m_biblicalTermsPane.MinimumSize = new System.Drawing.Size(100, 40);
 			this.m_biblicalTermsPane.Name = "m_biblicalTermsPane";
 			this.m_biblicalTermsPane.RowCount = 1;
 			this.m_biblicalTermsPane.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.m_biblicalTermsPane.Size = new System.Drawing.Size(792, 135);
+			this.m_biblicalTermsPane.Size = new System.Drawing.Size(792, 117);
 			this.m_biblicalTermsPane.TabIndex = 17;
 			this.m_biblicalTermsPane.Resize += new System.EventHandler(this.m_biblicalTermsPane_Resize);
 			// 
@@ -1104,7 +1073,7 @@ namespace SIL.Transcelerator
 			this.m_lblAnswerLabel.Location = new System.Drawing.Point(3, 0);
 			this.m_lblAnswerLabel.Name = "m_lblAnswerLabel";
 			this.m_lblAnswerLabel.Padding = new System.Windows.Forms.Padding(1, 3, 1, 3);
-			this.m_lblAnswerLabel.Size = new System.Drawing.Size(80, 22);
+			this.m_lblAnswerLabel.Size = new System.Drawing.Size(67, 19);
 			this.m_lblAnswerLabel.TabIndex = 0;
 			this.m_lblAnswerLabel.Text = "Answer:";
 			// 
@@ -1116,10 +1085,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswers, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblAnswers, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAnswers, "MainWindow.m_lblAnswers");
-			this.m_lblAnswers.Location = new System.Drawing.Point(89, 0);
+			this.m_lblAnswers.Location = new System.Drawing.Point(76, 0);
 			this.m_lblAnswers.Name = "m_lblAnswers";
 			this.m_lblAnswers.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-			this.m_lblAnswers.Size = new System.Drawing.Size(15, 22);
+			this.m_lblAnswers.Size = new System.Drawing.Size(14, 19);
 			this.m_lblAnswers.TabIndex = 2;
 			this.m_lblAnswers.Text = "#";
 			// 
@@ -1129,10 +1098,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCommentLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCommentLabel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCommentLabel, "MainWindow.m_lblCommentLabel");
-			this.m_lblCommentLabel.Location = new System.Drawing.Point(3, 22);
+			this.m_lblCommentLabel.Location = new System.Drawing.Point(3, 19);
 			this.m_lblCommentLabel.Name = "m_lblCommentLabel";
 			this.m_lblCommentLabel.Padding = new System.Windows.Forms.Padding(1, 3, 1, 3);
-			this.m_lblCommentLabel.Size = new System.Drawing.Size(80, 22);
+			this.m_lblCommentLabel.Size = new System.Drawing.Size(67, 19);
 			this.m_lblCommentLabel.TabIndex = 1;
 			this.m_lblCommentLabel.Text = "Comment:";
 			// 
@@ -1144,10 +1113,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblComments, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblComments, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblComments, "MainWindow.m_lblComments");
-			this.m_lblComments.Location = new System.Drawing.Point(89, 22);
+			this.m_lblComments.Location = new System.Drawing.Point(76, 19);
 			this.m_lblComments.Name = "m_lblComments";
 			this.m_lblComments.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
-			this.m_lblComments.Size = new System.Drawing.Size(15, 22);
+			this.m_lblComments.Size = new System.Drawing.Size(14, 19);
 			this.m_lblComments.TabIndex = 3;
 			this.m_lblComments.Text = "#";
 			// 
@@ -1163,12 +1132,12 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments.Controls.Add(this.m_lblAnswerLabel, 0, 0);
 			this.m_pnlAnswersAndComments.Controls.Add(this.m_lblCommentLabel, 0, 1);
 			this.m_pnlAnswersAndComments.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_pnlAnswersAndComments.Location = new System.Drawing.Point(3, 393);
+			this.m_pnlAnswersAndComments.Location = new System.Drawing.Point(3, 399);
 			this.m_pnlAnswersAndComments.Name = "m_pnlAnswersAndComments";
 			this.m_pnlAnswersAndComments.RowCount = 2;
 			this.m_pnlAnswersAndComments.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.m_pnlAnswersAndComments.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.m_pnlAnswersAndComments.Size = new System.Drawing.Size(792, 44);
+			this.m_pnlAnswersAndComments.Size = new System.Drawing.Size(792, 38);
 			this.m_pnlAnswersAndComments.TabIndex = 19;
 			this.m_pnlAnswersAndComments.Visible = false;
 			this.m_pnlAnswersAndComments.VisibleChanged += new System.EventHandler(this.LoadAnswersAndCommentsIfShowing);
@@ -1177,7 +1146,7 @@ namespace SIL.Transcelerator
 			// 
 			this.m_hSplitter.Cursor = System.Windows.Forms.Cursors.HSplit;
 			this.m_hSplitter.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.m_hSplitter.Location = new System.Drawing.Point(3, 255);
+			this.m_hSplitter.Location = new System.Drawing.Point(3, 279);
 			this.m_hSplitter.Name = "m_hSplitter";
 			this.m_hSplitter.Size = new System.Drawing.Size(792, 3);
 			this.m_hSplitter.TabIndex = 20;
@@ -1189,10 +1158,63 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
 			// 
+			// m_colReference
+			// 
+			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
+			this.m_colReference.Name = "m_colReference";
+			this.m_colReference.ReadOnly = true;
+			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			this.m_colReference.Width = 310;
+			// 
+			// m_colEnglish
+			// 
+			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
+			this.m_colEnglish.MinimumWidth = 100;
+			this.m_colEnglish.Name = "m_colEnglish";
+			this.m_colEnglish.ReadOnly = true;
+			// 
+			// m_colTranslation
+			// 
+			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
+			this.m_colTranslation.MinimumWidth = 100;
+			this.m_colTranslation.Name = "m_colTranslation";
+			// 
+			// m_colEditQuestion
+			// 
+			this.m_colEditQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.m_colEditQuestion.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Edit!Edit";
+			this.m_colEditQuestion.MinimumWidth = 20;
+			this.m_colEditQuestion.Name = "m_colEditQuestion";
+			this.m_colEditQuestion.Width = 227;
+			// 
+			// m_colUserTranslated
+			// 
+			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
+			this.m_colUserTranslated.Name = "m_colUserTranslated";
+			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.m_colUserTranslated.Width = 304;
+			// 
+			// m_colDebugInfo
+			// 
+			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
+    " Details";
+			this.m_colDebugInfo.MinimumWidth = 100;
+			this.m_colDebugInfo.Name = "m_colDebugInfo";
+			this.m_colDebugInfo.ReadOnly = true;
+			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+			// 
 			// UNSQuestionsDialog
 			// 
 			this.AccessibleName = "Transcelerator Main Window";
-			this.AutoScaleBaseSize = new System.Drawing.Size(6, 15);
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(798, 440);
 			this.Controls.Add(this.dataGridUns);
 			this.Controls.Add(this.m_hSplitter);
@@ -1207,7 +1229,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this, "MainWindow.WindowTitle");
 			this.MainMenuStrip = this.m_mainMenu;
-			this.MinimumSize = new System.Drawing.Size(216, 173);
+			this.MinimumSize = new System.Drawing.Size(180, 150);
 			this.Name = "UNSQuestionsDialog";
 			this.Padding = new System.Windows.Forms.Padding(3);
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
@@ -1302,14 +1324,16 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem en_ToolStripMenuItem;
 		private ToolStripMenuItem mnuProduceScriptureForgeFiles;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-		private DataGridViewTextBoxColumn m_colReference;
-		private DataGridViewTextBoxColumn m_colEnglish;
-		private DataGridViewTextBoxColumn m_colTranslation;
-		private DataGridViewCheckBoxColumn m_colUserTranslated;
-		private DataGridViewTextBoxColumn m_colDebugInfo;
 		private ToolStripMenuItem mnuViewDebugInfo;
 		private ToolStripSeparator toolStripSeparator10;
 		private ToolStripMenuItem browseTopicsToolStripMenuItem;
 		private ToolStripMenuItem toolStripMenuItemMoreLanguages;
+		private ToolStripMenuItem mnuViewEditQuestionColumn;
+		private DataGridViewTextBoxColumn m_colReference;
+		private DataGridViewTextBoxColumn m_colEnglish;
+		private DataGridViewTextBoxColumn m_colTranslation;
+		private DataGridViewImageColumn m_colEditQuestion;
+		private DataGridViewCheckBoxColumn m_colUserTranslated;
+		private DataGridViewTextBoxColumn m_colDebugInfo;
 	}
 }

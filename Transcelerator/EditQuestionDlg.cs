@@ -84,6 +84,8 @@ namespace SIL.Transcelerator
 					m_pnlAlternatives.Controls.Add(newBtn);
 					resources.ApplyResources(newBtn, "m_rdoAlternative");
 					m_pnlAlternatives.SetFlowBreak(newBtn, true);
+					newBtn.Padding = m_rdoAlternative.Padding;
+					newBtn.AutoSize = true;
 					InitializeRadioButton(newBtn, i, dataLocalizer);
 					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
