@@ -1,0 +1,78 @@
+<html>
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+  <title>Producing a Checking Script</title>
+  <link rel="icon" href="../TXL no TXL.ico">
+  <link rel="stylesheet" type="text/css" href= "TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Overview of Comprehension Checking</h2>
+
+<p>Comprehension checking is done with members of the language community who were not involved in preparing the translation. It is often desirable to check the translation in multiple passes as improvements are made. It is nearly always advisable to include "Uninitiated Native Speakers" to test the translation with members of the language community who are not believers and who little or no previous exposure to Scripture or familiarity with Christian teaching. If possible, it can also be helpful to check with other members of the community who are more familiar with Scripture with the understanding that the type of feedback from this group will be different from that given by members of UNS group. The purpose of comprehension checking is to identify possible issues of misunderstanding, especially as it relates to participant reference, key biblical terms, foreign concepts, metaphors, rhetorical questions, inferential information, and positive or negative associations. When feedback is properly processed, the resulting translation will be more clear, natural, and accurate. Often, spelling and grammar errors are also identified as part of this process</p>
+<p>Many factors will determine the best way to conduct the checking, including: literacy levels, access to language community, available technology, cultural concerns, time constraints, and the geographical range of the language community (including the existence of a significant diaspora community). Some of the possible approaches include:
+	<ul>
+		<li>Live interview where the interviewer reads the text and questions to the respondent and records the responses</li>
+		<li>Live interview where the respondent reads the text and the interviewer asks questions and records the responses</li>
+		<li>Respondent reads the text and questions and writes out the answers on paper to be collected afterwards</li>
+		<li>Respondent receives the text and questions in electronic form, responds to all the questions and sends the packet of responses via email</li>
+		<li>Respondent accesses individual questions and corresponding text portions using the <a href="https://scriptureforge.org">Scripture Forge</a> website and/or mobile app</li>
+		<li>Respondent receives individual questions and corresponding text portions via SMS, e-mail, etc. and responds ad-hoc</li>
+	</ul>
+	For some projects it might be necessary to use more than one approach to obtain the appropriate feedback. Transcelerator can be used to help facilitate any of these approaches, but there is no complete solution that has been identified to automate the last approach.
+</p>
+<h4 id="overview-and-detail">Question Categories</h4>
+<p>The questions in Transcelerator are broadly grouped into two types: "Overview" questions pertain to the section as a whole, key biblical terms used in the section, or personal/cultural insights that the respondent is asked to think about that relate to the material covered in the section. "Detail" questions generally focus on specific verses or paragraphs within the section. Most detail questions are ordered to correspond to the order of the information presented in the section. However, there are a few places where it is necessary to go back and ask questions later because additional information is presented later in the section that sheds additional light on the content presented earlier. Also, there are a few places where summary questions are asked after the detail questions, even though they cover the section as a whole.</p>
+<p>It is generally desirable to read an entire section before asking questions about it. Before asking detail questions, it can be helpful to re-read the relevant verses. If the section is short or the respondent is literate and can consult the passage, this might not be needed. To facilitate this, the generated HTML script will generally include the relevant text before each detail question unless it pertains to the same verses as the previous detail question.</p>
+
+<h2>Producing a Checking Script</h2>
+
+<p>Once all of the needed questions have been translated for the sections of Scripture to be checked, Transcelerator can help you with the checking process by either generating a checking script or by saving the translated questions in a form that can be imported and used for on-line checking using Scripture Forge. <span class="note">Note: If there are questions you do not wish to use, you can <a href="featureoverview.htm#exclude-question"><i class="material-icons">thumb_down_alt</i>exclude</a> them; but even if you do not, they can be omitted from the checking script.</span></p>
+
+<h2>Generate an HTML Checking Script</h2>
+
+<p>An HTML document can be generated to facilitate any of the above approaches except for the Scripture Forge approach. It can be printed for paper-based checking or used in electronic form. To produce a checking script, do the following:</p>
+<ol>
+	<li>Go to File and select <span class="ui">Generate Checking Script</span>.</li>
+	<li>On the <span class="ui">General</span> tab, select the book, section or range of sections you plan to check.</li>
+	<li>If needed, edit the title and file name of the document.</li>
+	<li>Go to the <span class="ui">Options</span> tab to change what is included in the script:</li>
+	<ul>
+		<li>If you will be working with a separate printout or pre-printed booklet with the Scripture text to be checked, you can save paper by clearing the <span class="ui">Include Entire Passage at the Start of Section</span> option.</li>
+		<li>Verse numbers can be a helpful reference, but they can also be distracting, especially for newer readers and those not familiar with the tradition of using verse numbers in Bibles, so Transcelerator omits them by default. If checking will be conducted by an interviewer who wants to be able to see the verse numbers or the verse numbers will not pose a problem for the respondent, select the <span class="ui">Include verse numbers</span> option.</li>
+		<li>If the script is for use by an interviewer who knows one of the languages of wider communication (LWC) in which the Transcelerator questions are available, it will probably be helpful to select the desired language and include at least the answers and comments in that language. If the interviewer is more comfortable in the LWC, it is probably also helpful to include the questions in the LWC. <span class="note">Note: It is currently not possible to translate the answers and notes into the target vernacular. If this is needed, it is possible to do this manually in the generated HTML, but this is not an optimal solution. Also, note that some of the comments have helpful information that could be relevant during the checking session, while others are primarily for the benefit of the person translating the questions or deciding which questions to include in the script. There is currently no way to include the former and filter out the latter when generating the script.</span></li>
+		<li>It is easy to accidentally overlook questions when translating. If this happens, when Transcelerator produces the script, it can:
+			<ul>
+				<li><span class="ui">Display a Warning Message</span> so you can go back and translate the remaining questions before proceding to generate the script;</li>
+				<li><span class="ui">Use the Original Untranslated Question</span> if the interviewer plans to translate questions on the fly during the checking session;</li>
+				<li>Or <span class="ui">Do Not Include in Script</span> to just omit those questions. (This saves the effort of excluding them and might be useful if you plan to translate and include additional questions in a subsequent round of checking.)</li>
+			</ul>
+		</li>
+		<li>In the rare cases where "detail" questions jump back and ask about previous verses, you might want to re-read the entire relevant passage or just rely on the respondents' memory of what has already been read. By default, in these cases the script will <span class="ui">Just Display the Reference</span> so that it is possible to refer back to the verses if needed. But if you know you will want to re-read it, you can choose to <span class="ui">Output the Text of the Passage</span> again for convenience.</li>
+	</ul>
+	<li>Go to the <span class="ui">Appearance</span> tab to change the formatting used in the script:</li>
+	<ul>
+		<li>The HTML script uses <a href="https://www.w3.org/Style/CSS/">Cascading Style Sheets (CSS)</a> to control formating of the text. To enable the script to be emailed as a single file without loss of the formatting information, by default Transcelerator embeds the style sheet informtation in the HTML. If you want to have greater control over the appearance of your scripts, select the <span class="ui">Use an External CSS File</span> option. The first time you do this, Transcelerator will generate the default style sheet. You can then edit the style sheet as needed and use it for all future scripts to obtain a consistent look. If you ever need to revert to the default, simply select the <span class="ui">Overwrite Existing CSS File</span> option.</li>
+		<li>If you do not want to mess with CSS but you just need to control a few simple appearance details, Transcelerator offers the following settiings:
+			<ul>
+				<li><span class="ui">Extra Lines for Recording Answers</span> is useful when the respondent or interviewer will be writing responses on a paper copy of the script.</li>
+				<li>The colors used for each of the major elements of the script can be set.</li>
+				<li>Question numbers can be turned on or off.</li>
+			</ul>
+		</li>
+	</ul>
+	<li>Click <span class="ui">OK</span>. If there are untranslated questions for the range you selected and you chose the option to display a warning, you will be given the option to continue with the script generation or not. The HTML-based script will be created in the location you chose and it will be opened in your browser (or your system's default program for files with an htm extension).</li>
+	<li>You can print the script directly from your browser program or open it in an HTML editor, word processor or text editor to make desired changes before printing or distributing it.</li>
+</ol>
+
+<h2>Produce Scripture Forge Files</h2>
+
+<p>If you have selected the option to <img src="sf_logo_small.png" height="24"><span class="ui">Produce Scripture Forge Files</span> on the <span class="ui">File</span> menu, these files will be saved whenever you close Transcelerator and will be automatically synchronized when using Send/Receive in Paratext. For more information about using these files in Scripture Forge, read the <a href="https://help.scriptureforge.org/en/#t=Tasks%2FAdministrator_tasks%2FImport_questions_from_Transcelerator.htm&rhsearch=Transcelerator">Help topic</a> on the Scripture Forge website.</p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Home</a>
+</body>
+
+</html>

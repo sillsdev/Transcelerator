@@ -21,9 +21,11 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using L10NSharp;
+using SIL.IO;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -36,6 +38,7 @@ namespace SIL.Transcelerator
 	public partial class RenderingSelectionRulesDlg : Form
 	{
 		private readonly Action<bool> m_selectKeyboard;
+		private readonly string m_help;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -57,6 +60,9 @@ namespace SIL.Transcelerator
 				m_listRules.SelectedIndex = 0;
 			}
 			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (m_listRules.SelectedIndex >= 0);
+
+			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "renderingselectionrules.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		public IEnumerable<RenderingSelectionRule> Rules
@@ -181,6 +187,16 @@ namespace SIL.Transcelerator
 		private void m_listRules_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
 			((RenderingSelectionRule)m_listRules.Items[e.Index]).Disabled = e.NewValue == CheckState.Unchecked;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			Process.Start(m_help);
 		}
 	}
 

@@ -515,6 +515,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.lblInstructions);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
+			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "PhraseSubstitutionsDlg.WindowTitle");
@@ -524,6 +525,7 @@ namespace SIL.Transcelerator
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Question Adjustments";
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTimesToMatch)).EndInit();

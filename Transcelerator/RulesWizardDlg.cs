@@ -11,9 +11,11 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using L10NSharp;
+using SIL.IO;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -27,6 +29,7 @@ namespace SIL.Transcelerator
 	{
 		private RenderingSelectionRule m_rule;
 		private readonly Action<bool> m_selectKeyboard;
+		private readonly string m_help;
 
 		private Func<string, bool> ValidateName { get; }
 
@@ -65,6 +68,9 @@ namespace SIL.Transcelerator
 			m_selectKeyboard = selectKeyboard;
 			ValidateName = nameValidator;
 			m_txtName.Text = m_rule.Name;
+
+			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 
 			if (!creating)
 				Text = LocalizationManager.GetString("RulesWizardDlg.EditRuleCaption",
@@ -323,6 +329,16 @@ namespace SIL.Transcelerator
 			else
 				DialogResult = DialogResult.OK;
 			Close();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			Process.Start(m_help);
 		}
 		#endregion
 

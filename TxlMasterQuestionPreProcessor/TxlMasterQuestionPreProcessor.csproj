@@ -304,9 +304,6 @@ goto copytoparatext
 IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
 
 :copytoparatext
-IF EXIST "C:\Program Files (x86)\Paratext 7" (
-robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 7\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
-if %25ERRORLEVEL%25 GEQ 8 goto failed)
 
 IF EXIST "C:\Program Files (x86)\Paratext 8" (
 robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np

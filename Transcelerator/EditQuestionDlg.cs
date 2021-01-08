@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.
-// <copyright from='2011' to='2017' company='SIL International'>
-//		Copyright (c) 2017, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -84,6 +84,8 @@ namespace SIL.Transcelerator
 					m_pnlAlternatives.Controls.Add(newBtn);
 					resources.ApplyResources(newBtn, "m_rdoAlternative");
 					m_pnlAlternatives.SetFlowBreak(newBtn, true);
+					newBtn.Padding = m_rdoAlternative.Padding;
+					newBtn.AutoSize = true;
 					InitializeRadioButton(newBtn, i, dataLocalizer);
 					newBtn.CheckedChanged += m_rdoAlternative_CheckedChanged;
 				}
