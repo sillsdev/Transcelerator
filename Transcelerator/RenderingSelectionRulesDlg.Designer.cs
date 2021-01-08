@@ -7,10 +7,9 @@
 // </copyright>
 #endregion
 //
-// File: RenderingSelectionRulesDlg.cs
+// File: RenderingSelectionRulesDlg.Designer.cs
 // ---------------------------------------------------------------------------------------------
 using L10NSharp.UI;
-using L10NSharp.XLiffUtils;
 
 namespace SIL.Transcelerator
 {

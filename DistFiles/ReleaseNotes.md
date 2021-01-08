@@ -1,4 +1,15 @@
-﻿## 1.5.0 23 September 2020
+﻿## 1.5.3 8 January 2021
+* Added Help system
+* Added (optional) Edit column
+* Various improvements to filtering and modifying questions.
+
+## 1.5.2 27 October 2020
+* Minimum version needed to produce compatible files to import into Scripture Forge.
+
+## 1.5.2 27 October 2020
+* Minimum version needed to produce compatible files to import into Scripture Forge.
+
+## 1.5.0 23 September 2020
 * Added ability to localize the user interface. (Includes partial localization into Spanish.)
 
 ## 1.4.18 31 July 2020

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.   
-// <copyright from='2011' to='2020 company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.   
+// <copyright from='2011' to='2021 company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -2566,7 +2566,7 @@ namespace SIL.Transcelerator
 					MessageBox.Show(e.ToString());
 				else
 				{
-					foreach (XmlTranslation unsTranslation in translations)
+					foreach (XmlTranslation unsTranslation in translations.Where(t => !IsNullOrWhiteSpace(t.Translation)))
 					{
 						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.PhraseKey);
 						if (phrase != null && !phrase.IsExcluded)
@@ -2934,7 +2934,7 @@ namespace SIL.Transcelerator
 		/// Determines whether the given point is contained within the selected region of text
 		/// in the text control that is currently being used to edit the Translation.
 		/// </summary>
-		/// <param name="position">Point (typically a mouse positon) relative to screen</param>
+		/// <param name="position">Point (typically a mouse position) relative to screen</param>
 		/// ------------------------------------------------------------------------------------
 		private bool IsPointInSelectedTextInTranslationEditingControl(Point position)
 		{

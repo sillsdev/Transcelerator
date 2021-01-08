@@ -321,11 +321,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		void m_cboMatchGroup_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			var selectedItemText = m_cboMatchGroup.Text;
+			if (selectedItemText == String.Empty)
+				return;
 			TextControl.TextChanged -= txtControl_TextChanged;
-			UpdateMatchGroup(m_cboMatchGroup.Text);
+			UpdateMatchGroup(selectedItemText);
 			int i = m_cboMatchGroup.SelectedIndex;
 			m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-			m_cboMatchGroup.Items[0] = m_cboMatchGroup.Text != m_sRemoveItem ? m_sRemoveItem : Empty;
+			m_cboMatchGroup.Items[0] = selectedItemText != m_sRemoveItem ? m_sRemoveItem : Empty;
 			m_cboMatchGroup.SelectedIndex = i;
 			m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
 			TextControl.TextChanged += txtControl_TextChanged;

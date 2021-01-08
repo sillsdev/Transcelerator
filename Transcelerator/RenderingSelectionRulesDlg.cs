@@ -89,7 +89,7 @@ namespace SIL.Transcelerator
 
 			RenderingSelectionRule rule = new RenderingSelectionRule(name);
 
-			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, true, Word.AllWords, m_selectKeyboard, nameIsUnique))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -112,7 +112,7 @@ namespace SIL.Transcelerator
 			string origQ = rule.QuestionMatchingPattern;
 			string origR = rule.RenderingMatchingPattern;
 			Func<string, bool> nameIsUnique = n => !m_listRules.Items.Cast<RenderingSelectionRule>().Where(r => r != rule).Any(r => r.Name == n);
-			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, false, Word.AllWords, m_selectKeyboard, nameIsUnique))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -152,7 +152,7 @@ namespace SIL.Transcelerator
 
 			newRule.Name = name;
 
-			using (RulesWizardDlg dlg = new RulesWizardDlg(newRule, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			using (RulesWizardDlg dlg = new RulesWizardDlg(newRule, true, Word.AllWords, m_selectKeyboard, nameIsUnique))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{

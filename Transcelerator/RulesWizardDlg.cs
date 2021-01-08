@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
+#region // Copyright (c) 2020, SIL International.
+// <copyright from='2011' to='2020' company='SIL International'>
 //		Copyright (c) 2013, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
@@ -39,7 +39,7 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:RulesWizardDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public RulesWizardDlg(RenderingSelectionRule rule, IEnumerable<string> allWordsInQuestions,
+		public RulesWizardDlg(RenderingSelectionRule rule, bool creating, IEnumerable<string> allWordsInQuestions,
 			Action<bool> selectKeyboard, Func<string, bool> nameValidator)
 		{
 			InitializeComponent();
@@ -72,13 +72,14 @@ namespace SIL.Transcelerator
 			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 
+			if (!creating)
+				Text = LocalizationManager.GetString("RulesWizardDlg.EditRuleCaption",
+					"Edit Rendering Selection Rule");
+
 			switch (m_rule.QuestionMatchCriteriaType)
 			{
 				case RenderingSelectionRule.QuestionMatchType.Undefined:
-					Text = LocalizationManager.GetString("RulesWizardDlg.EditRuleCaption",
-						"Edit Rendering Selection Rule");
 					m_rdoSuffix.Checked = true; // default;
-					//SetDetails(m_cboSuffix, string.Empty);
 					return;
 				case RenderingSelectionRule.QuestionMatchType.Suffix:
 					m_rdoSuffix.Checked = true;

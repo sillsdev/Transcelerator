@@ -58,8 +58,8 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.m_numTimesToMatch = new System.Windows.Forms.NumericUpDown();
 			this.m_btnMatchSingleWord = new System.Windows.Forms.Button();
 			this.lblMaxMatch = new System.Windows.Forms.Label();
@@ -251,7 +251,6 @@ namespace SIL.Transcelerator
 			this.lblMatchGroup.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblMatchGroup, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblMatchGroup, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.lblMatchGroup, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.lblMatchGroup, "PhraseSubstitutionsDlg.lblMatchGroup");
 			this.lblMatchGroup.Location = new System.Drawing.Point(3, 7);
 			this.lblMatchGroup.Name = "lblMatchGroup";
@@ -334,7 +333,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.m_dataGridView, "PhraseSubstitutionsDlg.Replacements");
 			this.m_dataGridView.Location = new System.Drawing.Point(12, 180);
 			this.m_dataGridView.Name = "m_dataGridView";
-			this.m_dataGridView.Size = new System.Drawing.Size(744, 207);
+			this.m_dataGridView.Size = new System.Drawing.Size(740, 207);
 			this.m_dataGridView.TabIndex = 9;
 			this.m_dataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_CellEndEdit);
 			this.m_dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.m_dataGridView_CellValueChanged);
@@ -365,9 +364,9 @@ namespace SIL.Transcelerator
 			// colIsRegEx
 			// 
 			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle5.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle5;
 			this.colIsRegEx.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.RegularExpression!Regular Expression";
 			this.colIsRegEx.Name = "colIsRegEx";
 			this.colIsRegEx.ToolTipText = "Select to interpret as a regular expression";
@@ -376,9 +375,9 @@ namespace SIL.Transcelerator
 			// colMatchCase
 			// 
 			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle6.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle6;
 			this.colMatchCase.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.MatchCase!Match Case";
 			this.colMatchCase.Name = "colMatchCase";
 			this.colMatchCase.ToolTipText = "Select to indicat that matches should be case-sensitive";
@@ -460,11 +459,11 @@ namespace SIL.Transcelerator
 			this.toolStripUpDownButtons.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.VerticalStackWithOverflow;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripUpDownButtons, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripUpDownButtons, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStripUpDownButtons, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripUpDownButtons, "PhraseSubstitutionsDlg.toolStripUpDownButtons");
-			this.toolStripUpDownButtons.Location = new System.Drawing.Point(767, 220);
+			this.toolStripUpDownButtons.Location = new System.Drawing.Point(762, 220);
 			this.toolStripUpDownButtons.Name = "toolStripUpDownButtons";
-			this.toolStripUpDownButtons.Size = new System.Drawing.Size(24, 48);
+			this.toolStripUpDownButtons.Padding = new System.Windows.Forms.Padding(0, 0, 6, 0);
+			this.toolStripUpDownButtons.Size = new System.Drawing.Size(29, 48);
 			this.toolStripUpDownButtons.TabIndex = 14;
 			// 
 			// btnUp
@@ -473,7 +472,7 @@ namespace SIL.Transcelerator
 			this.btnUp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnUp.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Up_icon;
 			this.btnUp.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnUp, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnUp, "Move Up");
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnUp, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnUp, "PhraseSubstitutionsDlg.btnUp");
 			this.btnUp.Name = "btnUp";
@@ -487,7 +486,7 @@ namespace SIL.Transcelerator
 			this.btnDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this.btnDown.Image = global::SIL.Transcelerator.Properties.Resources.Arrow_Down_icon;
 			this.btnDown.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnDown, null);
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnDown, "Move Down");
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnDown, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnDown, "PhraseSubstitutionsDlg.btnDown");
 			this.btnDown.Name = "btnDown";
