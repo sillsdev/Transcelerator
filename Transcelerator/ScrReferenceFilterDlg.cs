@@ -49,25 +49,24 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Properties
+		private bool ReferencesSetToEntireScriptureRange =>
+			scrPsgFrom.ScReference == m_firstAvailableRef && scrPsgTo.ScReference == m_lastAvailableRef;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the From reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BCVRef FromRef
-		{
-			get { return scrPsgFrom.ScReference; }
-		}
+		public BCVRef FromRef => ReferencesSetToEntireScriptureRange?  BCVRef.Empty :
+			scrPsgFrom.ScReference;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the To reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public BCVRef ToRef
-		{
-			get { return scrPsgTo.ScReference; }
-		}
+		public BCVRef ToRef=> ReferencesSetToEntireScriptureRange ? BCVRef.Empty :
+			scrPsgTo.ScReference;
 		#endregion
 
 		#region Event handlers

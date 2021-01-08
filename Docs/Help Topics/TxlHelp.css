@@ -27,6 +27,9 @@ p.example {
 .ui {
   font-weight:bold;
 }
+.key-name {
+  font-weight:bold;
+}
 .hint {
   font-style:italic;
 }

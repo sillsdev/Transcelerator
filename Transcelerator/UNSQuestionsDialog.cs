@@ -1108,8 +1108,8 @@ namespace SIL.Transcelerator
 				RememberCurrentSelection();
 				clearCurrentSelection = true;
 			}
-            Func<int, int, string, bool> refFilter = (m_startRef == BCVRef.Empty) ? null :
-				new Func<int, int, string, bool>((start, end, sref) => m_endRef >= start && m_startRef <= end);
+            var refFilter = m_startRef == BCVRef.Empty ? null :
+				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef >= start && m_startRef <= end);
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
             dataGridUns.RowEnter -= dataGridUns_RowEnter;
@@ -2185,11 +2185,15 @@ namespace SIL.Transcelerator
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					m_startRef = dlg.FromRef;
-					m_endRef = dlg.ToRef;
-                    Properties.Settings.Default.FilterStartRef = m_startRef;
-                    Properties.Settings.Default.FilterEndRef = m_endRef;
-					ApplyFilter();
+					// If nothing changed, don't waste time re-filtering.
+					var newStartRefValue = dlg.FromRef;
+					var newEndRefValue = dlg.ToRef;
+					if (m_startRef != newStartRefValue || m_endRef != newEndRefValue)
+					{
+						Properties.Settings.Default.FilterStartRef = m_startRef = newStartRefValue;
+						Properties.Settings.Default.FilterEndRef = m_endRef = newEndRefValue;
+						ApplyFilter();
+					}
 				}
 			}
 		}

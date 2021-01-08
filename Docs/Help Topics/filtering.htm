@@ -11,8 +11,32 @@
 <body lang=EN-US>
 
 <h2>Filtering</h2>
+<p>Transcelerator allows the questions in the main window to be filtered in three different ways. When the questions are filtered, it only affects which questions you see in the table, not which questions will be included when generating a checking script or producing <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a> output files. <span = class="note">Note: If you do not want to use a particular question at all, you can <a href="editingquestions.htm#excluding">exclude</a> it.</p>
 
-<p>...</p>
+<h3>Reference Range</h3>
+<p>Over the normal course of a Scripture translation project, a team will usually be focusing on checking specific books or portions. Therefore, it is important to be able to filter the questions to see only the ones that are relevant for the passage or passages that are currently of interest. Note that the built-in questions in Transcelerator are based on the "English" versification. When generating scripts, verse numbers are converted to the versification used in the project if necessary; however, this filter dialog box uses the English versification. To filter by reference range, do the following:</p>
+<ol>
+  <li>On the <span class="ui">Filter menu</span> select <span class="ui">Set Reference Range</span>.</li>
+  <li>To enter the start and end references in the <span class="ui">From</span> and <span class="ui">To</span> boxes, do one of the following:</li>
+  <ul>
+    <li>Drop down the list of books and select one. Then select a chapter number fom the list. Finally, select a verse number. <span class="note">Note: The arrow keys and <span class=key-name">Enter</span> can be used to select the desired book, chapter, and verse. If you press <span class=key-name">Esc</span> or click away from the box before selecting all three components of the reference, any selections made will be reverted.</span></li>
+    <li>Type the full reference using the <a href="https://wiki.crosswire.org/OSIS_Book_Abbreviations">standard Paratext 3-letter book code</a> followed by a space, then the chapter number, a colon and the verse number.</li>
+  </ul>
+  <li>Click <span class="ui">OK</span> to apply the selected reference range</li>
+</ol>
+<p>To remove a reference range filter, in the <span class="ui">Filter by Reference</span> dialog box, click <span class="ui">Clear Filter</span>.</p>
+
+<h3>Questions with Biblical Terms</h3>
+<p>To filter the list of questions to show only those which have no key biblical terms or whose biblical terms have vernacular renderings, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show Questions Where All Terms Have Renderings</span>. This filter can be used to allow a translator to focus on questions that do not have terms with no identified renderings, perhaps while waiting for decisions to be made about how to render certain terms.</p>
+<p>On the other hand, it might be also be helpful to see questions that use key biblical terms which are lacking renderings in the target vernacular in order to prioritize the decision-making process for those terms. To filter the list of questions to show only those which have key biblical terms lacking any vernacular renderings, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show Questions With Terms Missing Renderings</span>.</p>
+<p>To remove either of the above filters, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show All (no filter)</span>. This will not clear the other types of filters.</p>
+<p><span class="note">Note: In cases where a key biblical term does not have any user-confirmed renderings, it is still considered to have a rendering if Paratext is able to make a statistically likely guess at the renderings. See <a href="biblicalterms.htm">more information about biblical terms</a>.</span></p>
+
+<h3>Textual Filters</h3>
+<p>To look for questions that ask about a specific topic, use a certain term, or have a particular phrase or grammatical construct of interest, Transcelerator offers general textual filtering. This filtering applies to the source questions (in the current user interface language), not to translations. To filter for a particular word or phrase, type it in the <span class="ui">Question Filter</span> box on the main window's toolbar. To match whole words only, on the <span class="ui">Filter menu</span>, select <span class="ui">Match Whole Words When Filtering</span>. To remove a textual filter, simply delete the text in the <span class="ui">Question Filter</span> box.</p>
+
+<h3>Filter Status</h3>
+<p>The rightmost portion of toolbar in the main widnow indicates whether the data is currently filtered or unfiltered. Next to that you can see the number of questions that remain to be translated of those currently showing. If there is a filter set, these counts will include only those questions that match the the filter.</p>
 
 <a href="Home.htm"><i class="material-icons">home</i>Home</a>
 </body>
