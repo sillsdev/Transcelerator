@@ -62,8 +62,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
-	<Compile Include="..\output\installer\GeneratedDocFiles.wxs">
-      <Link>GeneratedDistFiles.wxs</Link>
+	<Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
+      <Link>GeneratedDocFilesP9.wxs</Link>
+    </Compile>
+	<Compile Include="..\output\installer\GeneratedDocFilesP8.wxs">
+      <Link>GeneratedDocFilesP8.wxs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
