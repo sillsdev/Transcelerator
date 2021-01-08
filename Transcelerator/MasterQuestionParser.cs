@@ -692,8 +692,7 @@ namespace SIL.Transcelerator
                             q.StartRef = section.StartRef;
                             q.EndRef = section.EndRef;
                         }
-						if (q.StartRef == 0 || q.EndRef == 0)
-							Debug.WriteLine(q.Text);
+
                         if (currBookCustomizations != null)
                         {
                             foreach (var question in GetCustomizations(q, section, category, iQuestion, currBookCustomizations))
