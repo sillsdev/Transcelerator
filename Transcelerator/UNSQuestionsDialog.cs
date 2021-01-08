@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.   
-// <copyright from='2011' to='2020 company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.   
+// <copyright from='2011' to='2021 company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -33,6 +33,7 @@ using DesktopAnalytics;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using SIL.IO;
 using SIL.WritingSystems;
 using static System.String;
 using File = System.IO.File;
@@ -61,7 +62,7 @@ namespace SIL.Transcelerator
 		private readonly bool m_fVernIsRtoL;
 		private readonly Action<bool> m_selectKeyboard;
 	    private readonly Func<string, IList<int>> m_getTermOccurrences;
-	    private readonly Action m_helpDelegate;
+	    private readonly string m_helpHome;
 		private readonly Action<IList<string>> m_lookupTermDelegate;
 		private readonly bool m_fEnableDragDrop;
 		private LocalizationsFileAccessor m_dataLocalizer;
@@ -384,7 +385,8 @@ namespace SIL.Transcelerator
 			ClearBiblicalTermsPane();
 
 			Text = Format(Text, projectName);
-			HelpButton = (m_helpDelegate != null);
+			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
+			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
@@ -405,6 +407,7 @@ namespace SIL.Transcelerator
 			MaximumHeightOfKeyTermsPane = Properties.Settings.Default.MaximumHeightOfKeyTermsPane;
 			mnuProduceScriptureForgeFiles.Checked = Properties.Settings.Default.ProduceScriptureForgeFiles;
 			mnuAutoSave.Checked = Properties.Settings.Default.AutoSave;
+			mnuViewEditQuestionColumn.Checked = m_colEditQuestion.Visible = Properties.Settings.Default.ShowEditColumn;
 
 			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
 			translationCellStyle.Font = vernFont;
@@ -917,6 +920,12 @@ namespace SIL.Transcelerator
 				dataGridUns.Columns.Add(m_colDebugInfo);
 		}
 
+		private void mnuViewEditQuestionColumn_CheckedChanged(object sender, EventArgs e)
+		{
+			ToolStripMenuItem item = (ToolStripMenuItem)sender;
+			Properties.Settings.Default.ShowEditColumn = m_colEditQuestion.Visible = item.Checked;
+		}
+
 		private void mnuViewAnswersColumn_CheckedChanged(object sender, EventArgs e)
 		{
 			m_pnlAnswersAndComments.Visible = ShowAnswersAndComments;
@@ -925,16 +934,27 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
 		{
 			var tp = m_helper[e.RowIndex];
-			switch (e.ColumnIndex)
+			if (e.ColumnIndex == m_colReference.Index)
+				e.Value = tp.Reference;
+			else if (e.ColumnIndex == m_colEnglish.Index)
+				e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedString(tp.ToUIDataString());
+			else if (e.ColumnIndex == m_colEditQuestion.Index)
 			{
-				case 0: e.Value = tp.Reference; break;
-				case 1:
-					e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedString(tp.ToUIDataString());
-					break;
-				case 2: e.Value = tp.Translation; break;
-				case 3: e.Value = tp.HasUserTranslation; break;
-				case 4: e.Value = tp.DebugInfo; break;
+				if (tp.ModifiedPhrase != null || tp.IsUserAdded)
+					e.Value = Resources.iconfinder_edit_3855617___user_added;
+				else if (tp.IsExcluded)
+					e.Value = Resources.iconfinder_edit_3855617___excluded;
+				else if (tp.AlternateForms != null)
+					e.Value = Resources.iconfinder_edit_3855617___with_alternatives;
+				else
+					e.Value = Resources.iconfinder_edit_3855617;
 			}
+			else if (e.ColumnIndex == m_colTranslation.Index)
+				e.Value = tp.Translation;
+			else if (e.ColumnIndex == m_colUserTranslated.Index)
+				e.Value = tp.HasUserTranslation;
+			else if (e.ColumnIndex == m_colDebugInfo.Index)
+				e.Value = tp.DebugInfo;
 		}
 
 		private void dataGridUns_CellValuePushed(object sender, DataGridViewCellValueEventArgs e)
@@ -965,6 +985,14 @@ namespace SIL.Transcelerator
 		{
 			if (e.ColumnIndex == m_colTranslation.Index)
 				dataGridUns.BeginEdit(true);
+			if (e.ColumnIndex == m_colEditQuestion.Index)
+			{
+				var tp = m_helper[e.RowIndex];
+				if (tp.IsExcluded)
+					IncludeOrExcludeQuestion(false);
+				else
+					mnuEditQuestion_Click(sender, e);
+			}
 		}
 
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -983,11 +1011,14 @@ namespace SIL.Transcelerator
 		private void dataGridUns_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			int iClickedCol = e.ColumnIndex;
+			var clickedColumn = dataGridUns.Columns[iClickedCol];
+			if (clickedColumn.SortMode != DataGridViewColumnSortMode.Automatic)
+				return;
 			// We want to sort it ascending unless it already was ascending.
-			bool sortAscending = (dataGridUns.Columns[iClickedCol].HeaderCell.SortGlyphDirection != SortOrder.Ascending);
+			bool sortAscending = clickedColumn.HeaderCell.SortGlyphDirection != SortOrder.Ascending;
 			if (!sortAscending)
 			{
-				dataGridUns.Columns[iClickedCol].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+				clickedColumn.HeaderCell.SortGlyphDirection = SortOrder.Descending;
 			}
 			else
 			{
@@ -1077,8 +1108,8 @@ namespace SIL.Transcelerator
 				RememberCurrentSelection();
 				clearCurrentSelection = true;
 			}
-            Func<int, int, string, bool> refFilter = (m_startRef == BCVRef.Empty) ? null :
-				new Func<int, int, string, bool>((start, end, sref) => m_endRef >= start && m_startRef <= end);
+            var refFilter = m_startRef == BCVRef.Empty ? null :
+				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef >= start && m_startRef <= end);
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
             dataGridUns.RowEnter -= dataGridUns_RowEnter;
@@ -1174,16 +1205,6 @@ namespace SIL.Transcelerator
 						menu.Checked = false;
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles the HelpButtonClicked event of the UNSQuestionsDialog control.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		private void UNSQuestionsDialog_HelpButtonClicked(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			m_helpDelegate();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1502,12 +1523,15 @@ namespace SIL.Transcelerator
 
 		private void ProduceScriptureForgeFiles()
 		{
-			var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
-
-			foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers))
+			using (new WaitCursor(this))
 			{
-				m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
-					questionsForBook.BookId, questionsForBook);
+				var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
+
+				foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers))
+				{
+					m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
+						questionsForBook.BookId, questionsForBook);
+				}
 			}
 		}
 
@@ -2021,7 +2045,19 @@ namespace SIL.Transcelerator
 			if (dataGridUns.CurrentRow == null)
 				return;
 
-			CurrentPhrase.IsExcluded = (sender == mnuExcludeQuestion);
+			IncludeOrExcludeQuestion(sender == mnuExcludeQuestion);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the current phrase to be included or excluded.
+		/// </summary>
+		/// <param name="exclude">Flag indicating whether this is a request to exclude (or
+		/// include) the current question.</param>
+		/// ------------------------------------------------------------------------------------
+		private void IncludeOrExcludeQuestion(bool exclude)
+		{
+			CurrentPhrase.IsExcluded = exclude;
 			Save(true, true);
 			var addressToSelect = dataGridUns.CurrentCellAddress;
 			ApplyFilter();
@@ -2149,11 +2185,15 @@ namespace SIL.Transcelerator
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
-					m_startRef = dlg.FromRef;
-					m_endRef = dlg.ToRef;
-                    Properties.Settings.Default.FilterStartRef = m_startRef;
-                    Properties.Settings.Default.FilterEndRef = m_endRef;
-					ApplyFilter();
+					// If nothing changed, don't waste time re-filtering.
+					var newStartRefValue = dlg.FromRef;
+					var newEndRefValue = dlg.ToRef;
+					if (m_startRef != newStartRefValue || m_endRef != newEndRefValue)
+					{
+						Properties.Settings.Default.FilterStartRef = m_startRef = newStartRefValue;
+						Properties.Settings.Default.FilterEndRef = m_endRef = newEndRefValue;
+						ApplyFilter();
+					}
 				}
 			}
 		}
@@ -2366,6 +2406,16 @@ namespace SIL.Transcelerator
 			{
 				dlg.ShowDialog();
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the browseTopicsToolStripMenuItem control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void browseTopicsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Process.Start(m_helpHome);
 		}
 
 		private void HandleDisplayLanguageSelected(object sender, EventArgs e)
