@@ -1,4 +1,4 @@
-﻿## 2.0.1 8 January 2021
+﻿## 2.0.1 11 January 2021
 * Added Help system
 * Added (optional) Edit column
 * Various improvements to filtering and modifying questions.

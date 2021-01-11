@@ -180,10 +180,10 @@
 		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
 		<MakeWixForDirTree
 			DirectoryReferenceId="DocsDirP9Beta"
-			ComponentGroupId="COMPONENTSFORP8BetaDocumentation_en"
+			ComponentGroupId="COMPONENTSFORP9BetaDocumentation_en"
 			RootDirectory="$(RootDir)\Docs\Help Topics"
 			InstallerSourceDirectory="$(RootDir)\Installer"
-			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFiles.wxs"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9Beta.wxs"
 			MatchRegExPattern=".*"
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
@@ -193,7 +193,7 @@
 			ComponentGroupId="COMPONENTSFORP9Documentation_en"
 			RootDirectory="$(RootDir)\Docs\Help Topics"
 			InstallerSourceDirectory="$(RootDir)\Installer"
-			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFiles.wxs"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9.wxs"
 			MatchRegExPattern=".*"
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
