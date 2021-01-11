@@ -209,6 +209,14 @@ namespace DataIntegrityTests
 									"Question unexpectedly starts outside of containing section: " + line);
 							}
 						}
+						else
+						{
+							// This is important because the logic in MasterQuestionParser only fills in the
+							// start and end references from the section (typical for Overview questions) if
+							// the scrref attribute is not defined. If those values are not set, then sorting
+							// and filtering gets messed up.
+							Assert.IsFalse(matchScrRef.Success, "If scrref is defined, start and end refs should be non-zero: " + line);
+						}
 
 						matchEndRef = regexEndRef.Match(line, startPos);
 						Assert.That(matchEndRef.Success, "Question does not contain a valid endref attribute: " + line);

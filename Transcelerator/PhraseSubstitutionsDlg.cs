@@ -17,7 +17,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
+using SIL.IO;
 using SilUtils.Controls;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -37,6 +39,7 @@ namespace SIL.Transcelerator
 		public const string kEntireMatch = "Entire match";
 		private const string kContiguousLettersMatchExpr = @"(\w+)";
 		protected readonly string m_sRemoveItem;
+		private readonly string m_help;
 
 		#region Constructor and initialization methods
 		/// ------------------------------------------------------------------------------------
@@ -73,6 +76,9 @@ namespace SIL.Transcelerator
 
 			m_txtMatchPrefix.Tag = @"\b{0}";
 			m_txtMatchSuffix.Tag = @"{0}\b";
+
+			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 		#endregion
 
@@ -155,7 +161,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				Match match = FindSelectedMatch(s_matchSubstGroup);
-				string group = match.Success ? match.Result("${numeric}${named}") : string.Empty;
+				string group = match.Success ? match.Result("${numeric}${named}") : Empty;
 				return (group == "0" || group == "&") ? kEntireMatch : group;
 			}
 		}
@@ -191,7 +197,7 @@ namespace SIL.Transcelerator
 				{
 					m_cboMatchGroup.Items.AddRange(matchGroups);
 					string sGroup = ExistingMatchGroup;
-					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? m_sRemoveItem : string.Empty);
+					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? m_sRemoveItem : Empty);
 					m_regexReplaceDropDown.Show(m_dataGridView, cellDisplayRect.Left, cellDisplayRect.Bottom + 1);
 				}
 				else
@@ -286,7 +292,7 @@ namespace SIL.Transcelerator
 			}
 			SelectExistingPrefixOrSuffix(format);
 			int selRestore = TextControl.SelectionStart + format.IndexOf("{0}");
-			ReplaceSelectedTextInCurrentEditControl(string.Format(format, sText));
+			ReplaceSelectedTextInCurrentEditControl(Format(format, sText));
 			TextControl.SelectionStart = selRestore;
 			TextControl.SelectionLength = sText.Length;
 			UpdateRegExHelperControls();
@@ -315,11 +321,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		void m_cboMatchGroup_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			var selectedItemText = m_cboMatchGroup.Text;
+			if (selectedItemText == String.Empty)
+				return;
 			TextControl.TextChanged -= txtControl_TextChanged;
-			UpdateMatchGroup(m_cboMatchGroup.Text);
+			UpdateMatchGroup(selectedItemText);
 			int i = m_cboMatchGroup.SelectedIndex;
 			m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-			m_cboMatchGroup.Items[0] = m_cboMatchGroup.Text != m_sRemoveItem ? m_sRemoveItem : string.Empty;
+			m_cboMatchGroup.Items[0] = selectedItemText != m_sRemoveItem ? m_sRemoveItem : Empty;
 			m_cboMatchGroup.SelectedIndex = i;
 			m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
 			TextControl.TextChanged += txtControl_TextChanged;
@@ -425,6 +434,16 @@ namespace SIL.Transcelerator
 
 			m_dataGridView.CurrentCell = nextRow.Cells[m_dataGridView.CurrentCell.ColumnIndex];
 		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			Process.Start(m_help);
+		}
 		#endregion
 
 		#region Private/protected helper methods
@@ -491,10 +510,10 @@ namespace SIL.Transcelerator
 				}
 				else
 				{
-					if (index == m_dataGridView.RowCount - 1 && string.IsNullOrEmpty(sub.MatchingPattern))
+					if (index == m_dataGridView.RowCount - 1 && IsNullOrEmpty(sub.MatchingPattern))
 					{
 						// Don't display error message in the "New" row.
-						row.Cells[colPreviewResult.Index].Value = string.Empty;
+						row.Cells[colPreviewResult.Index].Value = Empty;
 					}
 					else
 					{
@@ -527,7 +546,7 @@ namespace SIL.Transcelerator
 			{
 				string sExisting = ExistingMatchGroup;
 				m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-				m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? m_sRemoveItem : string.Empty;
+				m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? m_sRemoveItem : Empty;
 				m_cboMatchGroup.SelectedIndex = m_cboMatchGroup.FindStringExact(sExisting);
 				m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
 			}
@@ -566,7 +585,7 @@ namespace SIL.Transcelerator
 				if (numTimesToMatch > 1)
 				{
 					string minRange = match.Result("${minMatches}");
-					if (String.IsNullOrEmpty(minRange))
+					if (IsNullOrEmpty(minRange))
 						minRange = "1,";
 					text = match.Result("$`${expressionToRepeat}");
 					insertAt = text.Length;
@@ -617,7 +636,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected void UpdateMatchGroup(string sGroup)
 		{
-			if (string.IsNullOrEmpty(sGroup))
+			if (IsNullOrEmpty(sGroup))
 				throw new ArgumentException("Parameter must not be null or empty", "sGroup");
 
 			if (sGroup == kEntireMatch)
@@ -720,7 +739,7 @@ namespace SIL.Transcelerator
 		private string GetExistingAffix(string format)
 		{
 			Match match = FindAffixExpression(format);
-			return (match.Success) ? match.Result("$1") : string.Empty;
+			return (match.Success) ? match.Result("$1") : Empty;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -736,7 +755,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private Match FindAffixExpression(string format)
 		{
-			Regex matchPattern = new Regex(string.Format(format.Replace(@"\b", @"\\b"), kContiguousLettersMatchExpr));
+			Regex matchPattern = new Regex(Format(format.Replace(@"\b", @"\\b"), kContiguousLettersMatchExpr));
 			return FindSelectedMatch(matchPattern);
 		}
 

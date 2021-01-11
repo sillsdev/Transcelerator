@@ -1,5 +1,13 @@
-﻿## 2.0.0 3 December 2020
+﻿## 2.0.1 11 January 2021
+* Added Help system
+* Added (optional) Edit column
+* Various improvements to filtering and modifying questions.
+
+## 2.0.0 3 December 2020
 * 64-bit version of Transcelerator for use with Paratext 9.1 and later.
+
+## 1.5.2 27 October 2020
+* Minimum version needed to produce compatible files to import into Scripture Forge.
 
 ## 1.5.2 27 October 2020
 * Minimum version needed to produce compatible files to import into Scripture Forge.

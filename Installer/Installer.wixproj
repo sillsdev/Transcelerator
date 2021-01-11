@@ -63,6 +63,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
+	<Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
+      <Link>GeneratedDocFilesP9.wxs</Link>
+    </Compile>
+	<Compile Include="..\output\installer\GeneratedDocFilesP9Beta.wxs">
+      <Link>GeneratedDocFilesP9Beta.wxs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUtilExtension">

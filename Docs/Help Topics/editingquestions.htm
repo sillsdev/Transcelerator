@@ -1,0 +1,50 @@
+<html> 
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+  <title>Editing Questions</title>
+  <link rel="icon" href="../TXL no TXL.ico">
+  <link rel="stylesheet" type="text/css" href= "TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Editing Questions</h2>
+
+<p>Transcelerator allows for the wording of the source questions to be modified. There are two reasons why you would likely want to edit the source questions:</p>
+<ol>
+  <li>The main reason is to improve wording to make translation easier. For example, if a question uses a word or grammatical construction that is unlikely to be familiar to the person translating the question and you can think of a simpler way of expressing the idea, it would probably make sense to reword the question.</li>
+  <li>Even if the translator understands the wording of the source question, if the question is going to be asked in a very different way in the target vernacular, the mismatch between the words and expressions used in the source question and the translated question will make it difficult for Transcelerator to make any useful conclusions about the best way to translate them. In most cases, this is of lesser concern, but in some cases, it could be worth the effort to better align the wording of the source question to the translation.</li>
+</ol>
+<p>Probably the most common case where you will want to modify a source question is when it has variants with <a href="#alternates">alternate wording</a>. You should <span class="emphasis">not</span> edit an existing question to change it to ask something totally different. The answers and comments (if any) corresponding to the original question are not editable, so they will not make sense if you change the question in this way. Instead, you should <a href="#excluding">exclude</a> the question and <a href="addingquestions.htm">add a new question</a>.</p>
+
+<h3 id="edit-column">Using the Edit Column</h3>
+<p>The <span class="ui">Edit</span> column is useful when customizing source questions. The icons displayed in this column serve both as visual indicators of the state of the question (whether it is modified, excluded, etc.) and as a short-cut button so you do not have to open the context menu to access the command to modify the question. Here are what each of the icons signifies:</p>
+<ul>
+  <li><img src="iconfinder_edit_3855617.png">The ordinary icon displayed for most questions.</li>
+  <li><img src="iconfinder_edit_3855617 - user-added.png">Indicates a question which was either user-added or modified.</li>
+  <li><img src="iconfinder_edit_3855617 - with-alternatives.png">This brighter icon indicates a question which has predetermined <a href="#alternates">alternate wording</a> options available but has not been user-modified or had an alternate selected.</li>
+  <li><img src="iconfinder_edit_3855617 - excluded.png">Indicates a question which the user chose to <a href="#excluding">exclude</a>. This icon will only appear when <a href="#view-excluded-questions">showing excluded questions</a>. Unlike the other icons in the <span class="ui">Edit</span> column, clicking this icon will not open the <span class="ui">Edit Question</span> dialog box; rather, it will re-include the question.</li>
+</ul>
+<p>The <span class="ui">Edit</span> column is hidden by default. To display it, on the <span class="ui">View</span> menu, select <span class="ui">Edit Question Column</span>. To avoid confusion and to conserve useful screen space, you will probably want to keep this column hidden when working on the normal translation task in Transcelerator.</p>
+
+<h3 id="alternates">Questions with Alternate Wording</h3>
+<p>Many of the built-in questions in Transcelerator have variants with alternate wording. In most cases, these questions will have slashes or square brackets indicating alternate and optional words. It is possible to translate the questions to reflect all the alternate and optional words, using punctuation similar to that used in the source questions. However, this will usually result in questions that are harder to read and understand, so normally you will want to translate a single, simple form of the question. The optional parts (in brackets) should be included only when you think it will make the question easier for the respondent to understand. If you are displaying the <a href="#edit-column"><span class="ui">Edit</span> column</a>, it will be easy to see which questions have alternate forms because that column will display the <img src="iconfinder_edit_3855617 - with-alternatives.png"> icon. It is not necessary to select a single alternate form of the question (or edit it to create your own preferred wording), but doing so will generally make it easier to translate without getting confused. The following section explains how Transcelerator enables you to do this easily.</p>
+
+<h3>Using the Edit Question dialog box</h3>
+<p>You can open the <span class="ui">Edit Question</span> dialog box either by clicking the icon in the <a href="#edit-column"><span class="ui">Edit</span> column</a> or by opening the context menu in the main grid and selecting <span class="ui">Edit Question</span>.</p>
+<p>The top portion of the <span class="ui">Edit Question</span> dialog box shows the original version of the question. If you had previously edited a question and later realized you made a mistake, you can click <span class="ui">Reset</span> to return to the original version. You can use that as your starting place if edits are needed. <span class="note">Note: In most cases, if the question has variants with <a href="#alternates">alternate wording</a>, the text of the original question will be a "messy" version that includes all of the alternate and optional parts.</span></p>
+<p>If the question has variants with <a href="#alternates">alternate wording</a>, the middle portion of the <span class="ui">Edit Question</span> dialog box will have a series of options representing all the predetermined alternate forms of the question. Usually, there are only a few options to choose from, but very complex questions can have many alternate forms. In those cases, it can be a little tricky to read through them all and ensure that you are selecting the desired version. <span class="hint">Hint: If there are more options than can be seen, you can increase the size of the dialog box to make the other versions visible.</span></p>
+<p>The bottom portion of the <span class="ui">Edit Question</span> dialog box has a box where you can edit the question as needed. If the question has alternates, first choose the best alternate, and then make any additional changes. When you click <span class="ui">OK</span>, whatever is in the <span class="ui">Question to Use</span> box is what will appear in the main grid.</p>
+
+<p><span class="note">Note: If the questions are being displayed in a language other than English and the question has a localized version, the <span class="ui">Edit Question</span> dialog box will display the localized version of the question and any localized alternates, if applicable. If you save a modified version of the question that does not correspond exactly to a localized alternate version, the modified version (in whichever language you entered it) will be displayed in the grid even if you later change to display the questions in a different localized language. Sorry, but there is no way to save custom modified versions of the question in multiple languages.</span></p>
+
+<h3 id="excluding">Excluding Questions</h3>
+<p>If a question is redundant, does not seem appropriate or meaningful in the target culture or language, or is otherwise not needed, it can be excluded. This will cause it to disappear from the main display and be omitted from any generated scripts or <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a> output files. To exclude a question, open the context menu and select <span class="ui">Exclude Question</span>.</p>
+<p id="view-excluded-questions"><span class="note">Note: If you previously excluded questions and want to see them, on the <span class="ui">View</span> menu, select <span class="ui">Excluded Questions</span>. Excluded questions are highlighted with a colored background to make them easy to distinguish from the other questions. To re-include a previously excluded question, use the <span class="ui">Include Question</span> command on the context menu or click the <img src="iconfinder_edit_3855617 - excluded.png"> icon in the <span class="ui">Edit</span> column.</span></p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Home</a>
+</body>
+
+</html>
