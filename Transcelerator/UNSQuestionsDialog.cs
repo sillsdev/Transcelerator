@@ -375,7 +375,7 @@ namespace SIL.Transcelerator
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			SetControlTagsToFormatStringsAndFormatMenus();
+			HandleStringsLocalized();
 
             Location = Properties.Settings.Default.WindowLocation;
 			WindowState = Properties.Settings.Default.DefaultWindowState;
@@ -2720,6 +2720,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdateCountsAndFilterStatus()
 		{
+			if (m_helper == null)
+				return; // Not ready yet. We'll get back here later...
 			if (m_helper.FilteredPhraseCount == m_helper.UnfilteredPhraseCount)
 			{
 				lblFilterIndicator.Text = (string)lblFilterIndicator.Tag;
