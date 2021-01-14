@@ -132,10 +132,7 @@ namespace SIL.Transcelerator
         /// Gets all the underlying term IDs.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public IEnumerable<string> AllTermIds
-        {
-            get { return m_termSurrogate.BiblicalTermIds; }
-        }
+        public IEnumerable<string> AllTermIds => m_termSurrogate.BiblicalTermIds;
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -143,10 +140,7 @@ namespace SIL.Transcelerator
         /// last column of the grid).
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public string DebugInfo
-        {
-            get { return "KT: " + Translation; }
-        }
+        public string DebugInfo => "KT: " + Translation;
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -168,13 +162,8 @@ namespace SIL.Transcelerator
         /// Gets the rendering info (if any) corresponding to this key term object
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        private KeyTermRenderingInfo RenderingInfo
-        {
-            get
-            {
-                return s_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == m_termSurrogate.TermId);
-            }
-        }
+        private KeyTermRenderingInfo RenderingInfo =>
+            s_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == m_termSurrogate.TermId);
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -184,7 +173,7 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         public string BestRendering
         {
-            get { return Translation; }
+            get => Translation;
             set
             {
                 m_bestTranslation = value.Normalize(NormalizationForm.FormC);
@@ -196,8 +185,8 @@ namespace SIL.Transcelerator
                 }
                 else
                     info.PreferredRendering = m_bestTranslation;
-                if (BestRenderingChanged != null)
-                    BestRenderingChanged(this);
+                
+                BestRenderingChanged?.Invoke(this);
                 UpdateRenderingInfoFile();
             }
         }

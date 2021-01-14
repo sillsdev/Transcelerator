@@ -43,7 +43,7 @@ namespace SIL.Transcelerator
 	    private TxlSplashScreen splashScreen;
 		private UNSQuestionsDialog unsMainWindow;
 		private IHost host;
-		private string projectName;
+		private string m_projectName;
 
 		public void RequestShutdown()
 		{
@@ -86,9 +86,8 @@ namespace SIL.Transcelerator
                 // and Activate is a no-op. But we do need to use a temp variable because it could
                 // get set to null between the time we check for null and the call to Activate.
                 TxlSplashScreen tempSplashScreen = splashScreen;
-                if (tempSplashScreen != null)
-                    tempSplashScreen.Activate();
-            }
+				tempSplashScreen?.Activate();
+			}
 	    }
 
 	    public void Run(IHost ptHost, string activeProjectName)
@@ -108,7 +107,7 @@ namespace SIL.Transcelerator
 				Application.EnableVisualStyles();
 
 				host = ptHost;
-				projectName = activeProjectName;
+				m_projectName = activeProjectName;
 #if DEBUG
 				MessageBox.Show("Attach debugger now (if you want to)", pluginName);
 #endif
@@ -129,7 +128,7 @@ namespace SIL.Transcelerator
 
 				Thread mainUIThread = new Thread(() =>
 				{
-					InitializeErrorHandling(projectName);
+					InitializeErrorHandling(m_projectName);
 
                     const string kMajorList = "Major";
 
@@ -178,7 +177,7 @@ namespace SIL.Transcelerator
 							{
 								try
 								{
-									string keyboard = host.GetProjectKeyboard(projectName);
+									string keyboard = host.GetProjectKeyboard(m_projectName);
 									if (!string.IsNullOrEmpty(keyboard))
 										Keyboard.Controller.GetKeyboard(keyboard).Activate();
 
@@ -189,8 +188,8 @@ namespace SIL.Transcelerator
 									// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
 									// calls work with no exception. Paratext seems to make this same call without any exceptions. The
 									// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
-									// in PalasoUIWindowsForms that throws the COM exception says that an E_FAIL is an unspecified error,
-									// so that's fairly helpful.
+									// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
+									// unspecified error, so that's fairly helpful.
 									if (!(e.InnerException is COMException))
 										throw;
 								}
@@ -199,9 +198,9 @@ namespace SIL.Transcelerator
 								Keyboard.Controller.ActivateDefaultKeyboard();
 						};
 
-                        var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, projectName, fileId),
-                            (fileId, reader) => host.PutPlugInData(this, projectName, fileId, reader),
-                            fileId => host.GetPlugInDataLastModifiedTime(this, projectName, fileId));
+                        var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, m_projectName, fileId),
+                            (fileId, reader) => host.PutPlugInData(this, m_projectName, fileId, reader),
+                            fileId => host.GetPlugInDataLastModifiedTime(this, m_projectName, fileId));
 
 						bool fEnableDragDrop = true;
 						try
@@ -214,18 +213,18 @@ namespace SIL.Transcelerator
 						{
 						}
 						
-						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, projectName,
+						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, m_projectName,
                             () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
-                            termId => host.GetProjectTermRenderings(projectName, termId, true),
-                            host.GetProjectFont(projectName),
-						    host.GetProjectLanguageId(projectName, "generate templates"),
-							host.GetProjectSetting(projectName, "Language"), host.GetProjectRtoL(projectName),
-						    fileAccessor, host.GetScriptureExtractor(projectName, ExtractorType.USFX),
-                            () => host.GetCssStylesheet(projectName), host.ApplicationName,
+                            termId => host.GetProjectTermRenderings(m_projectName, termId, true),
+                            host.GetProjectFont(m_projectName),
+						    host.GetProjectLanguageId(m_projectName, "generate templates"),
+							host.GetProjectSetting(m_projectName, "Language"), host.GetProjectRtoL(m_projectName),
+						    fileAccessor, host.GetScriptureExtractor(m_projectName, ExtractorType.USFX),
+                            () => host.GetCssStylesheet(m_projectName), host.ApplicationName,
                             new ScrVers(host, TxlCore.kEnglishVersificationName),
-						    new ScrVers(host, host.GetProjectVersificationName(projectName)), startRef,
-						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, projectName, termId),
-						    terms => host.LookUpKeyTerm(projectName, terms), fEnableDragDrop, preferredUiLocale);
+						    new ScrVers(host, host.GetProjectVersificationName(m_projectName)), startRef,
+						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, m_projectName, termId),
+						    terms => host.LookUpKeyTerm(m_projectName, terms), fEnableDragDrop, preferredUiLocale);
 					    splashScreen = null;
 					}
 
