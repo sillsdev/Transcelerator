@@ -46,7 +46,7 @@ namespace SIL.Transcelerator
 				m_lblCopyright.Text = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 			m_lblCopyright.Text = Format(LocalizationManager.GetString("TransceleratorInfo.CopyrightFmt",
 					"{0}. Distributable under the terms of the MIT License.",
-					"Param is copyright information. This is display in the Help/About box and the splash screen"),
+					"Param is copyright information. This is displayed in the Help/About box and the splash screen"),
 				m_lblCopyright.Text.Replace("(C)", "©"));
 
 			string version = assembly.GetName().Version.ToString();

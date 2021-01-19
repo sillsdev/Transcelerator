@@ -109,8 +109,8 @@ Global
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|x64.Build.0 = Debug|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|x86.ActiveCfg = Debug|x86
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|x86.Build.0 = Debug|x86
-		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x64.Build.0 = Release|x64
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x64.ActiveCfg = Release - Copy To Paratext|x64
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x64.Build.0 = Release - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x86.ActiveCfg = Release|x86
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x86.Build.0 = Release|x86
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release|x64.ActiveCfg = Release|x64
