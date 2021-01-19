@@ -1165,7 +1165,6 @@ namespace SIL.Transcelerator
 			this.m_colReference.Name = "m_colReference";
 			this.m_colReference.ReadOnly = true;
 			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
 			this.m_colReference.Width = 310;
 			// 
 			// m_colEnglish
@@ -1209,7 +1208,6 @@ namespace SIL.Transcelerator
 			this.m_colDebugInfo.MinimumWidth = 100;
 			this.m_colDebugInfo.Name = "m_colDebugInfo";
 			this.m_colDebugInfo.ReadOnly = true;
-			this.m_colDebugInfo.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
 			// 
 			// UNSQuestionsDialog
 			// 

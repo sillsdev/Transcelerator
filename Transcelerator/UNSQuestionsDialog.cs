@@ -983,6 +983,8 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
+			if (e.RowIndex < 0)
+				return;
 			if (e.ColumnIndex == m_colTranslation.Index)
 				dataGridUns.BeginEdit(true);
 			if (e.ColumnIndex == m_colEditQuestion.Index)
@@ -1012,7 +1014,7 @@ namespace SIL.Transcelerator
 		{
 			int iClickedCol = e.ColumnIndex;
 			var clickedColumn = dataGridUns.Columns[iClickedCol];
-			if (clickedColumn.SortMode != DataGridViewColumnSortMode.Automatic)
+			if (clickedColumn.SortMode == DataGridViewColumnSortMode.NotSortable)
 				return;
 			// We want to sort it ascending unless it already was ascending.
 			bool sortAscending = clickedColumn.HeaderCell.SortGlyphDirection != SortOrder.Ascending;
@@ -1034,14 +1036,16 @@ namespace SIL.Transcelerator
 
 		private void SortByColumn(int iClickedCol, bool sortAscending)
 		{
-			switch (iClickedCol)
-			{
-				case 0: m_helper.Sort(PhrasesSortedBy.Reference, sortAscending); break;
-				case 1: m_helper.Sort(PhrasesSortedBy.EnglishPhrase, sortAscending); break;
-				case 2: m_helper.Sort(PhrasesSortedBy.Translation, sortAscending); break;
-				case 3: m_helper.Sort(PhrasesSortedBy.Status, sortAscending); break;
-				case 4: m_helper.Sort(PhrasesSortedBy.Default, sortAscending); break;
-			}
+			if (iClickedCol == m_colReference.Index)
+				m_helper.Sort(PhrasesSortedBy.Reference, sortAscending);
+			else if (iClickedCol == m_colEnglish.Index)
+				m_helper.Sort(PhrasesSortedBy.EnglishPhrase, sortAscending);
+			else if (iClickedCol == m_colTranslation.Index)
+				m_helper.Sort(PhrasesSortedBy.Translation, sortAscending);
+			else if (iClickedCol == m_colUserTranslated.Index)
+				m_helper.Sort(PhrasesSortedBy.Status, sortAscending);
+			else if (iClickedCol == m_colDebugInfo.Index)
+				m_helper.Sort(PhrasesSortedBy.Default, sortAscending);
 		}
 
 		/// ------------------------------------------------------------------------------------
