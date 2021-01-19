@@ -1347,11 +1347,6 @@
         <note>ID: TxlInfo.m_lblCopyright</note>
         <target xml:lang="es-ES" state="translated">(C) 2011-2020, SIL Internacional.</target>
       </trans-unit>
-      <trans-unit id="m_lblAlternative">
-        <source xml:lang="en">#</source>
-        <note>ID: m_lblAlternative</note>
-        <target xml:lang="es-ES" state="translated">#</target>
-      </trans-unit>
     </body>
   </file>
 </xliff>

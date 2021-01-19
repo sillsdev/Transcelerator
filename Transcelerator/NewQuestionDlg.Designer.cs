@@ -218,6 +218,7 @@ namespace SIL.Transcelerator
 			this.m_lblAlternative.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAlternative, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAlternative, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblAlternative, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblAlternative, "m_lblAlternative");
 			this.m_lblAlternative.Location = new System.Drawing.Point(148, 0);
 			this.m_lblAlternative.Name = "m_lblAlternative";
