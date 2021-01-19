@@ -369,6 +369,7 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
+			Text = Format(Text, m_projectName);
 			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
 			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
@@ -419,7 +420,6 @@ namespace SIL.Transcelerator
 		
 		private void HandleStringsLocalized()
 		{
-			Text = Format(Text, m_projectName);
 			SetControlTagsToFormatStringsAndFormatMenus();
 			UpdateCountsAndFilterStatus();
 		}
