@@ -111,10 +111,10 @@ namespace SIL.Transcelerator
 		#region Properties
 		private DataGridViewTextBoxEditingControl TextControl { get; set;}
 		private bool RefreshNeeded { get; set; }
-		internal int MaximumHeightOfKeyTermsPane
+		private int MaximumHeightOfKeyTermsPane
 		{
-			get { return m_maximumHeightOfKeyTermsPane; }
-			private set { m_maximumHeightOfKeyTermsPane = Math.Max(38, value); }
+			get => m_maximumHeightOfKeyTermsPane;
+			set => m_maximumHeightOfKeyTermsPane = Math.Max(38, value);
 		}
 
 		private SortedDictionary<string, string> AvailableLocales { get; } = new SortedDictionary<string, string>();
@@ -126,7 +126,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private bool PostponeRefresh
 		{
-			get { return m_postponeRefresh; }
+			get => m_postponeRefresh;
 			set
 			{
 				if (value && !m_postponeRefresh)
@@ -137,13 +137,11 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		internal PhraseTranslationHelper.KeyTermFilterType CheckedKeyTermFilterType
+		private PhraseTranslationHelper.KeyTermFilterType CheckedKeyTermFilterType
 		{
-			get
-			{
-				return (PhraseTranslationHelper.KeyTermFilterType)mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
-			}
-			private set
+			get => (PhraseTranslationHelper.KeyTermFilterType)mnuFilterBiblicalTerms
+				.DropDownItems.Cast<ToolStripMenuItem>().First(menu => menu.Checked).Tag;
+			set
 			{
 				mnuFilterBiblicalTerms.DropDownItems.Cast<ToolStripMenuItem>().First(
                     menu => (PhraseTranslationHelper.KeyTermFilterType)menu.Tag == value).Checked = true;
@@ -151,9 +149,9 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		protected bool SaveNeeded
+		private bool SaveNeeded
 		{
-			get { return btnSave.Enabled; }
+			get => btnSave.Enabled;
 			set
 			{
 				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
@@ -163,7 +161,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		protected IEnumerable<int> AvailableBookIds
+		private IEnumerable<int> AvailableBookIds
 		{
 			get
 			{
@@ -186,10 +184,10 @@ namespace SIL.Transcelerator
 		/// word matches.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal bool MatchWholeWords
+		private bool MatchWholeWords
 		{
-			get { return mnuMatchWholeWords.Checked; }
-			set { mnuMatchWholeWords.Checked = value; }
+			get => mnuMatchWholeWords.Checked;
+			set => mnuMatchWholeWords.Checked = value;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -197,10 +195,10 @@ namespace SIL.Transcelerator
 		/// Gets or sets a value indicating whether toolbar is displayed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal bool ShowToolbar
+		private bool ShowToolbar
 		{
-			get { return mnuViewToolbar.Checked; }
-			set { mnuViewToolbar.Checked = value; }
+			get => mnuViewToolbar.Checked;
+			set => mnuViewToolbar.Checked = value;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -209,13 +207,13 @@ namespace SIL.Transcelerator
 		/// on the questions.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal bool ShowAnswersAndComments
+		private bool ShowAnswersAndComments
 		{
-			get { return mnuViewAnswers.Checked; }
-			set { mnuViewAnswers.Checked = value; }
+			get => mnuViewAnswers.Checked;
+			set => mnuViewAnswers.Checked = value;
 		}
 
-		protected TranslatablePhrase CurrentPhrase
+		private TranslatablePhrase CurrentPhrase
 		{
 			get
 			{
@@ -229,14 +227,8 @@ namespace SIL.Transcelerator
 		/// Gets a value indicating whether a cell in the Translation column is the current cell.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool InTranslationCell
-		{
-			get
-			{
-				return dataGridUns.CurrentCell != null &&
-				  dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index;
-			}
-		}
+		private bool InTranslationCell => dataGridUns.CurrentCell != null &&
+			dataGridUns.CurrentCell.ColumnIndex == m_colTranslation.Index;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -244,20 +236,13 @@ namespace SIL.Transcelerator
 		/// Translation column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private bool EditingTranslation
-		{
-			get
-			{
-				return InTranslationCell && dataGridUns.IsCurrentCellInEditMode;
-			}
-		}
-
+		private bool EditingTranslation => InTranslationCell &&
+			dataGridUns.IsCurrentCellInEditMode;
 		#endregion
 
 		#region Constructors
 	    static UNSQuestionsDialog()
 	    {
-
 		    // On Windows, CommonApplicationData is actually the preferred location for this because it is not user-specific, but we do it this way to make it work on Linux.
 			try
 			{
@@ -384,14 +369,14 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
-			Text = Format(Text, projectName);
+			Text = Format(Text, m_projectName);
 			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
 			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
 			mnuShowPhrasesWithMissingKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithoutRenderings;
-			SetControlTagsToFormatStringsAndFormatMenus();
+			HandleStringsLocalized();
 
             Location = Properties.Settings.Default.WindowLocation;
 			WindowState = Properties.Settings.Default.DefaultWindowState;
@@ -899,8 +884,8 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
 			m_lastTranslationSelectionState = null;
-			if (e.ColumnIndex == m_colTranslation.Index && m_selectKeyboard != null)
-				m_selectKeyboard(true);
+			if (e.ColumnIndex == m_colTranslation.Index)
+				m_selectKeyboard?.Invoke(true);
 			if (e.ColumnIndex != m_colUserTranslated.Index || e.RowIndex != m_lastTranslationSet)
 				m_lastTranslationSet = -1;
 		}
@@ -1159,16 +1144,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == 4)
+			if (e.ColumnIndex == m_colDebugInfo.Index)
 			{
-				StringBuilder sbldr = new StringBuilder();
+				var sbldr = new StringBuilder();
 				sbldr.AppendLine("Key Terms:");
-				foreach (KeyTermMatch keyTermMatch in m_helper[e.RowIndex].GetParts().OfType<KeyTermMatch>())
+				foreach (var keyTerm in m_helper[e.RowIndex].GetParts().OfType<KeyTerm>())
 				{
-					foreach (string sEnglishTerm in keyTermMatch.AllTerms.Select(term => term.Term))
-					{
-						sbldr.AppendLine(sEnglishTerm);
-					}
+					foreach (var sTermId in keyTerm.AllTermIds)
+						sbldr.AppendLine(sTermId);
 				}
 				MessageBox.Show(sbldr.ToString(), "More Key Term Debug Info");
 			}
@@ -2447,9 +2430,9 @@ namespace SIL.Transcelerator
 				dlg.ShowDialog(this);
 			}
 		}
-#endregion
+		#endregion
 
-#region Private helper methods
+		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the Scripture reference of the row corresponding to the given index.
@@ -2607,9 +2590,8 @@ namespace SIL.Transcelerator
 		{
 			if (keyTermRulesFilename == null)
 				keyTermRulesFilename = Path.Combine(m_installDir, kKeyTermRulesFilename);
-			Exception e;
 
-			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out e);
+			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out var e);
 			if (e != null)
 				MessageBox.Show(e.ToString(), Text);
 			else
@@ -2738,6 +2720,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdateCountsAndFilterStatus()
 		{
+			if (m_helper == null)
+				return; // Not ready yet. We'll get back here later...
 			if (m_helper.FilteredPhraseCount == m_helper.UnfilteredPhraseCount)
 			{
 				lblFilterIndicator.Text = (string)lblFilterIndicator.Tag;
@@ -2905,9 +2889,9 @@ namespace SIL.Transcelerator
 				contents.Text = loc.ToString(Environment.NewLine + "\t");
 			}
 		}
-#endregion
+		#endregion
 
-#region Drag-drop stuff
+		#region Drag-drop stuff
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Catch a left-mouse down in selected text when translation is being edited to
@@ -3081,7 +3065,7 @@ namespace SIL.Transcelerator
 	#region class SubstringDescriptor
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Simple class to allow methods to pass an offset and a length in order to descibe a
+	/// Simple class to allow methods to pass an offset and a length in order to describe a
 	/// substring.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
@@ -3090,10 +3074,7 @@ namespace SIL.Transcelerator
 		public int Start { get; set; }
 		public int Length { get; set; }
 
-		public int EndOffset
-		{
-			get { return Start + Length; }
-		}
+		public int EndOffset => Start + Length;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3118,5 +3099,5 @@ namespace SIL.Transcelerator
 			Length = textBoxCtrl.SelectionLength;
 		}
 	}
-#endregion
+	#endregion
 }
