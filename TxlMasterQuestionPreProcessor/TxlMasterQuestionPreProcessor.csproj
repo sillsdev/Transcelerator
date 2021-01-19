@@ -305,12 +305,9 @@ IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
 
 :copytoparatext
 
-IF EXIST "C:\Program Files (x86)\Paratext 8" (
-robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 8\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
-if %25ERRORLEVEL%25 GEQ 8 goto failed)
-
-IF EXIST "C:\Program Files (x86)\Paratext 9" (
-robocopy $(TargetDir) "C:\Program Files (x86)\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
+IF EXIST "C:\Program Files\Paratext 9" (
+@echo Copying Transcelerator Pre-processor plugin files to Paratext 9 plugin folder...
+robocopy $(TargetDir) "C:\Program Files\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed)
 
 :done
