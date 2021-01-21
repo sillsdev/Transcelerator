@@ -82,6 +82,7 @@ namespace SIL.Transcelerator
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
 		private static Regex s_regexGlossaryEntry;
+		private static Regex s_regexUsxElement;
 		private static Regex s_regexVerseNumbers;
 		private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
@@ -1282,9 +1283,6 @@ namespace SIL.Transcelerator
                         InRange = (tp) => tp.StartRef >= startRef && tp.EndRef <= endRef;
                     }
 
-					if (Properties.Settings.Default.GenerateIncludeVerseNumbers && s_regexVerseNumbers == null)
-						s_regexVerseNumbers = new Regex("(<verse number=\")([^\"]+)(\" style=\"v\")\\s\\/>", RegexOptions.Compiled);
-
                     List<TranslatablePhrase> allPhrasesInRange = m_helper.AllActivePhrasesWhere(InRange).ToList();
                     if (dlg.m_rdoDisplayWarning.Checked)
                     {
@@ -1359,7 +1357,8 @@ namespace SIL.Transcelerator
 	                        {
 		                        try
 		                        {
-			                        sw.Write(GetExtractedScripture(startRef, endRef));
+			                        sw.Write(GetExtractedScripture(startRef, endRef,
+										Properties.Settings.Default.GenerateIncludeVerseNumbers));
 		                        }
 		                        catch (Exception ex)
 		                        {
@@ -1524,68 +1523,52 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the requested range of Scripture text.
+		/// Gets the requested range of Scripture text with the following cleanup:
+		/// Remove USX element
+		/// Change para elements (and style attributes) to div elements (and class attributes)
+		/// Remove char style elements that wrap glossary entries.
+		/// If requested, converts verse number notation into usable HTML
 		/// </summary>
+		/// <remarks>ENHANCE: Rather than getting the data as USFX and doing these somewhat
+		/// kludgy cleanup steps, we could implement an HTML extractor in Paratext and let it
+		/// do the transformation using its XSLT scripts.</remarks>
 		/// ------------------------------------------------------------------------------------
-		private string GetExtractedScripture(int startRef, int endRef)
+		private string GetExtractedScripture(int startRef, int endRef, bool includeVerseNumbers)
 		{
-			StringBuilder extractedScr = new StringBuilder();
-
-			BCVRef startRefTemp = new BCVRef(startRef);
-			BCVRef endRefTemp = new BCVRef(endRef);
-			int endChapter = endRefTemp.Chapter;
-			if (endRefTemp.Chapter > startRefTemp.Chapter)
-			{
-				endRefTemp = new BCVRef(startRefTemp);
-				endRefTemp.Verse = m_projectVersification.GetLastVerse(endRefTemp.Book, endRefTemp.Chapter);
-			}
-
-			for (;;)
-			{
-				extractedScr.Append(GetExtractedScriptureFromSingleChapter(startRefTemp.BBCCCVVV, endRefTemp.BBCCCVVV));
-				extractedScr.Append(Environment.NewLine);
-				if (endRefTemp.Chapter == endChapter)
-					break;
-				startRefTemp.Chapter++;
-				startRefTemp.Verse = 1;
-				if (startRefTemp.Chapter == endChapter)
-					endRefTemp = new BCVRef(endRef);
-				else
-				{
-					endRefTemp.Chapter++;
-					endRefTemp.Verse = m_projectVersification.GetLastVerse(endRefTemp.Book, endRefTemp.Chapter);
-				}
-			}
-			if (Properties.Settings.Default.GenerateIncludeVerseNumbers)
-				return s_regexVerseNumbers.Replace(extractedScr.ToString(), "$1$2$3>$2</verse>");
-			return extractedScr.ToString();
+			m_scrExtractor.IncludeVerseNumbers = includeVerseNumbers;
+			return ConvertUsxToHtml(m_scrExtractor.Extract(startRef, endRef), includeVerseNumbers);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the requested range of Scripture text. (Until Paratext 7.5 is available, this
-		/// is limited to text within a single chapter.)
+		/// Does the following cleanup:
+		/// Remove USX element
+		/// Change para elements (and style attributes) to div elements (and class attributes)
+		/// Remove char style elements that wrap glossary entries.
+		/// If requested, converts verse number notation into usable HTML
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private string GetExtractedScriptureFromSingleChapter(int startRef, int endRef)
+		internal static string ConvertUsxToHtml(string usx, bool includeVerseNumbers)
 		{
-			StringBuilder extractedScr = new StringBuilder(m_scrExtractor.Extract(startRef, endRef));
-			// ENHANCE: Rather than getting the data as USFX and doing these somewhat-kludgey cleanup
-			// steps, we could implement an HTML extractor in Paratext and let it do the transformation
-			// using its XSLT scripts.
-			const string usfxHead = "<usx version=\"2.0\">";
-			const string usfxTail = "</usx>";
-			if (extractedScr.ToString(0, usfxHead.Length) == usfxHead)
-				extractedScr.Remove(0, usfxHead.Length);
-			if (extractedScr.ToString(extractedScr.Length - usfxTail.Length, usfxTail.Length) == usfxTail)
-				extractedScr.Remove(extractedScr.Length - usfxTail.Length, usfxTail.Length);
-			extractedScr.Replace("para style=\"", "DIV class=\"usfm_");
-			extractedScr.Replace("/para", "/DIV");
-
+			StringBuilder extractedScr = new StringBuilder(usx);
+			extractedScr.Replace("para style=\"", "div class=\"usfm_");
+			extractedScr.Replace("/para", "/div");
+			extractedScr.Replace("</usx>", "");
+			extractedScr.Append(Environment.NewLine);
+			
+			if (s_regexUsxElement == null)
+				s_regexUsxElement = new Regex("\\<usx version=\"[0-9]+\\.[0-9]+\"\\>", RegexOptions.Compiled);
 			if (s_regexGlossaryEntry == null)
 				s_regexGlossaryEntry = new Regex("\\<char style=\"w\"\\>(?<surfaceFormOfGlossaryWord>[^|]*)\\|[^<]*\\</char\\>", RegexOptions.Compiled);
+			if (includeVerseNumbers && s_regexVerseNumbers == null)
+				s_regexVerseNumbers = new Regex("<verse number=\"([^\"]+)\" style=\"v\"\\s\\/>", RegexOptions.Compiled);
 
-			return s_regexGlossaryEntry.Replace(extractedScr.ToString(), "${surfaceFormOfGlossaryWord}");
+			var result = s_regexUsxElement.Replace(extractedScr.ToString(), Empty);
+			result = s_regexGlossaryEntry.Replace(result, "${surfaceFormOfGlossaryWord}");
+
+			return includeVerseNumbers ?
+				s_regexVerseNumbers.Replace(result, "<span class=\"verse\" number=\"$1\">$1</span>") :
+				result;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1785,7 +1768,7 @@ namespace SIL.Transcelerator
 			sw.WriteLine("h2:lang(en) {font-family:serif;}");
 			sw.WriteLine("p:lang(en) {font-family:serif;");
   			sw.WriteLine("font-size:0.85em;}");
-			sw.WriteLine("verse {vertical-align: super; font-size: .80em; color:DimGray;}");
+			sw.WriteLine(".verse {vertical-align: super; font-size: .80em; color:DimGray;}");
 			sw.WriteLine("h3 {color:" + questionGroupHeadingsClr.Name + ";}");
 			sw.WriteLine(".questionbt {color:" + englishQuestionClr.Name + ";}");
 			sw.WriteLine(".answer {color:" + englishAnswerClr.Name + ";}");

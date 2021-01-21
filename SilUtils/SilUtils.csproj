@@ -162,7 +162,7 @@
       <Version>4.1.0-beta0047</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>8.0.0-beta0166</Version>
+      <Version>8.0.0-beta0255</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

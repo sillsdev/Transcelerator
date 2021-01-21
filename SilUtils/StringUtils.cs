@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,8 +14,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using SIL.Extensions;
 using static System.Char;
-using static System.IO.Path;
 
 namespace SIL.Utils
 {
@@ -68,7 +68,7 @@ namespace SIL.Utils
 		/// <param name="str2">second string to compare</param>
 		/// <returns>The index of the first difference or -1 if not found</returns>
 		/// TODO-Linux FWNX-150: mono compiler was have problems thinking calls to FindStringDifference was
-		/// ambiguous. So renambed to FindStringDifference_
+		/// ambiguous. So renamed to FindStringDifference_
 		/// ------------------------------------------------------------------------------------
 		private static int FindStringDifference_(string str1, string str2)
 		{
@@ -96,76 +96,6 @@ namespace SIL.Utils
 			// If we get this far, the strings are the same.
 			return -1;
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Produce a version of the given name that can be used as a file name. This is done
-		/// by replacing characters that the current OS does not allow with underscores '_'.
-		/// </summary>
-		/// <param name="sName">Name to be filtered</param>
-		/// <returns>the filtered name</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string FilterForFileName(string sName)
-		{
-			return FilterForFileName(sName, new string(GetInvalidFileNameChars()));
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Produce a version of the given name that can be used as a file name. This is done
-		/// by replacing invalid characters with underscores '_' and trimming any leading spaces
-		/// or trailing periods or spaces.
-		/// </summary>
-		/// <param name="sName">Name to be filtered</param>
-		/// <param name="invalidChars">characters to filter out</param>
-		/// <param name="replaceNbsp">Replace non-breaking spaces with normal spaces</param>
-		/// <returns>The filtered name. (A single underscore will be returned if the given name
-		/// consists entirely of removed spaces and periods.)</returns>
-		/// ------------------------------------------------------------------------------------
-		public static string FilterForFileName(string sName, string invalidChars, bool replaceNbsp = true)
-		{
-			var cleanName = new StringBuilder(sName);
-			while (cleanName.Length > 0 && cleanName[0].IsInvalidFilenameLeadingOrTrailingSpaceChar())
-				cleanName.Remove(0, 1);
-			while (cleanName.Length > 0)
-			{
-				var lastCharPos = cleanName.Length - 1;
-				var lastChar = cleanName[lastCharPos];
-				if (lastChar == '.' || lastChar.IsInvalidFilenameLeadingOrTrailingSpaceChar())
-					cleanName.Remove(lastCharPos, 1);
-				else
-					break;
-			}
-
-			if (cleanName.Length == 0)
-				return "_";
-
-			// replace all invalid characters with an '_'
-			for (var i = 0; i < sName.Length; i++)
-			{
-				if (invalidChars.IndexOf(sName[i]) >= 0 || sName[i] < ' ') // eliminate all control characters too
-					cleanName[i] = '_';
-			}
-			
-			if (replaceNbsp)
-				cleanName.Replace('\u00A0', ' ');
-
-			return cleanName.ToString();
-		}
-
-		/// <summary>
-		/// In addition to all the "normal" space characters covered by Char.IsWhitespace, this
-		/// also returns true for certain formatting characters which have no visible effect on
-		/// a string when used as a leading or trailing character and would likely be confusing
-		/// if allowed at the start or end of a filename. 
-		/// </summary>
-		/// <remarks>Originally, I implemented the second check as
-		/// GetUnicodeCategory(c) == UnicodeCategory.Format, but this seemed to be too aggressive
-		/// since significant formatting marks such as those used to control bidi text could be
-		/// removed.
-		/// </remarks>
-		private static bool IsInvalidFilenameLeadingOrTrailingSpaceChar(this char c) =>
-			IsWhiteSpace(c) || c == '\uFEFF' || c == '\u200B' || c == '\u200C' || c == '\u200D';
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -207,25 +137,6 @@ namespace SIL.Utils
 				--ichLim1;
 				--ichLim2;
 			}
-		}
-
-		/// <summary>
-		/// Remove all whitespace from a string.
-		/// </summary>
-		public static string StripWhitespace(string s)
-		{
-			if (s == null)
-				return s;
-			int len = s.Length;
-			if (len <= 0)
-				return s;
-			StringBuilder sb = new StringBuilder(len);
-			foreach (char c in s)
-			{
-				if (!IsWhiteSpace(c))
-					sb.Append(c);
-			}
-			return sb.ToString();
 		}
 
 		/// ------------------------------------------------------------------------------------
