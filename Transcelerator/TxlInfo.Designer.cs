@@ -121,7 +121,7 @@ namespace SIL.Transcelerator
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(175, 119);
 			this.m_lblCopyright.TabIndex = 20;
-			this.m_lblCopyright.Text = "(C) 2011-2020, SIL International.";
+			this.m_lblCopyright.Text = "(C) 2011-2021, SIL International.";
 			this.m_lblCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_picLogo
