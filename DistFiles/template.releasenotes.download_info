@@ -5,7 +5,7 @@
   "platform": "resource",
   "platform_version": "",
   "architecture": "x86",
-  "file": "ReleaseNotes.md",
+  "file": "ReleaseNotes (32-bit).md",
   "type": "md",
   "build": ""
 }
