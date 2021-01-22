@@ -13,6 +13,7 @@
 		<Configuration>Release</Configuration>
 		<TeamCity Condition="'$(teamcity_version)' != ''">true</TeamCity>
 		<TeamCity Condition="'$(teamcity_version)' == ''">false</TeamCity>
+		<ReleaseNotesSuffix Condition="'$(Platform)' == 'x86'">(32-bit)</ReleaseNotesSuffix>
 		<TestOutputXmlFile Condition="'$(teamcity_version)' == ''">$(RootDir)/output/$(Configuration)/TestResults.xml</TestOutputXmlFile>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,</ExtraExcludeCategories>
 		<RestartBuild Condition="!Exists('$(BuildTasksDll)') Or !Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') Or !Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') Or !Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">true</RestartBuild>
@@ -164,13 +165,20 @@
 			ReplacementText ="$(Version)" />
 			
 		<Copy SourceFiles ="$(RootDir)\DistFiles\template.releasenotes.download_info"
-			DestinationFiles ="$(RootDir)\output\releasenotes.download_info"/>
+			DestinationFiles ="$(RootDir)\output\releasenotes$(ReleaseNotesSuffix).download_info"/>
 
-		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
+		<FileUpdate File="$(RootDir)\output\releasenotes$(ReleaseNotesSuffix).download_info"
 			DatePlaceHolder='_DATE_'
 			DateFormat='yyyy-MM-dd'
 			Regex='_VERSION_'
 			ReplacementText ="$(Version)" />
+		
+		<!-- For the 32-bit version only, also make a copy of the release notes named
+			 so that it will not overwrite the 64-bit version when copied to the 
+			 download server. -->
+		<Copy SourceFiles ="$(RootDir)\DistFiles\ReleaseNotes.md"
+			DestinationFiles ="$(RootDir)\output\ReleaseNotes $(ReleaseNotesSuffix).md"
+			Condition="'$(Platform)' == 'x86'"/>
 	</Target>
 
 	<!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one

@@ -4,8 +4,8 @@
   "date": "_DATE_",
   "platform": "resource",
   "platform_version": "",
-  "architecture": "",
-  "file": "ReleaseNotes.md",
+  "architecture": "x86",
+  "file": "ReleaseNotes (32-bit).md",
   "type": "md",
   "build": ""
 }
