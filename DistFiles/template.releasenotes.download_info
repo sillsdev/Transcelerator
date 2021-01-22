@@ -1,10 +1,10 @@
 {
-  "name": "Transcelerator",
+  "name": "Release Notes",
   "version": "_VERSION_",
   "date": "_DATE_",
   "platform": "resource",
   "platform_version": "",
-  "architecture": "",
+  "architecture": "x64",
   "file": "ReleaseNotes.md",
   "type": "md",
   "build": ""
