@@ -49,5 +49,44 @@ namespace SIL.Transcelerator
 					"<char style=\"w\">dientes|basically, we're talking teeth</char>. "+
 					"</para></usx>", true));
 		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void ConvertUsxToHtml_EmptyVerses_Removed(bool includeEmptyVerseAtEnd)
+		{
+			var usx = "<usx version=\"3.0\"><para style=\"p\">" +
+				"<verse number=\"1\" style=\"v\" />This is the " +
+				"<char style=\"w\">genealogy|list of begats</char> " +
+				"of Jesus Christ. " +
+				"<verse number=\"2\" style=\"v\" /> " +
+				"<verse number=\"3\" style=\"v\" /> " +
+				"<verse number=\"4\" style=\"v\" />" +
+				"<verse number=\"6\" style=\"v\" /> " +
+				"<verse number=\"7\" style=\"v\" />Then spake He, saying, " +
+				"<char style=\"wj\">This is my genealogy.</char>" +
+				"<verse number=\"8\" style=\"v\" /> " +
+				"<verse number=\"12\" style=\"v\" /> " +
+				"<verse number=\"13\" style=\"v\" /></para>" +
+				"<para style=\"q\">" +
+				"This is the start of verse 13, but in a different paragraph. " +
+				"<verse number=\"14\" style=\"v\" /> " +
+				"<verse number=\"15\" style=\"v\" />" +
+				"<verse number=\"16\" style=\"v\" />Blah.";
+			if (includeEmptyVerseAtEnd)
+				usx += "<verse number=\"17\" style=\"v\" />";
+			usx += "</para></usx>";
+
+			Assert.AreEqual("<div class=\"usfm_p\">" +
+				"<span class=\"verse\" number=\"1\">1</span>This is the genealogy of Jesus Christ. " +
+				"<span class=\"verse\" number=\"7\">7</span>Then spake He, saying, " +
+				// REVIEW: Would we want to convert <char style="..."> to <span class="usfm_...">? 
+				"<char style=\"wj\">This is my genealogy.</char>" +
+				"<span class=\"verse\" number=\"13\">13</span></div>" +
+				"<div class=\"usfm_q\">" +
+				"This is the start of verse 13, but in a different paragraph. " +
+				"<span class=\"verse\" number=\"16\">16</span>Blah." +
+				"</div>" + Environment.NewLine,
+				UNSQuestionsDialog.ConvertUsxToHtml(usx, true));
+		}
 	}
 }

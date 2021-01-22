@@ -84,6 +84,7 @@ namespace SIL.Transcelerator
 		private static Regex s_regexGlossaryEntry;
 		private static Regex s_regexUsxElement;
 		private static Regex s_regexVerseNumbers;
+		private static Regex s_regexEmptyVerses;
 		private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private MasterQuestionParser m_parser;
@@ -1555,20 +1556,27 @@ namespace SIL.Transcelerator
 			extractedScr.Replace("/para", "/div");
 			extractedScr.Replace("</usx>", "");
 			extractedScr.Append(Environment.NewLine);
-			
-			if (s_regexUsxElement == null)
+
+			if (s_regexUsxElement == null || s_regexGlossaryEntry == null)
+			{
 				s_regexUsxElement = new Regex("\\<usx version=\"[0-9]+\\.[0-9]+\"\\>", RegexOptions.Compiled);
-			if (s_regexGlossaryEntry == null)
 				s_regexGlossaryEntry = new Regex("\\<char style=\"w\"\\>(?<surfaceFormOfGlossaryWord>[^|]*)\\|[^<]*\\</char\\>", RegexOptions.Compiled);
+			}
+
 			if (includeVerseNumbers && s_regexVerseNumbers == null)
+			{
+				s_regexEmptyVerses = new Regex("<verse [^>]*> *((?=(<verse))|(?=(</div>\\s*$)))", RegexOptions.Compiled);
 				s_regexVerseNumbers = new Regex("<verse number=\"([^\"]+)\" style=\"v\"\\s\\/>", RegexOptions.Compiled);
+			}
 
 			var result = s_regexUsxElement.Replace(extractedScr.ToString(), Empty);
 			result = s_regexGlossaryEntry.Replace(result, "${surfaceFormOfGlossaryWord}");
 
-			return includeVerseNumbers ?
-				s_regexVerseNumbers.Replace(result, "<span class=\"verse\" number=\"$1\">$1</span>") :
-				result;
+			if (!includeVerseNumbers)
+				return result;
+
+			result = s_regexEmptyVerses.Replace(result, "");
+			return s_regexVerseNumbers.Replace(result, "<span class=\"verse\" number=\"$1\">$1</span>");
 		}
 
 		/// ------------------------------------------------------------------------------------
