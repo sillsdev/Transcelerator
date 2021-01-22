@@ -18,6 +18,7 @@ using AddInSideViews;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
@@ -316,7 +317,7 @@ namespace SIL.Transcelerator
 			var info = m_sections[m_cboSection.SelectedIndex];
 			VerseRangeStartRef = new BCVRef(info.StartRef);
 			VerseRangeEndRef = new BCVRef(info.EndRef);
-			UpdateTextBoxWithSelectedPassage(m_txtFilename, StringUtils.FilterForFileName(info.Heading), m_sFilenameTemplate);
+			UpdateTextBoxWithSelectedPassage(m_txtFilename, info.Heading.SanitizeFilename('_', true), m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
 
