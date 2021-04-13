@@ -4304,8 +4304,11 @@ namespace SIL.Transcelerator
 		}
 		
         // TXL-233
-		[Test]
-		public void GetQuestionsForBooks_TwoBooksPlusThreeThatNoLongerHaveUserConfirmedTranslations_BooksWithoutTranslationsReturnEmptyList()
+		[TestCase(2, 44, 66)]
+		[TestCase(2, 40, 44, 66)]
+		[TestCase(2, 40, 44, 65, 66)]
+		public void GetQuestionsForBooks_TwoBooksIncludingSomeThatNoLongerHaveUserConfirmedTranslations_BooksWithoutTranslationsReturnEmptyList(
+			params int[] existing)
 		{
 			var vernLocale = "en-US";
 			var frenchLocalizations = MockRepository.GenerateMock<ILocalizationsProvider>();
@@ -4337,7 +4340,7 @@ namespace SIL.Transcelerator
 			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
 			pth.GetPhrase("JUD 1:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
 
-			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}, new int[] {2, 44, 66}).ToList();
+			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}, existing).ToList();
             Assert.AreEqual(5, result.Count);
 
 			int i = 0;
