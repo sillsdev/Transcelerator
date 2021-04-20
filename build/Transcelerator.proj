@@ -3,8 +3,6 @@
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
-    <useNUnit-x86 Condition="'$(OS)'=='Windows_NT'">true</useNUnit-x86>
-    <useNUnit-x86 Condition="'$(OS)'!='Windows_NT'">false</useNUnit-x86>
 		<PackagesDir>$(RootDir)/packages</PackagesDir>
 		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner/tools</NunitConsoleRunnerDir>
 		<BuildTasksDll>$(PackagesDir)/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
@@ -43,7 +41,7 @@
 		<Message Text="BuildHash: $(BuildHash)" Importance="high"/>
 
 		<!-- Mimicking Bloom's strategy of updating the version number here (not on TeamCity, not in the assemblies). -->
-		<CreateProperty Value="1.5.$(BuildCounter)">
+		<CreateProperty Value="2.0.$(BuildCounter)">
 			<Output PropertyName="Version" TaskParameter="Value"/>
 		</CreateProperty>
 		<CreateProperty Value="$(Version).$(BuildHash)">
@@ -106,29 +104,22 @@
 			 Properties="Configuration=%(Configurations.Identity)" />
 	</Target>
 
-	<Target Name="Test" DependsOnTargets="Build">
-		<CallTarget Targets="RunNUnit"/>
+	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
+		<Message Text="Running NUnit 3 from $(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"/>
+		<NUnit3
+			Assemblies="@(TestAssemblies)"
+			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
+			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
+			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			Force32Bit="false"
+			Verbose="true"
+			TeamCity="$(TeamCity)"/>
 	</Target>
-
-	<Target Name="TestOnly" DependsOnTargets="RunNUnit" />
 
 	<Target Name="SetTestAssemblies">
 		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
-	</Target>
-  
-  	<Target Name="RunNUnit" DependsOnTargets ="SetTestAssemblies">
-		<NUnit3
-			Assemblies="@(TestAssemblies)"
-			ToolPath="$(NunitConsoleRunnerDir)"
-			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)"
-			Force32Bit="$(useNUnit-x86)"
-			Verbose="true"
-			OutputXmlFile="$(TestOutputXmlFile)"
-			UseNUnit3Xml = "true"
-			TeamCity="$(TeamCity)"/>
 	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles">
@@ -196,11 +187,11 @@
 	<Target Name="MakeWixForHtmlDocFiles">
 		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
 		<MakeWixForDirTree
-			DirectoryReferenceId="DocsDirP8"
-			ComponentGroupId="COMPONENTSFORP8Documentation_en"
+			DirectoryReferenceId="DocsDirP9Beta"
+			ComponentGroupId="COMPONENTSFORP9BetaDocumentation_en"
 			RootDirectory="$(RootDir)\Docs\Help Topics"
 			InstallerSourceDirectory="$(RootDir)\Installer"
-			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP8.wxs"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9Beta.wxs"
 			MatchRegExPattern=".*"
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />

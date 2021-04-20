@@ -10,6 +10,7 @@
 	<DefineSolutionProperties>false</DefineSolutionProperties>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	<InstallerPlatform>x64</InstallerPlatform>
     <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
@@ -58,7 +59,7 @@
     <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\release</IntermediateOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <SuppressIces>ICE30</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
@@ -66,8 +67,8 @@
 	<Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
       <Link>GeneratedDocFilesP9.wxs</Link>
     </Compile>
-	<Compile Include="..\output\installer\GeneratedDocFilesP8.wxs">
-      <Link>GeneratedDocFilesP8.wxs</Link>
+	<Compile Include="..\output\installer\GeneratedDocFilesP9Beta.wxs">
+      <Link>GeneratedDocFilesP9Beta.wxs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
