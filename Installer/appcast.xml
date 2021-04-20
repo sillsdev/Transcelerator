@@ -8,9 +8,9 @@
          <item>
             <title>Version VERSION_NUMBER</title>
 						<sparkle:releaseNotesLink>
-							http://build.palaso.org/guestAuth/repository/download/Transcelerator_TransceleratorWinPublish64bit/.lastSuccessful/ReleaseNotes.md
+							http://build.palaso.org/guestAuth/repository/download/bt433/.lastSuccessful/ReleaseNotes.md
 						</sparkle:releaseNotesLink>
-            <enclosure url="http://build.palaso.org/guestAuth/repository/download/Transcelerator_TransceleratorWinPublish64bit/.lastSuccessful/TransceleratorInstaller-VERSION_NUMBER.msi" sparkle:version="VERSION_NUMBER" type="application/octet-stream" />
+            <enclosure url="http://build.palaso.org/guestAuth/repository/download/bt433/.lastSuccessful/TransceleratorInstaller-VERSION_NUMBER.msi" sparkle:version="VERSION_NUMBER" type="application/octet-stream" />
          </item>
 
    </channel>

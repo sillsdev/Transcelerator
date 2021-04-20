@@ -1514,19 +1514,7 @@ namespace SIL.Transcelerator
 			{
 				var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
 
-				// TXL-233: If Scripture Forge output files are created for a book but the user
-				// later goes back and removes user-confirmed translations such that the book has
-				// none, GetQuestionsForBooks needs to include those books with an empty list so
-				// that the existing files are not left with the old content.
-				var booksWithExistingSfFiles = new List<int>();
-				for (var b = 1; b <= BCVRef.LastBook; b++)
-				{
-					var bookId = BCVRef.NumberToBookCode(b);
-					if (m_fileAccessor.BookSpecificDataExists(DataFileAccessor.BookSpecificDataFileId.ScriptureForge, bookId))
-						booksWithExistingSfFiles.Add(b);
-				}
-
-				foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers, booksWithExistingSfFiles))
+				foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers))
 				{
 					m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
 						questionsForBook.BookId, questionsForBook);

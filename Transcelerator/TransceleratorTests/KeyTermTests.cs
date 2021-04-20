@@ -199,11 +199,6 @@ namespace SIL.Transcelerator
             Data = data;
         }
 
-		public override bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
 	    {
 		    throw new NotImplementedException();
