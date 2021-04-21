@@ -341,8 +341,22 @@ namespace SIL.Transcelerator
 		}
 
 		public IEnumerable<ComprehensionCheckingQuestionsForBook> GetQuestionsForBooks(
-			string vernIcuLocale, IReadOnlyCollection<ILocalizationsProvider> localizations)
+			string vernIcuLocale, IReadOnlyCollection<ILocalizationsProvider> localizations,
+			IEnumerable<int> booksWithExistingSfFiles)
 		{
+			var e = booksWithExistingSfFiles.GetEnumerator();
+
+			void AdvanceEnumerator()
+			{
+				if (!e.MoveNext())
+				{
+					e.Dispose();
+					e = null;
+				}
+			}
+
+			AdvanceEnumerator();
+
 			var prevBook = -1;
 			ComprehensionCheckingQuestionsForBook currentBookQuestions = null; 
 
@@ -355,6 +369,17 @@ namespace SIL.Transcelerator
 				{
 					if (currentBookQuestions != null)
 						yield return currentBookQuestions;
+
+					while (e != null && currBook > e.Current)
+					{
+						yield return new ComprehensionCheckingQuestionsForBook
+						{
+							Lang = vernIcuLocale,
+							BookId = BCVRef.NumberToBookCode(e.Current),
+							Questions = new List<ComprehensionCheckingQuestion>()
+						};
+						AdvanceEnumerator();
+					}
 					
 					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
 					{
@@ -389,6 +414,17 @@ namespace SIL.Transcelerator
 
 			if (currentBookQuestions != null)
 				yield return currentBookQuestions;
+			
+			while (e != null)
+			{
+				yield return new ComprehensionCheckingQuestionsForBook
+				{
+					Lang = vernIcuLocale,
+					BookId = BCVRef.NumberToBookCode(e.Current),
+					Questions = new List<ComprehensionCheckingQuestion>()
+				};
+				AdvanceEnumerator();
+			}
 		}
 
 		private StringAlt[] GetQuestionAlternates(TranslatablePhrase question, string vernIcuLocale,
