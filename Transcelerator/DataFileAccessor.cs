@@ -89,6 +89,8 @@ namespace SIL.Transcelerator
 			WriteBookSpecificData(fileId, bookId, serializedData);
 		}
 
+		public abstract bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId);
+
 		protected abstract void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data);
 
 		public abstract string Read(DataFileId fileId);
@@ -155,6 +157,11 @@ namespace SIL.Transcelerator
         {
             return m_getPlugInDataModifiedTime(GetFileName(fileId)).Ticks > 0;
         }
+
+		public override bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId)
+		{
+			return m_getPlugInDataModifiedTime(GetBookSpecificFileName(fileId, bookId)).Ticks > 0;
+		}
 
         public override DateTime ModifiedTime(DataFileId fileId)
         {
