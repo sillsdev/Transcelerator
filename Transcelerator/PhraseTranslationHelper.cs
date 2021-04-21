@@ -380,6 +380,8 @@ namespace SIL.Transcelerator
 						};
 						AdvanceEnumerator();
 					}
+					if (e != null && currBook == e.Current)
+						AdvanceEnumerator();
 					
 					currentBookQuestions = new ComprehensionCheckingQuestionsForBook
 					{
