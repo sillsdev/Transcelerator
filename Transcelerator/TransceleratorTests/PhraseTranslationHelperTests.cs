@@ -4277,7 +4277,7 @@ namespace SIL.Transcelerator
 			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
 			pth.GetPhrase("REV 6:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
 
-			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}, new int[0]).ToList();
+			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}).ToList();
             Assert.AreEqual(2, result.Count);
 
             // Verify MAT questions
@@ -4301,85 +4301,6 @@ namespace SIL.Transcelerator
             Assert.AreEqual("Q3", q3.Id);
             Assert.AreEqual($"{vernLocale} Who ate the pizza?", q3.Question.Single(q => q.Lang == vernLocale).Text);
             Assert.AreEqual(vernLocale == "oth" ? 4 : 3, rev.Questions.Single().Question.Length);
-		}
-		
-        // TXL-233
-		[TestCase(2, 44, 66)]
-		[TestCase(2, 40, 44, 66)]
-		[TestCase(2, 40, 44, 65, 66)]
-		public void GetQuestionsForBooks_TwoBooksIncludingSomeThatNoLongerHaveUserConfirmedTranslations_BooksWithoutTranslationsReturnEmptyList(
-			params int[] existing)
-		{
-			var vernLocale = "en-US";
-			var frenchLocalizations = MockRepository.GenerateMock<ILocalizationsProvider>();
-			frenchLocalizations.Stub(l => l.Locale).Return("fr");
-			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q1"),
-				out Arg<string>.Out("frQ1").Dummy)).Return(true);
-			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q2"),
-				out Arg<string>.Out("frQ2").Dummy)).Return(true);
-			frenchLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q3"),
-				out Arg<string>.Out("frQ3").Dummy)).Return(true);
-            
-			var spanishLocalizations = MockRepository.GenerateMock<ILocalizationsProvider>();
-			spanishLocalizations.Stub(l => l.Locale).Return("es");
-			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q1"),
-				out Arg<string>.Out("esQ1").Dummy)).Return(true);
-			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q2"),
-				out Arg<string>.Out("esQ2").Dummy)).Return(true);
-			spanishLocalizations.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(d => d.Question == "Q3"),
-				out Arg<string>.Out("esQ3").Dummy)).Return(true);
-
-			var cat = m_sections.Items[0].Categories[0];
-			AddTestQuestion(cat, "Q1", "MAT 2.2", 40002002, 40002002, "Q1");
-			AddTestQuestion(cat, "Q2", "MAT 2.2", 40002002, 40002002, "Q2");
-			AddTestQuestion(cat, "Q3", "JUD 1.4-5", 65001004, 65001005, "Q2");
-
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			pth.GetPhrase("MAT 2:2", "Q1").Translation = $"{vernLocale} Why so many frogs?";
-			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
-			pth.GetPhrase("JUD 1:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
-
-			var result = pth.GetQuestionsForBooks(vernLocale, new [] {spanishLocalizations, frenchLocalizations}, existing).ToList();
-            Assert.AreEqual(5, result.Count);
-
-			int i = 0;
-			// Verify EXO questions
-			var r = result[i];
-			Assert.AreEqual("EXO", r.BookId);
-			Assert.AreEqual(0, r.Questions.Count);
-
-            // Verify MAT questions
-			r = result[++i];
-            Assert.AreEqual("MAT", r.BookId);
-            Assert.AreEqual(2, r.Questions.Count);
-			var q1 = r.Questions[0];
-            Assert.AreEqual("Q1", q1.Id);
-            Assert.AreEqual($"{vernLocale} Why so many frogs?", q1.Question.Single(q => q.Lang == vernLocale).Text);
-			var q2 = r.Questions[1];
-            Assert.AreEqual("Q2", q2.Id);
-			pth.GetPhrase("MAT 2:2", "Q2").ModifiedPhrase = "This should not be the ID";
-			Assert.AreEqual("Q2", q2.Id);
-            Assert.AreEqual($"{vernLocale} What was her name?", q2.Question.Single(q => q.Lang == vernLocale).Text);
-			Assert.IsTrue(r.Questions.All(q => q.Question.Length == (vernLocale == "oth" ? 4 : 3)));
-            
-			// Verify ACT questions
-			r = result[++i];
-			Assert.AreEqual("ACT", r.BookId);
-			Assert.AreEqual(0, r.Questions.Count);
-
-			// Verify JUD questions
-			r = result[++i];
-			Assert.AreEqual("JUD", r.BookId);
-			var q3 = r.Questions[0];
-			Assert.AreEqual("Q3", q3.Id);
-			Assert.AreEqual($"{vernLocale} Who ate the pizza?", q3.Question.Single(q => q.Lang == vernLocale).Text);
-			Assert.AreEqual(vernLocale == "oth" ? 4 : 3, r.Questions.Single().Question.Length);
-
-            // Verify REV questions
-			r = result[++i];
-			Assert.AreEqual("REV", r.BookId);
-			Assert.AreEqual(0, r.Questions.Count);
 		}
 
 		#region Private helper methods
