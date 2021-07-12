@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2012' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2012' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -57,7 +57,7 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				var startRef = m_scrPsgReference.ScReference;
+				var startRef = new BCVRef(m_scrPsgReference.VerseControl.VerseRef.BBBCCCVVV);
 				var endRef = new BCVRef(startRef) { Verse = EndVerse };
 				return BCVRef.MakeReferenceString(startRef, endRef, ".", "-");
 			}
@@ -66,8 +66,15 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Starting reference (in master versification)
 		/// </summary>
-		public BCVRef StartReference =>
-			new BCVRef(m_masterVersification.ChangeVersification(m_scrPsgReference.ScReference, m_projectVersification));
+		public BCVRef StartReference
+		{
+			get
+			{
+				var projectVerseRef = m_scrPsgReference.VerseControl.VerseRef;
+				m_masterVersification.ChangeVersification(ref projectVerseRef);
+				return new BCVRef(projectVerseRef.BBBCCCVVV); 
+			}
+		}
 
 		/// <summary>
 		/// Ending reference (in master versification)
@@ -76,16 +83,17 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				var endRef = m_scrPsgReference.ScReference;
-				endRef.Verse = EndVerse;
-				return new BCVRef(m_masterVersification.ChangeVersification(endRef, m_projectVersification));
+				var endRef = m_scrPsgReference.VerseControl.VerseRef;
+				endRef.VerseNum = EndVerse;
+				m_masterVersification.ChangeVersification(ref endRef);
+				return new BCVRef(endRef.BBBCCCVVV); 
 			}
 		}
 
 		/// <summary>
 		/// Starting verse number (in project versification - i.e., matches what the user sees)
 		/// </summary>
-		private int StartVerse => m_scrPsgReference.ScReference.Verse;
+		private int StartVerse => m_scrPsgReference.VerseControl.VerseRef.VerseNum;
 
 		/// <summary>
 		/// Ending verse number (in project versification - i.e., matches what the user sees)
@@ -190,7 +198,8 @@ namespace SIL.Transcelerator
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
 			var startRef = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
-			m_scrPsgReference.Initialize(new BCVRef(startRef), m_projectVersification, canonicalBookIds);
+			m_scrPsgReference.VerseControl.VerseRef = new VerseRef(startRef, m_projectVersification.);
+				, canonicalBookIds);
 			m_existingStartRef = m_scrPsgReference.ScReference;
 			SetCurrentSections();
 			var endRef = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
