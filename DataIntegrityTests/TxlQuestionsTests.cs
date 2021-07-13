@@ -526,7 +526,6 @@ namespace DataIntegrityTests
 			}
 		}
 
-		// Test that no more than one Alternative form is marked as the "key"
 		[Test]
 		public void DataIntegrity_AllElements_NoTextOutsideOfElements()
 		{
