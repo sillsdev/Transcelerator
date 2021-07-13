@@ -526,6 +526,24 @@ namespace DataIntegrityTests
 			}
 		}
 
+		[Test]
+		public void DataIntegrity_AllElements_NoTextOutsideOfElements()
+		{
+			var nonWhitespaceBeforeElement = new Regex("^\\s*(?<nonWhitespace>[^\\s<]*\\s*)<(?<element>[^\\s>]+).*>", RegexOptions.Compiled);
+			var charactersAfterElement = new Regex(">(?<trailing>[^>]*)$", RegexOptions.Compiled);
+			foreach (var matchedLine in GetMatchingLines(new Regex("<[^\\?].*>", RegexOptions.Compiled)))
+			{ 
+				var match = nonWhitespaceBeforeElement.Match(matchedLine.Line);
+				Assert.IsTrue(match.Success, $"Failed to match line {matchedLine.LineNumber}:" + matchedLine.Line);
+				Assert.AreEqual(0, match.Groups["nonWhitespace"].Length,
+					$"Line {matchedLine.LineNumber} has unexpected text before element {match.Groups["element"].Value}: " + matchedLine.Line);
+				match = charactersAfterElement.Match(matchedLine.Line);
+				Assert.IsTrue(match.Success, $"Failed to match line {matchedLine.LineNumber}:" + matchedLine.Line);
+				Assert.AreEqual(0, match.Groups["trailing"].Length,
+					$"Line {matchedLine.LineNumber} has unexpected text after close of element: " + matchedLine.Line);
+			}
+		}
+
 		private IEnumerable<MatchedXmlLine> GetMatchingLines(Regex regexLevel0, Regex regexLevel1 = null)
 		{
 			var folder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
