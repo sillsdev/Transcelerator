@@ -3846,6 +3846,546 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(6, pq.TranslatableParts.Length);
 			Assert.AreEqual(6, iQuestion);
 		}
+		
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests another scenario where a user-added question has been added to the master list
+		/// of questions.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(PhraseCustomization.CustomizationType.AdditionAfter)]
+		[TestCase(PhraseCustomization.CustomizationType.InsertionBefore)]
+		public void GetResult_AddedQuestionsNowInDifferentOrderMasterList_OneDependentAddition_AdditionsIgnored(
+			PhraseCustomization.CustomizationType firstAdditionType)
+		{
+			var customizations = GetJonahC1V3Customizations(firstAdditionType);
+			var qs = GetJonahQuestionSections();
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs,
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						if (actQuestion.IsExcluded)
+						{
+							Assert.AreEqual("Instead where did Jonah intend to flee?", actQuestion.Text);
+							continue;
+						}
+
+						iQuestion++;
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("Tell me about what happened in this passage/account/story.", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("What kind of city was Nineveh?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("Nineveh was a foreign city.", actQuestion.Answers[0]);
+								Assert.AreEqual("It was a wicked place where the people did not worship God.", actQuestion.Answers[1]);
+								break;
+							case 3:
+								Assert.AreEqual("Did Jonah do what God told him to do?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("No", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.AreEqual("How did Jonah plan to go to Tarshish?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("On a boat", actQuestion.Answers.Single());
+								break;
+							case 5:
+								Assert.AreEqual("Why did Jonah go to Joppa?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("to find a boat that was sailing for Tarshish.", actQuestion.Answers.Single());
+								break;
+							case 6:
+								Assert.AreEqual("What did Jonah pay for?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("He paid the fare to go to Tarshish.", actQuestion.Answers.Single());
+								break;
+							case 7:
+								Assert.AreEqual("How did Jonah go to Tarsis?", actQuestion.PhraseInUse);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 8:
+								Assert.AreEqual("What did the LORD send upon the sea?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("A storm", actQuestion.Answers.Single());
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(8, pq.TranslatableParts.Length);
+			Assert.AreEqual(8, iQuestion);
+		}
+		
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests another scenario where a user-added question has been added to the master list
+		/// of questions.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(PhraseCustomization.CustomizationType.AdditionAfter)]
+		[TestCase(PhraseCustomization.CustomizationType.InsertionBefore)]
+		public void GetResult_AddedQuestionsNowInDifferentOrderMasterList_TwoDependentAdditions_AdditionsIgnored(
+			PhraseCustomization.CustomizationType firstAdditionType)
+		{
+			var customizations = GetJonahC1V3Customizations(firstAdditionType);
+			var qs = GetJonahQuestionSections(false);
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs,
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			int iQuestion = 0;
+
+			foreach (Section actSection in sections)
+			{
+				foreach (Category actCategory in actSection.Categories)
+				{
+					foreach (Question actQuestion in actCategory.Questions)
+					{
+						if (actQuestion.IsExcluded)
+						{
+							Assert.AreEqual("Instead where did Jonah intend to flee?", actQuestion.Text);
+							continue;
+						}
+
+						iQuestion++;
+						Assert.IsNull(actQuestion.ModifiedPhrase);
+						Assert.AreEqual(PartType.TranslatablePart, actQuestion.ParsedParts.Single().Type);
+						switch (iQuestion)
+						{
+							case 1:
+								Assert.AreEqual("Tell me about what happened in this passage/account/story.", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								break;
+							case 2:
+								Assert.AreEqual("What kind of city was Nineveh?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("Nineveh was a foreign city.", actQuestion.Answers[0]);
+								Assert.AreEqual("It was a wicked place where the people did not worship God.", actQuestion.Answers[1]);
+								break;
+							case 3:
+								Assert.AreEqual("Did Jonah do what God told him to do?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("No", actQuestion.Answers.Single());
+								break;
+							case 4:
+								Assert.AreEqual("What did Jonah pay for?", actQuestion.PhraseInUse);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								Assert.IsNull(actQuestion.Answers);
+								break;
+							case 5:
+								Assert.AreEqual("How did Jonah go to Tarsis?", actQuestion.PhraseInUse);
+								Assert.IsTrue(actQuestion.IsUserAdded);
+								break;
+							case 6:
+								Assert.AreEqual("How did Jonah plan to go to Tarshish?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("On a boat", actQuestion.Answers.Single());
+								break;
+							case 7:
+								Assert.AreEqual("Why did Jonah go to Joppa?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("to find a boat that was sailing for Tarshish.", actQuestion.Answers.Single());
+								break;
+							case 8:
+								Assert.AreEqual("What did the LORD send upon the sea?", actQuestion.PhraseInUse);
+								Assert.IsFalse(actQuestion.IsUserAdded);
+								Assert.AreEqual("A storm", actQuestion.Answers.Single());
+								break;
+							default:
+								throw new Exception("More included questions than expected.");
+						}
+					}
+				}
+			}
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(8, pq.TranslatableParts.Length);
+			Assert.AreEqual(8, iQuestion);
+		}
+				
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests another scenario where a user-added question has been added to the master list
+		/// of questions.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[TestCase(true)]
+		[TestCase(false)]
+		public void GetResult_AddedQuestionsOutOfVerseOrderNowInDifferentOrderMasterList_AdditionsIgnored(bool excludeWhereQuestion)
+		{
+			var customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			if (excludeWhereQuestion)
+			{
+				pc.Reference = "JON 1.1-2";
+				pc.OriginalPhrase = "Where did the word of the LORD tell Jonah to go?";
+				pc.Type = PhraseCustomization.CustomizationType.Deletion;
+				customizations.Add(pc);
+				pc = new PhraseCustomization();
+			}
+			
+			pc.Reference = "JON 1.1-2";
+			pc.OriginalPhrase = "What kind of people lived in Nineveh?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.1-2";
+			pc.OriginalPhrase = "Where did the word of the LORD tell Jonah to go?";
+			pc.ModifiedPhrase = "What kind of people lived in Nineveh?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			pc.Reference = "JON 4.10-11";
+			pc.OriginalPhrase = "What question did God ask Jonah?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.1";
+			pc.OriginalPhrase = "What question did God ask Jonah?";
+			pc.ModifiedPhrase = "How do you think God spoke to Jonah?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.2";
+			pc.OriginalPhrase = "How do you think God spoke to Jonah?";
+			pc.ModifiedPhrase = "What kind of people lived in Nineveh?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.1";
+			pc.OriginalPhrase = "What kind of people lived in Nineveh?";
+			pc.ModifiedPhrase = "Who spoke to Jonah?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.2";
+			pc.OriginalPhrase = "Who spoke to Jonah?";
+			pc.ModifiedPhrase = "What kind of city was Nineveh?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.2";
+			pc.OriginalPhrase = "What kind of city was Nineveh?";
+			pc.ModifiedPhrase = "What did God tell Jonah to say to the people of Nineveh?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 3.10";
+			pc.OriginalPhrase = "What did God tell Jonah to say to the people of Nineveh?";
+			pc.ModifiedPhrase = "Why did God have mercy on the people and not destroy their city?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			var qs = new QuestionSections();
+			qs.Items = new Section[3];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("JON 1.1-17", "Jon 1:1-17", 32001001,
+				32001017, 1, 7);
+			int iC = 0;
+			Question q = qs.Items[iS].Categories[iC].Questions[0];
+			q.Text = "Tell me about what happened in this passage/account/story.";
+
+			iC = 1;
+			int iQ = 0;
+
+			q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.StartRef = 32001001;
+			q.EndRef = 32001001;
+			q.ScriptureReference = "JON 1.1";
+			q.Text = "Who spoke to Jonah?";
+			q.Answers = new[] {"The LORD (God)"};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001001;
+			q.EndRef = 32001001;
+			q.ScriptureReference = "JON 1.1";
+			q.Text = "How do you think God spoke to Jonah?";
+			q.Alternatives = new []
+			{
+				new AlternativeForm {Text = "How do you think the LORD spoke to Jonah?"},
+				new AlternativeForm {Text = "How do you think God's word came to Jonah?"}
+			};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001001;
+			q.EndRef = 32001002;
+			q.ScriptureReference = "JON 1.1-2";
+			q.Text = "Where did the word of the LORD tell Jonah to go?";
+			q.Answers = new[] {"Nineveh (1-2)"};
+			q.Alternatives = new[]
+			{
+				new AlternativeForm {Text = "Where did the LORD tell Jonah to go?"},
+				new AlternativeForm {Text = "Where did God tell Jonah to go?"}
+			};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001002;
+			q.EndRef = 32001002;
+			q.ScriptureReference = "JON 1.2";
+			q.Text = "What kind of city was Nineveh?";
+			q.Answers = new[] { "Nineveh was a foreign city.", "It was a wicked place where the people did not worship God." };
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001002;
+			q.EndRef = 32001002;
+			q.ScriptureReference = "JON 1.2";
+			q.Text = "What did God tell Jonah to say to the people of Nineveh?";
+			q.Answers = new[] {"Jonah was to announce God's judgment against the people of Nineveh."};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001002;
+			q.EndRef = 32001002;
+			q.ScriptureReference = "JON 1.2";
+			q.Text = "What kind of people lived in Nineveh?";
+			q.Answers = new[] { "Wicked" };
+
+			iS = 1;
+			qs.Items[iS] = CreateSection("JON 3.1-10", "Jon 3:1-10", 32003001,
+				32003010, 0, 1);
+			iC = 0;
+			q = qs.Items[iS].Categories[iC].Questions[0];
+			q.StartRef = 32003010;
+			q.EndRef = 32003010;
+			q.ScriptureReference = "JON 3.10";
+			q.Text = "What did God do when he saw their works?";
+			q.Answers = new[] { "He relented and did not carry out the destruction he had threatened." };
+
+			iS = 2;
+			qs.Items[iS] = CreateSection("JON 4.1-11", "Jon 4:1-11", 32004001,
+				32004011, 0, 1);
+			iC = 0;
+			q = qs.Items[iS].Categories[iC].Questions[0];
+			q.StartRef = 32004010;
+			q.EndRef = 32004011;
+			q.ScriptureReference = "JON 4.10-11";
+			q.Text = "What question did God ask Jonah?";
+			q.Answers = new[] { "Should not I pity Nineveh? (10-11)" };
+
+			MasterQuestionParser qp = new MasterQuestionParser(qs,
+				new List<string>(), null, null, customizations, null);
+
+			ParsedQuestions pq = qp.Result;
+
+			Section[] sections = pq.Sections.Items;
+
+			Section actSection = sections[0];
+			Assert.AreEqual(2, actSection.Categories.Length);
+			Category actCategory = actSection.Categories[0];
+			Assert.AreEqual("Tell me about what happened in this passage/account/story.", actCategory.Questions.Single().PhraseInUse);
+
+			actCategory = actSection.Categories[1];
+
+			var iQuestion = 0;
+			var actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("Who spoke to Jonah?", actQuestion.PhraseInUse);
+			Assert.AreEqual(32001001, actQuestion.StartRef);
+			Assert.AreEqual(32001001, actQuestion.EndRef);
+			Assert.AreEqual("The LORD (God)", actQuestion.Answers.Single());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+			
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("How do you think God spoke to Jonah?", actQuestion.PhraseInUse);
+			Assert.AreEqual(32001001, actQuestion.StartRef);
+			Assert.AreEqual(32001001, actQuestion.EndRef);
+			Assert.IsNull(actQuestion.Answers);
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("Where did the word of the LORD tell Jonah to go?", actQuestion.PhraseInUse);
+			Assert.AreEqual(excludeWhereQuestion, actQuestion.IsExcluded);
+			Assert.AreEqual(32001001, actQuestion.StartRef);
+			Assert.AreEqual(32001002, actQuestion.EndRef);
+			Assert.AreEqual("Nineveh (1-2)", actQuestion.Answers.Single());
+			
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("What kind of city was Nineveh?", actQuestion.PhraseInUse);
+			Assert.AreEqual(32001002, actQuestion.StartRef);
+			Assert.AreEqual(32001002, actQuestion.EndRef);
+			Assert.AreEqual("Nineveh was a foreign city.", actQuestion.Answers.First());
+			Assert.AreEqual("It was a wicked place where the people did not worship God.", actQuestion.Answers.Last());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("What did God tell Jonah to say to the people of Nineveh?", actQuestion.PhraseInUse);
+			Assert.IsFalse(actQuestion.IsExcluded);
+			Assert.AreEqual(32001002, actQuestion.StartRef);
+			Assert.AreEqual(32001002, actQuestion.EndRef);
+			Assert.AreEqual("Jonah was to announce God's judgment against the people of Nineveh.", actQuestion.Answers.Single());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			// It seems silly and senseless for this question to appear here, but
+			// the real-life data had this question inserted here. Most likely it
+			// was a mistake made possible by a previous version of the program.
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("Why did God have mercy on the people and not destroy their city?", actQuestion.PhraseInUse);
+			Assert.IsFalse(actQuestion.IsExcluded);
+			Assert.AreEqual(32003010, actQuestion.StartRef);
+			Assert.AreEqual(32003010, actQuestion.EndRef);
+			Assert.IsNull(actQuestion.Answers);
+			Assert.IsTrue(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			actQuestion = actCategory.Questions[iQuestion++];
+			Assert.AreEqual("What kind of people lived in Nineveh?", actQuestion.PhraseInUse);
+			Assert.IsFalse(actQuestion.IsExcluded);
+			Assert.AreEqual(32001002, actQuestion.StartRef);
+			Assert.AreEqual(32001002, actQuestion.EndRef);
+			Assert.AreEqual("Wicked", actQuestion.Answers.Single());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			Assert.IsNull(pq.KeyTerms);
+			Assert.AreEqual(iQuestion, actCategory.Questions.Count);
+
+			actCategory = sections[1].Categories.Single();
+			actQuestion = actCategory.Questions.Single();
+			Assert.AreEqual("What did God do when he saw their works?", actQuestion.PhraseInUse);
+			Assert.AreEqual(32003010, actQuestion.StartRef);
+			Assert.AreEqual(32003010, actQuestion.EndRef);
+			Assert.AreEqual("He relented and did not carry out the destruction he had threatened.", actQuestion.Answers.Single());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsFalse(actQuestion.IsExcluded);
+
+			actCategory = sections[2].Categories.Single();
+			actQuestion = actCategory.Questions.Single();
+			Assert.AreEqual("What question did God ask Jonah?", actQuestion.PhraseInUse);
+			Assert.AreEqual(32004010, actQuestion.StartRef);
+			Assert.AreEqual(32004011, actQuestion.EndRef);
+			Assert.AreEqual("Should not I pity Nineveh? (10-11)", actQuestion.Answers.Single());
+			Assert.IsFalse(actQuestion.IsUserAdded);
+			Assert.IsTrue(actQuestion.IsExcluded);
+		}
+
+		private List<PhraseCustomization> GetJonahC1V3Customizations(PhraseCustomization.CustomizationType firstAdditionType)
+		{
+			List<PhraseCustomization> customizations = new List<PhraseCustomization>();
+			PhraseCustomization pc = new PhraseCustomization();
+			pc.Reference = "JON 1.3";
+			pc.OriginalPhrase = "Instead where did Jonah intend to flee?";
+			pc.Type = PhraseCustomization.CustomizationType.Deletion;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.3";
+			pc.OriginalPhrase = "Instead where did Jonah intend to flee?";
+			pc.ModifiedPhrase = "Did Jonah do what God told him to do?";
+			pc.Type = firstAdditionType;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.3";
+			pc.OriginalPhrase = "Did Jonah do what God told him to do?";
+			pc.ModifiedPhrase = "What did Jonah pay for?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.3";
+			pc.OriginalPhrase = "What did Jonah pay for?";
+			pc.ModifiedPhrase = "How did Jonah go to Tarsis?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+			pc = new PhraseCustomization();
+			pc.Reference = "JON 1.3";
+			pc.OriginalPhrase = "How did Jonah go to Tarsis?";
+			pc.ModifiedPhrase = "Why did Jonah go to Joppa?";
+			pc.Type = PhraseCustomization.CustomizationType.AdditionAfter;
+			customizations.Add(pc);
+
+			return customizations;
+		}
+
+		private QuestionSections GetJonahQuestionSections(bool includeBuiltInPayForQuestion = true)
+		{
+			var qs = new QuestionSections();
+			qs.Items = new Section[1];
+			int iS = 0;
+			qs.Items[iS] = CreateSection("JON 1.1-17", "Jon 1:1-17", 32001001,
+				32001017, 1, 7);
+			int iC = 0;
+			Question q = qs.Items[iS].Categories[iC].Questions[0];
+			q.Text = "Tell me about what happened in this passage/account/story.";
+
+			iC = 1;
+			int iQ = 0;
+
+			q = qs.Items[iS].Categories[iC].Questions[iQ];
+			q.StartRef = 32001002;
+			q.EndRef = 32001002;
+			q.ScriptureReference = "JON 1.2";
+			q.Text = "What kind of city was Nineveh?";
+			q.Answers = new[] { "Nineveh was a foreign city.", "It was a wicked place where the people did not worship God." };
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001003;
+			q.EndRef = 32001003;
+			q.ScriptureReference = "JON 1.3";
+			q.Text = "Did Jonah do what God told him to do?";
+			q.Answers = new[] {"No"};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001003;
+			q.EndRef = 32001003;
+			q.ScriptureReference = "JON 1.3";
+			q.Text = "Instead where did Jonah intend to flee?";
+			q.Answers = new[] {"Tarshish"};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001003;
+			q.EndRef = 32001003;
+			q.ScriptureReference = "JON 1.3";
+			q.Text = "How did Jonah plan to go to Tarshish?";
+			q.Answers = new[] {"On a boat"};
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001003;
+			q.EndRef = 32001003;
+			q.ScriptureReference = "JON 1.3";
+			q.Text = "Why did Jonah go to Joppa?";
+			q.Answers = new[] {"to find a boat that was sailing for Tarshish."};
+
+			if (includeBuiltInPayForQuestion)
+			{
+				q = qs.Items[iS].Categories[iC].Questions[++iQ];
+				q.StartRef = 32001003;
+				q.EndRef = 32001003;
+				q.ScriptureReference = "JON 1.3";
+				q.Text = "What did Jonah pay for?";
+				q.Answers = new[] {"He paid the fare to go to Tarshish."};
+			}
+
+			q = qs.Items[iS].Categories[iC].Questions[++iQ];
+			q.StartRef = 32001004;
+			q.EndRef = 32001004;
+			q.ScriptureReference = "JON 1.4";
+			q.Text = "What did the LORD send upon the sea?";
+			q.Answers = new[] {"A storm"};
+
+				return qs;
+		}
 
 		///--------------------------------------------------------------------------------------
 		/// <summary>
