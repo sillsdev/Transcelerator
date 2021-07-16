@@ -83,22 +83,29 @@ namespace SIL.Transcelerator
 				}
 			}
 
-			private void SetExcludedAndModified(Question question)
+			private void SetExcludedAndModified(Question question, IReadOnlyCollection<Question> existing = null)
 			{
 				question.IsExcluded = Deletions.SingleOrDefault() != null;
 				Deletions.Clear();
 				if (ModifiedPhrase != null)
 				{
-					question.ModifiedPhrase = ModifiedPhrase;
+					if (existing != null && existing.Any(e => e.CompareRefs(question) == 0 &&
+						(e.Text == Modification.ModifiedPhrase ||
+						Modification.OriginalPhrase == e.Alternatives?.SingleOrDefault(a => a.IsKey)?.Text)))
+					{
+						question.IsExcluded = true;
+					}
+					else
+						question.ModifiedPhrase = ModifiedPhrase;
 					Modification = null;
 				}
 			}
 
-			public void ApplyToQuestion(Question question)
+			public void ApplyToQuestion(Question question, IReadOnlyCollection<Question> existing)
 			{
 				ResolveDeletionsAndAdditions();
 
-				SetExcludedAndModified(question);
+				SetExcludedAndModified(question, existing);
 
 				var duplicate = AdditionsAndInsertions.SingleOrDefault(q => q.OriginalPhrase == q.ModifiedPhrase && q.OriginalPhrase == question.PhraseInUse);
 
@@ -146,6 +153,28 @@ namespace SIL.Transcelerator
 					question.AddedQuestionAfter = new Question(addition.Reference, addition.ScrStartReference,
 						addition.ScrEndReference, addition.ModifiedPhrase, addition.Answer, addition.ImmutableKey);
 				}
+			}
+
+			public bool AdditionsAlreadyIn(IReadOnlyCollection<IQuestionKey> existing)
+			{
+				return AdditionsAndInsertions.All(c => existing.Any(q => q.CompareRefs(c.Key) == 0 &&
+					q.Text.Equals(c.ModifiedPhrase, StringComparison.Ordinal)));
+			}
+
+			public bool TryApplyDeletionAndAdditionToExisting(Question existing)
+			{
+				if (!Deletions.Any() || AdditionsAndInsertions.Count != 1)
+					return false;
+				var c = AdditionsAndInsertions[0];
+				if (existing.ModifiedPhrase != null ||
+					!c.OriginalPhrase.Equals(existing.Alternatives?.SingleOrDefault(a => a.IsKey)?.Text, StringComparison.Ordinal))
+				{
+					return false;
+				}
+
+				existing.ModifiedPhrase = c.ModifiedPhrase;
+				existing.IsExcluded = false;
+				return true;
 			}
 
 			private void ResolveDeletionsAndAdditions()
@@ -561,8 +590,8 @@ namespace SIL.Transcelerator
 	        Customizations customizationsForQuestion;
 			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out customizationsForQuestion))
 			{
-				customizationsForQuestion.ApplyToQuestion(q);
-				if (q.InsertedQuestionBefore != null)
+				customizationsForQuestion.ApplyToQuestion(q, category.Questions);
+				if (q.InsertedQuestionBefore != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.InsertedQuestionBefore)))
 				{
 					category.Questions.Insert(index, q.InsertedQuestionBefore);
 					foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, sectionRange,
@@ -595,15 +624,28 @@ namespace SIL.Transcelerator
 				}
 			}
 
+			QuestionKey matchToRemove = null;
+			foreach (var key in customizations.Keys)
+			{
+				var insertion = customizations[key];
+				if (insertion.TryApplyDeletionAndAdditionToExisting(q))
+				{
+					matchToRemove = key;
+					break;
+				}
+			}
+			if (matchToRemove != null)
+				customizations.Remove(matchToRemove);
+			
 			yield return q;
 			
-	        if (q.AddedQuestionAfter != null)
+	        if (q.AddedQuestionAfter != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.AddedQuestionAfter)))
 	        {
-		        category.Questions.Insert(index + 1, q.AddedQuestionAfter);
+				category.Questions.Insert(index + 1, q.AddedQuestionAfter);
 				foreach (Question tpAdded in GetCustomizations(q.AddedQuestionAfter, sectionRange, 
 					category, index + 1, customizations))
 		        {
-			        yield return tpAdded;
+					yield return tpAdded;
 			        index++;
 		        }
 	        }
@@ -618,6 +660,13 @@ namespace SIL.Transcelerator
 				customizations.Remove(question);
 		        return true;
 	        }
+
+			var keyAlt = question.Alternatives?.SingleOrDefault(a => a.IsKey)?.Text;
+			if (keyAlt != null && customizations.TryGetValue(new Question(question, keyAlt, null), out customizationsForQuestion))
+			{
+				customizations.Remove(question);
+				return true;
+			}
 
 			// In theory questions cannot be added that span multiple sections, but it used to
 			// be possible (and may become possible again in the future?). In any case, if we
@@ -655,23 +704,26 @@ namespace SIL.Transcelerator
 	        SortedDictionary<QuestionKey, Customizations> currBookCustomizations = null;
 			Category category = null;
 			Question lastQuestionInBook = null;
-			Section lastSectionInBook = null;
+			List<Section> sectionsInBook = null;
 	        int iQuestion = -1;
 			foreach (Section section in m_sections.Items)
             {
 	            if (m_customizations != null && BCVRef.GetBookFromBcv(section.StartRef) != currBook)
 	            {
-		            if (lastSectionInBook != null)
+		            if (sectionsInBook == null)
+						sectionsInBook = new List<Section>();
+					else
 		            {
-			            foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+						foreach (var question in GetTrailingCustomizations(currBook, sectionsInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
 				            yield return question;
+						sectionsInBook.Clear();
 		            }
 
 		            currBook = BCVRef.GetBookFromBcv(section.StartRef);
 		            m_customizations.TryGetValue(currBook, out currBookCustomizations);
 	            }
 
-	            lastSectionInBook = section;
+	            sectionsInBook?.Add(section);
 	            for (int iCat = 0; iCat < section.Categories.Length; iCat++)
                 {
                     category = section.Categories[iCat];
@@ -697,11 +749,11 @@ namespace SIL.Transcelerator
                         {
                             foreach (var question in GetCustomizations(q, section, category, iQuestion, currBookCustomizations))
                             {
-	                            lastQuestionInBook = question;
+								lastQuestionInBook = question;
 								yield return question;
-                                iQuestion++;
-                            }
-                        }
+								iQuestion++;
+							}
+						}
                         else
                         {
                             yield return q;
@@ -710,12 +762,12 @@ namespace SIL.Transcelerator
                     }
                 }
             }
-	        foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+	        foreach (var question in GetTrailingCustomizations(currBook, sectionsInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
 		        yield return question;
 			m_customizations = null; // Allow this to be garbage collected (and prevent accidental future use)
 		}
 
-		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, IRefRange finalSection, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
+		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, IReadOnlyCollection<Section> bookSections, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
 			Category category, int iQuestion)
 		{
 			if (customizations != null)
@@ -723,21 +775,38 @@ namespace SIL.Transcelerator
 				Debug.Assert(lastQuestionInBook != null && iQuestion > 0 && category != null,
 					$"Book {BCVRef.NumberToBookCode(bookNum)} has no built-in questions - cannot process customizations!");
 
+				IReadOnlyCollection<IQuestionKey> GetExistingQuestions(QuestionKey k)
+				{
+					return bookSections.Where(s => s.StartRef <= k.StartRef && s.EndRef >= k.EndRef)
+						.SelectMany(s => s.Categories)
+						.SelectMany(cat => cat.Questions)
+						.ToList();
+				}
+
 				while (customizations.Any(c => c.Value.IsAdditionOrInsertion))
 				{
-					var insertionForPreviousReference = customizations.FirstOrDefault(c => c.Value.IsAdditionOrInsertion && customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key)));
-					var key = insertionForPreviousReference.Key;
-					if (key == null)
+					var insertionsForPreviousReferences = customizations.Where(
+						c => c.Value.IsAdditionOrInsertion &&
+							customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key))).ToList();
+					if (!insertionsForPreviousReferences.Any())
 					{
 						Debug.Assert(!customizations.Any(), $"Detected circular chain of customizations for book: {BCVRef.NumberToBookCode(bookNum)}. There were {customizations.Count} customizations that could not be processed!");
 						break;
 					}
 
-					var newQ = lastQuestionInBook.AddedQuestionAfter = insertionForPreviousReference.Value.PopQuestion(key);
-					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
+					var firstPrevOrphan = insertionsForPreviousReferences.FirstOrDefault(c =>
+						!c.Value.AdditionsAlreadyIn(GetExistingQuestions(c.Key)));
+
+					var key = firstPrevOrphan.Key;
+
+					if (firstPrevOrphan.Key == null)
+						break; // All "orphans" already included
+
+					var newQ = lastQuestionInBook.AddedQuestionAfter = firstPrevOrphan.Value.PopQuestion(key);
+					if (!firstPrevOrphan.Value.IsAdditionOrInsertion)
 						customizations.Remove(key);
 					category.Questions.Add(newQ);
-					foreach (Question question in GetCustomizations(newQ, finalSection, category, iQuestion, customizations))
+					foreach (Question question in GetCustomizations(newQ, bookSections.Last(), category, iQuestion, customizations))
 					{
 						lastQuestionInBook = question;
 						yield return question;
