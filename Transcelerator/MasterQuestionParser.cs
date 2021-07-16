@@ -148,6 +148,12 @@ namespace SIL.Transcelerator
 				}
 			}
 
+			public bool AdditionsAlreadyIn(IReadOnlyCollection<IQuestionKey> existing)
+			{
+				return AdditionsAndInsertions.All(c => existing.Any(q => q.CompareRefs(c.Key) == 0 &&
+					q.Text.Equals(c.ModifiedPhrase, StringComparison.Ordinal)));
+			}
+
 			private void ResolveDeletionsAndAdditions()
 			{
 				if (m_isResolved)
@@ -562,7 +568,7 @@ namespace SIL.Transcelerator
 			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out customizationsForQuestion))
 			{
 				customizationsForQuestion.ApplyToQuestion(q);
-				if (q.InsertedQuestionBefore != null)
+				if (q.InsertedQuestionBefore != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.InsertedQuestionBefore)))
 				{
 					category.Questions.Insert(index, q.InsertedQuestionBefore);
 					foreach (Question customQuestion in GetCustomizations(q.InsertedQuestionBefore, sectionRange,
@@ -597,13 +603,13 @@ namespace SIL.Transcelerator
 
 			yield return q;
 			
-	        if (q.AddedQuestionAfter != null)
+	        if (q.AddedQuestionAfter != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.AddedQuestionAfter)))
 	        {
-		        category.Questions.Insert(index + 1, q.AddedQuestionAfter);
+				category.Questions.Insert(index + 1, q.AddedQuestionAfter);
 				foreach (Question tpAdded in GetCustomizations(q.AddedQuestionAfter, sectionRange, 
 					category, index + 1, customizations))
 		        {
-			        yield return tpAdded;
+					yield return tpAdded;
 			        index++;
 		        }
 	        }
@@ -655,23 +661,26 @@ namespace SIL.Transcelerator
 	        SortedDictionary<QuestionKey, Customizations> currBookCustomizations = null;
 			Category category = null;
 			Question lastQuestionInBook = null;
-			Section lastSectionInBook = null;
+			List<Section> sectionsInBook = null;
 	        int iQuestion = -1;
 			foreach (Section section in m_sections.Items)
             {
 	            if (m_customizations != null && BCVRef.GetBookFromBcv(section.StartRef) != currBook)
 	            {
-		            if (lastSectionInBook != null)
+		            if (sectionsInBook == null)
+						sectionsInBook = new List<Section>();
+					else
 		            {
-			            foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+			            foreach (var question in GetTrailingCustomizations(currBook, sectionsInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
 				            yield return question;
+						sectionsInBook.Clear();
 		            }
 
 		            currBook = BCVRef.GetBookFromBcv(section.StartRef);
 		            m_customizations.TryGetValue(currBook, out currBookCustomizations);
 	            }
 
-	            lastSectionInBook = section;
+	            sectionsInBook?.Add(section);
 	            for (int iCat = 0; iCat < section.Categories.Length; iCat++)
                 {
                     category = section.Categories[iCat];
@@ -697,11 +706,11 @@ namespace SIL.Transcelerator
                         {
                             foreach (var question in GetCustomizations(q, section, category, iQuestion, currBookCustomizations))
                             {
-	                            lastQuestionInBook = question;
+								lastQuestionInBook = question;
 								yield return question;
-                                iQuestion++;
-                            }
-                        }
+								iQuestion++;
+							}
+						}
                         else
                         {
                             yield return q;
@@ -710,12 +719,12 @@ namespace SIL.Transcelerator
                     }
                 }
             }
-	        foreach (var question in GetTrailingCustomizations(currBook, lastSectionInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
+	        foreach (var question in GetTrailingCustomizations(currBook, sectionsInBook, currBookCustomizations, lastQuestionInBook, category, iQuestion))
 		        yield return question;
 			m_customizations = null; // Allow this to be garbage collected (and prevent accidental future use)
 		}
 
-		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, IRefRange finalSection, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
+		private static IEnumerable<Question> GetTrailingCustomizations(int bookNum, IReadOnlyCollection<Section> bookSections, SortedDictionary<QuestionKey, Customizations> customizations, Question lastQuestionInBook,
 			Category category, int iQuestion)
 		{
 			if (customizations != null)
@@ -725,19 +734,30 @@ namespace SIL.Transcelerator
 
 				while (customizations.Any(c => c.Value.IsAdditionOrInsertion))
 				{
-					var insertionForPreviousReference = customizations.FirstOrDefault(c => c.Value.IsAdditionOrInsertion && customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key)));
-					var key = insertionForPreviousReference.Key;
-					if (key == null)
+					var insertionsForPreviousReferences = customizations.Where(
+						c => c.Value.IsAdditionOrInsertion &&
+							customizations.All(other => c.Value == other.Value || !other.Key.Matches(c.Key))).ToList();
+					if (!insertionsForPreviousReferences.Any())
 					{
 						Debug.Assert(!customizations.Any(), $"Detected circular chain of customizations for book: {BCVRef.NumberToBookCode(bookNum)}. There were {customizations.Count} customizations that could not be processed!");
 						break;
 					}
 
-					var newQ = lastQuestionInBook.AddedQuestionAfter = insertionForPreviousReference.Value.PopQuestion(key);
-					if (!insertionForPreviousReference.Value.IsAdditionOrInsertion)
+					var firstPrevOrphan = insertionsForPreviousReferences.FirstOrDefault(c =>
+						!c.Value.AdditionsAlreadyIn(bookSections.Where(s => s.StartRef <= c.Key.StartRef && s.EndRef >= c.Key.EndRef)
+							.SelectMany(s => s.Categories)
+							.SelectMany(cat => cat.Questions).ToList()));
+
+					var key = firstPrevOrphan.Key;
+
+					if (firstPrevOrphan.Key == null)
+						break; // All "orphans" already included
+
+					var newQ = lastQuestionInBook.AddedQuestionAfter = firstPrevOrphan.Value.PopQuestion(key);
+					if (!firstPrevOrphan.Value.IsAdditionOrInsertion)
 						customizations.Remove(key);
 					category.Questions.Add(newQ);
-					foreach (Question question in GetCustomizations(newQ, finalSection, category, iQuestion, customizations))
+					foreach (Question question in GetCustomizations(newQ, bookSections.Last(), category, iQuestion, customizations))
 					{
 						lastQuestionInBook = question;
 						yield return question;
