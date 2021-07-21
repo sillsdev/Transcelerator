@@ -360,21 +360,18 @@ namespace SIL.Transcelerator
 					m_sTranslation = null;
 					m_fHasUserTranslation = false;
 
-					Part firstPart = TranslatableParts.FirstOrDefault();
-					if (firstPart != null)
+					foreach (TranslatablePhrase similarPhrase in GetTranslatedPhrasesWithSameInitialTranslatablePart().Where(phrase => phrase.PartPatternMatches(this)))
 					{
-						foreach (TranslatablePhrase similarPhrase in firstPart.OwningPhrases.Where(phrase => phrase.HasUserTranslation && phrase.PartPatternMatches(this)))
+						if (similarPhrase.PhraseInUse == PhraseInUse)
 						{
-							if (similarPhrase.PhraseInUse == PhraseInUse)
-							{
-								m_sTranslation = similarPhrase.Translation;
-								return;
-							}
-							if (similarPhrase.m_allTermsAndNumbersMatch)
-							{
-								SetProvisionalTranslation(similarPhrase.GetTranslationTemplate());
-								return;
-							}
+							m_sTranslation = similarPhrase.Translation;
+							return;
+						}
+
+						if (similarPhrase.m_allTermsAndNumbersMatch)
+						{
+							SetProvisionalTranslation(similarPhrase.GetTranslationTemplate());
+							return;
 						}
 					}
 				}
@@ -693,6 +690,32 @@ namespace SIL.Transcelerator
 					return false;
 			}
 			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the other phrases that have a translation and which have the same initial part
+		/// as the given phrase.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetTranslatedPhrasesWithSameInitialTranslatablePart()
+		{
+			var firstPart = TranslatableParts.FirstOrDefault();
+			if (firstPart != null)
+				return firstPart.OwningPhrases.Where(phrase => phrase != this && phrase.HasUserTranslation);
+			return new TranslatablePhrase[0];
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the other identical phrases that have the same translation.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IReadOnlyCollection<TranslatablePhrase> GetOtherIdenticalPhrasesWithSameTranslation()
+		{
+			return GetTranslatedPhrasesWithSameInitialTranslatablePart().Where(phrase =>
+				phrase.PhraseInUse == PhraseInUse &&
+				phrase.Translation == Translation).ToList();
 		}
 
 		/// ------------------------------------------------------------------------------------
