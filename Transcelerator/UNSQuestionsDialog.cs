@@ -986,14 +986,34 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet)
+			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet &&
+				m_helper[e.RowIndex].Translation.Any(Char.IsLetter))
 			{
-				if (m_helper[e.RowIndex].Translation.Any(Char.IsLetter))
+				if (m_helper[e.RowIndex].HasUserTranslation)
 				{
-					m_helper[e.RowIndex].HasUserTranslation = !m_helper[e.RowIndex].HasUserTranslation;
-					SaveNeeded = true;
-					dataGridUns.InvalidateRow(e.RowIndex);
+					var otherIdenticalQuestions = m_helper[e.RowIndex].GetOtherIdenticalPhrasesWithSameTranslation();
+					if (otherIdenticalQuestions.Any())
+					{
+						var msg = (otherIdenticalQuestions.Count == 1) ?
+							LocalizationManager.GetString("MainWindow.ClearAllMatchingTranslations.Single",
+								"There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.") :
+							LocalizationManager.GetString("MainWindow.ClearAllMatchingTranslations.Multiple",
+								"There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.");
+						if (MessageBox.Show(msg, TxlPlugin.pluginName, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+							return;
+						foreach (var tp in otherIdenticalQuestions)
+						{
+							tp.HasUserTranslation = false;
+							int index = m_helper.FindPhrase(tp.PhraseKey);
+							if (index >= 0 && index < dataGridUns.RowCount)
+								dataGridUns.InvalidateRow(index);
+						}
+					}
 				}
+
+				m_helper[e.RowIndex].HasUserTranslation = !m_helper[e.RowIndex].HasUserTranslation;
+				SaveNeeded = true;
+				dataGridUns.InvalidateRow(e.RowIndex);
 			}
 		}
 
