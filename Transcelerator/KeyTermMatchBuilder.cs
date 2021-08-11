@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -15,7 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using AddInSideViews;
+using Paratext.PluginInterfaces;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -34,7 +34,7 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public KeyTermMatchBuilder(IKeyTerm keyTerm) : this(keyTerm, null, null)
+		public KeyTermMatchBuilder(IBiblicalTerm keyTerm) : this(keyTerm, null, null)
 		{
 		}
 
@@ -50,10 +50,10 @@ namespace SIL.Transcelerator
 	    /// "term". If the term variable is not present in the regular expression, this term
 	    /// will be excluded.</param>
 	    /// ------------------------------------------------------------------------------------
-	    public KeyTermMatchBuilder(IKeyTerm keyTerm, IReadonlyDictionary<string, KeyTermRule> rules,
+	    public KeyTermMatchBuilder(IBiblicalTerm keyTerm, IReadonlyDictionary<string, KeyTermRule> rules,
             IEnumerable<Regex> regexRules)
 		{
-			string normalizedLcTerm = keyTerm.Term.ToLowerInvariant().Normalize(NormalizationForm.FormC);
+			string normalizedLcTerm = keyTerm.Gloss("en").ToLowerInvariant().Normalize(NormalizationForm.FormC);
 			bool fMatchForRefOnly = false;
             if (rules != null && rules.TryGetValue(normalizedLcTerm, out var ktRule))
 			{
@@ -104,7 +104,7 @@ namespace SIL.Transcelerator
 		/// phrase. But some have multiple alternative words or phrases; hence, this method.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void ProcessKeyTermPhrase(IKeyTerm keyTerm, string phrase, bool fMatchForRefOnly)
+		private void ProcessKeyTermPhrase(IBiblicalTerm keyTerm, string phrase, bool fMatchForRefOnly)
 		{
 			int startOfListForPhrase = m_list.Count;
 			string[] orParts = phrase.Split(new [] {" or "}, 2, StringSplitOptions.RemoveEmptyEntries);
@@ -141,7 +141,7 @@ namespace SIL.Transcelerator
         /// include this phrase as part of the sequence of words used to form a match.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        private void AddMatchesForPhrase(IKeyTerm keyTerm, string phrase, bool fMatchForRefOnly,
+        private void AddMatchesForPhrase(IBiblicalTerm keyTerm, string phrase, bool fMatchForRefOnly,
 	        bool createExtraMatchIfPhraseStartsWithTo, int startOfListForPhrase)
 	    {
             // Initially, we add one empty list

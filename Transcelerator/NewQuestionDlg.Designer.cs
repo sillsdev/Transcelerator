@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2012' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2012' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -561,6 +561,7 @@ namespace SIL.Transcelerator
 			this.m_toolStripReference.Size = new System.Drawing.Size(518, 27);
 			this.m_toolStripReference.TabIndex = 10;
 			this.m_toolStripReference.Text = "toolStrip1";
+			this.m_scrPsgReference.VerseControl.VerseRefChanged += m_scrPsgReference_PassageChanged;
 			// 
 			// lblReference
 			// 

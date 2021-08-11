@@ -511,5 +511,17 @@ namespace SIL.Transcelerator.Properties {
                 this["ShowEditColumn"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastProjectCustomVersificationNotice {
+            get {
+                return ((string)(this["LastProjectCustomVersificationNotice"]));
+            }
+            set {
+                this["LastProjectCustomVersificationNotice"] = value;
+            }
+        }
     }
 }

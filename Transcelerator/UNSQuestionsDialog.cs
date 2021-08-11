@@ -9,7 +9,6 @@
 // 
 // File: UNSQuestionsDialog.cs
 // ---------------------------------------------------------------------------------------------
-using AddInSideViews;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Transcelerator.Properties;
@@ -26,13 +25,16 @@ using System.IO;
 using System.Linq;
 using System.Media;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
 using DesktopAnalytics;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using Paratext.PluginInterfaces;
 using SIL.IO;
 using SIL.WritingSystems;
 using static System.String;
@@ -54,37 +56,24 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Member Data
-		private readonly string m_projectName;
-	    private readonly Func<IEnumerable<IKeyTerm>> m_getKeyTerms;
-	    private readonly Font m_vernFont;
-		private readonly string m_vernIcuLocale;
-		private readonly string m_vernLanguageName;
-		private readonly bool m_fVernIsRtoL;
+	    private readonly Func<IEnumerable<IBiblicalTerm>> m_getKeyTerms;
+		// Function to get the vernacular font
+		private Font m_vernFont;
+		private readonly IPluginHost m_host;
+		private readonly IProject m_project;
 		private readonly Action<bool> m_selectKeyboard;
-	    private readonly Func<string, IList<int>> m_getTermOccurrences;
 	    private readonly string m_helpHome;
-		private readonly Action<IList<string>> m_lookupTermDelegate;
-		private readonly bool m_fEnableDragDrop;
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
         private readonly DataFileAccessor m_fileAccessor;
-		private readonly string m_defaultBibleModuleFolder = null;
-        private readonly IScrExtractor m_scrExtractor;
-	    private readonly Func<string> m_getCss;
-	    private readonly string m_appName;
 		private readonly string m_installDir;
-        private readonly IScrVers m_masterVersification;
-        private readonly IScrVers m_projectVersification;
-	    private BCVRef m_startRef;
-        private BCVRef m_endRef;
+        private readonly IVersification m_masterVersification;
+	    private IVerseRef m_startRef;
+        private IVerseRef m_endRef;
         private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
         private static readonly string s_programDataFolder;
-		private static Regex s_regexGlossaryEntry;
-		private static Regex s_regexUsxElement;
-		private static Regex s_regexVerseNumbers;
-		private static Regex s_regexEmptyVerses;
 		private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private MasterQuestionParser m_parser;
@@ -138,6 +127,8 @@ namespace SIL.Transcelerator
 					dataGridUns.Refresh();
 			}
 		}
+
+		private bool DragAndDropDisabled => !m_host.UserSettings.IsDragAndDropEnabled;
 
 		private PhraseTranslationHelper.KeyTermFilterType CheckedKeyTermFilterType
 		{
@@ -273,44 +264,30 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="UNSQuestionsDialog"/> class.
 		/// </summary>
 		/// <param name="splashScreen">The splash screen (can be null)</param>
-		/// <param name="projectName">Name of the project.</param>
-		/// <param name="getKeyTerms">Function to get collection of key terms.</param>
-		/// <param name="getTermRenderings">Function to get renderings for given key term.</param>
-		/// <param name="vernFont">The vernacular font.</param>
-		/// <param name="vernIcuLocale">The vernacular icu locale.</param>
-		/// <param name="vernLanguageName">The vernacular language name</param>
-		/// <param name="fVernIsRtoL">if set to <c>true</c> the vernacular language is r-to-L].</param>
-		/// <param name="datafileProxy">helper object to store and retrieve data.</param>
-		/// <param name="scrExtractor">The Scripture extractor (can be null).</param>
-		/// <param name="getCss">Function to retrieve the project's USFX cascading style sheet</param>
-		/// <param name="appName">Name of the calling application</param>
-		/// <param name="englishVersification">The versification typically used in English Bibles</param>
-		/// <param name="projectVersification">The versification of the external project (to
-		/// be used for passing references to the scrExtractor).</param>
-		/// <param name="startRef">The starting Scripture reference to filter on</param>
-		/// <param name="endRef">The ending Scripture reference to filter on</param>
-		/// <param name="currRef">The current reference in the calling application</param>
-		/// <param name="selectKeyboard">The delegate to select vern/anal keyboard.</param>
-		/// <param name="getTermOccurrences">Function to get occurrences for given key term.</param>
-		/// <param name="lookupTermDelegate">The lookup term delegate.</param>
-		/// <param name="fEnableDragDrop">Allow drag-drop editing (moving text within a translation)</param>
+		/// <param name="host">The application hosting the Transcelerator plugin</param>
+		/// <param name="project">The project that Transcelerator is working with</param>
+		/// <param name="selectKeyboard">The delegate to select vern/anal keyboard</param>
+		/// <param name="startRef">The starting Scripture reference to filter on (in the English
+		/// versification)</param>
+		/// <param name="endRef">The ending Scripture reference to filter on (in the English
+		/// versification)</param>
 		/// <param name="preferredUiLocale">THE BCP-47 locale identifier to use for the user
 		/// interface (including localized questions, answers, etc.)</param>
+		/// <param name="currRef">The current reference in the calling application
+		/// converted to the English versification (if needed).</param>
 		/// ------------------------------------------------------------------------------------
-		public UNSQuestionsDialog(TxlSplashScreen splashScreen, string projectName,
-            Func<IEnumerable<IKeyTerm>> getKeyTerms, Func<string, IList<string>> getTermRenderings,
-            Font vernFont, string vernIcuLocale, string vernLanguageName, bool fVernIsRtoL, DataFileAccessor datafileProxy,
-            IScrExtractor scrExtractor, Func<string> getCss, string appName, IScrVers englishVersification,
-            IScrVers projectVersification, BCVRef startRef, BCVRef endRef, BCVRef currRef,
-            Action<bool> selectKeyboard, Func<string, IList<int>> getTermOccurrences,
-            Action<IList<string>> lookupTermDelegate, bool fEnableDragDrop, string preferredUiLocale)
+		public UNSQuestionsDialog(TxlSplashScreen splashScreen, IPluginHost host,
+			IProject project, Action<bool> selectKeyboard, IVerseRef startRef, IVerseRef endRef,
+			string preferredUiLocale, IVerseRef currRef)
 		{
-            if (splashScreen == null)
-            {
-                splashScreen = new TxlSplashScreen();
-                splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-            }
-            splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgInitializing", "Initializing...");
+			if (startRef != default && endRef != default && startRef.CompareTo(endRef) > 0)
+				throw new ArgumentException("startRef must be before endRef");
+
+			m_host = host;
+			m_project = project;
+
+			if (splashScreen != null)
+				splashScreen.Message = LocalizationManager.GetString("SplashScreen.MsgInitializing", "Initializing...");
 
             InitializeComponent();
 
@@ -318,38 +295,26 @@ namespace SIL.Transcelerator
 		    generateOutputForArloToolStripMenuItem.Visible = true;
 		    mnuLoadTranslationsFromTextFile.Visible = true;
 #endif
+			m_fileAccessor = new ParatextDataFileAccessor(project);
 
-            m_fileAccessor = datafileProxy;
+			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major);
+			KeyTerm.GetTermRenderings = lemma => project.BiblicalTermList.Where(term => term.Lemma == lemma)
+				.SelectMany(term => project.GetBiblicalTermRenderings(term, true).Renderings);
 
-            if (startRef != BCVRef.Empty && endRef != BCVRef.Empty && startRef > endRef)
-				throw new ArgumentException("startRef must be before endRef");
-			m_projectName = projectName;
-	        m_getKeyTerms = getKeyTerms;
-	        KeyTerm.GetTermRenderings = getTermRenderings;
-	        m_vernFont = vernFont;
-			m_vernIcuLocale = vernIcuLocale;
-			m_vernLanguageName = vernLanguageName;
-			m_fVernIsRtoL = fVernIsRtoL;
-		    if (IsNullOrEmpty(m_vernIcuLocale))
+			if (m_project.Language.Id != null)
                 mnuGenerate.Enabled = false;
-			m_selectKeyboard = selectKeyboard;
-	        m_getTermOccurrences = getTermOccurrences;
-	        m_lookupTermDelegate = lookupTermDelegate;
-		    m_fEnableDragDrop = fEnableDragDrop;
 
-			m_scrExtractor = scrExtractor;
-	        m_getCss = getCss;
-	        m_appName = appName;
-            m_masterVersification = englishVersification;
-            m_projectVersification = projectVersification;
-		    TermRenderingCtrl.s_AppName = appName;
+			m_selectKeyboard = selectKeyboard;
+
+            m_masterVersification = m_host.GetStandardVersification(StandardScrVersType.English);
+		    TermRenderingCtrl.s_AppName = m_host.ApplicationName;
            
             m_startRef = startRef;
             m_endRef = endRef;
 		    m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
             
             m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
-	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, projectName, TxlCore.kQuestionsFilename);
+	        m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlCore.kQuestionsFilename);
 
 			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
 			{
@@ -371,7 +336,7 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
-			Text = Format(Text, m_projectName);
+			Text = Format(Text, m_project.ShortName);
 			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
 			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
@@ -396,30 +361,48 @@ namespace SIL.Transcelerator
 			mnuAutoSave.Checked = Properties.Settings.Default.AutoSave;
 			mnuViewEditQuestionColumn.Checked = m_colEditQuestion.Visible = Properties.Settings.Default.ShowEditColumn;
 
-			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
-			translationCellStyle.Font = vernFont;
-			m_colTranslation.DefaultCellStyle = translationCellStyle;
-			if (fVernIsRtoL)
-				m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-
-			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
-				(int)Math.Ceiling(vernFont.Height * CreateGraphics().DpiY / 72) + 2;
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
 	        KeyTerm.FileAccessor = m_fileAccessor;
 
 			LoadTranslations(splashScreen);
 
-            dataGridUns.HandleCreated += (sender, args) => ProcessReceivedMessage(currRef);
+            dataGridUns.HandleCreated += (sender, args) => ProcessReceivedMessage(new BCVRef(currRef.BBBCCCVVV));
 
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
-			splashScreen.Close();
-		}			
-		
+			InitFromHostProject();
+
+			project.ProjectDataChanged += (sender, details) => InitFromHostProject(details);
+
+			splashScreen?.Close();
+		}
+
+		private void InitFromHostProject(ProjectDataChangeType change = ProjectDataChangeType.WholeProject)
+		{
+			switch (change)
+			{
+				case ProjectDataChangeType.SettingVernacularKeyboard: // ENHANCE: If vern keyboard is active, set it to new keyboard
+					return;
+			}
+			
+			var fontInfo = m_project.Language.Font;
+			m_vernFont?.Dispose();
+			m_vernFont = new Font(fontInfo.FontFamily, fontInfo.Size);
+			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
+			translationCellStyle.Font = m_vernFont;
+			m_colTranslation.DefaultCellStyle = translationCellStyle;
+
+			if (m_project.Language.IsRtoL)
+				m_colTranslation.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+			dataGridUns.RowTemplate.MinimumHeight = dataGridUns.RowTemplate.Height = m_normalRowHeight =
+				(int)Math.Ceiling(m_vernFont.Height * CreateGraphics().DpiY / 72) + 2;
+		}
+
 		private void HandleStringsLocalized()
 		{
 			SetControlTagsToFormatStringsAndFormatMenus();
@@ -671,7 +654,7 @@ namespace SIL.Transcelerator
 	        {
 		        mnuProduceScriptureForgeFiles.Tag = "shown";
 
-				using (var dlg = new ScriptureForgeInfoDlg(m_appName))
+				using (var dlg = new ScriptureForgeInfoDlg(m_host.ApplicationName))
 		        {
 			        dlg.ShowDialog(this);
 		        }
@@ -1119,8 +1102,8 @@ namespace SIL.Transcelerator
 				RememberCurrentSelection();
 				clearCurrentSelection = true;
 			}
-            var refFilter = m_startRef == BCVRef.Empty ? null :
-				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef >= start && m_startRef <= end);
+            var refFilter = m_startRef == null ? null :
+				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef.BBBCCCVVV >= start && m_startRef.BBBCCCVVV <= end);
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
             dataGridUns.RowEnter -= dataGridUns_RowEnter;
@@ -1272,8 +1255,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            GenerateScript(m_scrExtractor == null ? m_defaultBibleModuleFolder :
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            GenerateScript(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
 
 	    /// ------------------------------------------------------------------------------------
@@ -1283,13 +1265,15 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private void GenerateScript(string defaultFolder)
         {
-            using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_projectName, m_scrExtractor,
+            using (GenerateScriptDlg dlg = new GenerateScriptDlg(m_project.ShortName,
                 defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, AvailableLocales))
             {
 	            dlg.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
 
 				if (dlg.ShowDialog() == DialogResult.OK)
-                {
+				{
+					var vernIcuLocale = m_project.Language.Id;
+					var projectVersification = m_project.Versification;
                     Func<TranslatablePhrase, bool> InRange;
                     var book = dlg.SelectedBook;
                     if (book != null)
@@ -1346,7 +1330,7 @@ namespace SIL.Transcelerator
                         sw.WriteLine("<style type=\"text/css\">");
                         // This CSS directive always gets written directly to the template file because it's
                         // important to get right and it's unlikely that someone will want to do a global override.
-                        sw.WriteLine(":lang(" + m_vernIcuLocale + ") {font-family:serif," +
+                        sw.WriteLine(":lang(" + vernIcuLocale + ") {font-family:serif," +
                             m_colTranslation.DefaultCellStyle.Font.FontFamily.Name + ",Arial Unicode MS;}");
                         if (dlg.m_rdoEmbedStyleInfo.Checked)
                         {
@@ -1357,7 +1341,7 @@ namespace SIL.Transcelerator
                         }
                         sw.WriteLine("</style>");
                         sw.WriteLine("</head>");
-                        sw.WriteLine("<body lang=\"" + m_vernIcuLocale + "\">");
+                        sw.WriteLine("<body lang=\"" + vernIcuLocale + "\">");
                         sw.WriteLine("<h1 lang=\"en\">" + dlg.NormalizedTitle + "</h1>");
                         int prevCategory = -1;
                         int prevSection = -1;
@@ -1365,29 +1349,21 @@ namespace SIL.Transcelerator
                         var prevQuestionStartRef = -1;
                         var prevQuestionEndRef = -1;
                         bool sectionHeadHasBeenOutput = false;
+						var extractor = new ScriptureExtractor(m_project, Properties.Settings.Default.GenerateIncludeVerseNumbers);
 
                         void OutputScripture(int startRef, int endRef)
-                        {
-	                        if (m_scrExtractor == null)
+						{
+	                        try
 	                        {
-		                        sw.WriteLine("<p class=\"scripture\">");
-		                        sw.WriteLine(@"\ref " + BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
-		                        sw.WriteLine("</p>");
+		                        sw.Write(extractor.GetAsHtmlFragment(m_masterVersification.CreateReference(startRef),
+									m_masterVersification.CreateReference(endRef)));
 	                        }
-	                        else
+	                        catch (Exception ex)
 	                        {
-		                        try
-		                        {
-			                        sw.Write(GetExtractedScripture(startRef, endRef,
-										Properties.Settings.Default.GenerateIncludeVerseNumbers));
-		                        }
-		                        catch (Exception ex)
-		                        {
-			                        sw.Write(ex.Message);
+		                        sw.Write(ex.Message);
 #if DEBUG
-			                        throw;
+		                        throw;
 #endif
-		                        }
 	                        }
                         }
 
@@ -1415,7 +1391,7 @@ namespace SIL.Transcelerator
 	                            else
 	                            {
 		                            var h2 = dlg.GetDataString(new UISectionHeadDataString(section), out lang);
-									WriteParagraphElement(sw, null, h2, m_vernIcuLocale, lang, "h2");
+									WriteParagraphElement(sw, null, h2, vernIcuLocale, lang, "h2");
 	                            }
 	                            sectionHeadHasBeenOutput = true;
                             }
@@ -1429,7 +1405,7 @@ namespace SIL.Transcelerator
 	                            }
 
 	                            var lwcCategoryName = dlg.GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
-								WriteParagraphElement(sw, null, lwcCategoryName, m_vernIcuLocale, lang, "h3");
+								WriteParagraphElement(sw, null, lwcCategoryName, vernIcuLocale, lang, "h3");
 
 								if (phrase.Category == 0 && dlg.m_chkPassageBeforeOverview.Checked)
 									OutputScripture(section.StartRef, section.EndRef);
@@ -1464,8 +1440,8 @@ namespace SIL.Transcelerator
 									outputPassage = dlg.OutputPassageForOutOfOrderQuestions && phrase.Category > 0;
 									if (!outputPassage)
 									{
-										int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
-										int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
+										int startRef = projectVersification.ChangeVersification(m_masterVersification.CreateReference(phrase.StartRef)).BBBCCCVVV;
+										int endRef = projectVersification.ChangeVersification(m_masterVersification.CreateReference(phrase.EndRef)).BBBCCCVVV;
 										sw.WriteLine("<h4 class=\"summaryRef\">");
 										sw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
 										sw.WriteLine("</h4>");
@@ -1476,18 +1452,18 @@ namespace SIL.Transcelerator
                             {
                                 if (phrase.Category > 0)
                                 {
-                                    int startRef = m_projectVersification.ChangeVersification(phrase.StartRef, m_masterVersification);
-                                    int endRef = m_projectVersification.ChangeVersification(phrase.EndRef, m_masterVersification);
+                                    int startRef = projectVersification.ChangeVersification(m_masterVersification.CreateReference(phrase.StartRef)).BBBCCCVVV;
+									int endRef = projectVersification.ChangeVersification(m_masterVersification.CreateReference(phrase.EndRef)).BBBCCCVVV;
 									OutputScripture(startRef, endRef);
                                 }
                                 prevQuestionStartRef = phrase.StartRef;
                                 prevQuestionEndRef = phrase.EndRef;
                             }
 
-	                        lang = m_vernIcuLocale;
+	                        lang = vernIcuLocale;
 	                        var questionText = phrase.HasUserTranslation ? phrase.Translation :
 								dlg.GetDataString(phrase.ToUIDataString(), out lang);
-	                        WriteParagraphElement(sw, "question", questionText, m_vernIcuLocale, lang);
+	                        WriteParagraphElement(sw, "question", questionText, vernIcuLocale, lang);
 
 							sw.WriteLine($"<div class=\"extras\" lang=\"{dlg.LwcLocale}\">");
 	                        if (dlg.m_chkIncludeLWCQuestions.Checked && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
@@ -1546,69 +1522,12 @@ namespace SIL.Transcelerator
 						booksWithExistingSfFiles.Add(b);
 				}
 
-				foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_vernIcuLocale, allAvailableLocalizers, booksWithExistingSfFiles))
+				foreach (var questionsForBook in m_helper.GetQuestionsForBooks(m_project.Language.Id, allAvailableLocalizers, booksWithExistingSfFiles))
 				{
 					m_fileAccessor.WriteBookSpecificData(DataFileAccessor.BookSpecificDataFileId.ScriptureForge,
 						questionsForBook.BookId, questionsForBook);
 				}
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the requested range of Scripture text with the following cleanup:
-		/// Remove USX element
-		/// Change para elements (and style attributes) to div elements (and class attributes)
-		/// Remove char style elements that wrap glossary entries.
-		/// If requested, converts verse number notation into usable HTML
-		/// </summary>
-		/// <remarks>ENHANCE: Rather than getting the data as USFX and doing these somewhat
-		/// kludgy cleanup steps, we could implement an HTML extractor in Paratext and let it
-		/// do the transformation using its XSLT scripts.</remarks>
-		/// ------------------------------------------------------------------------------------
-		private string GetExtractedScripture(int startRef, int endRef, bool includeVerseNumbers)
-		{
-			m_scrExtractor.IncludeVerseNumbers = includeVerseNumbers;
-			return ConvertUsxToHtml(m_scrExtractor.Extract(startRef, endRef), includeVerseNumbers);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Does the following cleanup:
-		/// Remove USX element
-		/// Change para elements (and style attributes) to div elements (and class attributes)
-		/// Remove char style elements that wrap glossary entries.
-		/// If requested, converts verse number notation into usable HTML
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		internal static string ConvertUsxToHtml(string usx, bool includeVerseNumbers)
-		{
-			StringBuilder extractedScr = new StringBuilder(usx);
-			extractedScr.Replace("para style=\"", "div class=\"usfm_");
-			extractedScr.Replace("/para", "/div");
-			extractedScr.Replace("</usx>", "");
-			extractedScr.Append(Environment.NewLine);
-
-			if (s_regexUsxElement == null || s_regexGlossaryEntry == null)
-			{
-				s_regexUsxElement = new Regex("\\<usx version=\"[0-9]+\\.[0-9]+\"\\>", RegexOptions.Compiled);
-				s_regexGlossaryEntry = new Regex("\\<char style=\"w\"\\>(?<surfaceFormOfGlossaryWord>[^|]*)\\|[^<]*\\</char\\>", RegexOptions.Compiled);
-			}
-
-			if (includeVerseNumbers && s_regexVerseNumbers == null)
-			{
-				s_regexEmptyVerses = new Regex("<verse [^>]*> *((?=(<verse))|(?=(</div>\\s*$)))", RegexOptions.Compiled);
-				s_regexVerseNumbers = new Regex("<verse number=\"([^\"]+)\" style=\"v\"\\s\\/>", RegexOptions.Compiled);
-			}
-
-			var result = s_regexUsxElement.Replace(extractedScr.ToString(), Empty);
-			result = s_regexGlossaryEntry.Replace(result, "${surfaceFormOfGlossaryWord}");
-
-			if (!includeVerseNumbers)
-				return result;
-
-			result = s_regexEmptyVerses.Replace(result, "");
-			return s_regexVerseNumbers.Replace(result, "<span class=\"verse\" number=\"$1\">$1</span>");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1627,21 +1546,21 @@ namespace SIL.Transcelerator
 
 				string sRef;
 				Func<BCVRef, BCVRef, bool> InRange;
-				if (m_startRef == BCVRef.Empty)
+				if (m_startRef == null)
 				{
 					sRef = "- All";
 					InRange = (bcvStart, bcvEnd) => true;
 				}
 				else
 				{
-					sRef = BCVRef.NumberToBookCode(m_startRef.Book);
-					if (m_startRef.Book != m_endRef.Book)
-						sRef += "-" + BCVRef.NumberToBookCode(m_endRef.Book);
+					sRef = m_startRef.BookCode;
+					if (m_startRef.BookNum != m_endRef.BookNum)
+						sRef += "-" + m_endRef.BookCode;
 
-					InRange = (bcvStart, bcvEnd) => bcvStart >= m_startRef && bcvEnd <= m_endRef;
+					InRange = (bcvStart, bcvEnd) => bcvStart >= m_startRef.BBBCCCVVV && bcvEnd <= m_endRef.BBBCCCVVV;
 				}
 
-				string language = m_vernIcuLocale;
+				string language = m_project.Language.Id;
 				string sChapter = "Chapter";
 				string sPsalm = "Psalm";
 				if (language == "es")
@@ -1815,8 +1734,11 @@ namespace SIL.Transcelerator
 			sw.WriteLine(".comment {color:" + commentClr.Name + ";}");
 			sw.WriteLine(".extras {margin-bottom:" + cBlankLines + "em;}");
 
-            if (m_getCss != null)
-                sw.WriteLine(m_getCss());
+			var languageInfo = m_project.Language;
+			var fontInfo = languageInfo.Font;
+			
+            sw.WriteLine(new UsfmStyleBasedCss(fontInfo.FontFamily, fontInfo.Features,
+				languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS());
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2117,9 +2039,9 @@ namespace SIL.Transcelerator
 		private void AddNewQuestion(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			string language = Format("{0} ({1})", m_vernLanguageName, m_vernIcuLocale);
-			using (var dlg = new NewQuestionDlg(CurrentPhrase, language, m_sectionInfo,
-				m_projectVersification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
+			string language = Format("{0} ({1})", m_project.LanguageName, m_project.Language.Id);
+			using (var dlg = new NewQuestionDlg(m_project, CurrentPhrase, language, m_sectionInfo,
+				m_project.Versification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -2190,8 +2112,9 @@ namespace SIL.Transcelerator
 		private void mnuReferenceRange_Click(object sender, EventArgs e)
 		{
 			m_selectKeyboard(false);
-			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(m_masterVersification,
-                new BCVRef(m_startRef), new BCVRef(m_endRef), m_availableBookIds))
+			using (ScrReferenceFilterDlg dlg = new ScrReferenceFilterDlg(m_project,
+                m_startRef.ChangeVersification(m_project.Versification), 
+				m_endRef.ChangeVersification(m_project.Versification), m_availableBookIds))
 			{
 				if (dlg.ShowDialog(this) == DialogResult.OK)
 				{
@@ -2200,8 +2123,11 @@ namespace SIL.Transcelerator
 					var newEndRefValue = dlg.ToRef;
 					if (m_startRef != newStartRefValue || m_endRef != newEndRefValue)
 					{
-						Properties.Settings.Default.FilterStartRef = m_startRef = newStartRefValue;
-						Properties.Settings.Default.FilterEndRef = m_endRef = newEndRefValue;
+						var englishVrs = m_host.GetStandardVersification(StandardScrVersType.English);
+						m_startRef = newStartRefValue?.ChangeVersification(englishVrs);
+						m_endRef = newEndRefValue?.ChangeVersification(englishVrs);
+						Properties.Settings.Default.FilterStartRef = m_startRef?.BBBCCCVVV ?? 0;
+						Properties.Settings.Default.FilterEndRef = m_endRef?.BBBCCCVVV ?? 0;
 						ApplyFilter();
 					}
 				}
@@ -2387,7 +2313,7 @@ namespace SIL.Transcelerator
 			if (TextControl == null || !EditingTranslation)
 				return;
 
-			TextControl.MoveSelectedWord(sender == (m_fVernIsRtoL ? mnuShiftWordsLeft : mnuShiftWordsRight));
+			TextControl.MoveSelectedWord(sender == (m_project.Language.IsRtoL ? mnuShiftWordsLeft : mnuShiftWordsRight));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2697,22 +2623,29 @@ namespace SIL.Transcelerator
 			m_loadingBiblicalTermsPane = false;
 		}
 
-		private void LookupTerm(IEnumerable<string> termIds)
+		private void LookupTerm(IReadOnlyList<string> termIds)
 		{
-		    List<string> prioritizedTerms = new List<string>();
-		    List<string> termsNotOccurringInCurrentRefRange = new List<string>();
+			var majorTerms = m_host.GetBiblicalTermList(BiblicalTermListType.Major);
+		    List<IBiblicalTerm> termsToLoad = new List<IBiblicalTerm>();
 		    int startRef = CurrentPhrase.StartRef;
 		    int endRef = CurrentPhrase.EndRef;
-            foreach (string termId in termIds)
-            {
-                var occurrences = m_getTermOccurrences(termId);
-                if (occurrences.Any(o => o >= startRef && o <= endRef))
-                    prioritizedTerms.Add(termId);
-                else
-                    termsNotOccurringInCurrentRefRange.Add(termId);
+			bool foundPriorityTerm = false;
+            foreach (var term in majorTerms.Where(t => termIds.Contains(t.Lemma) ))
+			{
+				if (term.Occurrences.Select(o => o.BBBCCCVVV).Any(o => o >= startRef && o <= endRef))
+				{
+					if (!foundPriorityTerm)
+					{
+						termsToLoad.Clear();
+						foundPriorityTerm = true;
+					}
+				}
+				else if (foundPriorityTerm)
+					continue;
+				termsToLoad.Add(term);
             }
-		    prioritizedTerms.AddRange(termsNotOccurringInCurrentRefRange);
-			m_lookupTermDelegate(prioritizedTerms);
+
+			m_host.BiblicalTermsWindow.LoadFilteredList(m_project, termsToLoad, majorTerms);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3003,7 +2936,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		void TextControl_GiveFeedback(object sender, GiveFeedbackEventArgs e)
 		{
-			if (!m_fEnableDragDrop && e.Effect == DragDropEffects.Move)
+			if (DragAndDropDisabled && e.Effect == DragDropEffects.Move)
 			{
 				e.UseDefaultCursors = false;
 			}
@@ -3032,7 +2965,7 @@ namespace SIL.Transcelerator
 		{
 			var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(new Point(e.X, e.Y)));
 
-			if (!m_fEnableDragDrop)
+			if (DragAndDropDisabled)
 			{
 				TextControl.SelectionStart = ichInsert;
 				TextControl.SelectionLength = 0;

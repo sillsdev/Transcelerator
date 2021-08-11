@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using L10NSharp;
+using Paratext.PluginInterfaces;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -43,12 +44,12 @@ namespace SIL.Transcelerator
         #region Construction and initialization
         // ---------------------------------------------------------------------------------------------
         /// <summary>
-        /// Before using this class to request renderings, This function must be set.
+        /// This function must be set before using this class to request renderings.
         /// </summary>
         // ---------------------------------------------------------------------------------------------
-        public static Func<string, IList<string>> GetTermRenderings { get; set; }
+        public static Func<string, IEnumerable<string>> GetTermRenderings { get; set; }
 
-        // ---------------------------------------------------------------------------------------------
+		// ---------------------------------------------------------------------------------------------
         /// <summary>
         /// Before using this class, the file proxy must be set to allow user-added renderings to be
         /// loaded.
@@ -132,7 +133,7 @@ namespace SIL.Transcelerator
         /// Gets all the underlying term IDs.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public IEnumerable<string> AllTermIds => m_termSurrogate.BiblicalTermIds;
+        public IReadOnlyList<string> AllTermIds => m_termSurrogate.BiblicalTermIds;
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -305,10 +306,10 @@ namespace SIL.Transcelerator
             int max = -1;
             Dictionary<string, int> occurrences = new Dictionary<string, int>();
 
-            foreach (var termId in m_termSurrogate.BiblicalTermIds)
+            foreach (var term in m_termSurrogate.BiblicalTermIds)
             {
                 int value = 4; // First rendering for each term is considered the best, so it counts more.
-                IList<string> renderings = GetTermRenderings(termId);
+                var renderings = GetTermRenderings(term);
                 if (renderings == null)
                     continue;
                 foreach (string termRendering in renderings.Where(rendering => rendering != null).

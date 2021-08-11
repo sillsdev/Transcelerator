@@ -1,23 +1,19 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.   
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.   
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.AddIn;
-using System.AddIn.Pipeline;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using AddInSideViews;
 using DesktopAnalytics;
 using L10NSharp;
 using SIL.IO;
@@ -26,24 +22,19 @@ using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.Windows.Forms.Reporting;
+using JetBrains.Annotations;
+using Paratext.PluginInterfaces;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
-	[AddIn(pluginName, Description = "Assists in rapid translation of Scripture comprehension checking questions.",
-		Version = "2.0", Publisher = "SIL International")]
-	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
-	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Tools|Custom tools")]
-	[QualificationData(PluginMetaDataKeys.menuImagePath, @"Transcelerator\TXL no TXL.ico")]
-	[QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.scriptureProjectActive)]
-    [QualificationData(PluginMetaDataKeys.multipleInstances, CreateInstanceRule.forEachActiveProject)]
-	public class TxlPlugin : IParatextAddIn2
+	[PublicAPI]
+	public class TxlPlugin : IParatextStandalonePlugin
 	{
 		public const string pluginName = "Transcelerator";
 		public const string emailAddress = "transcelerator_feedback@sil.org";
 	    private TxlSplashScreen splashScreen;
 		private UNSQuestionsDialog unsMainWindow;
-		private IHost host;
-		private string m_projectName;
 
 		public void RequestShutdown()
 		{
@@ -60,11 +51,6 @@ namespace SIL.Transcelerator
 		        else
                     Environment.Exit(0);
 		    }
-		}
-
-		public Dictionary<string, IPluginDataFileMergeInfo> DataFileKeySpecifications
-		{
-			get { return ParatextDataFileAccessor.GetDataFileKeySpecifications(); }
 		}
 
 	    public void Activate(string activeProjectName)
@@ -90,34 +76,19 @@ namespace SIL.Transcelerator
 			}
 	    }
 
-	    public void Run(IHost ptHost, string activeProjectName)
+	    public void Run(IPluginHost host, IParatextChildState state)
 		{
-            lock (this)
-            {
-                if (host != null)
-                {
-                    // This should never happen, but just in case Host does something wrong...
-                    ptHost.WriteLineToLog(this, "Run called more than once!");
-                    return;
-                }
-            }
-
 			try
 			{
 				Application.EnableVisualStyles();
 
-				host = ptHost;
-				m_projectName = activeProjectName;
-#if DEBUG
-				MessageBox.Show("Attach debugger now (if you want to)", pluginName);
-#endif
-				ptHost.WriteLineToLog(this, "Starting " + pluginName);
+				host.Log(this, "Starting " + pluginName);
 
 				string preferredUiLocale = "en";
 				try
 				{
-					preferredUiLocale = host.GetApplicationSetting("InterfaceLanguageId");
-					if (String.IsNullOrWhiteSpace(preferredUiLocale))
+					preferredUiLocale = host.UserSettings.UiLocale;
+					if (IsNullOrWhiteSpace(preferredUiLocale))
 						preferredUiLocale = "en";
 				}
 				catch (Exception)
@@ -126,48 +97,41 @@ namespace SIL.Transcelerator
 
 				SetUpLocalization(preferredUiLocale);
 
+				var project = state.Project;
+
 				Thread mainUIThread = new Thread(() =>
 				{
-					InitializeErrorHandling(m_projectName);
-
-                    const string kMajorList = "Major";
+					InitializeErrorHandling(host, project.ShortName);
 
 					UNSQuestionsDialog formToShow;
 					lock (this)
 					{
 						splashScreen = new TxlSplashScreen();
 					    splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
-						splashScreen.Message = string.Format(
+						splashScreen.Message = Format(
 						    LocalizationManager.GetString("SplashScreen.MsgRetrievingDataFromCaller",
 							    "Retrieving data from {0}...", "Param is host application name (Paratext)"),
 						    host.ApplicationName);
 
-						int currRef = host.GetCurrentRef(TxlCore.kEnglishVersificationName);
-						BCVRef startRef = new BCVRef(currRef);
-						BCVRef endRef = new BCVRef(currRef);
-					    bool useSavedRefRange = false;
-                        // See TXL-131 for explanation of this code, if needed.
-                        if (Properties.Settings.Default.FilterStartRef > 0 &&
-                            Properties.Settings.Default.FilterStartRef < Properties.Settings.Default.FilterEndRef)
-                        {
-                            var savedStartRef = new BCVRef(Properties.Settings.Default.FilterStartRef);
-                            var savedEndRef = new BCVRef(Properties.Settings.Default.FilterEndRef);
-                            if (savedStartRef.Valid && savedEndRef.Valid &&
-                                savedStartRef <= startRef && savedEndRef >= endRef)
-                            {
-                                useSavedRefRange = true;
-                                startRef = savedStartRef;
-                                endRef = savedEndRef;
-                            }
-                        }
+						var currentRef = state.VerseRef.ChangeVersification(host.GetStandardVersification(StandardScrVersType.English));
+						IVerseRef startRef = currentRef.Versification.CreateReference(currentRef.BookNum, 1, 1);
+						var lastChapter = currentRef.Versification.GetLastChapter(currentRef.BookNum);
+						IVerseRef endRef = currentRef.Versification.CreateReference(currentRef.BookNum,
+							lastChapter, currentRef.Versification.GetLastVerse(currentRef.BookNum, lastChapter));
 
-                        if (!useSavedRefRange)
-                        {
-                            startRef.Chapter = 1;
-                            startRef.Verse = 1;
-                            endRef.Chapter = host.GetLastChapter(endRef.Book, TxlCore.kEnglishVersificationName);
-                            endRef.Verse = host.GetLastVerse(endRef.Book, endRef.Chapter, TxlCore.kEnglishVersificationName);
-                        }
+						// See TXL-131 for explanation of this code, if needed.
+						if (Properties.Settings.Default.FilterStartRef > 0 &&
+							Properties.Settings.Default.FilterStartRef < Properties.Settings.Default.FilterEndRef)
+						{
+							var savedStartRef = new BCVRef(Properties.Settings.Default.FilterStartRef);
+							var savedEndRef = new BCVRef(Properties.Settings.Default.FilterEndRef);
+							if (savedStartRef.Valid && savedEndRef.Valid &&
+								savedStartRef <= currentRef.BBBCCCVVV && savedEndRef >= currentRef.BBBCCCVVV)
+							{
+								startRef = currentRef.Versification.CreateReference(savedStartRef);
+								endRef = currentRef.Versification.CreateReference(savedEndRef);
+							}
+						}
 
 						KeyboardController.Initialize();
 
@@ -175,57 +139,30 @@ namespace SIL.Transcelerator
 						{
 							if (vern)
 							{
-								try
-								{
-									string keyboard = host.GetProjectKeyboard(m_projectName);
-									if (!string.IsNullOrEmpty(keyboard))
-										Keyboard.Controller.GetKeyboard(keyboard).Activate();
-
-								}
-								catch (ApplicationException e)
-								{
-									// For some reason, the very first time this gets called it throws a COM exception, wrapped as
-									// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
-									// calls work with no exception. Paratext seems to make this same call without any exceptions. The
-									// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
-									// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
-									// unspecified error, so that's fairly helpful.
-									if (!(e.InnerException is COMException))
-										throw;
-								}
+								//try
+								//{
+								project.VernacularKeyboard?.Activate();
+								//}
+								//catch (ApplicationException e)
+								//{
+								//	// For some reason, the very first time this gets called it throws a COM exception, wrapped as
+								//	// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
+								//	// calls work with no exception. Paratext seems to make this same call without any exceptions. The
+								//	// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
+								//	// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
+								//	// unspecified error, so that's fairly helpful.
+								//	if (!(e.InnerException is COMException))
+								//		throw;
+								//}
 							}
 							else
 								Keyboard.Controller.ActivateDefaultKeyboard();
 						};
 
-                        var fileAccessor = new ParatextDataFileAccessor(fileId => host.GetPlugInData(this, m_projectName, fileId),
-                            (fileId, reader) => host.PutPlugInData(this, m_projectName, fileId, reader),
-                            fileId => host.GetPlugInDataLastModifiedTime(this, m_projectName, fileId));
+						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, host, project,
+							activateKeyboard, startRef, endRef, preferredUiLocale, currentRef);
 
-						bool fEnableDragDrop = true;
-						try
-						{
-						    string dragDropSetting = host.GetApplicationSetting("EnableDragAndDrop");
-						    if (dragDropSetting != null)
-						        fEnableDragDrop = bool.Parse(dragDropSetting);
-						}
-						catch (Exception)
-						{
-						}
-						
-						formToShow = unsMainWindow = new UNSQuestionsDialog(splashScreen, m_projectName,
-                            () => host.GetFactoryKeyTerms(kMajorList, "en", 01001001, 66022021),
-                            termId => host.GetProjectTermRenderings(m_projectName, termId, true),
-                            host.GetProjectFont(m_projectName),
-						    host.GetProjectLanguageId(m_projectName, "generate templates"),
-							host.GetProjectSetting(m_projectName, "Language"), host.GetProjectRtoL(m_projectName),
-						    fileAccessor, host.GetScriptureExtractor(m_projectName, ExtractorType.USFX),
-                            () => host.GetCssStylesheet(m_projectName), host.ApplicationName,
-                            new ScrVers(host, TxlCore.kEnglishVersificationName),
-						    new ScrVers(host, host.GetProjectVersificationName(m_projectName)), startRef,
-						    endRef, currRef, activateKeyboard, termId => host.GetTermOccurrences(kMajorList, m_projectName, termId),
-						    terms => host.LookUpKeyTerm(m_projectName, terms), fEnableDragDrop, preferredUiLocale);
-					    splashScreen = null;
+						splashScreen = null;
 					}
 
 #if DEBUG
@@ -241,14 +178,14 @@ namespace SIL.Transcelerator
 
                     const string key = "3iuv313n8t";
 #endif
-					using (new Analytics(key, GetUserInfo(), allowTracking))
+					using (new Analytics(key, GetUserInfo(host), allowTracking))
 					{
 						Analytics.Track("Startup", new Dictionary<string, string>
 						{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
 
 						formToShow.ShowDialog();
 					}
-					ptHost.WriteLineToLog(this, "Closing " + pluginName);
+					host.Log(this, "Closing " + pluginName);
 					Environment.Exit(0);
 				});
 				mainUIThread.Name = pluginName;
@@ -260,15 +197,15 @@ namespace SIL.Transcelerator
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(string.Format(LocalizationManager.GetString("General.ErrorStarting", "Error occurred attempting to start {0}: ",
+				MessageBox.Show(Format(LocalizationManager.GetString("General.ErrorStarting", "Error occurred attempting to start {0}: ",
 					"Param is \"Transcelerator\" (plugin name)"), pluginName) + e.Message);
 				throw;
 			}
 		}
 
-		private UserInfo GetUserInfo()
+		private UserInfo GetUserInfo(IPluginHost host)
 		{
-			string lastName = host.UserName;
+			string lastName = host.UserInfo.Name;
 			string firstName = "";
 			if (lastName != null)
 			{
@@ -297,7 +234,7 @@ namespace SIL.Transcelerator
 		    }
 		}
 
-		private void InitializeErrorHandling(string projectName)
+		private void InitializeErrorHandling(IPluginHost host, string projectName)
 		{
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
 			ErrorReport.EmailAddress = emailAddress;
@@ -307,7 +244,7 @@ namespace SIL.Transcelerator
 			// useful.
 			ErrorReport.AddProperty("Plugin Name", pluginName);
 			Assembly assembly = Assembly.GetExecutingAssembly();
-			ErrorReport.AddProperty("Version", string.Format("{0} (apparent build date: {1})",
+			ErrorReport.AddProperty("Version", Format("{0} (apparent build date: {1})",
 				assembly.GetName().Version,
 				File.GetLastWriteTime(assembly.Location).ToShortDateString()));
 			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
@@ -326,6 +263,31 @@ namespace SIL.Transcelerator
 			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, version,
 				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(FileLocationUtilities.GetFileDistributedWithApplication("TXL no TXL.ico")), emailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
+		}
+
+		public string GetDescription(string locale)
+		{
+			return LocalizationManager.GetString("Transcelerator.Description",
+				"Assists in rapid translation of Scripture comprehension checking questions.",
+				"This will be requested using the current Paratext UI locale",
+				new [] {locale, LocalizationManager.UILanguageId}, out _);
+		}
+
+		public string Name => pluginName;
+		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
+		public string VersionString => Version.ToString();
+		public string Publisher => "SIL International";
+
+		public IEnumerable<KeyValuePair<string, XMLDataMergeInfo>> MergeDataInfo =>
+			ParatextDataFileAccessor.GetDataFileKeySpecifications();
+
+		public IEnumerable<PluginMenuEntry> PluginMenuEntries
+		{
+			get
+			{
+				yield return new PluginMenuEntry(pluginName + "...", Run, PluginMenuLocation.ScrTextDefault,
+					@"TXL no TXL.ico");
+			}
 		}
 	}
 }

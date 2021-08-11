@@ -42,7 +42,7 @@ namespace SIL.Transcelerator
 		private readonly KeyTerm m_term;
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<bool> m_selectKeyboard;
-		private readonly Action<IEnumerable<string>> m_lookupTerm;
+		private readonly Action<IReadOnlyList<string>> m_lookupTerm;
 
 		internal static string s_AppName;
 		#endregion
@@ -60,7 +60,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IEnumerable<string>> lookupTerm)
+			Action<bool> selectKeyboard, Action<IReadOnlyList<string>> lookupTerm)
 		{
 			InitializeComponent();
 

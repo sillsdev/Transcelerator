@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,9 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
+using SIL.Scripture;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -429,7 +430,7 @@ namespace SIL.Transcelerator
                 AddMockedKeyTerm("(1) Judah: (a) son of Jacob, his tribe, his territory; (b)" +
                 " person in the genealogy of Jesus; (2) Judas: (a) the betrayer of Jesus; (b)" +
                 " a brother of Jesus; (c) an apostle, the son of James; (d) member of the" +
-                " Jerusalem church, called Barsabbas; (3) a disciple in Damsacus; (f)" +
+                " Jerusalem church, called Barsabbas; (3) a disciple in Damascus; (f)" +
                 " revolutionary leader"), null,
                 new[] { regexSingleProperName, regexMultipleProperNames });
             Assert.AreEqual(2, bldr.Matches.Count());
@@ -779,12 +780,12 @@ namespace SIL.Transcelerator
 		/// Adds the mocked key term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static IKeyTerm AddMockedKeyTerm(string term, params int[] occurences)
+		internal static IBiblicalTerm AddMockedKeyTerm(string term, params int[] occurrences)
 		{
-			IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
-			mockedKt.Stub(kt => kt.Term).Return(term);
-			mockedKt.Stub(kt => kt.BcvOccurences).Return(occurences.Length > 0 ? occurences : new[] { 0 });
-		    mockedKt.Stub(kt => kt.Id).Return(new string(term.Reverse().ToArray()));
+			IBiblicalTerm mockedKt = MockRepository.GenerateStub<IBiblicalTerm>();
+			mockedKt.Stub(kt => kt.Gloss(Arg<string>.Is.Anything)).Return(term);
+			mockedKt.Stub(kt => kt.Occurrences).Return(occurrences.Length > 0 ? occurrences.Select(o => (IVerseRef)new BcvRefIVerseAdapter(new BCVRef(o))).ToList() : new List<IVerseRef>());
+		    mockedKt.Stub(kt => kt.Lemma).Return(new string(term.Reverse().ToArray()));
 			return mockedKt;
 		}
 

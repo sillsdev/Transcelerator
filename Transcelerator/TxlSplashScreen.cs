@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright  2012, SIL International.   
-// <copyright from='2012' to='2013' company='SIL International'>
-//		Copyright  2012, SIL International.   
+#region // Copyright  2021, SIL International.   
+// <copyright from='2012' to='2021' company='SIL International'>
+//		Copyright  2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -29,7 +29,7 @@ namespace SIL.Transcelerator
 
 		private Thread m_thread;
 		private RealSplashScreen m_splashScreen;
-		internal EventWaitHandle m_waitHandle;
+		private EventWaitHandle m_waitHandle;
 		Screen m_displayToUse;
 		#endregion
 
@@ -43,7 +43,7 @@ namespace SIL.Transcelerator
 		#endif
 		
 		/// <summary/>
-		public bool IsDisposed { get; private set; }
+		private bool IsDisposed { get; set; }
 		
 		/// <summary/>
 		public void Dispose()
@@ -53,17 +53,15 @@ namespace SIL.Transcelerator
 		}
 		
 		/// <summary/>
-		protected virtual void Dispose(bool fDisposing)
+		private void Dispose(bool fDisposing)
 		{
 			Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (fDisposing && !IsDisposed)
 			{
 				// dispose managed and unmanaged objects
 				Close();
-				if (m_waitHandle != null)
-					m_waitHandle.Close();
-				if (m_splashScreen != null)
-					m_splashScreen.Dispose();
+				m_waitHandle?.Close();
+				m_splashScreen?.Dispose();
 			}
 			m_waitHandle = null;
 			m_splashScreen = null;
@@ -148,8 +146,7 @@ namespace SIL.Transcelerator
 				}
 			}
 #if !__MonoCS__
-			if (m_thread != null)
-				m_thread.Join();
+			m_thread?.Join();
 #endif
 			lock (m_splashScreen.m_Synchronizer)
 			{

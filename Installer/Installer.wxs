@@ -53,27 +53,17 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                             Name="Program_Files_Directory_Ptw91"
                             Type="directory" />
         </Property>
-        <Condition Message="To install Transcelerator using this 64-bit installer, you need to install Paratext 9.1 or later. If you are trying to install for an earlier version of Paratext, please use the 32-bit installer.">
+        <Condition Message="This version of the Transcelerator installer requires Paratext 9.2 or later. If you are trying to install for an earlier version of Paratext 9, use the latest version of Transcelerator 2.0. If you are trying to install for Paratext 8 or earlier, use the latest 32-bit installer (version 1.5.x).">
             <![CDATA[Installed OR PARATEXT9BETA OR PARATEXT9]]>
         </Condition>
-				
-		<Property Id="UPDATEP9PLUGINCACHE" Secure="yes">
-            <DirectorySearch Id="Paratext9PluginCacheExeExists" Path="[PARATEXT9]">
-                <FileSearch Name="UpdateParatextPluginCache.exe"/>
-            </DirectorySearch>
-        </Property>
 
-		<Property Id="UPDATEP9BETAPLUGINCACHE" Secure="yes">
-            <DirectorySearch Id="Paratext9BetaPluginCacheExeExists" Path="[PARATEXT9BETA]">
-                <FileSearch Name="UpdateParatextPluginCache.exe"/>
-            </DirectorySearch>
+        <Property Id="PARATEXT92ORGREATER" Secure="yes">
+          <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT7]">
+            <FileSearch Name="Paratext.exe" MinVersion="9.2.0.0" />
+          </DirectorySearch>
         </Property>
-		
-		<!-- This is extremely unlikely... -->
-        <Condition Message="Paratext is not installed properly. Missing required file: UpdateParatextPluginCache.exe. Re-run the Paratext Installer to repair the installation. Then re-run the Transcelerator Installer.">
-            <![CDATA[Installed OR
-			(PARATEXT9 AND UPDATEP9PLUGINCACHE) OR
-			(PARATEXT9BETA AND UPDATEP9BETAPLUGINCACHE)]]>
+        <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
+          <![CDATA[Installed OR PARATEXT92ORGREATER]]>
         </Condition>
 		
         <Binary Id="CustomInstallerActions.CA.dll"
@@ -408,7 +398,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </ComponentGroup>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9 AND UPDATEP9PLUGINCACHE]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT9]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
 			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
 				<CreateFolder />
@@ -437,7 +427,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 9 Beta" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9BETA AND UPDATEP9BETAPLUGINCACHE]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT9BETA]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN" />
 			<Component Id="CreateP9BetaLocalizationFolder" Directory="INSTALLDIR9BETA_LOCALIZATION" Guid="{CFB970EC-655A-49AA-8D35-FD3F437CAD4B}">
 				<CreateFolder />
@@ -464,62 +454,11 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <ComponentGroupRef Id="COMPONENTSFORP9BetaDocumentation_en" />
             </Feature>
         </Feature>
-
-        <CustomAction Id="SetUpdatePluginStore_P9" Property="UpdatePluginStore_P9"
-                      Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
-        <CustomAction Id="SetUpdatePluginStore_P9Beta" Property="UpdatePluginStore_P9Beta"
-                      Value="&quot;[PARATEXT9BETA]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
-                      Return="check" />
-
-        <CustomAction Id="SetUpdatePluginStore_P9_Failsafe" Property="UpdatePluginStore_P9_Failsafe"
-                      Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
-        <CustomAction Id="SetUpdatePluginStore_P9Beta_Failsafe" Property="UpdatePluginStore_P9Beta_Failsafe"
-                      Value="&quot;[PARATEXT9BETA]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
-                      Return="check" />
 					  
-        <CustomAction Id="UpdatePluginStore_P9" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="check" />
-        <CustomAction Id="UpdatePluginStore_P9Beta" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="check" />
-
-        <CustomAction Id="UpdatePluginStore_P9_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="asyncWait" />
-        <CustomAction Id="UpdatePluginStore_P9Beta_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="asyncWait" />
-					  
-		<!-- INSTALLSTATE_LOCAL = 3 -->
+        <!-- INSTALLSTATE_LOCAL = 3 -->
 		<!-- INSTALLSTATE_ABSENT = 2 -->
         <InstallExecuteSequence>
             <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
-
-			<!-- Sequencing of the failsafe and non-failsafe versions of the actions is arbitrary since their
-			conditions are mutually exclusive. -->
-			
-            <Custom Action="UpdatePluginStore_P9" Before="InstallFinalize">
-                <![CDATA[&PluginFeature_P9=3]]>
-            </Custom>
-            <Custom Action="UpdatePluginStore_P9_Failsafe" Before="InstallFinalize">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9" Before="UpdatePluginStore_P9">
-                <![CDATA[&PluginFeature_P9=3]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9_Failsafe" Before="UpdatePluginStore_P9_Failsafe">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
-            </Custom>
-			
-			<Custom Action="UpdatePluginStore_P9Beta" Before="InstallFinalize">
-                <![CDATA[&PluginFeature_P9Beta=3]]>
-            </Custom>
-            <Custom Action="UpdatePluginStore_P9Beta_Failsafe" Before="InstallFinalize">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9Beta=2) AND UPDATEP9BETAPLUGINCACHE AND (!PluginFeature_P9Beta=3)]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9Beta" Before="UpdatePluginStore_P9Beta">
-                <![CDATA[&PluginFeature_P9Beta=3]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9Beta_Failsafe" Before="UpdatePluginStore_P9Beta_Failsafe">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9Beta=2) AND UPDATEP9BETAPLUGINCACHE AND (!PluginFeature_P9Beta=3)]]>
-            </Custom>
         </InstallExecuteSequence>
 
         <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />

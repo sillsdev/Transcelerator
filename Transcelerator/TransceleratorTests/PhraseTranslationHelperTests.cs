@@ -15,8 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Extensions;
 using SIL.Reflection;
@@ -30,7 +30,7 @@ namespace SIL.Transcelerator
     public abstract class PhraseTranslationTestBase
     {
         protected QuestionSections m_sections;
-        private List<IKeyTerm> m_dummyKtList;
+        private List<IBiblicalTerm> m_dummyKtList;
         protected Dictionary<string, List<string>> m_dummyKtRenderings;
         private Dictionary<string, KeyTermMatchSurrogate> m_keyTermsDictionary;
         private Dictionary<string, ParsedPart> m_translatablePartsDictionary;
@@ -44,7 +44,7 @@ namespace SIL.Transcelerator
             m_sections.Items[0].Categories = new Category[1];
             m_sections.Items[0].Categories[0] = new Category();
 
-            m_dummyKtList = new List<IKeyTerm>();
+            m_dummyKtList = new List<IBiblicalTerm>();
             m_dummyKtRenderings = new Dictionary<string, List<string>>();
             KeyTerm.GetTermRenderings = s =>
                 {
@@ -58,7 +58,7 @@ namespace SIL.Transcelerator
             m_translatablePartsDictionary = new Dictionary<string, ParsedPart>();
         }
 
-		public IEnumerable<IKeyTerm> KeyTerms { get { return m_dummyKtList; } } 
+		public IEnumerable<IBiblicalTerm> KeyTerms { get { return m_dummyKtList; } } 
 
         #region Helper methods
         /// ------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm)
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm)
         {
             return AddMockedKeyTerm(englishGlossOfTerm, englishGlossOfTerm.ToUpper());
         }
@@ -141,7 +141,7 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
         {
             return AddMockedKeyTerm(englishGlossOfTerm, new string(englishGlossOfTerm.ToLowerInvariant().Reverse().ToArray()),
                 bestRendering, (bestRendering != null) ? new[] { englishGlossOfTerm } : new string[0]);
@@ -152,7 +152,7 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
             string bestRendering, params string[] otherRenderings)
         {
             if (bestRendering != null)
@@ -165,9 +165,9 @@ namespace SIL.Transcelerator
                 listOfRenderings.Insert(0, bestRendering);
             }
 
-            IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
-            mockedKt.Stub(kt => kt.Term).Return(englishGlossOfTerm);
-            mockedKt.Stub(kt => kt.Id).Return(underlyingTermId);
+            IBiblicalTerm mockedKt = MockRepository.GenerateStub<IBiblicalTerm>();
+            mockedKt.Stub(kt => kt.Gloss("en")).Return(englishGlossOfTerm);
+            mockedKt.Stub(kt => kt.Lemma).Return(underlyingTermId);
 
             m_dummyKtList.Add(mockedKt);
             return mockedKt;

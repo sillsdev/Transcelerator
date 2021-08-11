@@ -41,41 +41,20 @@ namespace SIL.Transcelerator
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.m_lblFrom = new System.Windows.Forms.Label();
-			this.m_lblTo = new System.Windows.Forms.Label();
 			this.btnOk = new System.Windows.Forms.Button();
 			this.btnCancel = new System.Windows.Forms.Button();
-			this.scrPsgFrom = new SIL.Windows.Forms.Scripture.ScrPassageControl();
-			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ScrPassageControl();
 			this.btnClearFilter = new System.Windows.Forms.Button();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.toolStripFrom = new System.Windows.Forms.ToolStrip();
+			this.toolStripLabelFrom = new System.Windows.Forms.ToolStripLabel();
+			this.scrPsgFrom = new SIL.Windows.Forms.Scripture.ToolStripVerseControl();
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.toolStripLabelTo = new System.Windows.Forms.ToolStripLabel();
+			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ToolStripVerseControl();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
+			this.toolStripFrom.SuspendLayout();
+			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// m_lblFrom
-			// 
-			this.m_lblFrom.AutoSize = true;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblFrom, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblFrom, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.m_lblFrom, "ScrReferenceFilterDlg.m_lblFrom");
-			this.m_lblFrom.Location = new System.Drawing.Point(13, 17);
-			this.m_lblFrom.Name = "m_lblFrom";
-			this.m_lblFrom.Size = new System.Drawing.Size(33, 13);
-			this.m_lblFrom.TabIndex = 0;
-			this.m_lblFrom.Text = "From:";
-			// 
-			// m_lblTo
-			// 
-			this.m_lblTo.AutoSize = true;
-			this.m_lblTo.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblTo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblTo, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.m_lblTo, "ScrReferenceFilterDlg.m_lblTo");
-			this.m_lblTo.Location = new System.Drawing.Point(184, 17);
-			this.m_lblTo.Name = "m_lblTo";
-			this.m_lblTo.Size = new System.Drawing.Size(23, 13);
-			this.m_lblTo.TabIndex = 2;
-			this.m_lblTo.Text = "To:";
 			// 
 			// btnOk
 			// 
@@ -84,7 +63,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
-			this.btnOk.Location = new System.Drawing.Point(133, 52);
+			this.btnOk.Location = new System.Drawing.Point(96, 79);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(75, 23);
 			this.btnOk.TabIndex = 5;
@@ -99,43 +78,12 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
-			this.btnCancel.Location = new System.Drawing.Point(214, 52);
+			this.btnCancel.Location = new System.Drawing.Point(177, 79);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.btnCancel.TabIndex = 6;
 			this.btnCancel.Text = "Cancel";
 			this.btnCancel.UseVisualStyleBackColor = true;
-			// 
-			// scrPsgFrom
-			// 
-			this.scrPsgFrom.AutoScroll = true;
-			this.scrPsgFrom.BackColor = System.Drawing.SystemColors.Window;
-			this.scrPsgFrom.ErrorCaption = "From Reference";
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgFrom, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgFrom, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgFrom, "ScrReferenceFilterDlg.ScrPassageControl");
-			this.scrPsgFrom.Location = new System.Drawing.Point(52, 14);
-			this.scrPsgFrom.Name = "scrPsgFrom";
-			this.scrPsgFrom.Padding = new System.Windows.Forms.Padding(1);
-			this.scrPsgFrom.Reference = "GEN 1:1";
-			this.scrPsgFrom.Size = new System.Drawing.Size(110, 20);
-			this.scrPsgFrom.TabIndex = 1;
-			this.scrPsgFrom.PassageChanged += new SIL.Windows.Forms.Scripture.ScrPassageControl.PassageChangedHandler(this.scrPsgFrom_PassageChanged);
-			// 
-			// scrPsgTo
-			// 
-			this.scrPsgTo.BackColor = System.Drawing.SystemColors.Window;
-			this.scrPsgTo.ErrorCaption = "To Reference";
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgTo, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgTo, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgTo, "ScrReferenceFilterDlg.ScrPassageControl");
-			this.scrPsgTo.Location = new System.Drawing.Point(213, 14);
-			this.scrPsgTo.Name = "scrPsgTo";
-			this.scrPsgTo.Padding = new System.Windows.Forms.Padding(1);
-			this.scrPsgTo.Reference = "REV 22:21";
-			this.scrPsgTo.Size = new System.Drawing.Size(110, 20);
-			this.scrPsgTo.TabIndex = 3;
-			this.scrPsgTo.PassageChanged += new SIL.Windows.Forms.Scripture.ScrPassageControl.PassageChangedHandler(this.scrPsgTo_PassageChanged);
 			// 
 			// btnClearFilter
 			// 
@@ -146,7 +94,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnClearFilter, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnClearFilter, "ScrReferenceFilterDlg.btnClearFilter");
-			this.btnClearFilter.Location = new System.Drawing.Point(52, 52);
+			this.btnClearFilter.Location = new System.Drawing.Point(15, 79);
 			this.btnClearFilter.Name = "btnClearFilter";
 			this.btnClearFilter.Size = new System.Drawing.Size(75, 23);
 			this.btnClearFilter.TabIndex = 4;
@@ -159,18 +107,86 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = null;
 			// 
+			// toolStripFrom
+			// 
+			this.toolStripFrom.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabelFrom,
+            this.scrPsgFrom});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripFrom, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripFrom, "toolStrip1");
+			this.toolStripFrom.Location = new System.Drawing.Point(8, 8);
+			this.toolStripFrom.Name = "toolStripFrom";
+			this.toolStripFrom.Size = new System.Drawing.Size(248, 27);
+			this.toolStripFrom.TabIndex = 7;
+			this.toolStripFrom.Text = "toolStrip1";
+			// 
+			// toolStripLabelFrom
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripLabelFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripLabelFrom, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelFrom, "ScrReferenceFilterDlg.m_lblFrom");
+			this.toolStripLabelFrom.Name = "toolStripLabelFrom";
+			this.toolStripLabelFrom.Size = new System.Drawing.Size(38, 24);
+			this.toolStripLabelFrom.Text = "From:";
+			// 
+			// scrPsgFrom
+			// 
+			this.scrPsgFrom.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.scrPsgFrom.BackColor = System.Drawing.SystemColors.Control;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgFrom, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgFrom, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.scrPsgFrom, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgFrom, "ScrReferenceFilterDlg.scrPsgFrom");
+			this.scrPsgFrom.Name = "scrPsgFrom";
+			this.scrPsgFrom.Size = new System.Drawing.Size(191, 24);
+			this.scrPsgFrom.VerseControl.VerseRefChanged += scrPassageChanged;
+			// 
+			// toolStrip1
+			// 
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripLabelTo,
+            this.scrPsgTo});
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "toolStrip1");
+			this.toolStrip1.Location = new System.Drawing.Point(8, 35);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(248, 27);
+			this.toolStrip1.TabIndex = 8;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// toolStripLabelTo
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripLabelTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripLabelTo, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelTo, "ScrReferenceFilterDlg.m_lblTo");
+			this.toolStripLabelTo.Name = "toolStripLabelTo";
+			this.toolStripLabelTo.Size = new System.Drawing.Size(22, 24);
+			this.toolStripLabelTo.Text = "To:";
+			// 
+			// scrPsgTo
+			// 
+			this.scrPsgTo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.scrPsgTo.BackColor = System.Drawing.SystemColors.Control;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.scrPsgTo, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.scrPsgTo, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.scrPsgTo, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgTo, "ScrReferenceFilterDlg.scrPsgTo");
+			this.scrPsgTo.Name = "scrPsgTo";
+			this.scrPsgTo.Size = new System.Drawing.Size(191, 24);
+			this.scrPsgTo.VerseControl.VerseRefChanged += scrPassageChanged;
+			// 
 			// ScrReferenceFilterDlg
 			// 
 			this.AcceptButton = this.btnOk;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
-			this.ClientSize = new System.Drawing.Size(338, 87);
+			this.ClientSize = new System.Drawing.Size(264, 114);
+			this.Controls.Add(this.toolStrip1);
+			this.Controls.Add(this.toolStripFrom);
 			this.Controls.Add(this.btnClearFilter);
-			this.Controls.Add(this.scrPsgTo);
-			this.Controls.Add(this.scrPsgFrom);
-			this.Controls.Add(this.m_lblTo);
-			this.Controls.Add(this.m_lblFrom);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
@@ -180,10 +196,15 @@ namespace SIL.Transcelerator
 			this.MaximumSize = new System.Drawing.Size(800, 594);
 			this.MinimizeBox = false;
 			this.Name = "ScrReferenceFilterDlg";
+			this.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Filter by Reference";
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
+			this.toolStripFrom.ResumeLayout(false);
+			this.toolStripFrom.PerformLayout();
+			this.toolStrip1.ResumeLayout(false);
+			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -193,11 +214,13 @@ namespace SIL.Transcelerator
 
 		private System.Windows.Forms.Button btnOk;
 		private System.Windows.Forms.Button btnCancel;
-		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgFrom;
-		private SIL.Windows.Forms.Scripture.ScrPassageControl scrPsgTo;
 		private System.Windows.Forms.Button btnClearFilter;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
-		private System.Windows.Forms.Label m_lblFrom;
-		private System.Windows.Forms.Label m_lblTo;
+		private System.Windows.Forms.ToolStrip toolStripFrom;
+		private System.Windows.Forms.ToolStripLabel toolStripLabelFrom;
+		private Windows.Forms.Scripture.ToolStripVerseControl scrPsgFrom;
+		private System.Windows.Forms.ToolStrip toolStrip1;
+		private System.Windows.Forms.ToolStripLabel toolStripLabelTo;
+		private Windows.Forms.Scripture.ToolStripVerseControl scrPsgTo;
 	}
 }

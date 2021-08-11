@@ -83,17 +83,16 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Adds the given match to the existing key terms table if it is nopt already present.
+		/// Adds the given match to the existing key terms table if it is not already present.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal void AddKeyTermMatch(KeyTermMatchSurrogate matchSuurrogate)
+		internal void AddKeyTermMatch(KeyTermMatchSurrogate matchSurrogate)
 		{
-			Word firstWord = Word.FirstWord(matchSuurrogate.TermId);
-			List<KeyTerm> termsStartingWithSameFirstWord;
-			if (!m_keyTermsTable.TryGetValue(firstWord, out termsStartingWithSameFirstWord))
+			Word firstWord = Word.FirstWord(matchSurrogate.TermId);
+			if (!m_keyTermsTable.TryGetValue(firstWord, out var termsStartingWithSameFirstWord))
 				m_keyTermsTable[firstWord] = termsStartingWithSameFirstWord = new List<KeyTerm>();
 
-			termsStartingWithSameFirstWord.Add(new KeyTerm(matchSuurrogate));
+			termsStartingWithSameFirstWord.Add(new KeyTerm(matchSurrogate));
 		}
 
 		/// ------------------------------------------------------------------------------------

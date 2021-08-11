@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,9 +11,13 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
-using AddInSideViews;
+using L10NSharp;
+using Paratext.PluginInterfaces;
+using SIL.Extensions;
+using SIL.Reporting;
 using SIL.Xml;
 
 namespace SIL.Transcelerator
@@ -100,72 +104,109 @@ namespace SIL.Transcelerator
         public abstract DateTime ModifiedTime(DataFileId fileId);
     }
 
-    public class ParatextDataFileAccessor : DataFileAccessor
+    public class ParatextDataFileAccessor : DataFileAccessor, IPluginObject
     {
-        private readonly Func<string, string> m_getPlugInData;
-        private readonly Action<string, string> m_putPlugInData;
-        private readonly Func<string, DateTime> m_getPlugInDataModifiedTime;
+		private readonly IProject m_project;
+		private Dictionary<string, IWriteLock> m_locks = new Dictionary<string, IWriteLock>();
 
-        public ParatextDataFileAccessor(Func<string, string> getPlugInData,
-            Action<string, string> putPlugInData,
-            Func<string, DateTime> getPlugInDataModifiedTime)
+		public ParatextDataFileAccessor(IProject project)
         {
-            m_getPlugInData = getPlugInData;
-            m_putPlugInData = putPlugInData;
-            m_getPlugInDataModifiedTime = getPlugInDataModifiedTime;
+            m_project = project;
         }
 
-        public static Dictionary<string, IPluginDataFileMergeInfo> GetDataFileKeySpecifications()
+		public static IEnumerable<KeyValuePair<string, XMLDataMergeInfo>> GetDataFileKeySpecifications()
         {
-            var specs = new Dictionary<string, IPluginDataFileMergeInfo>();
+            var specs = new Dictionary<string, XMLDataMergeInfo>();
 
-            specs[GetFileName(DataFileId.Translations)] = new PluginDataFileMergeInfo(
-                new MergeLevel("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
+            specs[GetFileName(DataFileId.Translations)] = new XMLDataMergeInfo(false,
+                new XMLListKeyDefinition("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
 
-            specs[GetFileName(DataFileId.QuestionCustomizations)] = new PluginDataFileMergeInfo(
-                new MergeLevel("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)"));
+            specs[GetFileName(DataFileId.QuestionCustomizations)] = new XMLDataMergeInfo(false,
+                new XMLListKeyDefinition("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)"));
 
-            specs[GetFileName(DataFileId.PhraseSubstitutions)] = new PluginDataFileMergeInfo(
-                new MergeLevel("/ArrayOfSubstitution", "@pattern"));
+            specs[GetFileName(DataFileId.PhraseSubstitutions)] = new XMLDataMergeInfo(true,
+                new XMLListKeyDefinition("/ArrayOfSubstitution", "@pattern"));
 
-            specs[GetFileName(DataFileId.KeyTermRenderingInfo)] = new PluginDataFileMergeInfo(
-                new MergeLevel("/ArrayOfKeyTermRenderingInfo", "@id"),
-                new MergeLevel("AdditionalRenderings", "."));
+            specs[GetFileName(DataFileId.KeyTermRenderingInfo)] = new XMLDataMergeInfo(false,
+                new XMLListKeyDefinition("/ArrayOfKeyTermRenderingInfo", "@id"),
+                new XMLListKeyDefinition("AdditionalRenderings", "."));
 
-            specs[GetFileName(DataFileId.TermRenderingSelectionRules)] = new PluginDataFileMergeInfo(
-                new MergeLevel("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
+            specs[GetFileName(DataFileId.TermRenderingSelectionRules)] = new XMLDataMergeInfo(true,
+                new XMLListKeyDefinition("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
 
             return specs;
         }
 
         protected override void Write(DataFileId fileId, string data)
         {
-            m_putPlugInData(GetFileName(fileId), data);
-        }
+			lock (m_locks)
+			{
+				var fileName = GetFileName(fileId);
+				m_project.PutPluginData(EnsureLock(fileName), this, fileName,
+					writer => { writer.Write(data); });
+			}
+		}
 
 		protected override void WriteBookSpecificData(BookSpecificDataFileId fileId, string bookId, string data)
 		{
-			m_putPlugInData(GetBookSpecificFileName(fileId, bookId), data);
+			lock (m_locks)
+			{
+				var fileName = GetBookSpecificFileName(fileId, bookId);
+				m_project.PutPluginData(EnsureLock(fileName), this, fileName,
+					writer => { writer.Write(data); });
+			}
 		}
 
 	    public override string Read(DataFileId fileId)
-        {
-            return m_getPlugInData(GetFileName(fileId)) ?? string.Empty;
-        }
-
-        public override bool Exists(DataFileId fileId)
-        {
-            return m_getPlugInDataModifiedTime(GetFileName(fileId)).Ticks > 0;
-        }
-
-		public override bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId)
 		{
-			return m_getPlugInDataModifiedTime(GetBookSpecificFileName(fileId, bookId)).Ticks > 0;
+			var fileName = GetFileName(fileId);
+			EnsureLock(fileName); // Lock is not needed for reading, but this way we'll find out of something else tries to access a file we've already read.
+
+			using (var reader = m_project.GetPluginData(this, fileName))
+				return reader?.ReadToEnd();
+		}
+
+		private IWriteLock EnsureLock(string fileName)
+		{
+			if (m_locks.TryGetValue(fileName, out var lockForFile))
+			{
+				lockForFile = m_project.RequestWriteLock(this, ReleaseRequested, fileName);
+				if (lockForFile == null)
+				{
+					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
+						"Unable to obtain exclusive access to Txl"));
+				}
+				else
+					m_locks[fileName] = lockForFile;
+			}
+
+			return lockForFile;
+		}
+
+		private void ReleaseRequested(IWriteLock lockToRelease)
+		{
+			m_locks.RemoveAll(kvp => kvp.Value == lockToRelease);
+		}
+
+		public override bool Exists(DataFileId fileId) =>
+			Exists(m_project.GetPluginData(this, GetFileName(fileId)));
+
+		public override bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId) => 
+			Exists(m_project.GetPluginData(this, GetBookSpecificFileName(fileId, bookId)));
+
+		private bool Exists(TextReader reader)
+		{
+			if (reader == null)
+				return false;
+			reader.Dispose();
+			return true;
 		}
 
         public override DateTime ModifiedTime(DataFileId fileId)
-        {
-            return m_getPlugInDataModifiedTime(GetFileName(fileId));
+		{
+			// TODO: New Interface/Implementation needed
+			//return m_project.GetPluginDataLastWriteTime(this, GetFileName(fileId));
+            return DateTime.MinValue;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
+using Paratext.PluginInterfaces;
 using SIL.ComprehensionCheckingData;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
@@ -762,7 +763,7 @@ namespace SIL.Transcelerator
 		/// <param name="vers">Master versification system used</param>
 		/// <param name="reportWriter">writable stream to report results</param>
 		/// ------------------------------------------------------------------------------------
-		internal void SetTranslationsFromText(TextReader reader, string filename, IScrVers vers,
+		internal void SetTranslationsFromText(TextReader reader, string filename, IVersification vers,
 			TextWriter reportWriter)
 		{
 			reportWriter.WriteLine("Processing file: " + filename);

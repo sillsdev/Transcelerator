@@ -12,8 +12,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Transcelerator.Localization;
 
@@ -359,10 +359,10 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_Present()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "paulo", "Pablo", "luaP");
-            IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos");
-            IKeyTerm ktSay = AddMockedKeyTerm("say", "dice");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "paulo", "Pablo", "luaP");
+            IBiblicalTerm ktHave = AddMockedKeyTerm("have", "tenemos");
+            IBiblicalTerm ktSay = AddMockedKeyTerm("say", "dice");
 
             var cat = m_sections.Items[0].Categories[0];
 
@@ -415,10 +415,10 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_SomeMissing()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
-            IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos");
-            IKeyTerm ktSay = AddMockedKeyTerm("say", "dice");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
+            IBiblicalTerm ktHave = AddMockedKeyTerm("have", "tenemos");
+            IBiblicalTerm ktSay = AddMockedKeyTerm("say", "dice");
 
             var cat = m_sections.Items[0].Categories[0];
 
@@ -466,8 +466,8 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_RepeatedTerms()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
 
             var cat = m_sections.Items[0].Categories[0];
 
@@ -631,7 +631,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -652,7 +652,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -673,7 +673,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -694,7 +694,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -717,7 +717,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(20);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -737,7 +737,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -757,7 +757,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -780,7 +780,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -803,7 +803,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -826,7 +826,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -849,7 +849,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -872,7 +872,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -895,7 +895,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -919,7 +919,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -942,7 +942,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -965,7 +965,7 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
@@ -1015,9 +1015,9 @@ namespace SIL.Transcelerator
 
         public int EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm { get; set; }
 
-        public DummyKeyTermRenderingInfo(IKeyTerm kt, int endOffsetOfPrev)
+        public DummyKeyTermRenderingInfo(IBiblicalTerm kt, int endOffsetOfPrev)
         {
-            Renderings = s_ktRenderings[kt.Id];
+            Renderings = s_ktRenderings[kt.Lemma];
             EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
         }
         #endregion
