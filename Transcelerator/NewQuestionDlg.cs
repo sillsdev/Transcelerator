@@ -22,6 +22,7 @@ using L10NSharp.XLiffUtils;
 using Paratext.PluginInterfaces;
 using SIL.ObjectModel;
 using SIL.Scripture;
+using static System.Int32;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -400,6 +401,15 @@ namespace SIL.Transcelerator
 					newRefInMasterVersification < m_currentSections[0].Value.StartRef ||
 					newRefInMasterVersification > m_currentSections.Last().Value.EndRef;
 
+				// If the start verse is set beyond the end verse, we get into a funny state where the
+				// arithmetically calculated end verse can come back greater than the last verse in the chapter
+				// because we have not yet repopulated the end verse combo box but the calculation of EdnVerse
+				// (which will be used in SetCurrentSelections) doesn't know that. Unfortunately, we have a
+				// chicken-and-egg problem because we need to have the current sections to repopulate it, so
+				// we just remove items we know are impossible now to ensure that the EndVerse is valid.
+				while (m_cboEndVerse.Items.Count > 1 && Parse((string)m_cboEndVerse.Items[1]) < StartVerse)
+					m_cboEndVerse.Items.RemoveAt(1);
+				
 				SetCurrentSections();
 				PopulateEndRefComboBox();
 

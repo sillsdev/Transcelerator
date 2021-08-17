@@ -160,6 +160,18 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
             </Component>
             <Component Guid="*">
+                <File Id="Keyman7Interop.dll_P9" ShortName="t39ghpsp.dll" KeyPath="yes"
+                      Name="Keyman7Interop.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="Keyman10Interop.dll_P9" ShortName="j7kojtod.dll" KeyPath="yes"
+                      Name="Keyman10Interop.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes"
+                      Name="KeymanLink.dll" />
+            </Component>
+            <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
             </Component>
@@ -307,6 +319,18 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Keyboarding.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
+                      Name="Keyman7Interop.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
+                      Name="Keyman10Interop.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
+                      Name="KeymanLink.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
