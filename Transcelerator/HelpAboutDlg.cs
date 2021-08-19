@@ -43,7 +43,7 @@ namespace SIL.Transcelerator
 
 		private void m_linkLabelReleaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			var path = FileLocationUtilities.GetFileDistributedWithApplication("ReleaseNotes.md");
+			var path = TxlPlugin.GetFileDistributedWithApplication("ReleaseNotes.md");
 			using (var dlg = new ShowReleaseNotesDialog(Icon, path))
 				dlg.ShowDialog();
 		}

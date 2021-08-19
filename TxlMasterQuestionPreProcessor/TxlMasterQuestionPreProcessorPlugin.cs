@@ -22,11 +22,15 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	{
         public const string pluginName = "Transcelerator Question Pre-Processor";
 
+		public IDataFileMerger GetMerger(IPluginHost host, string dataIdentifier)
+		{
+			throw new NotImplementedException();
+		}
+
 		public string Name => pluginName;
 		public Version Version => new Version(2, 0);
 		public string VersionString => Version.ToString();
 		public string Publisher => "SIL International";
-		public IEnumerable<KeyValuePair<string, XMLDataMergeInfo>> MergeDataInfo => null;
 		public IEnumerable<PluginMenuEntry> PluginMenuEntries
 		{
 			get
@@ -39,19 +43,12 @@ namespace SIL.TxlMasterQuestionPreProcessor
 		{
 			try
 			{
-//#if DEBUG
-//                MessageBox.Show("Attach debugger now (if you want to)", pluginName);
-//#endif
 				host.Log(this, "Starting " + pluginName);
 
 				InitializeErrorHandling(host);
 
-				TxlMasterQuestionPreProcessorForm formToShow;
-				lock (this)
-				{
-					formToShow = new TxlMasterQuestionPreProcessorForm(host.GetStandardVersification(StandardScrVersType.English));
-				}
-				formToShow.ShowDialog();
+				var formToShow = new TxlMasterQuestionPreProcessorForm(host.GetStandardVersification(StandardScrVersType.English));
+				formToShow.Show();
 				
 				host.Log(this, "Closing " + pluginName);
 			}

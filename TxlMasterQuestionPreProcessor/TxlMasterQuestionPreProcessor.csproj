@@ -161,8 +161,8 @@
     <Reference Include="PangoSharp, Version=3.22.24.37, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PangoSharp.3.22.24.37\lib\netstandard2.0\PangoSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PluginInterfaces, Version=1.0.8.0, Culture=neutral, PublicKeyToken=583bede96b7c94a3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ParatextPluginInterfaces.1.0.8-beta\lib\netstandard2.0\PluginInterfaces.dll</HintPath>
+    <Reference Include="PluginInterfaces, Version=2.0.2.0, Culture=neutral, PublicKeyToken=583bede96b7c94a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ParatextPluginInterfaces.2.0.2-beta\lib\netstandard2.0\PluginInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <HintPath>..\packages\SIL.Core.9.0.0-beta0039\lib\net461\SIL.Core.dll</HintPath>
@@ -302,11 +302,13 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
+    <PostBuildEvent>xcopy "$(TargetPath)" "$(TargetDir)\$(TargetName).ptxplg" /Y
+if %25ERRORLEVEL%25 GEQ 1 goto failed
+
+IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
 IF "%25ParatextInstallDir%25" == "" goto copytoparatext
 IF NOT EXIST "%25ParatextInstallDir%25" goto copytoparatext
 
-ren "$(TargetPath)" "$(TargetName).ptxplg"
 robocopy "$(TargetDir)$" "%25ParatextInstallDir%25\plugins\$(ProjectName)"
 
 robocopy $(TargetDir) ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
@@ -318,6 +320,7 @@ IF NOT "$(ConfigurationName)" == "Release - Copy To Paratext" goto done
 
 :copytoparatext
 
+@REM The following command will fail if not running under elevated privileges.
 IF EXIST "C:\Program Files\Paratext 9" (
 @echo Copying Transcelerator Pre-processor plugin files to Paratext 9 plugin folder...
 robocopy $(TargetDir) "C:\Program Files\Paratext 9\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /NJH /NJS /np

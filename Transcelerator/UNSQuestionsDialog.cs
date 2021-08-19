@@ -337,7 +337,7 @@ namespace SIL.Transcelerator
 			ClearBiblicalTermsPane();
 
 			Text = Format(Text, m_project.ShortName);
-			m_helpHome = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "Home.htm");
+			m_helpHome = TxlPlugin.GetFileDistributedWithApplication("docs", "Home.htm");
 			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;

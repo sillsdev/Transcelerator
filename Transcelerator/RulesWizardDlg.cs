@@ -69,7 +69,7 @@ namespace SIL.Transcelerator
 			ValidateName = nameValidator;
 			m_txtName.Text = m_rule.Name;
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "adjustments.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 
 			if (!creating)

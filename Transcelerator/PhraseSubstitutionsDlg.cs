@@ -77,7 +77,7 @@ namespace SIL.Transcelerator
 			m_txtMatchPrefix.Tag = @"\b{0}";
 			m_txtMatchSuffix.Tag = @"{0}\b";
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "adjustments.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 		#endregion

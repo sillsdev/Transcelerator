@@ -61,7 +61,7 @@ namespace SIL.Transcelerator
 			}
 			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (m_listRules.SelectedIndex >= 0);
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "renderingselectionrules.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "renderingselectionrules.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 

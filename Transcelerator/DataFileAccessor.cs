@@ -114,28 +114,31 @@ namespace SIL.Transcelerator
             m_project = project;
         }
 
-		public static IEnumerable<KeyValuePair<string, XMLDataMergeInfo>> GetDataFileKeySpecifications()
+		public static XMLDataMergeInfo GetXMLDataMergeInfo(string pluginDataId)
         {
-            var specs = new Dictionary<string, XMLDataMergeInfo>();
+			if (pluginDataId == DataFileId.Translations.ToString())
+				return new XMLDataMergeInfo(false,
+				new XMLListKeyDefinition("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
 
-            specs[GetFileName(DataFileId.Translations)] = new XMLDataMergeInfo(false,
-                new XMLListKeyDefinition("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
-
-            specs[GetFileName(DataFileId.QuestionCustomizations)] = new XMLDataMergeInfo(false,
+			if (pluginDataId == DataFileId.QuestionCustomizations.ToString())
+				return new XMLDataMergeInfo(false,
                 new XMLListKeyDefinition("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)"));
 
-            specs[GetFileName(DataFileId.PhraseSubstitutions)] = new XMLDataMergeInfo(true,
+			if (pluginDataId == DataFileId.PhraseSubstitutions.ToString())
+				return new XMLDataMergeInfo(true,
                 new XMLListKeyDefinition("/ArrayOfSubstitution", "@pattern"));
 
-            specs[GetFileName(DataFileId.KeyTermRenderingInfo)] = new XMLDataMergeInfo(false,
+			if (pluginDataId == DataFileId.KeyTermRenderingInfo.ToString())
+				return new XMLDataMergeInfo(false,
                 new XMLListKeyDefinition("/ArrayOfKeyTermRenderingInfo", "@id"),
                 new XMLListKeyDefinition("AdditionalRenderings", "."));
 
-            specs[GetFileName(DataFileId.TermRenderingSelectionRules)] = new XMLDataMergeInfo(true,
+			if (pluginDataId == DataFileId.TermRenderingSelectionRules.ToString())
+				return new XMLDataMergeInfo(true,
                 new XMLListKeyDefinition("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
 
-            return specs;
-        }
+			throw new NotImplementedException("Caller requested merge info for unexpected type of data.");
+		}
 
         protected override void Write(DataFileId fileId, string data)
         {

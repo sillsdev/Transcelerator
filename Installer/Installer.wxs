@@ -53,17 +53,22 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                             Name="Program_Files_Directory_Ptw91"
                             Type="directory" />
         </Property>
-        <Condition Message="This version of the Transcelerator installer requires Paratext 9.2 or later. If you are trying to install for an earlier version of Paratext 9, use the latest version of Transcelerator 2.0. If you are trying to install for Paratext 8 or earlier, use the latest 32-bit installer (version 1.5.x).">
+        <Condition Message="This version of Transcelerator requires Paratext 9.2 or later. For earlier versions of Paratext 9, use the latest version of Transcelerator 2.0. For Paratext 8, use the 32-bit installer (version 1.5.x).">
             <![CDATA[Installed OR PARATEXT9BETA OR PARATEXT9]]>
         </Condition>
 
         <Property Id="PARATEXT92ORGREATER" Secure="yes">
-          <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT7]">
+          <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT9]">
             <FileSearch Name="Paratext.exe" MinVersion="9.2.0.0" />
           </DirectorySearch>
         </Property>
+        <Property Id="PARATEXT92BETAORGREATER" Secure="yes">
+          <DirectorySearch Id="ParatextBetaExeVersion" Path="[PARATEXT9BETA]">
+            <FileSearch Name="Paratext.exe" MinVersion="9.2.52.2" />
+          </DirectorySearch>
+        </Property>
         <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
-          <![CDATA[Installed OR PARATEXT92ORGREATER]]>
+          <![CDATA[Installed OR PARATEXT92ORGREATER OR PARATEXT92BETAORGREATER]]>
         </Condition>
 		
         <Binary Id="CustomInstallerActions.CA.dll"
@@ -99,7 +104,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 
         <ComponentGroup Id="COMPONENTSFORP9PLUGIN" Directory="INSTALLDIR9" Source="..\Transcelerator\bin\x64\Release">
             <Component Guid="*">
-                <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.dll" />
+                <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
             </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
@@ -257,7 +262,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA"
                         Source="..\Transcelerator\bin\x64\Release">
             <Component Guid="*">
-                <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.dll" />
+                <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
             </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
@@ -422,7 +427,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </ComponentGroup>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT92ORGREATER]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
 			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
 				<CreateFolder />
@@ -451,7 +456,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Feature>
 
         <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 9 Beta" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9BETA]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT92BETAORGREATER]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN" />
 			<Component Id="CreateP9BetaLocalizationFolder" Directory="INSTALLDIR9BETA_LOCALIZATION" Guid="{CFB970EC-655A-49AA-8D35-FD3F437CAD4B}">
 				<CreateFolder />
@@ -488,7 +493,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
 
         <!-- Icon you see in add/remove programs control panel -->
-        <Icon Id="Transcelerator.ico" SourceFile="..\Transcelerator\bin\x64\Release\Transcelerator.dll" />
+        <Icon Id="Transcelerator.ico" SourceFile="..\Transcelerator\bin\x64\Release\Transcelerator.ptxplg" />
         <Property Id="ARPPRODUCTICON" Value="Transcelerator.ico" />
     </Product>
 </Wix>
