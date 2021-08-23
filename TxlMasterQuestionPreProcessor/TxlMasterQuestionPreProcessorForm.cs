@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2018' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -102,7 +102,17 @@ namespace SIL.TxlMasterQuestionPreProcessor
 
 		private string TryGenerateQuestionLocalizationsFile(out string missingFileName)
 		{
-			var txlLocalizationManager = new LocalizationsFileGenerator(DestinationDirectory, txtLocale.Text);
+			LocalizationsFileGenerator txlLocalizationManager;
+			try
+			{
+				txlLocalizationManager = new LocalizationsFileGenerator(DestinationDirectory, txtLocale.Text);
+			}
+			catch (FileNotFoundException e)
+			{
+				missingFileName = e.FileName;
+				return null;
+			}
+
 			var existingTranslationsFilename = String.IsNullOrWhiteSpace(txtSourceFile.Text) ? null : txtSourceFile.Text;
 			var finfoExistingTxlTranslations = existingTranslationsFilename == null ? null : new FileInfo(txtSourceFile.Text);
 			var finfoMasterQuestionFile = new FileInfo(txtXmlQuestionFile.Text);
