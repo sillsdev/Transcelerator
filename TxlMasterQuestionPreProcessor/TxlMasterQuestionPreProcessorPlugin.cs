@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
 using SIL.Reporting;
+using SIL.Transcelerator;
 using SIL.Windows.Forms.Reporting;
 
 namespace SIL.TxlMasterQuestionPreProcessor
@@ -45,7 +46,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			{
 				host.Log(this, "Starting " + pluginName);
 
-				InitializeErrorHandling(host);
+				TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
 
 				var formToShow = new TxlMasterQuestionPreProcessorForm(host.GetStandardVersification(StandardScrVersType.English));
 				formToShow.Show();
@@ -57,15 +58,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
                 MessageBox.Show("Error occurred attempting to start Transcelerator Question Pre-Processor: " + e.Message);
 				throw;
 			}
-		}
-
-		private void InitializeErrorHandling(IPluginHost host)
-		{
-			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
-			ErrorReport.AddStandardProperties();
-			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
-			ExceptionHandler.Init(new WinFormsExceptionHandler());
 		}
 
 		public string GetDescription(string locale) =>

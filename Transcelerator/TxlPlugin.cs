@@ -17,10 +17,8 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using L10NSharp;
 using SIL.Keyboarding;
-using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Windows.Forms.Keyboarding;
-using SIL.Windows.Forms.Reporting;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
 using static System.String;
@@ -31,7 +29,6 @@ namespace SIL.Transcelerator
 	public class TxlPlugin : IParatextStandalonePlugin
 	{
 		public const string pluginName = "Transcelerator";
-		public const string emailAddress = "transcelerator_feedback@sil.org";
 
 		private static readonly string s_baseInstallFolder;
 		private static readonly string s_company;
@@ -58,10 +55,10 @@ namespace SIL.Transcelerator
 			{
 				Application.EnableVisualStyles();
 
-				host.Log(this, "Starting " + pluginName);
-
-				TxlSplashScreen splashScreen = null;
+				TxlSplashScreen splashScreen;
 				var project = state.Project;
+			
+				host.Log(this, $"Starting {pluginName} for project {project}");
 
 				string preferredUiLocale = "en";
 				try
@@ -90,7 +87,7 @@ namespace SIL.Transcelerator
 					if (!s_projectStates.Any()) // If there's already an active Transcelerator, just use the existing LM
 						SetUpLocalization(preferredUiLocale);
 
-					InitializeErrorHandling(host, project.ShortName);
+					TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
 
 					splashScreen = new TxlSplashScreen();
 					s_projectStates[project] = new ProjectState(splashScreen);
@@ -235,30 +232,12 @@ namespace SIL.Transcelerator
 			return new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = "en"};
 		}
 
-		private void InitializeErrorHandling(IPluginHost host, string projectName)
-		{
-			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = emailAddress;
-			ErrorReport.AddStandardProperties();
-			// The version that gets added to the report by default is for the entry assembly, which is
-			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very
-			// useful.
-			ErrorReport.AddProperty("Plugin Name", pluginName);
-			Assembly assembly = Assembly.GetExecutingAssembly();
-			ErrorReport.AddProperty("Version", Format("{0} (apparent build date: {1})",
-				assembly.GetName().Version,
-				File.GetLastWriteTime(assembly.Location).ToShortDateString()));
-			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
-			ErrorReport.AddProperty("Project Name", projectName);
-			ExceptionHandler.Init(new WinFormsExceptionHandler());
-		}
-		
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
 			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, s_version,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), emailAddress,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), TxlCore.emailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
 		}
 
