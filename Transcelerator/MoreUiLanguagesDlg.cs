@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.   
-// <copyright from='2020' to='2020 company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.   
+// <copyright from='2020' to='2021 company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,13 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using L10NSharp;
 using L10NSharp.UI;

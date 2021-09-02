@@ -42,6 +42,9 @@ namespace SIL.Transcelerator
 		{
 			m_project = project;
 			InitializeComponent();
+			scrPsgTo.VerseControl.VerseRefChanged += ScrPassageChanged;
+			scrPsgFrom.VerseControl.VerseRefChanged += ScrPassageChanged;
+
 			scrPsgFrom.VerseControl.BooksPresentSet = scrPsgTo.VerseControl.BooksPresentSet = new BookSet(canonicalBookIds);
 			scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(initialFromRef, project);
             scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(initialToRef, project);
@@ -81,13 +84,13 @@ namespace SIL.Transcelerator
 		/// Handles change in the from passage
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void scrPassageChanged(object sender, PropertyChangedEventArgs e)
+		private void ScrPassageChanged(object sender, PropertyChangedEventArgs e)
 		{
 			var fromReference = GetRef(scrPsgFrom.VerseControl.VerseRef);
 			var toReference = GetRef(scrPsgTo.VerseControl.VerseRef);
 			if (fromReference.CompareTo(toReference) > 0)
 			{
-				if (sender == scrPsgFrom)
+				if (sender == scrPsgFrom.VerseControl)
 					scrPsgTo.VerseControl.VerseRef = scrPsgFrom.VerseControl.VerseRef.Clone();
 				else
 					scrPsgFrom.VerseControl.VerseRef = scrPsgTo.VerseControl.VerseRef.Clone();
@@ -108,7 +111,7 @@ namespace SIL.Transcelerator
 
 		#region Private helper methods
 		private IVerseRef GetRef(IScrVerseRef verseRef) =>
-			m_firstAvailableRef.Versification.CreateReference(verseRef.BookNum, scrPsgFrom.VerseControl.VerseRef.ChapterNum, scrPsgFrom.VerseControl.VerseRef.VerseNum);
+			m_firstAvailableRef.Versification.CreateReference(verseRef.BookNum, verseRef.ChapterNum, verseRef.VerseNum);
 		#endregion
 	}
 }

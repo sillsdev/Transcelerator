@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -27,6 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -81,7 +82,7 @@ namespace SIL.Transcelerator
 		#region Public properties
 		public string SelectedRendering
 		{
-			get { return m_lbRenderings.SelectedItem as string; }
+			get => m_lbRenderings.SelectedItem as string;
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -93,7 +94,7 @@ namespace SIL.Transcelerator
 
 		public Font VernacularFont
 		{
-			get { return m_lbRenderings.Font; }
+			get => m_lbRenderings.Font;
 			set
 			{
 				m_lbRenderings.Font = value;
@@ -108,10 +109,7 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Implementation of ITermRenderingInfo
-		public IEnumerable<string> Renderings
-		{
-			get { return m_term.Renderings; }
-		}
+		public IEnumerable<string> Renderings => m_term.Renderings;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -119,11 +117,8 @@ namespace SIL.Transcelerator
 		/// without a vertical scroll bar.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int NaturalHeight
-		{
-			get { return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
-				(Height - m_lbRenderings.ClientRectangle.Height); }
-		}
+		public int NaturalHeight => m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
+			(Height - m_lbRenderings.ClientRectangle.Height);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -161,8 +156,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_lbRenderings_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (SelectedRenderingChanged != null)
-				SelectedRenderingChanged(this);
+			SelectedRenderingChanged?.Invoke(this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -176,8 +170,7 @@ namespace SIL.Transcelerator
 				return; // already the (implicit or explicit default)
 			m_term.BestRendering = SelectedRendering;
 			m_lbRenderings.Invalidate();
-			if (BestRenderingsChanged != null)
-				BestRenderingsChanged();
+			BestRenderingsChanged?.Invoke();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -185,7 +178,7 @@ namespace SIL.Transcelerator
         /// Handles the Click event of the mnuLookUpTermH/mnuLookUpTermC controls.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LookUpTermInHostApplicaton(object sender, EventArgs e)
+		private void LookUpTermInHostApplication(object sender, EventArgs e)
 		{
 			m_lookupTerm(m_term.AllTermIds);
 		}
@@ -309,11 +302,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new AddRenderingDlg(m_selectKeyboard))
+			var parentForm = ParentForm as ParentFormBase;
+			parentForm?.ShowModalChild(new AddRenderingDlg(m_selectKeyboard), dlg => 
 			{
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
+				if (dlg.DialogResult == DialogResult.OK)
 					AddRendering(dlg.Rendering, dlg.Text);
-			}
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -337,8 +331,7 @@ namespace SIL.Transcelerator
 		{
 			string rendering = m_lbRenderings.SelectedItem.ToString();
 			SelectedRendering = m_term.BestRendering;
-			if (SelectedRenderingChanged != null)
-				SelectedRenderingChanged(this);
+			SelectedRenderingChanged?.Invoke(this);
 			m_term.DeleteRendering(rendering);
 			m_lbRenderings.Items.Remove(rendering);
 		}
@@ -415,7 +408,7 @@ namespace SIL.Transcelerator
 			}
 			catch (ArgumentException ex)
 			{
-				MessageBox.Show(FindForm(), ex.Message, errorCaption);
+				(ParentForm as ParentFormBase)?.ShowModalChild(new MessageBoxForm(ex.Message, errorCaption));
 			}
 			SelectedRendering = newRendering;
 		}

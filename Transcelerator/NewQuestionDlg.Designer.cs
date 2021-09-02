@@ -548,6 +548,7 @@ namespace SIL.Transcelerator
 			// 
 			// m_toolStripReference
 			// 
+			this.m_toolStripReference.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.m_toolStripReference.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblReference,
             this.m_scrPsgReference,
@@ -561,13 +562,13 @@ namespace SIL.Transcelerator
 			this.m_toolStripReference.Size = new System.Drawing.Size(518, 27);
 			this.m_toolStripReference.TabIndex = 10;
 			this.m_toolStripReference.Text = "toolStrip1";
-			this.m_scrPsgReference.VerseControl.VerseRefChanged += m_scrPsgReference_PassageChanged;
 			// 
 			// lblReference
 			// 
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblReference, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.lblReference, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.lblReference, "NewQuestionDlg.lblReference");
+			this.lblReference.Margin = new System.Windows.Forms.Padding(10, 1, 0, 2);
 			this.lblReference.Name = "lblReference";
 			this.lblReference.Size = new System.Drawing.Size(112, 24);
 			this.lblReference.Text = "Scripture Reference:";

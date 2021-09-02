@@ -21,7 +21,7 @@ namespace SIL.Transcelerator
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class HelpAboutDlg : Form
+	public partial class HelpAboutDlg : ParentFormBase
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -44,8 +44,7 @@ namespace SIL.Transcelerator
 		private void m_linkLabelReleaseNotes_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			var path = TxlPlugin.GetFileDistributedWithApplication("ReleaseNotes.md");
-			using (var dlg = new ShowReleaseNotesDialog(Icon, path))
-				dlg.ShowDialog();
+			ShowModalChild(new ShowReleaseNotesDialog(Icon, path));
 		}
 	}
 }

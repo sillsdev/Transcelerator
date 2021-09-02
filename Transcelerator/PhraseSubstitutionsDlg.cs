@@ -83,6 +83,16 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Properties
+		public string ReadonlyAlert
+		{
+			set
+			{
+				Text += value;
+				if (value != null)
+					btnOk.Enabled = false;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the substitutions.

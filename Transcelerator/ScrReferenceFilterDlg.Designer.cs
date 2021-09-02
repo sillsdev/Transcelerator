@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -109,6 +109,7 @@ namespace SIL.Transcelerator
 			// 
 			// toolStripFrom
 			// 
+			this.toolStripFrom.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStripFrom.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabelFrom,
             this.scrPsgFrom});
@@ -140,10 +141,10 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgFrom, "ScrReferenceFilterDlg.scrPsgFrom");
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Size = new System.Drawing.Size(191, 24);
-			this.scrPsgFrom.VerseControl.VerseRefChanged += scrPassageChanged;
 			// 
 			// toolStrip1
 			// 
+			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabelTo,
             this.scrPsgTo});
@@ -175,7 +176,6 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgTo, "ScrReferenceFilterDlg.scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Size = new System.Drawing.Size(191, 24);
-			this.scrPsgTo.VerseControl.VerseRefChanged += scrPassageChanged;
 			// 
 			// ScrReferenceFilterDlg
 			// 
@@ -193,8 +193,9 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "ScrReferenceFilterDlg.WindowTitle");
 			this.MaximizeBox = false;
-			this.MaximumSize = new System.Drawing.Size(800, 594);
+			this.MaximumSize = new System.Drawing.Size(320, 183);
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(280, 153);
 			this.Name = "ScrReferenceFilterDlg";
 			this.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.ShowIcon = false;

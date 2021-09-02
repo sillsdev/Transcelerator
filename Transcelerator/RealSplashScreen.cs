@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright © 2012, SIL International.   
-// <copyright from='2012' company='SIL International'>
-//		Copyright © 2012, SIL International.   
+#region // Copyright © 2021, SIL International.   
+// <copyright from='2021' company='SIL International'>
+//		Copyright © 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,12 +14,13 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// The real splash screen that the user sees. It gets created and handled by FwSplashScreen
+	/// The real splash screen that the user sees. It gets created and handled by TxlSplashScreen
 	/// and runs in a separate thread. 
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
@@ -32,12 +33,6 @@ namespace SIL.Transcelerator
 		private System.Threading.Timer m_timer;
 		private TxlInfo m_txlInfo;
 		private Label lblMessage;
-
-		/// <summary>Used for locking the splash screen</summary>
-		/// <remarks>Note: we can't use lock(this) (or equivalent) since .NET uses lock(this)
-		/// e.g. in it's Dispose(bool) method which might result in dead locks!
-		/// </remarks>
-		internal object m_Synchronizer = new object();
 		#endregion
 
 		#region Constructor
@@ -55,6 +50,8 @@ namespace SIL.Transcelerator
 			InitializeComponent();
             AccessibleName = GetType().Name;
             Opacity = 0;
+
+			ShowInTaskbar = true;
 		}
 
 		/// <summary>
@@ -65,14 +62,11 @@ namespace SIL.Transcelerator
 		private void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException(Format("'{0}' in use after being disposed.", GetType().Name));
 
-#if __MonoCS__
-			// Note: mono can only create a winform on the main thread.
-			// So this ensures the progress bar gets painted when modified.
+			// This ensures the progress bar gets painted when modified.
 			if (IsHandleCreated)
 				Application.DoEvents();
-#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -85,12 +79,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
+			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
-			{
-				if (m_timer != null)
-					m_timer.Dispose();
-			}
+				m_timer?.Dispose();
 			m_timer = null;
 			m_waitHandle = null;
 			base.Dispose(disposing);
@@ -175,30 +166,39 @@ namespace SIL.Transcelerator
 		#region Public Methods
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
-		/// Activates (brings back to the top) the splash screen (assuming it is already visible
-		/// and the application showing it is the active application).
-		/// </summary>
-		/// ----------------------------------------------------------------------------------------
-		public void RealActivate()
-		{
-			CheckDisposed();
-
-			BringToFront();
-			Refresh();
-		}
-
-		/// ----------------------------------------------------------------------------------------
-		/// <summary>
 		/// Closes the splash screen
 		/// </summary>
 		/// ----------------------------------------------------------------------------------------
 		public void RealClose()
 		{
-			CheckDisposed();
+			try
+			{
+				CheckDisposed();
 
-			if (m_timer != null)
-				m_timer.Change(Timeout.Infinite, Timeout.Infinite);
-			Close();
+				if (InvokeRequired)
+					Invoke(new MethodInvoker(RealClose));
+				else
+				{
+					m_timer?.Change(Timeout.Infinite, Timeout.Infinite);
+					Close();
+				}
+			}
+			catch
+			{
+				// Something bad happened, but we are closing anyways :)
+			}
+
+			try
+			{
+				if (InvokeRequired)
+					Invoke(new Action(Dispose));
+				else
+					Dispose();
+			}
+			catch
+			{
+				// Something bad happened, but we are closing anyways :)
+			}
 		}
 		#endregion
 
@@ -210,7 +210,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal EventWaitHandle WaitHandle
 		{
-			set { m_waitHandle = value; }
+			set => m_waitHandle = value;
 		}
 		#endregion
 
@@ -260,66 +260,53 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdateDisplayCallback(object state)
 		{
-			// This callback might get called multiple times before the Invoke is finished,
-			// which causes some problems. We just ignore any callbacks we get while we are
-			// processing one, so we are using TryEnter/Exit(m_Synchronizer) instead of 
-			// lock(m_Synchronizer).
-			// We sync on "m_Synchronizer" so that we're using the same flag as the FwSplashScreen class.
-			if (Monitor.TryEnter(m_Synchronizer))
+			if (InvokeRequired)
 			{
-				try
-				{
+				Invoke(new Action(() => UpdateDisplayCallback(state)));
+				return;
+			}
 
-#if DEBUG && !__MonoCS__
-					Thread.CurrentThread.Name = "UpdateDisplayCallback";
-#endif
+			try
+			{
+				if (m_timer == null)
+					return;
 
-					if (m_timer == null)
-						return;
+				// In some rare cases the splash screen is already disposed and the 
+				// timer is still running. It happened to me (EberhardB) when I stopped 
+				// debugging while starting up, but it might happen at other times too 
+				// - so just be safe.
+				if (!IsDisposed && IsHandleCreated)
+				{
+					UpdateOpacity();
+					Application.DoEvents(); // force a paint
+				}
 
-					// In some rare cases the splash screen is already disposed and the 
-					// timer is still running. It happened to me (EberhardB) when I stopped 
-					// debugging while starting up, but it might happen at other times too 
-					// - so just be safe.
-					if (!IsDisposed && IsHandleCreated)
-#if !__MonoCS__
-						Invoke(new Action(UpdateDisplay));
-#else // Windows have to be on the main thread on mono.
-					{
-						UpdateDisplay();						
-						Application.DoEvents(); // force a paint
-					}
-#endif
-				}
-				catch (Exception e)
-				{
-					// just ignore any exceptions
-					Debug.WriteLine("Got exception in UpdateDisplayCallback: " + e.Message);
-				}
-				finally
-				{
-					Monitor.Exit(m_Synchronizer);
-				}
+			}
+			catch (Exception e)
+			{
+				// just ignore any exceptions
+				Debug.WriteLine("Got exception in UpdateDisplayCallback: " + e.Message);
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// 
+		/// Increases the opacity (until 100%). Must be called on UI thread, with synchronizer
+		/// locked.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void UpdateDisplay()
+		private void UpdateOpacity()
 		{
 			try
 			{
 				double currentOpacity = Opacity;
 				if (currentOpacity < 1.0)
 				{
-#if !__MonoCS__
-					Opacity = currentOpacity + 0.05;
-#else
+//#if !__MonoCS__
+//					Opacity = currentOpacity + 0.05;
+//#else
 					Opacity = currentOpacity + 0.025; // looks nicer on mono/linux
-#endif
+//#endif
 					currentOpacity = Opacity;
 					if (currentOpacity == 1.0)
 					{
@@ -337,50 +324,28 @@ namespace SIL.Transcelerator
 		#region IProgress implementation
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets the message to display to indicate startup activity on the splash screen
+		/// Sets the message to display to indicate startup activity on the splash screen
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Message
+		public void SetMessage(string message)
 		{
-			get
-			{
-				CheckDisposed();
-				return lblMessage.Text;
-			}
-			set
+			try
 			{
 				CheckDisposed();
 
-				// In some rare cases, setting the text causes an exception which should just
-				// be ignored.
-				try
+				if (InvokeRequired)
+					Invoke(new Action(() => { SetMessage(message); }));
+				else
 				{
-					lblMessage.Text = value;
+					lblMessage.Text = message;
+					Refresh();
 				}
-				catch { }
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the form displaying the progress (used for message box owners, etc). If the progress
-		/// is not associated with a visible Form, then this returns its owning form, if any.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public Form Form
-		{
-			get { return this; }
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Get the title of the progress display window.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public string Title
-		{
-			get { return Text; }
-			set { Text = value; }
+			catch
+			{
+				// In some rare cases (e.g., already disposed), setting the text causes an
+				// exception which should just be ignored.
+			}
 		}
 		#endregion
 	}

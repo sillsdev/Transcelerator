@@ -27,7 +27,6 @@ namespace SIL.Transcelerator
 		#region Data members
 		private delegate void SetStringPropDelegate(string value);
 
-		private Thread m_thread;
 		private RealSplashScreen m_splashScreen;
 		private EventWaitHandle m_waitHandle;
 		Screen m_displayToUse;
@@ -77,25 +76,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public void Show(Screen display)
 		{
-			if (m_thread != null)
+			if (m_splashScreen != null)
 				return;
 
 			m_displayToUse = display;
 			m_waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
 
-#if __MonoCS__
-			// mono winforms can't create items not on main thread.
-			StartSplashScreen(); // Create Modeless dialog on Main GUI thread
-#else
-			m_thread = new Thread(StartSplashScreen);
-			m_thread.IsBackground = true;
-			m_thread.SetApartmentState(ApartmentState.STA);
-			m_thread.Name = "SplashScreen";
-			// Copy the UI culture from the main thread to the splash screen thread.
-			m_thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
-			m_thread.Start();
-			m_waitHandle.WaitOne();
-#endif
+			StartSplashScreen(); // Create Modeless dialog (this had better be called on Main GUI thread)
 			
 			Debug.Assert(m_splashScreen != null);
 			Message = string.Empty;
@@ -108,21 +95,18 @@ namespace SIL.Transcelerator
         /// ----------------------------------------------------------------------------------------
         public void Activate()
         {
-            if (m_splashScreen != null)
-            {
-                lock (m_splashScreen.m_Synchronizer)
-                {
-                    try
-                    {
-                        m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.Activate));
-                    }
-                    catch
-                    {
-                        // Something bad happened, but don't die
-                    }
-                }
-            }
-        }
+			if (m_splashScreen != null)
+			{
+				try
+				{
+					m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.Activate));
+				}
+				catch
+				{
+					// Something bad happened, but don't die
+				}
+			}
+		}
 
 		/// ----------------------------------------------------------------------------------------
 		/// <summary>
@@ -134,28 +118,9 @@ namespace SIL.Transcelerator
 			if (m_splashScreen == null)
 				return;
 
-			lock (m_splashScreen.m_Synchronizer)
-			{
-				try
-				{
-					m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.RealClose));
-				}
-				catch
-				{
-					// Something bad happened, but we are closing anyways :)
-				}
-			}
-#if !__MonoCS__
-			m_thread?.Join();
-#endif
-			lock (m_splashScreen.m_Synchronizer)
-			{
-				m_splashScreen.Dispose();
-				m_splashScreen = null;
-			}
-#if !__MonoCS__
-			m_thread = null;
-#endif
+			m_splashScreen.RealClose(); // Invokes if needed. Guaranteed not to throw.
+			
+			m_splashScreen = null;
 		}
 		#endregion
 
@@ -168,15 +133,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Message
 		{
-			set
-			{
-				lock (m_splashScreen.m_Synchronizer)
-				{
-					SetStringPropDelegate setMethod = delegate(string val) { m_splashScreen.Message = val; };
-					m_splashScreen.Invoke(setMethod, value);
-					m_splashScreen.Invoke(new MethodInvoker(m_splashScreen.Refresh));
-				}
-			}
+			set => m_splashScreen.SetMessage(value); // Invokes if needed. Guaranteed not to throw.
 		}
 		#endregion
 
@@ -190,14 +147,7 @@ namespace SIL.Transcelerator
 		{
 			m_splashScreen = new RealSplashScreen(m_displayToUse);
 			m_splashScreen.WaitHandle = m_waitHandle;
-#if !__MonoCS__
-			m_splashScreen.ShowDialog();
-#else
-			// Mono Winforms can't create Forms that are not on the Main thread.
-			// REVIEW: Is this line actually needed?
-			//m_splashScreen.CreateControl();
 			m_splashScreen.Show();
-#endif
 		}
 		#endregion
 	}

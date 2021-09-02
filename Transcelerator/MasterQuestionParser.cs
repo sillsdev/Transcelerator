@@ -846,14 +846,14 @@ namespace SIL.Transcelerator
 			}
 
 #if DEBUG
-            if (rules != null)
-            {
-                string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
-                if (unUsedRules.Length > 0)
-                {
-                    MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
-                }
-            }
+            //if (rules != null)
+            //{
+            //    string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
+            //    if (unUsedRules.Length > 0)
+            //    {
+            //        MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
+            //    }
+            //}
 #endif
 		}
 

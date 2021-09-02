@@ -149,7 +149,7 @@ namespace SIL.Transcelerator
 			this.mnuLookUpTermH.Name = "mnuLookUpTermH";
 			this.mnuLookUpTermH.Size = new System.Drawing.Size(221, 22);
 			this.mnuLookUpTermH.Text = "Find &Term in {0}...";
-			this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
+			this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplication);
 			// 
 			// mnuRefreshRenderingsH
 			// 
@@ -217,7 +217,7 @@ namespace SIL.Transcelerator
 			this.mnuLookUpTermC.Name = "mnuLookUpTermC";
 			this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
 			this.mnuLookUpTermC.Text = "Find &Term in {0}...";
-			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
+			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplication);
 			// 
 			// l10NSharpExtender1
 			// 

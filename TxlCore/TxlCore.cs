@@ -13,16 +13,14 @@ using System.Reflection;
 using SIL.Reporting;
 using SIL.Scripture;
 using SIL.Windows.Forms.Reporting;
-using static System.String;
 
 namespace SIL.Transcelerator
 {
     public static class TxlCore
     {
-        public const string kEnglishVersificationName = "English";
 		public const string kQuestionsFilename = "TxlQuestions.xml";
 		public const string kQuestionWordsFilename = "TxlQuestionWords.xml";
-		public const string emailAddress = "transcelerator_feedback@sil.org";
+		public const string kEmailAddress = "transcelerator_feedback@sil.org";
 
 		private static bool ErrorHandlingInitialized { get; set; }
 
@@ -41,27 +39,25 @@ namespace SIL.Transcelerator
             BCVRef.ParseRefRange(sReference, ref startRef, ref endRef);
         }
 
-		public static void InitializeErrorHandling(string hostAppName, Version hostVersion)		
+		public static void InitializeErrorHandling(string hostAppName, Version hostVersion)
 		{
 			if (ErrorHandlingInitialized)
 				return;
 			ErrorHandlingInitialized = true;
 
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = emailAddress;
+			ErrorReport.EmailAddress = kEmailAddress;
 			ErrorReport.AddStandardProperties();
 			// The version that gets added to the report by default is for the entry assembly, which is
 			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very
 			// useful.
 			ErrorReport.AddProperty("Plugin Name", "Transcelerator");
 			Assembly assembly = Assembly.GetExecutingAssembly();
-			ErrorReport.AddProperty("Version", Format("{0} (apparent build date: {1})",
-				assembly.GetName().Version,
-				File.GetLastWriteTime(assembly.Location).ToShortDateString()));
+			ErrorReport.AddProperty("Version", $"{assembly.GetName().Version} (apparent build date: {File.GetLastWriteTime(assembly.Location).ToShortDateString()})");
 			ErrorReport.AddProperty("Host Application", hostAppName + " " + hostVersion);
-			ExceptionHandler.Init(new WinFormsExceptionHandler());
+			ExceptionHandler.Init(new WinFormsExceptionHandler(false));
 
 			ErrorHandlingInitialized = true;
 		}
-    }
+	}
 }

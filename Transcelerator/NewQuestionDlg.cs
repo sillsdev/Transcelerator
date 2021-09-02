@@ -22,6 +22,7 @@ using L10NSharp.XLiffUtils;
 using Paratext.PluginInterfaces;
 using SIL.ObjectModel;
 using SIL.Scripture;
+using SIL.Utils;
 using static System.Int32;
 using static System.String;
 
@@ -32,7 +33,7 @@ namespace SIL.Transcelerator
 	/// Dialog box for adding a new question
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal partial class NewQuestionDlg : Form
+	internal partial class NewQuestionDlg : ParentFormBase
 	{
 		private readonly IVersification m_projectVersification;
 		private readonly IVersification m_masterVersification;
@@ -203,6 +204,7 @@ namespace SIL.Transcelerator
 			m_ptHelper = pth;
 			m_changeKeyboard = changeKeyboard;
 			InitializeComponent();
+			m_scrPsgReference.VerseControl.VerseRefChanged += m_scrPsgReference_PassageChanged;
 
 			HandleStringsLocalized();
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
@@ -507,8 +509,7 @@ namespace SIL.Transcelerator
 
 		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			if (DialogResult.OK ==
-				MessageBox.Show(this, LocalizationManager.GetString(
+			ShowModalChild(new MessageBoxForm(LocalizationManager.GetString(
 					"NewQuestionDlg.RequestAddCategoryFeatureInfo",
 					"Sorry this feature is not available yet. But if you are connected to the " +
 					"Internet and have not opted out of transmitting analytics data, this " +
@@ -516,11 +517,15 @@ namespace SIL.Transcelerator
 					Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
 					"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
 					TxlPlugin.pluginName),
-					MessageBoxButtons.OKCancel))
+					MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
-				Analytics.Track("TXL-218", new Dictionary<string, string>
-					{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
-			}
+				if (form.DialogResult == DialogResult.OK)
+				{
+					Analytics.Track("TXL-218", new Dictionary<string, string>
+						{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
+				}
+			});
+		}
 		}
 	}
 }

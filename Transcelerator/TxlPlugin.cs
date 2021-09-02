@@ -9,10 +9,15 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using L10NSharp;
@@ -21,20 +26,47 @@ using SIL.Scripture;
 using SIL.Windows.Forms.Keyboarding;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
+using SIL.Reporting;
 using static System.String;
 
 namespace SIL.Transcelerator
 {
 	[PublicAPI]
-	public class TxlPlugin : IParatextStandalonePlugin
+	public class TxlPlugin : IParatextStandalonePlugin, IPluginErrorHandler
 	{
 		public const string pluginName = "Transcelerator";
 
 		private static readonly string s_baseInstallFolder;
 		private static readonly string s_company;
 		private static readonly string s_version;
+		private static Analytics s_analytics;
 		private static Dictionary<IProject, ProjectState> s_projectStates = new Dictionary<IProject, ProjectState>();
-		
+		private static IProject s_currentProject;
+		private static IPluginHost Host { get; set; }
+
+		public static Analytics GetAnalytics(IPluginHost host)
+		{
+			if (s_analytics == null)
+			{
+#if DEBUG
+				// Always track if this is a debug build, but track to a different segment.io project
+				const bool allowTracking = true;
+				const string key = "0mtsix4obm";
+#else
+                    // If this is a release build, then allow an environment variable to be set to false
+                    // so that testers aren't generating false analytics
+                    string feedbackSetting = Environment.GetEnvironmentVariable("FEEDBACK");
+
+                    var allowTracking = string.IsNullOrEmpty(feedbackSetting) || feedbackSetting.ToLower() == "yes" || feedbackSetting.ToLower() == "true";
+
+                    const string key = "3iuv313n8t";
+#endif
+				s_analytics = new Analytics(key, GetUserInfo(host), allowTracking);
+			}
+
+			return s_analytics;
+		}
+
 		public string Name => pluginName;
 		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 		public string VersionString => Version.ToString();
@@ -49,7 +81,13 @@ namespace SIL.Transcelerator
 			s_version = assembly.GetName().Version.ToString();
 		}
 
-	    public void Run(IPluginHost host, IParatextChildState state)
+		public TxlPlugin(IPluginHost host)
+		{
+			Host = host;
+			TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
+		}
+
+	    public async void Run(IPluginHost host, IParatextChildState state)
 		{
 			try
 			{
@@ -71,9 +109,6 @@ namespace SIL.Transcelerator
 				{
 				}
 
-				Action<bool> activateKeyboard;
-				IVerseRef currentRef, startRef, endRef;
-
 				lock (s_projectStates)
 				{
 					if (s_projectStates.TryGetValue(project, out var existing))
@@ -87,88 +122,87 @@ namespace SIL.Transcelerator
 					if (!s_projectStates.Any()) // If there's already an active Transcelerator, just use the existing LM
 						SetUpLocalization(preferredUiLocale);
 
-					TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
-
 					splashScreen = new TxlSplashScreen();
 					s_projectStates[project] = new ProjectState(splashScreen);
 					splashScreen.Show(Screen.FromPoint(Properties.Settings.Default.WindowLocation));
 					splashScreen.Message = Format(
 						LocalizationManager.GetString("SplashScreen.MsgRetrievingDataFromCaller",
-							"Retrieving data from {0}...", "Param is host application name (Paratext)"),
-						host.ApplicationName);
-
-					currentRef = state.VerseRef.ChangeVersification(host.GetStandardVersification(StandardScrVersType.English));
-					startRef = currentRef.Versification.CreateReference(currentRef.BookNum, 1, 1);
-					var lastChapter = currentRef.Versification.GetLastChapter(currentRef.BookNum);
-					endRef = currentRef.Versification.CreateReference(currentRef.BookNum,
-						lastChapter, currentRef.Versification.GetLastVerse(currentRef.BookNum, lastChapter));
-
-					// See TXL-131 for explanation of this code, if needed.
-					if (Properties.Settings.Default.FilterStartRef > 0 &&
-						Properties.Settings.Default.FilterStartRef < Properties.Settings.Default.FilterEndRef)
-					{
-						var savedStartRef = new BCVRef(Properties.Settings.Default.FilterStartRef);
-						var savedEndRef = new BCVRef(Properties.Settings.Default.FilterEndRef);
-						if (savedStartRef.Valid && savedEndRef.Valid &&
-							savedStartRef <= currentRef.BBBCCCVVV && savedEndRef >= currentRef.BBBCCCVVV)
-						{
-							startRef = currentRef.Versification.CreateReference(savedStartRef);
-							endRef = currentRef.Versification.CreateReference(savedEndRef);
-						}
-					}
-
-					KeyboardController.Initialize();
-
-					activateKeyboard = vern =>
-					{
-						if (vern)
-						{
-							//try
-							//{
-							project.VernacularKeyboard?.Activate();
-							//}
-							//catch (ApplicationException e)
-							//{
-							//	// For some reason, the very first time this gets called it throws a COM exception, wrapped as
-							//	// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
-							//	// calls work with no exception. Paratext seems to make this same call without any exceptions. The
-							//	// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
-							//	// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
-							//	// unspecified error, so that's fairly helpful.
-							//	if (!(e.InnerException is COMException))
-							//		throw;
-							//}
-						}
-						else
-							Keyboard.Controller.ActivateDefaultKeyboard();
-					};
+							"Retrieving data from {0} project {1}...",
+							"Param 0: host application name (Paratext); " +
+							"Param 1: Paratext project name"),
+						host.ApplicationName, project.ShortName);
 				}
 
-				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(splashScreen, host, project,
-						activateKeyboard, startRef, endRef, preferredUiLocale, currentRef);
+				Action<bool> activateKeyboard = vern =>
+				{
+					if (vern)
+					{
+						//try
+						//{
+						project.VernacularKeyboard?.Activate();
+						//}
+						//catch (ApplicationException e)
+						//{
+						//	// For some reason, the very first time this gets called it throws a COM exception, wrapped as
+						//	// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
+						//	// calls work with no exception. Paratext seems to make this same call without any exceptions. The
+						//	// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
+						//	// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
+						//	// unspecified error, so that's fairly helpful.
+						//	if (!(e.InnerException is COMException))
+						//		throw;
+						//}
+					}
+					else
+						Keyboard.Controller.ActivateDefaultKeyboard();
+				};
 
-#if DEBUG
-				// Always track if this is a debug build, but track to a different segment.io project
-				const bool allowTracking = true;
-				const string key = "0mtsix4obm";
-#else
-                    // If this is a release build, then allow an environment variable to be set to false
-                    // so that testers aren't generating false analytics
-                    string feedbackSetting = Environment.GetEnvironmentVariable("FEEDBACK");
+				IVerseRef currentRef = state.VerseRef.ChangeVersification(host.GetStandardVersification(StandardScrVersType.English));
+				var startRef = currentRef.Versification.CreateReference(currentRef.BookNum, 1, 1);
+				var lastChapter = currentRef.Versification.GetLastChapter(currentRef.BookNum);
+				var endRef = currentRef.Versification.CreateReference(currentRef.BookNum,
+					lastChapter, currentRef.Versification.GetLastVerse(currentRef.BookNum, lastChapter));
 
-                    var allowTracking = string.IsNullOrEmpty(feedbackSetting) || feedbackSetting.ToLower() == "yes" || feedbackSetting.ToLower() == "true";
+				// See TXL-131 for explanation of this code, if needed.
+				if (Properties.Settings.Default.FilterStartRef > 0 &&
+					Properties.Settings.Default.FilterStartRef < Properties.Settings.Default.FilterEndRef)
+				{
+					var savedStartRef = new BCVRef(Properties.Settings.Default.FilterStartRef);
+					var savedEndRef = new BCVRef(Properties.Settings.Default.FilterEndRef);
+					if (savedStartRef.Valid && savedEndRef.Valid &&
+						savedStartRef <= currentRef.BBBCCCVVV && savedEndRef >= currentRef.BBBCCCVVV)
+					{
+						startRef = currentRef.Versification.CreateReference(savedStartRef);
+						endRef = currentRef.Versification.CreateReference(savedEndRef);
+					}
+				}
 
-                    const string key = "3iuv313n8t";
-#endif
+				KeyboardController.Initialize();
+
+				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(host, project, startRef, endRef,
+					activateKeyboard, preferredUiLocale);
+
+				await Task.Run(() => { InitMainWindow(mainWindow, splashScreen, project); });
 
 				lock (s_projectStates)
 				{
-					void SpecifyName(object s, EventArgs e) => MainWindow_Closed(project);
+					if (!s_projectStates.ContainsKey(project))
+					{
+						// There was either a startup error that was already caught and handled,
+						// or the user decided to shut down Paratext while the data was loading,
+						// or a fatal exception occurred in some other Transcelerator window and
+						// all instances were cleaned up.
+						return;
+					}
+					mainWindow.Closed += (s, e) => MainWindow_Closed(project);
+					mainWindow.Activated += (sender, e) =>
+					{
+						s_currentProject = s_projectStates.FirstOrDefault(s => s.Value.IsFor(sender as UNSQuestionsDialog)).Key;
+					};
 
-					mainWindow.Closed += SpecifyName;
 					try
 					{
-						s_projectStates[project].ShowMainWindow(new Analytics(key, GetUserInfo(host), allowTracking), mainWindow);
+						s_projectStates[project].ShowMainWindow(GetAnalytics(host), mainWindow);
 					}
 					catch (Exception e)
 					{
@@ -180,9 +214,64 @@ namespace SIL.Transcelerator
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show(Format(LocalizationManager.GetString("General.ErrorStarting", "Error occurred attempting to start {0}: ",
-					"Param is \"Transcelerator\" (plugin name)"), pluginName) + e.Message);
-				throw;
+				ShowStartupError(e);
+			}
+		}
+
+		private void CleanUpForFatalException(IProject projectToKill = null)
+		{
+			bool lockTaken = false;
+			try
+			{
+				Monitor.TryEnter(s_projectStates, 100, ref lockTaken);
+				if (lockTaken)
+				{
+					List<ProjectState> copyOfProjectStates;
+					if (projectToKill == null)
+						copyOfProjectStates = s_projectStates.Values.ToList();
+					else if (s_projectStates.TryGetValue(projectToKill, out var state))
+						copyOfProjectStates = new List<ProjectState>(new [] {state});
+					else
+						return;
+
+					foreach (var projectState in copyOfProjectStates)
+						projectState.CleanUp();
+
+					// Most likely this dictionary will already be empty now, but if any were showing
+					// the splash screen, there is no handler to remove them.
+					if (projectToKill == null)
+						s_projectStates.Clear();
+				}
+			}
+			finally {
+				if (lockTaken) {
+					Monitor.Exit(s_projectStates);
+				}
+			}
+		}
+
+		private void ShowStartupError(Exception e)
+		{
+			ErrorReport.ReportFatalException(e);
+		}
+
+		private void InitMainWindow(UNSQuestionsDialog mainWindow, TxlSplashScreen splashScreen, IProject project)
+		{
+			try
+			{
+				mainWindow.LoadTranslations(splashScreen);
+			}
+			catch (Exception e)
+			{
+				ShowStartupError(e);
+				lock (s_projectStates)
+				{
+					if (s_projectStates.TryGetValue(project, out var state))
+					{
+						state.CleanUp();
+						s_projectStates.Remove(project);
+					}
+				}
 			}
 		}
 
@@ -198,15 +287,17 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private void Host_ShuttingDown(object sender, System.ComponentModel.CancelEventArgs e)
+		private void Host_ShuttingDown(object sender, CancelEventArgs e)
 		{
 			lock (s_projectStates)
 			{
 				List<IProject> keysToDelete = new List<IProject>();
 				foreach (var kvp in s_projectStates)
 				{
-					if (!kvp.Value.Close())
-						keysToDelete.Add(kvp.Key);
+					kvp.Value.RequestClose(e);
+					if (e.Cancel)
+						break;
+					keysToDelete.Add(kvp.Key);
 				}
 
 				foreach (var key in keysToDelete)
@@ -214,7 +305,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private UserInfo GetUserInfo(IPluginHost host)
+		private static UserInfo GetUserInfo(IPluginHost host)
 		{
 			string lastName = host.UserInfo.Name;
 			string firstName = "";
@@ -237,7 +328,7 @@ namespace SIL.Transcelerator
 			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
 			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, s_version,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), TxlCore.emailAddress,
+				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), TxlCore.kEmailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
 		}
 
@@ -258,7 +349,7 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				yield return new PluginMenuEntry(pluginName + "...", Run, PluginMenuLocation.ScrTextDefault,
+				yield return new PluginMenuEntry(pluginName + "...", Run, PluginMenuLocation.ScrTextTools,
 					@"TXL no TXL.ico");
 			}
 		}
@@ -297,24 +388,14 @@ namespace SIL.Transcelerator
 				Analytics?.Dispose();
 			}
 
+			public bool IsFor(UNSQuestionsDialog window) => MainWindow == window;
+
 			public void Activate()
 			{
-				if (MainWindow != null)
-				{
-					InvokeOnUiThread(() => MainWindow.Activate());
-				}
+				if (MainWindow == null)
+					SplashScreen?.Activate();
 				else
-				{
-					// Can't lock because the whole start-up sequence takes several seconds and the
-					// whole point of this code is to activate the splash screen so the user can see
-					// it's still starting up. But there is no harm in calling Activate on the splash
-					// screen if we happen to catch it between the time it is closed and the member
-					// variable is set to null, since in that case, the "real" splash screen is closed
-					// and Activate is a no-op. But we do need to use a temp variable because it could
-					// get set to null between the time we check for null and the call to Activate.
-					TxlSplashScreen tempSplashScreen = SplashScreen;
-					tempSplashScreen?.Activate();
-				}
+					InvokeOnUiThread(() => MainWindow.Activate());
 			}
 
 			/// <summary>
@@ -332,6 +413,21 @@ namespace SIL.Transcelerator
 
 				Dispose();
 				return false;
+			}
+			
+			/// <summary>
+			/// Unconditionally close the main window or splash screen and dispose everything.
+			/// </summary>
+			/// <returns></returns>
+			public void CleanUp()
+			{
+				if (SplashScreen != null)
+				{
+					SplashScreen.Close();
+					Dispose();
+				}
+				else
+					Close();
 			}
 
 			private void InvokeOnUiThread(Action action)
@@ -353,8 +449,47 @@ namespace SIL.Transcelerator
 				Analytics.Track("Startup", new Dictionary<string, string>
 					{{"Specific version", Assembly.GetExecutingAssembly().GetName().Version.ToString()}});
 
-				mainWindow.Show();
+				mainWindow.Show(SplashScreen);
+				SplashScreen.Dispose();
+				SplashScreen = null;
 			}
+
+			public void RequestClose(CancelEventArgs cancelEventArgs)
+			{
+				if (MainWindow != null)
+					MainWindow.RequestClose(cancelEventArgs);
+				else
+					SplashScreen?.Close();
+			}
+		}
+
+		public bool ReportUnhandledException(Exception exception)
+		{
+			bool isFatal = false;
+
+			try
+			{
+				if (!(exception is ParatextPluginException))
+				{
+					StackTrace stackTrace = new StackTrace(exception);
+					var methodAtTopOfCallStack = stackTrace.GetFrames()?.LastOrDefault()?.GetMethod();
+					isFatal = methodAtTopOfCallStack.Name == "Callback" && methodAtTopOfCallStack.DeclaringType == typeof(NativeWindow);
+				}
+			}
+			catch (Exception e)
+			{
+				Host.Log(this, "Error occurred trying to determine if exception was fatal: " + e.Message);
+				throw;
+			}
+
+			if (isFatal)
+			{
+				ErrorReport.ReportFatalException(exception);
+				CleanUpForFatalException(s_currentProject);
+			}
+			else
+				ErrorReport.ReportNonFatalException(exception);
+			return true;
 		}
 	}
 }

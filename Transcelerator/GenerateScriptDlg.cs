@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -25,12 +26,44 @@ using File = System.IO.File;
 
 namespace SIL.Transcelerator
 {
+	public interface IGenerateScriptSettings
+	{
+		string SelectedBook { get; }
+		BCVRef VerseRangeStartRef { get; }
+		BCVRef VerseRangeEndRef { get; }
+		bool WarnAboutUntranslatedQuestions { get; }
+		bool UseOriginalForUntranslatedQuestions { get; }
+		bool OutputFullPassageAtStartOfSection { get; }
+		bool OutputPassageForOutOfOrderQuestions { get; }
+		bool OutputPassageBeforeOverview { get; }
+		bool IncludeLWCQuestions { get; }
+		bool IncludeLWCAnswers { get; }
+		bool IncludeLWCComments { get; }
+		bool EmbedStyleInfo { get; }
+		bool WriteCssFile { get; }
+		bool OverwriteCssFile { get; }
+		string FileName { get; }
+		string NormalizedTitle { get; }
+		string CssFile { get; }
+		string FullCssPath { get; }
+
+		Color QuestionGroupHeadingsColor { get; }
+		Color LWCQuestionColor { get; }
+		Color LWCAnswerTextColor { get; }
+		Color CommentTextColor { get; }
+		int NumberOfBlankLinesForAnswer { get; }
+		bool NumberQuestions { get; }
+
+		string LwcLocale { get; }
+		string GetDataString(UIDataString key, out string lang);
+	}
+
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
 	/// Dialog to present user with options to generate a script to do comprehension checking.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class GenerateScriptDlg : Form
+	public partial class GenerateScriptDlg : Form, IGenerateScriptSettings
 	{
 		public delegate LocalizationsFileAccessor DataLocalizerNeededEventHandler(object sender, string localeId);
 		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
@@ -229,6 +262,15 @@ namespace SIL.Transcelerator
 
 		public BCVRef VerseRangeEndRef { get; private set; } = new BCVRef();
 
+		public bool WarnAboutUntranslatedQuestions => m_rdoDisplayWarning.Checked;
+		public bool UseOriginalForUntranslatedQuestions => m_rdoUseOriginal.Checked;
+		public bool OutputPassageBeforeOverview => m_chkPassageBeforeOverview.Checked;
+		public bool IncludeLWCQuestions => m_chkIncludeLWCQuestions.Checked;
+		public bool IncludeLWCAnswers => m_chkIncludeLWCAnswers.Checked;
+		public bool IncludeLWCComments => m_chkIncludeLWCComments.Checked;
+		public bool EmbedStyleInfo => m_rdoEmbedStyleInfo.Checked;
+		public bool OverwriteCssFile => m_chkOverwriteCss.Checked;
+
 		public string FileName
 		{
 			get
@@ -252,6 +294,13 @@ namespace SIL.Transcelerator
 				return path;
 			}
 		}
+
+		public Color QuestionGroupHeadingsColor => m_lblQuestionGroupHeadingsColor.ForeColor;
+		public Color LWCQuestionColor => m_lblLWCQuestionColor.ForeColor;
+		public Color LWCAnswerTextColor => m_lblLWCAnswerTextColor.ForeColor;
+		public Color CommentTextColor => m_lblCommentTextColor.ForeColor;
+		public int NumberOfBlankLinesForAnswer => (int)m_numBlankLines.Value;
+		public bool NumberQuestions => m_chkNumberQuestions.Checked;
 
 		public bool WriteCssFile => m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
 

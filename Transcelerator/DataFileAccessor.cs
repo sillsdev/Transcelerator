@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using L10NSharp;
@@ -107,7 +108,15 @@ namespace SIL.Transcelerator
     public class ParatextDataFileAccessor : DataFileAccessor, IPluginObject
     {
 		private readonly IProject m_project;
-		private Dictionary<string, IWriteLock> m_locks = new Dictionary<string, IWriteLock>();
+		private readonly Dictionary<string, IWriteLock> m_locks = new Dictionary<string, IWriteLock>();
+		public bool IsReadonly
+		{
+			get 
+			{
+				lock(m_locks)
+					return m_locks.Values.Any(l => l == null);
+			}
+		}
 
 		public ParatextDataFileAccessor(IProject project)
         {
@@ -116,24 +125,24 @@ namespace SIL.Transcelerator
 
 		public static XMLDataMergeInfo GetXMLDataMergeInfo(string pluginDataId)
         {
-			if (pluginDataId == DataFileId.Translations.ToString())
+			if (pluginDataId == GetFileName(DataFileId.Translations))
 				return new XMLDataMergeInfo(false,
 				new XMLListKeyDefinition("/ArrayOfTranslation", "concat(@ref,'/',OriginalPhrase)"));
 
-			if (pluginDataId == DataFileId.QuestionCustomizations.ToString())
+			if (pluginDataId == GetFileName(DataFileId.QuestionCustomizations))
 				return new XMLDataMergeInfo(false,
                 new XMLListKeyDefinition("/ArrayOfPhraseCustomization", "concat(@ref,'/',@type,'/',OriginalPhrase)"));
 
-			if (pluginDataId == DataFileId.PhraseSubstitutions.ToString())
+			if (pluginDataId == GetFileName(DataFileId.PhraseSubstitutions))
 				return new XMLDataMergeInfo(true,
                 new XMLListKeyDefinition("/ArrayOfSubstitution", "@pattern"));
 
-			if (pluginDataId == DataFileId.KeyTermRenderingInfo.ToString())
+			if (pluginDataId == GetFileName(DataFileId.KeyTermRenderingInfo))
 				return new XMLDataMergeInfo(false,
                 new XMLListKeyDefinition("/ArrayOfKeyTermRenderingInfo", "@id"),
                 new XMLListKeyDefinition("AdditionalRenderings", "."));
 
-			if (pluginDataId == DataFileId.TermRenderingSelectionRules.ToString())
+			if (pluginDataId == GetFileName(DataFileId.TermRenderingSelectionRules))
 				return new XMLDataMergeInfo(true,
                 new XMLListKeyDefinition("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
 
@@ -145,7 +154,7 @@ namespace SIL.Transcelerator
 			lock (m_locks)
 			{
 				var fileName = GetFileName(fileId);
-				m_project.PutPluginData(EnsureLock(fileName), this, fileName,
+				m_project.PutPluginData(EnsureLock(fileName, true), this, fileName,
 					writer => { writer.Write(data); });
 			}
 		}
@@ -155,7 +164,7 @@ namespace SIL.Transcelerator
 			lock (m_locks)
 			{
 				var fileName = GetBookSpecificFileName(fileId, bookId);
-				m_project.PutPluginData(EnsureLock(fileName), this, fileName,
+				m_project.PutPluginData(EnsureLock(fileName, true), this, fileName,
 					writer => { writer.Write(data); });
 			}
 		}
@@ -163,32 +172,36 @@ namespace SIL.Transcelerator
 	    public override string Read(DataFileId fileId)
 		{
 			var fileName = GetFileName(fileId);
-			EnsureLock(fileName); // Lock is not needed for reading, but this way we'll find out of something else tries to access a file we've already read.
+			EnsureLock(fileName, false); // Lock is not needed for reading, but this way we'll find out of something else tries to access a file we've already read.
 
 			using (var reader = m_project.GetPluginData(this, fileName))
 				return reader?.ReadToEnd();
 		}
 
-		private IWriteLock EnsureLock(string fileName)
+		private IWriteLock EnsureLock(string fileName, bool required)
 		{
-			if (m_locks.TryGetValue(fileName, out var lockForFile))
+			lock (m_locks)
 			{
-				lockForFile = m_project.RequestWriteLock(this, ReleaseRequested, fileName);
-				if (lockForFile == null)
+				if (!m_locks.TryGetValue(fileName, out var lockForFile) || lockForFile == null)
 				{
-					ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
-						"Unable to obtain exclusive access to Txl"));
-				}
-				else
-					m_locks[fileName] = lockForFile;
-			}
+					lockForFile = m_project.RequestWriteLock(this, ReleaseRequested, fileName);
+					if (lockForFile == null && required)
+					{
+						ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
+							"Unable to obtain exclusive access to Txl"));
+					}
 
-			return lockForFile;
+					m_locks[fileName] = lockForFile;
+				}
+
+				return lockForFile;
+			}
 		}
 
 		private void ReleaseRequested(IWriteLock lockToRelease)
 		{
-			m_locks.RemoveAll(kvp => kvp.Value == lockToRelease);
+			lock (m_locks)
+				m_locks.RemoveAll(kvp => kvp.Value == lockToRelease);
 		}
 
 		public override bool Exists(DataFileId fileId) =>
@@ -207,9 +220,7 @@ namespace SIL.Transcelerator
 
         public override DateTime ModifiedTime(DataFileId fileId)
 		{
-			// TODO: New Interface/Implementation needed
-			//return m_project.GetPluginDataLastWriteTime(this, GetFileName(fileId));
-            return DateTime.MinValue;
+			return m_project.GetPluginDataModifiedTime(this, GetFileName(fileId));
         }
     }
 }
