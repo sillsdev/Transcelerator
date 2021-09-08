@@ -616,6 +616,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
 			this.Controls.Add(this.lblReference);
+			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "NewQuestionDlg.WindowTitle");
@@ -628,6 +629,8 @@ namespace SIL.Transcelerator
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "New Question";
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
+			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
 			((System.ComponentModel.ISupportInitialize)(this.m_dataGridViewExistingQuestions)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_insertionPointArrow)).EndInit();
 			this.m_tableLayoutPanel.ResumeLayout(false);

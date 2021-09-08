@@ -11,6 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -19,6 +21,7 @@ using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using SIL.Extensions;
+using SIL.IO;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
@@ -56,7 +59,7 @@ namespace SIL.Transcelerator
 		private string m_fmtChkIncludeComments;
 		private string m_fmLWCAnswerTextColor;
 		private string m_fmLWCQuestionTextColor;
-
+		private readonly string m_help;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -136,6 +139,9 @@ namespace SIL.Transcelerator
 				m_txtCssFile.Text = Properties.Settings.Default.GenerateTemplateCssFile;
 				m_chkAbsoluteCssPath.Checked = Properties.Settings.Default.GenerateTemplateAbsoluteCssPath;
 			}
+
+			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "generatescript.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		private void HandleStringsLocalized()
@@ -514,6 +520,21 @@ namespace SIL.Transcelerator
 				m_lblLWCQuestionColor.Text = Format(m_fmLWCQuestionTextColor, languageName);
 				m_lblLWCAnswerTextColor.Text = Format(m_fmLWCAnswerTextColor, languageName);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			Process.Start(m_help);
 		}
 		#endregion
 

@@ -58,11 +58,17 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			this.mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
+			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEditQuestion = new System.Windows.Forms.DataGridViewImageColumn();
+			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,12 +142,6 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEditQuestion = new System.Windows.Forms.DataGridViewImageColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -252,6 +252,57 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridUns_RowPrePaint);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
+			// 
+			// m_colReference
+			// 
+			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
+			this.m_colReference.Name = "m_colReference";
+			this.m_colReference.ReadOnly = true;
+			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.m_colReference.Width = 310;
+			// 
+			// m_colEnglish
+			// 
+			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
+			this.m_colEnglish.MinimumWidth = 100;
+			this.m_colEnglish.Name = "m_colEnglish";
+			this.m_colEnglish.ReadOnly = true;
+			// 
+			// m_colTranslation
+			// 
+			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
+			this.m_colTranslation.MinimumWidth = 100;
+			this.m_colTranslation.Name = "m_colTranslation";
+			// 
+			// m_colEditQuestion
+			// 
+			this.m_colEditQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.m_colEditQuestion.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Edit!Edit";
+			this.m_colEditQuestion.MinimumWidth = 20;
+			this.m_colEditQuestion.Name = "m_colEditQuestion";
+			this.m_colEditQuestion.Width = 227;
+			// 
+			// m_colUserTranslated
+			// 
+			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
+			this.m_colUserTranslated.Name = "m_colUserTranslated";
+			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.m_colUserTranslated.Width = 304;
+			// 
+			// m_colDebugInfo
+			// 
+			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
+    " Details";
+			this.m_colDebugInfo.MinimumWidth = 100;
+			this.m_colDebugInfo.Name = "m_colDebugInfo";
+			this.m_colDebugInfo.ReadOnly = true;
 			// 
 			// dataGridContextMenu
 			// 
@@ -914,6 +965,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.browseTopicsToolStripMenuItem, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.browseTopicsToolStripMenuItem, "MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem");
 			this.browseTopicsToolStripMenuItem.Name = "browseTopicsToolStripMenuItem";
+			this.browseTopicsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
 			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
 			this.browseTopicsToolStripMenuItem.Text = "Browse Topics...";
 			this.browseTopicsToolStripMenuItem.Click += new System.EventHandler(this.browseTopicsToolStripMenuItem_Click);
@@ -1157,57 +1209,6 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
-			// 
-			// m_colReference
-			// 
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.Width = 310;
-			// 
-			// m_colEnglish
-			// 
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
-			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
-			this.m_colEnglish.MinimumWidth = 100;
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			// 
-			// m_colTranslation
-			// 
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
-			this.m_colTranslation.MinimumWidth = 100;
-			this.m_colTranslation.Name = "m_colTranslation";
-			// 
-			// m_colEditQuestion
-			// 
-			this.m_colEditQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.m_colEditQuestion.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Edit!Edit";
-			this.m_colEditQuestion.MinimumWidth = 20;
-			this.m_colEditQuestion.Name = "m_colEditQuestion";
-			this.m_colEditQuestion.Width = 227;
-			// 
-			// m_colUserTranslated
-			// 
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.m_colUserTranslated.Width = 304;
-			// 
-			// m_colDebugInfo
-			// 
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
-    " Details";
-			this.m_colDebugInfo.MinimumWidth = 100;
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
 			// 
 			// UNSQuestionsDialog
 			// 
