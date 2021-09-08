@@ -442,6 +442,11 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
 		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
 			Process.Start(m_help);
 		}
 		#endregion

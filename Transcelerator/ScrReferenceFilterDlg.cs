@@ -9,9 +9,12 @@
 //
 // File: ScrReferenceFilterDlg.cs
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using SIL.IO;
 using SIL.Scripture;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -25,6 +28,7 @@ namespace SIL.Transcelerator
 		#region Data members
 		private readonly BCVRef m_firstAvailableRef;
         private readonly BCVRef m_lastAvailableRef;
+		private readonly string m_help;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -45,6 +49,9 @@ namespace SIL.Transcelerator
             m_lastAvailableRef.Verse = versification.GetLastVerse(m_lastAvailableRef.Book, m_lastAvailableRef.Chapter);
 			if (initialFromRef == m_firstAvailableRef && initialToRef == m_lastAvailableRef)
 				btnClearFilter.Enabled = false;
+
+			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "filtering.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 		#endregion
 
@@ -103,6 +110,21 @@ namespace SIL.Transcelerator
 		{
             scrPsgFrom.ScReference = new BCVRef(m_firstAvailableRef);
             scrPsgTo.ScReference = new BCVRef(m_lastAvailableRef);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			Process.Start(m_help);
 		}
 		#endregion
 	}

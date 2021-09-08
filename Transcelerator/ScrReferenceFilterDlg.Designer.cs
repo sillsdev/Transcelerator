@@ -173,6 +173,7 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.m_lblFrom);
 			this.Controls.Add(this.btnCancel);
 			this.Controls.Add(this.btnOk);
+			this.HelpButton = true;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizingId(this, "ScrReferenceFilterDlg.WindowTitle");
@@ -183,6 +184,8 @@ namespace SIL.Transcelerator
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Filter by Reference";
+			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
+			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

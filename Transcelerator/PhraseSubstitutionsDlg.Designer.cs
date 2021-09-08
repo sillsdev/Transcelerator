@@ -526,6 +526,7 @@ namespace SIL.Transcelerator
 			this.ShowInTaskbar = false;
 			this.Text = "Question Adjustments";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
+			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTimesToMatch)).EndInit();
