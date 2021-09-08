@@ -11,7 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -137,7 +136,7 @@ namespace SIL.Transcelerator.Localization
 						var questionGroup = categoryGroup.SubGroups?.SingleOrDefault(qg => qg.Id == $"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
 						if (questionGroup == null)
 						{
-							questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}+{q.PhraseInUse}");
+							questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}{FileBody.kQuestionGroupRefSeparator}{q.PhraseInUse}");
 							key = new UIQuestionDataString(q, true, false);
 							AddTranslationUnit(questionGroup, key);
 						}
@@ -158,7 +157,7 @@ namespace SIL.Transcelerator.Localization
 		private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
 		{
 			var alternatives = q.Alternatives;
-			if (alternatives != null)
+			if (alternatives != null && alternatives.Any())
 			{
 				var subGroup = questionGroup.GetQuestionSubGroup(LocalizableStringType.Alternate) ?? questionGroup.AddSubGroup(LocalizableStringType.Alternate.SubQuestionGroupId());
 				for (var index = 0; index < alternatives.Length; index++)

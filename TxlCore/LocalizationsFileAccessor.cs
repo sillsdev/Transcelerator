@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2013' company='SIL International'>
-//		Copyright (c) 2018, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -26,7 +26,9 @@ namespace SIL.Transcelerator.Localization
 		protected FileBody Localizations { get; private set; } // Exposed for sake of subclass used in unit tests
 		private string DirectoryName { get; }
 		public string Locale { get; }
-		private const string klocaleFilenamePrefix = "LocalizedPhrases-";
+		public string FileName { get; }
+		private const string kBaseFilename = "LocalizedPhrases";
+		private const string kLocaleFilenamePrefix = kBaseFilename + "-";
 		private const string kLocaleFilenameExtension = ".xlf";
 		private Dictionary<UIDataString, Tuple<string, bool>> m_fastLookup;
 
@@ -39,6 +41,10 @@ namespace SIL.Transcelerator.Localization
 				throw new DirectoryNotFoundException("Attempt to initialize LocalizationsFileGenerator with non-existent directory failed.");
 			DirectoryName = directory;
 			Locale = locale;
+			FileName = locale == "en" ?
+				Path.Combine(DirectoryName, $"{kBaseFilename}{kLocaleFilenameExtension}") :
+				Path.Combine(DirectoryName, $"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
+
 			if (Exists)
 			{
 				try
@@ -53,7 +59,7 @@ namespace SIL.Transcelerator.Localization
 
 				if (!m_xliffRoot.IsValid(out string error))
 					throw new DataException(error);
-				// Crowdin insists on using "es-ES" (Spanish as spoke in Spain), rather than supporting generic Spanish.
+				// Crowdin now supports Language Mapping but used to insist on using "es-ES" (Spanish as spoken in Spain), rather than supporting generic Spanish.
 				if (String.IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage) || (m_xliffRoot.File.TargetLanguage == "es-ES" && locale == "es"))
 					m_xliffRoot.File.TargetLanguage = locale;
 				else if (m_xliffRoot.File.TargetLanguage != locale)
@@ -63,6 +69,12 @@ namespace SIL.Transcelerator.Localization
 			}
 			else
 			{
+				if (locale == "en")
+				{
+					throw new FileNotFoundException("I don't think you want to regenerate the English xml file from scratch. You will lose the magic numbers assigned by Crowdin. If you need this file, re-get it from Crowdin.",
+						FileName);
+				}
+
 				InitializeLocalizations();
 			}
 		}
@@ -92,9 +104,9 @@ namespace SIL.Transcelerator.Localization
 			try
 			{
 				DirectoryInfo dirInfo = new DirectoryInfo(directory);
-				return dirInfo.GetFiles($"{klocaleFilenamePrefix}*{kLocaleFilenameExtension}")
+				return dirInfo.GetFiles($"{kLocaleFilenamePrefix}*{kLocaleFilenameExtension}")
 					.Select(fi => fi.Name)
-					.Select(n => n.Substring(klocaleFilenamePrefix.Length))
+					.Select(n => n.Substring(kLocaleFilenamePrefix.Length))
 					.Select(l => l.Substring(0, l.Length - kLocaleFilenameExtension.Length));
 			}
 			catch (Exception)
@@ -104,7 +116,6 @@ namespace SIL.Transcelerator.Localization
 			}
 		}
 
-		public string FileName => Path.Combine(DirectoryName, $"{klocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
 		public FileInfo FileInfo => new FileInfo(FileName);
 		public bool Exists => FileInfo.Exists;
 

@@ -50,7 +50,7 @@ namespace SIL.Transcelerator.Localization
 			{
 				var sectionGroup = Localizations.FindSectionsForQuestion(data).Skip(specificSection).FirstOrDefault();
 				Debug.Assert(sectionGroup != null);
-				group = sectionGroup.FindQuestionGroup(data.Question) ?? AddQuestionGroup(sectionGroup, data);
+				group = sectionGroup.FindQuestionGroup(data) ?? AddQuestionGroup(sectionGroup, data);
 				switch (type)
 				{
 					case LocalizableStringType.Question:
