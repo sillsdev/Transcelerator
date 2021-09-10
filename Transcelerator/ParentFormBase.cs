@@ -15,9 +15,12 @@ using System.Windows.Forms;
 
 namespace SIL.Transcelerator
 {
+	/// <summary>
+	/// Base class for forms which need to show a child form that is modal with respect to
+	/// the parent form but is not application modal.
+	/// </summary>
 	public class ParentFormBase : Form
 	{
-		//private List<Tuple<Form, Action<Form>> waiting = new List<Tuple<Form, Action<Form>>>();
 		private Form ModalChild { get; set; }
 
 		protected bool IsShowingModalForm => ModalChild != null;

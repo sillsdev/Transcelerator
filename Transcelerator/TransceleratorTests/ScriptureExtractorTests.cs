@@ -11,16 +11,19 @@ namespace SIL.Transcelerator
 	[TestFixture]
 	class ScriptureExtractorTests
 	{
+		IVerseRef MakeVerseRef(int bbcccvvv) => new BcvRefIVerseAdapter(new BCVRef(bbcccvvv));
+
 		[Test]
 		public void GetAsHtmlFragment_ExcludeVerseNumbers_ParagraphsAndVerses_ConvertedToDivAndSpanElements()
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 54));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 57));
+			var startRef = new BCVRef(bookNumActs, 7, 54);
+			var endRef = new BCVRef(bookNumActs, 7, 57);
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 7)).Return(GetActs7Tokens());
 
-			var extractor = new ScriptureExtractor(mockedProject, false);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = false;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual("<div class=\"usfm_p\">" +
 				"Oyendo esto, se enfurecían y crujían los dientes. Pero Esteban vio la gloria de Dios, y a Jesús, y dijo:</div>" +
@@ -36,11 +39,12 @@ namespace SIL.Transcelerator
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 54));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 57));
+			var startRef = new BCVRef(bookNumActs, 7, 54);
+			var endRef = new BCVRef(bookNumActs, 7, 57);
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 7)).Return(GetActs7Tokens());
 
-			var extractor = new ScriptureExtractor(mockedProject, true);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = true;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual("<div class=\"usfm_p\">" +
 				"<span class=\"verse\" number=\"54\">54</span>Oyendo esto, se enfurecían y crujían los dientes. " +
@@ -58,11 +62,12 @@ namespace SIL.Transcelerator
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 54));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 54));
+			var startRef = new BCVRef(bookNumActs, 7, 54);
+			var endRef = new BCVRef(bookNumActs, 7, 54);
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 7)).Return(GetActs7Tokens(true));
 
-			var extractor = new ScriptureExtractor(mockedProject, true);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = true;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual("<div class=\"usfm_p\">" +
 				"<span class=\"verse\" number=\"54\">54</span>Oyendo esto, se enfurecían y crujían los <span class=\"usfm_w\">dientes</span>. " +
@@ -75,12 +80,13 @@ namespace SIL.Transcelerator
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 1));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 2));
+			var startRef = new BCVRef(bookNumActs, 7, 1);
+			var endRef = new BCVRef(bookNumActs, 7, 2);
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 6)).Throw(new NotImplementedException("This test should not have requested ACTS 6 tokens."));
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 7)).Return(GetActs7Tokens(true));
 
-			var extractor = new ScriptureExtractor(mockedProject, true);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = true;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual("<div class=\"usfm_p\">" +
 				"<span class=\"verse\" number=\"1\">1</span>El sumo sacerdote preguntó a Esteban:</div>" +
@@ -94,8 +100,8 @@ namespace SIL.Transcelerator
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 6, 15));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 7, 2));
+			var startRef = new BCVRef(bookNumActs, 6, 15);
+			var endRef = new BCVRef(bookNumActs, 7, 2);
 
 			List<IUSFMToken> acts6Tokens = new List<IUSFMToken>();
 			acts6Tokens.Add(StubbedToken.GetChapter(BCVRef.BookToNumber("ACT"), 6));
@@ -107,7 +113,8 @@ namespace SIL.Transcelerator
 
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs)).Return(acts6Tokens.Union(GetActs7Tokens(true)));
 
-			var extractor = new ScriptureExtractor(mockedProject, true);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = true;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual("<div class=\"usfm_p\">" +
 				"<span class=\"verse\" number=\"15\">15</span>Todo los del consejo miraron a Esteban que su rostro parecía el de un ángel.</div>" +
@@ -125,8 +132,8 @@ namespace SIL.Transcelerator
 		{
 			int bookNumMat = BCVRef.BookToNumber("MAT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumMat, 1, 1));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumMat, 1, 17));
+			var startRef = new BCVRef(bookNumMat, 1, 1);
+			var endRef = new BCVRef(bookNumMat, 1, 17);
 
 			List<IUSFMToken> tokens = new List<IUSFMToken>();
 			StubbedToken.s_currentRef = new BCVRef(bookNumMat, 1, 0);
@@ -156,7 +163,8 @@ namespace SIL.Transcelerator
 
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumMat, 1)).Return(tokens);
 
-			var extractor = new ScriptureExtractor(mockedProject, true);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = true;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 
 			Assert.AreEqual("<div class=\"usfm_p\">" +
@@ -176,11 +184,12 @@ namespace SIL.Transcelerator
 		{
 			int bookNumActs = BCVRef.BookToNumber("ACT");
 			IProject mockedProject = MockRepository.GenerateStub<IProject>();
-			IVerseRef startRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 2, 1));
-			IVerseRef endRef = new BcvRefIVerseAdapter(new BCVRef(bookNumActs, 2, 5));
+			var startRef = new BCVRef(bookNumActs, 2, 1);
+			var endRef = new BCVRef(bookNumActs, 2, 5);
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs, 2)).Return(new IUSFMToken[0]);
 
-			var extractor = new ScriptureExtractor(mockedProject, false);
+			var extractor = new ScriptureExtractor(mockedProject, MakeVerseRef);
+			extractor.IncludeVerseNumbers = false;
 			var result = extractor.GetAsHtmlFragment(startRef, endRef);
 			Assert.AreEqual(Environment.NewLine, result);
 		}

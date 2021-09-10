@@ -59,8 +59,8 @@
     <Setting Name="GenerateTemplateIncludeComments" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="GenerateTemplateUseOriginalQuestionIfNotTranslated" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="GenerateHandleUntranslatedQuestionsOption" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="GenerateTemplateBlankLines" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
@@ -106,9 +106,6 @@
     </Setting>
     <Setting Name="GenerateTemplateUseLWC" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
-    </Setting>
-    <Setting Name="GenerateTemplateSkipQuestionIfNotTranslated" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ProduceScriptureForgeFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

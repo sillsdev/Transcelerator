@@ -61,7 +61,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IReadOnlyList<string>> lookupTerm)
+			Action<bool> selectKeyboard, Action<IReadOnlyList<string>> lookupTerm, bool isReadOnly)
 		{
 			InitializeComponent();
 
@@ -69,6 +69,7 @@ namespace SIL.Transcelerator
 			m_term = term;
 			m_selectKeyboard = selectKeyboard;
 			m_lookupTerm = lookupTerm;
+			Enabled = !isReadOnly;
 			m_lblKeyTermColHead.Text = term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			PopulateRenderings();

@@ -260,14 +260,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdateDisplayCallback(object state)
 		{
-			if (InvokeRequired)
-			{
-				Invoke(new Action(() => UpdateDisplayCallback(state)));
-				return;
-			}
-
 			try
 			{
+				if (InvokeRequired)
+				{
+					Invoke(new Action(() => UpdateDisplayCallback(state)));
+					return;
+				}
+
 				if (m_timer == null)
 					return;
 
@@ -282,9 +282,8 @@ namespace SIL.Transcelerator
 				}
 
 			}
-			catch (Exception e)
+			catch (ObjectDisposedException e)
 			{
-				// just ignore any exceptions
 				Debug.WriteLine("Got exception in UpdateDisplayCallback: " + e.Message);
 			}
 		}

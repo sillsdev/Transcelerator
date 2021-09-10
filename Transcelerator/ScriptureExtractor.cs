@@ -6,10 +6,17 @@ using Paratext.PluginInterfaces;
 
 namespace SIL.Transcelerator
 {
-	public class ScriptureExtractor
+	public interface IHtmlScriptureExtractor
+	{
+		bool IncludeVerseNumbers { get; set; }
+
+		string GetAsHtmlFragment(int startRef, int endRef);
+	}
+
+	public class ScriptureExtractor : IHtmlScriptureExtractor
 	{
 		private readonly IProject m_project;
-		private readonly bool m_includeVerseNumbers;
+		private readonly Func<int, IVerseRef> m_makeVerseRef;
 
 		private IVerseRef m_startRef;
 		private IVerseRef m_endRef;
@@ -20,25 +27,27 @@ namespace SIL.Transcelerator
 		private Action WriteVerse { get; set; }
 		private Action WriteChapter { get; set; }
 
-		public ScriptureExtractor(IProject project, bool includeVerseNumbers)
+		public ScriptureExtractor(IProject project, Func<int, IVerseRef> makeVerseRef)
 		{
 			m_project = project;
-			m_includeVerseNumbers = includeVerseNumbers;
+			m_makeVerseRef = makeVerseRef;
 		}
 
-		public string GetAsHtmlFragment(IVerseRef startRef, IVerseRef endRef)
+		public bool IncludeVerseNumbers { get; set; }
+
+		public string GetAsHtmlFragment(int startRef, int endRef)
 		{
-			m_startRef = startRef;
-			m_endRef = endRef;
+			m_startRef = m_makeVerseRef(startRef);
+			m_endRef = m_makeVerseRef(endRef);
 			WriteParagraph = null;
 			WriteVerse = null;
 			WriteChapter = null;
 			m_openElements = 0;
 
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			var fragment = doc.CreateDocumentFragment();
 
-			using (XmlWriter xmlw = fragment.CreateNavigator().AppendChild())
+			using (var xmlw = fragment.CreateNavigator().AppendChild())
 			{
 				int chapter = m_startRef.ChapterNum == m_endRef.ChapterNum ? m_startRef.ChapterNum : 0;
 
@@ -111,7 +120,7 @@ namespace SIL.Transcelerator
 						};
 						break;
 					case MarkerType.Verse:
-						if (m_includeVerseNumbers)
+						if (IncludeVerseNumbers)
 						{
 							WriteVerse = () =>
 							{
@@ -128,7 +137,7 @@ namespace SIL.Transcelerator
 						}
 						break;
 					case MarkerType.Chapter:
-						if (xmlw.WriteState != WriteState.Start && m_includeVerseNumbers)
+						if (xmlw.WriteState != WriteState.Start && IncludeVerseNumbers)
 						{
 							WriteChapter = () =>
 							{

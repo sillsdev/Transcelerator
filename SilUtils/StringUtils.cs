@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using SIL.Extensions;
 using static System.Char;
 
 namespace SIL.Utils

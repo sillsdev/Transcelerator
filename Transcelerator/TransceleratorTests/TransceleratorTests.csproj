@@ -266,6 +266,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BcvRefIVerseAdapter.cs" />
+    <Compile Include="HtmlScriptGeneratorTests.cs" />
     <Compile Include="PhraseCustomizationTests.cs" />
     <Compile Include="TestScrVers.cs" />
     <Compile Include="TranslatablePhraseTests.cs" />

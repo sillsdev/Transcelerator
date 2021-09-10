@@ -71,7 +71,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				var startRef = BcvRefInProjectVersification;
-				var endRef = new BCVRef(startRef) { Verse = EndVerse };
+				var endRef = new BCVRef(startRef) {Verse = EndVerse};
 				return BCVRef.MakeReferenceString(startRef, endRef, ".", "-");
 			}
 		}
@@ -84,7 +84,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				var projectVerseRef = m_projectVersification.CreateReference(BcvRefInProjectVersification);
-				return new BCVRef(projectVerseRef.ChangeVersification(m_masterVersification).BBBCCCVVV); 
+				return new BCVRef(projectVerseRef.ChangeVersification(m_masterVersification).BBBCCCVVV);
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace SIL.Transcelerator
 			{
 				var startRef = StartReference;
 				var endRef = m_projectVersification.CreateReference(startRef.Book, startRef.Chapter, EndVerse);
-				return new BCVRef(endRef.ChangeVersification(m_masterVersification).BBBCCCVVV); 
+				return new BCVRef(endRef.ChangeVersification(m_masterVersification).BBBCCCVVV);
 			}
 		}
 
@@ -213,7 +213,7 @@ namespace SIL.Transcelerator
 			m_scrPsgReference.VerseControl.VerseRef = new ScrVersRefAdapter(startRef, project);
 			m_existingStartRef = new BCVRef(startRef.BBBCCCVVV);
 			SetCurrentSections();
-			var endRef = m_masterVersification.CreateReference(baseQuestion.EndRef).ChangeVersification( m_projectVersification);
+			var endRef = m_masterVersification.CreateReference(baseQuestion.EndRef).ChangeVersification(m_projectVersification);
 			m_existingEndVerse = BCVRef.GetVerseFromBcv(endRef.BBBCCCVVV);
 			PopulateEndRefComboBox();
 
@@ -337,6 +337,7 @@ namespace SIL.Transcelerator
 			{
 				btnOk.Enabled = false;
 			}
+
 			m_lblIdenticalQuestion.Visible = false;
 			m_chkNoEnglish.Visible = true;
 		}
@@ -411,7 +412,7 @@ namespace SIL.Transcelerator
 				// we just remove items we know are impossible now to ensure that the EndVerse is valid.
 				while (m_cboEndVerse.Items.Count > 1 && Parse((string)m_cboEndVerse.Items[1]) < StartVerse)
 					m_cboEndVerse.Items.RemoveAt(1);
-				
+
 				SetCurrentSections();
 				PopulateEndRefComboBox();
 
@@ -499,25 +500,25 @@ namespace SIL.Transcelerator
 
 		private void m_txtVernacularQuestion_Enter(object sender, EventArgs e)
 		{
-			m_changeKeyboard(true);
+			m_changeKeyboard?.Invoke(true);
 		}
 
 		private void m_txtVernacularQuestion_Leave(object sender, EventArgs e)
 		{
-			m_changeKeyboard(false);
+			m_changeKeyboard?.Invoke(false);
 		}
 
 		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			ShowModalChild(new MessageBoxForm(LocalizationManager.GetString(
-					"NewQuestionDlg.RequestAddCategoryFeatureInfo",
-					"Sorry this feature is not available yet. But if you are connected to the " +
-					"Internet and have not opted out of transmitting analytics data, this " +
-					"feature will now be requested for you."),
-					Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
-					"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
-					TxlPlugin.pluginName),
-					MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
+				"NewQuestionDlg.RequestAddCategoryFeatureInfo",
+				"Sorry this feature is not available yet. But if you are connected to the " +
+				"Internet and have not opted out of transmitting analytics data, this " +
+				"feature will now be requested for you."),
+				Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
+				"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
+				TxlPlugin.pluginName),
+				MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
 				if (form.DialogResult == DialogResult.OK)
 				{
@@ -525,7 +526,6 @@ namespace SIL.Transcelerator
 						{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
 				}
 			});
-		}
 		}
 	}
 }

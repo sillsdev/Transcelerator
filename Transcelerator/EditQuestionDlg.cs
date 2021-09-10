@@ -99,14 +99,9 @@ namespace SIL.Transcelerator
 		private void InitializeRadioButton(RadioButton btn, int index, LocalizationsFileAccessor dataLocalizer)
 		{
 			var alternateForm = m_question.QuestionInfo.Alternatives[index].Text;
-			if (dataLocalizer == null)
-				btn.Text = alternateForm;
-			else
-			{
-				btn.Text = dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
-				btn.Tag = alternateForm;
-
-			}
+			btn.Text = dataLocalizer == null ? alternateForm :
+				dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
+			btn.Tag = alternateForm;
 			btn.Checked = m_txtModified.Text == btn.Text;
 		}
 
