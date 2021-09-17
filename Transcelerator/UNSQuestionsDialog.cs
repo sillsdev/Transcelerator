@@ -373,7 +373,18 @@ namespace SIL.Transcelerator
 
 		void HandleDataGridUnsPopulatedFirstTime()
 		{
-			if (dataGridUns.RowCount > 0)
+			if (!dataGridUns.IsHandleCreated)
+			{
+				dataGridUns.HandleCreated += (sender, args) =>
+				{
+					var bcvRef = new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV);
+					if (InvokeRequired)
+						Invoke(new Action(() => { ProcessReceivedMessage(bcvRef); }));
+					else
+						ProcessReceivedMessage(bcvRef);
+				};
+			}
+			else if (dataGridUns.RowCount > 0)
 				ProcessReceivedMessage(new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV));
 		}
 
@@ -403,6 +414,7 @@ namespace SIL.Transcelerator
 			{
 				case ProjectDataChangeType.SettingVernacularKeyboard: // ENHANCE: If vern keyboard is active, set it to new keyboard
 					return;
+				// TODO: If sort order changes and we are sorted on the Translation column, we should re-sort.
 			}
 			
 			var fontInfo = m_project.Language.Font;
@@ -611,35 +623,6 @@ namespace SIL.Transcelerator
 			Application.RemoveMessageFilter(this);
 
 			base.OnClosing(e);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Processes Windows messages.
-		/// </summary>
-		/// <param name="msg">The Windows Message to process.</param>
-		/// ------------------------------------------------------------------------------------
-		protected override void WndProc(ref Message msg)
-		{
-			if (msg.Msg == SantaFeFocusMessageHandler.FocusMsg)
-			{
-				// Always assume the English versification scheme for passing references.
-				var scrRef = new BCVRef(SantaFeFocusMessageHandler.ReceiveFocusMessage(msg));
-
-				if (!btnReceiveScrReferences.Checked || m_fIgnoreNextRecvdSantaFeSyncMessage ||
-					m_fProcessingSyncMessage)
-				{
-					if (m_fProcessingSyncMessage)
-						m_queuedReference = scrRef;
-
-					m_fIgnoreNextRecvdSantaFeSyncMessage = false;
-					return;
-				}
-
-				ProcessReceivedMessage(scrRef);
-			}
-
-			base.WndProc(ref msg);
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -1079,8 +1062,19 @@ namespace SIL.Transcelerator
 				}
 			}
 
-			Enabled = false;
-			Task.Run(() => { SortByColumn(iClickedCol, sortAscending); /* TODO: Need to ensure sorting happens before we return to UI thread. Call ApplyFilter maybe? */ }).ContinueWith(t =>
+			var refreshAction = new Action(() =>
+			{
+				UseWaitCursor = false;
+				dataGridUns.Refresh();
+				foreach (Control control in Controls)
+					control.Enabled = true;
+			});
+
+			foreach (Control control in Controls)
+				control.Enabled = false;
+
+			UseWaitCursor = true;
+			Task.Run(() => { SortByColumn(iClickedCol, sortAscending);}).ContinueWith(t =>
 			{
 				if (t.Exception != null)
 				{
@@ -1089,26 +1083,26 @@ namespace SIL.Transcelerator
 						ErrorReport.ReportFatalException(exception);
 					// ???	Close();
 				}
-				Invoke(new Action(() =>
-				{
-					dataGridUns.Refresh();
-					Enabled = true;
-				}));
+
+				if (InvokeRequired)
+					Invoke(refreshAction);
+				else
+					refreshAction();
 			});
 		}
 
 		private void SortByColumn(int iClickedCol, bool sortAscending)
 		{
 			if (iClickedCol == m_colReference.Index)
-				m_helper.Sort(PhrasesSortedBy.Reference, sortAscending);
+				m_helper.Sort(PhrasesSortedBy.Reference, sortAscending, true);
 			else if (iClickedCol == m_colEnglish.Index)
-				m_helper.Sort(PhrasesSortedBy.EnglishPhrase, sortAscending);
+				m_helper.Sort(PhrasesSortedBy.EnglishPhrase, sortAscending, true);
 			else if (iClickedCol == m_colTranslation.Index)
-				m_helper.Sort(PhrasesSortedBy.Translation, sortAscending);
+				m_helper.Sort(PhrasesSortedBy.Translation, sortAscending, true);
 			else if (iClickedCol == m_colUserTranslated.Index)
-				m_helper.Sort(PhrasesSortedBy.Status, sortAscending);
+				m_helper.Sort(PhrasesSortedBy.Status, sortAscending, true);
 			else if (iClickedCol == m_colDebugInfo.Index)
-				m_helper.Sort(PhrasesSortedBy.Default, sortAscending);
+				m_helper.Sort(PhrasesSortedBy.Default, sortAscending, true);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1178,10 +1172,51 @@ namespace SIL.Transcelerator
 			}
             var refFilter = m_startRef == null ? null :
 				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef.BBBCCCVVV >= start && m_startRef.BBBCCCVVV <= end);
-			dataGridUns.RowCount = 0;
-			m_biblicalTermsPane.Hide();
-            dataGridUns.RowEnter -= dataGridUns_RowEnter;
 
+			SetUiForLongTask(true);
+			dataGridUns.RowEnter -= dataGridUns_RowEnter;
+			m_biblicalTermsPane.Hide();
+
+			Action<Task<int>> completionAction = t =>
+			{
+				SetUiForLongTask(false);
+				dataGridUns.RowCount = t.Result;
+
+				dataGridUns.RowEnter += dataGridUns_RowEnter;
+
+				int currentRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
+				if (m_currentPhrase != null)
+				{
+					for (int i = 0; i < dataGridUns.Rows.Count; i++)
+					{
+						if (m_helper[i] == m_currentPhrase)
+						{
+							dataGridUns.CurrentCell = dataGridUns.Rows[i].Cells[m_iCurrentColumn];
+							break;
+						}
+					}
+					if (clearCurrentSelection)
+					{
+						m_currentPhrase = null;
+						m_iCurrentColumn = -1;
+					}
+				}
+				else
+					HandleDataGridUnsPopulatedFirstTime();
+
+				if (dataGridUns.CurrentCell == null)
+				{
+					if (m_pnlAnswersAndComments.Visible)
+						m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
+				}
+				else if (currentRow == dataGridUns.CurrentCell.RowIndex)
+				{
+					dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
+				}
+
+				UpdateCountsAndFilterStatus();
+			};
+			
 			Task.Run(() =>
 			{
 				Trace.WriteLine($"Filtering at {DateTime.Now}");
@@ -1194,45 +1229,18 @@ namespace SIL.Transcelerator
 			{
 				Trace.WriteLine($"Done Filtering at {DateTime.Now}");
 
-				Invoke(new Action(() =>
-				{
-					dataGridUns.RowCount = t.Result;
-
-					dataGridUns.RowEnter += dataGridUns_RowEnter;
-
-					int currentRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
-					if (m_currentPhrase != null)
-					{
-						for (int i = 0; i < dataGridUns.Rows.Count; i++)
-						{
-							if (m_helper[i] == m_currentPhrase)
-							{
-								dataGridUns.CurrentCell = dataGridUns.Rows[i].Cells[m_iCurrentColumn];
-								break;
-							}
-						}
-						if (clearCurrentSelection)
-						{
-							m_currentPhrase = null;
-							m_iCurrentColumn = -1;
-						}
-					}
-					else
-						HandleDataGridUnsPopulatedFirstTime();
-
-					if (dataGridUns.CurrentCell == null)
-					{
-						if (m_pnlAnswersAndComments.Visible)
-							m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
-					}
-					else if (currentRow == dataGridUns.CurrentCell.RowIndex)
-					{
-						dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
-					}
-
-					UpdateCountsAndFilterStatus();
-				}));
+				if (InvokeRequired)
+					Invoke(new Action(() => { completionAction(t); }));
+				else
+					completionAction(t);
 			});
+		}
+
+		private void SetUiForLongTask(bool startingTask)
+		{
+			foreach (Control control in Controls)
+				control.Enabled = !startingTask;
+			UseWaitCursor = startingTask;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1671,8 +1679,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void Reload(bool fForceSave, IQuestionKey key, int fallBackRow)
 		{
-			Enabled = false;
-			var waitCursor = new WaitCursor(this);
+			SetUiForLongTask(true);
+
 			int iCol = dataGridUns.CurrentCell.ColumnIndex;
 			Save(fForceSave, fForceSave); // See comment above for fForceSave
 
@@ -1697,14 +1705,13 @@ namespace SIL.Transcelerator
 			}
 
 			m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
+
 			dataGridUns.CurrentCell = null;
 			dataGridUns.RowCount = 0;
 			lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
 
 			var refreshUi = new Action(() =>
 			{
-				dataGridUns.RowCount = m_helper.Phrases.Count();
-
 				ApplyFilter();
 				if (iSortedCol >= 0)
 					SortByColumn(iSortedCol, sortAscending);
@@ -1728,8 +1735,7 @@ namespace SIL.Transcelerator
 					}
 				}
 
-				Enabled = true;
-				waitCursor.Dispose();
+				SetUiForLongTask(false);
 			});
 
 			Task.Run(() => { LoadTranslations(null); }).ContinueWith(t =>
@@ -2134,6 +2140,26 @@ namespace SIL.Transcelerator
 			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
 		}
 
+		private void dataGridUns_HandleCreated(object sender, EventArgs e)
+		{
+			m_host.VerseRefChanged += delegate(IPluginHost host, IVerseRef reference, SyncReferenceGroup @group)
+			{ 
+				var scrRef = new BCVRef(reference.ChangeVersification(m_masterVersification).BBBCCCVVV);
+
+				if (!btnReceiveScrReferences.Checked || m_fIgnoreNextRecvdSantaFeSyncMessage ||
+					m_fProcessingSyncMessage)
+				{
+					if (m_fProcessingSyncMessage)
+						m_queuedReference = scrRef;
+
+					m_fIgnoreNextRecvdSantaFeSyncMessage = false;
+					return;
+				}
+
+				ProcessReceivedMessage(scrRef);
+			};
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the CellEndEdit event of the dataGridUns control.
@@ -2379,6 +2405,7 @@ namespace SIL.Transcelerator
 			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms);
 	        var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
             m_helper = new PhraseTranslationHelper(qp);
+			m_helper.VernacularStringComparer = m_project.Language.StringComparer;
 		    m_helper.FileProxy = m_fileAccessor;
 	        m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
@@ -2472,7 +2499,7 @@ namespace SIL.Transcelerator
 			{
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out var ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
 				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
-					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, m_selectKeyboard, LookupTerm, m_fileAccessor.IsReadonly);
+					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, DisplayExceptionMessage, LookupTerm, m_fileAccessor.IsReadonly);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
 				SubstringDescriptor sd = m_helper[rowIndex].FindTermRenderingInUse(ktRenderCtrl);
@@ -2601,6 +2628,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void SendScrReference(int iRow)
 		{
+			// REVIEW: Do we need this still? Do we want to use SantaFe at all?
 			m_fIgnoreNextRecvdSantaFeSyncMessage = true;
 			BCVRef currRef = GetScrRefOfRow(iRow);
 			if (currRef != null && currRef.Valid)
@@ -2617,6 +2645,8 @@ namespace SIL.Transcelerator
 		{
             if (dataGridUns.IsCurrentCellInEditMode)
                 return;
+
+			// REVIEW: This can be kind of slow. Figure out which parts need to be done in the background
 
 			// While we process the given reference we might get additional synch events, the
 			// most recent of which we store in m_queuedReference. If we're done
@@ -2896,6 +2926,22 @@ namespace SIL.Transcelerator
 			}
 		}
 		#endregion
+
+		public void ShowAddRenderingDlg(Action<string, string> addRendering)
+		{
+			Debug.Assert(!IsShowingModalForm);
+
+			ShowModalChild(new AddRenderingDlg(m_selectKeyboard), dlg =>
+			{
+				if (dlg.DialogResult == DialogResult.OK)
+					addRendering(dlg.Rendering, dlg.Text);
+			});
+		}
+
+		private void DisplayExceptionMessage(Exception ex, string caption = null)
+		{
+			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlPlugin.pluginName));
+		}
 	}
 	#endregion
 

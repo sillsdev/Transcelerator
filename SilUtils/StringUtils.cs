@@ -197,7 +197,7 @@ namespace SIL.Utils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the longest substring that two strings have in common. The substring returned
-		/// will either be one or more contiguous whole words or a sustring that is part of a
+		/// will either be one or more contiguous whole words or a substring that is part of a
 		/// single word (if so requested by the caller). In the latter case, the returned
 		/// substring must be at least 15% of the total string length to be considered useful.
 		/// </summary>

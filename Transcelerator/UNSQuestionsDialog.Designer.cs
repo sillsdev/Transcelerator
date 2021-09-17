@@ -247,6 +247,7 @@ namespace SIL.Transcelerator
 			this.dataGridUns.CellValuePushed += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dataGridUns_CellValuePushed);
 			this.dataGridUns.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridUns_ColumnHeaderMouseClick);
 			this.dataGridUns.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridUns_EditingControlShowing);
+			this.dataGridUns.HandleCreated += new System.EventHandler(this.dataGridUns_HandleCreated);
 			this.dataGridUns.RowContextMenuStripNeeded += new System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler(this.dataGridUns_RowContextMenuStripNeeded);
 			this.dataGridUns.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowEnter);
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using L10NSharp;
-using Paratext.PluginInterfaces;
+using SIL.Scripture;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -261,12 +261,12 @@ namespace SIL.Transcelerator
         /// <remarks>If this term occurs more than once in the phrase, it is not possible to
         /// know which occurrence is which.</remarks>
         /// ------------------------------------------------------------------------------------
-        public string GetBestRenderingInContext(TranslatablePhrase phrase)
+        public string GetBestRenderingInContext(TranslatablePhrase phrase, bool fast = false)
         {
             IEnumerable<string> renderings = Renderings;
             if (!renderings.Any())
                 return string.Empty;
-            if (renderings.Count() == 1 || TranslatablePhrase.s_helper.TermRenderingSelectionRules == null)
+            if (renderings.Count() == 1 || fast || TranslatablePhrase.s_helper.TermRenderingSelectionRules == null)
                 return Translation;
 
             List<string> renderingsList = null;

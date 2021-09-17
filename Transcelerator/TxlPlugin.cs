@@ -20,9 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using L10NSharp;
-using SIL.Keyboarding;
 using SIL.Scripture;
-using SIL.Windows.Forms.Keyboarding;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
 using SIL.Reporting;
@@ -135,25 +133,9 @@ namespace SIL.Transcelerator
 				Action<bool> activateKeyboard = vern =>
 				{
 					if (vern)
-					{
-						//try
-						//{
 						project.VernacularKeyboard?.Activate();
-						//}
-						//catch (ApplicationException e)
-						//{
-						//	// For some reason, the very first time this gets called it throws a COM exception, wrapped as
-						//	// an ApplicationException. Mysteriously, it seems to work just fine anyway, and then all subsequent
-						//	// calls work with no exception. Paratext seems to make this same call without any exceptions. The
-						//	// documentation for ITfInputProcessorProfiles.ChangeCurrentLanguage (which is the method call
-						//	// in SIL.Windows.Forms.Keyboarding.Windows that throws the COM exception says that an E_FAIL is an
-						//	// unspecified error, so that's fairly helpful.
-						//	if (!(e.InnerException is COMException))
-						//		throw;
-						//}
-					}
 					else
-						Keyboard.Controller.ActivateDefaultKeyboard();
+						host.DefaultKeyboard.Activate();
 				};
 
 				IVerseRef currentRef = state.VerseRef.ChangeVersification(host.GetStandardVersification(StandardScrVersType.English));
@@ -175,8 +157,6 @@ namespace SIL.Transcelerator
 						endRef = currentRef.Versification.CreateReference(savedEndRef);
 					}
 				}
-
-				KeyboardController.Initialize();
 
 				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(host, project, startRef, endRef,
 					activateKeyboard, preferredUiLocale);

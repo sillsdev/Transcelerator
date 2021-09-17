@@ -173,8 +173,6 @@ namespace SIL.Transcelerator
 		{
 			try
 			{
-				CheckDisposed();
-
 				if (InvokeRequired)
 					Invoke(new MethodInvoker(RealClose));
 				else

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -58,25 +58,22 @@ namespace SIL.Transcelerator
 		/// Gets the numeric value of the number
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int NumericValue
-		{
-		    get { return m_value; }
-		}
+		public int NumericValue => m_value;
 
-	    /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// A number is always a single "Word"
         /// </summary>
         /// ------------------------------------------------------------------------------------
         public IEnumerable<Word> Words
         {
-			get { yield return m_value.ToString(CultureInfo.InvariantCulture); }
+			get { yield return ToString(CultureInfo.InvariantCulture); }
         }
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
 		/// Gets the "translation", which is just the number expressed in the vernacular script,
-		/// formatted apprpriately.
+		/// formatted appropriately.
         /// </summary>
         /// ------------------------------------------------------------------------------------
         public string Translation
@@ -180,10 +177,9 @@ namespace SIL.Transcelerator
         /// appropriate in the current culture.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public override string ToString()
-        {
-	        return m_value.ToString(CultureInfo.CurrentCulture);
-        }
+        public override string ToString() => ToString(CultureInfo.CurrentCulture);
+
+		public string ToString(CultureInfo culture) => m_value.ToString(culture);
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -191,24 +187,21 @@ namespace SIL.Transcelerator
         /// last column of the grid).
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public string DebugInfo
-        {
-            get { return ToString(); }
-        }
-        #endregion
+        public string DebugInfo => ToString();
+		#endregion
 
         #region Public methods
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// The "best rendering" for a number is always just the number expressed in the
-        /// vernacular script, formatted apprpriately.
+        /// vernacular script, formatted appropriately.
         /// </summary>
         /// <remarks>If this term occurs more than once in the phrase, it is not possible to
         /// know which occurrence is which.</remarks>
         /// ------------------------------------------------------------------------------------
-        public string GetBestRenderingInContext(TranslatablePhrase phrase)
+        public string GetBestRenderingInContext(TranslatablePhrase phrase, bool fast)
         {
-            return Translation;
+            return fast ? ToString(CultureInfo.InvariantCulture) : Translation;
         }
         #endregion
 

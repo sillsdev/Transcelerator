@@ -43,7 +43,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		internal void ShowModalChild<T>(T childForm, Action<T> onClosed = null) where T : Form
+		protected void ShowModalChild<T>(T childForm, Action<T> onClosed = null) where T : Form
 		{
 			ModalChild = childForm;
 			foreach (var ctrl in childForm.Controls)

@@ -128,7 +128,6 @@
     <Compile Include="MessageBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ReadonlyDictionary.cs" />
     <Compile Include="CustomDropDown.cs">
       <SubType>Component</SubType>
     </Compile>

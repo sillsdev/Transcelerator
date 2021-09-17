@@ -6,14 +6,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-#if !MONO
-
-#endif
 
 namespace SIL.Utils
 {
 	/* The code in this file is based on:
 	* FlexibleMessageBox – A flexible replacement for the .NET MessageBox
+	* Note that a similar FlexibleMessageBox class (with a different but somewhat overlapping set of
+	* modifications) is also included in libpalaso. It would be ideal to find a way to get them into a single
+	* set of classes for improved maintainability, but right now it is not clear how to achieve that. At a
+	* minimum, some of the improvements there could be ported to this class.
 	* 
 	*  Author:         Jörg Reichert (public@jreichert.de)
 	*  Contributors:   Thanks to: David Hall, Roink
@@ -28,6 +29,7 @@ namespace SIL.Utils
 	*  - It never exceeds the current desktop working area
 	*  - It displays a vertical scrollbar when needed
 	*  - It does support hyperlinks in text
+	*  - It allows copying of messages to clipboard
 	* 
 	*  Because the interface is identical to MessageBox, you can add this single source file to your project 
 	*  and use the FlexibleMessageBox almost everywhere you use a standard MessageBox. 

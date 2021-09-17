@@ -16,8 +16,8 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Paratext.PluginInterfaces;
 using Rhino.Mocks;
+using SIL.ObjectModel;
 using SIL.Scripture;
-using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -56,7 +56,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term consisting of
-		/// a verb with the implictly optional word "to".
+		/// a verb with the implicitly optional word "to".
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -192,7 +192,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term where "or" separates
-		/// two three-word phrases, with more text preceeding
+		/// two three-word phrases, with more text preceding
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -269,7 +269,7 @@ namespace SIL.Transcelerator
 			rule.Alternates[0].Name = "Jesus Christ";
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(2, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "jesus", "christ");
 			VerifyKeyTermMatch(bldr, 1, "jesus");
@@ -290,7 +290,7 @@ namespace SIL.Transcelerator
 			rule.Rule = KeyTermRule.RuleType.Exclude;
 			rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
@@ -309,7 +309,7 @@ namespace SIL.Transcelerator
 			rule.Rule = KeyTermRule.RuleType.MatchForRefOnly;
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id, 34),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(1, bldr.Matches.Count());
 			KeyTermMatch ktm = VerifyKeyTermMatch(bldr, 0, false, "ask");
 			Assert.IsFalse(ktm.AppliesTo(30, 33));
@@ -336,7 +336,7 @@ namespace SIL.Transcelerator
 			rule.Alternates[2].Name = "pray";
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(3, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "worship");
 			VerifyKeyTermMatch(bldr, 1, "praise", "exuberantly");
@@ -363,7 +363,7 @@ namespace SIL.Transcelerator
             rule.Alternates[1].Name = "pray";
             rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
             Assert.AreEqual(2, bldr.Matches.Count());
             VerifyKeyTermMatch(bldr, 0, false, "ask");
             VerifyKeyTermMatch(bldr, 1, true, "pray");
@@ -388,7 +388,7 @@ namespace SIL.Transcelerator
             rule.Alternates[1].Name = "fast or pray";
             rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
             Assert.AreEqual(2, bldr.Matches.Count());
             VerifyKeyTermMatch(bldr, 0, true, "to", "fast");
             VerifyKeyTermMatch(bldr, 1, true, "fast", "or", "pray");

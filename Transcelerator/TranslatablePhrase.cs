@@ -297,16 +297,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Translation
 		{
-			get
-			{
-				if (m_fHasUserTranslation)
-					return m_sTranslation;
-				if (!IsNullOrEmpty(m_sTranslation))
-					return Format(m_sTranslation, KeyTermRenderings.Concat(NumberRenderings).Cast<object>().ToArray());
-				return s_helper.InitialPunctuationForType(TypeOfPhrase) +
-					m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this)) +
-					s_helper.FinalPunctuationForType(TypeOfPhrase);
-			}
+			get => GetTranslation();
 			set
 			{
 				if (IsExcluded)
@@ -314,6 +305,17 @@ namespace SIL.Transcelerator
 				SetHasUserTranslationInternal(!IsNullOrEmpty(value));
 				SetTranslationInternal(value);
 			}
+		}
+
+		public string GetTranslation(bool fast = false)
+		{
+			if (m_fHasUserTranslation)
+				return m_sTranslation;
+			if (!IsNullOrEmpty(m_sTranslation))
+				return Format(m_sTranslation, GetRenderingsOfType<KeyTerm>(fast).Concat(GetRenderingsOfType<Number>(fast)).Cast<object>().ToArray());
+			return s_helper.InitialPunctuationForType(TypeOfPhrase) +
+				m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this, fast)) +
+				s_helper.FinalPunctuationForType(TypeOfPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -480,22 +482,13 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the numbers formatted appropriately for inserting into a
-		/// translations, ordered by their occurrence in the phrase.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private string[] NumberRenderings => GetRenderingsOfType<Number>();
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets an an array of the parts formatted appropriately for inserting into a
 		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private string[] GetRenderingsOfType<T>() where T : IPhrasePart
+		private string[] GetRenderingsOfType<T>(bool fast = false) where T : IPhrasePart
 		{
-			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this)).ToArray();
+			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this, fast)).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------

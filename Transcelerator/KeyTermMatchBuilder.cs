@@ -16,7 +16,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Paratext.PluginInterfaces;
-using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -30,15 +29,6 @@ namespace SIL.Transcelerator
 		private bool m_fInOptionalPhrase;
 
 		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public KeyTermMatchBuilder(IBiblicalTerm keyTerm) : this(keyTerm, null, null)
-		{
-		}
-
-	    /// ------------------------------------------------------------------------------------
 	    /// <summary>
 	    /// Initializes a new instance of the <see cref="KeyTermMatchBuilder"/> class.
 	    /// </summary>
@@ -50,8 +40,8 @@ namespace SIL.Transcelerator
 	    /// "term". If the term variable is not present in the regular expression, this term
 	    /// will be excluded.</param>
 	    /// ------------------------------------------------------------------------------------
-	    public KeyTermMatchBuilder(IBiblicalTerm keyTerm, IReadonlyDictionary<string, KeyTermRule> rules,
-            IEnumerable<Regex> regexRules)
+	    public KeyTermMatchBuilder(IBiblicalTerm keyTerm, IReadOnlyDictionary<string, KeyTermRule> rules = null,
+            IEnumerable<Regex> regexRules = null)
 		{
 			string normalizedLcTerm = keyTerm.Gloss("en").ToLowerInvariant().Normalize(NormalizationForm.FormC);
 			bool fMatchForRefOnly = false;
@@ -112,13 +102,13 @@ namespace SIL.Transcelerator
 			{
 				int ichEndOfPreOrPhrase = orParts[0].Length;
 				int ichStartOfPostOrPhrase = 0;
-				int ichPre, ichPost;
+				int ichPost;
 				do
 				{
-					ichPre = orParts[0].LastIndexOf(' ', ichEndOfPreOrPhrase - 1);
+					var ichPre = orParts[0].LastIndexOf(' ', ichEndOfPreOrPhrase - 1);
 					ichPost = orParts[1].IndexOf(' ', ichStartOfPostOrPhrase + 1);
-					ichEndOfPreOrPhrase = (ichPre >= 0) ? ichPre : 0;
-					ichStartOfPostOrPhrase = (ichPost >= 0) ? ichPost : orParts[1].Length;
+					ichEndOfPreOrPhrase = ichPre >= 0 ? ichPre : 0;
+					ichStartOfPostOrPhrase = ichPost >= 0 ? ichPost : orParts[1].Length;
 				} while (ichEndOfPreOrPhrase > 0 && ichPost >= 0);
 
 				if (ichEndOfPreOrPhrase > 0)
@@ -199,10 +189,7 @@ namespace SIL.Transcelerator
 		/// Gets the matches.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<KeyTermMatch> Matches
-		{
-			get { return m_list; }
-		}
+		public IEnumerable<KeyTermMatch> Matches => m_list;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -23,6 +23,7 @@ using SIL.Reflection;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.Int32;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -387,8 +388,9 @@ namespace SIL.Transcelerator
         /// Tests getting phrases sorted alphabetically by the translation.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        [Test]
-        public void GetPhrasesSortedByTranslation()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GetPhrasesSortedByTranslation(bool immediate)
         {
             var cat = m_sections.Items[0].Categories[0];
             var q1 = AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
@@ -408,7 +410,7 @@ namespace SIL.Transcelerator
             pth[pth.FindPhrase(q5)].Translation = "e";
             pth[pth.FindPhrase(q6)].Translation = "E";
 
-            pth.Sort(PhrasesSortedBy.Translation, true);
+            pth.Sort(PhrasesSortedBy.Translation, true, immediate);
 
             Assert.AreEqual(q3, pth[0].QuestionInfo);
             Assert.AreEqual(q2, pth[1].QuestionInfo);
@@ -417,7 +419,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(q6, pth[4].QuestionInfo);
             Assert.AreEqual(q1, pth[5].QuestionInfo);
 
-            pth.Sort(PhrasesSortedBy.Translation, false);
+            pth.Sort(PhrasesSortedBy.Translation, false, immediate);
 
             Assert.AreEqual(q1, pth[0].QuestionInfo);
             Assert.AreEqual(q6, pth[1].QuestionInfo);
@@ -426,6 +428,63 @@ namespace SIL.Transcelerator
             Assert.AreEqual(q2, pth[4].QuestionInfo);
             Assert.AreEqual(q3, pth[5].QuestionInfo);
         }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting phrases sorted alphabetically by the translation.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GetPhrasesSortedByTranslation_CustomVernComparer(bool immediate)
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            var q1 = AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
+            var q2 = AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2);
+            var q3 = AddTestQuestion(cat, "that dog", "C", 3, 3);
+            var q4 = AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4);
+            var q5 = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5);
+            var q6 = AddTestQuestion(cat, "What is that dog?", "F", 6, 6);
+
+            var qp = new QuestionProvider(GetParsedQuestions());
+            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+
+			pth.VernacularStringComparer = new VowelComparer();
+
+            pth[pth.FindPhrase(q1)].Translation = "Zee";
+            pth[pth.FindPhrase(q2)].Translation = "Boo";
+            pth[pth.FindPhrase(q3)].Translation = "alligator";
+            pth[pth.FindPhrase(q4)].Translation = "Dia";
+            pth[pth.FindPhrase(q5)].Translation = "e";
+            pth[pth.FindPhrase(q6)].Translation = "E";
+
+            pth.Sort(PhrasesSortedBy.Translation, true, immediate);
+
+            Assert.AreEqual(q3, pth[0].QuestionInfo);
+            Assert.AreEqual(q5, pth[1].QuestionInfo);
+            Assert.AreEqual(q6, pth[2].QuestionInfo);
+            Assert.AreEqual(q1, pth[3].QuestionInfo);
+            Assert.AreEqual(q4, pth[4].QuestionInfo);
+            Assert.AreEqual(q2, pth[5].QuestionInfo);
+
+            pth.Sort(PhrasesSortedBy.Translation, false, immediate);
+
+            Assert.AreEqual(q2, pth[0].QuestionInfo);
+            Assert.AreEqual(q4, pth[1].QuestionInfo);
+            Assert.AreEqual(q1, pth[2].QuestionInfo);
+            Assert.AreEqual(q6, pth[3].QuestionInfo);
+            Assert.AreEqual(q5, pth[4].QuestionInfo);
+            Assert.AreEqual(q3, pth[5].QuestionInfo);
+        }
+
+        private class VowelComparer : IComparer<string>
+		{
+			public int Compare(string x, string y)
+			{
+				return string.Compare(new string(x?.Where(c => c.IsOneOf('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')).ToArray()),
+					new string(y?.Where(c => c.IsOneOf('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')).ToArray()), StringComparison.InvariantCulture);
+			}
+		}
 	    #endregion
 
         #region List filtering tests
@@ -2000,7 +2059,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(4, keyTerms.Length);
 			Assert.AreEqual("FUR", keyTerms[0]);
 			Assert.AreEqual("HAVE", keyTerms[1]);
-			Assert.AreEqual(String.Empty, keyTerms[2]);
+			Assert.AreEqual(Empty, keyTerms[2]);
 			Assert.AreEqual("RADISH", keyTerms[3]);
 		}
 
@@ -2590,10 +2649,10 @@ namespace SIL.Transcelerator
             Assert.AreEqual(2, phrase2.GetParts().Count());
 
             const string frame = "\u00BFQuie\u0301n era {0}?";
-            phrase1.Translation = string.Format(frame, "Timoteo");
+            phrase1.Translation = Format(frame, "Timoteo");
 
-            Assert.AreEqual(string.Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
-            Assert.AreEqual(string.Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.AreEqual(Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual(Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
             Assert.IsTrue(phrase1.HasUserTranslation);
             Assert.IsFalse(phrase2.HasUserTranslation);
         }
@@ -2627,10 +2686,10 @@ namespace SIL.Transcelerator
             Assert.AreEqual(3, phrase2.GetParts().Count());
 
             const string frame = "\u00BFFue {0} uno de los discipulos?";
-            phrase1.Translation = string.Format(frame, "Jacobo");
+            phrase1.Translation = Format(frame, "Jacobo");
 
-            Assert.AreEqual(string.Format(frame, "Jacobo"), phrase1.Translation);
-            Assert.AreEqual(string.Format(frame, "Mateo"), phrase2.Translation);
+            Assert.AreEqual(Format(frame, "Jacobo"), phrase1.Translation);
+            Assert.AreEqual(Format(frame, "Mateo"), phrase2.Translation);
             Assert.IsTrue(phrase1.HasUserTranslation);
             Assert.IsFalse(phrase2.HasUserTranslation);
         }

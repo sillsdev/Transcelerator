@@ -41,8 +41,8 @@ namespace SIL.Transcelerator
 	{
 		#region Data members
 		private readonly KeyTerm m_term;
+		private readonly Action<Exception, string> m_handleAddRenderingError;
 		private Rectangle m_rectToInvalidateOnResize;
-		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action<IReadOnlyList<string>> m_lookupTerm;
 
 		internal static string s_AppName;
@@ -61,13 +61,14 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IReadOnlyList<string>> lookupTerm, bool isReadOnly)
+			Action<Exception, string> handleAddRenderingError,
+			Action<IReadOnlyList<string>> lookupTerm, bool isReadOnly)
 		{
 			InitializeComponent();
 
 			DoubleBuffered = true;
 			m_term = term;
-			m_selectKeyboard = selectKeyboard;
+			m_handleAddRenderingError = handleAddRenderingError;
 			m_lookupTerm = lookupTerm;
 			Enabled = !isReadOnly;
 			m_lblKeyTermColHead.Text = term.ToString();
@@ -303,12 +304,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
-			var parentForm = ParentForm as ParentFormBase;
-			parentForm?.ShowModalChild(new AddRenderingDlg(m_selectKeyboard), dlg => 
-			{
-				if (dlg.DialogResult == DialogResult.OK)
-					AddRendering(dlg.Rendering, dlg.Text);
-			});
+			var parentForm = ParentForm as UNSQuestionsDialog;
+			parentForm.ShowAddRenderingDlg(AddRendering);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -346,7 +343,7 @@ namespace SIL.Transcelerator
 		{
 			var newRendering = GetRenderingFromDragDropData(e);
 			if (newRendering != null)
-				AddRendering(newRendering, "Transcelerator");
+				AddRendering(newRendering);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -400,7 +397,7 @@ namespace SIL.Transcelerator
 		/// Adds the given new rendering and selects it as the current one in the list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void AddRendering(string newRendering, string errorCaption)
+		private void AddRendering(string newRendering, string errorCaption = null)
 		{
 			try
 			{
@@ -409,7 +406,7 @@ namespace SIL.Transcelerator
 			}
 			catch (ArgumentException ex)
 			{
-				(ParentForm as ParentFormBase)?.ShowModalChild(new MessageBoxForm(ex.Message, errorCaption));
+				m_handleAddRenderingError(ex, errorCaption);
 			}
 			SelectedRendering = newRendering;
 		}
