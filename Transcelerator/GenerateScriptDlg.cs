@@ -22,8 +22,8 @@ using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using SIL.Extensions;
 using SIL.Scripture;
-using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.String;
 using File = System.IO.File;
 
@@ -198,7 +198,7 @@ namespace SIL.Transcelerator
 
 		private void LoadLWCCombo(IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs)
 		{
-			m_lwcLocaleIds = new List<string>(new [] {"en-US"});
+			m_lwcLocaleIds = new List<string>(new [] { HtmlScriptGenerator.kDefaultLwc });
 			int i = 0;
 			foreach (var lwc in availableAdditionalLWCs)
 			{
@@ -444,8 +444,6 @@ namespace SIL.Transcelerator
 			m_generator.CommentTextColor = m_lblCommentTextColor.ForeColor;
 			m_generator.NumberOfBlankLinesForAnswer = (int)m_numBlankLines.Value;
 			m_generator.NumberQuestions = m_chkNumberQuestions.Checked;
-
-		// REVIEW: public string LwcLocale => m_dataLoc?.Locale ?? "en";
 
 			m_generator.Title = m_txtTitle.Text;
 			m_generator.LwcLocale = m_chkIncludeLWCQuestions.Enabled ?

@@ -155,7 +155,7 @@ namespace SIL.Transcelerator
 
 			if (s_regexScrForgeTranslationsFile.IsMatch(pluginDataId))
 				return new XMLDataMergeInfo(true,
-					new XMLListKeyDefinition("/Question", "concat(@id,'/',@startChapter,'/',@startVerse)"));
+					new XMLListKeyDefinition("/ComprehensionCheckingQuestionsForBook", "concat(@id,'/',@startChapter,'/',@startVerse)"));
 
 			throw new NotImplementedException("Caller requested merge info for unexpected type of data.");
 		}

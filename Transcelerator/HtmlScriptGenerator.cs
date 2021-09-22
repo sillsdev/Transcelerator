@@ -15,6 +15,7 @@ namespace SIL.Transcelerator
 	/// </summary>
 	internal class HtmlScriptGenerator : ScriptGenerator
 	{
+		public const string kDefaultLwc = "en-US";
 		public string DefaultVernFont { get; }
 		public Func<TranslatablePhrase, ISectionInfo> FindSectionInfo { get; }
 		private const string kLwcQuestionClassName = "questionbt";
@@ -228,7 +229,7 @@ namespace SIL.Transcelerator
 				{
 					Func<TranslatablePhrase, bool> inRange;
 					var book = SelectedBook;
-					if (book != null)
+					if (!IsNullOrEmpty(book))
 					{
 						int bookNum = BCVRef.BookToNumber(book);
 						inRange = tp => BCVRef.GetBookFromBcv(tp.StartRef) == bookNum;
@@ -287,20 +288,20 @@ namespace SIL.Transcelerator
 			tw.WriteLine("<style type=\"text/css\">");
 			// This CSS directive always gets written directly to the template file because it's
 			// important to get right and it's unlikely that someone will want to do a global override.
-			tw.WriteLine(":lang(" + VernIcuLocale + ") {font-family:serif," +
-				DefaultVernFont + ",Arial Unicode MS;}");
+			tw.WriteLine(":lang(" + VernIcuLocale + ") {font-family:" + DefaultVernFont +
+				",serif,Arial Unicode MS;}");
 			if (EmbedStyleInfo)
 			{
 				WriteCssStyleInfo(tw, QuestionGroupHeadingsColor,
 					LWCQuestionColor, LWCAnswerTextColor,
-					CommentTextColor, (int)NumberOfBlankLinesForAnswer,
+					CommentTextColor, NumberOfBlankLinesForAnswer,
 					NumberQuestions);
 			}
 
 			tw.WriteLine("</style>");
 			tw.WriteLine("</head>");
 			tw.WriteLine("<body lang=\"" + VernIcuLocale + "\">");
-			tw.WriteLine("<h1 lang=\"en\">" + Title + "</h1>");
+			tw.WriteLine($"<h1 lang=\"{kDefaultLwc}\">" + Title + "</h1>");
 			int prevCategory = -1;
 			int prevSection = -1;
 			ISectionInfo section = null;
@@ -425,12 +426,12 @@ namespace SIL.Transcelerator
 					GetDataString(phrase.ToUIDataString(), out lang);
 				WriteParagraphElement(tw, "question", questionText, VernIcuLocale, lang);
 
-				tw.WriteLine($"<div class=\"extras\" lang=\"{LwcLocale}\">");
 				if (IncludeLWCQuestions && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
 				{
 					var lwcQuestion = GetDataString(phrase.ToUIDataString(), out lang);
 					WriteParagraphElement(tw, kLwcQuestionClassName, lwcQuestion, LwcLocale, lang);
 				}
+				tw.WriteLine($"<div class=\"extras\" lang=\"{LwcLocale}\">");
 
 				if (IncludeLWCAnswers && question.Answers != null)
 				{
@@ -517,7 +518,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_dataLoc == null)
 			{
-				lang = "en";
+				lang = kDefaultLwc;
 				return key.SourceUIString;
 			}
 			return m_dataLoc.GetLocalizedDataString(key, out lang);

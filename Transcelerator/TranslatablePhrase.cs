@@ -38,7 +38,7 @@ namespace SIL.Transcelerator
 		private string m_sModifiedPhrase;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
-		internal readonly IQuestionKey m_questionInfo;
+		private readonly IQuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsAndNumbersMatch;
