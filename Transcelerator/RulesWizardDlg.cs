@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using L10NSharp;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.String;
 
 namespace SIL.Transcelerator

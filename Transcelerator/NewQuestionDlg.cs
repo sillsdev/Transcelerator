@@ -23,6 +23,7 @@ using Paratext.PluginInterfaces;
 using SIL.ObjectModel;
 using SIL.Scripture;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.Int32;
 using static System.String;
 
@@ -194,7 +195,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal NewQuestionDlg(IProject project, TranslatablePhrase basePhrase, string vernLanguage,
 			TransceleratorSections sectionInfo, IVersification projectVersification, IVersification masterVersification,
-			PhraseTranslationHelper pth, int[] canonicalBookIds, Action<bool> changeKeyboard)
+			PhraseTranslationHelper pth, Action<bool> changeKeyboard)
 		{
 			var baseQuestion = basePhrase.QuestionInfo;
 			m_vernLanguage = vernLanguage;

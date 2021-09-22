@@ -11,10 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
-using SIL.Transcelerator.Properties;
 using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
-using SIL.Windows.Forms.Scripture;
 using SIL.Xml;
 using System;
 using System.Collections.Generic;
@@ -27,6 +25,7 @@ using System.Linq;
 using System.Media;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DesktopAnalytics;
@@ -35,10 +34,17 @@ using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using Paratext.PluginInterfaces;
 using SIL.Reporting;
+using SIL.Windows.Forms;
 using SIL.WritingSystems;
 using static System.Char;
 using static System.String;
+using Application = System.Windows.Forms.Application;
+using DateTime = System.DateTime;
 using File = System.IO.File;
+using FileInfo = System.IO.FileInfo;
+using Process = System.Diagnostics.Process;
+using Resources = SIL.Transcelerator.Properties.Resources;
+using Task = System.Threading.Tasks.Task;
 
 namespace SIL.Transcelerator
 {
@@ -70,6 +76,7 @@ namespace SIL.Transcelerator
 		private readonly IVersification m_masterVersification;
 		private IVerseRef m_startRef;
 		private IVerseRef m_endRef;
+		private readonly Action<BCVRef> m_sendReference;
 		private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
@@ -79,7 +86,6 @@ namespace SIL.Transcelerator
 		private MasterQuestionParser m_parser;
 		/// <summary>Use PhraseSubstitutions property to ensure non-null cache</summary>
 		private List<Substitution> m_cachedPhraseSubstitutions;
-		private bool m_fIgnoreNextRecvdSantaFeSyncMessage;
 		private bool m_fProcessingSyncMessage;
 		private BCVRef m_queuedReference;
 		private int m_lastRowEntered = -1;
@@ -274,18 +280,21 @@ namespace SIL.Transcelerator
 		/// <param name="endRef">The ending Scripture reference to filter on (in the English
 		/// versification)</param>
 		/// <param name="selectKeyboard">The delegate to select vern/anal keyboard</param>
+		/// <param name="sendReference">The callback to notify the host that Transcelerator is
+		/// looking at a particular Scripture reference.</param>
 		/// <param name="preferredUiLocale">THE BCP-47 locale identifier to use for the user
 		/// interface (including localized questions, answers, etc.)</param>
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(IPluginHost host, IProject project,
 			IVerseRef startRef, IVerseRef endRef,
-			Action<bool> selectKeyboard, string preferredUiLocale)
+			Action<bool> selectKeyboard, Action<BCVRef> sendReference, string preferredUiLocale)
 		{
 			if (startRef != default && endRef != default && startRef.CompareTo(endRef) > 0)
 				throw new ArgumentException("startRef must be before endRef");
 
 			m_startRef = startRef;
 			m_endRef = endRef;
+			m_sendReference = sendReference;
 
 			InitializeComponent();
 
@@ -294,7 +303,7 @@ namespace SIL.Transcelerator
 
 			m_fileAccessor = new ParatextDataFileAccessor(m_project);
 
-			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major);
+			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major).Where(t => t.Occurrences.Any(o => o.BookNum < 67));
 
 			m_selectKeyboard = m_fileAccessor.IsReadonly ? null : selectKeyboard;
 
@@ -350,6 +359,8 @@ namespace SIL.Transcelerator
 			ShowAnswersAndComments = Properties.Settings.Default.ShowAnswersAndComments;
 			MaximumHeightOfKeyTermsPane = Properties.Settings.Default.MaximumHeightOfKeyTermsPane;
 			mnuProduceScriptureForgeFiles.Checked = Properties.Settings.Default.ProduceScriptureForgeFiles;
+			SetScrForgeMenuIcon();
+			mnuProduceScriptureForgeFiles.CheckedChanged += mnuProduceScriptureForgeFiles_CheckedChanged;
 			mnuAutoSave.Checked = Properties.Settings.Default.AutoSave;
 			mnuViewEditQuestionColumn.Checked = m_colEditQuestion.Visible = Properties.Settings.Default.ShowEditColumn;
 
@@ -379,13 +390,13 @@ namespace SIL.Transcelerator
 				{
 					var bcvRef = new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV);
 					if (InvokeRequired)
-						Invoke(new Action(() => { ProcessReceivedMessage(bcvRef); }));
+						Invoke(new Action(() => { ProcessCurrentVerseRefChange(bcvRef); }));
 					else
-						ProcessReceivedMessage(bcvRef);
+						ProcessCurrentVerseRefChange(bcvRef);
 				};
 			}
 			else if (dataGridUns.RowCount > 0)
-				ProcessReceivedMessage(new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV));
+				ProcessCurrentVerseRefChange(new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV));
 		}
 
 		public void Show(TxlSplashScreen splashScreen)
@@ -398,7 +409,7 @@ namespace SIL.Transcelerator
 
 			InitFromHostProject();
 
-			m_project.ProjectDataChanged += (sender, details) => InitFromHostProject(details);
+			m_project.ProjectDataChanged += OnProjectDataChanged;
 
 			splashScreen?.Close();
 
@@ -407,6 +418,9 @@ namespace SIL.Transcelerator
 
 			Show();
 		}
+
+		private void OnProjectDataChanged(IProject sender, ProjectDataChangeType details) =>
+			InitFromHostProject(details);
 
 		private void InitFromHostProject(ProjectDataChangeType change = ProjectDataChangeType.WholeProject)
 		{
@@ -678,11 +692,10 @@ namespace SIL.Transcelerator
 
         private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
         {
-	        mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
-		        Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
+	        SetScrForgeMenuIcon();
 	        Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
 
-	        if (mnuProduceScriptureForgeFiles.Checked && (string)mnuProduceScriptureForgeFiles.Tag == "first click")
+	        if (mnuProduceScriptureForgeFiles.Checked && mnuProduceScriptureForgeFiles.Tag == null)
 	        {
 		        mnuProduceScriptureForgeFiles.Tag = "shown";
 
@@ -690,15 +703,7 @@ namespace SIL.Transcelerator
 	        }
 		}
 
-        private void mnuProduceScriptureForgeFiles_Clicked(object sender, EventArgs e)
-        {
-	        if (mnuProduceScriptureForgeFiles.Tag == null)
-	        {
-		        mnuProduceScriptureForgeFiles.Tag = "first click";
-	        }
-        }
-
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Handles copying and pasting cell contents (TXL-100)
         /// </summary>
@@ -1175,6 +1180,7 @@ namespace SIL.Transcelerator
 
 			SetUiForLongTask(true);
 			dataGridUns.RowEnter -= dataGridUns_RowEnter;
+			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
 
 			Action<Task<int>> completionAction = t =>
@@ -1239,7 +1245,11 @@ namespace SIL.Transcelerator
 		private void SetUiForLongTask(bool startingTask)
 		{
 			foreach (Control control in Controls)
-				control.Enabled = !startingTask;
+			{
+				if (control != toolStrip1 || !control.ContainsFocus)
+					control.Enabled = !startingTask;
+			}
+
 			UseWaitCursor = startingTask;
 		}
 
@@ -1391,7 +1401,10 @@ namespace SIL.Transcelerator
 							scriptGenerator.Generate(sw);
 
 						Process.Start(scriptGenerator.FileName);
-					});
+					}).ContinueWith(t =>
+					{
+						ErrorReport.ReportNonFatalException(t.Exception);
+					}, TaskContinuationOptions.OnlyOnFaulted);
 				}
 			});
 		}
@@ -1922,7 +1935,7 @@ namespace SIL.Transcelerator
 			m_selectKeyboard?.Invoke(false);
 			string language = Format("{0} ({1})", m_project.LanguageName, m_project.Language.Id);
 			var newQuestionDlg = new NewQuestionDlg(m_project, CurrentPhrase, language, m_sectionInfo,
-				m_project.Versification, m_masterVersification, m_helper, m_availableBookIds, m_selectKeyboard);
+				m_project.Versification, m_masterVersification, m_helper, m_selectKeyboard);
 
 			ShowModalChild(newQuestionDlg, dlg =>
 			{
@@ -1975,8 +1988,16 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
-			dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = (m_helper[e.RowIndex].IsExcluded) ?
-				Color.LightCoral : dataGridUns.DefaultCellStyle.BackColor;
+			try
+			{
+				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = m_helper[e.RowIndex].IsExcluded ?
+					Color.LightCoral : dataGridUns.DefaultCellStyle.BackColor;
+			}
+			catch(Exception)
+			{
+				// Collection size is probably changing. Don't crash
+				Debug.Fail("Probably changing filter while still trying to pain previously existing rows.");
+			}
 		}
 
 		private void dataGridUns_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
@@ -2142,22 +2163,24 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_HandleCreated(object sender, EventArgs e)
 		{
-			m_host.VerseRefChanged += delegate(IPluginHost host, IVerseRef reference, SyncReferenceGroup @group)
-			{ 
+			m_host.VerseRefChanged += OnHostOnVerseRefChanged;
+		}
+
+		private void OnHostOnVerseRefChanged(IPluginHost host, IVerseRef reference, SyncReferenceGroup @group)
+		{
+			lock (this)
+			{
 				var scrRef = new BCVRef(reference.ChangeVersification(m_masterVersification).BBBCCCVVV);
 
-				if (!btnReceiveScrReferences.Checked || m_fIgnoreNextRecvdSantaFeSyncMessage ||
-					m_fProcessingSyncMessage)
+				if (!btnReceiveScrReferences.Checked || m_fProcessingSyncMessage)
 				{
 					if (m_fProcessingSyncMessage)
 						m_queuedReference = scrRef;
-
-					m_fIgnoreNextRecvdSantaFeSyncMessage = false;
 					return;
 				}
 
-				ProcessReceivedMessage(scrRef);
-			};
+				ProcessCurrentVerseRefChange(scrRef);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2326,6 +2349,12 @@ namespace SIL.Transcelerator
 					"Please re-run the {0} Installer to repair this problem.",
 					"Parameter is \"Transcelerator\" (plugin name)"), TxlPlugin.pluginName);
 			return msg;
+		}
+
+		private void SetScrForgeMenuIcon()
+		{
+			mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
+				Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
 		}
 
 		private void UpdateSplashScreenMessage(IProgressMessage splashScreen, string fmt)
@@ -2623,56 +2652,45 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sends the start reference for the given row as a Santa-Fe "focus" message.
+		/// Notifies the host of the current (start) reference for the given row.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void SendScrReference(int iRow)
 		{
-			// REVIEW: Do we need this still? Do we want to use SantaFe at all?
-			m_fIgnoreNextRecvdSantaFeSyncMessage = true;
-			BCVRef currRef = GetScrRefOfRow(iRow);
-			if (currRef != null && currRef.Valid)
-                SantaFeFocusMessageHandler.SendFocusMessage(currRef.ToString());
+			lock (this)
+			{
+				if (m_fProcessingSyncMessage)
+					return;
+				var currentRef = GetScrRefOfRow(iRow);
+				if (currentRef != null && currentRef.Valid)
+					m_sendReference?.Invoke(currentRef);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Processes the received sync message.
+		/// Processes the received request to update the current verse reference.
 		/// </summary>
 		/// <param name="reference">The reference (in English versification scheme).</param>
 		/// ------------------------------------------------------------------------------------
-		private void ProcessReceivedMessage(BCVRef reference)
+		private void ProcessCurrentVerseRefChange(BCVRef reference)
 		{
             if (dataGridUns.IsCurrentCellInEditMode)
                 return;
 
-			// REVIEW: This can be kind of slow. Figure out which parts need to be done in the background
-
-			// While we process the given reference we might get additional synch events, the
-			// most recent of which we store in m_queuedReference. If we're done
-			// and we have a new reference in m_queuedReference we process that one, etc.
-			for (; reference != null; reference = m_queuedReference)
+			lock (this)
 			{
-				m_queuedReference = null;
-				m_fProcessingSyncMessage = true;
+				// While we process the given reference we might get additional synch events, the
+				// most recent of which we store in m_queuedReference. If we're done
+				// and we have a new reference in m_queuedReference we process that one, etc.
+				for (; reference != null; reference = m_queuedReference)
+				{
+					m_queuedReference = null;
+					m_fProcessingSyncMessage = true;
 
-			    try
-			    {
-			        if (reference.Valid)
-			        {
-                        TranslatablePhrase phrase = (dataGridUns.CurrentRow == null) ? null :
-                            m_helper.Phrases.ElementAt(dataGridUns.CurrentRow.Index);
-
-			            bool phraseAppliesToRef = phrase != null && phrase.AppliesToReference(reference);
-                        
-			            if (!phraseAppliesToRef || !phrase.IsDetail)
-			                GoToReference(reference, phraseAppliesToRef && !phrase.IsDetail);
-			        }
-			    }
-			    finally
-			    {
-			        m_fProcessingSyncMessage = false;
-			    }
+					int currentPhraseIndex = dataGridUns.CurrentCellAddress.Y;
+					GoToReference(reference, currentPhraseIndex);
+				}
 			}
 		}
 
@@ -2682,31 +2700,88 @@ namespace SIL.Transcelerator
 		/// preferably for a detail question.
 		/// </summary>
         /// <param name="reference">The reference to check against</param>
-        /// <param name="detailOnly">If <c>true</c> only move to a new row if a matching detail
-        /// question is found (i.e., disregard overview questions)</param>
+        /// <param name="currentPhraseIndex">The index of the currently selected question</param>
         /// ------------------------------------------------------------------------------------
-        private void GoToReference(BCVRef reference, bool detailOnly)
+        private void GoToReference(BCVRef reference, int currentPhraseIndex)
 		{
-		    int iFound = -1;
-		    int iRow = 0;
-		    foreach (TranslatablePhrase phrase in m_helper.Phrases)
-		    {
-                if (phrase.AppliesToReference(reference))
-		        {
-		            if (phrase.IsDetail)
-		            {
-		                iFound = iRow;
-		                break;
-		            }
-                    if (!detailOnly && iFound < 0)
-		                iFound = iRow; // But don't break yet because we might find a detail question, which is preferred.
-		        }
-		        iRow++;
-		    }
-            if (iFound >= 0)
-            {
-                dataGridUns.CurrentCell = dataGridUns.Rows[iFound].Cells[dataGridUns.CurrentCell?.ColumnIndex ?? 2];
-            }
+			Action<Task<int>> completionAction = t =>
+			{
+				lock (this)
+				{
+					if (m_queuedReference != null && !m_queuedReference.Equals(reference))
+					{
+						reference = m_queuedReference;
+						m_queuedReference = null;
+						ProcessCurrentVerseRefChange(reference);
+					}
+					else
+					{
+						if (t.Result >= 0 && m_queuedReference == null && !dataGridUns.IsCurrentCellInEditMode &&
+							dataGridUns.RowCount > t.Result)
+							dataGridUns.CurrentCell = dataGridUns.Rows[t.Result].Cells[dataGridUns.CurrentCell?.ColumnIndex ?? 2];
+
+						m_fProcessingSyncMessage = false;
+					}
+				}
+			};
+
+			Task.Run(() =>
+			{
+				if (!reference.Valid)
+					return -1;
+
+				bool detailOnly = false;
+
+				if (currentPhraseIndex >= 0)
+				{
+					var currentPhrase = m_helper.Phrases.ElementAt(currentPhraseIndex);
+
+					if (currentPhrase.AppliesToReference(reference))
+					{
+						if (currentPhrase.IsDetail)
+							return -1;
+
+						// If we're already on a question for the current reference, we only
+						// want to change to a different one if we are currently on an
+						// overview question and we're able to find a detail question for the
+						// new reference.
+						detailOnly = true;
+					}
+				}
+
+				int iFound = -1;
+				int iRow = 0;
+				foreach (var phrase in m_helper.Phrases)
+				{
+					if (phrase.AppliesToReference(reference))
+					{
+						if (phrase.IsDetail)
+						{
+							iFound = iRow;
+							break;
+						}
+
+						if (!detailOnly && iFound < 0)
+							iFound = iRow; // But don't break yet because we might find a detail question, which is preferred.
+					}
+
+					iRow++;
+				}
+
+				// This is not strictly necessary, but it gives Paratext a bit of a fighting chance to reclaim the
+				// UI thread so it can finish its updates before Transcelerator, which is probably generally what
+				// the user would expect.
+				Thread.Sleep(2);
+
+				return iFound;
+			}
+			).ContinueWith(t =>
+			{
+				if (InvokeRequired)
+					Invoke(new Action(() => { completionAction(t); }));
+				else
+					completionAction(t);
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------

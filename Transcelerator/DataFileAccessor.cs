@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 using L10NSharp;
 using Paratext.PluginInterfaces;
 using SIL.Extensions;
@@ -25,6 +26,12 @@ namespace SIL.Transcelerator
 {
     public abstract class DataFileAccessor
 	{
+		private const string kScrForgeTranslationsFilenamePrefix = "Translated Checking Questions for ";
+		private const string kScrForgeTranslationsExt = ".xml";
+		protected static Regex s_regexScrForgeTranslationsFile = new Regex("^" +
+			kScrForgeTranslationsFilenamePrefix + @"[1-3A-Z][A-Z]{2}\" +
+			kScrForgeTranslationsExt + "$", RegexOptions.Compiled);
+
 		public enum DataFileId
 		{
 			Translations,
@@ -57,7 +64,7 @@ namespace SIL.Transcelerator
 		{
 			switch (fileId)
 			{
-				case BookSpecificDataFileId.ScriptureForge: return $"Translated Checking Questions for {bookId}.xml";
+				case BookSpecificDataFileId.ScriptureForge: return $"{kScrForgeTranslationsFilenamePrefix}{bookId}{kScrForgeTranslationsExt}";
 				default:
 					throw new ArgumentException("Bogus", nameof(fileId));
 			}
@@ -145,6 +152,10 @@ namespace SIL.Transcelerator
 			if (pluginDataId == GetFileName(DataFileId.TermRenderingSelectionRules))
 				return new XMLDataMergeInfo(true,
                 new XMLListKeyDefinition("/ArrayOfRenderingSelectionRule", "@questionMatcher"));
+
+			if (s_regexScrForgeTranslationsFile.IsMatch(pluginDataId))
+				return new XMLDataMergeInfo(true,
+					new XMLListKeyDefinition("/Question", "concat(@id,'/',@startChapter,'/',@startVerse)"));
 
 			throw new NotImplementedException("Caller requested merge info for unexpected type of data.");
 		}

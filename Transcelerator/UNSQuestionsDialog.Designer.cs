@@ -32,8 +32,10 @@ namespace SIL.Transcelerator
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				components?.Dispose();
+				m_host.VerseRefChanged -= OnHostOnVerseRefChanged;
+				m_project.ProjectDataChanged -= OnProjectDataChanged;
+
 				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
@@ -512,8 +514,6 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(277, 22);
 			this.mnuProduceScriptureForgeFiles.Text = "Produce {0} Files";
-			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
-			this.mnuProduceScriptureForgeFiles.Click += new System.EventHandler(this.mnuProduceScriptureForgeFiles_Clicked);
 			// 
 			// generateOutputForArloToolStripMenuItem
 			// 

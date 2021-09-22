@@ -659,10 +659,7 @@ namespace SIL.Transcelerator
 		/// Get the translatable phrase at the specified <paramref name="index"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase this[int index]
-		{
-			get { return FilteredSortedPhrases[index]; }
-		}
+		public TranslatablePhrase this[int index] => FilteredSortedPhrases[index];
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

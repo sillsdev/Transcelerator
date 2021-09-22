@@ -138,7 +138,17 @@ namespace SIL.Transcelerator
 						host.DefaultKeyboard.Activate();
 				};
 
-				IVerseRef currentRef = state.VerseRef.ChangeVersification(host.GetStandardVersification(StandardScrVersType.English));
+				var englishVersification = host.GetStandardVersification(StandardScrVersType.English);
+
+				Action<BCVRef> sendReference = bcvRef =>
+				{
+					// ENHANCE: Some day we can maybe make it so the user can select the scroll group.
+					// 999+ times out of 1000, the scroll group of the window at the time the user runs
+					// Transcelerator will be the one they want.
+					host.SetReferenceForSyncGroup(englishVersification.CreateReference(bcvRef.BBCCCVVV), state.SyncReferenceGroup);
+				};
+
+				IVerseRef currentRef = state.VerseRef.ChangeVersification(englishVersification);
 				var startRef = currentRef.Versification.CreateReference(currentRef.BookNum, 1, 1);
 				var lastChapter = currentRef.Versification.GetLastChapter(currentRef.BookNum);
 				var endRef = currentRef.Versification.CreateReference(currentRef.BookNum,
@@ -159,7 +169,7 @@ namespace SIL.Transcelerator
 				}
 
 				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(host, project, startRef, endRef,
-					activateKeyboard, preferredUiLocale);
+					activateKeyboard, sendReference, preferredUiLocale);
 
 				await Task.Run(() => { InitMainWindow(mainWindow, splashScreen, project); });
 
