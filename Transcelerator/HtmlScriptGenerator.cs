@@ -110,13 +110,11 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions = value;
 		}
 
-		public bool OutputPassageBeforeOverview
+		public bool OutputFullPassageAtStartOfSection
 		{
 			get => Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
 			set => Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = value;
 		}
-
-		private bool OutputFullPassageAtStartOfSection => OutputPassageBeforeOverview;
 
 		public bool IncludeVerseNumbers
 		{
@@ -142,10 +140,10 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateTemplateIncludeComments = value;
 		}
 
-		public bool EmbedStyleInfo
+		public bool UseExternalCss
 		{
-			get => !Properties.Settings.Default.GenerateTemplateUseExternalCss;
-			set => Properties.Settings.Default.GenerateTemplateUseExternalCss = !value;
+			get => Properties.Settings.Default.GenerateTemplateUseExternalCss;
+			set => Properties.Settings.Default.GenerateTemplateUseExternalCss = value;
 		}
 
 		public bool WriteCssFile { get; set; }
@@ -180,12 +178,12 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateTemplateFolder = value;
 		}
 
-		public Color QuestionGroupHeadingsColor
+		public Color QuestionGroupHeadingsTextColor
 		{
 			get => Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor;
 			set => Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = value;
 		}
-		public Color LWCQuestionColor
+		public Color LWCQuestionTextColor
 		{
 			get => Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
 			set => Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = value;
@@ -270,15 +268,15 @@ namespace SIL.Transcelerator
 			tw.WriteLine("<head>");
 			tw.WriteLine("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"/>");
 			tw.WriteLine("<title>" + Title + "</title>");
-			if (!EmbedStyleInfo)
+			if (UseExternalCss)
 			{
 				tw.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href= \"" + CssFile + "\"/>");
 				if (WriteCssFile)
 				{
 					using (StreamWriter css = new StreamWriter(FullCssPath))
 					{
-						WriteCssStyleInfo(css, QuestionGroupHeadingsColor,
-							LWCQuestionColor, LWCAnswerTextColor,
+						WriteCssStyleInfo(css, QuestionGroupHeadingsTextColor,
+							LWCQuestionTextColor, LWCAnswerTextColor,
 							CommentTextColor, NumberOfBlankLinesForAnswer,
 							NumberQuestions);
 					}
@@ -290,10 +288,10 @@ namespace SIL.Transcelerator
 			// important to get right and it's unlikely that someone will want to do a global override.
 			tw.WriteLine(":lang(" + VernIcuLocale + ") {font-family:" + DefaultVernFont +
 				",serif,Arial Unicode MS;}");
-			if (EmbedStyleInfo)
+			if (!UseExternalCss)
 			{
-				WriteCssStyleInfo(tw, QuestionGroupHeadingsColor,
-					LWCQuestionColor, LWCAnswerTextColor,
+				WriteCssStyleInfo(tw, QuestionGroupHeadingsTextColor,
+					LWCQuestionTextColor, LWCAnswerTextColor,
 					CommentTextColor, NumberOfBlankLinesForAnswer,
 					NumberQuestions);
 			}
@@ -301,6 +299,7 @@ namespace SIL.Transcelerator
 			tw.WriteLine("</style>");
 			tw.WriteLine("</head>");
 			tw.WriteLine("<body lang=\"" + VernIcuLocale + "\">");
+			// ENHANCE: Support titles in language other than English (the chosen LWC or the vernacular)
 			tw.WriteLine($"<h1 lang=\"{kDefaultLwc}\">" + Title + "</h1>");
 			int prevCategory = -1;
 			int prevSection = -1;
@@ -357,17 +356,13 @@ namespace SIL.Transcelerator
 
 				if (phrase.Category != prevCategory)
 				{
-					if (prevCategory == -1 && phrase.Category > 0 && OutputFullPassageAtStartOfSection)
+					if (OutputFullPassageAtStartOfSection && prevCategory == -1)
 					{
-						// No Overview for this section. Output full section passage anyway.
 						OutputScripture(section.StartRef, section.EndRef);
 					}
 
 					var lwcCategoryName = GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
 					WriteParagraphElement(tw, null, lwcCategoryName, VernIcuLocale, lang, "h3");
-
-					if (phrase.Category == 0 && OutputPassageBeforeOverview)
-						OutputScripture(section.StartRef, section.EndRef);
 
 					prevCategory = phrase.Category;
 					prevQuestionStartRef = -1;
@@ -401,8 +396,8 @@ namespace SIL.Transcelerator
 						{
 							int startRef = ChangeVersification(phrase.StartRef);
 							int endRef = ChangeVersification(phrase.EndRef);
-							tw.WriteLine("<h4 class=\"summaryRef\">");
-							tw.WriteLine(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
+							tw.Write("<h4 class=\"summaryRef\">");
+							tw.Write(BCVRef.MakeReferenceString(startRef, endRef, ".", "-"));
 							tw.WriteLine("</h4>");
 						}
 					}
@@ -424,14 +419,15 @@ namespace SIL.Transcelerator
 				lang = VernIcuLocale;
 				var questionText = phrase.HasUserTranslation ? phrase.Translation :
 					GetDataString(phrase.ToUIDataString(), out lang);
+				tw.WriteLine($"<div class=\"extras\" lang=\"{LwcLocale}\">");
 				WriteParagraphElement(tw, "question", questionText, VernIcuLocale, lang);
+				tw.WriteLine("</div>");
 
 				if (IncludeLWCQuestions && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
 				{
 					var lwcQuestion = GetDataString(phrase.ToUIDataString(), out lang);
 					WriteParagraphElement(tw, kLwcQuestionClassName, lwcQuestion, LwcLocale, lang);
 				}
-				tw.WriteLine($"<div class=\"extras\" lang=\"{LwcLocale}\">");
 
 				if (IncludeLWCAnswers && question.Answers != null)
 				{
@@ -450,8 +446,6 @@ namespace SIL.Transcelerator
 						WriteParagraphElement(tw, "comment", lwcComment, LwcLocale, lang);
 					}
 				}
-
-				tw.WriteLine("</div>");
 			}
 
 			tw.WriteLine("</body>");

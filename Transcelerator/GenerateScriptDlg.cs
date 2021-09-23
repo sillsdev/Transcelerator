@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using L10NSharp;
 using L10NSharp.UI;
@@ -96,7 +95,7 @@ namespace SIL.Transcelerator
 					break;
 			}
 
-			m_chkPassageBeforeOverview.Checked = m_generator.OutputPassageBeforeOverview;
+			m_chkPassageBeforeOverview.Checked = m_generator.OutputFullPassageAtStartOfSection;
 			m_chkIncludeVerseNumbers.Checked = m_generator.IncludeVerseNumbers;
 			SetDefaultCheckedStateForLWCOptions();
 
@@ -120,22 +119,39 @@ namespace SIL.Transcelerator
             m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
 
 			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
-			if (!m_generator.QuestionGroupHeadingsColor.IsEmpty)
-				m_lblQuestionGroupHeadingsColor.ForeColor = m_generator.QuestionGroupHeadingsColor;
-			if (!m_generator.LWCQuestionColor.IsEmpty)
-				m_lblLWCQuestionColor.ForeColor = m_generator.LWCQuestionColor;
+			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
+				m_lblQuestionGroupHeadingsColor.ForeColor = m_generator.QuestionGroupHeadingsTextColor;
+			if (!m_generator.LWCQuestionTextColor.IsEmpty)
+				m_lblLWCQuestionColor.ForeColor = m_generator.LWCQuestionTextColor;
 			if (!m_generator.LWCAnswerTextColor.IsEmpty)
 				m_lblLWCAnswerTextColor.ForeColor = m_generator.LWCAnswerTextColor;
 			if (!m_generator.CommentTextColor.IsEmpty)
 				m_lblCommentTextColor.ForeColor = m_generator.CommentTextColor;
 			m_chkNumberQuestions.Checked = m_generator.NumberQuestions;
 
-			m_rdoUseExternalCss.Checked = m_generator.EmbedStyleInfo;
+			m_rdoUseExternalCss.Checked = m_generator.UseExternalCss;
 			if (m_rdoUseExternalCss.Checked)
 			{
-				m_txtCssFile.Text = m_generator.CssFile;
+				if (m_txtCssFile.Text == m_generator.CssFile)
+					UpdateControlsForCssFile(m_txtCssFile.Text);
+				else
+					m_txtCssFile.Text = m_generator.CssFile;
 				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
 			}
+
+			m_numBlankLines.ValueChanged += delegate
+			{ 
+				m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && !m_numBlankLines.Value.Equals(m_generator.NumberOfBlankLinesForAnswer);
+			};
+
+			m_lblCommentTextColor.Tag = new Func<Color>(() => m_generator.CommentTextColor);
+			m_lblCommentTextColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => m_generator.LWCAnswerTextColor);
+			m_lblLWCAnswerTextColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblLWCQuestionColor.Tag = new Func<Color>(() => m_generator.LWCQuestionTextColor);
+			m_lblLWCQuestionColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => m_generator.QuestionGroupHeadingsTextColor);
+			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
 		private void HandleStringsLocalized()
@@ -239,6 +255,12 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Event handlers
+		private void OnLblForeColorChanged(object sender, EventArgs e)
+		{
+			Label lbl = (Label)sender;
+			m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && lbl.ForeColor != ((Func<Color>)lbl.Tag)();
+		}
+
 		private void ChooseTextColor(object sender, EventArgs e)
 		{
 			Label label = (Label)((Button)sender).Tag;
@@ -347,7 +369,11 @@ namespace SIL.Transcelerator
 
 		private void m_txtCssFile_TextChanged(object sender, EventArgs e)
 		{
-			string path = m_txtCssFile.Text;
+			UpdateControlsForCssFile(m_txtCssFile.Text);
+		}
+
+		private void UpdateControlsForCssFile(string path)
+		{
 			if (!Path.IsPathRooted(path))
 				path = Path.Combine(m_lblFolder.Text, path);
 			else
@@ -435,11 +461,11 @@ namespace SIL.Transcelerator
 				path = Path.ChangeExtension(path, "htm");
 			m_generator.FileName = path;
 
-			m_generator.OutputPassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
+			m_generator.OutputFullPassageAtStartOfSection = m_chkPassageBeforeOverview.Checked;
 			m_generator.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
 
-			m_generator.QuestionGroupHeadingsColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-			m_generator.LWCQuestionColor = m_lblLWCQuestionColor.ForeColor;
+			m_generator.QuestionGroupHeadingsTextColor = m_lblQuestionGroupHeadingsColor.ForeColor;
+			m_generator.LWCQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
 			m_generator.LWCAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
 			m_generator.CommentTextColor = m_lblCommentTextColor.ForeColor;
 			m_generator.NumberOfBlankLinesForAnswer = (int)m_numBlankLines.Value;
@@ -467,7 +493,7 @@ namespace SIL.Transcelerator
 
 			m_generator.Folder = m_lblFolder.Text;
 
-			m_generator.EmbedStyleInfo = m_rdoUseExternalCss.Checked;
+			m_generator.UseExternalCss = m_rdoUseExternalCss.Checked;
 			if (m_rdoUseExternalCss.Checked)
 			{
 				m_generator.WriteCssFile = !m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked;
@@ -560,7 +586,10 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0)
 				return;
-			string sRef = BCVRef.MakeReferenceString(VerseRangeStartRef, VerseRangeEndRef, ".", "-");
+			// Use new version of libpalaso to get title when book names are different
+			var sRef = VerseRangeStartRef.Book != VerseRangeEndRef.Book ?
+				(VerseRangeStartRef + "-" + VerseRangeEndRef).Replace(":", "."):
+				BCVRef.MakeReferenceString(VerseRangeStartRef, VerseRangeEndRef, ".", "-");
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, sRef, m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}

@@ -12,7 +12,11 @@ namespace SIL.Transcelerator
 	[TestFixture]
 	class HtmlScriptGeneratorTests
 	{
-		private const string kHTMLSTart = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n" + 
+		private const string kHtmlSection = "<h2 lang=\"en-US\">%SECTIONHEADORREF%</h2>\r\n" + 
+			"<p>%SECTVERSENUM%This is the section head Scripture.</p>\r\n" + 
+			"<h3 lang=\"en-US\">%CATEGORY%</h3>\r\n";
+
+		private const string kHtmlSTart = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n" + 
 		"<html>\r\n" + 
 		"<head>\r\n" + 
 		"<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\"/>\r\n" + 
@@ -45,16 +49,15 @@ namespace SIL.Transcelerator
 		"</head>\r\n" +
 		"<body lang=\"%VERNLOCALE%\">\r\n" + 
 		"<h1 lang=\"en-US\">%TITLE%</h1>\r\n" +
-		"<h2 lang=\"en-US\">%SECTIONHEADORREF%</h2>\r\n" + 
-		"%SECTIONSCRIPTURE%\r\n" + 
-		"<h3 lang=\"en-US\">%CATEGORY%</h3>\r\n";
+		kHtmlSection;
 
-		private const string kHtmlExtrasDiv = "<div class=\"extras\" lang=\"en-US\">\r\n</div>\r\n";
+		private const string kHtmlExtrasDiv = "<div class=\"extras\" lang=\"en-US\">\r\n";
 		private const string kHtmlEnd = "</body>\r\n";
 
 		[SetUp]
 		public void Setup()
 		{
+			Properties.Settings.Default.Reload();
 			TranslatablePhrase.s_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
 			TranslatablePhrase.s_helper.Stub(h => h.GetCategoryName(0)).Return("Overview");
 			TranslatablePhrase.s_helper.Stub(h => h.GetCategoryName(1)).Return("Details");
@@ -78,16 +81,16 @@ namespace SIL.Transcelerator
 			using (var tw = new StringWriter(sb))
 				generator.Generate(tw);
 
-			var expected = kHTMLSTart.Replace("%TITLE%", "My Title")
+			var expected = kHtmlSTart.Replace("%TITLE%", "My Title")
 				.Replace("%VERNLOCALE%", "fr")
 				.Replace("%VERNFONT%", "Comic Sans")
 				.Replace("%BLANKLINES%", 0.ToString())
 				.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
-				.Replace("%SECTIONSCRIPTURE%", "<p>This is the section head Scripture.</p>")
+				.Replace("%SECTVERSENUM%", "")
 				.Replace("%CATEGORY%", "Details") +
 				"<p>This is the Scripture.</p>\r\n" +
-				"<p class=\"question\" lang=\"en-US\">What is this?</p>\r\n" +
 				kHtmlExtrasDiv +
+				"<p class=\"question\" lang=\"en-US\">What is this?</p>\r\n</div>\r\n" +
 				kHtmlEnd;
 
 			Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -100,7 +103,7 @@ namespace SIL.Transcelerator
 			ISectionInfo sectionInfo = GetSectionInfoForExo1V1ThruV15();
 
 			var repo = new PhraseRepo();
-			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4", 2010004, 2010004, null), 0, 1, 0)
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4", 2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0)
 			{
 				Translation = "Fmugh zorb wis Blen#"
 			});
@@ -110,47 +113,147 @@ namespace SIL.Transcelerator
 			generator.Title = "My Title";
 			generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC;
 			generator.IncludeVerseNumbers = true;
+			int addProjectSpecificCssEntriesCalled = 0;
+			generator.AddProjectSpecificCssEntries = delegate { addProjectSpecificCssEntriesCalled++; };
 			SetRefRange(generator, book, sectionInfo);
 			
 			var sb = new StringBuilder();
 			using (var tw = new StringWriter(sb))
 				generator.Generate(tw);
 
-			var expected = kHTMLSTart.Replace("%TITLE%", "My Title")
+			var expected = kHtmlSTart.Replace("%TITLE%", "My Title")
 					.Replace("%VERNLOCALE%", "xyz")
 					.Replace("%VERNFONT%", "Arial")
 					.Replace("%BLANKLINES%", 0.ToString())
 					.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
-					.Replace("%SECTIONSCRIPTURE%", "<p>1This is the section head Scripture.</p>")
+					.Replace("%SECTVERSENUM%", "1")
 					.Replace("%CATEGORY%", "Details") +
 				"<p>4This is the Scripture.</p>\r\n" +
-				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n" +
-				"<p class=\"questionbt\">What is this?</p>\r\n" +
 				kHtmlExtrasDiv +
+				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n</div>\r\n" +
+				"<p class=\"questionbt\">What is this?</p>\r\n" +
+				"<p class=\"answer\">Nothing</p>\r\n" +
+				kHtmlEnd;
+
+			Assert.That(sb.ToString(), Is.EqualTo(expected));
+			Assert.That(addProjectSpecificCssEntriesCalled, Is.EqualTo(1));
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void Generate_ExcludeLWCQuestionsAndAnswers_SkipUntranslated_MultipleSections_GeneratesValidHtml(bool includeComments)
+		{
+			const string book = "EXO";
+
+			ISectionInfo sectionInfo1 = GetSectionInfoForExo1V1ThruV15();
+			ISectionInfo sectionInfo2 = GetSectionInfo("Somebody Does Something", "Exodus 11:1-7", 2, 11, 1, 7);
+
+			var repo = new PhraseRepo();
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4", 2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0)
+			{
+				Translation = "Fmugh zorb wis Blen#"
+			});
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.5-6", 2011005, 2011006, "Why is this not translated?", null), 1, 0, 0));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.6-7", 2011006, 2011007, "Who did what?", null)
+			{
+				Notes = new []{"This is a comment."} }, 1, 0, 1)
+			{
+				Translation = "Klumpf zad 'op#"
+			});
+
+			var generator = new HtmlScriptGenerator("xyz", repo.GetPhrases, "Arial", tp => tp.SectionId == 0 ? sectionInfo1 : sectionInfo2);
+			generator.Extractor = new TestHtmlExtractor();
+			generator.Title = "Questions for Exodus";
+			generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Skip;
+			generator.IncludeLWCQuestions = false;
+			generator.IncludeLWCAnswers = false;
+			generator.IncludeLWCComments = includeComments;
+			SetRefRange(generator, book, null);
+			
+			var sb = new StringBuilder();
+			using (var tw = new StringWriter(sb))
+				generator.Generate(tw);
+
+			var expected = kHtmlSTart.Replace("%TITLE%", "Questions for Exodus")
+					.Replace("%VERNLOCALE%", "xyz")
+					.Replace("%VERNFONT%", "Arial")
+					.Replace("%BLANKLINES%", 0.ToString())
+					.Replace("%SECTIONHEADORREF%", sectionInfo1.Heading)
+					.Replace("%SECTVERSENUM%", "")
+					.Replace("%CATEGORY%", "Details") +
+				"<p>This is the Scripture.</p>\r\n" +
+				kHtmlExtrasDiv +
+				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n</div>\r\n" +
+				kHtmlSection.Replace("%SECTIONHEADORREF%", sectionInfo2.Heading)
+					.Replace("%SECTVERSENUM%", "")
+					.Replace("%CATEGORY%", "Overview") +
+				kHtmlExtrasDiv +
+				"<p class=\"question\">Klumpf zad 'op#</p>\r\n</div>\r\n" +
+				(includeComments ? "<p class=\"comment\">This is a comment.</p>\r\n" : "") +
 				kHtmlEnd;
 
 			Assert.That(sb.ToString(), Is.EqualTo(expected));
 		}
 
-		[Test]
-		public void WriteTests()
+		[TestCase(true)]
+		[TestCase(false)]
+		public void Generate_OutOfOrderQuestion_GeneratesValidHtml(bool outputPassageForOutOfOrderQuestions)
 		{
-			Assert.Fail("Write some more tests");
+			ISectionInfo sectionInfo = GetSectionInfoForExo1V1ThruV15();
+			var repo = new PhraseRepo();
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Tell me some stuff.", "", 2010001, 2010015, null), 0, 0, 0));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4", 2010004, 2010004, null), 0, 1, 0));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Can I go back and ask something?", "EXO 10.2-3", 2010002, 2010003, null), 0, 1, 1));
+
+			var generator = new HtmlScriptGenerator("fr", repo.GetPhrases, "Comic Sans", tp => sectionInfo);
+			generator.Extractor = new TestHtmlExtractor();
+			generator.Title = "My Title";
+			generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC;
+			generator.IncludeVerseNumbers = true;
+			generator.OutputPassageForOutOfOrderQuestions = outputPassageForOutOfOrderQuestions;
+			SetRefRange(generator, "EXO", null);
+
+			var sb = new StringBuilder();
+			using (var tw = new StringWriter(sb))
+				generator.Generate(tw);
+
+			var expected = kHtmlSTart.Replace("%TITLE%", "My Title")
+					.Replace("%VERNLOCALE%", "fr")
+					.Replace("%VERNFONT%", "Comic Sans")
+					.Replace("%BLANKLINES%", 0.ToString())
+					.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
+					.Replace("%SECTVERSENUM%", "1")
+					.Replace("%CATEGORY%", "Overview") +
+				kHtmlExtrasDiv +
+				"<p class=\"question\" lang=\"en-US\">Tell me some stuff.</p>\r\n</div>\r\n" +
+				"<h3 lang=\"en-US\">Details</h3>\r\n" +
+				"<p>4This is the Scripture.</p>\r\n" +
+				kHtmlExtrasDiv +
+				"<p class=\"question\" lang=\"en-US\">What is this?</p>\r\n</div>\r\n" +
+				(outputPassageForOutOfOrderQuestions ? "<p>2This is the Scripture.</p>\r\n" :
+					"<h4 class=\"summaryRef\">EXO 10.2-3</h4>\r\n") +
+				kHtmlExtrasDiv +
+				"<p class=\"question\" lang=\"en-US\">Can I go back and ask something?</p>\r\n</div>\r\n" +
+				kHtmlEnd;
+
+			Assert.That(sb.ToString(), Is.EqualTo(expected));
 		}
 
-		private static Section GetSectionInfoForExo1V1ThruV15()
+		private static Section GetSectionInfoForExo1V1ThruV15() => GetSectionInfo("Oui Oui", "Exodus 10:1-15", 2, 10, 1, 15);
+
+		private static Section GetSectionInfo(string heading, string scrRef, int book, int chapter, int startVerse, int endVerse)
 		{
 			return new Section
 			{
-				Heading = "Oui Oui",
+				Heading = heading,
 				Categories = new []
 				{
 					new Category {IsOverview = true, Type = "Overview"},
 					new Category {IsOverview = false, Type = "Details"}
 				},
-				ScriptureReference = "Exodus 10:1-15",
-				StartRef = 2010001,
-				EndRef = 2010015,
+				ScriptureReference = scrRef,
+				StartRef = new BCVRef(book, chapter, startVerse),
+				EndRef = new BCVRef(book, chapter, endVerse),
 			};
 		}
 
