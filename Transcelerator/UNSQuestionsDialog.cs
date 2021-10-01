@@ -87,6 +87,7 @@ namespace SIL.Transcelerator
 		/// <summary>Use PhraseSubstitutions property to ensure non-null cache</summary>
 		private List<Substitution> m_cachedPhraseSubstitutions;
 		private bool m_fProcessingSyncMessage;
+		private bool m_fSendingSyncMessage;
 		private BCVRef m_queuedReference;
 		private int m_lastRowEntered = -1;
 		private TranslatablePhrase m_currentPhrase = null;
@@ -1167,9 +1168,10 @@ namespace SIL.Transcelerator
 			ApplyFilter();
 		}
 
-		private void ApplyFilter()
+		private void ApplyFilter(Action setCurrentCell = null)
 		{
 			bool clearCurrentSelection = false;
+			
 			if (m_currentPhrase == null)
 			{
 				RememberCurrentSelection();
@@ -1183,44 +1185,55 @@ namespace SIL.Transcelerator
 			dataGridUns.RowCount = 0;
 			m_biblicalTermsPane.Hide();
 
+			if (setCurrentCell == null)
+			{
+				setCurrentCell = () =>
+				{
+					if (m_currentPhrase != null)
+					{
+						for (int i = 0; i < dataGridUns.Rows.Count; i++)
+						{
+							if (m_helper[i] == m_currentPhrase)
+							{
+								dataGridUns.CurrentCell = dataGridUns.Rows[i].Cells[m_iCurrentColumn];
+								break;
+							}
+						}
+
+						if (clearCurrentSelection)
+						{
+							m_currentPhrase = null;
+							m_iCurrentColumn = -1;
+						}
+					}
+					else
+						HandleDataGridUnsPopulatedFirstTime();
+				};
+			}
+
 			Action<Task<int>> completionAction = t =>
 			{
-				SetUiForLongTask(false);
 				dataGridUns.RowCount = t.Result;
 
 				dataGridUns.RowEnter += dataGridUns_RowEnter;
 
-				int currentRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
-				if (m_currentPhrase != null)
-				{
-					for (int i = 0; i < dataGridUns.Rows.Count; i++)
-					{
-						if (m_helper[i] == m_currentPhrase)
-						{
-							dataGridUns.CurrentCell = dataGridUns.Rows[i].Cells[m_iCurrentColumn];
-							break;
-						}
-					}
-					if (clearCurrentSelection)
-					{
-						m_currentPhrase = null;
-						m_iCurrentColumn = -1;
-					}
-				}
-				else
-					HandleDataGridUnsPopulatedFirstTime();
+				int initialRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
+
+				setCurrentCell();
 
 				if (dataGridUns.CurrentCell == null)
 				{
 					if (m_pnlAnswersAndComments.Visible)
 						m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
 				}
-				else if (currentRow == dataGridUns.CurrentCell.RowIndex)
+				else if (initialRow == dataGridUns.CurrentCell.RowIndex)
 				{
-					dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, currentRow));
+					dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, initialRow));
 				}
 
 				UpdateCountsAndFilterStatus();
+				SetUiForLongTask(false);
+
 			};
 			
 			Task.Run(() =>
@@ -1725,30 +1738,30 @@ namespace SIL.Transcelerator
 
 			var refreshUi = new Action(() =>
 			{
-				ApplyFilter();
-				if (iSortedCol >= 0)
-					SortByColumn(iSortedCol, sortAscending);
-				if (key != null)
+				ApplyFilter(() =>
 				{
-					int iRow = m_helper.FindPhrase(key);
-					if (iRow < 0)
-						iRow = fallBackRow;
-					if (iRow < dataGridUns.Rows.Count)
+					if (iSortedCol >= 0)
+						SortByColumn(iSortedCol, sortAscending);
+					if (key != null)
 					{
-						try
+						int iRow = m_helper.FindPhrase(key);
+						if (iRow < 0)
+							iRow = fallBackRow;
+						if (iRow < dataGridUns.Rows.Count)
 						{
-							dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
-						}
-						catch (InvalidOperationException e)
-						{
-							Debug.Fail("Got the ever-elusive InvalidOperationException: " + e.Message);
+							try
+							{
+								dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+							}
+							catch (InvalidOperationException e)
+							{
+								Debug.Fail("Got the ever-elusive InvalidOperationException: " + e.Message);
 
-							// What to do? Ignore?
+								// What to do? Ignore?
+							}
 						}
 					}
-				}
-
-				SetUiForLongTask(false);
+				});
 			});
 
 			Task.Run(() => { LoadTranslations(null); }).ContinueWith(t =>
@@ -2170,16 +2183,15 @@ namespace SIL.Transcelerator
 		{
 			lock (this)
 			{
+				if (!btnReceiveScrReferences.Checked || m_fSendingSyncMessage)
+					return;
+
 				var scrRef = new BCVRef(reference.ChangeVersification(m_masterVersification).BBBCCCVVV);
 
-				if (!btnReceiveScrReferences.Checked || m_fProcessingSyncMessage)
-				{
-					if (m_fProcessingSyncMessage)
-						m_queuedReference = scrRef;
-					return;
-				}
-
-				ProcessCurrentVerseRefChange(scrRef);
+				if (m_fProcessingSyncMessage)
+					m_queuedReference = scrRef;
+				else
+					ProcessCurrentVerseRefChange(scrRef);
 			}
 		}
 
@@ -2663,7 +2675,12 @@ namespace SIL.Transcelerator
 					return;
 				var currentRef = GetScrRefOfRow(iRow);
 				if (currentRef != null && currentRef.Valid)
+				{
+					m_fSendingSyncMessage = true;
 					m_sendReference?.Invoke(currentRef);
+					m_fSendingSyncMessage = false;
+					Activate();
+				}
 			}
 		}
 
