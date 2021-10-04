@@ -20,7 +20,8 @@ namespace SIL.Transcelerator
 
 		private IVerseRef m_startRef;
 		private IVerseRef m_endRef;
-		private int m_openElements;
+		private bool m_isParagraphOpen;
+		private Stack<string> m_pendingEndMarkers;
 
 		// We need to defer writing paragraphs and verse/chapter numbers until we actually get some text.
 		private Action WriteParagraph { get; set; }
@@ -42,7 +43,8 @@ namespace SIL.Transcelerator
 			WriteParagraph = null;
 			WriteVerse = null;
 			WriteChapter = null;
-			m_openElements = 0;
+			m_isParagraphOpen = false;
+			m_pendingEndMarkers = new Stack<string>();
 
 			var doc = new XmlDocument();
 			var fragment = doc.CreateDocumentFragment();
@@ -51,12 +53,17 @@ namespace SIL.Transcelerator
 			{
 				int chapter = m_startRef.ChapterNum == m_endRef.ChapterNum ? m_startRef.ChapterNum : 0;
 
-				List<IUSFMToken> openingTokens = new List<IUSFMToken>();
+				List<IUSFMMarkerToken> openingTokens = new List<IUSFMMarkerToken>();
 
 				foreach (var tok in m_project.GetUSFMTokens(m_startRef.BookNum, chapter))
 				{
-					if (!tok.IsPublishableVernacular || tok.IsFigure ||
-						tok.IsFootnoteOrCrossReference && tok.IsSpecial)
+					if (!tok.IsPublishableVernacular || tok.IsSpecial)
+					{
+						openingTokens.Clear();
+						continue;
+					}
+
+					if (tok.IsFigure || tok.IsFootnoteOrCrossReference)
 					{
 						openingTokens.Clear();
 						continue;
@@ -70,13 +77,16 @@ namespace SIL.Transcelerator
 
 					if (tok.VerseRef.CompareTo(m_startRef) < 0)
 					{
-						if (!(tok is IUSFMMarkerToken) || ((IUSFMMarkerToken)tok).Type == MarkerType.Verse)
+						if (!(tok is IUSFMMarkerToken markerToken) || markerToken.Type == MarkerType.Verse)
 						{
 							if (openingTokens.LastOrDefault() is IUSFMMarkerToken marker && marker.Type == MarkerType.Chapter)
 								openingTokens.RemoveAt(openingTokens.Count - 1);
 						}
-						else
-							openingTokens.Add(tok);
+						else if (markerToken.Type != MarkerType.End)
+						{
+							openingTokens.Add(markerToken);
+						}
+
 						continue;
 					}
 
@@ -86,16 +96,21 @@ namespace SIL.Transcelerator
 					ProcessToken(xmlw, tok);
 				}
 
-				while (m_openElements > 0)
-				{
-					xmlw.WriteEndElement();
-					m_openElements--;
-				}
+				CloseOpenParagraph(xmlw);
 
 				xmlw.Flush();
 			}
 
 			return fragment.InnerXml + Environment.NewLine;
+		}
+
+		private void CloseOpenParagraph(XmlWriter xmlw)
+		{
+			if (m_isParagraphOpen)
+			{
+				xmlw.WriteEndElement();
+				m_isParagraphOpen = false;
+			}
 		}
 
 		private void ProcessToken(XmlWriter xmlw, IUSFMToken tok)
@@ -105,21 +120,19 @@ namespace SIL.Transcelerator
 				switch (markerToken.Type)
 				{
 					case MarkerType.Paragraph:
+						ClosePendingEndMarkers(xmlw);
 						WritePendingVerse();
-						while (m_openElements > 0)
-						{
-							xmlw.WriteEndElement();
-							m_openElements--;
-						}
+						CloseOpenParagraph(xmlw);
 
 						WriteParagraph = () =>
 						{
 							xmlw.WriteStartElement("div");
 							xmlw.WriteAttributeString("class", "usfm_" + markerToken.Marker);
-							m_openElements++;
+							m_isParagraphOpen = true;
 						};
 						break;
 					case MarkerType.Verse:
+						ClosePendingEndMarkers(xmlw);
 						if (IncludeVerseNumbers)
 						{
 							WriteVerse = () =>
@@ -135,8 +148,10 @@ namespace SIL.Transcelerator
 								xmlw.WriteEndElement();
 							};
 						}
+
 						break;
 					case MarkerType.Chapter:
+						ClosePendingEndMarkers(xmlw);
 						if (xmlw.WriteState != WriteState.Start && IncludeVerseNumbers)
 						{
 							WriteChapter = () =>
@@ -148,14 +163,34 @@ namespace SIL.Transcelerator
 								xmlw.WriteEndElement();
 							};
 						}
+
 						break;
 					case MarkerType.Character:
 						WritePendingVerse();
 						xmlw.WriteStartElement("span");
 						xmlw.WriteAttributeString("class", "usfm_" + markerToken.Marker);
+						if (markerToken.EndMarker != null)
+							m_pendingEndMarkers.Push(markerToken.EndMarker);
 						break;
+
 					case MarkerType.End:
-						xmlw.WriteEndElement();
+						if (m_pendingEndMarkers.Any(e => e == markerToken.Marker))
+						{
+							do
+							{
+								xmlw.WriteEndElement();
+							} while (m_pendingEndMarkers.Pop() != markerToken.Marker);
+						}
+						break;
+
+					default:
+						if (tok.IsFigure || tok.IsFootnoteOrCrossReference)
+						{
+							ClosePendingEndMarkers(xmlw);
+							if (markerToken.EndMarker != null)
+								m_pendingEndMarkers.Push(markerToken.EndMarker);
+						}
+
 						break;
 				}
 			}
@@ -165,6 +200,16 @@ namespace SIL.Transcelerator
 				WriteParagraph?.Invoke();
 				WriteParagraph = null;
 				xmlw.WriteValue(textToken.Text);
+			}
+		}
+
+		private void ClosePendingEndMarkers(XmlWriter xmlw)
+		{
+			// In case data is bad...
+			while (m_pendingEndMarkers.Count > 0)
+			{
+				xmlw.WriteEndElement();
+				m_pendingEndMarkers.Pop();
 			}
 		}
 

@@ -15,7 +15,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
-using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Xml;
