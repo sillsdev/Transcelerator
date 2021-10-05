@@ -2679,7 +2679,6 @@ namespace SIL.Transcelerator
 					m_fSendingSyncMessage = true;
 					m_sendReference?.Invoke(currentRef);
 					m_fSendingSyncMessage = false;
-					Activate();
 				}
 			}
 		}
