@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -47,7 +48,7 @@ namespace SIL.Transcelerator
 		private string m_fmtChkIncludeComments;
 		private string m_fmLWCAnswerTextColor;
 		private string m_fmLWCQuestionTextColor;
-
+		private readonly string m_help;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -139,6 +140,9 @@ namespace SIL.Transcelerator
 				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
 			}
 
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "generatescript.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
+			
 			m_numBlankLines.ValueChanged += delegate
 			{ 
 				m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && !m_numBlankLines.Value.Equals(m_generator.NumberOfBlankLinesForAnswer);
@@ -553,6 +557,22 @@ namespace SIL.Transcelerator
 				m_lblLWCQuestionColor.Text = Format(m_fmLWCQuestionTextColor, languageName);
 				m_lblLWCAnswerTextColor.Text = Format(m_fmLWCAnswerTextColor, languageName);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 		#endregion
 

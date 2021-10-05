@@ -206,7 +206,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			Process.Start(m_help);
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 

@@ -791,6 +791,7 @@ namespace SIL.Transcelerator
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Create Rendering Selection Rule";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
+			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
 			this.grpSelectRendering.ResumeLayout(false);
 			this.grpSelectRendering.PerformLayout();
 			this.m_pnlUserDefinedRenderingMatch.ResumeLayout(false);

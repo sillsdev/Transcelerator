@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -50,6 +51,7 @@ namespace SIL.Transcelerator
 		private int m_existingEndVerse;
 		private int m_insertionLocation;
 		private readonly Action<bool> m_changeKeyboard;
+		private readonly string m_help;
 
 		#region Properties
 		public string EnglishQuestion => m_chkNoEnglish.Checked ? null : m_txtEnglishQuestion.Text;
@@ -246,6 +248,9 @@ namespace SIL.Transcelerator
 			};
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
+
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "addingquestions.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		private void SetCurrentSections()
@@ -512,13 +517,13 @@ namespace SIL.Transcelerator
 		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			ShowModalChild(new MessageBoxForm(LocalizationManager.GetString(
-				"NewQuestionDlg.RequestAddCategoryFeatureInfo",
-				"Sorry this feature is not available yet. But if you are connected to the " +
-				"Internet and have not opted out of transmitting analytics data, this " +
-				"feature will now be requested for you."),
+					"NewQuestionDlg.RequestAddCategoryFeatureInfo",
+					"Sorry this feature is not available yet. But if you are connected to the " +
+					"Internet and have not opted out of transmitting analytics data, this " +
+					"feature will now be requested for you."),
 				Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
-				"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
-				TxlPlugin.pluginName),
+						"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
+					TxlPlugin.pluginName),
 				MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
 				if (form.DialogResult == DialogResult.OK)
@@ -527,6 +532,22 @@ namespace SIL.Transcelerator
 						{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
 				}
 			});
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }

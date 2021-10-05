@@ -70,7 +70,7 @@ namespace SIL.Transcelerator
 			ValidateName = nameValidator;
 			m_txtName.Text = m_rule.Name;
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "adjustments.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "renderingselectionrules.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 
 			if (!creating)
@@ -341,7 +341,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			Process.Start(m_help);
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 		#endregion
 

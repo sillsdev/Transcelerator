@@ -10,10 +10,12 @@
 // File: ScrReferenceFilterDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Paratext.PluginInterfaces;
 using SIL.Scripture;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -29,6 +31,7 @@ namespace SIL.Transcelerator
 		#region Data members
 		private readonly IVerseRef m_firstAvailableRef;
         private readonly IVerseRef m_lastAvailableRef;
+		private readonly string m_help;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -55,6 +58,9 @@ namespace SIL.Transcelerator
 			m_lastAvailableRef = versification.CreateReference(lastBook, lastChapter, versification.GetLastVerse(lastBook, lastChapter));
 			if (initialFromRef.Equals(m_firstAvailableRef) && initialToRef.Equals(m_lastAvailableRef))
 				btnClearFilter.Enabled = false;
+
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "filtering.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 		#endregion
 
@@ -106,6 +112,22 @@ namespace SIL.Transcelerator
 		{
             scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(m_firstAvailableRef, m_project);
             scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(m_lastAvailableRef, m_project);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 		#endregion
 

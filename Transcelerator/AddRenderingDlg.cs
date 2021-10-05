@@ -10,7 +10,10 @@
 // File: AddRenderingDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -23,6 +26,7 @@ namespace SIL.Transcelerator
 	public partial class AddRenderingDlg : Form
 	{
 		private readonly Action<bool> m_selectKeyboard;
+		private readonly string m_help;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -34,6 +38,9 @@ namespace SIL.Transcelerator
 			m_selectKeyboard = selectKeyboard;
 			InitializeComponent();
 			selectKeyboard?.Invoke(true);
+
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "biblicalterms.htm");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -62,6 +69,22 @@ namespace SIL.Transcelerator
 		private void m_txtRendering_TextChanged(object sender, EventArgs e)
 		{
 			btnOk.Enabled = !string.IsNullOrEmpty(m_txtRendering.Text);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }
