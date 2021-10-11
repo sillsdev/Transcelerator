@@ -1,4 +1,10 @@
-﻿## 2.0.5 22 January 2021
+﻿## 3.0.0 14 October 2021
+* Changed to use the new interfaces compatible with Paratext 9.2.
+* This version also fixes several deficiencies, including performance issues when sorting on the Translation column.
+* Improvements to the Add Question dialog box
+* Properly handles read-only projects
+
+## 2.0.5 22 January 2021
 * Changed verse numbers to output using <span class="verse"> so they can be formatted using styles in word processing programs (e.g., MS Word) that recognize the span elements that have the class attribute set. Note: If you use an external CSS, you will need to regenerate it or manually edit it in order for verse numbers to display as superscripted in the generated HTML checking script files. (To regenerate the external CSS, in the __Generate Checking Script__ dialog box on the __Appearance__ tab, select the __Overwrite Existing CSS File__ option.)
 
 ## 2.0.3 11 January 2021
