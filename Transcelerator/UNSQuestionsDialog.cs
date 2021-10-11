@@ -2069,14 +2069,21 @@ namespace SIL.Transcelerator
 			if (m_helper[rowIndex].InsertKeyTermRendering(sender, m_lastTranslationSelectionState,
 				sender.SelectedRendering))
 			{
-				// Replacement was based on previous editing selection, so put the translation
-				// back into edit mode, and select the inserted rendering.
-				dataGridUns.BeginEdit(false);
-				// Start and Length values may have been modified
-				TextControl.SelectionStart = m_lastTranslationSelectionState.Start;
-				TextControl.SelectionLength = m_lastTranslationSelectionState.Length;
+				if (TextControl == null)
+				{
+					// Replacement was based on previous editing selection, so put the translation
+					// back into edit mode, and select the inserted rendering.
+					dataGridUns.BeginEdit(false);
+					// Start and Length values may have been modified
+					TextControl.SelectionStart = m_lastTranslationSelectionState.Start;
+					TextControl.SelectionLength = m_lastTranslationSelectionState.Length;
+					TextControl.Focus();
+				}
+				else
+				{
+					TextControl.SelectedText = sender.SelectedRendering;
+				}
 				m_lastTranslationSelectionState = null;
-				TextControl.Focus();
 			}
 			else
 				SaveNeeded = true;
@@ -2205,13 +2212,19 @@ namespace SIL.Transcelerator
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
 			if (TextControl != null)
 			{
-				m_lastTranslationSelectionState = new SubstringDescriptor(TextControl);
+				SaveSelectionState();
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
 				TextControl.DragEnter -= TextControl_Drag;
 				TextControl.DragOver -= TextControl_Drag;
 				TextControl.DragDrop -= TextControl_DragDrop;
 				TextControl.GiveFeedback -= TextControl_GiveFeedback;
 			}
+		}
+
+		private void SaveSelectionState()
+		{
+			m_lastTranslationSelectionState = TextControl == null ? null :
+				new SubstringDescriptor(TextControl);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3021,6 +3034,8 @@ namespace SIL.Transcelerator
 		public void ShowAddRenderingDlg(Action<string, string> addRendering)
 		{
 			Debug.Assert(!IsShowingModalForm);
+
+			SaveSelectionState();
 
 			ShowModalChild(new AddRenderingDlg(m_selectKeyboard), dlg =>
 			{
