@@ -2210,9 +2210,9 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
+			SaveSelectionState();
 			if (TextControl != null)
 			{
-				SaveSelectionState();
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
 				TextControl.DragEnter -= TextControl_Drag;
 				TextControl.DragOver -= TextControl_Drag;
