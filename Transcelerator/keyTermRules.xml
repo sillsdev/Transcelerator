@@ -81,6 +81,15 @@
   <KeyTermRule id="covenant">
     <Alternate name="agreement"/>
   </KeyTermRule>
+  <KeyTermRule id="circumcise">
+    <Alternate name="circumcised"/>
+  </KeyTermRule>
+  <!-- This misspelling in the Major Biblical Terms list has been reported as YouTrack issue RES-1228 -->
+  <KeyTermRule id="to circumsize; circumcision" rule="Exclude">
+    <Alternate name="circumcise"/>
+    <Alternate name="circumcision"/>
+    <Alternate name="circumcised"/>
+  </KeyTermRule>
   <KeyTermRule id="so" rule="MatchForRefOnly" />
   <KeyTermRule id="official; servant; attendant" rule="MatchForRefOnly" />
   <KeyTermRule id="people who are like a flock" rule="Exclude">
