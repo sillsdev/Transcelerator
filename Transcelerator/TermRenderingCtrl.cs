@@ -43,6 +43,7 @@ namespace SIL.Transcelerator
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly Action<IEnumerable<string>> m_lookupTerm;
+		private readonly Action m_prepareToAddRendering;
 
 		internal static string s_AppName;
 		#endregion
@@ -60,7 +61,8 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IEnumerable<string>> lookupTerm)
+			Action<bool> selectKeyboard, Action<IEnumerable<string>> lookupTerm,
+			Action prepareToAddRendering)
 		{
 			InitializeComponent();
 
@@ -68,6 +70,7 @@ namespace SIL.Transcelerator
 			m_term = term;
 			m_selectKeyboard = selectKeyboard;
 			m_lookupTerm = lookupTerm;
+			m_prepareToAddRendering = prepareToAddRendering;
 			m_lblKeyTermColHead.Text = term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			PopulateRenderings();
@@ -309,6 +312,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
+			m_prepareToAddRendering?.Invoke();
+
 			using (var dlg = new AddRenderingDlg(m_selectKeyboard))
 			{
 				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
