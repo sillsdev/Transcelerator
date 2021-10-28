@@ -100,6 +100,8 @@ namespace SIL.Transcelerator
 		private bool m_loadingBiblicalTermsPane = false;
 		private SubstringDescriptor m_lastTranslationSelectionState;
 		private bool m_preventReEntrantCommitEditDuringSave = false;
+		private bool m_forceSaveOnCloseModal = false;
+		private DataFileAccessor.DataFileId m_lockToHold = DataFileAccessor.DataFileId.Translations;
 		#endregion
 
 		#region Delegates
@@ -298,11 +300,12 @@ namespace SIL.Transcelerator
 			m_sendReference = sendReference;
 
 			InitializeComponent();
+			Icon = Resources.TXL_no_TXL;
 
 			m_host = host;
 			m_project = project;
 
-			m_fileAccessor = new ParatextDataFileAccessor(m_project);
+			m_fileAccessor = new ParatextDataFileAccessor(m_project, HandleWriteLockReleased);
 
 			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major).Where(t => t.Occurrences.Any(o => o.BookNum < 67));
 
@@ -380,7 +383,33 @@ namespace SIL.Transcelerator
 			if (m_project.Language.Id == null)
 				mnuGenerate.Enabled = false;
 
-			TermRenderingCtrl.s_AppName = m_host.ApplicationName;
+			TermRenderingCtrl.AppName = m_host.ApplicationName;
+		}
+
+		private Task HandleWriteLockReleased(DataFileAccessor.DataFileId fileType)
+		{
+			if (InvokeRequired)
+				return new Task(() => Invoke(new Action(() => HandleWriteLockReleased(fileType))));
+
+			if (fileType != m_lockToHold)
+				return null;
+
+			if (IsShowingModalForm)
+			{
+				m_forceSaveOnCloseModal = true;
+				return new Task(WaitForSave);
+			}
+
+			if (SaveNeeded || dataGridUns.IsCurrentCellInEditMode)
+				Save(true, false);
+
+			return null;
+		}
+
+		void WaitForSave()
+		{
+			while (m_forceSaveOnCloseModal)
+				Thread.Sleep(100);
 		}
 
 		void HandleDataGridUnsPopulatedFirstTime()
@@ -415,21 +444,66 @@ namespace SIL.Transcelerator
 			splashScreen?.Close();
 
 			OnModalFormShown += delegate { m_biblicalTermsPane.Enabled = false; };
-			OnModalFormClosed += delegate { m_biblicalTermsPane.Enabled = true; };
+			OnModalFormClosed += OnOnModalFormClosed;
 
 			Show();
 		}
 
-		private void OnProjectDataChanged(IProject sender, ProjectDataChangeType details) =>
+		private void OnOnModalFormClosed()
+		{
+			m_biblicalTermsPane.Enabled = true;
+			if (m_forceSaveOnCloseModal)
+			{
+				Save(dataGridUns.IsCurrentCellInEditMode, false);
+				m_forceSaveOnCloseModal = false;
+			}
+		}
+
+		private void OnProjectDataChanged(IProject sender, ProjectDataChangeType details)
+		{
+			// REVIEW: Does this handle global changes from Send/Receive properly?
 			InitFromHostProject(details);
+			if (details == ProjectDataChangeType.WholeProject)
+			{
+				// REVIEW: If sort order changes and we are sorted on the Translation column, we should re-sort.
+				// Does this code cover that?
+
+				// This seems ideal, but we can't do this because a settings change does not request release of
+				// Transcelerator's write lock(s); therefore, it does not force a save to happen before making
+				// this change.
+				// Debug.Assert(!SaveNeeded);
+
+				Reload(false);
+			}
+		}
 
 		private void InitFromHostProject(ProjectDataChangeType change = ProjectDataChangeType.WholeProject)
 		{
 			switch (change)
 			{
-				case ProjectDataChangeType.SettingVernacularKeyboard: // ENHANCE: If vern keyboard is active, set it to new keyboard
+				case ProjectDataChangeType.SettingVernacularKeyboard:
+					if (InTranslationCell)
+						m_selectKeyboard?.Invoke(true);
 					return;
-				// TODO: If sort order changes and we are sorted on the Translation column, we should re-sort.
+				case ProjectDataChangeType.DataBiblicalTerms:
+				case ProjectDataChangeType.WholeProject:
+					break;
+				case ProjectDataChangeType.DataBiblicalTermsRenderings:
+					var rowIndex = dataGridUns.CurrentCellAddress.Y;
+					foreach (Control ctrl in m_biblicalTermsPane.Controls)
+					{
+						if (ctrl is TermRenderingCtrl ktRenderCtrl)
+						{
+							ktRenderCtrl.Reload();
+
+							var sd = m_helper[rowIndex].FindTermRenderingInUse(ktRenderCtrl);
+							if (sd != null)
+								ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Start, sd.Length);
+						}
+					}
+					return;
+				default:
+					return;
 			}
 			
 			var fontInfo = m_project.Language.Font;
@@ -606,17 +680,51 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClosing(CancelEventArgs e)
 		{
+			if (IsShowingModalForm)
+			{
+				Activate();
+				e.Cancel = true;
+				return;
+			}
+
+			var caption = LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "Save changes?");
+			bool confirmedSave = false;
+			if (dataGridUns.IsCurrentCellInEditMode)
+			{
+				if (dataGridUns.IsCurrentCellDirty)
+				{
+					switch (MessageBox.Show(this,
+						LocalizationManager.GetString("MainWindow.CommitChangesBeforeClosingMessage",
+							"You are currently editing a translation. Do you wish to save this change before closing?"),
+						caption,
+						MessageBoxButtons.YesNoCancel))
+					{
+						case DialogResult.Yes:
+							dataGridUns.EndEdit();
+							confirmedSave = true;
+							break;
+						case DialogResult.Cancel:
+							e.Cancel = true;
+							base.OnClosing(e);
+							return;
+					}
+				}
+				else
+					dataGridUns.CancelEdit();
+			}
+
 			if (SaveNeeded)
 			{
-				if (mnuAutoSave.Checked)
+				if (mnuAutoSave.Checked || confirmedSave)
 				{
 					Save(true, false);
 					return;
 				}
+
 				switch (MessageBox.Show(this,
 					LocalizationManager.GetString("MainWindow.SaveChangesBeforeClosingMessage",
 						"You have made changes. Do you wish to save before closing?"),
-					LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "Save changes?"),
+					caption,
 					MessageBoxButtons.YesNoCancel))
 				{
 					case DialogResult.Yes:
@@ -624,23 +732,21 @@ namespace SIL.Transcelerator
 						break;
 					case DialogResult.Cancel:
 						e.Cancel = true;
-						break;
+						base.OnClosing(e);
+						return;
 				}
 			}
-			if (!e.Cancel)
-			{
-				Properties.Settings.Default.Save();
 
-				if (Properties.Settings.Default.ProduceScriptureForgeFiles)
-					ProduceScriptureForgeFiles();
-			}
+			Properties.Settings.Default.Save();
 
+			if (Properties.Settings.Default.ProduceScriptureForgeFiles)
+				ProduceScriptureForgeFiles();
 			Application.RemoveMessageFilter(this);
 
 			base.OnClosing(e);
 		}
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Cut cell contents (Translation column only) - from context menu for cell, not in
         /// editing mode
@@ -893,12 +999,24 @@ namespace SIL.Transcelerator
 			if (PostponeRefresh)
 				RefreshNeeded = true;
 			else
-				dataGridUns.Refresh();
+			{
+				if (InvokeRequired)
+					Invoke(new Action(() => { dataGridUns.Refresh(); }));
+				else
+					dataGridUns.Refresh();
+			}
 		}
 
-		private void UNSQuestionsDialog_Activated(object sender, EventArgs e)
+		protected override void OnActivated(EventArgs e)
 		{
+			base.OnActivated(e);
 			m_selectKeyboard?.Invoke(InTranslationCell);
+		}
+
+		protected override void OnDeactivate(EventArgs e)
+		{
+			base.OnDeactivate(e);
+			m_selectKeyboard?.Invoke(false);
 		}
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -1053,6 +1171,15 @@ namespace SIL.Transcelerator
 			var clickedColumn = dataGridUns.Columns[iClickedCol];
 			if (clickedColumn.SortMode == DataGridViewColumnSortMode.NotSortable)
 				return;
+
+			// ENHANCE: Remember which cell we were in and try to find the same place in the newly sorted list.
+			// We might only care about this in the case where the cell was being edited.
+
+			// Not likely that a user would initiate a new sort while editing, but if they do (and if the
+			// cell value was actually changed, let's just save it.
+			if (dataGridUns.IsCurrentCellInEditMode)
+				dataGridUns.EndEdit();
+
 			// We want to sort it ascending unless it already was ascending.
 			bool sortAscending = clickedColumn.HeaderCell.SortGlyphDirection != SortOrder.Ascending;
 			if (!sortAscending)
@@ -1264,6 +1391,15 @@ namespace SIL.Transcelerator
 			}
 
 			UseWaitCursor = startingTask;
+
+			if (!startingTask)
+			{
+				lock (this)
+				{
+					if (m_queuedReference != null)
+						ProcessQueuedReferenceChange();
+				}
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1653,6 +1789,7 @@ namespace SIL.Transcelerator
 				dlg.ReadonlyAlert = ReadonlyAlert;
 			
 			m_selectKeyboard?.Invoke(false);
+			m_lockToHold = DataFileAccessor.DataFileId.PhraseSubstitutions;
 			ShowModalChild(dlg, substitutionsDlg =>
 			{
 				if (substitutionsDlg.DialogResult == DialogResult.OK)
@@ -1665,6 +1802,7 @@ namespace SIL.Transcelerator
 					Reload(false);
 				}
 				m_selectKeyboard?.Invoke(true);
+				m_lockToHold = DataFileAccessor.DataFileId.Translations;
 			});
 		}
 
@@ -1805,6 +1943,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
+			// Note: Apparently you get a RowEnter not only when you actually enter a row but
+			// also if you are entering or leaving edit mode for the already current row. We
+			// only care about the first time. Setting ReadOnly (below) causes a crash if it
+			// happens when this gets called as part of committing an edit.
+			if (dataGridUns.CurrentRow?.Index == e.RowIndex) // && dataGridUns.IsCurrentCellInEditMode
+				return;
+
 			m_lastRowEntered = e.RowIndex;
 			if (mnuViewBiblicalTermsPane.Checked)
 				LoadKeyTermsPane(e.RowIndex);
@@ -1917,6 +2062,7 @@ namespace SIL.Transcelerator
 		{
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard?.Invoke(false);
+			m_lockToHold = DataFileAccessor.DataFileId.QuestionCustomizations;
 			ShowModalChild(new EditQuestionDlg(phrase,
 				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
 					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
@@ -1933,6 +2079,8 @@ namespace SIL.Transcelerator
 					dataGridUns.CurrentCell = dataGridUns.Rows[row].Cells[currentCol];
 					dataGridUns.InvalidateRow(row);
 				}
+
+				m_lockToHold = DataFileAccessor.DataFileId.Translations;
 			});
 		}
 
@@ -1950,6 +2098,7 @@ namespace SIL.Transcelerator
 			var newQuestionDlg = new NewQuestionDlg(m_project, CurrentPhrase, language, m_sectionInfo,
 				m_project.Versification, m_masterVersification, m_helper, m_selectKeyboard);
 
+			m_lockToHold = DataFileAccessor.DataFileId.QuestionCustomizations;
 			ShowModalChild(newQuestionDlg, dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)
@@ -1981,6 +2130,8 @@ namespace SIL.Transcelerator
 					dataGridUns.CurrentCell = dataGridUns.Rows[m_helper.FindPhrase(newPhrase.QuestionInfo)].Cells[m_colTranslation.Index];
 					UpdateCountsAndFilterStatus();
 				}
+
+				m_lockToHold = DataFileAccessor.DataFileId.Translations;
 			});
 		}
 
@@ -2085,8 +2236,15 @@ namespace SIL.Transcelerator
 				}
 				m_lastTranslationSelectionState = null;
 			}
-			else
+			else if (TextControl == null)
 				SaveNeeded = true;
+			else
+			{
+				// REVIEW: How did this used to work without this code?
+				TextControl.Text = m_helper[rowIndex].Translation;
+				// TODO: Make an appropriate selection
+			}
+
 			dataGridUns.InvalidateRow(rowIndex);
 		}
 
@@ -2149,6 +2307,8 @@ namespace SIL.Transcelerator
 			if (m_fileAccessor.IsReadonly)
 				dlg.ReadonlyAlert = ReadonlyAlert;
 
+			m_lockToHold = DataFileAccessor.DataFileId.TermRenderingSelectionRules;
+
 			ShowModalChild(dlg, rulesDlg =>
 			{
 				if (rulesDlg.DialogResult == DialogResult.OK)
@@ -2156,6 +2316,8 @@ namespace SIL.Transcelerator
 					m_helper.TermRenderingSelectionRules = new List<RenderingSelectionRule>(rulesDlg.Rules);
 					KeyTermBestRenderingsChanged();
 				}
+
+				m_lockToHold = DataFileAccessor.DataFileId.Translations;
 			});
 		}
 
@@ -2173,6 +2335,7 @@ namespace SIL.Transcelerator
 			if (TextControl == null)
 				return;
 
+			TextControl.UseWaitCursor = TextControl.Parent.UseWaitCursor = false;
 			TextControl.AllowDrop = true;
 			TextControl.DragDrop += TextControl_DragDrop;
 			TextControl.DragEnter += TextControl_Drag;
@@ -2195,7 +2358,7 @@ namespace SIL.Transcelerator
 
 				var scrRef = new BCVRef(reference.ChangeVersification(m_masterVersification).BBBCCCVVV);
 
-				if (m_fProcessingSyncMessage)
+				if (m_fProcessingSyncMessage || !dataGridUns.Enabled)
 					m_queuedReference = scrRef;
 				else
 					ProcessCurrentVerseRefChange(scrRef);
@@ -2426,8 +2589,8 @@ namespace SIL.Transcelerator
 				finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
 				(!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
 				(!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
-                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations) < finfoParsedQuestions.LastWriteTimeUtc &&
-                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions) < finfoParsedQuestions.LastWriteTimeUtc)
+                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc &&
+                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc)
 	        {
 	            parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
 	        }
@@ -2684,7 +2847,7 @@ namespace SIL.Transcelerator
 		{
 			lock (this)
 			{
-				if (m_fProcessingSyncMessage)
+				if (m_fProcessingSyncMessage || m_queuedReference != null)
 					return;
 				var currentRef = GetScrRefOfRow(iRow);
 				if (currentRef != null && currentRef.Valid)
@@ -2738,11 +2901,7 @@ namespace SIL.Transcelerator
 				lock (this)
 				{
 					if (m_queuedReference != null && !m_queuedReference.Equals(reference))
-					{
-						reference = m_queuedReference;
-						m_queuedReference = null;
-						ProcessCurrentVerseRefChange(reference);
-					}
+						ProcessQueuedReferenceChange();
 					else
 					{
 						if (t.Result >= 0 && m_queuedReference == null && !dataGridUns.IsCurrentCellInEditMode &&
@@ -2811,6 +2970,13 @@ namespace SIL.Transcelerator
 				else
 					completionAction(t);
 			});
+		}
+
+		private void ProcessQueuedReferenceChange()
+		{
+			BCVRef reference = m_queuedReference;
+			m_queuedReference = null;
+			ProcessCurrentVerseRefChange(reference);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3037,10 +3203,14 @@ namespace SIL.Transcelerator
 
 			SaveSelectionState();
 
+			m_lockToHold = DataFileAccessor.DataFileId.KeyTermRenderingInfo;
+
 			ShowModalChild(new AddRenderingDlg(m_selectKeyboard), dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)
 					addRendering(dlg.Rendering, dlg.Text);
+
+				m_lockToHold = DataFileAccessor.DataFileId.Translations;
 			});
 		}
 

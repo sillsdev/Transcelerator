@@ -27,7 +27,6 @@ using System.Text;
 using System.Windows.Forms;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
-using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -45,7 +44,7 @@ namespace SIL.Transcelerator
 		private Rectangle m_rectToInvalidateOnResize;
 		private readonly Action<IReadOnlyList<string>> m_lookupTerm;
 
-		internal static string s_AppName;
+		internal static string AppName;
 		#endregion
 
 		#region Events and Delegates
@@ -135,9 +134,8 @@ namespace SIL.Transcelerator
 		#region Event handlers
 		private void HandleStringsLocalized()
 		{
-			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
-			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, s_AppName);
-			mnuRefreshRenderingsH.Text = string.Format(mnuRefreshRenderingsH.Text, s_AppName);
+			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, AppName);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -185,16 +183,17 @@ namespace SIL.Transcelerator
 			m_lookupTerm(m_term.AllTermIds);
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles the Click event of the Refresh Renderings from Paratext menu item.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void mnuRefreshRenderingsH_Click(object sender, EventArgs e)
-        {
-            m_term.LoadRenderings();
-            PopulateRenderings();
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles Reloads the Renderings from Paratext (plus any TXL-specific ones) and
+		/// populates the display.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal void Reload()
+		{
+			m_term.LoadRenderings();
+			PopulateRenderings();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -305,7 +304,7 @@ namespace SIL.Transcelerator
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
 			var parentForm = ParentForm as UNSQuestionsDialog;
-			parentForm.ShowAddRenderingDlg(AddRendering);
+			parentForm?.ShowAddRenderingDlg(AddRendering);
 		}
 
 		/// ------------------------------------------------------------------------------------

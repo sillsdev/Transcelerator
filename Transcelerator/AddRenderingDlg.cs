@@ -51,7 +51,7 @@ namespace SIL.Transcelerator
 		protected override void OnClosed(EventArgs e)
 		{
 			m_selectKeyboard?.Invoke(false);
-			 base.OnClosed(e);
+			base.OnClosed(e);
 		}
 
 		/// ------------------------------------------------------------------------------------

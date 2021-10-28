@@ -115,11 +115,7 @@ namespace SIL.Transcelerator
 		/// ----------------------------------------------------------------------------------------
 		public void Close()
 		{
-			if (m_splashScreen == null)
-				return;
-
-			m_splashScreen.RealClose(); // Invokes if needed. Guaranteed not to throw.
-			
+			m_splashScreen?.RealClose(); // Invokes if needed. Guaranteed not to throw.
 			m_splashScreen = null;
 		}
 		#endregion
@@ -133,7 +129,19 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Message
 		{
-			set => m_splashScreen.SetMessage(value); // Invokes if needed. Guaranteed not to throw.
+			set
+			{
+				try
+				{
+					// Invokes if needed. Guaranteed not to throw.
+					m_splashScreen?.SetMessage(value); 
+				}
+				catch (NullReferenceException)
+				{
+					// m_splashScreen got set to null between the time of the null reference check at the call to SetMessage
+				}
+			}
+			
 		}
 		#endregion
 

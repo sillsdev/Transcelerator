@@ -16,21 +16,24 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using L10NSharp;
 using Paratext.PluginInterfaces;
-using SIL.Extensions;
 using SIL.Reporting;
 using SIL.Xml;
+using DateTime = System.DateTime;
+using Task = System.Threading.Tasks.Task;
 
 namespace SIL.Transcelerator
 {
     public abstract class DataFileAccessor
 	{
-		private const string kScrForgeTranslationsFilenamePrefix = "Translated Checking Questions for ";
-		private const string kScrForgeTranslationsExt = ".xml";
+		protected const string kScrForgeTranslationsFilenamePrefix = "Translated Checking Questions for ";
+		protected const string kScrForgeTranslationsExt = ".xml";
 		protected static Regex s_regexScrForgeTranslationsFile = new Regex("^" +
 			kScrForgeTranslationsFilenamePrefix + @"[1-3A-Z][A-Z]{2}\" +
 			kScrForgeTranslationsExt + "$", RegexOptions.Compiled);
+		private static Dictionary<DataFileId, string> s_dataFileIdMap;
 
 		public enum DataFileId
 		{
@@ -46,18 +49,28 @@ namespace SIL.Transcelerator
 			ScriptureForge,
 		}
 
+		static DataFileAccessor()
+		{
+			s_dataFileIdMap = new Dictionary<DataFileId, string>(5);
+			s_dataFileIdMap[DataFileId.Translations] = "Translations of Checking Questions.xml";
+			s_dataFileIdMap[DataFileId.QuestionCustomizations] = "Question Customizations.xml";
+			s_dataFileIdMap[DataFileId.PhraseSubstitutions] = "Phrase substitutions.xml";
+			s_dataFileIdMap[DataFileId.KeyTermRenderingInfo] = "Key term rendering info.xml";
+			s_dataFileIdMap[DataFileId.TermRenderingSelectionRules] = "Term rendering selection rules.xml";
+		}
+
 		protected static string GetFileName(DataFileId fileId)
         {
-            switch (fileId)
-            {
-                case DataFileId.Translations: return "Translations of Checking Questions.xml";
-                case DataFileId.QuestionCustomizations: return "Question Customizations.xml";
-                case DataFileId.PhraseSubstitutions: return "Phrase substitutions.xml";
-                case DataFileId.KeyTermRenderingInfo: return "Key term rendering info.xml";
-                case DataFileId.TermRenderingSelectionRules: return "Term rendering selection rules.xml";
-				default:
-		            throw new ArgumentException("Bogus", nameof(fileId));
-            }
+			return s_dataFileIdMap.TryGetValue(fileId, out var filename) ?
+				filename : throw new ArgumentException("Bogus", nameof(fileId));
+		}
+
+		protected static DataFileId GetFileId(string fileName)
+		{
+			foreach (var pair in s_dataFileIdMap)
+				if (fileName.Equals(pair.Value)) return pair.Key;
+
+			throw new ArgumentException("Unexpected Filename", nameof(fileName));
 		}
 
 		protected static string GetBookSpecificFileName(BookSpecificDataFileId fileId, string bookId)
@@ -115,7 +128,11 @@ namespace SIL.Transcelerator
     public class ParatextDataFileAccessor : DataFileAccessor, IPluginObject
     {
 		private readonly IProject m_project;
+		private readonly Func<DataFileId, Task> m_writeLockReleaseRequestHandler;
+		// Dictionary of file names to their corresponding write locks
 		private readonly Dictionary<string, IWriteLock> m_locks = new Dictionary<string, IWriteLock>();
+		private readonly List<string> m_locksPendingRemoval = new List<string>();
+
 		public bool IsReadonly
 		{
 			get 
@@ -125,10 +142,11 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public ParatextDataFileAccessor(IProject project)
-        {
-            m_project = project;
-        }
+		public ParatextDataFileAccessor(IProject project, Func<DataFileId, Task> writeLockReleaseRequestHandler)
+		{
+			m_project = project;
+			m_writeLockReleaseRequestHandler = writeLockReleaseRequestHandler;
+		}
 
 		public static XMLDataMergeInfo GetXMLDataMergeInfo(string pluginDataId)
         {
@@ -157,7 +175,7 @@ namespace SIL.Transcelerator
 				return new XMLDataMergeInfo(true,
 					new XMLListKeyDefinition("/ComprehensionCheckingQuestionsForBook", "concat(@id,'/',@startChapter,'/',@startVerse)"));
 
-			throw new NotImplementedException("Caller requested merge info for unexpected type of data.");
+			throw new ArgumentException($"Caller requested merge info for unexpected type of data: {pluginDataId}.", nameof(pluginDataId));
 		}
 
         protected override void Write(DataFileId fileId, string data)
@@ -211,8 +229,44 @@ namespace SIL.Transcelerator
 
 		private void ReleaseRequested(IWriteLock lockToRelease)
 		{
+			bool pending = false;
 			lock (m_locks)
-				m_locks.RemoveAll(kvp => kvp.Value == lockToRelease);
+			{
+				var toRemove = m_locks.Where(kvp => kvp.Value == lockToRelease).Select(kvp => kvp.Key).ToList();
+				foreach (var filename in toRemove)
+				{
+					if (m_writeLockReleaseRequestHandler == null)
+						m_locks.Remove(filename);
+					else
+					{
+						var task = filename.StartsWith(kScrForgeTranslationsFilenamePrefix) ? null :
+							m_writeLockReleaseRequestHandler.Invoke(GetFileId(filename));
+						if (task == null)
+							m_locks.Remove(filename);
+						else
+						{
+							m_locksPendingRemoval.Add(filename);
+							pending = true;
+							task.ContinueWith(t =>
+							{
+								lock (m_locks)
+								{
+									m_locksPendingRemoval.Remove(filename);
+									m_locks.Remove(filename);
+								}
+							});
+							task.Start();
+						}
+					}
+				}
+			}
+
+			while (pending)
+			{
+				Thread.Sleep(100);
+				lock (m_locks)
+					pending = m_locksPendingRemoval.Any();
+			}
 		}
 
 		public override bool Exists(DataFileId fileId) =>

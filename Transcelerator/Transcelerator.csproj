@@ -624,6 +624,7 @@
     <None Include="Properties\iconfinder_edit_3855617 - excluded.png" />
     <None Include="Properties\iconfinder_edit_3855617 - user-added.png" />
     <None Include="Properties\iconfinder_edit_3855617 - with-alternatives.png" />
+    <None Include="Properties\TXL no TXL.ico" />
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

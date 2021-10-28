@@ -51,6 +51,8 @@ namespace SIL.Transcelerator
             AccessibleName = GetType().Name;
             Opacity = 0;
 
+			Icon = Properties.Resources.TXL_no_TXL;
+			ShowIcon = true;
 			ShowInTaskbar = true;
 		}
 
