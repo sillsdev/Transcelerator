@@ -89,6 +89,7 @@ namespace SIL.Transcelerator
 		private bool m_fProcessingSyncMessage;
 		private bool m_fSendingSyncMessage;
 		private BCVRef m_queuedReference;
+		private int m_longTaskStackCount = 0;
 		private int m_lastRowEntered = -1;
 		private TranslatablePhrase m_currentPhrase = null;
 		private int m_iCurrentColumn = -1;
@@ -1307,11 +1308,13 @@ namespace SIL.Transcelerator
             var refFilter = m_startRef == null ? null :
 				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef.BBBCCCVVV >= start && m_startRef.BBBCCCVVV <= end);
 
-			SetUiForLongTask(true);
-			dataGridUns.RowEnter -= dataGridUns_RowEnter;
-			dataGridUns.RowCount = 0;
-			m_biblicalTermsPane.Hide();
-
+			SetUiForLongTask(true, () =>
+			{
+				dataGridUns.RowEnter -= dataGridUns_RowEnter;
+				dataGridUns.RowCount = 0;
+				m_biblicalTermsPane.Hide();
+			});
+			
 			if (setCurrentCell == null)
 			{
 				setCurrentCell = () =>
@@ -1338,63 +1341,73 @@ namespace SIL.Transcelerator
 				};
 			}
 
-			Action<Task<int>> completionAction = t =>
+			void CompletionAction()
 			{
-				dataGridUns.RowCount = t.Result;
-
-				dataGridUns.RowEnter += dataGridUns_RowEnter;
-
-				int initialRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
-
-				setCurrentCell();
-
-				if (dataGridUns.CurrentCell == null)
+				void ResetGridCountsAndStatus()
 				{
-					if (m_pnlAnswersAndComments.Visible)
-						m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
-				}
-				else if (initialRow == dataGridUns.CurrentCell.RowIndex)
-				{
-					dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, initialRow));
+					dataGridUns.RowCount = m_helper.Phrases.Count();
+
+					dataGridUns.RowEnter += dataGridUns_RowEnter;
+
+					int initialRow = dataGridUns.CurrentCell?.RowIndex ?? -1;
+
+					setCurrentCell();
+
+					if (dataGridUns.CurrentCell == null)
+					{
+						if (m_pnlAnswersAndComments.Visible)
+							m_lblAnswerLabel.Visible = m_lblAnswers.Visible = m_lblCommentLabel.Visible = m_lblComments.Visible = false;
+					}
+					else if (initialRow == dataGridUns.CurrentCell.RowIndex)
+					{
+						dataGridUns_RowEnter(dataGridUns, new DataGridViewCellEventArgs(m_iCurrentColumn, initialRow));
+					}
+
+					UpdateCountsAndFilterStatus();
 				}
 
-				UpdateCountsAndFilterStatus();
-				SetUiForLongTask(false);
+				SetUiForLongTask(false, ResetGridCountsAndStatus);
+			}
 
-			};
-			
 			Task.Run(() =>
 			{
 				Trace.WriteLine($"Filtering at {DateTime.Now}");
 				m_helper.Filter(txtFilterByPart.Text, MatchWholeWords, CheckedKeyTermFilterType, refFilter,
 					mnuViewExcludedQuestions.Checked, m_dataLocalizer == null ? null :
 						(Func<TranslatablePhrase, string>)(tp => m_dataLocalizer.GetLocalizedString(tp.ToUIDataString())));
-				return m_helper.Phrases.Count();
 
 			}).ContinueWith(t =>
 			{
 				Trace.WriteLine($"Done Filtering at {DateTime.Now}");
 
 				if (InvokeRequired)
-					Invoke(new Action(() => { completionAction(t); }));
+					Invoke(new Action(CompletionAction));
 				else
-					completionAction(t);
+					CompletionAction();
 			});
 		}
 
-		private void SetUiForLongTask(bool startingTask)
+		private void SetUiForLongTask(bool startingTask, Action doIfStartingOrEnding)
 		{
-			foreach (Control control in Controls)
+			lock (this)
 			{
-				if (control != toolStrip1 || !control.ContainsFocus)
-					control.Enabled = !startingTask;
-			}
+				m_longTaskStackCount += startingTask ? 1 : -1;
+				Debug.Assert(m_longTaskStackCount >= 0);
 
-			UseWaitCursor = startingTask;
+				if (startingTask && m_longTaskStackCount > 1 || !startingTask && m_longTaskStackCount > 0)
+					return;
 
-			if (!startingTask)
-			{
-				lock (this)
+				doIfStartingOrEnding.Invoke();
+
+				foreach (Control control in Controls)
+				{
+					if (control != toolStrip1 || !control.ContainsFocus)
+						control.Enabled = !startingTask;
+				}
+
+				UseWaitCursor = startingTask;
+
+				if (!startingTask)
 				{
 					if (m_queuedReference != null)
 						ProcessQueuedReferenceChange();
@@ -1843,7 +1856,11 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void Reload(bool fForceSave, IQuestionKey key, int fallBackRow)
 		{
-			SetUiForLongTask(true);
+			SetUiForLongTask(true, () =>
+			{
+				m_helper.TranslationsChanged -= m_helper_TranslationsChanged; 
+				lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
+			});
 
 			int iCol = dataGridUns.CurrentCell.ColumnIndex;
 			Save(fForceSave, fForceSave); // See comment above for fForceSave
@@ -1868,11 +1885,8 @@ namespace SIL.Transcelerator
 				break;
 			}
 
-			m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
-
 			dataGridUns.CurrentCell = null;
 			dataGridUns.RowCount = 0;
-			lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
 
 			var refreshUi = new Action(() =>
 			{
@@ -1916,7 +1930,6 @@ namespace SIL.Transcelerator
 					Invoke(refreshUi);
 				else
 					refreshUi();
-
 			});
 		}
 
@@ -1950,19 +1963,28 @@ namespace SIL.Transcelerator
 			if (dataGridUns.CurrentRow?.Index == e.RowIndex) // && dataGridUns.IsCurrentCellInEditMode
 				return;
 
+			var phrase = m_helper[e.RowIndex];
+
 			m_lastRowEntered = e.RowIndex;
 			if (mnuViewBiblicalTermsPane.Checked)
-				LoadKeyTermsPane(e.RowIndex);
+				LoadKeyTermsPane(phrase);
 			if (m_pnlAnswersAndComments.Visible)
-				LoadAnswerAndComment(e.RowIndex);
+				LoadAnswerAndComment(phrase);
 			if (btnSendScrReferences.Checked)
 				SendScrReference(e.RowIndex);
 
-			DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
-			row.ReadOnly = m_helper[e.RowIndex].IsExcluded;
+			try
+			{
+				DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
+				row.ReadOnly = m_helper[e.RowIndex].IsExcluded;
 
-			m_normalRowHeight = row.Height;
-			dataGridUns.AutoResizeRow(e.RowIndex);
+				m_normalRowHeight = row.Height;
+				dataGridUns.AutoResizeRow(e.RowIndex);
+			}
+			catch (Exception exception)
+			{
+				Console.WriteLine(exception);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2140,7 +2162,7 @@ namespace SIL.Transcelerator
 			e.ContextMenuStrip = (m_helper[e.RowIndex].Category == -1  || IsShowingModalForm) ? null : dataGridContextMenu;
 		}
 
-		private void dataGridContextMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		private void dataGridContextMenu_Opening(object sender, CancelEventArgs e)
 		{
 			bool fExcluded = CurrentPhrase.IsExcluded;
 			mnuExcludeQuestion.Visible = !fExcluded && !m_fileAccessor.IsReadonly && CurrentPhrase.Category != -1; // Can't exclude categories
@@ -2157,10 +2179,10 @@ namespace SIL.Transcelerator
 				dataGridUns.Rows[e.RowIndex].DefaultCellStyle.BackColor = m_helper[e.RowIndex].IsExcluded ?
 					Color.LightCoral : dataGridUns.DefaultCellStyle.BackColor;
 			}
-			catch(Exception)
+			catch (Exception)
 			{
 				// Collection size is probably changing. Don't crash
-				Debug.Fail("Probably changing filter while still trying to pain previously existing rows.");
+				Debug.Fail("Probably changing filter while still trying to paint previously existing rows.");
 			}
 		}
 
@@ -2217,6 +2239,9 @@ namespace SIL.Transcelerator
 			if (sender.SelectedRendering == null)
 				return;
 			int rowIndex = dataGridUns.CurrentRow.Index;
+
+			SaveSelectionState();
+
 			if (m_helper[rowIndex].InsertKeyTermRendering(sender, m_lastTranslationSelectionState,
 				sender.SelectedRendering))
 			{
@@ -2226,9 +2251,9 @@ namespace SIL.Transcelerator
 					// back into edit mode, and select the inserted rendering.
 					dataGridUns.BeginEdit(false);
 					// Start and Length values may have been modified
+					Debug.Assert(TextControl != null);
 					TextControl.SelectionStart = m_lastTranslationSelectionState.Start;
 					TextControl.SelectionLength = m_lastTranslationSelectionState.Length;
-					TextControl.Focus();
 				}
 				else
 				{
@@ -2239,13 +2264,11 @@ namespace SIL.Transcelerator
 			else if (TextControl == null)
 				SaveNeeded = true;
 			else
-			{
-				// REVIEW: How did this used to work without this code?
 				TextControl.Text = m_helper[rowIndex].Translation;
-				// TODO: Make an appropriate selection
-			}
 
 			dataGridUns.InvalidateRow(rowIndex);
+
+			TextControl?.Focus();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2373,7 +2396,6 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
 			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
-			SaveSelectionState();
 			if (TextControl != null)
 			{
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
@@ -2509,7 +2531,15 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private BCVRef GetScrRefOfRow(int iRow)
 		{
-			string sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
+			string sRef = null;
+			try
+			{
+				sRef = dataGridUns.Rows[iRow].Cells[m_colReference.Index].Value as string;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
 			if (IsNullOrEmpty(sRef))
 				return null;
 			int ichDash = sRef.IndexOf('-');
@@ -2695,15 +2725,24 @@ namespace SIL.Transcelerator
 			return questionWords.Items;
 		}
 
-	    /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the key terms pane.
 		/// </summary>
 		/// <param name="rowIndex">Index of the row to load for.</param>
 		/// ------------------------------------------------------------------------------------
-		[SuppressMessage("Gendarme.Rules.Correctness", "EnsureLocalDisposalRule",
-			Justification="ktRenderCtrl gets added to m_biblicalTermsPane.Controls collection and disposed there")]
 		private void LoadKeyTermsPane(int rowIndex)
+		{
+			LoadKeyTermsPane(m_helper[rowIndex]);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the key terms pane.
+		/// </summary>
+		/// <param name="phrase">Phrase for which the pane is to be loaded.</param>
+		/// ------------------------------------------------------------------------------------
+		private void LoadKeyTermsPane(TranslatablePhrase phrase)
 		{
 			m_loadingBiblicalTermsPane = true;
 			m_biblicalTermsPane.SuspendLayout();
@@ -2712,23 +2751,23 @@ namespace SIL.Transcelerator
 			int col = 0;
 			int longestListHeight = 0;
 			Dictionary<KeyTerm, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTerm, int>();
-			foreach (KeyTerm keyTerm in m_helper[rowIndex].GetParts().OfType<KeyTerm>())//.Where(ktm => ktm.Renderings.Any()))
+			foreach (KeyTerm keyTerm in phrase.GetParts().OfType<KeyTerm>())//.Where(ktm => ktm.Renderings.Any()))
 			{
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out var ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
 				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
 					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, DisplayExceptionMessage, LookupTerm, m_fileAccessor.IsReadonly);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
-				SubstringDescriptor sd = m_helper[rowIndex].FindTermRenderingInUse(ktRenderCtrl);
+				SubstringDescriptor sd = phrase.FindTermRenderingInUse(ktRenderCtrl);
 				if (sd == null)
 				{
 					// Didn't find any renderings for this term in the translation, so don't select anything
-					previousKeyTermEndOfRenderingOffsets[keyTerm] = m_helper[rowIndex].Translation.Length;
+					previousKeyTermEndOfRenderingOffsets[keyTerm] = phrase.Translation.Length;
 				}
 				else
 				{
 					previousKeyTermEndOfRenderingOffsets[keyTerm] = sd.EndOffset;
-					ktRenderCtrl.SelectedRendering = m_helper[rowIndex].Translation.Substring(sd.Start, sd.Length);
+					ktRenderCtrl.SelectedRendering = phrase.Translation.Substring(sd.Start, sd.Length);
 				}
 				ktRenderCtrl.Dock = DockStyle.Fill;
 				m_biblicalTermsPane.Controls.Add(ktRenderCtrl, col, 0);
@@ -2987,7 +3026,19 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void LoadAnswerAndComment(int rowIndex)
 		{
-			var question = m_helper[rowIndex].QuestionInfo;
+			LoadAnswerAndComment(m_helper[rowIndex]);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the answer and comment labels for the given row.
+		/// </summary>
+		/// <param name="phrase">Phrase for which the anwer(s) and comment(s) are to be loaded.
+		/// </param>
+		/// ------------------------------------------------------------------------------------
+		private void LoadAnswerAndComment(TranslatablePhrase phrase)
+		{
+			var question = phrase.QuestionInfo;
 			PopulateAnswerOrCommentLabel(question, question?.Answers, LocalizableStringType.Answer,
 				m_lblAnswerLabel, m_lblAnswers, LocalizationManager.GetString("MainWindow.AnswersLabel", "Answers:"));
 			PopulateAnswerOrCommentLabel(question, question?.Notes, LocalizableStringType.Note,
