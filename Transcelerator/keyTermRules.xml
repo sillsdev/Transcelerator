@@ -714,6 +714,19 @@
     <Alternate name="justifying"/>
   </KeyTermRule>
   <KeyTermRule id="sin against; wrong" rule="MatchForRefOnly"/>
+  <KeyTermRule id="way (of life, of God)" rule="Exclude">
+    <Alternate name="way of life"/>
+    <Alternate name="way of living"/>
+    <Alternate name="conduct" rule="MatchForRefOnly"/>
+    <Alternate name="way" rule="MatchForRefOnly"/>
+  </KeyTermRule>
+  <KeyTermRule id="way (of the Lord, of God)" rule="Exclude">
+    <Alternate name="way of life"/>
+    <Alternate name="way of living"/>
+    <Alternate name="conduct" rule="MatchForRefOnly"/>
+    <Alternate name="way" rule="MatchForRefOnly"/>
+  </KeyTermRule>
+  <KeyTermRule id="the Way" rule="MatchForRefOnly"/>
   <KeyTermRule id="sound wisdom" rule="Exclude">
     <Alternate name="wisdom"/>
   </KeyTermRule>

@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="KeyTermRulesTests.cs" />
     <Compile Include="TxlQuestionsTests.cs" />
     <ProjectReference Include="..\Transcelerator\Transcelerator.csproj">
       <Project>{3a4bf2af-23b5-487e-bea5-5d65a0a01bf7}</Project>

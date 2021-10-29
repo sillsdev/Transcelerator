@@ -49,7 +49,6 @@ namespace SIL.Transcelerator
 	public partial class UNSQuestionsDialog : Form, IMessageFilter
 	{
 		#region Constants
-		private const string kKeyTermRulesFilename = "keyTermRules.xml";
 		public const string kScriptureForgeProductName = "Scripture Forge";
 		#endregion
 
@@ -2509,7 +2508,7 @@ namespace SIL.Transcelerator
 				return;
 			}
 
-			string keyTermRulesFilename = Path.Combine(m_installDir, kKeyTermRulesFilename);
+			string keyTermRulesFilename = Path.Combine(m_installDir, TxlCore.kKeyTermRulesFilename);
 
             FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
             if (!finfoKtRules.Exists)
@@ -2616,7 +2615,7 @@ namespace SIL.Transcelerator
 		private KeyTermRules GetKeyTermRules(string keyTermRulesFilename = null)
 		{
 			if (keyTermRulesFilename == null)
-				keyTermRulesFilename = Path.Combine(m_installDir, kKeyTermRulesFilename);
+				keyTermRulesFilename = Path.Combine(m_installDir, TxlCore.kKeyTermRulesFilename);
 
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out var e);
 			if (e != null)
