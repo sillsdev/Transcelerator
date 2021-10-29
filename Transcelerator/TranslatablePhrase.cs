@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -20,6 +20,7 @@ using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using static System.Char;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -282,9 +283,9 @@ namespace SIL.Transcelerator
 				Debug.Assert(m_fHasUserTranslation);
 
 				StringBuilder bldr = new StringBuilder(m_sTranslation);
-				while (bldr.Length > 0 && Char.IsPunctuation(bldr[0]))
+				while (bldr.Length > 0 && IsPunctuation(bldr[0]))
 					bldr.Remove(0, 1);
-				while (bldr.Length > 0 && Char.IsPunctuation(bldr[bldr.Length - 1]))
+				while (bldr.Length > 0 && IsPunctuation(bldr[bldr.Length - 1]))
 					bldr.Length--;
 				return bldr.ToString();
 			}
@@ -769,15 +770,15 @@ namespace SIL.Transcelerator
 				for (int iTrans = 0; iTrans < translation.Length; iTrans++)
 				{
 					char t = translation[iTrans];
-					if (char.IsDigit(t) &&
-						char.GetNumericValue(sNbr[iNbr]).Equals(char.GetNumericValue(t)))
+					if (IsDigit(t) &&
+						GetNumericValue(sNbr[iNbr]).Equals(GetNumericValue(t)))
 					{
 						if (ich < 0)
 							ich = iTrans; // Found possible start of the number we're seeking.
 						iNbr++;
 						if (iNbr == sNbr.Length)
 						{
-							if (iTrans + 1 < translation.Length && char.IsDigit(translation[iTrans + 1]))
+							if (iTrans + 1 < translation.Length && IsDigit(translation[iTrans + 1]))
 							{
 								// Number in the translation has more (unaccounted for) digits - not a match
 								ich = -1;
@@ -793,7 +794,7 @@ namespace SIL.Transcelerator
 							}
 						}
 					}
-					else if (ich > -1 && !char.IsPunctuation(t) && !char.IsWhiteSpace(t))
+					else if (ich > -1 && !IsPunctuation(t) && !IsWhiteSpace(t))
 					{
 						// Not a complete match. Start over.
 						ich = -1;
@@ -816,7 +817,23 @@ namespace SIL.Transcelerator
 		/// <returns>An object that indicates where in the translation string the match was
 		/// found (offset and length)</returns>
 		/// ------------------------------------------------------------------------------------
-		public SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo)
+		public SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo) =>
+			FindTermRenderingInUse(renderingInfo, Translation);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the term rendering (from the known ones in the renderingInfo) in use in
+		/// the given translation.
+		/// </summary>
+		/// <param name="renderingInfo">The information about a single occurrence of a key
+		/// biblical term and its rendering in a string in the target language.</param>
+		/// <param name="translation">If provided, a provisional translation to use instead
+		/// of the current <see cref="Translation"/></param>
+		/// <returns>An object that indicates where in the translation string the match was
+		/// found (offset and length)</returns>
+		/// ------------------------------------------------------------------------------------
+		public static SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo,
+			string translation)
 		{
 			// This will almost always be 0, but if a term occurs more than once, this
 			// will be the character offset following the occurrence of the rendering of
@@ -826,7 +843,7 @@ namespace SIL.Transcelerator
 			int lengthOfMatch = 0;
 			foreach (string rendering in renderingInfo.Renderings)
 			{
-				int ich = Translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
+				int ich = translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
 				if (ich >= 0 && (ich < indexOfMatch || (ich == indexOfMatch && rendering.Length > lengthOfMatch)))
 				{
 					// Found an earlier or longer match.
@@ -843,8 +860,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inserts a newly selected key term rendering into the appropriate place in the
-		/// translation.
+		/// (provisional) translation.
 		/// </summary>
+		/// <param name="text">The initial value of the translation. This may or may not be the
+		/// actual value of the translation for this phrase since it may be a "dirty" value if
+		/// the user is in the middle of editing it.
+		/// </param>
 		/// <param name="renderingInfo">object that indicates all the renderings for the term
 		/// and the offset of the end of the preceding occurrence of the rendering of the term
 		/// (if any).</param>
@@ -854,14 +875,13 @@ namespace SIL.Transcelerator
 		/// not null, we'll consider whether the new rendering should be inserted at that point.
 		/// </param>
 		/// <param name="newRendering">The selected rendering.</param>
-		/// <returns>true if the rendering is inserted based on the editing state; false
-		/// otherwise (merely replaces an existing rendering or is inserted at the end).</returns>
+		/// <returns>The new (provisional) value of the translation with the new rendering
+		/// inserted in the best possible place in the text.</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool InsertKeyTermRendering(ITermRenderingInfo renderingInfo,
-			SubstringDescriptor editingSelectionState, string newRendering)
+		public string InsertKeyTermRendering(string text, ITermRenderingInfo renderingInfo,
+			string newRendering, ref SubstringDescriptor editingSelectionState)
 		{
-			var locationOfExistingRendering = FindTermRenderingInUse(renderingInfo);
-			string text = Translation;
+			var locationOfExistingRendering = FindTermRenderingInUse(renderingInfo, text);
 			if (editingSelectionState != null)
 			{
 				// If the user had selected the entire translation, we treat it as if they weren't
@@ -917,19 +937,17 @@ namespace SIL.Transcelerator
 					{
 						if (length == 0)
 						{
-							if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
+							if (start > 0 && IsLetterOrDigit(text[start - 1]))
 							{
 								text = text.Insert(start, " ");
 								start++;
 							}
-							if (start < text.Length && Char.IsLetterOrDigit(text[start]))
+							if (start < text.Length && IsLetterOrDigit(text[start]))
 								text = text.Insert(start, " ");
 						}
-						text = text.Insert(start, newRendering);
-						SetTranslationInternal(text);
 						editingSelectionState.Start = start;
 						editingSelectionState.Length = newRendering.Length;
-						return true;
+						return text.Insert(start, newRendering);
 					}
 				}
 			}
@@ -943,12 +961,13 @@ namespace SIL.Transcelerator
 				int start = text.Length;
 				if (finalPunct != null && text.EndsWith(finalPunct))
 					start -= finalPunct.Length;
+				if (start > 0 && IsLetterOrDigit(text[start - 1]))
+					text = text.Insert(start++, " ");
 				sd = new SubstringDescriptor(start, 0);
-				if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
-					newRendering = " " + newRendering;
 			}
-			SetTranslationInternal(text.Remove(sd.Start, sd.Length).Insert(sd.Start, newRendering));
-			return false;
+
+			editingSelectionState = new SubstringDescriptor(sd.Start, newRendering.Length);
+			return text.Remove(sd.Start, sd.Length).Insert(sd.Start, newRendering);
 		}
 
         /// ------------------------------------------------------------------------------------

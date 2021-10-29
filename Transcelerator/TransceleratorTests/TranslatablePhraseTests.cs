@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,6 +9,7 @@
 // 
 // File: TranslatablePhraseTests.cs
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -641,8 +642,14 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("best?", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing?";
 			Assert.AreEqual("Why is the term missing?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Why is the term missing fair?", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing fair?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length - 1));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -662,8 +669,14 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing";
 			Assert.AreEqual("Why is the term missing", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "pretty good"));
-			Assert.AreEqual("Why is the term missing pretty good", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing pretty good";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo("pretty good".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -683,8 +696,14 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing ";
 			Assert.AreEqual("Why is the term missing ", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "best"));
-			Assert.AreEqual("Why is the term missing best", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing best";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo("best".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing ", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -702,12 +721,21 @@ namespace SIL.Transcelerator
 			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "pretty good"));
-			Assert.AreEqual("pretty good", phrases[0].Translation);
-			phrases[0].Translation = "Is this a pretty good translation?";
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Is this a fair translation?", phrases[0].Translation);
+			
+			SubstringDescriptor sd = null;
+			string expectedResult = "pretty good";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo(expectedResult.Length));
+			expectedResult = "Is this a fair translation?";
+			sd = null;
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering("Is this a pretty good translation?", renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("best", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -726,8 +754,16 @@ namespace SIL.Transcelerator
 
 			phrases[0].Translation = "Was this pretty good translation done by the best guy?";
 			Assert.AreEqual("Was this pretty good translation done by the best guy?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Was this pretty good translation done by the fair guy?", phrases[0].Translation);
+
+			SubstringDescriptor sd = null;
+			string expectedResult = "Was this pretty good translation done by the fair guy?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Was this pretty good translation done by the best guy?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -746,8 +782,15 @@ namespace SIL.Transcelerator
 
 			phrases[0].Translation = "Is this a pretty good translation?";
 			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, new SubstringDescriptor(10, 11), "fair"));
-			Assert.AreEqual("Is this a fair translation?", phrases[0].Translation);
+
+			SubstringDescriptor sd = new SubstringDescriptor(10, 11);
+			string expectedResult = "Is this a fair translation?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -767,10 +810,13 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this a fairly good translation?";
 			Assert.AreEqual("Is this a fairly good translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(10, 4);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "best"));
-			Assert.AreEqual("Is this a bestly good translation?", phrases[0].Translation);
+			var expectedResult = "Is this a bestly good translation?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
 			Assert.AreEqual(10, sd.Start);
-			Assert.AreEqual(4, sd.Length);
+			Assert.AreEqual("best".Length, sd.Length);
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this a fairly good translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -790,10 +836,12 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(12, 5);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -813,8 +861,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(11, 5);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -836,8 +884,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(11, 6);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -859,8 +907,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this a translation?";
 			Assert.AreEqual("Is this a translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 1);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -882,8 +930,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this a  translation?";
 			Assert.AreEqual("Is this a  translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 2);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -906,8 +954,8 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("Is this a pretty good translation, or is it just fair?", phrases[0].Translation);
 			int ichStartOfFair = phrases[0].Translation.Length - 5;
 			var sd = new SubstringDescriptor(ichStartOfFair, 4);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "best"));
-			Assert.AreEqual("Is this a pretty good translation, or is it just best?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation, or is it just best?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
 			Assert.AreEqual(ichStartOfFair, sd.Start);
 			Assert.AreEqual("best".Length, sd.Length);
 		}
@@ -929,8 +977,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 0);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good frog?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good frog?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -952,8 +1000,8 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(10, 0);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good frog?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good frog?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -975,25 +1023,25 @@ namespace SIL.Transcelerator
 			phrases[0].Translation = "Is this really best?";
 			Assert.AreEqual("Is this really best?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(0, 2);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "fair"));
-			Assert.AreEqual("Is this really fair?", phrases[0].Translation);
-			// No change to sd since we didn't replace edited selection (InsertKeyTermRendering returns false)
-			Assert.AreEqual(0, sd.Start);
-			Assert.AreEqual(2, sd.Length);
+			var expectedResult = "Is this really fair?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.AreEqual(expectedResult.Length - 1, sd.EndOffset);
+			Assert.AreEqual("fair".Length, sd.Length);
 		}
 		#endregion
 
 		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Adds a test question to the given category and adds info about key terms and parts
-	    /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
-	    /// be treated as translatable parts unless prefixed with "kt:", in which case they
-	    /// will be treated as key terms (corresponding key terms must be added by calling
-	    /// AddMockedKeyTerm.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
-	    private void AddTestQuestion(Category cat, string text, params string[] parts)
+		/// <summary>
+		/// Adds a test question to the given category and adds info about key terms and parts
+		/// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
+		/// be treated as translatable parts unless prefixed with "kt:", in which case they
+		/// will be treated as key terms (corresponding key terms must be added by calling
+		/// AddMockedKeyTerm.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void AddTestQuestion(Category cat, string text, params string[] parts)
 	    {
 	        var q = new TestQ(text, "A", 1, 1, GetParsedParts(parts));
 	        cat.Questions.Add(q);

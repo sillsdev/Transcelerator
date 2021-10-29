@@ -35,6 +35,7 @@ namespace SIL.Transcelerator
 				components?.Dispose();
 				m_host.VerseRefChanged -= OnHostOnVerseRefChanged;
 				m_project.ProjectDataChanged -= OnProjectDataChanged;
+				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
 
 				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}

@@ -95,11 +95,11 @@ namespace SIL.Transcelerator
 		private int m_iCurrentColumn = -1;
 		private int m_normalRowHeight = -1;
 		private int m_lastTranslationSet = -1;
+		private bool m_translationEditWasCommitted;
 		private bool m_saving = false;
 		private bool m_postponeRefresh;
 		private int m_maximumHeightOfKeyTermsPane;
 		private bool m_loadingBiblicalTermsPane = false;
-		private SubstringDescriptor m_lastTranslationSelectionState;
 		private bool m_preventReEntrantCommitEditDuringSave = false;
 		private bool m_forceSaveOnCloseModal = false;
 		private DataFileAccessor.DataFileId m_lockToHold = DataFileAccessor.DataFileId.Translations;
@@ -110,7 +110,7 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Properties
-		private DataGridViewTextBoxEditingControl TextControl { get; set; }
+		private DataGridViewTextBoxEditingControl TextControl => dataGridUns.EditingControl as DataGridViewTextBoxEditingControl;
 		private bool RefreshNeeded { get; set; }
 		private int MaximumHeightOfKeyTermsPane
 		{
@@ -688,21 +688,28 @@ namespace SIL.Transcelerator
 				return;
 			}
 
-			var caption = LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "Save changes?");
+			var caption = Format(LocalizationManager.GetString("MainWindow.SaveChangesMessageCaption", "{0} - Save changes?",
+				"This is a message box caption. The parameter is the information from the main window title to identify the plugin and project."),
+				Text);
 			bool confirmedSave = false;
 			if (dataGridUns.IsCurrentCellInEditMode)
 			{
 				if (dataGridUns.IsCurrentCellDirty)
 				{
 					switch (MessageBox.Show(this,
-						LocalizationManager.GetString("MainWindow.CommitChangesBeforeClosingMessage",
-							"You are currently editing a translation. Do you wish to save this change before closing?"),
+						Format(LocalizationManager.GetString("MainWindow.CommitChangesBeforeClosingMessage",
+							"You are currently editing the translation for a question in {0}. Do you wish to save this change before closing?",
+							"Param is a Scripture reference."),
+							m_helper[dataGridUns.CurrentCellAddress.Y].Reference),
 						caption,
 						MessageBoxButtons.YesNoCancel))
 					{
 						case DialogResult.Yes:
 							dataGridUns.EndEdit();
 							confirmedSave = true;
+							break;
+						case DialogResult.No:
+							dataGridUns.CancelEdit();
 							break;
 						case DialogResult.Cancel:
 							e.Cancel = true;
@@ -960,15 +967,19 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private void nextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int iRow = dataGridUns.CurrentRow.Index + 1; iRow < m_helper.FilteredPhraseCount; iRow++)
-            {
-                if (!m_helper[iRow].HasUserTranslation)
-                {
-                    dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[m_colTranslation.Index];
-                    return;
-                }
-            }
-            SystemSounds.Beep.Play();
+			if (dataGridUns.CurrentRow != null)
+			{
+				for (int iRow = dataGridUns.CurrentRow.Index + 1; iRow < m_helper.FilteredPhraseCount; iRow++)
+				{
+					if (!m_helper[iRow].HasUserTranslation)
+					{
+						SelectTranslationCellIn(iRow);
+						return;
+					}
+				}
+			}
+
+			SystemSounds.Beep.Play();
         }
 
         /// ------------------------------------------------------------------------------------
@@ -979,15 +990,19 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         private void prevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int iRow = dataGridUns.CurrentRow.Index - 1; iRow >= 0; iRow--)
-            {
-                if (!m_helper[iRow].HasUserTranslation)
-                {
-                    dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[m_colTranslation.Index];
-                    return;
-                }
-            }
-            SystemSounds.Beep.Play();
+			if (dataGridUns.CurrentRow != null)
+			{
+				for (int iRow = dataGridUns.CurrentRow.Index - 1; iRow >= 0; iRow--)
+				{
+					if (!m_helper[iRow].HasUserTranslation)
+					{
+						SelectTranslationCellIn(iRow);
+						return;
+					}
+				}
+			}
+
+			SystemSounds.Beep.Play();
         }
 
         /// ------------------------------------------------------------------------------------
@@ -1022,10 +1037,13 @@ namespace SIL.Transcelerator
 
 		private void dataGridUns_CellEnter(object sender, DataGridViewCellEventArgs e)
 		{
-			m_lastTranslationSelectionState = null;
 			if (e.ColumnIndex == m_colTranslation.Index)
+			{
 				m_selectKeyboard?.Invoke(true);
-			if (e.ColumnIndex != m_colUserTranslated.Index || e.RowIndex != m_lastTranslationSet)
+				if (dataGridUns.IsCurrentCellInEditMode)
+					m_translationEditWasCommitted = false;
+			}
+			else if (e.RowIndex != m_lastTranslationSet)
 				m_lastTranslationSet = -1;
 		}
 
@@ -1092,6 +1110,7 @@ namespace SIL.Transcelerator
 			{
 				m_helper[e.RowIndex].Translation = (string)e.Value;
 				m_lastTranslationSet = e.RowIndex;
+				m_translationEditWasCommitted = true;
 				SaveNeeded = true;
 			}
 			else if (e.ColumnIndex == m_colUserTranslated.Index)
@@ -1956,11 +1975,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_RowEnter(object sender, DataGridViewCellEventArgs e)
 		{
-			// Note: Apparently you get a RowEnter not only when you actually enter a row but
-			// also if you are entering or leaving edit mode for the already current row. We
-			// only care about the first time. Setting ReadOnly (below) causes a crash if it
-			// happens when this gets called as part of committing an edit.
-			if (dataGridUns.CurrentRow?.Index == e.RowIndex) // && dataGridUns.IsCurrentCellInEditMode
+			// RowEnter frequently fires for the row we are already in. We only care about the
+			// first time we're going to a new row. Setting ReadOnly (below) causes a crash if
+			// it happens when this gets called as part of committing an edit.
+			if (dataGridUns.CurrentRow?.Index == e.RowIndex)
 				return;
 
 			var phrase = m_helper[e.RowIndex];
@@ -2149,7 +2167,7 @@ namespace SIL.Transcelerator
 					Save(true, true);
 					dataGridUns.RowCount = m_helper.Phrases.Count();
 
-					dataGridUns.CurrentCell = dataGridUns.Rows[m_helper.FindPhrase(newPhrase.QuestionInfo)].Cells[m_colTranslation.Index];
+					SelectTranslationCellIn(m_helper.FindPhrase(newPhrase.QuestionInfo));
 					UpdateCountsAndFilterStatus();
 				}
 
@@ -2240,36 +2258,40 @@ namespace SIL.Transcelerator
 				return;
 			int rowIndex = dataGridUns.CurrentRow.Index;
 
-			SaveSelectionState();
+			var selection = TextControl == null ? null : new SubstringDescriptor(TextControl);
 
-			if (m_helper[rowIndex].InsertKeyTermRendering(sender, m_lastTranslationSelectionState,
-				sender.SelectedRendering))
+			var phrase = m_helper[rowIndex];
+
+			var provisionalTranslation = phrase.InsertKeyTermRendering(
+				TextControl?.Text ?? phrase.Translation, sender, sender.SelectedRendering, ref selection);
+			if (TextControl == null)
 			{
-				if (TextControl == null)
+				if (phrase.HasUserTranslation)
 				{
-					// Replacement was based on previous editing selection, so put the translation
-					// back into edit mode, and select the inserted rendering.
-					dataGridUns.BeginEdit(false);
-					// Start and Length values may have been modified
-					Debug.Assert(TextControl != null);
-					TextControl.SelectionStart = m_lastTranslationSelectionState.Start;
-					TextControl.SelectionLength = m_lastTranslationSelectionState.Length;
+					phrase.Translation = provisionalTranslation;
+					dataGridUns.InvalidateRow(rowIndex);
+					SaveNeeded = true;
+					return;
 				}
-				else
-				{
-					TextControl.SelectedText = sender.SelectedRendering;
-				}
-				m_lastTranslationSelectionState = null;
+
+				if (dataGridUns.CurrentCellAddress.X != m_colTranslation.Index)
+					SelectTranslationCellIn(dataGridUns.CurrentCellAddress.Y);
+				dataGridUns.BeginEdit(false);
+				// Start and Length values may have been modified
+				Debug.Assert(TextControl != null);
 			}
-			else if (TextControl == null)
-				SaveNeeded = true;
-			else
-				TextControl.Text = m_helper[rowIndex].Translation;
 
-			dataGridUns.InvalidateRow(rowIndex);
+			Debug.Assert(selection != null);
 
-			TextControl?.Focus();
+			TextControl.Text = provisionalTranslation;
+			TextControl.SelectionStart = selection.Start;
+			TextControl.SelectionLength = selection.Length;
+
+			TextControl.Focus();
 		}
+
+		void SelectTranslationCellIn(int row) =>
+			dataGridUns.CurrentCell = dataGridUns.Rows[row].Cells[m_colTranslation.Index];
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2349,12 +2371,14 @@ namespace SIL.Transcelerator
 		/// Handles the EditingControlShowing event of the m_dataGridView control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Forms.DataGridViewEditingControlShowingEventArgs"/> instance containing the event data.</param>
+		/// <param name="e">The <see cref="DataGridViewEditingControlShowingEventArgs"/>
+		/// instance containing the event data.</param>
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
 		{
-			Debug.WriteLine("dataGridUns_EditingControlShowing: m_lastTranslationSet = " + m_lastTranslationSet);
-			TextControl = e.Control as DataGridViewTextBoxEditingControl;
+			m_translationEditWasCommitted = false;
+
+			Debug.WriteLine($"dataGridUns_EditingControlShowing: m_lastTranslationSet = {m_lastTranslationSet}");
 			if (TextControl == null)
 				return;
 
@@ -2395,7 +2419,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void dataGridUns_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
-			Debug.WriteLine("dataGridUns_CellEndEdit: m_lastTranslationSet = " + m_lastTranslationSet);
+			Debug.WriteLine($"dataGridUns_CellEndEdit: m_lastTranslationSet = {m_lastTranslationSet};" +
+				$"m_translationEditWasCommitted = {m_translationEditWasCommitted}");
+
+			if (!m_translationEditWasCommitted && dataGridUns.CurrentRow != null)
+				LoadKeyTermsPane(dataGridUns.CurrentRow.Index);
+
 			if (TextControl != null)
 			{
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
@@ -2404,12 +2433,6 @@ namespace SIL.Transcelerator
 				TextControl.DragDrop -= TextControl_DragDrop;
 				TextControl.GiveFeedback -= TextControl_GiveFeedback;
 			}
-		}
-
-		private void SaveSelectionState()
-		{
-			m_lastTranslationSelectionState = TextControl == null ? null :
-				new SubstringDescriptor(TextControl);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2945,7 +2968,8 @@ namespace SIL.Transcelerator
 					{
 						if (t.Result >= 0 && m_queuedReference == null && !dataGridUns.IsCurrentCellInEditMode &&
 							dataGridUns.RowCount > t.Result)
-							dataGridUns.CurrentCell = dataGridUns.Rows[t.Result].Cells[dataGridUns.CurrentCell?.ColumnIndex ?? 2];
+							dataGridUns.CurrentCell = dataGridUns.Rows[t.Result].Cells[dataGridUns.CurrentCell?.ColumnIndex ??
+								m_colTranslation.Index];
 
 						m_fProcessingSyncMessage = false;
 					}
@@ -3251,8 +3275,6 @@ namespace SIL.Transcelerator
 		public void ShowAddRenderingDlg(Action<string, string> addRendering)
 		{
 			Debug.Assert(!IsShowingModalForm);
-
-			SaveSelectionState();
 
 			m_lockToHold = DataFileAccessor.DataFileId.KeyTermRenderingInfo;
 
