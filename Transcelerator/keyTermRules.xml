@@ -767,8 +767,9 @@
   </KeyTermRule>
 
   <!-- New Terms in P8 -->
-  <KeyTermRule id ="female fallow deer, doe">
-    <Alternate name="doe"/>
+  <KeyTermRule id ="female fallow deer, doe" rule="Exclude">
+    <Alternate name="deer"/>
+    <Alternate name="doe" matchForRefOnly="true"/>
     <Alternate name="does" matchForRefOnly="true"/>
   </KeyTermRule>
 </KeyTermRules>
