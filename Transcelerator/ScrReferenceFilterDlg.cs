@@ -39,6 +39,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:ScrReferenceFilterDlg"/> class.
 		/// </summary>
+		/// <param name="project"></param>
 		/// ------------------------------------------------------------------------------------
         internal ScrReferenceFilterDlg(IProject project, IVerseRef initialFromRef,
 			IVerseRef initialToRef, int[] canonicalBookIds)
@@ -48,14 +49,22 @@ namespace SIL.Transcelerator
 			scrPsgTo.VerseControl.VerseRefChanged += ScrPassageChanged;
 			scrPsgFrom.VerseControl.VerseRefChanged += ScrPassageChanged;
 
-			scrPsgFrom.VerseControl.BooksPresentSet = scrPsgTo.VerseControl.BooksPresentSet = new BookSet(canonicalBookIds);
-			scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(initialFromRef, project);
-            scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(initialToRef, project);
-			var versification = initialFromRef.Versification;
-            m_firstAvailableRef = versification.CreateReference(canonicalBookIds[0], 1, 1);
-			var lastBook = canonicalBookIds.Last();
+			var versification = project.Versification;
+			var bookSet = new BookSet(canonicalBookIds);
+            m_firstAvailableRef = versification.CreateReference(bookSet.FirstSelectedBookNum, 1, 1);
+			var lastBook = bookSet.LastSelectedBookNum;
 			var lastChapter = versification.GetLastChapter(lastBook);
 			m_lastAvailableRef = versification.CreateReference(lastBook, lastChapter, versification.GetLastVerse(lastBook, lastChapter));
+			if (initialFromRef == null)
+				initialFromRef = versification.CreateReference(m_firstAvailableRef.BBBCCCVVV);
+			if (initialToRef == null)
+				initialToRef = versification.CreateReference(m_lastAvailableRef.BBBCCCVVV);
+
+			scrPsgFrom.VerseControl.BooksPresentSet = scrPsgTo.VerseControl.BooksPresentSet = bookSet;
+			scrPsgFrom.VerseControl.ShowEmptyBooks = false;
+			scrPsgTo.VerseControl.ShowEmptyBooks = false;
+			scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(initialFromRef, project);
+            scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(initialToRef, project);
 			if (initialFromRef.Equals(m_firstAvailableRef) && initialToRef.Equals(m_lastAvailableRef))
 				btnClearFilter.Enabled = false;
 
@@ -119,7 +128,7 @@ namespace SIL.Transcelerator
 		/// Handles the Click event of the Help button.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
 		{
 			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
 		}

@@ -432,7 +432,7 @@ namespace SIL.Transcelerator
 
 		public void Show(TxlSplashScreen splashScreen)
 		{
-			dataGridUns.RowCount = m_helper.Phrases.Count();
+			ResetRowCount();
 
 			// Now apply settings that have filtering or other side-effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
@@ -448,6 +448,12 @@ namespace SIL.Transcelerator
 			OnModalFormClosed += OnOnModalFormClosed;
 
 			Show();
+		}
+
+		private void ResetRowCount()
+		{
+			dataGridUns.RowCount = m_helper.Phrases.Count();
+			m_lastRowEntered = -1;
 		}
 
 		private void OnOnModalFormClosed()
@@ -1364,7 +1370,7 @@ namespace SIL.Transcelerator
 			{
 				void ResetGridCountsAndStatus()
 				{
-					dataGridUns.RowCount = m_helper.Phrases.Count();
+					ResetRowCount();
 
 					dataGridUns.RowEnter += dataGridUns_RowEnter;
 
@@ -1978,7 +1984,7 @@ namespace SIL.Transcelerator
 			// RowEnter frequently fires for the row we are already in. We only care about the
 			// first time we're going to a new row. Setting ReadOnly (below) causes a crash if
 			// it happens when this gets called as part of committing an edit.
-			if (dataGridUns.CurrentRow?.Index == e.RowIndex)
+			if (dataGridUns.CurrentRow?.Index == e.RowIndex && m_lastRowEntered >= 0)
 				return;
 
 			var phrase = m_helper[e.RowIndex];
@@ -2085,10 +2091,11 @@ namespace SIL.Transcelerator
 			Save(true, true);
 			var addressToSelect = dataGridUns.CurrentCellAddress;
 			ApplyFilter();
-			dataGridUns.RowCount = m_helper.Phrases.Count();
+			ResetRowCount();
 			if (dataGridUns.RowCount == addressToSelect.Y)
 				addressToSelect.Y--;
 			dataGridUns.CurrentCell = dataGridUns.Rows[addressToSelect.Y].Cells[addressToSelect.X];
+			UpdateCountsAndFilterStatus();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2165,7 +2172,7 @@ namespace SIL.Transcelerator
 						newPhrase.Translation = dlg.Translation;
 
 					Save(true, true);
-					dataGridUns.RowCount = m_helper.Phrases.Count();
+					ResetRowCount();
 
 					SelectTranslationCellIn(m_helper.FindPhrase(newPhrase.QuestionInfo));
 					UpdateCountsAndFilterStatus();
@@ -2223,8 +2230,8 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard?.Invoke(false);
 			ScrReferenceFilterDlg filterDlg = new ScrReferenceFilterDlg(m_project,
-				m_startRef.ChangeVersification(m_project.Versification),
-				m_endRef.ChangeVersification(m_project.Versification), m_availableBookIds);
+				m_startRef?.ChangeVersification(m_project.Versification),
+				m_endRef?.ChangeVersification(m_project.Versification), m_availableBookIds);
 			ShowModalChild(filterDlg, dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)

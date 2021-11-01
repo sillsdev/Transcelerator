@@ -34,7 +34,6 @@ namespace SIL.Transcelerator
 		private int m_iStartMatch;
 		private int m_iNextWord;
 		private List<KeyTermMatch> m_matches;
-		private static PorterStemmer s_stemmer = new PorterStemmer();
 		private readonly List<KeyTermMatch> m_keyTermsUsedForPhrase = new List<KeyTermMatch>();
 
 		/// ------------------------------------------------------------------------------------
@@ -50,7 +49,6 @@ namespace SIL.Transcelerator
 			m_questionWords = questionWords;
 			YieldTranslatablePart = yieldPart;
 			m_phrase = phrase;
-			s_stemmer.StagedStemming = true;
 
 			string phraseToParse = m_phrase.PhraseInUse;
 		    if (substituteStrings != null)
@@ -201,11 +199,10 @@ namespace SIL.Transcelerator
                 }
                 if (m_matches == null || m_matches.All(m => m.WordCount > 1))
                 {
-	                var baseWord = nextWord.Text;
-					Word stem = s_stemmer.stemTerm(baseWord);
+					foreach (var form in PorterStemmer.GetStemmedForms(nextWord.Text))
+					{
+						Word stem = form;
 
-                    while (stem.Text != baseWord)
-                    {
                         if (m_keyTermsTable.TryGetValue(stem, out matches))
                         {
                             stem.AddAlternateForm(nextWord);
@@ -215,8 +212,6 @@ namespace SIL.Transcelerator
                             else
                                 m_matches.AddRange(matches);
                         }
-	                    baseWord = stem.Text;
-						stem = s_stemmer.stemTerm(baseWord);
                     }
                     if (m_matches == null || m_matches.Count == 0)
                     {
