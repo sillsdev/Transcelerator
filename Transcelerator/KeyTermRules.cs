@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Schema;
