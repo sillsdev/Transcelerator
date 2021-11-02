@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2015' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2015' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -26,7 +26,7 @@ namespace SIL.Transcelerator
         #region Data members
         private readonly Dictionary<Word, List<KeyTerm>> m_keyTermsTable = new Dictionary<Word, List<KeyTerm>>();
         /// <summary>A double lookup table of all parts in all phrases managed by this class.
-        /// For improved performance, outer lookup is by wordcount.</summary>
+        /// For improved performance, outer lookup is by word count.</summary>
         private readonly SortedDictionary<int, Dictionary<Word, List<Part>>> m_partsTable = new SortedDictionary<int, Dictionary<Word, List<Part>>>();
 		private List<Part> m_allPartsList; 
 	    #endregion

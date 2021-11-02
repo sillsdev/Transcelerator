@@ -349,6 +349,8 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="IHtmlScriptureExtractor.cs" />
+    <Compile Include="IPhrasePart.cs" />
     <Compile Include="ScriptGenerator.cs" />
     <Compile Include="MoreUiLanguagesDlg.cs">
       <SubType>Form</SubType>

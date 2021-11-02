@@ -215,13 +215,4 @@ namespace SIL.Transcelerator
 				Process.Start(m_help);
 		}
 	}
-
-	public class NoToolStripBorderRenderer : ToolStripProfessionalRenderer
-	{
-		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
-		{
-			// Eat this event.
-		}
-	}
-
 }
