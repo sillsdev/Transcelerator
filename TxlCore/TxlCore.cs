@@ -19,6 +19,7 @@ namespace SIL.Transcelerator
     public static class TxlCore
     {
 		public const string kQuestionsFilename = "TxlQuestions.xml";
+		public const string kKeyTermRulesFilename = "keyTermRules.xml";
 		public const string kQuestionWordsFilename = "TxlQuestionWords.xml";
 		public const string kEmailAddress = "transcelerator_feedback@sil.org";
 

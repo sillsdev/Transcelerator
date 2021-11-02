@@ -100,6 +100,11 @@
     <Alternate name="give life"/>
     <Alternate name="gave life"/>
   </KeyTermRule>
+  <KeyTermRule id="heavenly, in heaven; from heaven, from God" rule="Exclude">
+    <Alternate name="heavenly"/>
+    <Alternate name="from heaven"/>
+    <Alternate name="in heaven" matchForRefOnly="true"/>
+  </KeyTermRule>
   <KeyTermRule id="think" rule="MatchForRefOnly" />
   <KeyTermRule id="living; (of) life; property; means" rule="MatchForRefOnly" />
   <KeyTermRule id="Put" rule="MatchForRefOnly" />
@@ -213,7 +218,6 @@
   <KeyTermRule id="scroll">
     <Alternate name="book"/>
   </KeyTermRule>
-  <KeyTermRule id="name; person, people; category of, being of the type that..." rule="MatchForRefOnly" />
   <KeyTermRule id="nation; people; Gentiles" rule="Exclude=">
     <Alternate name="nation"/>
     <Alternate name="nations"/>
@@ -711,6 +715,19 @@
     <Alternate name="justifying"/>
   </KeyTermRule>
   <KeyTermRule id="sin against; wrong" rule="MatchForRefOnly"/>
+  <KeyTermRule id="way (of life, of God)" rule="Exclude">
+    <Alternate name="way of life"/>
+    <Alternate name="way of living"/>
+    <Alternate name="conduct" rule="MatchForRefOnly"/>
+    <Alternate name="way" rule="MatchForRefOnly"/>
+  </KeyTermRule>
+  <KeyTermRule id="way (of the Lord, of God)" rule="Exclude">
+    <Alternate name="way of life"/>
+    <Alternate name="way of living"/>
+    <Alternate name="conduct" rule="MatchForRefOnly"/>
+    <Alternate name="way" rule="MatchForRefOnly"/>
+  </KeyTermRule>
+  <KeyTermRule id="the Way" rule="MatchForRefOnly"/>
   <KeyTermRule id="sound wisdom" rule="Exclude">
     <Alternate name="wisdom"/>
   </KeyTermRule>
@@ -740,8 +757,8 @@
   <KeyTermRule id="name; person, people; category of, being of the type that..." rule="Exclude">
     <Alternate name="name"/>
     <Alternate name="names"/>
-    <Alternate name="named"/>
-    <Alternate name="called"/>
+    <Alternate name="named" rule="MatchForRefOnly"/>
+    <Alternate name="called" rule="MatchForRefOnly"/>
   </KeyTermRule>
   
   <!-- There seems to be a bug in the Major Biblical Terms list. Both the city and the people are listed as Thessalonica. -->
@@ -751,8 +768,9 @@
   </KeyTermRule>
 
   <!-- New Terms in P8 -->
-  <KeyTermRule id ="female fallow deer, doe">
-    <Alternate name="doe"/>
+  <KeyTermRule id ="female fallow deer, doe" rule="Exclude">
+    <Alternate name="deer"/>
+    <Alternate name="doe" matchForRefOnly="true"/>
     <Alternate name="does" matchForRefOnly="true"/>
   </KeyTermRule>
 </KeyTermRules>
