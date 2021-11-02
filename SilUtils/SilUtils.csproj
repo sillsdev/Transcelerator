@@ -162,7 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="L10NSharp">
-      <Version>4.1.0</Version>
+      <Version>4.2.0-beta0006</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
       <Version>9.0.0-beta0076</Version>
