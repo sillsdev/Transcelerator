@@ -71,6 +71,7 @@ namespace SIL.Transcelerator
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private PhraseTranslationHelper m_helper;
 		private readonly ParatextDataFileAccessor m_fileAccessor;
+		private ParatextTermRenderingsRepo m_renderingsRepo;
 		private readonly string m_installDir;
 		private readonly IVersification m_masterVersification;
 		private IVerseRef m_startRef;
@@ -370,15 +371,10 @@ namespace SIL.Transcelerator
 
 			Margin = new Padding(Margin.Left, toolStrip1.Height, Margin.Right, Margin.Bottom);
 
-			KeyTerm.FileAccessor = m_fileAccessor;
-
 #if DEBUG
 			generateOutputForArloToolStripMenuItem.Visible = true;
 			mnuLoadTranslationsFromTextFile.Visible = true;
 #endif
-
-			KeyTerm.GetTermRenderings = lemma => m_project.BiblicalTermList.Where(term => term.Lemma == lemma)
-				.SelectMany(term => m_project.GetBiblicalTermRenderings(term, true).Renderings);
 
 			if (m_project.Language.Id == null)
 				mnuGenerate.Enabled = false;
@@ -2309,7 +2305,13 @@ namespace SIL.Transcelerator
 			dataGridUns.InvalidateColumn(m_colTranslation.Index);
 			if (dataGridUns.ColumnCount == (m_colDebugInfo.Index + 1))
 				dataGridUns.InvalidateColumn(m_colDebugInfo.Index);
+			SaveRenderings();
         }
+
+		private void SaveRenderings()
+		{
+			m_renderingsRepo.Save();
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -2678,7 +2680,8 @@ namespace SIL.Transcelerator
 	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
 	        }
 
-			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms);
+			m_renderingsRepo = new ParatextTermRenderingsRepo(m_fileAccessor, m_project);
+			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms, m_renderingsRepo);
 	        var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
             m_helper = new PhraseTranslationHelper(qp);
 			m_helper.VernacularStringComparer = m_project.Language.StringComparer;
@@ -2804,6 +2807,7 @@ namespace SIL.Transcelerator
 					longestListHeight = ktRenderCtrl.NaturalHeight;
 				ktRenderCtrl.SelectedRenderingChanged += KeyTermRenderingSelected;
 				ktRenderCtrl.BestRenderingsChanged += KeyTermBestRenderingsChanged;
+				ktRenderCtrl.RenderingAddedOrDeleted += SaveRenderings;
 				col++;
 			}
 			m_biblicalTermsPane.ColumnCount = col;

@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
+using System.Globalization;
 using Paratext.PluginInterfaces;
 using SIL.ComprehensionCheckingData;
 using SIL.Scripture;
@@ -46,7 +47,6 @@ namespace SIL.Transcelerator
 		#region Events
 		public event Action TranslationsChanged;
 		#endregion
-
 		#region Data members
 		private readonly List<TranslatablePhrase> m_phrases = new List<TranslatablePhrase>();
 		private readonly PhrasePartManager m_phrasePartManager;
@@ -84,8 +84,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public PhraseTranslationHelper(QuestionProvider qp)
 		{
-			TranslatablePhrase.s_helper = this;
 			m_phrasePartManager = qp.PhrasePartManager;
+			qp.Helper = this;
 
 			foreach (TranslatablePhrase phrase in qp.Where(p => !IsNullOrEmpty(p.PhraseToDisplayInUI)))
 			{
@@ -734,7 +734,7 @@ namespace SIL.Transcelerator
 				p.Category == category && p.SequenceNumber >= seqNumber).ToArray();
 			foreach (var phrase in phrasesToAdvance)
 				phrase.IncrementSequenceNumber();
-			var newPhrase = new TranslatablePhrase(question, section, category, seqNumber);
+			var newPhrase = new TranslatablePhrase(question, section, category, seqNumber, this);
 			m_phrases.Add(newPhrase);
 			if (m_filteredPhrases != m_phrases)
 				m_filteredPhrases.Add(newPhrase);
@@ -901,7 +901,7 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region Private and internal methods
+		#region Implementation of IPhraseTranslationHelper and associated private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Processes a new translation on a phrase.
@@ -1231,26 +1231,42 @@ namespace SIL.Transcelerator
 					phraseBefore.AddedPhraseAfter = newPhrase.QuestionInfo;
 			}
 		}
+
+		#region Number formatting stuff
+		public event OnNumberFormattingChangedHandler OnNumberFormattingChanged;
+
+		/// ------------------------------------------------------------------------------------
+		public void SetNumericFormat(char exampleDigit, string groupingPunctuation,
+			IReadOnlyList<int> digitGroups, bool fNoGroupPunctForShortNumbers)
+		{
+			char nativeZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
+			if (nativeZero.ToString(CultureInfo.InvariantCulture) != NumberFormatInfo.NativeDigits[0] ||
+				groupingPunctuation != NumberFormatInfo.NumberGroupSeparator ||
+				NoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
+				!NumberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups))
+			{
+				NumberFormatInfo = new NumberFormatInfo();
+				NumberFormatInfo.DigitSubstitution = DigitShapes.NativeNational;
+				var nativeDigits = new string[10];
+				for (int i = 0; i <= 9; i++)
+					nativeDigits[i] = ((char) (nativeZero + i)).ToString(CultureInfo.InvariantCulture);
+
+				NumberFormatInfo.NativeDigits = nativeDigits;
+
+				NumberFormatInfo.NumberGroupSeparator = groupingPunctuation;
+
+				NumberFormatInfo.NumberGroupSizes = digitGroups.ToArray();
+
+				NoGroupPunctForShortNumbers = fNoGroupPunctForShortNumbers;
+
+				OnNumberFormattingChanged?.Invoke();
+			}
+		}
+
+		public NumberFormatInfo NumberFormatInfo { get; private set; } = CultureInfo.CurrentCulture.NumberFormat;
+		public bool NoGroupPunctForShortNumbers { get; private set; }
+
+		#endregion
 		#endregion
 	}
-
-    public interface IPhraseTranslationHelper
-    {
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Processes a new translation on a phrase.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        void ProcessTranslation(TranslatablePhrase tp);
-
-		void ProcessChangeInUserTranslationState();
-
-        string InitialPunctuationForType(TypeOfPhrase type);
-
-        string FinalPunctuationForType(TypeOfPhrase type);
-
-        string GetCategoryName(int category);
-
-        List<RenderingSelectionRule> TermRenderingSelectionRules { get; }
-    }
 }

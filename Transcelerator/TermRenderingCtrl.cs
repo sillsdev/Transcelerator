@@ -51,6 +51,7 @@ namespace SIL.Transcelerator
 		public delegate void RenderingChangedHandler(TermRenderingCtrl sender);
 		public event RenderingChangedHandler SelectedRenderingChanged;
 		public Action BestRenderingsChanged;
+		public Action RenderingAddedOrDeleted;
 		#endregion
 
 		#region Constructor
@@ -61,7 +62,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
 			Action<Exception, string> handleAddRenderingError,
-			Action<IReadOnlyList<string>> lookupTerm, bool isReadOnly)
+			Action<IReadOnlyList<string>> lookupTerm,
+			bool isReadOnly)
 		{
 			InitializeComponent();
 
@@ -140,8 +142,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles a change (probably from another TermRenderingCtrl) to our term's best
-		/// rendering.
+		/// Handles a change (from another TermRenderingCtrl) to our term's best rendering.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		void term_BestRenderingChanged(KeyTerm sender)
@@ -185,7 +186,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles Reloads the Renderings from Paratext (plus any TXL-specific ones) and
+		/// Reloads the Renderings from Paratext (plus any TXL-specific ones) and
 		/// populates the display.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -330,6 +331,7 @@ namespace SIL.Transcelerator
 			SelectedRendering = m_term.BestRendering;
 			SelectedRenderingChanged?.Invoke(this);
 			m_term.DeleteRendering(rendering);
+			RenderingAddedOrDeleted?.Invoke();
 			m_lbRenderings.Items.Remove(rendering);
 		}
 
@@ -402,6 +404,7 @@ namespace SIL.Transcelerator
 			{
 				m_term.AddRendering(newRendering);
 				m_lbRenderings.Items.Add(newRendering);
+				RenderingAddedOrDeleted?.Invoke();
 			}
 			catch (ArgumentException ex)
 			{

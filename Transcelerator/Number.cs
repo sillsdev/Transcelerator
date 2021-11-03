@@ -24,19 +24,10 @@ namespace SIL.Transcelerator
     // ---------------------------------------------------------------------------------------------
     public sealed class Number : IPhrasePart
     {
-		internal delegate void OnNumberFormattingChangedHandler();
-
-        #region Data members
+		#region Data members
         private readonly int m_value;
-        private string m_vernacular = null;
-        #endregion
-
-		#region Statics
-	    private static NumberFormatInfo s_numberFormatInfo = CultureInfo.CurrentCulture.NumberFormat;
-		// 3000 vs. 3,000
-	    private static bool s_fNoGroupPunctForShortNumbers = false;
-
-		internal static event OnNumberFormattingChangedHandler OnNumberFormattingChanged;
+        private string m_vernacular;
+		private readonly IPhraseTranslationHelper m_formatInfo;
 		#endregion
 
 		#region Construction and initialization
@@ -45,10 +36,12 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="Number"/> class.
 		/// </summary>
 		/// <param name="value">The numeric value.</param>
+		/// <param name="formatInfo">Object with information about how to format numbers</param>
 		/// ------------------------------------------------------------------------------------
-		internal Number(int value)
+		internal Number(int value, IPhraseTranslationHelper formatInfo)
 		{
             m_value = value;
+			m_formatInfo = formatInfo;
 		}
         #endregion
 
@@ -82,29 +75,29 @@ namespace SIL.Transcelerator
             {
 	            if (m_vernacular == null)
 	            {
-		            m_vernacular = (s_fNoGroupPunctForShortNumbers &&
-						s_numberFormatInfo.NumberGroupSizes.Length > 0 &&
-						NumberOfDigits == s_numberFormatInfo.NumberGroupSizes[0] + 1) ?
+		            m_vernacular = (m_formatInfo.NoGroupPunctForShortNumbers &&
+						m_formatInfo.NumberFormatInfo.NumberGroupSizes.Length > 0 &&
+						NumberOfDigits == m_formatInfo.NumberFormatInfo.NumberGroupSizes[0] + 1) ?
 						m_value.ToString(CultureInfo.InvariantCulture) :
-						m_value.ToString("n0", s_numberFormatInfo);
-		            if (s_numberFormatInfo.NativeDigits[0] != "0")
+						m_value.ToString("n0", m_formatInfo.NumberFormatInfo);
+		            if (m_formatInfo.NumberFormatInfo.NativeDigits[0] != "0")
 		            {
 						StringBuilder sb = new StringBuilder(m_vernacular);
 			            for (int i = 0; i < sb.Length; i++)
 			            {
 				            if (char.IsDigit(sb[i]))
-					            sb[i] = s_numberFormatInfo.NativeDigits[(int) char.GetNumericValue(sb[i])][0];
+					            sb[i] = m_formatInfo.NumberFormatInfo.NativeDigits[(int) char.GetNumericValue(sb[i])][0];
 			            }
 			            m_vernacular = sb.ToString();
 		            }
-					OnNumberFormattingChanged += ClearProvisionalFormatting;
+					m_formatInfo.OnNumberFormattingChanged += ClearProvisionalFormatting;
 	            }
 	            return m_vernacular;
             }
 	        internal set
 	        {
 				if (!string.IsNullOrEmpty(m_vernacular))
-					OnNumberFormattingChanged -= ClearProvisionalFormatting;
+					m_formatInfo.OnNumberFormattingChanged -= ClearProvisionalFormatting;
 
 		        if (string.IsNullOrEmpty(value))
 			        m_vernacular = null;
@@ -130,15 +123,12 @@ namespace SIL.Transcelerator
 						}
 					}
 					if (sGroupPunct == string.Empty)
-						sGroupPunct = s_numberFormatInfo.NumberGroupSeparator;
+						sGroupPunct = m_formatInfo.NumberFormatInfo.NumberGroupSeparator;
 
-					bool fNoGroupPunctForShortNumbers = s_fNoGroupPunctForShortNumbers;
-					if (numberGroupSizes.Count == 0 && s_numberFormatInfo.NumberGroupSizes.Length > 0 &&
-						groupSize == s_numberFormatInfo.NumberGroupSizes[0] + 1)
-					{
-						fNoGroupPunctForShortNumbers = true;
-					}
-		
+					bool fNoGroupPunctForShortNumbers = m_formatInfo.NoGroupPunctForShortNumbers ||
+						(numberGroupSizes.Count == 0 && m_formatInfo.NumberFormatInfo.NumberGroupSizes.Length > 0 &&
+						groupSize == m_formatInfo.NumberFormatInfo.NumberGroupSizes[0] + 1);
+
 					// Don't overwrite a previously determined set of number groupings unless this new
 					// rendering definitely changes something by:
 					// 1) increasing the number of groups (typically because this number has more digits
@@ -152,14 +142,14 @@ namespace SIL.Transcelerator
 					//    highest-level grouping because the number were formatting now is only 9 digits
 					//    long, which does not exceed the number of digits already accounted for by the
 					//    existing groupings: 3 + 3 + 3 = 9.
-					if (s_numberFormatInfo.NumberGroupSizes.Length > numberGroupSizes.Count &&
-						s_numberFormatInfo.NumberGroupSizes.Take(numberGroupSizes.Count).SequenceEqual(numberGroupSizes) &&
-						s_numberFormatInfo.NumberGroupSizes.Sum() > NumberOfDigits)
+					if (m_formatInfo.NumberFormatInfo.NumberGroupSizes.Length > numberGroupSizes.Count &&
+						m_formatInfo.NumberFormatInfo.NumberGroupSizes.Take(numberGroupSizes.Count).SequenceEqual(numberGroupSizes) &&
+						m_formatInfo.NumberFormatInfo.NumberGroupSizes.Sum() > NumberOfDigits)
 					{
-						numberGroupSizes = new List<int>(s_numberFormatInfo.NumberGroupSizes);
+						numberGroupSizes = new List<int>(m_formatInfo.NumberFormatInfo.NumberGroupSizes);
 					}
 
-					SetFormat(value[0], sGroupPunct, numberGroupSizes, fNoGroupPunctForShortNumbers);
+					m_formatInfo.SetNumericFormat(value[0], sGroupPunct, numberGroupSizes, fNoGroupPunctForShortNumbers);
 				}
 			}
         }
@@ -168,7 +158,7 @@ namespace SIL.Transcelerator
 		private void ClearProvisionalFormatting()
 		{
 			m_vernacular = null;
-			OnNumberFormattingChanged -= ClearProvisionalFormatting;
+			m_formatInfo.OnNumberFormattingChanged -= ClearProvisionalFormatting;
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -207,39 +197,7 @@ namespace SIL.Transcelerator
 
 		#region Private helper methods/properties
 		/// ------------------------------------------------------------------------------------
-		private int NumberOfDigits
-		{
-			get { return (int) (Math.Log10(m_value) + 1); }
-		}
-
-	    /// ------------------------------------------------------------------------------------
-		private static void SetFormat(char exampleDigit, string groupingPunctuation,
-			IEnumerable<int> digitGroups, bool fNoGroupPunctForShortNumbers)
-		{
-			char nativeZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
-			if (nativeZero.ToString(CultureInfo.InvariantCulture) != s_numberFormatInfo.NativeDigits[0] ||
-				groupingPunctuation != s_numberFormatInfo.NumberGroupSeparator ||
-				s_fNoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
-				(!s_numberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups)))
-			{
-				s_numberFormatInfo = new NumberFormatInfo();
-				s_numberFormatInfo.DigitSubstitution = DigitShapes.NativeNational;
-				var nativeDigits = new string[10];
-				for (int i = 0; i <= 9; i++)
-					nativeDigits[i] = ((char) (nativeZero + i)).ToString(CultureInfo.InvariantCulture);
-
-				s_numberFormatInfo.NativeDigits = nativeDigits;
-
-				s_numberFormatInfo.NumberGroupSeparator = groupingPunctuation;
-
-				s_numberFormatInfo.NumberGroupSizes = digitGroups.ToArray();
-
-				s_fNoGroupPunctForShortNumbers = fNoGroupPunctForShortNumbers;
-
-				if (OnNumberFormattingChanged != null)
-					OnNumberFormattingChanged();
-			}
-		}
+		private int NumberOfDigits => (int) (Math.Log10(m_value) + 1);
 		#endregion
 	}
 }

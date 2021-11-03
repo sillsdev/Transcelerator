@@ -351,6 +351,9 @@
     </Compile>
     <Compile Include="IHtmlScriptureExtractor.cs" />
     <Compile Include="IPhrasePart.cs" />
+    <Compile Include="IPhraseTranslationHelper.cs" />
+    <Compile Include="TermRenderingsRepo.cs" />
+    <Compile Include="ITermRenderingsRepo.cs" />
     <Compile Include="ScriptGenerator.cs" />
     <Compile Include="MoreUiLanguagesDlg.cs">
       <SubType>Form</SubType>

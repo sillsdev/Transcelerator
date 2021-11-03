@@ -17,6 +17,7 @@ using NUnit.Framework;
 using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Transcelerator.Localization;
+using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -28,12 +29,14 @@ namespace SIL.Transcelerator
 	[TestFixture]
     public class TranslatablePhraseTests : PhraseTranslationTestBase
 	{
-	    [SetUp]
+		private IPhraseTranslationHelper m_helper;
+
+		[SetUp]
 	    public override void Setup()
 	    {
             base.Setup();
 	        DummyKeyTermRenderingInfo.s_ktRenderings = m_dummyKtRenderings;
-	        TranslatablePhrase.s_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
+	        m_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
 		}
 
 		#region Constructor tests
@@ -42,7 +45,7 @@ namespace SIL.Transcelerator
 		{
 			var qk = new Question();
 			qk.Text = "What doe\u0301s the fox say?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -54,7 +57,7 @@ namespace SIL.Transcelerator
 			var qk = new Question();
 			qk.Text = "What doe\u0301s the fox say?";
 			qk.ModifiedPhrase = "Does the\u0301 fox say anything?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("Does th\u00e9 fox say anything?", phrase.ModifiedPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
 			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
@@ -70,7 +73,7 @@ namespace SIL.Transcelerator
 			var qk = new Question("TST 5:6", 100005006, 100005006, null, null);
 			var id = qk.Id;
 			qk.ModifiedPhrase = "What's up with the\u0301 fox?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.ModifiedPhrase);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);
@@ -89,7 +92,7 @@ namespace SIL.Transcelerator
 			var id = qk.Id;
 			Assert.IsTrue(id.StartsWith(Question.kGuidPrefix));
 			Assert.AreEqual(id, qk.Text);
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual(string.Empty, phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -107,7 +110,7 @@ namespace SIL.Transcelerator
 
 			cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
 
-			var phrases = new QuestionProvider(GetParsedQuestions()).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 			var result = (UIQuestionDataString)phrases.Single().ToUIDataString();
 			Assert.AreEqual("Abc", result.SourceUIString);
 			Assert.AreEqual(02003001, result.StartRef);
@@ -123,7 +126,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -140,7 +143,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
@@ -159,7 +162,7 @@ namespace SIL.Transcelerator
 		public void ToUIDataString_QuestionIsModifiedButHasNoAlternateForms_ReturnsNonLocalizableUISimpleDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
@@ -185,7 +188,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?", Hide = true},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = qk.AlternativeForms.ElementAt(i);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
@@ -205,7 +208,7 @@ namespace SIL.Transcelerator
 
 			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			TranslatablePhrase phrase1 = phrases[0];
 
@@ -224,7 +227,7 @@ namespace SIL.Transcelerator
 
 			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			TranslatablePhrase phrase1 = phrases[0];
 
@@ -241,7 +244,7 @@ namespace SIL.Transcelerator
         public void AppliesToReference_CategoryName_ReturnsFalse()
         {
             m_sections.Items[0].Categories[0].Type = "Overview";
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(1, phrases.Count);
             Assert.IsTrue(phrases[0].IsCategoryName);
             Assert.IsFalse(phrases[0].AppliesToReference(01001001));
@@ -256,7 +259,7 @@ namespace SIL.Transcelerator
             cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
             cat.Questions.Add(new TestQ("Xyz", "JUD 10-11", 65001010, 65001011, null));
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(2, phrases.Count);
             Assert.IsFalse(phrases[0].IsCategoryName);
             Assert.IsFalse(phrases[0].AppliesToReference(02002021));
@@ -274,7 +277,7 @@ namespace SIL.Transcelerator
             cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
             cat.Questions.Add(new TestQ("Xyz", "JUD 10-11", 65001010, 65001011, null));
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(2, phrases.Count);
             Assert.IsFalse(phrases[0].IsCategoryName);
             Assert.IsTrue(phrases[0].AppliesToReference(02003001));
@@ -301,7 +304,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "Wuzzee!", "wuzzee");
             AddTestQuestion(cat, "As a man thinks in his heart, how is he?", "as a man thinks in his heart how is he");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[1]));
             Assert.IsTrue(phrases[1].PartPatternMatches(phrases[0]));
@@ -332,7 +335,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "Wunkers wuzzee!", "kt:wunkers", "wuzzee");
             AddTestQuestion(cat, "A dude named punkers?", "a dude named", "kt:punkers");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[1]));
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[2]));
@@ -372,7 +375,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What does Paul say we have to give to God?",
                 "what does", "kt:paul", "kt:say", "we", "kt:have", "to give to", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
             TranslatablePhrase phrase2 = phrases[1];
@@ -428,7 +431,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What does Paul say we have to give to God?",
                 "what does", "kt:paul", "kt:say", "we", "kt:have", "to give to", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
             TranslatablePhrase phrase2 = phrases[1];
@@ -475,7 +478,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What did God tell Paul?/What was Paul told by God?",
                 "what did", "kt:god", "tell", "kt:paul", "what was", "kt:paul", "told by", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
 
@@ -507,7 +510,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_LeadingPunctuation_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "!Cool is so that";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -515,7 +518,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_TrailingPunctuation_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "Cool is so that!";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -523,7 +526,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_MultiplePunctuationCharacters_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "\".Cool is so that!?";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -543,7 +546,7 @@ namespace SIL.Transcelerator
 
             AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
 
@@ -563,12 +566,12 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_QuestionWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("Why don't I have a translation?");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("Why don't I have a translation?", m_helper);
 
             Assert.AreEqual(";?", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -583,12 +586,12 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_StatementWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("I don't have a translation.");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("I don't have a translation.", m_helper);
 
             Assert.AreEqual(".", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -603,19 +606,19 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_UnknownWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("-OR-");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("-OR-", m_helper);
 
             Assert.AreEqual("--", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
             
-            TranslatablePhrase phrase2 = new TranslatablePhrase("Oops, I forgot the puctuation");
+            TranslatablePhrase phrase2 = new TranslatablePhrase("Oops, I forgot the puctuation", m_helper);
 
             Assert.AreEqual("--", phrase2.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -627,7 +630,7 @@ namespace SIL.Transcelerator
 		[Test]
 		public void InsertKeyTermRendering_NoExistingRendering_InsertsNewRenderingBeforeFinalPunctuation()
 		{
-			TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+			m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
 
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
@@ -637,7 +640,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best?", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing?";
@@ -664,7 +667,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing";
@@ -691,7 +694,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing ";
@@ -718,7 +721,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
 			
@@ -750,7 +753,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers fuzzy wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Was this pretty good translation done by the best guy?";
 			Assert.AreEqual("Was this pretty good translation done by the best guy?", phrases[0].Translation);
@@ -778,7 +781,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a pretty good translation?";
 			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
@@ -805,7 +808,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a fairly good translation?";
 			Assert.AreEqual("Is this a fairly good translation?", phrases[0].Translation);
@@ -831,7 +834,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
@@ -856,7 +859,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
@@ -879,7 +882,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
@@ -902,7 +905,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a translation?";
 			Assert.AreEqual("Is this a translation?", phrases[0].Translation);
@@ -925,7 +928,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a  translation?";
 			Assert.AreEqual("Is this a  translation?", phrases[0].Translation);
@@ -948,7 +951,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a pretty good translation, or is it just fair?";
 			Assert.AreEqual("Is this a pretty good translation, or is it just fair?", phrases[0].Translation);
@@ -972,7 +975,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
@@ -995,7 +998,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
@@ -1018,7 +1021,7 @@ namespace SIL.Transcelerator
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this really best?";
 			Assert.AreEqual("Is this really best?", phrases[0].Translation);

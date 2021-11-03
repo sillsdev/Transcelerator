@@ -1,4 +1,15 @@
-﻿using System;
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2021' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
+//	
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright> 
+#endregion
+// 
+// File: HtmlScriptGeneratorTests.cs
+// ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,13 +65,19 @@ namespace SIL.Transcelerator
 		private const string kHtmlExtrasDiv = "<div class=\"extras\" lang=\"en-US\">\r\n";
 		private const string kHtmlEnd = "</body>\r\n";
 
+		private readonly IPhraseTranslationHelper m_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
+
+		[OneTimeSetUp]
+		public void FixtureSetup()
+		{
+			m_helper.Stub(h => h.GetCategoryName(0)).Return("Overview");
+			m_helper.Stub(h => h.GetCategoryName(1)).Return("Details");
+		}
+
 		[SetUp]
 		public void Setup()
 		{
 			Properties.Settings.Default.Reload();
-			TranslatablePhrase.s_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
-			TranslatablePhrase.s_helper.Stub(h => h.GetCategoryName(0)).Return("Overview");
-			TranslatablePhrase.s_helper.Stub(h => h.GetCategoryName(1)).Return("Details");
 		}
 
 		[TestCase("EXO")]
@@ -69,7 +86,8 @@ namespace SIL.Transcelerator
 		{
 			ISectionInfo sectionInfo = GetSectionInfoForExo1V1ThruV15();
 			var repo = new PhraseRepo();
-			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4", 2010004, 2010004, null), 0, 1, 0));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4",
+				2010004, 2010004, null), 0, 1, 0, m_helper));
 
 			var generator = new HtmlScriptGenerator("fr", repo.GetPhrases, "Comic Sans", tp => sectionInfo);
 			generator.Extractor = new TestHtmlExtractor();
@@ -103,7 +121,8 @@ namespace SIL.Transcelerator
 			ISectionInfo sectionInfo = GetSectionInfoForExo1V1ThruV15();
 
 			var repo = new PhraseRepo();
-			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4", 2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0)
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4",
+				2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0, m_helper)
 			{
 				Translation = "Fmugh zorb wis Blen#"
 			});
@@ -149,14 +168,17 @@ namespace SIL.Transcelerator
 			ISectionInfo sectionInfo2 = GetSectionInfo("Somebody Does Something", "Exodus 11:1-7", 2, 11, 1, 7);
 
 			var repo = new PhraseRepo();
-			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4", 2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0)
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4",
+				2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0, m_helper)
 			{
 				Translation = "Fmugh zorb wis Blen#"
 			});
-			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.5-6", 2011005, 2011006, "Why is this not translated?", null), 1, 0, 0));
-			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.6-7", 2011006, 2011007, "Who did what?", null)
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.5-6",
+				2011005, 2011006, "Why is this not translated?", null), 1, 0, 0, m_helper));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.6-7",
+				2011006, 2011007, "Who did what?", null)
 			{
-				Notes = new []{"This is a comment."} }, 1, 0, 1)
+				Notes = new []{"This is a comment."} }, 1, 0, 1, m_helper)
 			{
 				Translation = "Klumpf zad 'op#"
 			});
@@ -201,9 +223,12 @@ namespace SIL.Transcelerator
 		{
 			ISectionInfo sectionInfo = GetSectionInfoForExo1V1ThruV15();
 			var repo = new PhraseRepo();
-			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Tell me some stuff.", "", 2010001, 2010015, null), 0, 0, 0));
-			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4", 2010004, 2010004, null), 0, 1, 0));
-			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Can I go back and ask something?", "EXO 10.2-3", 2010002, 2010003, null), 0, 1, 1));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Tell me some stuff.", "",
+				2010001, 2010015, null), 0, 0, 0, m_helper));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4",
+				2010004, 2010004, null), 0, 1, 0, m_helper));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Can I go back and ask something?",
+				"EXO 10.2-3", 2010002, 2010003, null), 0, 1, 1, m_helper));
 
 			var generator = new HtmlScriptGenerator("fr", repo.GetPhrases, "Comic Sans", tp => sectionInfo);
 			generator.Extractor = new TestHtmlExtractor();

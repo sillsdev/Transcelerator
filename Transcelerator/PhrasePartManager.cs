@@ -23,7 +23,9 @@ namespace SIL.Transcelerator
 	/// ------------------------------------------------------------------------------------
 	public class PhrasePartManager
     {
-        #region Data members
+		private readonly ITermRenderingsRepo m_renderingsRepository;
+
+		#region Data members
         private readonly Dictionary<Word, List<KeyTerm>> m_keyTermsTable = new Dictionary<Word, List<KeyTerm>>();
         /// <summary>A double lookup table of all parts in all phrases managed by this class.
         /// For improved performance, outer lookup is by word count.</summary>
@@ -38,11 +40,15 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <param name="translatableParts">parts (that are not key terms) to add to the master
 		/// parts table</param>
-		/// <param name="keyTerms">(optional) key terms</param>
+		/// <param name="keyTerms">key term match surrogates</param>
+		/// <param name="renderingsRepository">Repository of term rendering info</param>
 		/// ------------------------------------------------------------------------------------
-		public PhrasePartManager(IEnumerable<string> translatableParts, IEnumerable<KeyTermMatchSurrogate> keyTerms = null)
+		public PhrasePartManager(IEnumerable<string> translatableParts,
+			IEnumerable<KeyTermMatchSurrogate> keyTerms,
+			ITermRenderingsRepo renderingsRepository)
 		{
-            PopulatePartsTable(translatableParts);
+			m_renderingsRepository = renderingsRepository;
+			PopulatePartsTable(translatableParts);
             if (keyTerms != null)
                 PopulateKeyTermsTable(keyTerms);
         }
@@ -92,7 +98,7 @@ namespace SIL.Transcelerator
 			if (!m_keyTermsTable.TryGetValue(firstWord, out var termsStartingWithSameFirstWord))
 				m_keyTermsTable[firstWord] = termsStartingWithSameFirstWord = new List<KeyTerm>();
 
-			termsStartingWithSameFirstWord.Add(new KeyTerm(matchSurrogate));
+			termsStartingWithSameFirstWord.Add(new KeyTerm(matchSurrogate, m_renderingsRepository));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -136,16 +142,15 @@ namespace SIL.Transcelerator
 	    public Part GetOrCreatePart(List<Word> words, TranslatablePhrase owningPhraseOfPart,
             bool unconditionallyCreate)
         {
-            Dictionary<Word, List<Part>> partsDictionary;
-            List<Part> parts = null;
+			List<Part> parts = null;
             Part part = null;
-            if (m_partsTable.TryGetValue(words.Count(), out partsDictionary))
+            if (m_partsTable.TryGetValue(words.Count, out var partsDictionary))
             {
                 if (partsDictionary.TryGetValue(words.First(), out parts) && !unconditionallyCreate)
                     part = parts.FirstOrDefault(x => x.Words.SequenceEqual(words));
             }
             else
-                m_partsTable[words.Count()] = partsDictionary = new Dictionary<Word, List<Part>>();
+                m_partsTable[words.Count] = partsDictionary = new Dictionary<Word, List<Part>>();
 
             if (parts == null)
                 partsDictionary[words.First()] = parts = new List<Part>();
@@ -154,9 +159,8 @@ namespace SIL.Transcelerator
             {
                 part = new Part(words);
                 parts.Add(part);
-				if (m_allPartsList != null)
-					m_allPartsList.Add(part);
-            }
+				m_allPartsList?.Add(part);
+			}
 
             if (owningPhraseOfPart != null)
                 part.AddOwningPhrase(owningPhraseOfPart);
@@ -185,7 +189,7 @@ namespace SIL.Transcelerator
 				else if (part.Type == PartType.KeyTerm)
 					newPart = FindKeyTerm(part.Words);
 				else
-					newPart = new Number(part.NumericValue);
+					newPart = new Number(part.NumericValue, phrase.Helper);
 				phrase.m_parts.Add(newPart);
 			}
 		}
@@ -217,9 +221,9 @@ namespace SIL.Transcelerator
 		//		{
 		//			if (match.StartIndex > 0)
 		//			{
-		//				Part preceedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex).ToList(),
+		//				Part precedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex).ToList(),
 		//					phrase, false);
-		//				question.ParsedParts.Insert(iPart++, preceedingPart);
+		//				question.ParsedParts.Insert(iPart++, precedingPart);
 		//			}
 		//			question.ParsedParts.Insert(iPart++, match.Part);
 		//			if (match.StartIndex + match.Part.Words.Count < part.Words.Count)
@@ -289,11 +293,11 @@ namespace SIL.Transcelerator
 		//				foreach (Part possibleSubPart in possibleSubParts)
 		//				{
 		//					int iWordTemp = iWord + 1;
-		//					int isubWord = 1;
+		//					int iSubWord = 1;
 		//					int possiblePartWordCount = possibleSubPart.Words.Count();
-		//					while (isubWord < possiblePartWordCount && possibleSubPart.Words.ElementAt(isubWord) == part.Words.ElementAt(iWordTemp++))
-		//						isubWord++;
-		//					if (isubWord == possiblePartWordCount)
+		//					while (iSubWord < possiblePartWordCount && possibleSubPart.Words.ElementAt(iSubWord) == part.Words.ElementAt(iWordTemp++))
+		//						iSubWord++;
+		//					if (iSubWord == possiblePartWordCount)
 		//						return new SubPhraseMatch(iWord, possibleSubPart);
 		//				}
 		//			}

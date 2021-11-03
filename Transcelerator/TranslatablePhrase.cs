@@ -43,11 +43,9 @@ namespace SIL.Transcelerator
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsAndNumbersMatch;
-		internal static IPhraseTranslationHelper s_helper;
 		#endregion
 
 		#region Constructors
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
@@ -59,10 +57,12 @@ namespace SIL.Transcelerator
 		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular section and category).</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(IQuestionKey questionInfo, int section, int iCategory,
-			int seqNumber)
-			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
+			int seqNumber, IPhraseTranslationHelper helper)
+			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase, helper)
 		{
 			m_questionInfo = questionInfo;
 			SectionId = section;
@@ -83,8 +83,11 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
 		/// </summary>
 		/// <param name="phrase">The original phrase.</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(string phrase) : this(phrase, null)
+		public TranslatablePhrase(string phrase, IPhraseTranslationHelper helper) :
+			this(phrase, null, helper)
 		{
 		}
 
@@ -95,8 +98,10 @@ namespace SIL.Transcelerator
 		/// <param name="originalPhrase">The original phrase. (Possibly a user-added phrase, in
 		/// which case it will be a GUID, prefaced by Question.kGuidPrefix) </param>
 		/// <param name="modifiedPhrase">The modified phrase.</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
-		private TranslatablePhrase(string originalPhrase, string modifiedPhrase)
+		private TranslatablePhrase(string originalPhrase, string modifiedPhrase, IPhraseTranslationHelper helper)
 		{
 			OriginalPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
 			if (!IsNullOrEmpty(modifiedPhrase))
@@ -117,10 +122,13 @@ namespace SIL.Transcelerator
 					m_type = TypeOfPhrase.NoEnglishVersion;
 				}
 			}
+
+			Helper = helper;
 		}
 		#endregion
 
 		#region Properties
+		internal IPhraseTranslationHelper Helper { get; }
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the category of this phrase (used to group phrases within the same section).
@@ -314,9 +322,9 @@ namespace SIL.Transcelerator
 				return m_sTranslation;
 			if (!IsNullOrEmpty(m_sTranslation))
 				return Format(m_sTranslation, GetRenderingsOfType<KeyTerm>(fast).Concat(GetRenderingsOfType<Number>(fast)).Cast<object>().ToArray());
-			return s_helper.InitialPunctuationForType(TypeOfPhrase) +
+			return Helper.InitialPunctuationForType(TypeOfPhrase) +
 				m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this, fast)) +
-				s_helper.FinalPunctuationForType(TypeOfPhrase);
+				Helper.FinalPunctuationForType(TypeOfPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -340,7 +348,7 @@ namespace SIL.Transcelerator
 			if (m_fHasUserTranslation != value)
 			{
 				m_fHasUserTranslation = value;
-				s_helper.ProcessChangeInUserTranslationState();
+				Helper.ProcessChangeInUserTranslationState();
 			}
 		}
 
@@ -545,7 +553,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string CategoryName => s_helper.GetCategoryName(Category);
+		public string CategoryName => Helper.GetCategoryName(Category);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -640,14 +648,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public int CompareTo(TranslatablePhrase other)
 		{
-			int compare;
 			// 1)
 			// ENHANCE: Idea for a possible future optimization: 	compare = (TranslatableParts.Any() ? (-1) : m_parts[0] ) + (other.TranslatableParts.Any() ? 1 : -2);
 			if (!other.TranslatableParts.Any())
 				return TranslatableParts.Any() ? -1 : 0;
 			if (!TranslatableParts.Any())
 				return 1;
-			compare = other.TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / other.TranslatableParts.Count() - TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / TranslatableParts.Count();
+			var compare = other.TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / other.TranslatableParts.Count() - TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / TranslatableParts.Count();
 			if (compare != 0)
 				return compare;
 			// 2)
@@ -736,7 +743,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets the translation template with placeholders for each of the key terms for which
 		/// a matching rendering is found in the translation. As a side-effect, this also sets
-		/// m_allTermsMatch.
+		/// m_allTermsAndNumbersMatch.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal string GetTranslationTemplate()
@@ -957,7 +964,7 @@ namespace SIL.Transcelerator
 			var sd = locationOfExistingRendering;
 			if (sd == null)
 			{
-				var finalPunct = s_helper.FinalPunctuationForType(TypeOfPhrase);
+				var finalPunct = Helper.FinalPunctuationForType(TypeOfPhrase);
 				int start = text.Length;
 				if (finalPunct != null && text.EndsWith(finalPunct))
 					start -= finalPunct.Length;
@@ -994,7 +1001,7 @@ namespace SIL.Transcelerator
 			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
 				m_allTermsAndNumbersMatch = false; // This will usually get updated in ProcessTranslation
-				s_helper.ProcessTranslation(this);
+				Helper.ProcessTranslation(this);
 			}
 		}
 		#endregion
