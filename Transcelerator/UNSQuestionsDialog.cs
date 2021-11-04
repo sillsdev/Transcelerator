@@ -1910,30 +1910,31 @@ namespace SIL.Transcelerator
 
 			var refreshUi = new Action(() =>
 			{
-				ApplyFilter(() =>
-				{
-					if (iSortedCol >= 0)
-						SortByColumn(iSortedCol, sortAscending);
-					if (key != null)
+				SetUiForLongTask(false, () =>
+					ApplyFilter(() =>
 					{
-						int iRow = m_helper.FindPhrase(key);
-						if (iRow < 0)
-							iRow = fallBackRow;
-						if (iRow < dataGridUns.Rows.Count)
+						if (iSortedCol >= 0)
+							SortByColumn(iSortedCol, sortAscending);
+						if (key != null)
 						{
-							try
+							int iRow = m_helper.FindPhrase(key);
+							if (iRow < 0)
+								iRow = fallBackRow;
+							if (iRow < dataGridUns.Rows.Count)
 							{
-								dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
-							}
-							catch (InvalidOperationException e)
-							{
-								Debug.Fail("Got the ever-elusive InvalidOperationException: " + e.Message);
+								try
+								{
+									dataGridUns.CurrentCell = dataGridUns.Rows[iRow].Cells[iCol];
+								}
+								catch (InvalidOperationException e)
+								{
+									Debug.Fail("Got the ever-elusive InvalidOperationException: " + e.Message);
 
-								// What to do? Ignore?
+									// What to do? Ignore?
+								}
 							}
 						}
-					}
-				});
+					}));
 			});
 
 			Task.Run(() => { LoadTranslations(null); }).ContinueWith(t =>
