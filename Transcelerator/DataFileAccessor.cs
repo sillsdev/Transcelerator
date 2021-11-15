@@ -207,6 +207,11 @@ namespace SIL.Transcelerator
 				return reader?.ReadToEnd();
 		}
 
+		public void EnsureLockForTranslationData()
+		{
+			EnsureLock(GetFileName(DataFileId.Translations), true);
+		}
+
 		private IWriteLock EnsureLock(string fileName, bool required)
 		{
 			lock (m_locks)

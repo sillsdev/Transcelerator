@@ -164,7 +164,11 @@ namespace SIL.Transcelerator
 				if (value && mnuAutoSave.Checked && DateTime.Now > m_lastSaveTime.AddSeconds(10))
 					Save(true, false);
 				else
+				{
+					if (value)
+						m_fileAccessor.EnsureLockForTranslationData();
 					mnuSave.Enabled = btnSave.Enabled = value;
+				}
 			}
 		}
 
@@ -1882,7 +1886,7 @@ namespace SIL.Transcelerator
 				lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
 			});
 
-			int iCol = dataGridUns.CurrentCell.ColumnIndex;
+			int iCol = dataGridUns.CurrentCell?.ColumnIndex ?? m_colTranslation.Index;
 			Save(fForceSave, fForceSave); // See comment above for fForceSave
 
 			int iSortedCol = -1;
