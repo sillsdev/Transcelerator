@@ -69,6 +69,7 @@ namespace SIL.Transcelerator
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly string m_helpHome;
 		private LocalizationsFileAccessor m_dataLocalizer;
+		private BiblicalTermLocalizer m_termLocalizer;
 		private PhraseTranslationHelper m_helper;
 		private readonly ParatextDataFileAccessor m_fileAccessor;
 		private ParatextTermRenderingsRepo m_renderingsRepo;
@@ -639,6 +640,10 @@ namespace SIL.Transcelerator
 		private void SetLocalizer(string preferredUiLocale)
 		{
 			m_dataLocalizer = GetDataLocalizer(preferredUiLocale);
+
+			m_termLocalizer = m_dataLocalizer == null ||
+				m_dataLocalizer.Locale == "en" || m_dataLocalizer.Locale == "en-GB" ? null :
+				new BiblicalTermLocalizer(m_dataLocalizer.Locale, m_host.GetBiblicalTermList(BiblicalTermListType.Major));
 		}
 
 		private LocalizationsFileAccessor GetDataLocalizer(string localeId)
@@ -2788,11 +2793,14 @@ namespace SIL.Transcelerator
 			int col = 0;
 			int longestListHeight = 0;
 			Dictionary<KeyTerm, int> previousKeyTermEndOfRenderingOffsets = new Dictionary<KeyTerm, int>();
+			var majorTerms = m_host.GetBiblicalTermList(BiblicalTermListType.Major);
+
 			foreach (KeyTerm keyTerm in phrase.GetParts().OfType<KeyTerm>())//.Where(ktm => ktm.Renderings.Any()))
 			{
 				previousKeyTermEndOfRenderingOffsets.TryGetValue(keyTerm, out var ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm);
 				TermRenderingCtrl ktRenderCtrl = new TermRenderingCtrl(keyTerm,
-					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, DisplayExceptionMessage, LookupTerm, m_fileAccessor.IsReadonly);
+					ichEndRenderingOfPreviousOccurrenceOfThisSameKeyTerm, DisplayExceptionMessage, LookupTerm,
+					m_termLocalizer?.GetTermHeading(keyTerm), m_fileAccessor.IsReadonly);
 				ktRenderCtrl.VernacularFont = m_vernFont;
 
 				SubstringDescriptor sd = phrase.FindTermRenderingInUse(ktRenderCtrl);

@@ -349,6 +349,7 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="BiblicalTermLocalizer.cs" />
     <Compile Include="IHtmlScriptureExtractor.cs" />
     <Compile Include="IPhrasePart.cs" />
     <Compile Include="IPhraseTranslationHelper.cs" />

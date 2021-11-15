@@ -62,7 +62,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
 			Action<Exception, string> handleAddRenderingError,
-			Action<IReadOnlyList<string>> lookupTerm,
+			Action<IReadOnlyList<string>> lookupTerm, string termInUiLocale,
 			bool isReadOnly)
 		{
 			InitializeComponent();
@@ -72,7 +72,7 @@ namespace SIL.Transcelerator
 			m_handleAddRenderingError = handleAddRenderingError;
 			m_lookupTerm = lookupTerm;
 			Enabled = !isReadOnly;
-			m_lblKeyTermColHead.Text = term.ToString();
+			m_lblKeyTermColHead.Text = termInUiLocale ?? term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			PopulateRenderings();
 			term.BestRenderingChanged += term_BestRenderingChanged;

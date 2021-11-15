@@ -1,4 +1,4 @@
-﻿## 3.0.0 14 October 2021
+﻿## 3.0.0 16 November 2021
 * Changed to use the new interfaces compatible with Paratext 9.2.
 * This version also fixes several deficiencies, including performance issues when sorting on the Translation column.
 * Improvements to the Add Question dialog box
