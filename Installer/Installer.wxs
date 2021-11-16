@@ -45,16 +45,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                             Name="Paratext9_Full_Release_AppPath"
                             Type="directory" />
         </Property>
-        <Property Id="PARATEXT9BETA" Secure="yes">
-            <RegistrySearch Win64="no"
-							Id="Paratext9Beta"
-							Root="HKLM"
-                            Key="SOFTWARE\Paratext\8"
-                            Name="Program_Files_Directory_Ptw91"
-                            Type="directory" />
-        </Property>
         <Condition Message="This version of Transcelerator requires Paratext 9.2 or later. For earlier versions of Paratext 9, use the latest version of Transcelerator 2.0. For Paratext 8, use the 32-bit installer (version 1.5.x).">
-            <![CDATA[Installed OR PARATEXT9BETA OR PARATEXT9]]>
+            <![CDATA[Installed OR PARATEXT9]]>
         </Condition>
 
         <Property Id="PARATEXT92ORGREATER" Secure="yes">
@@ -62,13 +54,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <FileSearch Name="Paratext.exe" MinVersion="9.2.0.0" />
           </DirectorySearch>
         </Property>
-        <Property Id="PARATEXT92BETAORGREATER" Secure="yes">
-          <DirectorySearch Id="ParatextBetaExeVersion" Path="[PARATEXT9BETA]">
-            <FileSearch Name="Paratext.exe" MinVersion="9.2.52.2" />
-          </DirectorySearch>
-        </Property>
         <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
-          <![CDATA[Installed OR PARATEXT92ORGREATER OR PARATEXT92BETAORGREATER]]>
+          <![CDATA[Installed OR PARATEXT92ORGREATER]]>
         </Condition>
 		
         <Binary Id="CustomInstallerActions.CA.dll"
@@ -88,14 +75,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 						<Directory Id="INSTALLDIR9" Name="Transcelerator">
 							<Directory Id="INSTALLDIR9_LOCALIZATION" Name="localization"/>
 							<Directory Id="DocsDirP9" Name="docs"/>
-						</Directory>
-					</Directory>
-				</Directory>
-				<Directory Id="PARATEXT9BETA" Name="ParatextDir9Beta">
-					<Directory Id="PLUGINDIR9BETA" Name="plugins">
-						<Directory Id="INSTALLDIR9BETA" Name="Transcelerator">
-							<Directory Id="INSTALLDIR9BETA_LOCALIZATION" Name="localization"/>
-							<Directory Id="DocsDirP9Beta" Name="docs"/>
 						</Directory>
 					</Directory>
 				</Directory>
@@ -263,176 +242,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
         </ComponentGroup>
 
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Guid="*">
-                <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xsd_P9Beta" ShortName="1194exg5.xsd" KeyPath="yes" Name="keyTermRules.xsd" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestions.xml_P9Beta" ShortName="pr7gvp5k.xml" KeyPath="yes" Name="TxlQuestions.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestionWords.xml_P9Beta" ShortName="4m95zkrf.xml" KeyPath="yes"
-                      Name="TxlQuestionWords.xml" />
-            </Component>
-
-            <Component Guid="*">
-                <File Id="Analytics.NET.dll_P9Beta" ShortName="pt3ei4z5.dll" KeyPath="yes" Name="Analytics.NET.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="DesktopAnalytics.dll_P9Beta" ShortName="mcmisnhb.dll" KeyPath="yes"
-                      Name="DesktopAnalytics.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Newtonsoft.Json.dll_P9Beta" ShortName="2yd4aev9.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.dll_P9Beta" ShortName="uk0wei71.dll" KeyPath="yes" Name="TxlCore.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="L10NSharp.dll_P9Beta" ShortName="qywkwk5r.dll" KeyPath="yes"
-                      Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.dll_P9Beta" ShortName="t5lk78ie.dll" KeyPath="yes" Name="SilUtils.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.WritingSystems.dll_P9Beta" ShortName="0dmsdv4y.dll" KeyPath="yes"
-                      Name="SIL.WritingSystems.dll" />
-            </Component>
-			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
-				But the code would also need to be made to handle the case of no icu.net.dll (by catching
-				exception?)-->
-			<Component Guid="*">
-				<File Id="icu.net.dll_P9Beta" ShortName="icunet9t.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp9t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
-			</Component>
-			<Component Guid="*">
-				<File Id="icudt62.dll_86_P9Beta" ShortName="dt62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuin62.dll_86_P9Beta" ShortName="in62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
-			</Component>
-			<!-- End ICU -->
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Keyboarding.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
-                      Name="Keyman7Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
-                      Name="Keyman10Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
-                      Name="KeymanLink.dll" />
-            </Component>
-		    <Component Guid="*">
-			    <File Id="Markdig.Signed.dll_P9Beta" ShortName="ho9myfa3.dll" KeyPath="yes"
-                      Name="Markdig.Signed.dll" />
-		    </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Scripture.dll_P9Beta" ShortName="qpybzotc.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.dll_P9Beta" ShortName="5j3m7jap.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.dll_P9Beta" ShortName="yifsuyy7.dll" KeyPath="yes" Name="SIL.Core.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.Desktop.dll_P9Beta" ShortName="q3763bq8.dll" KeyPath="yes"
-                      Name="SIL.Core.Desktop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Transcelerator.pdb_P9Beta" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.dll_P9Beta" ShortName="vp29mioj.dll" KeyPath="yes"
-                      Name="ComprehensionCheckingData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.pdb_P9Beta" ShortName="jmjj2d6f.pdb" KeyPath="yes"
-                      Name="ComprehensionCheckingData.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.pdb_P9Beta" ShortName="l1xkhgcz.pdb" KeyPath="yes" Name="TxlCore.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.pdb_P9Beta" ShortName="gty40lss.pdb" KeyPath="yes" Name="SilUtils.pdb" />
-            </Component>
-            <Component Guid="{bb48a596-a43f-47f0-b6c9-fd125d18096f}">
-                <File Id="Icon_P9Beta" ShortName="fihp0pz8.ico" KeyPath="yes" Name="TXL no TXL.ico" />
-            </Component>
-            <Component Guid="*">
-                <File Id="CreditsAndLicense.htm_P9Beta" ShortName="2gd8uwk5.htm" KeyPath="yes"
-                      Name="CreditsAndLicense.htm" />
-            </Component>
-            <Component Id="Transcelerator.dll.config_P9Beta" Guid="*">
-                <File Id="Transcelerator.dll.config_P9Beta" ShortName="eemr572z.cfg" KeyPath="yes"
-                      Name="Transcelerator.dll.config" />
-            </Component>
-            <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
-                <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_es" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="LocalizedPhrases_es.xlf_P9Beta" Guid="*">
-                <File Id="LocalizedPhrases_es.xlf_P9Beta" ShortName="ejoysqre.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-es.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_es" Directory="INSTALLDIR9BETA_LOCALIZATION"
-                        Source="..\DistFiles\localization">
-            <Component Id="Transcelerator.es.xlf_P9Beta" Guid="*">
-                <File Id="Transcelerator.es.xlf_P9Beta" ShortName="esp9beta.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_en_GB" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="COMPONENTSFORP9BetaPLUGIN_en_GB" Guid="*">
-                <File Id="LocalizedPhrases_en_GB.xlf_P9Beta" ShortName="7cogbz73.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-en-GB.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_fr" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="LocalizedPhrases_fr.xlf_P9Beta" Guid="*">
-                <File Id="LocalizedPhrases_fr.xlf_P9Beta" ShortName="88bj5edw.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-fr.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_fr" Directory="INSTALLDIR9BETA_LOCALIZATION"
-                        Source="..\DistFiles\localization">
-            <Component Id="Transcelerator.fr.xlf_P9Beta" Guid="*">
-                <File Id="Transcelerator.fr.xlf_P9Beta" ShortName="frp8.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
-            </Component>
-        </ComponentGroup>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT92ORGREATER]]></Condition>
@@ -460,35 +269,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 			<Feature Id="Documentation_P9" Level="1" Title="Documentation" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <ComponentGroupRef Id="COMPONENTSFORP9Documentation_en" />
-            </Feature>
-        </Feature>
-
-        <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 9 Beta" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT92BETAORGREATER]]></Condition>
-            <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN" />
-			<Component Id="CreateP9BetaLocalizationFolder" Directory="INSTALLDIR9BETA_LOCALIZATION" Guid="{CFB970EC-655A-49AA-8D35-FD3F437CAD4B}">
-				<CreateFolder />
-			</Component>
-            <Feature Id="Localization_P9Beta" Level="1" Title="Localizations" InstallDefault="followParent"
-                     AllowAdvertise="no">
-                <Feature Id="Localization_P9Beta_es" Level="1" Title="español" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_es" />
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_es" />
-                </Feature>
-                <Feature Id="Localization_P9Beta_enGB" Level="1" Title="British English" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_en_GB" />
-                </Feature>
-                <Feature Id="Localization_P9Beta_fr" Level="1" Title="français" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_fr" />
-					<ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_fr" />
-                </Feature>
-            </Feature>
-			<Feature Id="Documentation_P9Beta" Level="1" Title="Documentation" InstallDefault="followParent"
-                     AllowAdvertise="no">
-                <ComponentGroupRef Id="COMPONENTSFORP9BetaDocumentation_en" />
             </Feature>
         </Feature>
 					  
