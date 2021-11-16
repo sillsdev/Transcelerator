@@ -248,6 +248,16 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
 			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
 				<CreateFolder />
+				<!-- Note: Transcelerator requires this folder even if none
+				of the "Localizations" sub-features is installed. Unfortunately,
+				it seems that even with a RemoveFolder element, this folder does
+				not get removed. Though it seems counterintuitive, my guess is
+				that the uninstall order is such that the remove is attempted
+				before the installed xlf files are removed. If this hypothesis
+				is correct, presumably RemoveEx could solve this, but then it
+				might cause another problem because it would prematurely delete
+				files that the installer wants to remove gracefully. For now, I
+				think this is not worth additional time trying to figure out. -->
 			</Component>
             <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
