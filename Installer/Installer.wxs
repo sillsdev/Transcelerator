@@ -146,7 +146,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				exception?)-->
 			<Component Guid="*">
 				<File Id="icu.net.dll_P9" ShortName="icunetp9.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>			
+			</Component>
 			<Component Guid="*">
 				<File Id="Microsoft.Extensions.DependencyModel.dll_P9" ShortName="msedmp9.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
 			</Component>
@@ -176,6 +176,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes"
                       Name="KeymanLink.dll" />
             </Component>
+		    <Component Guid="*">
+			    <File Id="Markdig.Signed.dll_P9" ShortName="x8d4bn3u.dll" KeyPath="yes"
+                      Name="Markdig.Signed.dll" />
+		    </Component>
             <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
@@ -306,19 +310,19 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				But the code would also need to be made to handle the case of no icu.net.dll (by catching
 				exception?)-->
 			<Component Guid="*">
-				<File Id="icu.net.dll_P9Beta" ShortName="icunet7t.dll" KeyPath="yes" Name="icu.net.dll" />
+				<File Id="icu.net.dll_P9Beta" ShortName="icunet9t.dll" KeyPath="yes" Name="icu.net.dll" />
 			</Component>
 			<Component Guid="*">
-				<File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp7t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+				<File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp9t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
 			</Component>
 			<Component Guid="*">
-				<File Id="icudt62.dll_86_P9Beta" ShortName="dt62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
+				<File Id="icudt62.dll_86_P9Beta" ShortName="dt62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
 			</Component>
 			<Component Guid="*">
-				<File Id="icuin62.dll_86_P9Beta" ShortName="in62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
+				<File Id="icuin62.dll_86_P9Beta" ShortName="in62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
 			</Component>
 			<Component Guid="*">
-				<File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
+				<File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
 			</Component>
 			<!-- End ICU -->
             <Component Guid="*">
@@ -337,6 +341,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
                       Name="KeymanLink.dll" />
             </Component>
+		    <Component Guid="*">
+			    <File Id="Markdig.Signed.dll_P9Beta" ShortName="ho9myfa3.dll" KeyPath="yes"
+                      Name="Markdig.Signed.dll" />
+		    </Component>
             <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
