@@ -300,7 +300,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetPath)" "$(TargetDir)\$(TargetName).ptxplg" /Y
+    <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)\$(TargetName).ptxplg" /y
 if %25ERRORLEVEL%25 GEQ 1 goto failed
 
 IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
