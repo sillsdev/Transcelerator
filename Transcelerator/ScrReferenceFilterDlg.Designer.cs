@@ -201,6 +201,7 @@ namespace SIL.Transcelerator
 			this.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Filter by Reference";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
 			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);

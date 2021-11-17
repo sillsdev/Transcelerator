@@ -165,7 +165,7 @@
       <Version>4.2.0-beta0006</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>9.0.0-beta0076</Version>
+      <Version>9.0.0-beta0083</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

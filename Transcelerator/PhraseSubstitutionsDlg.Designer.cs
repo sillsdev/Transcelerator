@@ -524,6 +524,8 @@ namespace SIL.Transcelerator
 			this.Name = "PhraseSubstitutionsDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Question Adjustments";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
 			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
