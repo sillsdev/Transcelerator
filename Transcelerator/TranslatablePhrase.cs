@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -20,6 +20,7 @@ using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using static System.Char;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -38,15 +39,13 @@ namespace SIL.Transcelerator
 		private string m_sModifiedPhrase;
 		internal readonly List<IPhrasePart> m_parts = new List<IPhrasePart>();
 		private readonly TypeOfPhrase m_type;
-		internal readonly IQuestionKey m_questionInfo;
+		private readonly IQuestionKey m_questionInfo;
 		private string m_sTranslation;
 		private bool m_fHasUserTranslation;
 		private bool m_allTermsAndNumbersMatch;
-		internal static IPhraseTranslationHelper s_helper;
 		#endregion
 
 		#region Constructors
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
@@ -58,10 +57,12 @@ namespace SIL.Transcelerator
 		/// within the section (or -1 if this is a category name).</param>
 		/// <param name="seqNumber">The sequence number (used to sort and/or uniquely identify
 		/// a phrase within a particular section and category).</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
 		public TranslatablePhrase(IQuestionKey questionInfo, int section, int iCategory,
-			int seqNumber)
-			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase)
+			int seqNumber, IPhraseTranslationHelper helper)
+			: this(questionInfo.Text, (questionInfo as Question)?.ModifiedPhrase, helper)
 		{
 			m_questionInfo = questionInfo;
 			SectionId = section;
@@ -82,8 +83,11 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="TranslatablePhrase"/> class.
 		/// </summary>
 		/// <param name="phrase">The original phrase.</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase(string phrase) : this(phrase, null)
+		public TranslatablePhrase(string phrase, IPhraseTranslationHelper helper) :
+			this(phrase, null, helper)
 		{
 		}
 
@@ -94,8 +98,10 @@ namespace SIL.Transcelerator
 		/// <param name="originalPhrase">The original phrase. (Possibly a user-added phrase, in
 		/// which case it will be a GUID, prefaced by Question.kGuidPrefix) </param>
 		/// <param name="modifiedPhrase">The modified phrase.</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
 		/// ------------------------------------------------------------------------------------
-		private TranslatablePhrase(string originalPhrase, string modifiedPhrase)
+		private TranslatablePhrase(string originalPhrase, string modifiedPhrase, IPhraseTranslationHelper helper)
 		{
 			OriginalPhrase = originalPhrase.Normalize(NormalizationForm.FormC);
 			if (!IsNullOrEmpty(modifiedPhrase))
@@ -116,10 +122,13 @@ namespace SIL.Transcelerator
 					m_type = TypeOfPhrase.NoEnglishVersion;
 				}
 			}
+
+			Helper = helper;
 		}
 		#endregion
 
 		#region Properties
+		internal IPhraseTranslationHelper Helper { get; }
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the category of this phrase (used to group phrases within the same section).
@@ -282,9 +291,9 @@ namespace SIL.Transcelerator
 				Debug.Assert(m_fHasUserTranslation);
 
 				StringBuilder bldr = new StringBuilder(m_sTranslation);
-				while (bldr.Length > 0 && Char.IsPunctuation(bldr[0]))
+				while (bldr.Length > 0 && IsPunctuation(bldr[0]))
 					bldr.Remove(0, 1);
-				while (bldr.Length > 0 && Char.IsPunctuation(bldr[bldr.Length - 1]))
+				while (bldr.Length > 0 && IsPunctuation(bldr[bldr.Length - 1]))
 					bldr.Length--;
 				return bldr.ToString();
 			}
@@ -297,16 +306,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Translation
 		{
-			get
-			{
-				if (m_fHasUserTranslation)
-					return m_sTranslation;
-				if (!IsNullOrEmpty(m_sTranslation))
-					return Format(m_sTranslation, KeyTermRenderings.Concat(NumberRenderings).Cast<object>().ToArray());
-				return s_helper.InitialPunctuationForType(TypeOfPhrase) +
-					m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this)) +
-					s_helper.FinalPunctuationForType(TypeOfPhrase);
-			}
+			get => GetTranslation();
 			set
 			{
 				if (IsExcluded)
@@ -314,6 +314,17 @@ namespace SIL.Transcelerator
 				SetHasUserTranslationInternal(!IsNullOrEmpty(value));
 				SetTranslationInternal(value);
 			}
+		}
+
+		public string GetTranslation(bool fast = false)
+		{
+			if (m_fHasUserTranslation)
+				return m_sTranslation;
+			if (!IsNullOrEmpty(m_sTranslation))
+				return Format(m_sTranslation, GetRenderingsOfType<KeyTerm>(fast).Concat(GetRenderingsOfType<Number>(fast)).Cast<object>().ToArray());
+			return Helper.InitialPunctuationForType(TypeOfPhrase) +
+				m_parts.ToString(true, " ", p => p.GetBestRenderingInContext(this, fast)) +
+				Helper.FinalPunctuationForType(TypeOfPhrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -337,7 +348,7 @@ namespace SIL.Transcelerator
 			if (m_fHasUserTranslation != value)
 			{
 				m_fHasUserTranslation = value;
-				s_helper.ProcessChangeInUserTranslationState();
+				Helper.ProcessChangeInUserTranslationState();
 			}
 		}
 
@@ -480,22 +491,13 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the numbers formatted appropriately for inserting into a
-		/// translations, ordered by their occurrence in the phrase.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Browsable(false)]
-		private string[] NumberRenderings => GetRenderingsOfType<Number>();
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets an an array of the parts formatted appropriately for inserting into a
 		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private string[] GetRenderingsOfType<T>() where T : IPhrasePart
+		private string[] GetRenderingsOfType<T>(bool fast = false) where T : IPhrasePart
 		{
-			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this)).ToArray();
+			return GetValuesForPartsOfType<T>(t => t.GetBestRenderingInContext(this, fast)).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -551,7 +553,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
-		public string CategoryName => s_helper.GetCategoryName(Category);
+		public string CategoryName => Helper.GetCategoryName(Category);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -646,14 +648,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public int CompareTo(TranslatablePhrase other)
 		{
-			int compare;
 			// 1)
 			// ENHANCE: Idea for a possible future optimization: 	compare = (TranslatableParts.Any() ? (-1) : m_parts[0] ) + (other.TranslatableParts.Any() ? 1 : -2);
 			if (!other.TranslatableParts.Any())
 				return TranslatableParts.Any() ? -1 : 0;
 			if (!TranslatableParts.Any())
 				return 1;
-			compare = other.TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / other.TranslatableParts.Count() - TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / TranslatableParts.Count();
+			var compare = other.TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / other.TranslatableParts.Count() - TranslatableParts.Min(p => p.OwningPhrases.Count()) * 100 / TranslatableParts.Count();
 			if (compare != 0)
 				return compare;
 			// 2)
@@ -742,7 +743,7 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Gets the translation template with placeholders for each of the key terms for which
 		/// a matching rendering is found in the translation. As a side-effect, this also sets
-		/// m_allTermsMatch.
+		/// m_allTermsAndNumbersMatch.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal string GetTranslationTemplate()
@@ -776,15 +777,15 @@ namespace SIL.Transcelerator
 				for (int iTrans = 0; iTrans < translation.Length; iTrans++)
 				{
 					char t = translation[iTrans];
-					if (char.IsDigit(t) &&
-						char.GetNumericValue(sNbr[iNbr]).Equals(char.GetNumericValue(t)))
+					if (IsDigit(t) &&
+						GetNumericValue(sNbr[iNbr]).Equals(GetNumericValue(t)))
 					{
 						if (ich < 0)
 							ich = iTrans; // Found possible start of the number we're seeking.
 						iNbr++;
 						if (iNbr == sNbr.Length)
 						{
-							if (iTrans + 1 < translation.Length && char.IsDigit(translation[iTrans + 1]))
+							if (iTrans + 1 < translation.Length && IsDigit(translation[iTrans + 1]))
 							{
 								// Number in the translation has more (unaccounted for) digits - not a match
 								ich = -1;
@@ -800,7 +801,7 @@ namespace SIL.Transcelerator
 							}
 						}
 					}
-					else if (ich > -1 && !char.IsPunctuation(t) && !char.IsWhiteSpace(t))
+					else if (ich > -1 && !IsPunctuation(t) && !IsWhiteSpace(t))
 					{
 						// Not a complete match. Start over.
 						ich = -1;
@@ -823,7 +824,23 @@ namespace SIL.Transcelerator
 		/// <returns>An object that indicates where in the translation string the match was
 		/// found (offset and length)</returns>
 		/// ------------------------------------------------------------------------------------
-		public SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo)
+		public SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo) =>
+			FindTermRenderingInUse(renderingInfo, Translation);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the term rendering (from the known ones in the renderingInfo) in use in
+		/// the given translation.
+		/// </summary>
+		/// <param name="renderingInfo">The information about a single occurrence of a key
+		/// biblical term and its rendering in a string in the target language.</param>
+		/// <param name="translation">If provided, a provisional translation to use instead
+		/// of the current <see cref="Translation"/></param>
+		/// <returns>An object that indicates where in the translation string the match was
+		/// found (offset and length)</returns>
+		/// ------------------------------------------------------------------------------------
+		public static SubstringDescriptor FindTermRenderingInUse(ITermRenderingInfo renderingInfo,
+			string translation)
 		{
 			// This will almost always be 0, but if a term occurs more than once, this
 			// will be the character offset following the occurrence of the rendering of
@@ -833,7 +850,7 @@ namespace SIL.Transcelerator
 			int lengthOfMatch = 0;
 			foreach (string rendering in renderingInfo.Renderings)
 			{
-				int ich = Translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
+				int ich = translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
 				if (ich >= 0 && (ich < indexOfMatch || (ich == indexOfMatch && rendering.Length > lengthOfMatch)))
 				{
 					// Found an earlier or longer match.
@@ -850,8 +867,12 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Inserts a newly selected key term rendering into the appropriate place in the
-		/// translation.
+		/// (provisional) translation.
 		/// </summary>
+		/// <param name="text">The initial value of the translation. This may or may not be the
+		/// actual value of the translation for this phrase since it may be a "dirty" value if
+		/// the user is in the middle of editing it.
+		/// </param>
 		/// <param name="renderingInfo">object that indicates all the renderings for the term
 		/// and the offset of the end of the preceding occurrence of the rendering of the term
 		/// (if any).</param>
@@ -861,14 +882,13 @@ namespace SIL.Transcelerator
 		/// not null, we'll consider whether the new rendering should be inserted at that point.
 		/// </param>
 		/// <param name="newRendering">The selected rendering.</param>
-		/// <returns>true if the rendering is inserted based on the editing state; false
-		/// otherwise (merely replaces an existing rendering or is inserted at the end).</returns>
+		/// <returns>The new (provisional) value of the translation with the new rendering
+		/// inserted in the best possible place in the text.</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool InsertKeyTermRendering(ITermRenderingInfo renderingInfo,
-			SubstringDescriptor editingSelectionState, string newRendering)
+		public string InsertKeyTermRendering(string text, ITermRenderingInfo renderingInfo,
+			string newRendering, ref SubstringDescriptor editingSelectionState)
 		{
-			var locationOfExistingRendering = FindTermRenderingInUse(renderingInfo);
-			string text = Translation;
+			var locationOfExistingRendering = FindTermRenderingInUse(renderingInfo, text);
 			if (editingSelectionState != null)
 			{
 				// If the user had selected the entire translation, we treat it as if they weren't
@@ -924,19 +944,17 @@ namespace SIL.Transcelerator
 					{
 						if (length == 0)
 						{
-							if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
+							if (start > 0 && IsLetterOrDigit(text[start - 1]))
 							{
 								text = text.Insert(start, " ");
 								start++;
 							}
-							if (start < text.Length && Char.IsLetterOrDigit(text[start]))
+							if (start < text.Length && IsLetterOrDigit(text[start]))
 								text = text.Insert(start, " ");
 						}
-						text = text.Insert(start, newRendering);
-						SetTranslationInternal(text);
 						editingSelectionState.Start = start;
 						editingSelectionState.Length = newRendering.Length;
-						return true;
+						return text.Insert(start, newRendering);
 					}
 				}
 			}
@@ -946,16 +964,17 @@ namespace SIL.Transcelerator
 			var sd = locationOfExistingRendering;
 			if (sd == null)
 			{
-				var finalPunct = s_helper.FinalPunctuationForType(TypeOfPhrase);
+				var finalPunct = Helper.FinalPunctuationForType(TypeOfPhrase);
 				int start = text.Length;
 				if (finalPunct != null && text.EndsWith(finalPunct))
 					start -= finalPunct.Length;
+				if (start > 0 && IsLetterOrDigit(text[start - 1]))
+					text = text.Insert(start++, " ");
 				sd = new SubstringDescriptor(start, 0);
-				if (start > 0 && Char.IsLetterOrDigit(text[start - 1]))
-					newRendering = " " + newRendering;
 			}
-			SetTranslationInternal(text.Remove(sd.Start, sd.Length).Insert(sd.Start, newRendering));
-			return false;
+
+			editingSelectionState = new SubstringDescriptor(sd.Start, newRendering.Length);
+			return text.Remove(sd.Start, sd.Length).Insert(sd.Start, newRendering);
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -982,7 +1001,7 @@ namespace SIL.Transcelerator
 			if (m_fHasUserTranslation && m_type != TypeOfPhrase.NoEnglishVersion)
 			{
 				m_allTermsAndNumbersMatch = false; // This will usually get updated in ProcessTranslation
-				s_helper.ProcessTranslation(this);
+				Helper.ProcessTranslation(this);
 			}
 		}
 		#endregion

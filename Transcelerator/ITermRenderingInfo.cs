@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -10,7 +10,6 @@
 // File: ITermRenderingInfo.cs
 // ---------------------------------------------------------------------------------------------
 using System.Collections.Generic;
-using AddInSideViews;
 
 namespace SIL.Transcelerator
 {

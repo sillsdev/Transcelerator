@@ -20,9 +20,11 @@ using DesktopAnalytics;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
-using SIL.IO;
+using Paratext.PluginInterfaces;
 using SIL.ObjectModel;
 using SIL.Scripture;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.Int32;
 using static System.String;
 
@@ -33,10 +35,10 @@ namespace SIL.Transcelerator
 	/// Dialog box for adding a new question
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	internal partial class NewQuestionDlg : Form
+	internal partial class NewQuestionDlg : ParentFormBase
 	{
-		private readonly IScrVers m_projectVersification;
-		private readonly IScrVers m_masterVersification;
+		private readonly IVersification m_projectVersification;
+		private readonly IVersification m_masterVersification;
 		private readonly string m_vernLanguage;
 		private readonly TransceleratorSections m_sectionInfo;
 		private readonly PhraseTranslationHelper m_ptHelper;
@@ -58,12 +60,21 @@ namespace SIL.Transcelerator
 
 		public string Translation => m_txtVernacularQuestion.Text;
 
+		private BCVRef BcvRefInProjectVersification
+		{
+			get
+			{
+				var startVerse = m_scrPsgReference.VerseControl.VerseRef;
+				return new BCVRef(startVerse.BookNum, startVerse.ChapterNum, startVerse.VerseNum);
+			}
+		}
+
 		private string ReferenceInProjectVersification
 		{
 			get
 			{
-				var startRef = m_scrPsgReference.ScReference;
-				var endRef = new BCVRef(startRef) { Verse = EndVerse };
+				var startRef = BcvRefInProjectVersification;
+				var endRef = new BCVRef(startRef) {Verse = EndVerse};
 				return BCVRef.MakeReferenceString(startRef, endRef, ".", "-");
 			}
 		}
@@ -71,8 +82,14 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Starting reference (in master versification)
 		/// </summary>
-		public BCVRef StartReference =>
-			new BCVRef(m_masterVersification.ChangeVersification(m_scrPsgReference.ScReference, m_projectVersification));
+		public BCVRef StartReference
+		{
+			get
+			{
+				var projectVerseRef = m_projectVersification.CreateReference(BcvRefInProjectVersification);
+				return new BCVRef(projectVerseRef.ChangeVersification(m_masterVersification).BBBCCCVVV);
+			}
+		}
 
 		/// <summary>
 		/// Ending reference (in master versification)
@@ -81,16 +98,16 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				var endRef = m_scrPsgReference.ScReference;
-				endRef.Verse = EndVerse;
-				return new BCVRef(m_masterVersification.ChangeVersification(endRef, m_projectVersification));
+				var startRef = StartReference;
+				var endRef = m_projectVersification.CreateReference(startRef.Book, startRef.Chapter, EndVerse);
+				return new BCVRef(endRef.ChangeVersification(m_masterVersification).BBBCCCVVV);
 			}
 		}
 
 		/// <summary>
 		/// Starting verse number (in project versification - i.e., matches what the user sees)
 		/// </summary>
-		private int StartVerse => m_scrPsgReference.ScReference.Verse;
+		private int StartVerse => m_scrPsgReference.VerseControl.VerseRef.VerseNum;
 
 		/// <summary>
 		/// Ending verse number (in project versification - i.e., matches what the user sees)
@@ -178,9 +195,9 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="T:NewQuestionDlg"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal NewQuestionDlg(TranslatablePhrase basePhrase, string vernLanguage,
-			TransceleratorSections sectionInfo, IScrVers projectVersification, IScrVers masterVersification,
-			PhraseTranslationHelper pth, int[] canonicalBookIds, Action<bool> changeKeyboard)
+		internal NewQuestionDlg(IProject project, TranslatablePhrase basePhrase, string vernLanguage,
+			TransceleratorSections sectionInfo, IVersification projectVersification, IVersification masterVersification,
+			PhraseTranslationHelper pth, Action<bool> changeKeyboard)
 		{
 			var baseQuestion = basePhrase.QuestionInfo;
 			m_vernLanguage = vernLanguage;
@@ -190,16 +207,17 @@ namespace SIL.Transcelerator
 			m_ptHelper = pth;
 			m_changeKeyboard = changeKeyboard;
 			InitializeComponent();
+			m_scrPsgReference.VerseControl.VerseRefChanged += m_scrPsgReference_PassageChanged;
 
 			HandleStringsLocalized();
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
-			var startRef = m_projectVersification.ChangeVersification(baseQuestion.StartRef, m_masterVersification);
-			m_scrPsgReference.Initialize(new BCVRef(startRef), m_projectVersification, canonicalBookIds);
-			m_existingStartRef = m_scrPsgReference.ScReference;
+			var startRef = m_masterVersification.CreateReference(baseQuestion.StartRef).ChangeVersification(m_projectVersification);
+			m_scrPsgReference.VerseControl.VerseRef = new ScrVersRefAdapter(startRef, project);
+			m_existingStartRef = new BCVRef(startRef.BBBCCCVVV);
 			SetCurrentSections();
-			var endRef = m_projectVersification.ChangeVersification(baseQuestion.EndRef, m_masterVersification);
-			m_existingEndVerse = BCVRef.GetVerseFromBcv(endRef);
+			var endRef = m_masterVersification.CreateReference(baseQuestion.EndRef).ChangeVersification(m_projectVersification);
+			m_existingEndVerse = BCVRef.GetVerseFromBcv(endRef.BBBCCCVVV);
 			PopulateEndRefComboBox();
 
 			PopulateCategoryComboBox();
@@ -231,7 +249,7 @@ namespace SIL.Transcelerator
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "addingquestions.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "addingquestions.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
@@ -325,6 +343,7 @@ namespace SIL.Transcelerator
 			{
 				btnOk.Enabled = false;
 			}
+
 			m_lblIdenticalQuestion.Visible = false;
 			m_chkNoEnglish.Visible = true;
 		}
@@ -380,11 +399,11 @@ namespace SIL.Transcelerator
 			m_previouslySelectedRow = rowToSelect;
 		}
 
-		private void m_scrPsgReference_PassageChanged(BCVRef newReference)
+		private void m_scrPsgReference_PassageChanged(object sender, PropertyChangedEventArgs e)
 		{
 			// This check overcomes a HACK in the ScrPassageControl, which causes spurious PassageChanged events.
-			var newRef = m_scrPsgReference.ScReference;
-			if (m_existingStartRef != newRef)
+			var newRef = m_scrPsgReference.VerseControl.VerseRef;
+			if (m_existingStartRef.Verse != newRef.VerseNum || m_existingStartRef.Chapter != newRef.ChapterNum || m_existingStartRef.Book != newRef.BookNum)
 			{
 				var newRefInMasterVersification = StartReference;
 				var sectionChange = m_currentSections.Count == 0 ||
@@ -399,11 +418,11 @@ namespace SIL.Transcelerator
 				// we just remove items we know are impossible now to ensure that the EndVerse is valid.
 				while (m_cboEndVerse.Items.Count > 1 && Parse((string)m_cboEndVerse.Items[1]) < StartVerse)
 					m_cboEndVerse.Items.RemoveAt(1);
-				
+
 				SetCurrentSections();
 				PopulateEndRefComboBox();
 
-				m_existingStartRef = newRef;
+				m_existingStartRef = new BCVRef(newRef.BookNum, newRef.ChapterNum, newRef.VerseNum);
 				if (sectionChange)
 					PopulateExistingQuestionsGrid();
 				else
@@ -487,30 +506,32 @@ namespace SIL.Transcelerator
 
 		private void m_txtVernacularQuestion_Enter(object sender, EventArgs e)
 		{
-			m_changeKeyboard(true);
+			m_changeKeyboard?.Invoke(true);
 		}
 
 		private void m_txtVernacularQuestion_Leave(object sender, EventArgs e)
 		{
-			m_changeKeyboard(false);
+			m_changeKeyboard?.Invoke(false);
 		}
 
 		private void m_linklblWishForTxl218_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			if (DialogResult.OK ==
-				MessageBox.Show(this, LocalizationManager.GetString(
-						"NewQuestionDlg.RequestAddCategoryFeatureInfo",
-						"Sorry this feature is not available yet. But if you are connected to the " +
-						"Internet and have not opted out of transmitting analytics data, this " +
-						"feature will now be requested for you."),
-					Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
-							"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
-						TxlPlugin.pluginName),
-					MessageBoxButtons.OKCancel))
+			ShowModalChild(new MessageBoxForm(LocalizationManager.GetString(
+					"NewQuestionDlg.RequestAddCategoryFeatureInfo",
+					"Sorry this feature is not available yet. But if you are connected to the " +
+					"Internet and have not opted out of transmitting analytics data, this " +
+					"feature will now be requested for you."),
+				Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
+						"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
+					TxlPlugin.pluginName),
+				MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
-				Analytics.Track("TXL-218", new Dictionary<string, string>
-					{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
-			}
+				if (form.DialogResult == DialogResult.OK)
+				{
+					Analytics.Track("TXL-218", new Dictionary<string, string>
+						{{"StartRef", StartReference.ToString(BCVRef.RefStringFormat.General)}});
+				}
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -525,7 +546,8 @@ namespace SIL.Transcelerator
 
 		private void HandleHelpRequest(object sender, HelpEventArgs args)
 		{
-			Process.Start(m_help);
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }

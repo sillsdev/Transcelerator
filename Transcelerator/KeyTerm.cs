@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -32,52 +32,30 @@ namespace SIL.Transcelerator
         #endregion
 
         #region Data members
-        private static DataFileAccessor s_fileAccessor;
-        private static List<KeyTermRenderingInfo> s_keyTermRenderingInfo;
+        private readonly ITermRenderingsRepo m_termRenderingRepo;
         private readonly KeyTermMatchSurrogate m_termSurrogate;
         private readonly List<Word> m_words;
-        private HashSet<string> m_allRenderings = null;
-        private string m_bestTranslation = null;
+        private HashSet<string> m_allRenderings;
+        private string m_bestTranslation;
         #endregion
 
         #region Construction and initialization
-        // ---------------------------------------------------------------------------------------------
-        /// <summary>
-        /// Before using this class to request renderings, This function must be set.
-        /// </summary>
-        // ---------------------------------------------------------------------------------------------
-        public static Func<string, IList<string>> GetTermRenderings { get; set; }
-
-        // ---------------------------------------------------------------------------------------------
-        /// <summary>
-        /// Before using this class, the file proxy must be set to allow user-added renderings to be
-        /// loaded.
-        /// </summary>
-        // ---------------------------------------------------------------------------------------------
-        internal static DataFileAccessor FileAccessor
-        {
-            set
-            {
-                s_fileAccessor = value;
-				s_keyTermRenderingInfo = ListSerializationHelper.LoadOrCreateListFromString<KeyTermRenderingInfo>(
-                    s_fileAccessor.Read(DataFileAccessor.DataFileId.KeyTermRenderingInfo), true);
-            }
-        }
-
         /// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyTermMatch"/> class.
 		/// </summary>
-        /// <param name="termSurrogate">The key term match surrogate (which represents one or
-        /// more underlying actual biblical terms).</param>
+		/// <param name="termSurrogate">The key term match surrogate (which represents one or
+		/// more underlying actual biblical terms).</param>
+		/// <param name="repository"></param>
 		/// ------------------------------------------------------------------------------------
-		internal KeyTerm(KeyTermMatchSurrogate termSurrogate)
+		internal KeyTerm(KeyTermMatchSurrogate termSurrogate, ITermRenderingsRepo repository)
 		{
             m_words = termSurrogate.TermId.Split(new[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries).Select(w => (Word)w).ToList();
             m_termSurrogate = termSurrogate;
+			m_termRenderingRepo = repository;
 		}
-        #endregion
+		#endregion
 
         #region Properties
         /// ------------------------------------------------------------------------------------
@@ -85,12 +63,9 @@ namespace SIL.Transcelerator
         /// Gets the words.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public IEnumerable<Word> Words
-        {
-            get { return m_words; }
-        }
+        public IEnumerable<Word> Words => m_words;
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets the translation.
         /// </summary>
@@ -132,7 +107,7 @@ namespace SIL.Transcelerator
         /// Gets all the underlying term IDs.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        public IEnumerable<string> AllTermIds => m_termSurrogate.BiblicalTermIds;
+        public IReadOnlyList<string> AllTermIds => m_termSurrogate.BiblicalTermIds;
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -157,15 +132,15 @@ namespace SIL.Transcelerator
             }
         }
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Gets the rendering info (if any) corresponding to this key term object
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private KeyTermRenderingInfo RenderingInfo =>
-            s_keyTermRenderingInfo.FirstOrDefault(i => i.TermId == m_termSurrogate.TermId);
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets the rendering info (if any) corresponding to this key term object
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private KeyTermRenderingInfo RenderingInfo =>
+			m_termRenderingRepo.GetRenderingInfo(m_termSurrogate.TermId);
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// The primary (best) rendering for the term in the target language (equivalent to the
         /// Translation).
@@ -179,16 +154,15 @@ namespace SIL.Transcelerator
                 m_bestTranslation = value.Normalize(NormalizationForm.FormC);
                 KeyTermRenderingInfo info = RenderingInfo;
                 if (info == null)
-                {
+				{
                     info = new KeyTermRenderingInfo(m_termSurrogate.TermId, m_bestTranslation);
-                    s_keyTermRenderingInfo.Add(info);
+					m_termRenderingRepo.Add(info);
                 }
                 else
                     info.PreferredRendering = m_bestTranslation;
                 
                 BestRenderingChanged?.Invoke(this);
-                UpdateRenderingInfoFile();
-            }
+			}
         }
         #endregion
 
@@ -208,13 +182,12 @@ namespace SIL.Transcelerator
             if (info == null)
             {
                 info = new KeyTermRenderingInfo(m_termSurrogate.TermId, BestRendering);
-                s_keyTermRenderingInfo.Add(info);
+                m_termRenderingRepo.Add(info);
             }
             info.AddlRenderings.Add(rendering);
             m_allRenderings.Add(normalizedForm);
 	        if (m_bestTranslation == string.Empty)
 		        m_bestTranslation = rendering;
-            UpdateRenderingInfoFile();
         }
 
         /// ------------------------------------------------------------------------------------
@@ -246,7 +219,6 @@ namespace SIL.Transcelerator
             if (info.AddlRenderings.Remove(rendering))
             {
                 m_allRenderings.Remove(rendering);
-                UpdateRenderingInfoFile();
 	            if (m_bestTranslation == rendering)
 		            m_bestTranslation = null; // New "best" will be re-determined when needed.
             }
@@ -260,16 +232,16 @@ namespace SIL.Transcelerator
         /// <remarks>If this term occurs more than once in the phrase, it is not possible to
         /// know which occurrence is which.</remarks>
         /// ------------------------------------------------------------------------------------
-        public string GetBestRenderingInContext(TranslatablePhrase phrase)
+        public string GetBestRenderingInContext(TranslatablePhrase phrase, bool fast = false)
         {
-            IEnumerable<string> renderings = Renderings;
+            var renderings = (HashSet<string>)Renderings;
             if (!renderings.Any())
                 return string.Empty;
-            if (renderings.Count() == 1 || TranslatablePhrase.s_helper.TermRenderingSelectionRules == null)
+            if (renderings.Count == 1 || fast || phrase.Helper.TermRenderingSelectionRules == null)
                 return Translation;
 
             List<string> renderingsList = null;
-            foreach (RenderingSelectionRule rule in TranslatablePhrase.s_helper.TermRenderingSelectionRules.Where(r => !r.Disabled))
+            foreach (RenderingSelectionRule rule in phrase.Helper.TermRenderingSelectionRules.Where(r => !r.Disabled))
             {
                 if (renderingsList == null)
                 {
@@ -305,10 +277,10 @@ namespace SIL.Transcelerator
             int max = -1;
             Dictionary<string, int> occurrences = new Dictionary<string, int>();
 
-            foreach (var termId in m_termSurrogate.BiblicalTermIds)
+            foreach (var term in m_termSurrogate.BiblicalTermIds)
             {
                 int value = 4; // First rendering for each term is considered the best, so it counts more.
-                IList<string> renderings = GetTermRenderings(termId);
+                var renderings = m_termRenderingRepo.GetTermRenderings(term);
                 if (renderings == null)
                     continue;
                 foreach (string termRendering in renderings.Where(rendering => rendering != null).
@@ -316,8 +288,7 @@ namespace SIL.Transcelerator
                 {
                     m_allRenderings.Add(termRendering);
 
-                    int num;
-                    occurrences.TryGetValue(termRendering, out num);
+					occurrences.TryGetValue(termRendering, out var num);
                     occurrences[termRendering] = num + value;
                     if (num > max)
                     {
@@ -340,17 +311,6 @@ namespace SIL.Transcelerator
             if (m_bestTranslation == null)
                 m_bestTranslation = string.Empty;
         }
-
-        // ---------------------------------------------------------------------------------------------
-        /// <summary>
-        /// Persists the current biblical term rendering info (defaults and additions made by user).
-        /// </summary>
-        // ---------------------------------------------------------------------------------------------
-        private static void UpdateRenderingInfoFile()
-		{
-			s_fileAccessor?.Write(DataFileAccessor.DataFileId.KeyTermRenderingInfo,
-				s_keyTermRenderingInfo);
-		}
         #endregion
     }
 }

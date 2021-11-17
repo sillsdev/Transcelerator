@@ -32,8 +32,11 @@ namespace SIL.Transcelerator
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
-				if (components != null)
-					components.Dispose();
+				m_helper.TranslationsChanged -= m_helper_TranslationsChanged;
+				components?.Dispose();
+				m_host.VerseRefChanged -= OnHostOnVerseRefChanged;
+				m_project.ProjectDataChanged -= OnProjectDataChanged;
+
 				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
@@ -189,6 +192,7 @@ namespace SIL.Transcelerator
 			this.dataGridUns.AllowUserToDeleteRows = false;
 			this.dataGridUns.AllowUserToResizeRows = false;
 			this.dataGridUns.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.dataGridUns.CausesValidation = false;
 			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -251,6 +255,7 @@ namespace SIL.Transcelerator
 			this.dataGridUns.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowEnter);
 			this.dataGridUns.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridUns_RowLeave);
 			this.dataGridUns.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridUns_RowPrePaint);
+			this.dataGridUns.HandleCreated += new System.EventHandler(this.dataGridUns_HandleCreated);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
 			// 
 			// m_colReference
@@ -511,8 +516,6 @@ namespace SIL.Transcelerator
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
 			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(277, 22);
 			this.mnuProduceScriptureForgeFiles.Text = "Produce {0} Files";
-			this.mnuProduceScriptureForgeFiles.CheckedChanged += new System.EventHandler(this.mnuProduceScriptureForgeFiles_CheckedChanged);
-			this.mnuProduceScriptureForgeFiles.Click += new System.EventHandler(this.mnuProduceScriptureForgeFiles_Clicked);
 			// 
 			// generateOutputForArloToolStripMenuItem
 			// 
@@ -1222,7 +1225,6 @@ namespace SIL.Transcelerator
 			this.Controls.Add(this.m_mainMenu);
 			this.Controls.Add(this.m_pnlAnswersAndComments);
 			this.HelpButton = true;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this, L10NSharp.LocalizationPriority.NotLocalizable);
@@ -1235,7 +1237,6 @@ namespace SIL.Transcelerator
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "{0} - Transcelerator";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.browseTopicsToolStripMenuItem_Click);
-			this.Activated += new System.EventHandler(this.UNSQuestionsDialog_Activated);
 			this.Resize += new System.EventHandler(this.UNSQuestionsDialog_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).EndInit();
 			this.dataGridContextMenu.ResumeLayout(false);

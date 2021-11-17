@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.IO;
 using SIL.Transcelerator.Localization;
 using static System.String;
 
@@ -99,21 +98,16 @@ namespace SIL.Transcelerator
 			else
 				m_pnlAlternatives.Hide();
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "editingquestions.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "editingquestions.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		private void InitializeRadioButton(RadioButton btn, int index, LocalizationsFileAccessor dataLocalizer)
 		{
 			var alternateForm = m_question.QuestionInfo.Alternatives[index].Text;
-			if (dataLocalizer == null)
-				btn.Text = alternateForm;
-			else
-			{
-				btn.Text = dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
-				btn.Tag = alternateForm;
-
-			}
+			btn.Text = dataLocalizer == null ? alternateForm :
+				dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
+			btn.Tag = alternateForm;
 			btn.Checked = m_txtModified.Text == btn.Text;
 		}
 
@@ -153,7 +147,8 @@ namespace SIL.Transcelerator
 
 		private void HandleHelpRequest(object sender, HelpEventArgs args)
 		{
-			Process.Start(m_help);
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }

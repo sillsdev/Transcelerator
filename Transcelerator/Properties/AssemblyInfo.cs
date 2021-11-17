@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("b6e07ef9-3e1a-4200-8d7c-4464c4d04f11")]
 
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("3.0.0.0")]
 [assembly: AssemblyInformationalVersionAttribute("2.0.0")]
 // Version information for an assembly consists of the following four values:
 //
@@ -33,6 +33,6 @@ using System.Runtime.InteropServices;
 //
 // These version numbers are ignored. See build.proj file and counter on
 // TeamCity configuration for actual version numbers. 
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyVersion("3.0.0.0")]
 
 [assembly: InternalsVisibleTo("TransceleratorTests")]

@@ -1320,11 +1320,6 @@
         <note>ID: TermRenderingCtrl.mnuLookUpTermH</note>
         <target xml:lang="es-ES" state="translated">Buscar &amp;vocablo en {0}...</target>
       </trans-unit>
-      <trans-unit id="TermRenderingCtrl.mnuRefreshRenderingsH">
-        <source xml:lang="en">Refresh Renderings from {0}</source>
-        <note>ID: TermRenderingCtrl.mnuRefreshRenderingsH</note>
-        <target xml:lang="es-ES" state="translated">Actualizar las traducciones de {0}</target>
-      </trans-unit>
       <trans-unit id="TermRenderingCtrl.mnuSetAsDefault">
         <source xml:lang="en">&amp;Set as default rendering</source>
         <note>ID: TermRenderingCtrl.mnuSetAsDefault</note>

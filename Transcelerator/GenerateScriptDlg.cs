@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='201' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -13,18 +13,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using AddInSideViews;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using SIL.Extensions;
-using SIL.IO;
 using SIL.Scripture;
-using SIL.Transcelerator.Localization;
 using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.String;
 using File = System.IO.File;
 
@@ -35,25 +34,15 @@ namespace SIL.Transcelerator
 	/// Dialog to present user with options to generate a script to do comprehension checking.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class GenerateScriptDlg : Form
+	public partial class GenerateScriptDlg : ParentFormBase
 	{
-		public delegate LocalizationsFileAccessor DataLocalizerNeededEventHandler(object sender, string localeId);
-		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
-		public enum RangeOption
-		{
-			WholeBook = 0,
-			SingleSection = 1,
-			RangeOfSections = 2,
-		}
-
 		#region Data members
 		private string m_sFilenameTemplate;
 		private string m_sTitleTemplate;
 		private readonly IList<ISectionInfo> m_sections;
+		private readonly HtmlScriptGenerator m_generator;
 		private readonly string m_projectName;
-		private readonly IScrExtractor m_scrExtractor;
 		private List<string> m_lwcLocaleIds;
-		private LocalizationsFileAccessor m_dataLoc;
 		private string m_fmtChkEnglishQuestions;
 		private string m_fmtChkEnglishAnswers;
 		private string m_fmtChkIncludeComments;
@@ -68,13 +57,11 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of this class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal GenerateScriptDlg(string projectName, IScrExtractor scrExtractor,
-            string defaultFolder, IEnumerable<int> canonicalBookIds,
-            IList<ISectionInfo> sections,
-			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs)
+		internal GenerateScriptDlg(string projectName, string defaultFolder,
+			IEnumerable<int> canonicalBookIds, IList<ISectionInfo> sections,
+			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs, HtmlScriptGenerator generator)
 		{
 			m_projectName = projectName;
-			m_scrExtractor = scrExtractor;
 			InitializeComponent();
 			m_chkIncludeLWCQuestions.Tag = m_btnChooseLWCQuestionColor;
 			m_chkIncludeLWCAnswers.Tag = m_btnChooseLWCAnswerColor;
@@ -88,60 +75,87 @@ namespace SIL.Transcelerator
 
 			LoadBooks(canonicalBookIds);
 			m_sections = sections;
+			m_generator = generator;
 			LoadSectionCombos();
 			LoadLWCCombo(availableAdditionalLWCs);
 
-			switch ((RangeOption)Properties.Settings.Default.GenerateTemplateRange)
+			switch (m_generator.GenerateTemplateRange)
 			{
-				case RangeOption.WholeBook:
+				case HtmlScriptGenerator.RangeOption.WholeBook:
 					m_rdoWholeBook.Checked = true;
-					TrySelectItem(m_cboBooks, Properties.Settings.Default.GenerateTemplateBook);
+					TrySelectItem(m_cboBooks, m_generator.SelectedBook);
 					break;
-				case RangeOption.SingleSection:
+				case HtmlScriptGenerator.RangeOption.SingleSection:
 					m_rdoSingleSection.Checked = true;
 					TrySelectItem(m_cboSection, Properties.Settings.Default.GenerateTemplateSection);
 					break;
-				case RangeOption.RangeOfSections:
+				case HtmlScriptGenerator.RangeOption.RangeOfSections:
 					m_rdoSectionRange.Checked = true;
 					TrySelectItem(m_cboStartSection, Properties.Settings.Default.GenerateTemplateSection);
 					TrySelectItem(m_cboEndSection, Properties.Settings.Default.GenerateTemplateEndSection);
 					break;
 			}
 
-			m_chkPassageBeforeOverview.Checked = Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
-			if (m_scrExtractor == null)
-				m_chkIncludeVerseNumbers.Checked = m_chkIncludeVerseNumbers.Enabled = false;
-			else
-				m_chkIncludeVerseNumbers.Checked = Properties.Settings.Default.GenerateIncludeVerseNumbers;
+			m_chkPassageBeforeOverview.Checked = m_generator.OutputFullPassageAtStartOfSection;
+			m_chkIncludeVerseNumbers.Checked = m_generator.IncludeVerseNumbers;
 			SetDefaultCheckedStateForLWCOptions();
-			m_rdoUseOriginal.Checked = Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated;
-			m_rdoSkipUntranslated.Checked = !m_rdoUseOriginal.Checked && Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated; // These two settings should never be able to both be true, but just to be safe.
 
-			m_rdoOutputPassageForOutOfOrderQuestions.Checked = Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions;
-
-            m_lblFolder.Text = IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateFolder) ? defaultFolder :
-                Properties.Settings.Default.GenerateTemplateFolder;
-
-			m_numBlankLines.Value = Properties.Settings.Default.GenerateTemplateBlankLines;
-			if (!Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor.IsEmpty)
-				m_lblQuestionGroupHeadingsColor.ForeColor = Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor;
-			if (!Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor.IsEmpty)
-				m_lblLWCQuestionColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
-			if (!Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor.IsEmpty)
-				m_lblLWCAnswerTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor;
-			if (!Properties.Settings.Default.GenerateTemplateCommentTextColor.IsEmpty)
-				m_lblCommentTextColor.ForeColor = Properties.Settings.Default.GenerateTemplateCommentTextColor;
-			m_chkNumberQuestions.Checked = Properties.Settings.Default.GenerateTemplateNumberQuestions;
-
-			m_rdoUseExternalCss.Checked = Properties.Settings.Default.GenerateTemplateUseExternalCss;
-			if (m_rdoUseExternalCss.Checked)
+			switch (m_generator.HandlingOfUntranslatedQuestions)
 			{
-				m_txtCssFile.Text = Properties.Settings.Default.GenerateTemplateCssFile;
-				m_chkAbsoluteCssPath.Checked = Properties.Settings.Default.GenerateTemplateAbsoluteCssPath;
+				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn:
+					m_rdoDisplayWarning.Checked = true;
+					break;
+				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC:
+					m_rdoUseOriginal.Checked = true;
+					break;
+				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Skip:
+					m_rdoSkipUntranslated.Checked = true;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "generatescript.htm");
+			m_rdoOutputPassageForOutOfOrderQuestions.Checked = m_generator.OutputPassageForOutOfOrderQuestions;
+
+            m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
+
+			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
+			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
+				m_lblQuestionGroupHeadingsColor.ForeColor = m_generator.QuestionGroupHeadingsTextColor;
+			if (!m_generator.LWCQuestionTextColor.IsEmpty)
+				m_lblLWCQuestionColor.ForeColor = m_generator.LWCQuestionTextColor;
+			if (!m_generator.LWCAnswerTextColor.IsEmpty)
+				m_lblLWCAnswerTextColor.ForeColor = m_generator.LWCAnswerTextColor;
+			if (!m_generator.CommentTextColor.IsEmpty)
+				m_lblCommentTextColor.ForeColor = m_generator.CommentTextColor;
+			m_chkNumberQuestions.Checked = m_generator.NumberQuestions;
+
+			m_rdoUseExternalCss.Checked = m_generator.UseExternalCss;
+			if (m_rdoUseExternalCss.Checked)
+			{
+				if (m_txtCssFile.Text == m_generator.CssFile)
+					UpdateControlsForCssFile(m_txtCssFile.Text);
+				else
+					m_txtCssFile.Text = m_generator.CssFile;
+				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
+			}
+
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "generatescript.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
+			
+			m_numBlankLines.ValueChanged += delegate
+			{ 
+				m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && !m_numBlankLines.Value.Equals(m_generator.NumberOfBlankLinesForAnswer);
+			};
+
+			m_lblCommentTextColor.Tag = new Func<Color>(() => m_generator.CommentTextColor);
+			m_lblCommentTextColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => m_generator.LWCAnswerTextColor);
+			m_lblLWCAnswerTextColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblLWCQuestionColor.Tag = new Func<Color>(() => m_generator.LWCQuestionTextColor);
+			m_lblLWCQuestionColor.ForeColorChanged += OnLblForeColorChanged;
+			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => m_generator.QuestionGroupHeadingsTextColor);
+			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
 		private void HandleStringsLocalized()
@@ -157,9 +171,9 @@ namespace SIL.Transcelerator
 
 		private void SetDefaultCheckedStateForLWCOptions()
 		{
-			m_chkIncludeLWCQuestions.Checked = Properties.Settings.Default.GenerateTemplateEnglishQuestions;
-			m_chkIncludeLWCAnswers.Checked = Properties.Settings.Default.GenerateTemplateEnglishAnswers;
-			m_chkIncludeLWCComments.Checked = Properties.Settings.Default.GenerateTemplateIncludeComments;
+			m_chkIncludeLWCQuestions.Checked = m_generator.IncludeLWCQuestions;
+			m_chkIncludeLWCAnswers.Checked = m_generator.IncludeLWCAnswers;
+			m_chkIncludeLWCComments.Checked = m_generator.IncludeLWCComments;
 		}
 
 		private void TrySelectItem(ComboBox cbo, string value)
@@ -204,16 +218,16 @@ namespace SIL.Transcelerator
 
 		private void LoadLWCCombo(IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs)
 		{
-			m_lwcLocaleIds = new List<string>(new [] {"en-US"});
+			m_lwcLocaleIds = new List<string>(new [] { HtmlScriptGenerator.kDefaultLwc });
 			int i = 0;
 			foreach (var lwc in availableAdditionalLWCs)
 			{
 				m_cboUseLWC.Items.Insert(++i, lwc.Key);
 				m_lwcLocaleIds.Add(lwc.Value);
-				if (Properties.Settings.Default.GenerateTemplateUseLWC == lwc.Value)
+				if (m_generator.LwcLocale == lwc.Value)
 					m_cboUseLWC.SelectedIndex = i;
 			}
-			if (IsNullOrWhiteSpace(Properties.Settings.Default.GenerateTemplateUseLWC))
+			if (IsNullOrWhiteSpace(m_generator.LwcLocale))
 				m_cboUseLWC.SelectedIndex = m_cboUseLWC.Items.Count - 1; // None
 			if (m_cboUseLWC.SelectedIndex == -1)
 				m_cboUseLWC.SelectedIndex = 0;
@@ -228,7 +242,7 @@ namespace SIL.Transcelerator
 		// If the user selects one of these as a single section or starts/ends the section
 		// range in one of these, the generated script is going to include one of more
 		// questions from the adjacent section. From a task-oriented perspective this is
-		// unlikely. Unfortunately, because the section IDs are not in ascending with
+		// unlikely. Unfortunately, because the section IDs are not ascending with
 		// respect to the canonical order of Scripture books, they cannot be treated as
 		// indices for the purpose of establishing a range, and although the sections know
 		// which questions they own, the questions themselves do not hold their section IDs.
@@ -239,44 +253,18 @@ namespace SIL.Transcelerator
 		// To make this easier, it would obviously make sense to just re-order the books in
 		// the source question file. But I'm not sure if this would wreak havoc on the
 		// localization files (or perhaps something else).
-		public BCVRef VerseRangeStartRef { get; private set; } = new BCVRef();
+		private BCVRef VerseRangeStartRef { get; set; } = new BCVRef();
 
-		public BCVRef VerseRangeEndRef { get; private set; } = new BCVRef();
-
-		public string FileName
-		{
-			get
-			{
-				string path = Path.Combine(m_lblFolder.Text, m_txtFilename.Text);
-				if (IsNullOrEmpty(Path.GetExtension(path)))
-					path = Path.ChangeExtension(path, "htm");
-				return path;
-			}
-		}
-
-		public string CssFile => m_txtCssFile.Text;
-
-		public string FullCssPath
-		{
-			get 
-			{
-				string path = m_txtCssFile.Text;
-				if (!Path.IsPathRooted(path))
-					path = Path.Combine(m_lblFolder.Text, path);
-				return path;
-			}
-		}
-
-		public bool WriteCssFile => m_rdoUseExternalCss.Checked && (!m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked);
-
-		public string NormalizedTitle => m_txtTitle.Text.Normalize(NormalizationForm.FormC);
-		public string LwcLocale => m_dataLoc?.Locale ?? "en";
-
-		public bool OutputFullPassageAtStartOfSection => m_chkPassageBeforeOverview.Checked;
-		public bool OutputPassageForOutOfOrderQuestions => m_rdoOutputPassageForOutOfOrderQuestions.Checked;
+		private BCVRef VerseRangeEndRef { get; set; } = new BCVRef();
 		#endregion
 
 		#region Event handlers
+		private void OnLblForeColorChanged(object sender, EventArgs e)
+		{
+			Label lbl = (Label)sender;
+			m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && lbl.ForeColor != ((Func<Color>)lbl.Tag)();
+		}
+
 		private void ChooseTextColor(object sender, EventArgs e)
 		{
 			Label label = (Label)((Button)sender).Tag;
@@ -385,10 +373,20 @@ namespace SIL.Transcelerator
 
 		private void m_txtCssFile_TextChanged(object sender, EventArgs e)
 		{
-			string cssFile = FullCssPath;
-			if (Path.GetDirectoryName(cssFile) != m_lblFolder.Text)
-				m_chkAbsoluteCssPath.Checked = true;
-			m_chkOverwriteCss.Enabled = File.Exists(cssFile);
+			UpdateControlsForCssFile(m_txtCssFile.Text);
+		}
+
+		private void UpdateControlsForCssFile(string path)
+		{
+			if (!Path.IsPathRooted(path))
+				path = Path.Combine(m_lblFolder.Text, path);
+			else
+			{
+				if (Path.GetDirectoryName(path) != m_lblFolder.Text)
+					m_chkAbsoluteCssPath.Checked = true;
+			}
+
+			m_chkOverwriteCss.Enabled = File.Exists(path);
 		}
 
 		private void m_cboBooks_Enter(object sender, EventArgs e)
@@ -437,54 +435,93 @@ namespace SIL.Transcelerator
         private void btnOk_Click(object sender, EventArgs e)
         {
             if (m_rdoWholeBook.Checked)
-            {
-                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.WholeBook;
-                Properties.Settings.Default.GenerateTemplateBook = m_cboBooks.SelectedItem.ToString();
-            }
-            else if (m_rdoSingleSection.Checked)
-            {
-                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.SingleSection;
-                Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
+			{
+				m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.WholeBook;
+				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
             }
             else
-            {
-                Properties.Settings.Default.GenerateTemplateRange = (int)RangeOption.RangeOfSections;
-                Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
-                Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
-            }
+			{
+				m_generator.SelectedBook = null;
 
-            Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = m_chkPassageBeforeOverview.Checked;
-            if (m_chkIncludeVerseNumbers.Enabled)
-            {
-	            Properties.Settings.Default.GenerateIncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
-	            m_scrExtractor.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
-            }
-            Properties.Settings.Default.GenerateTemplateUseLWC = m_chkIncludeLWCQuestions.Enabled ?
+				if (m_rdoSingleSection.Checked)
+				{
+					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.SingleSection;
+					Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
+					Properties.Settings.Default.GenerateTemplateEndSection = "";
+				}
+				else
+				{
+					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.RangeOfSections;
+				    Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
+				    Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
+				}
+
+				m_generator.VerseRangeStartRef = VerseRangeStartRef;
+				m_generator.VerseRangeEndRef = VerseRangeEndRef;
+			}
+
+			var path = Path.Combine(m_lblFolder.Text, m_txtFilename.Text);
+			if (!Path.HasExtension(path))
+				path = Path.ChangeExtension(path, "htm");
+			m_generator.FileName = path;
+
+			m_generator.OutputFullPassageAtStartOfSection = m_chkPassageBeforeOverview.Checked;
+			m_generator.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
+
+			m_generator.QuestionGroupHeadingsTextColor = m_lblQuestionGroupHeadingsColor.ForeColor;
+			m_generator.LWCQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
+			m_generator.LWCAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
+			m_generator.CommentTextColor = m_lblCommentTextColor.ForeColor;
+			m_generator.NumberOfBlankLinesForAnswer = (int)m_numBlankLines.Value;
+			m_generator.NumberQuestions = m_chkNumberQuestions.Checked;
+
+			m_generator.Title = m_txtTitle.Text;
+			m_generator.LwcLocale = m_chkIncludeLWCQuestions.Enabled ?
 				m_lwcLocaleIds[m_cboUseLWC.SelectedIndex] : null;
-			Properties.Settings.Default.GenerateTemplateEnglishQuestions = m_chkIncludeLWCQuestions.Checked;
-            Properties.Settings.Default.GenerateTemplateEnglishAnswers = m_chkIncludeLWCAnswers.Checked;
-            Properties.Settings.Default.GenerateTemplateIncludeComments = m_chkIncludeLWCComments.Checked;
-			m_dataLoc = DataLocalizerNeeded?.Invoke(this, Properties.Settings.Default.GenerateTemplateUseLWC);
-            Properties.Settings.Default.GenerateTemplateUseOriginalQuestionIfNotTranslated = m_rdoUseOriginal.Checked;
-			Properties.Settings.Default.GenerateTemplateSkipQuestionIfNotTranslated = m_rdoSkipUntranslated.Checked;
 
-			Properties.Settings.Default.GenerateOutputPassageForOutOfOrderQuestions = m_rdoOutputPassageForOutOfOrderQuestions.Checked;
+			m_generator.OutputPassageForOutOfOrderQuestions = m_rdoOutputPassageForOutOfOrderQuestions.Checked;
 
-            Properties.Settings.Default.GenerateTemplateFolder = m_lblFolder.Text;
+			m_generator.IncludeLWCQuestions = m_chkIncludeLWCQuestions.Checked;
+			m_generator.IncludeLWCAnswers = m_chkIncludeLWCAnswers.Checked;
+			m_generator.IncludeLWCComments = m_chkIncludeLWCComments.Checked;
 
-            Properties.Settings.Default.GenerateTemplateBlankLines = (int)m_numBlankLines.Value;
-            Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateCommentTextColor = m_lblCommentTextColor.ForeColor;
-            Properties.Settings.Default.GenerateTemplateNumberQuestions = m_chkNumberQuestions.Checked;
+			if (m_rdoDisplayWarning.Checked)
+				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+			else if (m_rdoUseOriginal.Checked)
+				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC;
+			else
+			{
+				Debug.Assert(m_rdoDisplayWarning.Checked);
+				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+			}
 
-            Properties.Settings.Default.GenerateTemplateUseExternalCss = m_rdoUseExternalCss.Checked;
-            if (Properties.Settings.Default.GenerateTemplateUseExternalCss)
-            {
-                Properties.Settings.Default.GenerateTemplateCssFile = m_txtCssFile.Text;
-                Properties.Settings.Default.GenerateTemplateAbsoluteCssPath = m_chkAbsoluteCssPath.Checked;
-            }
+			m_generator.Folder = m_lblFolder.Text;
+
+			m_generator.UseExternalCss = m_rdoUseExternalCss.Checked;
+			if (m_rdoUseExternalCss.Checked)
+			{
+				m_generator.WriteCssFile = !m_chkOverwriteCss.Enabled || m_chkOverwriteCss.Checked;
+				m_generator.CssFile = m_txtCssFile.Text;
+				m_generator.UseAbsolutePathForCssFile = m_chkAbsoluteCssPath.Checked;
+			}
+
+			if (m_rdoDisplayWarning.Checked)
+			{
+				var untranslatedQuestions = m_generator.QuestionsToInclude.Count(p => !p.HasUserTranslation);
+				if (untranslatedQuestions > 0)
+				{
+					btnOk.DialogResult = DialogResult.None;
+					ShowModalChild(new MessageBoxForm(Format(LocalizationManager.GetString("MainWindow.UntranslatedQuestionsWarning",
+							"There are {0} questions in the selected range that do not have confirmed translations. These questions " +
+							"will be excluded from the checking script.",
+							"Param is a number."), untranslatedQuestions),
+						TxlPlugin.pluginName, MessageBoxButtons.OKCancel), form =>
+					{
+						DialogResult = form.DialogResult;
+						form.Disposed += (o, args) => { Close(); };
+					});
+				}
+			}
         }
 
         private void ComboTextUpdate(object sender, EventArgs e)
@@ -534,7 +571,8 @@ namespace SIL.Transcelerator
 
 		private void HandleHelpRequest(object sender, HelpEventArgs args)
 		{
-			Process.Start(m_help);
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 		#endregion
 
@@ -568,20 +606,13 @@ namespace SIL.Transcelerator
 		{
 			if (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0)
 				return;
-			string sRef = BCVRef.MakeReferenceString(VerseRangeStartRef, VerseRangeEndRef, ".", "-");
+			// Use new version of libpalaso to get title when book names are different
+			var sRef = VerseRangeStartRef.Book != VerseRangeEndRef.Book ?
+				(VerseRangeStartRef + "-" + VerseRangeEndRef).Replace(":", "."):
+				BCVRef.MakeReferenceString(VerseRangeStartRef, VerseRangeEndRef, ".", "-");
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, sRef, m_sFilenameTemplate);
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, sRef, m_sTitleTemplate);
 		}
 		#endregion
-
-		public string GetDataString(UIDataString key, out string lang)
-		{
-			if (m_dataLoc == null)
-			{
-				lang = "en";
-				return key.SourceUIString;
-			}
-			return m_dataLoc.GetLocalizedDataString(key, out lang);
-		}
 	}
 }

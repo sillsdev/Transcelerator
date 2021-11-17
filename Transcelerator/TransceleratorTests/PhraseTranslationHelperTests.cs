@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -15,14 +15,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Extensions;
 using SIL.Reflection;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.Int32;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -30,12 +31,13 @@ namespace SIL.Transcelerator
     public abstract class PhraseTranslationTestBase
     {
         protected QuestionSections m_sections;
-        private List<IKeyTerm> m_dummyKtList;
+        private List<IBiblicalTerm> m_dummyKtList;
         protected Dictionary<string, List<string>> m_dummyKtRenderings;
         private Dictionary<string, KeyTermMatchSurrogate> m_keyTermsDictionary;
         private Dictionary<string, ParsedPart> m_translatablePartsDictionary;
+		protected ITermRenderingsRepo RenderingsRepo { get; set; }
 
-        [SetUp]
+		[SetUp]
         public virtual void Setup()
         {
             m_sections = new QuestionSections();
@@ -44,23 +46,23 @@ namespace SIL.Transcelerator
             m_sections.Items[0].Categories = new Category[1];
             m_sections.Items[0].Categories[0] = new Category();
 
-            m_dummyKtList = new List<IKeyTerm>();
+            m_dummyKtList = new List<IBiblicalTerm>();
             m_dummyKtRenderings = new Dictionary<string, List<string>>();
-            KeyTerm.GetTermRenderings = s =>
-                {
-                    List<string> renderings;
-                    m_dummyKtRenderings.TryGetValue(s, out renderings);
-                    return renderings;
-                };
+     //       KeyTerm.GetTermRenderings = s =>
+     //           {
+					//m_dummyKtRenderings.TryGetValue(s, out var renderings);
+     //               return renderings;
+     //           };
 
-            KeyTerm.FileAccessor = new TestKeyTermRenderingDataFileAccessor();
+     //       KeyTerm.FileAccessor = new TestKeyTermRenderingDataFileAccessor();
+			RenderingsRepo = MockRepository.GenerateMock<ITermRenderingsRepo>();
             m_keyTermsDictionary = new Dictionary<string, KeyTermMatchSurrogate>();
             m_translatablePartsDictionary = new Dictionary<string, ParsedPart>();
         }
 
-		public IEnumerable<IKeyTerm> KeyTerms { get { return m_dummyKtList; } } 
+		public IEnumerable<IBiblicalTerm> KeyTerms => m_dummyKtList;
 
-        #region Helper methods
+		#region Helper methods
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Gets a list of ParsedParts based on a string array representing key terms and parts
@@ -131,7 +133,7 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm)
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm)
         {
             return AddMockedKeyTerm(englishGlossOfTerm, englishGlossOfTerm.ToUpper());
         }
@@ -141,7 +143,7 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm, string bestRendering)
         {
             return AddMockedKeyTerm(englishGlossOfTerm, new string(englishGlossOfTerm.ToLowerInvariant().Reverse().ToArray()),
                 bestRendering, (bestRendering != null) ? new[] { englishGlossOfTerm } : new string[0]);
@@ -152,22 +154,20 @@ namespace SIL.Transcelerator
         /// Adds the mocked key term.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        protected IKeyTerm AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
+        protected IBiblicalTerm AddMockedKeyTerm(string englishGlossOfTerm, string underlyingTermId,
             string bestRendering, params string[] otherRenderings)
         {
             if (bestRendering != null)
             {
-                List<string> listOfRenderings;
-                if (!m_dummyKtRenderings.TryGetValue(underlyingTermId, out listOfRenderings))
-                    m_dummyKtRenderings[underlyingTermId] = listOfRenderings = new List<string>();
-                if (otherRenderings != null)
-                    listOfRenderings.AddRange(otherRenderings.Where(r => !listOfRenderings.Contains(r)));
+				var listOfRenderings = new List<string>(otherRenderings);
                 listOfRenderings.Insert(0, bestRendering);
+				RenderingsRepo.Stub(r => r.GetTermRenderings(underlyingTermId)).Return(listOfRenderings.ToList());
+				m_dummyKtRenderings[underlyingTermId] = listOfRenderings;
             }
 
-            IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
-            mockedKt.Stub(kt => kt.Term).Return(englishGlossOfTerm);
-            mockedKt.Stub(kt => kt.Id).Return(underlyingTermId);
+			IBiblicalTerm mockedKt = MockRepository.GenerateStub<IBiblicalTerm>();
+            mockedKt.Stub(kt => kt.Gloss("en")).Return(englishGlossOfTerm);
+            mockedKt.Stub(kt => kt.Lemma).Return(underlyingTermId);
 
             m_dummyKtList.Add(mockedKt);
             return mockedKt;
@@ -211,8 +211,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-		    var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -240,8 +239,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5);
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -278,8 +276,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5);
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             pth.Sort(PhrasesSortedBy.Reference, true);
 
@@ -327,8 +324,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What is Paul asking that man?", "A", 1, 1);
             AddTestQuestion(cat, "Is a dog man's best friend?", "D", 4, 4);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             pth.Sort(PhrasesSortedBy.Reference, true);
 
@@ -387,8 +383,9 @@ namespace SIL.Transcelerator
         /// Tests getting phrases sorted alphabetically by the translation.
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        [Test]
-        public void GetPhrasesSortedByTranslation()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GetPhrasesSortedByTranslation(bool immediate)
         {
             var cat = m_sections.Items[0].Categories[0];
             var q1 = AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
@@ -398,17 +395,16 @@ namespace SIL.Transcelerator
             var q5 = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5);
             var q6 = AddTestQuestion(cat, "What is that dog?", "F", 6, 6);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
-            pth[pth.FindPhrase(q1)].Translation = "Z";
+			pth[pth.FindPhrase(q1)].Translation = "Z";
             pth[pth.FindPhrase(q2)].Translation = "B";
             pth[pth.FindPhrase(q3)].Translation = "alligator";
             pth[pth.FindPhrase(q4)].Translation = "D";
             pth[pth.FindPhrase(q5)].Translation = "e";
             pth[pth.FindPhrase(q6)].Translation = "E";
 
-            pth.Sort(PhrasesSortedBy.Translation, true);
+            pth.Sort(PhrasesSortedBy.Translation, true, immediate);
 
             Assert.AreEqual(q3, pth[0].QuestionInfo);
             Assert.AreEqual(q2, pth[1].QuestionInfo);
@@ -417,7 +413,7 @@ namespace SIL.Transcelerator
             Assert.AreEqual(q6, pth[4].QuestionInfo);
             Assert.AreEqual(q1, pth[5].QuestionInfo);
 
-            pth.Sort(PhrasesSortedBy.Translation, false);
+            pth.Sort(PhrasesSortedBy.Translation, false, immediate);
 
             Assert.AreEqual(q1, pth[0].QuestionInfo);
             Assert.AreEqual(q6, pth[1].QuestionInfo);
@@ -426,6 +422,62 @@ namespace SIL.Transcelerator
             Assert.AreEqual(q2, pth[4].QuestionInfo);
             Assert.AreEqual(q3, pth[5].QuestionInfo);
         }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting phrases sorted alphabetically by the translation.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GetPhrasesSortedByTranslation_CustomVernComparer(bool immediate)
+        {
+            var cat = m_sections.Items[0].Categories[0];
+            var q1 = AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
+            var q2 = AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2);
+            var q3 = AddTestQuestion(cat, "that dog", "C", 3, 3);
+            var q4 = AddTestQuestion(cat, "Is it okay for Paul me to talk with respect to God today?", "D", 4, 4);
+            var q5 = AddTestQuestion(cat, "that dog wishes this Paul and what is say radish", "E", 5, 5);
+            var q6 = AddTestQuestion(cat, "What is that dog?", "F", 6, 6);
+
+			var pth = InitializePhraseTranslationHelper();
+
+			pth.VernacularStringComparer = new VowelComparer();
+
+            pth[pth.FindPhrase(q1)].Translation = "Zee";
+            pth[pth.FindPhrase(q2)].Translation = "Boo";
+            pth[pth.FindPhrase(q3)].Translation = "alligator";
+            pth[pth.FindPhrase(q4)].Translation = "Dia";
+            pth[pth.FindPhrase(q5)].Translation = "e";
+            pth[pth.FindPhrase(q6)].Translation = "E";
+
+            pth.Sort(PhrasesSortedBy.Translation, true, immediate);
+
+            Assert.AreEqual(q3, pth[0].QuestionInfo);
+            Assert.AreEqual(q5, pth[1].QuestionInfo);
+            Assert.AreEqual(q6, pth[2].QuestionInfo);
+            Assert.AreEqual(q1, pth[3].QuestionInfo);
+            Assert.AreEqual(q4, pth[4].QuestionInfo);
+            Assert.AreEqual(q2, pth[5].QuestionInfo);
+
+            pth.Sort(PhrasesSortedBy.Translation, false, immediate);
+
+            Assert.AreEqual(q2, pth[0].QuestionInfo);
+            Assert.AreEqual(q4, pth[1].QuestionInfo);
+            Assert.AreEqual(q1, pth[2].QuestionInfo);
+            Assert.AreEqual(q6, pth[3].QuestionInfo);
+            Assert.AreEqual(q5, pth[4].QuestionInfo);
+            Assert.AreEqual(q3, pth[5].QuestionInfo);
+        }
+
+        private class VowelComparer : IComparer<string>
+		{
+			public int Compare(string x, string y)
+			{
+				return string.Compare(new string(x?.Where(c => c.IsOneOf('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')).ToArray()),
+					new string(y?.Where(c => c.IsOneOf('a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U')).ToArray()), StringComparison.InvariantCulture);
+			}
+		}
 	    #endregion
 
         #region List filtering tests
@@ -454,10 +506,9 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
-            Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
+			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
             pth.Filter("what is", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
             Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
@@ -499,8 +550,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, true, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper (unfiltered)");
 
@@ -542,8 +592,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 2 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -584,8 +633,7 @@ namespace SIL.Transcelerator
 			    "that dog" /* 4 */, "wishes this", "kt:paul", "and", "kt:say", "radish");
 		    AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 2 */, "that dog" /* 4 */);
 
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    Func<TranslatablePhrase, string> localizer = tp =>
 		    {
@@ -626,8 +674,7 @@ namespace SIL.Transcelerator
                 "this would", "kt:god", "kt:have", "me to", "kt:say", "with respect to", "kt:paul");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is that dog");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(2, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -661,8 +708,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -695,8 +741,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -738,8 +783,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, false, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -782,8 +826,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -822,8 +865,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, false, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -869,8 +911,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -908,8 +949,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:have", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -946,8 +986,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:have", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -984,8 +1023,7 @@ namespace SIL.Transcelerator
                 "that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
             AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
             Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
@@ -1008,8 +1046,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			Assert.IsFalse(pth.GetMatchingPhrases(4, 6).Any());
 		}
@@ -1026,8 +1063,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth.Sort(listSortedBy, ascending);
 
 			var matches = pth.GetMatchingPhrases(2, 2);
@@ -1044,8 +1080,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth[0].IsExcluded = true;
 
 			var matches = pth.GetMatchingPhrases(2, 2);
@@ -1063,8 +1098,7 @@ namespace SIL.Transcelerator
 		    AddTestQuestion(cat, "What would God have me to say with respect to Paul?", "A", 1, 1);
 		    AddTestQuestion(cat, "What is Paul asking me to say with respect to that dog?", "B", 2, 2);
 
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			Assert.IsFalse(pth.CustomizedPhrases.Any());
 		}
@@ -1084,8 +1118,7 @@ namespace SIL.Transcelerator
 		    q = AddTestQuestion(cat, "Question 6? (deleted)", "D", 4, 4);
 		    q.IsExcluded = true;
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 			Assert.AreEqual(4, customizations.Count);
@@ -1112,8 +1145,7 @@ namespace SIL.Transcelerator
 		    AddTestQuestion(cat, "Question 1? (replaced)", "A", 1, 1);
 			AddTestQuestion(cat, "Question 4?", "C", 3, 3);
 			
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 			pth.Sort(PhrasesSortedBy.Reference, true);
@@ -1159,8 +1191,7 @@ namespace SIL.Transcelerator
 		    var cat = m_sections.Items[0].Categories[0];
 		    AddTestQuestion(cat, "Is this just a question?", "GEN 22:13", 1022013, 1022013);
 			
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 			var qBase1 = pth[0];
@@ -1204,8 +1235,7 @@ namespace SIL.Transcelerator
 		    AddTestQuestion(cat, "How did Jesus compare these two towns, Chorazin and Bethsaida with other cities?", "LUK 10:13-14", 42010013, 42010014);
 		    AddTestQuestion(cat, "What do you think it would have meant if the people of Chorazin and Bethsaida had sat in sackcloth and ashes?", "LUK 10:13", 42010013, 42010013);
 			
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 			var qBase1 = pth[1];
@@ -1272,8 +1302,7 @@ namespace SIL.Transcelerator
             addedAfter.Answers = new[] { "Claro qu sí" };
             AddTestQuestion(cat, "What do you think was the reason that Jesus said that John was greater than anyone else ever born?", "LUK 7:28", 42007028, 42007028);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 			pth.UnfilteredPhrases.Single(p => p.QuestionInfo.Id == immutableKeyOfQuestion1_1)
@@ -1365,8 +1394,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
 			AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
 			
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 			pth.Sort(PhrasesSortedBy.Reference, true);
@@ -1400,8 +1428,7 @@ namespace SIL.Transcelerator
 		    AddTestQuestion(cat, "What does it mean to \"cast out a spirit/demon\" from a person?", "LUK 9.37-40", 42009037, 42009040);
 		    AddTestQuestion(cat, "What did all the crowd think about this?", "LUK 9.43", 42009043, 42009043);
 			
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
 
 		    pth.Sort(PhrasesSortedBy.Reference, true);
@@ -1436,8 +1463,7 @@ namespace SIL.Transcelerator
 		    var qBase4 = AddTestQuestion(cat, "Question 4?", "B", 2, 2);
 		    qBase4.InsertedQuestionBefore = qInserted; // This will be ignored.
 
-		    var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
@@ -1472,8 +1498,7 @@ namespace SIL.Transcelerator
 		    q.IsUserAdded = true;
 		    q.Answers = new[] { "Maybe" };
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount);
@@ -1518,8 +1543,7 @@ namespace SIL.Transcelerator
 		    q.IsUserAdded = false;
 		    q.Answers = new[] { "He needed help." };
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
@@ -1570,8 +1594,7 @@ namespace SIL.Transcelerator
 		    q.IsUserAdded = false;
 		    q.Answers = new[] { "He needed help." };
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
@@ -1604,8 +1627,7 @@ namespace SIL.Transcelerator
 		    q.IsUserAdded = false;
 		    q.Answers = new[] { "He needed help." };
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(5, pth.UnfilteredPhraseCount, "Two for the categories, and three for the questions.");
@@ -1652,8 +1674,7 @@ namespace SIL.Transcelerator
 		    q.IsUserAdded = false;
 		    q.Answers = new[] { "He needed help." };
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-		    PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 		    var customizations = pth.CustomizedPhrases;
 		    Assert.AreEqual(4, pth.UnfilteredPhraseCount, "One for the Minutia category, and three for the questions.");
@@ -1693,8 +1714,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
 			AddTestQuestion(cat, "What is that dog?", "B", 2, 2, "what is" /* 3 */, "that dog" /* 4 */);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth.Sort(PhrasesSortedBy.Reference, true);
 			var originalCount = pth.UnfilteredPhraseCount;
 
@@ -1754,8 +1774,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
 			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 		    var originalCount = pth.UnfilteredPhraseCount;
 
 			var basedOnQuestion = pth[3];
@@ -1813,8 +1832,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish"));
 			otherQuestions.Add(AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */));
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			var pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth.Filter("this", true, PhraseTranslationHelper.KeyTermFilterType.All, null, false);
 			pth.Sort(PhrasesSortedBy.EnglishPhrase, true);
 
@@ -1875,11 +1893,10 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "GEN 2:2", 001002002, 001002002, "Q2");
 			AddTestQuestion(cat, "Q3", "GEN 2:2-3", 001002002, 001002003, "Q3");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			var pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var newQuestion = new Question("GEN 1:1", 001001001, 001001001, "Why is this the first question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 0, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 0, 0, null);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q1 = pth.Phrases.Single(p => p.InsertedPhraseBefore != null);
@@ -1896,8 +1913,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "REV 20:9", 66020009, 66020009, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 20:11-12", 66020011, 66020012, "Q3");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			var pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			foreach (var phrase in pth.UnfilteredPhrases)
 			{
 				Assert.AreEqual(0, phrase.SectionId, "Setup sanity check");
@@ -1905,7 +1921,7 @@ namespace SIL.Transcelerator
 			}
 
 			var newQuestion = new Question("REV 20:10-12", 66020010, 66020012, "Why is this the last question?", null);
-			var newPhrase = new TranslatablePhrase(newQuestion, 0, 2 /* new category for this section*/, 0);
+			var newPhrase = new TranslatablePhrase(newQuestion, 0, 2 /* new category for this section*/, 0, null);
 			pth.AttachNewQuestionToAdjacentPhrase(newPhrase);
 
 			var q3 = pth.Phrases.Single(p => p.AddedPhraseAfter != null);
@@ -1936,8 +1952,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
 			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
 			var originalTranslatablePartsSequence = phraseToModify.TranslatableParts.ToList();
@@ -1979,8 +1994,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "kt:radish");
 			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
 			var originalTranslatablePartsSequence = phraseToModify.TranslatableParts.ToList();
@@ -2000,7 +2014,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(4, keyTerms.Length);
 			Assert.AreEqual("FUR", keyTerms[0]);
 			Assert.AreEqual("HAVE", keyTerms[1]);
-			Assert.AreEqual(String.Empty, keyTerms[2]);
+			Assert.AreEqual(Empty, keyTerms[2]);
 			Assert.AreEqual("RADISH", keyTerms[3]);
 		}
 
@@ -2024,8 +2038,7 @@ namespace SIL.Transcelerator
 				"that dog" /* 4 */, "wishes this", "kt:paul", "and", "what is" /* 3 */, "kt:say", "radish");
 			AddTestQuestion(cat, "What is that dog?", "F", 6, 6, "what is" /* 3 */, "that dog" /* 4 */);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phraseToModify = pth.Phrases.ElementAt(pth.FindPhrase(questionToModify));
 			var origId = phraseToModify.QuestionInfo.Id;
@@ -2064,9 +2077,7 @@ namespace SIL.Transcelerator
             var cat = m_sections.Items[0].Categories[0];
             AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             var phrase = pth.GetPhrase("A", "Who was the man?");
             phrase.Translation = null;
@@ -2091,9 +2102,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man" /* 2 */);
             Question q4 = AddTestQuestion(cat, "Where was the woman?", "C", 3, 3, "where was the woman" /* 2 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2126,9 +2135,7 @@ namespace SIL.Transcelerator
             Question q2 = AddTestQuestion(cat, "Who was Judas kissing?", "A", 1, 1, "who was" /* 2 */, "kt:judas", "kissing");
             Question q3 = AddTestQuestion(cat, "Why was Judas talking to Paul?", "B", 2, 2, "why was", "kt:judas", "talking to" /* 2*/, "kt:paul");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2157,11 +2164,9 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
             Question q2 = AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man" /* 2 */);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
-            TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
 
             phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
@@ -2170,7 +2175,7 @@ namespace SIL.Transcelerator
             Assert.IsTrue(phrase2.HasUserTranslation);
         }
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
         /// <summary>
         /// Tests setting the translation for a phrase when that whole phrase matches part of
         /// another phrase.
@@ -2183,9 +2188,7 @@ namespace SIL.Transcelerator
             Question shortQ = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
             Question longQ = AddTestQuestion(cat, "Who was the man with the jar?", "B", 2, 2, "who was the man" /* 2 */, "with the jar" /*1*/);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase shortPhrase = pth.GetPhrase(shortQ.ScriptureReference, shortQ.Text);
             TranslatablePhrase longPhrase = pth.GetPhrase(longQ.ScriptureReference, longQ.Text);
@@ -2218,9 +2221,7 @@ namespace SIL.Transcelerator
             Question shortQ = AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man" /* 2 */);
             Question longQ = AddTestQuestion(cat, "Who was the man with the jar?", "B", 2, 2, "who was the man" /* 2 */, "with the jar" /*1*/);
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase shortPhrase = pth.GetPhrase(shortQ.ScriptureReference, shortQ.Text);
             TranslatablePhrase longPhrase = pth.GetPhrase(longQ.ScriptureReference, longQ.Text);
@@ -2263,9 +2264,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "Who was the man Jesus healed?", "C", 3, 3, "who was the man" /* 2 */,
                 "kt:jesus", "healed");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2319,9 +2318,7 @@ namespace SIL.Transcelerator
 			Question q6 = AddTestQuestion(cat, "How can man obtain the favor of God?", "F", 6, 6, "how",
 				"can man obtain", "the", "kt:favor", "of", "kt:god");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2347,17 +2344,57 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         [Test]
-        public void SetTranslation_FindKeyTermRenderingWhenKtHasMultiplesTranslations()
+        public void SetTranslation_FindKeyTermRenderingWhenKtHasMultipleTranslations()
         {
-            AddMockedKeyTerm("arrow", "flecha");
-            AddMockedKeyTerm("arrow", "dardo");
-            AddMockedKeyTerm("arrow", "dardos");
-            AddMockedKeyTerm("lion", "noil", "leo\u0301n", "noil");
-            AddMockedKeyTerm("boat", "nave");
-            AddMockedKeyTerm("boat", "barco");
-            AddMockedKeyTerm("boat", "barca");
+			var project = MockRepository.GenerateMock<IProject>();
 
-            var cat = m_sections.Items[0].Categories[0];
+			var r1 = new TestBTRenderings("worra", "flecha");
+			var term1 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term1.Stub(t => t.Lemma).Return("worra");
+			term1.Stub(t => t.Gloss("en")).Return("arrow");
+			project.Stub(p => p.GetBiblicalTermRenderings(term1, true)).Return(r1);
+
+			var r2 = new TestBTRenderings("worra", "dardo");
+			var term2 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term2.Stub(t => t.Lemma).Return("worra");
+			term2.Stub(t => t.Gloss("en")).Return("arrow");
+			project.Stub(p => p.GetBiblicalTermRenderings(term2, true)).Return(r2);
+
+			var r3 = new TestBTRenderings("worra", "dardos");
+			var term3 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term3.Stub(t => t.Lemma).Return("worra");
+			term3.Stub(t => t.Gloss("en")).Return("arrow");
+			project.Stub(p => p.GetBiblicalTermRenderings(term3, true)).Return(r3);
+            
+			var r4 = new TestBTRenderings("noil", "leo\u0301n", "noil");
+			var term4 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term4.Stub(t => t.Lemma).Return("noil");
+			term4.Stub(t => t.Gloss("en")).Return("lion");
+			project.Stub(p => p.GetBiblicalTermRenderings(term4, true)).Return(r4);
+            
+			var r5 = new TestBTRenderings("taob", "nave", "boat");
+			var term5 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term5.Stub(t => t.Lemma).Return("taob");
+			term5.Stub(t => t.Gloss("en")).Return("boat");
+			project.Stub(p => p.GetBiblicalTermRenderings(term5, true)).Return(r5);
+            
+			var r6 = new TestBTRenderings("taob", "barco");
+			var term6 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term6.Stub(t => t.Lemma).Return("taob");
+			term6.Stub(t => t.Gloss("en")).Return("boat");
+			project.Stub(p => p.GetBiblicalTermRenderings(term6, true)).Return(r6);
+            
+			var r7 = new TestBTRenderings("taob", "barca");
+			var term7 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term7.Stub(t => t.Lemma).Return("taob");
+			term7.Stub(t => t.Gloss("en")).Return("boat");
+			project.Stub(p => p.GetBiblicalTermRenderings(term7, true)).Return(r7);
+
+			var termsList = new TestTermsList(new List<IBiblicalTerm> {term3, term2, term1, term4, term7, term6, term5});
+			project.Stub(p => p.BiblicalTermList).Return(termsList);
+			RenderingsRepo = new ParatextTermRenderingsRepo(new TestKeyTermRenderingDataFileAccessor(), project);
+
+			var cat = m_sections.Items[0].Categories[0];
             Question q1 = AddTestQuestion(cat, "I shot the lion with the arrow.", "A", 1, 1, "i shot the", "kt:lion", "with the", "kt:arrow");
             Question q2 = AddTestQuestion(cat, "Who put the lion in the boat?", "A", 1, 1, "who put the", "kt:lion", "in the", "kt:boat");
             Question q3 = AddTestQuestion(cat, "Does the boat belong to the boat?", "A", 1, 1, "does the", "kt:boat", "belong to the", "kt:boat");
@@ -2367,9 +2404,7 @@ namespace SIL.Transcelerator
             Question q7 = AddTestQuestion(cat, "I shot the arrow with the lion.", "A", 1, 1, "i shot the", "kt:arrow", "with the", "kt:lion");
             Question q8 = AddTestQuestion(cat, "Does the arrow belong to the lion?", "A", 1, 1, "does the", "kt:arrow", "belong to the", "kt:lion");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2436,9 +2471,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "What asked Jesus Phillip?", "A", 1, 1, "what asked", "kt:jesus", "kt:phillip");
             Question q2 = AddTestQuestion(cat, "What asked Phillip Matthew?", "A", 1, 1, "what asked", "kt:phillip", "kt:matthew");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase0 = pth.GetPhrase(q0.ScriptureReference, q0.Text);
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
@@ -2483,9 +2516,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "What asked Jesus Phillip?", "A", 1, 1, "what asked", "kt:jesus", "kt:phillip");
             Question q2 = AddTestQuestion(cat, "What asked Phillip Matthew?", "A", 1, 1, "what asked", "kt:phillip", "kt:matthew");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase0 = pth.GetPhrase(q0.ScriptureReference, q0.Text);
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
@@ -2531,9 +2562,7 @@ namespace SIL.Transcelerator
             Question q2 = AddTestQuestion(cat, "Who was the man with the jar?", "A", 1, 1, "who was the man", "with the", "kt:jar");
             Question q3 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus", " healed");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2577,9 +2606,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "Who was Timothy?", "A", 1, 1, "who was", "kt:timothy");
             Question q2 = AddTestQuestion(cat, "Who was Euticus?", "A", 1, 1, "who was", "kt:euticus");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2590,10 +2617,10 @@ namespace SIL.Transcelerator
             Assert.AreEqual(2, phrase2.GetParts().Count());
 
             const string frame = "\u00BFQuie\u0301n era {0}?";
-            phrase1.Translation = string.Format(frame, "Timoteo");
+            phrase1.Translation = Format(frame, "Timoteo");
 
-            Assert.AreEqual(string.Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
-            Assert.AreEqual(string.Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
+            Assert.AreEqual(Format(frame, "Timoteo").Normalize(NormalizationForm.FormC), phrase1.Translation);
+            Assert.AreEqual(Format(frame, "Eutico").Normalize(NormalizationForm.FormC), phrase2.Translation);
             Assert.IsTrue(phrase1.HasUserTranslation);
             Assert.IsFalse(phrase2.HasUserTranslation);
         }
@@ -2614,9 +2641,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "Was Jacob one of the disciples?", "A", 1, 1, "was", "kt:jacob", "one of the disciples");
             Question q2 = AddTestQuestion(cat, "Was Matthew one of the disciples?", "A", 1, 1, "was", "kt:matthew", " one of the disciples");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2627,10 +2652,10 @@ namespace SIL.Transcelerator
             Assert.AreEqual(3, phrase2.GetParts().Count());
 
             const string frame = "\u00BFFue {0} uno de los discipulos?";
-            phrase1.Translation = string.Format(frame, "Jacobo");
+            phrase1.Translation = Format(frame, "Jacobo");
 
-            Assert.AreEqual(string.Format(frame, "Jacobo"), phrase1.Translation);
-            Assert.AreEqual(string.Format(frame, "Mateo"), phrase2.Translation);
+            Assert.AreEqual(Format(frame, "Jacobo"), phrase1.Translation);
+            Assert.AreEqual(Format(frame, "Mateo"), phrase2.Translation);
             Assert.IsTrue(phrase1.HasUserTranslation);
             Assert.IsFalse(phrase2.HasUserTranslation);
         }
@@ -2662,9 +2687,7 @@ namespace SIL.Transcelerator
             Question q7 = AddTestQuestion(cat, "What did Moses do?", "A", 1, 1, "what did", "kt:moses", "do");
             Question q8 = AddTestQuestion(cat, "Did Moses ask, \"What did Jacob do?\"", "a", 1, 1, "did", "kt:moses", "ask", "what did", "kt:jacob", "do");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2726,9 +2749,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "XYZ want ABC whatever EFG", "a", 1, 1, "xyz", "kt:want", "abc", "kt:whatever", "efg");
             Question q4 = AddTestQuestion(cat, "EFG thing ABC", "A", 1, 1, "efg", "kt:thing", "abc");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2774,9 +2795,7 @@ namespace SIL.Transcelerator
             Question q4 = AddTestQuestion(cat, "So now what was Isaac complaining about?", "A", 1, 1, "so", "now what", "was", "kt:isaac", "complaining about");
             Question q5 = AddTestQuestion(cat, "So what did the Apostle Paul say about that?", "A", 1, 1, "so", "what did", "the apostle", "kt:paul", "say about that");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2828,9 +2847,7 @@ namespace SIL.Transcelerator
             Question q5 = AddTestQuestion(cat, "So what did the Apostle Paul say about that?", "A", 1, 1, "so", "what did", "the apostle", "kt:paul", "say about that");
             Question q6 = AddTestQuestion(cat, "Why did they treat the Apostle Paul so?", "A", 1, 1, "why did they treat the apostle", "kt:paul", "so");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2878,9 +2895,7 @@ namespace SIL.Transcelerator
 			Question q1 = AddTestQuestion(cat, "What did Paul and Silas do in jail?", "A", 1, 1, "what", "did", "kt:paul", "and", "kt:silas", "do in jail");
 			Question q2 = AddTestQuestion(cat, "Were Isaiah and Paul prophets?", "A", 1, 1, "were", "kt:isaiah", "and", "kt:paul", "prophets");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2908,9 +2923,7 @@ namespace SIL.Transcelerator
 			Question q3 = AddTestQuestion(cat, "Tell one way Paul helped Jesus.", "A", 1, 1, "tell", "one", "way", "kt:paul", "helped", "kt:jesus");
 			Question q4 = AddTestQuestion(cat, "Were the twelve disciples of Jesus in one room?", "A", 1, 1, "were", "the", "twelve disciples", "of", "kt:jesus", "in", "one", "room");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2942,9 +2955,7 @@ namespace SIL.Transcelerator
 			Question q2 = AddTestQuestion(cat, "The 2000 men of Judah donated 1000 talents of gold.", "A", 1, 1, "the", 2000,
 				"men of", "kt:judah", "donated", 1000, "kt:talent", "of gold");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2975,9 +2986,7 @@ namespace SIL.Transcelerator
 			Question q2 = AddTestQuestion(cat, "The 2000 men of Judah donated 1000 talents of gold.", "A", 1, 1, "the", 2000,
 				"men of", "kt:judah", "donated", 1000, "kt:talent", "of gold");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -2993,13 +3002,14 @@ namespace SIL.Transcelerator
 		/// numerals.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void SetTranslation_NoUserTranslations_GuessedTranslationsIncludeNumbers()
+		[TestCase('2', ",", 3, true, ExpectedResult = "144,000")]
+		[TestCase('६', ",", 4, true, "१२", ExpectedResult = "१४,४०००")]
+		[TestCase('0', ".", 2, false, ExpectedResult = "14.40.00")]
+		[TestCase('9', ":", 5, true, ExpectedResult = "144000")]
+		public string SetTranslation_NoUserTranslations_GuessedTranslationsIncludeNumbers(
+			char exampleDigit, string separator, int groupSize, bool noPunctForShortNumbers,
+			string expectedTwelve = "12")
 		{
-			//This just sets the statics in the Number class to a known setting for a predictable test result. 
-			Number n = new Number(200000);
-			n.Translation = "200,000";
-
 			AddMockedKeyTerm("Jesus", "Jesu\u0301s");
 			AddMockedKeyTerm("Paul", "Pablo");
 
@@ -3007,15 +3017,14 @@ namespace SIL.Transcelerator
 			Question q1 = AddTestQuestion(cat, "Was Paul one of Jesus' 12 disciples?", "A", 1, 1, "was", "kt:paul", "one", "of", "kt:jesus", 12, "disciples");
 			Question q2 = AddTestQuestion(cat, "Who sealed the 144,000?", "A", 1, 1, "who", " sealed the", 144000);
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
+			pth.SetNumericFormat(exampleDigit, separator, new []{groupSize}, noPunctForShortNumbers);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
 
-			Assert.AreEqual("Pablo Jesu\u0301s 12".Normalize(NormalizationForm.FormC), phrase1.Translation);
-			Assert.AreEqual("144,000".Normalize(NormalizationForm.FormC), phrase2.Translation);
+			Assert.AreEqual($"Pablo Jesu\u0301s {expectedTwelve}".Normalize(NormalizationForm.FormC), phrase1.Translation);
+			return phrase2.Translation;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3052,9 +3061,7 @@ namespace SIL.Transcelerator
 				"happy to have only", 300, "soldiers left");
 			Question q7 = AddTestQuestion(cat, "Should 3,500 have a comma?", "A", 1, 1, "should", 3500, "have a comma");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3099,9 +3106,7 @@ namespace SIL.Transcelerator
 			Question q2 = AddTestQuestion(cat, "Who sealed the 144,000?", "A", 1, 1, "who", " sealed the", 144000);
 
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 			TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3130,9 +3135,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "Did Paul and Silas run away?", "A", 1, 1, "did", "kt:paul", "and", "kt:silas", "run away");
             Question q4 = AddTestQuestion(cat, "And what did Paul do next?", "A", 1, 1, "and", "what did", "kt:paul", "do next");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3165,9 +3168,7 @@ namespace SIL.Transcelerator
             Question q4 = AddTestQuestion(cat, "Where did Mary eat?", "A", 1, 1, "where did", "kt:mary", "eat");
             Question q5 = AddTestQuestion(cat, "When Mary went to the tomb, where did Jesus meet her?", "A", 1, 1, "when", "kt:mary", "went to the tomb", "where did", "kt:jesus", " meet her");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3207,9 +3208,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "Where are Balaam and the squirrel?", "A", 1, 1, "where", "are", "kt:balaam", "and", "kt:the squirrel");
             Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3247,9 +3246,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "What did the donkey and Balaam do?", "A", 1, 1, "what", "did the", "kt:donkey", "and", "kt:balaam", "do");
             Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3287,9 +3284,7 @@ namespace SIL.Transcelerator
             Question q3 = AddTestQuestion(cat, "What did the donkey and Balaam do?", "A", 1, 1, "what did the", "kt:donkey", "and", "kt:balaam", "do");
             Question q4 = AddTestQuestion(cat, "and?", "A", 1, 1, "and");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3327,9 +3322,7 @@ namespace SIL.Transcelerator
             Question q4 = AddTestQuestion(cat, "What Balaam eats?", "A", 1, 1, "what", "kt:balaam", "eats");
             Question q5 = AddTestQuestion(cat, "Donkey eats?", "A", 1, 1, "kt:donkey", "eats");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3366,9 +3359,7 @@ namespace SIL.Transcelerator
             var cat = m_sections.Items[0].Categories[0];
             Question q1 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus", " healed");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 
@@ -3400,9 +3391,7 @@ namespace SIL.Transcelerator
             Question q2 = AddTestQuestion(cat, "What did Stephen do?", "A", 1, 1, "what", "did", "kt:stephen", "do");
             Question q3 = AddTestQuestion(cat, "What did Mary look for?", "A", 1, 1, "what", "did", "kt:mary", "kt:look", "for");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3438,9 +3427,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "Was the servant healed?", "A", 1, 1, "was the", "kt:servant", "kt:heal");
             Question q2 = AddTestQuestion(cat, "Was the magician healed?", "A", 1, 1, "was the", "kt:magician", "kt:heal");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3479,9 +3466,7 @@ namespace SIL.Transcelerator
             Question q2 = AddTestQuestion(cat, "Was the magician blinded?", "A", 1, 1, "was the", "kt:magician", "kt:blind");
             Question q3 = AddTestQuestion(cat, "Was the man helped?", "B", 2, 2, "was the", "kt:man", "kt:help");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3521,9 +3506,7 @@ namespace SIL.Transcelerator
             Question q2 = AddTestQuestion(cat, "Were the 4 magicians blinded by the 4 servants?", "A", 1, 1, "were the", "num:4", "kt:magician", "kt:blind", "by the", "num:4", "kt:servant");
             Question q3 = AddTestQuestion(cat, "Were the 12 men helped by the 6 servants?", "B", 2, 2, "were the", "num:12", "kt:man", "kt:help", "by the", "num:6", "kt:servant");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3549,17 +3532,36 @@ namespace SIL.Transcelerator
         [Test]
         public void SelectCorrectTermRendering_FillInTemplate_BasedOnSuffixRule_PreferDefault()
         {
-            AddMockedKeyTerm("magician", "naicigam", "mago", "brujo");
-            AddMockedKeyTerm("servant", "tnavres", "criado", "siervo");
-            AddMockedKeyTerm("heal", "laeh", "sanara\u0301", "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado");
+			var project = MockRepository.GenerateMock<IProject>();
+			var renderings = new List<TestBTRenderings>
+			{
+				new TestBTRenderings("naicigam", "mago", "brujo"),
+				new TestBTRenderings("tnavres", "criado", "siervo"),
+				new TestBTRenderings("laeh", "sanara\u0301", "curada", "sanada", "sanar", "curara\u0301", "sanas", "curan", "cura", "sana", "sanado"),
+			};
+			
+			var term1 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term1.Stub(t => t.Lemma).Return("naicigam");
+			term1.Stub(t => t.Gloss("en")).Return("magician");
+			project.Stub(p => p.GetBiblicalTermRenderings(term1, true)).Return(renderings.SingleOrDefault(r => r.TermLemma == term1.Lemma));
+			var term2 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term2.Stub(t => t.Lemma).Return("tnavres");
+			term2.Stub(t => t.Gloss("en")).Return("servant");
+			project.Stub(p => p.GetBiblicalTermRenderings(term2, true)).Return(renderings.SingleOrDefault(r => r.TermLemma == term2.Lemma));
+			var term3 = MockRepository.GenerateMock<IBiblicalTerm>();
+			term3.Stub(t => t.Lemma).Return("laeh");
+			term3.Stub(t => t.Gloss("en")).Return("heal");
+			project.Stub(p => p.GetBiblicalTermRenderings(term3, true)).Return(renderings.SingleOrDefault(r => r.TermLemma == term3.Lemma));
+
+			var termsList = new TestTermsList(new List<IBiblicalTerm> {term1, term2, term3});
+			project.Stub(p => p.BiblicalTermList).Return(termsList);
+			RenderingsRepo = new ParatextTermRenderingsRepo(new TestKeyTermRenderingDataFileAccessor(), project);
 
             var cat = m_sections.Items[0].Categories[0];
             Question q1 = AddTestQuestion(cat, "Will the servant be healed?", "A", 1, 1, "will the", "kt:servant", "be", "kt:heal");
             Question q2 = AddTestQuestion(cat, "Will the magician be healed?", "A", 1, 1, "will the", "kt:magician", "be", "kt:heal");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
             TranslatablePhrase phrase2 = pth.GetPhrase(q2.ScriptureReference, q2.Text);
@@ -3572,14 +3574,12 @@ namespace SIL.Transcelerator
             pth.TermRenderingSelectionRules = new List<RenderingSelectionRule>(new[] {
                 new RenderingSelectionRule(@"Will .* {0}\w*\b", "ra\u0301$")});
 
-            m_dummyKtRenderings["laeh"].Remove("curara\u0301");
-            m_dummyKtRenderings["laeh"].Insert(0, "curara\u0301");
+            renderings[2].RenderingList.Remove("curara\u0301");
+			renderings[2].RenderingList.Insert(0, "curara\u0301");
 
-            Dictionary<Word, List<KeyTerm>> keyTermsTable =
-                (Dictionary<Word, List<KeyTerm>>)ReflectionHelper.GetField(qp.PhrasePartManager, "m_keyTermsTable");
-            keyTermsTable["heal"].First().LoadRenderings();
+			phrase2.GetParts().OfType<KeyTerm>().First(kt => kt.Words.First().Text == "heal").LoadRenderings();
 
-            Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
+			Assert.AreEqual("\u00BFSe curara\u0301 el mago?".Normalize(NormalizationForm.FormC), phrase2.Translation);
         }
 
         /// ------------------------------------------------------------------------------------
@@ -3597,9 +3597,7 @@ namespace SIL.Transcelerator
             Question q1 = AddTestQuestion(cat, "Who was the man Jesus healed?", "A", 1, 1, "who was the man", "kt:jesus",
                 "healed");
 
-            var qp = new QuestionProvider(GetParsedQuestions());
-            PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-            ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
             TranslatablePhrase phrase1 = pth.GetPhrase(q1.ScriptureReference, q1.Text);
 
@@ -3627,9 +3625,7 @@ namespace SIL.Transcelerator
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Who was the man?", "A", 1, 1, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase = pth.GetPhrase("A", "Who was the man?");
 
@@ -3658,9 +3654,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
 			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
 
@@ -3701,9 +3695,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
 			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase1 = pth.GetPhrase("GEN 1.1", "Who was the man?");
 			var phrase2 = pth.GetPhrase("GEN 1.2", "Who is the girl?");
@@ -3754,9 +3746,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who is the girl?", "GEN 1.2", 001001002, 001001002, "who is the girl");
 			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2", 001002002, 001002002, "why do you ask");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase1 = pth.GetPhrase("GEN 1:1", "Who was the man?");
 			phrase1.Translation = "\u00BFQuie\u0301n era el hombre?";
@@ -3807,9 +3797,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who is the girl?", "GEN 2.2-13", 001002002, 001002013, "who is the girl");
 			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2-13", 001002002, 001002013, "why do you ask");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase1 = pth.GetPhrase("GEN 1:1-31", "Who was the man?");
 			var phrase2 = pth.GetPhrase("GEN 2:2-13", "Who is the girl?");
@@ -3863,9 +3851,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who is the girl?", "GEN 2.2-13", 001002002, 001002013, "who is the girl");
 			AddTestQuestion(cat, "Why do you ask?", "GEN 2.2-13", 001002002, 001002013, "why do you ask");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
-			ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			var pth = InitializePhraseTranslationHelper(true);
 
 			var phrase1 = pth.GetPhrase("GEN 2:2-13", "Who was the man?");
 			var phrase2 = pth.GetPhrase("GEN 2:2-13", "Who is the girl?");
@@ -3916,8 +3902,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
 			AddTestQuestion(cat, "Who was the man?", "B", 2, 2, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phrase = pth.GetPhrase("A", "Who was the man?");
 			Assert.AreEqual("A", phrase.Reference);
@@ -3948,8 +3933,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the woman?", "A", 1, 1, "who was the woman");
 			AddTestQuestion(cat, "Who was that man?", "B", 2, 2, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phrase = pth.GetPhrase("A", "Who was that man?");
 			Assert.AreEqual("A", phrase.Reference);
@@ -3971,8 +3955,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
 			AddTestQuestion(cat, "Who was the man?", "LEV 3.15", 003003015, 003003015, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phrase = pth.GetPhrase("LEV 2:1-13", "Who was the man?");
 			Assert.AreEqual("LEV 2.15", phrase.Reference);
@@ -3995,8 +3978,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
 			AddTestQuestion(cat, "Who was the man?", "LEV 2.1-14", 003002001, 003002014, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			Assert.IsNull(pth.GetPhrase("LEV 2.1-13", "Who was the man?"));
 		}
@@ -4015,8 +3997,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
 			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phrase = pth.GetPhrase("LEV 2:1", "Who was the man?");
 			Assert.AreEqual("LEV 2.1", phrase.Reference);
@@ -4039,8 +4020,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
 			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			var phrase = pth.GetPhrase(null, "Who was the man?");
 			Assert.AreEqual("LEV 2.1", phrase.Reference);
@@ -4063,8 +4043,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Who was the mannequin?", "LEV 2.1-13", 003002001, 003002013, "who was the mannequin");
 			AddTestQuestion(cat, "Who was the man?", "LUK 3.13-15", 042003013, 042003015, "who was the man");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 
 			Assert.IsNull(pth.GetPhrase(null, "Who was the manager?"));
 		}
@@ -4075,7 +4054,7 @@ namespace SIL.Transcelerator
         [TestCase(false)]
         public void ComparePhraseReferences_QuestionComparedToItself_ReturnsZero(bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1, null);
 	        var result = PhraseTranslationHelper.ComparePhraseReferences(a, a, ascending ? 1 : -1);
 		    Assert.AreEqual(0, result);
         }
@@ -4106,10 +4085,11 @@ namespace SIL.Transcelerator
 	        int bSection, int bCategory, int bSequence,
 	        bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
-		        aSection, aCategory, aSequence);
-	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
-		        bSection, bCategory, bSequence);
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2,
+				"Why is this the first question?", null), aSection, aCategory, aSequence, null);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2,
+				"Why is this different text but the same key?", null),
+		        bSection, bCategory, bSequence, null);
 	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
         }
 
@@ -4117,8 +4097,10 @@ namespace SIL.Transcelerator
         [TestCase(false)]
         public void ComparePhraseReferences_QuestionsWithDifferentStartRefs_SortedByStartRef(bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Why is this the first question?", null), 1, 1, 2);
-	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Is this an overview question?", null), 1, 0, 1);
+	        var a = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2,
+				"Why is this the first question?", null), 1, 1, 2, null);
+	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2,
+				"Is this an overview question?", null), 1, 0, 1, null);
 	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
         }
 
@@ -4126,8 +4108,11 @@ namespace SIL.Transcelerator
         [TestCase(false)]
         public void ComparePhraseReferences_QuestionsInDifferentSectionsSameStartRefs_SortedByEndRef(bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
-	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914,
+				"What did Laban say then?", null), 1, 1, 21, null);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915,
+				"About how long had Jacob worked for Laban, when Laban asked Jacob about wages?",
+				null), 2, 1, 2, null);
 	        VerifyComparePhraseReferencesALessThanB(ascending, a, b);
         }
         #endregion
@@ -4138,7 +4123,8 @@ namespace SIL.Transcelerator
         [TestCase(false)]
         public void ComparePhrasesByIndexedOrder_QuestionComparedToItself_ReturnsZero(bool ascending)
         {
-	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null), 1, 1, 1);
+	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2,
+				"Why is this the first question?", null), 1, 1, 1, null);
 	        var result = PhraseTranslationHelper.ComparePhrasesByIndexedOrder(a, a);
 	        Assert.AreEqual(0, result);
         }
@@ -4160,9 +4146,9 @@ namespace SIL.Transcelerator
 	        int bSection, int bCategory, int bSequence)
         {
 	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this the first question?", null),
-		        aSection, aCategory, aSequence);
+		        aSection, aCategory, aSequence, null);
 	        var b = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this different text but the same key?", null),
-		        bSection, bCategory, bSequence);
+		        bSection, bCategory, bSequence, null);
 	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
@@ -4174,17 +4160,20 @@ namespace SIL.Transcelerator
 	        int bSection, int bCategory, int bSequence)
         {
 	        var a = new TranslatablePhrase(new Question("GEN 1:2", 2, 2, "Why is this question out of verse order?", null),
-		        aSection, aCategory, aSequence);
+		        aSection, aCategory, aSequence, null);
 	        var b = new TranslatablePhrase(new Question("GEN 1:1-2", 1, 2, "Is this a summary question?", null),
-		        bSection, bCategory, bSequence);
+		        bSection, bCategory, bSequence, null);
 	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
         [Test]
         public void ComparePhrasesByIndexedOrder_QuestionsInDifferentSectionsSameStartRefs_SortedBySection()
         {
-	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914, "What did Laban say then?", null), 1, 1, 21);
-	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915, "About how long had Jacob worked for Laban, when Laban asked Jacob about wages?", null), 2, 1, 2);
+	        var a = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102914,
+				"What did Laban say then?", null), 1, 1, 21, null);
+	        var b = new TranslatablePhrase(new Question("GEN 29:14", 102914, 102915,
+				"About how long had Jacob worked for Laban, when Laban asked Jacob about wages?",
+				null), 2, 1, 2, null);
 	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
@@ -4207,8 +4196,10 @@ namespace SIL.Transcelerator
 	        int bSequence = differByCategory ? 1 : 2;
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 6, 0, 1);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 6, bCategory, bSequence);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA,
+				"Why is this the first question?", null), 6, 0, 1, null);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB,
+				"Why is this the second question?", null), 6, bCategory, bSequence, null);
             VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
@@ -4227,8 +4218,10 @@ namespace SIL.Transcelerator
 	        int bSequence = differByCategory ? 1 : 2;
 	        var strRefA = BCVRef.MakeReferenceString("GEN", startRefA, endRefA, ":", "-");
 	        var strRefB = BCVRef.MakeReferenceString("GEN", startRefB, endRefB, ":", "-");
-	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA, "Why is this the first question?", null), 4, 0, 1);
-	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB, "Why is this the second question?", null), 4, bCategory, bSequence);
+	        var a = new TranslatablePhrase(new Question(strRefA, startRefA, endRefA,
+				"Why is this the first question?", null), 4, 0, 1, null);
+	        var b = new TranslatablePhrase(new Question(strRefB, startRefB, endRefB,
+				"Why is this the second question?", null), 4, bCategory, bSequence, null);
             VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
 
@@ -4236,9 +4229,9 @@ namespace SIL.Transcelerator
         public void ComparePhrasesByIndexedOrder_DifferentBooks_SortedByBookNumber()
         {
 	        var a = new TranslatablePhrase(new Question("GEN 1.1", 1001001, 1001001,
-		        "At what time did these events happen?", null), 4, 1, 0);
+		        "At what time did these events happen?", null), 4, 1, 0, null);
 	        var b = new TranslatablePhrase(new Question("ACT 1:1-2", 44001001, 44001002, 
-			    "To whom did the writer of Acts address this book?", null), 0, 1, 0);
+			    "To whom did the writer of Acts address this book?", null), 0, 1, 0, null);
 	        VerifyComparePhrasesByIndexedOrderALessThanB(a, b);
         }
         #endregion
@@ -4271,8 +4264,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "MAT 2.2", 40002002, 40002002, "Q2");
 			AddTestQuestion(cat, "Q3", "REV 6.4-5", 66006004, 66006005, "Q2");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth.GetPhrase("MAT 2:2", "Q1").Translation = $"{vernLocale} Why so many frogs?";
 			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
 			pth.GetPhrase("REV 6:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
@@ -4334,8 +4326,7 @@ namespace SIL.Transcelerator
 			AddTestQuestion(cat, "Q2", "MAT 2.2", 40002002, 40002002, "Q2");
 			AddTestQuestion(cat, "Q3", "JUD 1.4-5", 65001004, 65001005, "Q2");
 
-			var qp = new QuestionProvider(GetParsedQuestions());
-			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			var pth = InitializePhraseTranslationHelper();
 			pth.GetPhrase("MAT 2:2", "Q1").Translation = $"{vernLocale} Why so many frogs?";
 			pth.GetPhrase("MAT 2:2", "Q2").Translation = $"{vernLocale} What was her name?";
 			pth.GetPhrase("JUD 1:4-5", "Q3").Translation = $"{vernLocale} Who ate the pizza?";
@@ -4382,7 +4373,34 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(0, r.Questions.Count);
 		}
 
+        #region
+		private class TestBTRenderings : IBiblicalTermRenderings
+		{
+			internal List<string> RenderingList { get; }
+
+			internal TestBTRenderings(string lemma, params string[] renderings)
+			{
+				TermLemma = lemma;
+				RenderingList = new List<string>(renderings);
+			}
+			public string TermLemma { get; }
+			public bool IsGuess => false;
+			public IReadOnlyList<string> Renderings => RenderingList;
+		}
+        #endregion
+
 		#region Private helper methods
+		private PhraseTranslationHelper InitializePhraseTranslationHelper(bool setGettingStartedFlag = false)
+		{
+			var pq = GetParsedQuestions();
+			var phrasePartManager = new PhrasePartManager(pq.TranslatableParts, pq.KeyTerms, RenderingsRepo);
+			var qp = new QuestionProvider(pq, phrasePartManager);
+			PhraseTranslationHelper pth = new PhraseTranslationHelper(qp);
+			if (setGettingStartedFlag)
+				ReflectionHelper.SetField(pth, "m_justGettingStarted", false);
+			return pth;
+		}
+
         /// ------------------------------------------------------------------------------------
         /// <summary>
         /// Adds a test question to the given category and adds info about key terms and parts

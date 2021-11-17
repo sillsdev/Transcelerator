@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -15,23 +15,7 @@ using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
-	public interface IPhrasePart
-	{
-        IEnumerable<Word> Words { get; }
-		string Translation { get; }
-		string DebugInfo { get; }
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets the best rendering for this part in when used in the context of the given
-		/// phrase.
-		/// </summary>
-		/// <remarks>If this part occurs more than once in the phrase, it is not possible to
-		/// know which occurrence is which.</remarks>
-		/// ------------------------------------------------------------------------------------
-		string GetBestRenderingInContext(TranslatablePhrase phrase);
-	}
-
-    public sealed class Part : IPhrasePart
+	public sealed class Part : IPhrasePart
 	{
 		#region Data Members
 		internal readonly List<Word> m_words;
@@ -59,30 +43,21 @@ namespace SIL.Transcelerator
 		/// Gets the words.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<Word> Words
-		{
-			get { return m_words; }
-		}
+		public IEnumerable<Word> Words => m_words;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the owning phrases.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<TranslatablePhrase> OwningPhrases
-		{
-			get { return m_owningPhrases; }
-		}
+		public IEnumerable<TranslatablePhrase> OwningPhrases => m_owningPhrases;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the text of the sub-phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Text
-		{
-			get { return m_words.ToString(" "); }
-		}
+		public string Text => m_words.ToString(" ");
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -91,8 +66,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public string Translation
 		{
-			get { return m_translation; }
-			internal set {  m_translation = value ?? string.Empty; }
+			get => m_translation;
+			internal set => m_translation = value ?? string.Empty;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -100,10 +75,7 @@ namespace SIL.Transcelerator
 		/// Gets a string with some debug info.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string DebugInfo
-		{
-			get { return OwningPhrases.Count() + ", " + Translation; }
-		}
+		public string DebugInfo => OwningPhrases.Count() + ", " + Translation;
 		#endregion
 
 		#region Internal methods
@@ -124,10 +96,7 @@ namespace SIL.Transcelerator
 		/// The text of this part.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public override string ToString()
-		{
-			 return Text;
-		}
+		public override string ToString() => Text;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -139,7 +108,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public static implicit operator string(Part part)
 		{
-			return part == null ? null : part.Text;
+			return part?.Text;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -150,9 +119,9 @@ namespace SIL.Transcelerator
 		/// <remarks>If this part occurs more than once in the phrase, it is not possible to
 		/// know which occurrence is which.</remarks>
 		/// ------------------------------------------------------------------------------------
-		public string GetBestRenderingInContext(TranslatablePhrase phrase)
+		public string GetBestRenderingInContext(TranslatablePhrase phrase, bool fast = false)
 		{
-			return Translation;
+			return Translation; // Always fast
 		}
 		#endregion
 	}

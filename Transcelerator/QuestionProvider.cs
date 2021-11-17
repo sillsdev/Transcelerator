@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.
-// <copyright from='2011' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -43,12 +43,11 @@ namespace SIL.Transcelerator
 	    /// </summary>
 	    /// <param name="sections">Class representing the questions, organized by Scripture
 	    /// section and category.</param>
-	    /// <param name="keyTerms">(optional) key terms</param>
 	    /// ------------------------------------------------------------------------------------
-	    internal QuestionProvider(QuestionSections sections, IEnumerable<KeyTermMatchSurrogate> keyTerms)
+	    internal QuestionProvider(QuestionSections sections)
 		{
 			m_sections = sections;
-            m_manager = new PhrasePartManager(new string[0], keyTerms);
+            m_manager = new PhrasePartManager(new string[0], null, null);
         }
 
 		/// ------------------------------------------------------------------------------------
@@ -57,11 +56,17 @@ namespace SIL.Transcelerator
 		/// is only for testing.
 		/// </summary>
 		/// <param name="parsedQuestions">The parsed questions object.</param>
+		/// <param name="helper">Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.</param>
+		/// <param name="renderingsRepository"></param>
 		/// ------------------------------------------------------------------------------------
-		internal QuestionProvider(ParsedQuestions parsedQuestions)
+		internal QuestionProvider(ParsedQuestions parsedQuestions,
+			IPhraseTranslationHelper helper, ITermRenderingsRepo renderingsRepository)
 		{
+			Helper = helper;
 			m_sections = parsedQuestions.Sections;
-			m_manager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms);
+			m_manager = new PhrasePartManager(parsedQuestions.TranslatableParts,
+				parsedQuestions.KeyTerms, renderingsRepository);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -105,11 +110,13 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public PhrasePartManager PhrasePartManager
-		{
-			get { return m_manager; }
-		}
-	    #endregion
+		public PhrasePartManager PhrasePartManager => m_manager;
+		/// <summary>
+		/// Helper object that knows about other TranslatablePhrase objects
+		/// and can manage the relationship between them as translations change.
+		/// </summary>
+		public IPhraseTranslationHelper Helper { get; set; }
+		#endregion
 
 		#region Private helper methods
 	    /// ------------------------------------------------------------------------------------
@@ -137,7 +144,7 @@ namespace SIL.Transcelerator
 					    var lcCategory = category.Type.ToLowerInvariant();
 					    if (!processedCategories.TryGetValue(lcCategory, out categoryIndex))
 					    {
-						    phrase = new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, -1, processedCategories.Count);
+						    phrase = new TranslatablePhrase(new SimpleQuestionKey(category.Type), -1, -1, processedCategories.Count, Helper);
 						    phrase.m_parts.Add(m_manager.GetOrCreatePart(PhraseParser.GetWordsInString(lcCategory), phrase, false));
 						    yield return phrase;
 						    // 0 is reserved for "overview", so we can't use that for non-overview categories.
@@ -157,7 +164,7 @@ namespace SIL.Transcelerator
 					    }
 
 						Debug.Assert(categoryIndex >= 0);
-					    phrase = new TranslatablePhrase(q, iSection, categoryIndex, iQuestion);
+					    phrase = new TranslatablePhrase(q, iSection, categoryIndex, iQuestion, Helper);
 					    if (!phrase.IsExcluded)
 						    InitializePhraseParts(phrase);
 					    yield return phrase;
@@ -166,7 +173,7 @@ namespace SIL.Transcelerator
 		    }
 		}
 
-		public void InitializePhraseParts(TranslatablePhrase phrase)
+		private void InitializePhraseParts(TranslatablePhrase phrase)
 		{
 			foreach (ParsedPart part in phrase.QuestionInfo.ParsedParts)
 			{
@@ -176,7 +183,7 @@ namespace SIL.Transcelerator
 				else if (part.Type == PartType.KeyTerm)
 					newPart = m_manager.FindKeyTerm(part.Words);
 				else
-					newPart = new Number(part.NumericValue);
+					newPart = new Number(part.NumericValue, phrase.Helper);
 				phrase.m_parts.Add(newPart);
 			}
 		}

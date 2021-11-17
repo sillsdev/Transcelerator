@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,13 +13,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AddInSideViews;
 using SIL.Utils;
 using System;
-using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Xml;
+using Paratext.PluginInterfaces;
 
 namespace SIL.Transcelerator
 {
@@ -369,7 +368,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(string filename, IEnumerable<string> questionWords,
-            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
             this(XmlSerializationHelper.DeserializeFromFile<QuestionSections>(filename),
@@ -385,7 +384,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public MasterQuestionParser(IEnumerable<string> questionWords,
-			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
 			IEnumerable<Substitution> phraseSubstitutions) : this(default(QuestionSections), questionWords,
 			keyTerms, keyTermRules, null, phraseSubstitutions)
 		{
@@ -397,7 +396,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
-            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
@@ -817,9 +816,9 @@ namespace SIL.Transcelerator
 		/// Populates the key terms table.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateKeyTermsTable(IEnumerable<IKeyTerm> keyTerms, KeyTermRules rules)
+		private void PopulateKeyTermsTable(IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules rules)
 		{
-			foreach (IKeyTerm keyTerm in keyTerms)
+			foreach (IBiblicalTerm keyTerm in keyTerms)
 			{
 				var matchBuilder = new KeyTermMatchBuilder(keyTerm, rules?.RulesDictionary,
 					rules?.RegexRules);
@@ -839,14 +838,14 @@ namespace SIL.Transcelerator
 			}
 
 #if DEBUG
-            if (rules != null)
-            {
-                string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
-                if (unUsedRules.Length > 0)
-                {
-                    MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
-                }
-            }
+            //if (rules != null)
+            //{
+            //    string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
+            //    if (unUsedRules.Length > 0)
+            //    {
+            //        MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
+            //    }
+            //}
 #endif
 		}
 

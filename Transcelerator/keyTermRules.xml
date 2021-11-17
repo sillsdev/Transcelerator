@@ -137,7 +137,8 @@
   <KeyTermRule id="passing; discerning; distinguishing" rule="Exclude">
     <Alternate name="discernment"/>
   </KeyTermRule>
-  <KeyTermRule id="almighty one; all-sufficient one" rule="Exclude">
+  <KeyTermRule id="examine, question, discern, judge; be discerned (pass.)" rule="MatchForRefOnly"/>
+    <KeyTermRule id="almighty one; all-sufficient one" rule="Exclude">
     <Alternate name="almighty"/>
   </KeyTermRule>
   <KeyTermRule id="conjurer">

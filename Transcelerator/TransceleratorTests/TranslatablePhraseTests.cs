@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,13 +9,15 @@
 // 
 // File: TranslatablePhraseTests.cs
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Transcelerator.Localization;
+using SIL.Utils;
 
 namespace SIL.Transcelerator
 {
@@ -27,12 +29,14 @@ namespace SIL.Transcelerator
 	[TestFixture]
     public class TranslatablePhraseTests : PhraseTranslationTestBase
 	{
-	    [SetUp]
+		private IPhraseTranslationHelper m_helper;
+
+		[SetUp]
 	    public override void Setup()
 	    {
             base.Setup();
 	        DummyKeyTermRenderingInfo.s_ktRenderings = m_dummyKtRenderings;
-	        TranslatablePhrase.s_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
+	        m_helper = MockRepository.GenerateMock<IPhraseTranslationHelper>();
 		}
 
 		#region Constructor tests
@@ -41,7 +45,7 @@ namespace SIL.Transcelerator
 		{
 			var qk = new Question();
 			qk.Text = "What doe\u0301s the fox say?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -53,7 +57,7 @@ namespace SIL.Transcelerator
 			var qk = new Question();
 			qk.Text = "What doe\u0301s the fox say?";
 			qk.ModifiedPhrase = "Does the\u0301 fox say anything?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("Does th\u00e9 fox say anything?", phrase.ModifiedPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
 			Assert.AreEqual("What do\u00e9s the fox say?", phrase.OriginalPhrase);
@@ -69,7 +73,7 @@ namespace SIL.Transcelerator
 			var qk = new Question("TST 5:6", 100005006, 100005006, null, null);
 			var id = qk.Id;
 			qk.ModifiedPhrase = "What's up with the\u0301 fox?";
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.ModifiedPhrase);
 			Assert.AreEqual("What's up with th\u00e9 fox?", phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);
@@ -88,7 +92,7 @@ namespace SIL.Transcelerator
 			var id = qk.Id;
 			Assert.IsTrue(id.StartsWith(Question.kGuidPrefix));
 			Assert.AreEqual(id, qk.Text);
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual(string.Empty, phrase.PhraseInUse);
 			Assert.IsTrue(phrase.IsUserAdded);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -106,7 +110,7 @@ namespace SIL.Transcelerator
 
 			cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
 
-			var phrases = new QuestionProvider(GetParsedQuestions()).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 			var result = (UIQuestionDataString)phrases.Single().ToUIDataString();
 			Assert.AreEqual("Abc", result.SourceUIString);
 			Assert.AreEqual(02003001, result.StartRef);
@@ -122,7 +126,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsNull(phrase.ModifiedPhrase);
 			Assert.IsFalse(phrase.IsExcludedOrModified);
@@ -139,7 +143,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
@@ -158,7 +162,7 @@ namespace SIL.Transcelerator
 		public void ToUIDataString_QuestionIsModifiedButHasNoAlternateForms_ReturnsNonLocalizableUISimpleDataString()
 		{
 			var qk = new Question { Text = "What does the fox say?" };
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = "What sound does that there fox seem to be making?";
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.AreEqual("What sound does that there fox seem to be making?", phrase.ModifiedPhrase);
@@ -184,7 +188,7 @@ namespace SIL.Transcelerator
 				new AlternativeForm {Text = "Pray tell what sayeth the fox?", Hide = true},
 				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
 			};
-			var phrase = new TranslatablePhrase(qk, 1, 1, 6);
+			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			phrase.ModifiedPhrase = qk.AlternativeForms.ElementAt(i);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);
 			Assert.IsTrue(phrase.IsExcludedOrModified);
@@ -204,7 +208,7 @@ namespace SIL.Transcelerator
 
 			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			TranslatablePhrase phrase1 = phrases[0];
 
@@ -223,7 +227,7 @@ namespace SIL.Transcelerator
 
 			AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			TranslatablePhrase phrase1 = phrases[0];
 
@@ -240,7 +244,7 @@ namespace SIL.Transcelerator
         public void AppliesToReference_CategoryName_ReturnsFalse()
         {
             m_sections.Items[0].Categories[0].Type = "Overview";
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(1, phrases.Count);
             Assert.IsTrue(phrases[0].IsCategoryName);
             Assert.IsFalse(phrases[0].AppliesToReference(01001001));
@@ -255,7 +259,7 @@ namespace SIL.Transcelerator
             cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
             cat.Questions.Add(new TestQ("Xyz", "JUD 10-11", 65001010, 65001011, null));
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(2, phrases.Count);
             Assert.IsFalse(phrases[0].IsCategoryName);
             Assert.IsFalse(phrases[0].AppliesToReference(02002021));
@@ -273,7 +277,7 @@ namespace SIL.Transcelerator
             cat.Questions.Add(new TestQ("Abc", "EXO 3:1-12", 02003001, 02003012, null));
             cat.Questions.Add(new TestQ("Xyz", "JUD 10-11", 65001010, 65001011, null));
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
             Assert.AreEqual(2, phrases.Count);
             Assert.IsFalse(phrases[0].IsCategoryName);
             Assert.IsTrue(phrases[0].AppliesToReference(02003001));
@@ -300,7 +304,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "Wuzzee!", "wuzzee");
             AddTestQuestion(cat, "As a man thinks in his heart, how is he?", "as a man thinks in his heart how is he");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[1]));
             Assert.IsTrue(phrases[1].PartPatternMatches(phrases[0]));
@@ -331,7 +335,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "Wunkers wuzzee!", "kt:wunkers", "wuzzee");
             AddTestQuestion(cat, "A dude named punkers?", "a dude named", "kt:punkers");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[1]));
             Assert.IsTrue(phrases[0].PartPatternMatches(phrases[2]));
@@ -359,10 +363,10 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_Present()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "paulo", "Pablo", "luaP");
-            IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos");
-            IKeyTerm ktSay = AddMockedKeyTerm("say", "dice");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "paulo", "Pablo", "luaP");
+            IBiblicalTerm ktHave = AddMockedKeyTerm("have", "tenemos");
+            IBiblicalTerm ktSay = AddMockedKeyTerm("say", "dice");
 
             var cat = m_sections.Items[0].Categories[0];
 
@@ -371,7 +375,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What does Paul say we have to give to God?",
                 "what does", "kt:paul", "kt:say", "we", "kt:have", "to give to", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
             TranslatablePhrase phrase2 = phrases[1];
@@ -415,10 +419,10 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_SomeMissing()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
-            IKeyTerm ktHave = AddMockedKeyTerm("have", "tenemos");
-            IKeyTerm ktSay = AddMockedKeyTerm("say", "dice");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
+            IBiblicalTerm ktHave = AddMockedKeyTerm("have", "tenemos");
+            IBiblicalTerm ktSay = AddMockedKeyTerm("say", "dice");
 
             var cat = m_sections.Items[0].Categories[0];
 
@@ -427,7 +431,7 @@ namespace SIL.Transcelerator
             AddTestQuestion(cat, "What does Paul say we have to give to God?",
                 "what does", "kt:paul", "kt:say", "we", "kt:have", "to give to", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
             TranslatablePhrase phrase2 = phrases[1];
@@ -466,15 +470,15 @@ namespace SIL.Transcelerator
         [Test]
         public void TestFindTermRenderingInUse_RepeatedTerms()
         {
-            IKeyTerm ktGod = AddMockedKeyTerm("God", "Dios");
-            IKeyTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
+            IBiblicalTerm ktGod = AddMockedKeyTerm("God", "Dios");
+            IBiblicalTerm ktPaul = AddMockedKeyTerm("Paul", "Pablo");
 
             var cat = m_sections.Items[0].Categories[0];
 
             AddTestQuestion(cat, "What did God tell Paul?/What was Paul told by God?",
                 "what did", "kt:god", "tell", "kt:paul", "what was", "kt:paul", "told by", "kt:god");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
 
@@ -506,7 +510,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_LeadingPunctuation_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "!Cool is so that";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -514,7 +518,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_TrailingPunctuation_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "Cool is so that!";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -522,7 +526,7 @@ namespace SIL.Transcelerator
         [Test]
         public void UserTransSansOuterPunctuation_MultiplePunctuationCharacters_GetsRemoved()
         {
-            TranslatablePhrase p = new TranslatablePhrase("That is so cool!");
+            TranslatablePhrase p = new TranslatablePhrase("That is so cool!", m_helper);
             p.Translation = "\".Cool is so that!?";
             Assert.AreEqual("Cool is so that", p.UserTransSansOuterPunctuation);
         }
@@ -542,7 +546,7 @@ namespace SIL.Transcelerator
 
             AddTestQuestion(cat, "What did God tell Paul?", "what did god tell paul");
 
-            var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+            var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
             TranslatablePhrase phrase1 = phrases[0];
 
@@ -562,12 +566,12 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_QuestionWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("Why don't I have a translation?");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("Why don't I have a translation?", m_helper);
 
             Assert.AreEqual(";?", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -582,12 +586,12 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_StatementWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("I don't have a translation.");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("I don't have a translation.", m_helper);
 
             Assert.AreEqual(".", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -602,19 +606,19 @@ namespace SIL.Transcelerator
         [Test]
         public void GetTranslation_UnknownWithNoUserTranslation_GetsStringWithInitialAndFinalPunctuation()
         {
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
-            TranslatablePhrase.s_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
-            TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Question)).Return(";");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return("");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.StatementOrImperative)).Return(".");
+            m_helper.Stub(h => h.InitialPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
+            m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Unknown)).Return("-");
 
-            TranslatablePhrase phrase1 = new TranslatablePhrase("-OR-");
+            TranslatablePhrase phrase1 = new TranslatablePhrase("-OR-", m_helper);
 
             Assert.AreEqual("--", phrase1.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
             
-            TranslatablePhrase phrase2 = new TranslatablePhrase("Oops, I forgot the puctuation");
+            TranslatablePhrase phrase2 = new TranslatablePhrase("Oops, I forgot the puctuation", m_helper);
 
             Assert.AreEqual("--", phrase2.Translation);
             Assert.IsFalse(phrase1.HasUserTranslation);
@@ -626,23 +630,29 @@ namespace SIL.Transcelerator
 		[Test]
 		public void InsertKeyTermRendering_NoExistingRendering_InsertsNewRenderingBeforeFinalPunctuation()
 		{
-			TranslatablePhrase.s_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
+			m_helper.Stub(h => h.FinalPunctuationForType(TypeOfPhrase.Question)).Return("?");
 
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best?", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing?";
 			Assert.AreEqual("Why is the term missing?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Why is the term missing fair?", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing fair?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length - 1));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -652,18 +662,24 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing";
 			Assert.AreEqual("Why is the term missing", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "pretty good"));
-			Assert.AreEqual("Why is the term missing pretty good", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing pretty good";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo("pretty good".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -673,18 +689,24 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
 			phrases[0].Translation = "Why is the term missing ";
 			Assert.AreEqual("Why is the term missing ", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "best"));
-			Assert.AreEqual("Why is the term missing best", phrases[0].Translation);
+			SubstringDescriptor sd = null;
+			string expectedResult = "Why is the term missing best";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo("best".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Why is the term missing ", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -694,20 +716,29 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			Assert.AreEqual("best", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "pretty good"));
-			Assert.AreEqual("pretty good", phrases[0].Translation);
-			phrases[0].Translation = "Is this a pretty good translation?";
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Is this a fair translation?", phrases[0].Translation);
+			
+			SubstringDescriptor sd = null;
+			string expectedResult = "pretty good";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
+			Assert.That(sd.EndOffset, Is.EqualTo(expectedResult.Length));
+			Assert.That(sd.Length, Is.EqualTo(expectedResult.Length));
+			expectedResult = "Is this a fair translation?";
+			sd = null;
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering("Is this a pretty good translation?", renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("best", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -717,17 +748,25 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(20);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers fuzzy wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Was this pretty good translation done by the best guy?";
 			Assert.AreEqual("Was this pretty good translation done by the best guy?", phrases[0].Translation);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, null, "fair"));
-			Assert.AreEqual("Was this pretty good translation done by the fair guy?", phrases[0].Translation);
+
+			SubstringDescriptor sd = null;
+			string expectedResult = "Was this pretty good translation done by the fair guy?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Was this pretty good translation done by the best guy?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -737,17 +776,24 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a pretty good translation?";
 			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, new SubstringDescriptor(10, 11), "fair"));
-			Assert.AreEqual("Is this a fair translation?", phrases[0].Translation);
+
+			SubstringDescriptor sd = new SubstringDescriptor(10, 11);
+			string expectedResult = "Is this a fair translation?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.That(sd.Start, Is.EqualTo(expectedResult.IndexOf("fair", StringComparison.Ordinal)));
+			Assert.That(sd.Length, Is.EqualTo("fair".Length));
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -757,20 +803,23 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a fairly good translation?";
 			Assert.AreEqual("Is this a fairly good translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(10, 4);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "best"));
-			Assert.AreEqual("Is this a bestly good translation?", phrases[0].Translation);
+			var expectedResult = "Is this a bestly good translation?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
 			Assert.AreEqual(10, sd.Start);
-			Assert.AreEqual(4, sd.Length);
+			Assert.AreEqual("best".Length, sd.Length);
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this a fairly good translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -780,20 +829,22 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(12, 5);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
+			// InsertKeyTermRendering should not actually set the translation.
+			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -803,18 +854,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(11, 5);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -826,18 +877,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this the best translation?";
 			Assert.AreEqual("Is this the best translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(11, 6);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this the pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this the pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(12, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -849,18 +900,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a translation?";
 			Assert.AreEqual("Is this a translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 1);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -872,18 +923,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a  translation?";
 			Assert.AreEqual("Is this a  translation?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 2);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good translation?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -895,19 +946,19 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a pretty good translation, or is it just fair?";
 			Assert.AreEqual("Is this a pretty good translation, or is it just fair?", phrases[0].Translation);
 			int ichStartOfFair = phrases[0].Translation.Length - 5;
 			var sd = new SubstringDescriptor(ichStartOfFair, 4);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "best"));
-			Assert.AreEqual("Is this a pretty good translation, or is it just best?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good translation, or is it just best?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "best", ref sd));
 			Assert.AreEqual(ichStartOfFair, sd.Start);
 			Assert.AreEqual("best".Length, sd.Length);
 		}
@@ -919,18 +970,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(9, 0);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good frog?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good frog?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -942,18 +993,18 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this a frog?";
 			Assert.AreEqual("Is this a frog?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(10, 0);
-			Assert.IsTrue(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "pretty good"));
-			Assert.AreEqual("Is this a pretty good frog?", phrases[0].Translation);
+			Assert.AreEqual("Is this a pretty good frog?",
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "pretty good", ref sd));
 			Assert.AreEqual(10, sd.Start);
 			Assert.AreEqual("pretty good".Length, sd.Length);
 		}
@@ -965,35 +1016,35 @@ namespace SIL.Transcelerator
 			var wunkers = AddMockedKeyTerm("wunkers", "sreknuw", "best", "pretty good", "fair");
 
 			var renderingCtrl = MockRepository.GenerateMock<ITermRenderingInfo>();
-			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Id]);
+			renderingCtrl.Stub(r => r.Renderings).Return(m_dummyKtRenderings[wunkers.Lemma]);
 			renderingCtrl.Stub(r => r.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm).Return(0);
 
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Wuzzee wunkers?", "wuzzee", "kt:wunkers");
-			var phrases = (new QuestionProvider(GetParsedQuestions())).ToList();
+			var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
 
 			phrases[0].Translation = "Is this really best?";
 			Assert.AreEqual("Is this really best?", phrases[0].Translation);
 			var sd = new SubstringDescriptor(0, 2);
-			Assert.IsFalse(phrases[0].InsertKeyTermRendering(renderingCtrl, sd, "fair"));
-			Assert.AreEqual("Is this really fair?", phrases[0].Translation);
-			// No change to sd since we didn't replace edited selection (InsertKeyTermRendering returns false)
-			Assert.AreEqual(0, sd.Start);
-			Assert.AreEqual(2, sd.Length);
+			var expectedResult = "Is this really fair?";
+			Assert.AreEqual(expectedResult,
+				phrases[0].InsertKeyTermRendering(phrases[0].Translation, renderingCtrl, "fair", ref sd));
+			Assert.AreEqual(expectedResult.Length - 1, sd.EndOffset);
+			Assert.AreEqual("fair".Length, sd.Length);
 		}
 		#endregion
 
 		#region Private helper methods
 		/// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Adds a test question to the given category and adds info about key terms and parts
-	    /// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
-	    /// be treated as translatable parts unless prefixed with "kt:", in which case they
-	    /// will be treated as key terms (corresponding key terms must be added by calling
-	    /// AddMockedKeyTerm.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
-	    private void AddTestQuestion(Category cat, string text, params string[] parts)
+		/// <summary>
+		/// Adds a test question to the given category and adds info about key terms and parts
+		/// to dictionaries used by GetParsedQuestions. Note that items in the parts array will
+		/// be treated as translatable parts unless prefixed with "kt:", in which case they
+		/// will be treated as key terms (corresponding key terms must be added by calling
+		/// AddMockedKeyTerm.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void AddTestQuestion(Category cat, string text, params string[] parts)
 	    {
 	        var q = new TestQ(text, "A", 1, 1, GetParsedParts(parts));
 	        cat.Questions.Add(q);
@@ -1015,9 +1066,9 @@ namespace SIL.Transcelerator
 
         public int EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm { get; set; }
 
-        public DummyKeyTermRenderingInfo(IKeyTerm kt, int endOffsetOfPrev)
+        public DummyKeyTermRenderingInfo(IBiblicalTerm kt, int endOffsetOfPrev)
         {
-            Renderings = s_ktRenderings[kt.Id];
+            Renderings = s_ktRenderings[kt.Lemma];
             EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
         }
         #endregion

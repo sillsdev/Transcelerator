@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator;
 using SIL.Transcelerator.Localization;
@@ -24,10 +25,10 @@ namespace SIL.TxlMasterQuestionPreProcessor
 {
 	public partial class TxlMasterQuestionPreProcessorForm : Form
 	{
-		private readonly IScrVers m_masterVersification;
+		private readonly IVersification m_masterVersification;
 		private string m_sfmSourceLabelText;
 
-		public TxlMasterQuestionPreProcessorForm(IScrVers englishVersification)
+		public TxlMasterQuestionPreProcessorForm(IVersification englishVersification)
 		{
 			InitializeComponent();
 

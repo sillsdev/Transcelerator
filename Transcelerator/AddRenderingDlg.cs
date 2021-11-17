@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -13,14 +13,14 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Forms;
-using SIL.IO;
 using static System.String;
 
 namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// Dialog box to allow the user to add a rendering in Transcelerator only (i.e., does not
+	/// propagate back to Paratext)
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class AddRenderingDlg : Form
@@ -37,10 +37,9 @@ namespace SIL.Transcelerator
 		{
 			m_selectKeyboard = selectKeyboard;
 			InitializeComponent();
-			if (selectKeyboard != null)
-				selectKeyboard(true);
+			selectKeyboard?.Invoke(true);
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "biblicalterms.htm");
+			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "biblicalterms.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
@@ -51,8 +50,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected override void OnClosed(EventArgs e)
 		{
-			m_selectKeyboard(false);
-			 base.OnClosed(e);
+			m_selectKeyboard?.Invoke(false);
+			base.OnClosed(e);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -60,17 +59,14 @@ namespace SIL.Transcelerator
 		/// Gets the rendering.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Rendering
-		{
-			get { return DialogResult == DialogResult.OK ? m_txtRendering.Text : null; }
-		}
+		public string Rendering => DialogResult == DialogResult.OK ? m_txtRendering.Text : null;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the TextChanged event of the m_txtRendering control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void m_txtRendering_TextChanged(object sender, System.EventArgs e)
+		private void m_txtRendering_TextChanged(object sender, EventArgs e)
 		{
 			btnOk.Enabled = !string.IsNullOrEmpty(m_txtRendering.Text);
 		}
@@ -87,7 +83,8 @@ namespace SIL.Transcelerator
 
 		private void HandleHelpRequest(object sender, HelpEventArgs args)
 		{
-			Process.Start(m_help);
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }

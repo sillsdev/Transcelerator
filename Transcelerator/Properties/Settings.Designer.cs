@@ -250,13 +250,13 @@ namespace SIL.Transcelerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GenerateTemplateUseOriginalQuestionIfNotTranslated {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int GenerateHandleUntranslatedQuestionsOption {
             get {
-                return ((bool)(this["GenerateTemplateUseOriginalQuestionIfNotTranslated"]));
+                return ((int)(this["GenerateHandleUntranslatedQuestionsOption"]));
             }
             set {
-                this["GenerateTemplateUseOriginalQuestionIfNotTranslated"] = value;
+                this["GenerateHandleUntranslatedQuestionsOption"] = value;
             }
         }
         
@@ -298,7 +298,7 @@ namespace SIL.Transcelerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ComprehensionChecking.css")]
         public string GenerateTemplateCssFile {
             get {
                 return ((string)(this["GenerateTemplateCssFile"]));
@@ -443,18 +443,6 @@ namespace SIL.Transcelerator.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool GenerateTemplateSkipQuestionIfNotTranslated {
-            get {
-                return ((bool)(this["GenerateTemplateSkipQuestionIfNotTranslated"]));
-            }
-            set {
-                this["GenerateTemplateSkipQuestionIfNotTranslated"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ProduceScriptureForgeFiles {
             get {
                 return ((bool)(this["ProduceScriptureForgeFiles"]));
@@ -509,6 +497,18 @@ namespace SIL.Transcelerator.Properties {
             }
             set {
                 this["ShowEditColumn"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastProjectCustomVersificationNotice {
+            get {
+                return ((string)(this["LastProjectCustomVersificationNotice"]));
+            }
+            set {
+                this["LastProjectCustomVersificationNotice"] = value;
             }
         }
     }

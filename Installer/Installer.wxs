@@ -45,35 +45,17 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                             Name="Paratext9_Full_Release_AppPath"
                             Type="directory" />
         </Property>
-        <Property Id="PARATEXT9BETA" Secure="yes">
-            <RegistrySearch Win64="no"
-							Id="Paratext9Beta"
-							Root="HKLM"
-                            Key="SOFTWARE\Paratext\8"
-                            Name="Program_Files_Directory_Ptw91"
-                            Type="directory" />
-        </Property>
-        <Condition Message="To install Transcelerator using this 64-bit installer, you need to install Paratext 9.1 or later. If you are trying to install for an earlier version of Paratext, please use the 32-bit installer.">
-            <![CDATA[Installed OR PARATEXT9BETA OR PARATEXT9]]>
+        <Condition Message="This version of Transcelerator requires Paratext 9.2 or later. For earlier versions of Paratext 9, use the latest version of Transcelerator 2.0. For Paratext 8, use the 32-bit installer (version 1.5.x).">
+            <![CDATA[Installed OR PARATEXT9]]>
         </Condition>
-				
-		<Property Id="UPDATEP9PLUGINCACHE" Secure="yes">
-            <DirectorySearch Id="Paratext9PluginCacheExeExists" Path="[PARATEXT9]">
-                <FileSearch Name="UpdateParatextPluginCache.exe"/>
-            </DirectorySearch>
-        </Property>
 
-		<Property Id="UPDATEP9BETAPLUGINCACHE" Secure="yes">
-            <DirectorySearch Id="Paratext9BetaPluginCacheExeExists" Path="[PARATEXT9BETA]">
-                <FileSearch Name="UpdateParatextPluginCache.exe"/>
-            </DirectorySearch>
+        <Property Id="PARATEXT92ORGREATER" Secure="yes">
+          <DirectorySearch Id="ParatextExeVersion" Path="[PARATEXT9]">
+            <FileSearch Name="Paratext.exe" MinVersion="9.2.0.0" />
+          </DirectorySearch>
         </Property>
-		
-		<!-- This is extremely unlikely... -->
-        <Condition Message="Paratext is not installed properly. Missing required file: UpdateParatextPluginCache.exe. Re-run the Paratext Installer to repair the installation. Then re-run the Transcelerator Installer.">
-            <![CDATA[Installed OR
-			(PARATEXT9 AND UPDATEP9PLUGINCACHE) OR
-			(PARATEXT9BETA AND UPDATEP9BETAPLUGINCACHE)]]>
+        <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
+          <![CDATA[Installed OR PARATEXT92ORGREATER]]>
         </Condition>
 		
         <Binary Id="CustomInstallerActions.CA.dll"
@@ -96,20 +78,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 						</Directory>
 					</Directory>
 				</Directory>
-				<Directory Id="PARATEXT9BETA" Name="ParatextDir9Beta">
-					<Directory Id="PLUGINDIR9BETA" Name="plugins">
-						<Directory Id="INSTALLDIR9BETA" Name="Transcelerator">
-							<Directory Id="INSTALLDIR9BETA_LOCALIZATION" Name="localization"/>
-							<Directory Id="DocsDirP9Beta" Name="docs"/>
-						</Directory>
-					</Directory>
-				</Directory>
 			</Directory>
         </Directory>
 
         <ComponentGroup Id="COMPONENTSFORP9PLUGIN" Directory="INSTALLDIR9" Source="..\Transcelerator\bin\x64\Release">
             <Component Guid="*">
-                <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.dll" />
+                <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
             </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
@@ -151,7 +125,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				exception?)-->
 			<Component Guid="*">
 				<File Id="icu.net.dll_P9" ShortName="icunetp9.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>			
+			</Component>
 			<Component Guid="*">
 				<File Id="Microsoft.Extensions.DependencyModel.dll_P9" ShortName="msedmp9.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
 			</Component>
@@ -181,6 +155,10 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes"
                       Name="KeymanLink.dll" />
             </Component>
+		    <Component Guid="*">
+			    <File Id="Markdig.Signed.dll_P9" ShortName="x8d4bn3u.dll" KeyPath="yes"
+                      Name="Markdig.Signed.dll" />
+		    </Component>
             <Component Guid="*">
                 <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes"
                       Name="SIL.Windows.Forms.Scripture.dll" />
@@ -264,178 +242,22 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
         </ComponentGroup>
 
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Guid="*">
-                <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xsd_P9Beta" ShortName="1194exg5.xsd" KeyPath="yes" Name="keyTermRules.xsd" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestions.xml_P9Beta" ShortName="pr7gvp5k.xml" KeyPath="yes" Name="TxlQuestions.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestionWords.xml_P9Beta" ShortName="4m95zkrf.xml" KeyPath="yes"
-                      Name="TxlQuestionWords.xml" />
-            </Component>
-
-            <Component Guid="*">
-                <File Id="Analytics.NET.dll_P9Beta" ShortName="pt3ei4z5.dll" KeyPath="yes" Name="Analytics.NET.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="DesktopAnalytics.dll_P9Beta" ShortName="mcmisnhb.dll" KeyPath="yes"
-                      Name="DesktopAnalytics.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Newtonsoft.Json.dll_P9Beta" ShortName="2yd4aev9.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.dll_P9Beta" ShortName="uk0wei71.dll" KeyPath="yes" Name="TxlCore.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="L10NSharp.dll_P9Beta" ShortName="qywkwk5r.dll" KeyPath="yes"
-                      Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.dll_P9Beta" ShortName="t5lk78ie.dll" KeyPath="yes" Name="SilUtils.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.WritingSystems.dll_P9Beta" ShortName="0dmsdv4y.dll" KeyPath="yes"
-                      Name="SIL.WritingSystems.dll" />
-            </Component>
-			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
-				But the code would also need to be made to handle the case of no icu.net.dll (by catching
-				exception?)-->
-			<Component Guid="*">
-				<File Id="icu.net.dll_P9Beta" ShortName="icunet7t.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp7t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
-			</Component>
-			<Component Guid="*">
-				<File Id="icudt62.dll_86_P9Beta" ShortName="dt62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuin62.dll_86_P9Beta" ShortName="in62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p7t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
-			</Component>
-			<!-- End ICU -->
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Keyboarding.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
-                      Name="Keyman7Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
-                      Name="Keyman10Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
-                      Name="KeymanLink.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Scripture.dll_P9Beta" ShortName="qpybzotc.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.dll_P9Beta" ShortName="5j3m7jap.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.dll_P9Beta" ShortName="yifsuyy7.dll" KeyPath="yes" Name="SIL.Core.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.Desktop.dll_P9Beta" ShortName="q3763bq8.dll" KeyPath="yes"
-                      Name="SIL.Core.Desktop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Transcelerator.pdb_P9Beta" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.dll_P9Beta" ShortName="vp29mioj.dll" KeyPath="yes"
-                      Name="ComprehensionCheckingData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.pdb_P9Beta" ShortName="jmjj2d6f.pdb" KeyPath="yes"
-                      Name="ComprehensionCheckingData.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.pdb_P9Beta" ShortName="l1xkhgcz.pdb" KeyPath="yes" Name="TxlCore.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.pdb_P9Beta" ShortName="gty40lss.pdb" KeyPath="yes" Name="SilUtils.pdb" />
-            </Component>
-            <Component Guid="{bb48a596-a43f-47f0-b6c9-fd125d18096f}">
-                <File Id="Icon_P9Beta" ShortName="fihp0pz8.ico" KeyPath="yes" Name="TXL no TXL.ico" />
-            </Component>
-            <Component Guid="*">
-                <File Id="CreditsAndLicense.htm_P9Beta" ShortName="2gd8uwk5.htm" KeyPath="yes"
-                      Name="CreditsAndLicense.htm" />
-            </Component>
-            <Component Id="Transcelerator.dll.config_P9Beta" Guid="*">
-                <File Id="Transcelerator.dll.config_P9Beta" ShortName="eemr572z.cfg" KeyPath="yes"
-                      Name="Transcelerator.dll.config" />
-            </Component>
-            <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
-                <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_es" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="LocalizedPhrases_es.xlf_P9Beta" Guid="*">
-                <File Id="LocalizedPhrases_es.xlf_P9Beta" ShortName="ejoysqre.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-es.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_es" Directory="INSTALLDIR9BETA_LOCALIZATION"
-                        Source="..\DistFiles\localization">
-            <Component Id="Transcelerator.es.xlf_P9Beta" Guid="*">
-                <File Id="Transcelerator.es.xlf_P9Beta" ShortName="esp9beta.xlf" KeyPath="yes" Name="Transcelerator.es.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_en_GB" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="COMPONENTSFORP9BetaPLUGIN_en_GB" Guid="*">
-                <File Id="LocalizedPhrases_en_GB.xlf_P9Beta" ShortName="7cogbz73.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-en-GB.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN_fr" Directory="INSTALLDIR9BETA"
-                        Source="..\Transcelerator\bin\x64\Release">
-            <Component Id="LocalizedPhrases_fr.xlf_P9Beta" Guid="*">
-                <File Id="LocalizedPhrases_fr.xlf_P9Beta" ShortName="88bj5edw.xlf" KeyPath="yes"
-                      Name="LocalizedPhrases-fr.xlf" />
-            </Component>
-        </ComponentGroup>
-
-        <ComponentGroup Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_fr" Directory="INSTALLDIR9BETA_LOCALIZATION"
-                        Source="..\DistFiles\localization">
-            <Component Id="Transcelerator.fr.xlf_P9Beta" Guid="*">
-                <File Id="Transcelerator.fr.xlf_P9Beta" ShortName="frp8.xlf" KeyPath="yes" Name="Transcelerator.fr.xlf" />
-            </Component>
-        </ComponentGroup>
 
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9 AND UPDATEP9PLUGINCACHE]]></Condition>
+            <Condition Level="1"><![CDATA[PARATEXT92ORGREATER]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
 			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
 				<CreateFolder />
+				<!-- Note: Transcelerator requires this folder even if none
+				of the "Localizations" sub-features is installed. Unfortunately,
+				it seems that even with a RemoveFolder element, this folder does
+				not get removed. Though it seems counterintuitive, my guess is
+				that the uninstall order is such that the remove is attempted
+				before the installed xlf files are removed. If this hypothesis
+				is correct, presumably RemoveEx could solve this, but then it
+				might cause another problem because it would prematurely delete
+				files that the installer wants to remove gracefully. For now, I
+				think this is not worth additional time trying to figure out. -->
 			</Component>
             <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
                      AllowAdvertise="no">
@@ -459,97 +281,17 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <ComponentGroupRef Id="COMPONENTSFORP9Documentation_en" />
             </Feature>
         </Feature>
-
-        <Feature Id="PluginFeature_P9Beta" Level="0" Title="Plugin for Paratext 9 Beta" AllowAdvertise="no">
-            <Condition Level="1"><![CDATA[PARATEXT9BETA AND UPDATEP9BETAPLUGINCACHE]]></Condition>
-            <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN" />
-			<Component Id="CreateP9BetaLocalizationFolder" Directory="INSTALLDIR9BETA_LOCALIZATION" Guid="{CFB970EC-655A-49AA-8D35-FD3F437CAD4B}">
-				<CreateFolder />
-			</Component>
-            <Feature Id="Localization_P9Beta" Level="1" Title="Localizations" InstallDefault="followParent"
-                     AllowAdvertise="no">
-                <Feature Id="Localization_P9Beta_es" Level="1" Title="español" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_es" />
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_es" />
-                </Feature>
-                <Feature Id="Localization_P9Beta_enGB" Level="1" Title="British English" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_en_GB" />
-                </Feature>
-                <Feature Id="Localization_P9Beta_fr" Level="1" Title="français" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGIN_fr" />
-					<ComponentGroupRef Id="COMPONENTSFORP9BetaPLUGINLOCALIZATION_fr" />
-                </Feature>
-            </Feature>
-			<Feature Id="Documentation_P9Beta" Level="1" Title="Documentation" InstallDefault="followParent"
-                     AllowAdvertise="no">
-                <ComponentGroupRef Id="COMPONENTSFORP9BetaDocumentation_en" />
-            </Feature>
-        </Feature>
-
-        <CustomAction Id="SetUpdatePluginStore_P9" Property="UpdatePluginStore_P9"
-                      Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
-        <CustomAction Id="SetUpdatePluginStore_P9Beta" Property="UpdatePluginStore_P9Beta"
-                      Value="&quot;[PARATEXT9BETA]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
-                      Return="check" />
-
-        <CustomAction Id="SetUpdatePluginStore_P9_Failsafe" Property="UpdatePluginStore_P9_Failsafe"
-                      Value="&quot;[PARATEXT9]UpdateParatextPluginCache.exe&quot;" Execute="immediate" Return="check" />
-        <CustomAction Id="SetUpdatePluginStore_P9Beta_Failsafe" Property="UpdatePluginStore_P9Beta_Failsafe"
-                      Value="&quot;[PARATEXT9BETA]UpdateParatextPluginCache.exe&quot;" Execute="immediate"
-                      Return="check" />
 					  
-        <CustomAction Id="UpdatePluginStore_P9" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="check" />
-        <CustomAction Id="UpdatePluginStore_P9Beta" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="check" />
-
-        <CustomAction Id="UpdatePluginStore_P9_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="asyncWait" />
-        <CustomAction Id="UpdatePluginStore_P9Beta_Failsafe" BinaryKey="WixCA" DllEntry="CAQuietExec" Impersonate="no"
-                      Execute="deferred" Return="asyncWait" />
-					  
-		<!-- INSTALLSTATE_LOCAL = 3 -->
+        <!-- INSTALLSTATE_LOCAL = 3 -->
 		<!-- INSTALLSTATE_ABSENT = 2 -->
         <InstallExecuteSequence>
             <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
-
-			<!-- Sequencing of the failsafe and non-failsafe versions of the actions is arbitrary since their
-			conditions are mutually exclusive. -->
-			
-            <Custom Action="UpdatePluginStore_P9" Before="InstallFinalize">
-                <![CDATA[&PluginFeature_P9=3]]>
-            </Custom>
-            <Custom Action="UpdatePluginStore_P9_Failsafe" Before="InstallFinalize">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9" Before="UpdatePluginStore_P9">
-                <![CDATA[&PluginFeature_P9=3]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9_Failsafe" Before="UpdatePluginStore_P9_Failsafe">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9=2) AND UPDATEP9PLUGINCACHE AND (!PluginFeature_P9=3)]]>
-            </Custom>
-			
-			<Custom Action="UpdatePluginStore_P9Beta" Before="InstallFinalize">
-                <![CDATA[&PluginFeature_P9Beta=3]]>
-            </Custom>
-            <Custom Action="UpdatePluginStore_P9Beta_Failsafe" Before="InstallFinalize">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9Beta=2) AND UPDATEP9BETAPLUGINCACHE AND (!PluginFeature_P9Beta=3)]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9Beta" Before="UpdatePluginStore_P9Beta">
-                <![CDATA[&PluginFeature_P9Beta=3]]>
-            </Custom>
-            <Custom Action="SetUpdatePluginStore_P9Beta_Failsafe" Before="UpdatePluginStore_P9Beta_Failsafe">
-                <![CDATA[(NOT UPGRADINGPRODUCTCODE) AND (&PluginFeature_P9Beta=2) AND UPDATEP9BETAPLUGINCACHE AND (!PluginFeature_P9Beta=3)]]>
-            </Custom>
         </InstallExecuteSequence>
 
         <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />
 
         <!-- Icon you see in add/remove programs control panel -->
-        <Icon Id="Transcelerator.ico" SourceFile="..\Transcelerator\bin\x64\Release\Transcelerator.dll" />
+        <Icon Id="Transcelerator.ico" SourceFile="..\Transcelerator\bin\x64\Release\Transcelerator.ptxplg" />
         <Property Id="ARPPRODUCTICON" Value="Transcelerator.ico" />
     </Product>
 </Wix>

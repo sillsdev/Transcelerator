@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -17,9 +17,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Utils;
 using System;
+using System.Globalization;
+using Paratext.PluginInterfaces;
 using SIL.ComprehensionCheckingData;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -44,7 +47,6 @@ namespace SIL.Transcelerator
 		#region Events
 		public event Action TranslationsChanged;
 		#endregion
-
 		#region Data members
 		private readonly List<TranslatablePhrase> m_phrases = new List<TranslatablePhrase>();
 		private readonly PhrasePartManager m_phrasePartManager;
@@ -82,10 +84,10 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public PhraseTranslationHelper(QuestionProvider qp)
 		{
-			TranslatablePhrase.s_helper = this;
 			m_phrasePartManager = qp.PhrasePartManager;
+			qp.Helper = this;
 
-			foreach (TranslatablePhrase phrase in qp.Where(p => !string.IsNullOrEmpty(p.PhraseToDisplayInUI)))
+			foreach (TranslatablePhrase phrase in qp.Where(p => !IsNullOrEmpty(p.PhraseToDisplayInUI)))
 			{
 				m_phrases.Add(phrase);
 				if (phrase.Category == -1)
@@ -100,7 +102,7 @@ namespace SIL.Transcelerator
 		/// Sorts the list of phrases in the specified way.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Sort(PhrasesSortedBy by, bool ascending)
+		public void Sort(PhrasesSortedBy by, bool ascending, bool immediate = false)
 		{
 			if (m_sortIsDirty)
 				m_listSorted = false;
@@ -114,47 +116,55 @@ namespace SIL.Transcelerator
 			else if (m_listSortedAscending != ascending)
 			{
 				if (m_listSorted)
+				{
 					m_filteredPhrases.Reverse();
-				else
-					m_listSortedAscending = ascending;
+					return;
+				}
+				m_listSortedAscending = ascending;
 			}
+
+			if (immediate)
+				SortList();
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Sorts the specified list of phrases in the specified way.
+		/// Applies the currently specified sort criterion to the list of (filtered) phrases).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static void SortList(List<TranslatablePhrase> phrases, PhrasesSortedBy by, bool ascending)
+		private void SortList()
 		{
-			if (by == PhrasesSortedBy.Default)
+			if (m_listSortCriterion == PhrasesSortedBy.Default)
 			{
-				phrases.Sort();
-				if (!ascending)
-					phrases.Reverse();
+				m_filteredPhrases.Sort();
+				if (!m_listSortedAscending)
+					m_filteredPhrases.Reverse();
 				return;
 			}
 
 			Comparison<TranslatablePhrase> how;
-			int direction = ascending ? kAscending : kDescending;
-			switch (by)
+			int direction = m_listSortedAscending ? kAscending : kDescending;
+			switch (m_listSortCriterion)
 			{
 				case PhrasesSortedBy.Reference:
 					how = PhraseReferenceComparison(direction);
 					break;
 				case PhrasesSortedBy.EnglishPhrase:
-					how = (a, b) => a.PhraseInUse.CompareTo(b.PhraseInUse) * direction;
+					how = (a, b) => Compare(a.PhraseInUse, b.PhraseInUse, StringComparison.InvariantCulture) * direction;
 					break;
 				case PhrasesSortedBy.Translation:
-					how = (a, b) => a.Translation.CompareTo(b.Translation) * direction;
+					if (VernacularStringComparer == null)
+						how = (a, b) => Compare(a.GetTranslation(true), b.GetTranslation(true), StringComparison.InvariantCulture) * direction;
+					else
+						how = (a, b) => VernacularStringComparer.Compare(a.GetTranslation(true), b.GetTranslation(true)) * direction;
 					break;
 				case PhrasesSortedBy.Status:
 					how = (a, b) => a.HasUserTranslation.CompareTo(b.HasUserTranslation) * direction;
 					break;
 				default:
-					throw new ArgumentException("Unexpected sorting method", "by");
+					throw new InvalidOperationException("Unexpected sorting method");
 			}
-			phrases.Sort(how);
+			m_filteredPhrases.Sort(how);
 		}
 
 		private static Comparison<TranslatablePhrase> NaturalOrderComparison() => ComparePhrasesByIndexedOrder;
@@ -294,7 +304,7 @@ namespace SIL.Transcelerator
 			{
 				if (!m_listSorted)
 				{
-					SortList(m_filteredPhrases, m_listSortCriterion, m_listSortedAscending);
+					SortList();
 					m_listSorted = true;
 					m_sortIsDirty = false;
 				}
@@ -583,6 +593,8 @@ namespace SIL.Transcelerator
 			return new PhraseCustomization(addedPhrase.OriginalPhrase,
 				addedPhrase.QuestionInfo, PhraseCustomization.CustomizationType.AdditionAfter /* arbitrary */);
 		}
+		
+		public IComparer<string> VernacularStringComparer { get; set; }
 
 		internal DataFileAccessor FileProxy
 		{
@@ -623,7 +635,7 @@ namespace SIL.Transcelerator
 		public string GetCategoryName(int categoryId)
 		{
 			string catName = m_categories[categoryId].Translation;
-			if (string.IsNullOrEmpty(catName))
+			if (IsNullOrEmpty(catName))
 				catName = m_categories[categoryId].PhraseToDisplayInUI;
 			return catName;
 		}
@@ -647,10 +659,7 @@ namespace SIL.Transcelerator
 		/// Get the translatable phrase at the specified <paramref name="index"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public TranslatablePhrase this[int index]
-		{
-			get { return FilteredSortedPhrases[index]; }
-		}
+		public TranslatablePhrase this[int index] => FilteredSortedPhrases[index];
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -676,7 +685,7 @@ namespace SIL.Transcelerator
 			
 			m_listSorted = false;
 
-			if (string.IsNullOrEmpty(partMatchString))
+			if (IsNullOrEmpty(partMatchString))
 			{
 				if (ktFilter != KeyTermFilterType.All)
 					m_filteredPhrases = m_phrases.Where(phrase => phrase.MatchesKeyTermFilter(ktFilter) &&
@@ -725,7 +734,7 @@ namespace SIL.Transcelerator
 				p.Category == category && p.SequenceNumber >= seqNumber).ToArray();
 			foreach (var phrase in phrasesToAdvance)
 				phrase.IncrementSequenceNumber();
-			var newPhrase = new TranslatablePhrase(question, section, category, seqNumber);
+			var newPhrase = new TranslatablePhrase(question, section, category, seqNumber, this);
 			m_phrases.Add(newPhrase);
 			if (m_filteredPhrases != m_phrases)
 				m_filteredPhrases.Add(newPhrase);
@@ -762,7 +771,7 @@ namespace SIL.Transcelerator
 		/// <param name="vers">Master versification system used</param>
 		/// <param name="reportWriter">writable stream to report results</param>
 		/// ------------------------------------------------------------------------------------
-		internal void SetTranslationsFromText(TextReader reader, string filename, IScrVers vers,
+		internal void SetTranslationsFromText(TextReader reader, string filename, IVersification vers,
 			TextWriter reportWriter)
 		{
 			reportWriter.WriteLine("Processing file: " + filename);
@@ -892,7 +901,7 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region Private and internal methods
+		#region Implementation of IPhraseTranslationHelper and associated private helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Processes a new translation on a phrase.
@@ -944,7 +953,7 @@ namespace SIL.Transcelerator
 					if (translation.EndsWith(finalPunct))
 						translation = translation.Substring(0, translation.Length - finalPunct.Length);
 
-					tpParts[0].Translation = Regex.Replace(translation, @"\{.+\}", string.Empty).Trim();
+					tpParts[0].Translation = Regex.Replace(translation, @"\{.+\}", Empty).Trim();
 					if (TranslationsChanged != null)
 						TranslationsChanged();
 					return;
@@ -973,7 +982,7 @@ namespace SIL.Transcelerator
 				}
 			}
 			if (unTranslatedParts.Count == 1)
-				unTranslatedParts[0].Translation = Regex.Replace(translation, @"\{.+\}", string.Empty).Trim();
+				unTranslatedParts[0].Translation = Regex.Replace(translation, @"\{.+\}", Empty).Trim();
 
 			foreach (Part partNeedingUpdating in partsNeedingUpdating.OrderBy(p => -p.Words.Count()))
 				RecalculatePartTranslation(partNeedingUpdating);
@@ -1093,7 +1102,7 @@ namespace SIL.Transcelerator
 				}
 			}
 			int totalComparisons = ((userTranslations.Count * userTranslations.Count) + userTranslations.Count) / 2;
-			return (string.IsNullOrEmpty(commonTranslation) || statisticallyBestSubstring.Value > totalComparisons) ?
+			return (IsNullOrEmpty(commonTranslation) || statisticallyBestSubstring.Value > totalComparisons) ?
 				statisticallyBestSubstring.Key : commonTranslation;
 		}
 
@@ -1110,16 +1119,15 @@ namespace SIL.Transcelerator
 			string firstOne = strings[0];
 			string sCommonSubstring;
 			if (strings.Count == 1)
-				sCommonSubstring = string.Empty;
+				sCommonSubstring = Empty;
 			else
 			{
-				bool fCommonSubstringIsWholeWord;
 				sCommonSubstring = StringUtils.LongestUsefulCommonSubstring(firstOne, strings[1],
-					true, out fCommonSubstringIsWholeWord);
+					true, out _);
 				for (int i = 2; i < strings.Count; i++)
 				{
 					string sPossibleCommonSubstring = StringUtils.LongestUsefulCommonSubstring(strings[i], sCommonSubstring,
-						true, out fCommonSubstringIsWholeWord);
+						true, out _);
 					if (sPossibleCommonSubstring.Length < sCommonSubstring.Length)
 					{
 						i = 1;
@@ -1138,7 +1146,7 @@ namespace SIL.Transcelerator
 							}
 						}
 						sCommonSubstring = StringUtils.LongestUsefulCommonSubstring(firstOne, strings[i],
-							true, out fCommonSubstringIsWholeWord);
+							true, out _);
 					}
 				}
 			}
@@ -1155,7 +1163,7 @@ namespace SIL.Transcelerator
         public string InitialPunctuationForType(TypeOfPhrase type)
 		{
 			string p;
-			return m_initialPunct.TryGetValue(type, out p) ? p : string.Empty;
+			return m_initialPunct.TryGetValue(type, out p) ? p : Empty;
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -1168,7 +1176,7 @@ namespace SIL.Transcelerator
         public string FinalPunctuationForType(TypeOfPhrase type)
 		{
 			string p;
-			return m_finalPunct.TryGetValue(type, out p) ? p : string.Empty;
+			return m_finalPunct.TryGetValue(type, out p) ? p : Empty;
 		}
 
 		internal void ProcessAllTranslations()
@@ -1223,26 +1231,42 @@ namespace SIL.Transcelerator
 					phraseBefore.AddedPhraseAfter = newPhrase.QuestionInfo;
 			}
 		}
+
+		#region Number formatting stuff
+		public event OnNumberFormattingChangedHandler OnNumberFormattingChanged;
+
+		/// ------------------------------------------------------------------------------------
+		public void SetNumericFormat(char exampleDigit, string groupingPunctuation,
+			IReadOnlyList<int> digitGroups, bool fNoGroupPunctForShortNumbers)
+		{
+			char nativeZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
+			if (nativeZero.ToString(CultureInfo.InvariantCulture) != NumberFormatInfo.NativeDigits[0] ||
+				groupingPunctuation != NumberFormatInfo.NumberGroupSeparator ||
+				NoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
+				!NumberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups))
+			{
+				NumberFormatInfo = new NumberFormatInfo();
+				NumberFormatInfo.DigitSubstitution = DigitShapes.NativeNational;
+				var nativeDigits = new string[10];
+				for (int i = 0; i <= 9; i++)
+					nativeDigits[i] = ((char) (nativeZero + i)).ToString(CultureInfo.InvariantCulture);
+
+				NumberFormatInfo.NativeDigits = nativeDigits;
+
+				NumberFormatInfo.NumberGroupSeparator = groupingPunctuation;
+
+				NumberFormatInfo.NumberGroupSizes = digitGroups.ToArray();
+
+				NoGroupPunctForShortNumbers = fNoGroupPunctForShortNumbers;
+
+				OnNumberFormattingChanged?.Invoke();
+			}
+		}
+
+		public NumberFormatInfo NumberFormatInfo { get; private set; } = CultureInfo.CurrentCulture.NumberFormat;
+		public bool NoGroupPunctForShortNumbers { get; private set; }
+
+		#endregion
 		#endregion
 	}
-
-    public interface IPhraseTranslationHelper
-    {
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Processes a new translation on a phrase.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        void ProcessTranslation(TranslatablePhrase tp);
-
-		void ProcessChangeInUserTranslationState();
-
-        string InitialPunctuationForType(TypeOfPhrase type);
-
-        string FinalPunctuationForType(TypeOfPhrase type);
-
-        string GetCategoryName(int category);
-
-        List<RenderingSelectionRule> TermRenderingSelectionRules { get; }
-    }
 }
