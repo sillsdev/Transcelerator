@@ -82,6 +82,7 @@ namespace SIL.Transcelerator
 			this.m_scrPsgReference = new SIL.Windows.Forms.Scripture.ToolStripVerseControl();
 			this.lblEndVerse = new System.Windows.Forms.ToolStripLabel();
 			this.m_cboEndVerse = new System.Windows.Forms.ToolStripComboBox();
+			this.m_timerWarning = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.m_dataGridViewExistingQuestions)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.m_insertionPointArrow)).BeginInit();
 			this.m_tableLayoutPanel.SuspendLayout();
@@ -603,6 +604,11 @@ namespace SIL.Transcelerator
 			this.m_cboEndVerse.Name = "m_cboEndVerse";
 			this.m_cboEndVerse.Size = new System.Drawing.Size(75, 27);
 			// 
+			// m_timerWarning
+			// 
+			this.m_timerWarning.Interval = 20;
+			this.m_timerWarning.Tick += new System.EventHandler(this.ResetOkButton);
+			// 
 			// NewQuestionDlg
 			// 
 			this.AcceptButton = this.btnOk;
@@ -685,5 +691,6 @@ namespace SIL.Transcelerator
 		private Windows.Forms.Scripture.ToolStripVerseControl m_scrPsgReference;
 		private System.Windows.Forms.ToolStripLabel lblEndVerse;
 		private System.Windows.Forms.ToolStripComboBox m_cboEndVerse;
+		private System.Windows.Forms.Timer m_timerWarning;
 	}
 }

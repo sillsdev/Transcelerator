@@ -51,6 +51,8 @@ namespace SIL.Transcelerator
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
 			this.toolStripLabelTo = new System.Windows.Forms.ToolStripLabel();
 			this.scrPsgTo = new SIL.Windows.Forms.Scripture.ToolStripVerseControl();
+			this.m_lblInvalidReference = new System.Windows.Forms.Label();
+			this.m_timerWarning = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.toolStripFrom.SuspendLayout();
 			this.toolStrip1.SuspendLayout();
@@ -63,7 +65,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnOk, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnOk, "Common.OK");
-			this.btnOk.Location = new System.Drawing.Point(96, 79);
+			this.btnOk.Location = new System.Drawing.Point(96, 91);
 			this.btnOk.Name = "btnOk";
 			this.btnOk.Size = new System.Drawing.Size(75, 23);
 			this.btnOk.TabIndex = 5;
@@ -78,7 +80,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnCancel, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.btnCancel, "Common.Cancel");
-			this.btnCancel.Location = new System.Drawing.Point(177, 79);
+			this.btnCancel.Location = new System.Drawing.Point(177, 91);
 			this.btnCancel.Name = "btnCancel";
 			this.btnCancel.Size = new System.Drawing.Size(75, 23);
 			this.btnCancel.TabIndex = 6;
@@ -94,7 +96,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.btnClearFilter, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.btnClearFilter, "ScrReferenceFilterDlg.btnClearFilter");
-			this.btnClearFilter.Location = new System.Drawing.Point(15, 79);
+			this.btnClearFilter.Location = new System.Drawing.Point(15, 91);
 			this.btnClearFilter.Name = "btnClearFilter";
 			this.btnClearFilter.Size = new System.Drawing.Size(75, 23);
 			this.btnClearFilter.TabIndex = 4;
@@ -141,6 +143,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgFrom, "ScrReferenceFilterDlg.scrPsgFrom");
 			this.scrPsgFrom.Name = "scrPsgFrom";
 			this.scrPsgFrom.Size = new System.Drawing.Size(191, 24);
+			this.scrPsgFrom.Leave += new System.EventHandler(this.OnScrPassageLeave);
 			// 
 			// toolStrip1
 			// 
@@ -176,6 +179,25 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.scrPsgTo, "ScrReferenceFilterDlg.scrPsgTo");
 			this.scrPsgTo.Name = "scrPsgTo";
 			this.scrPsgTo.Size = new System.Drawing.Size(191, 24);
+			this.scrPsgTo.Leave += new System.EventHandler(this.OnScrPassageLeave);
+			// 
+			// m_lblInvalidReference
+			// 
+			this.m_lblInvalidReference.AutoSize = true;
+			this.m_lblInvalidReference.ForeColor = System.Drawing.Color.Red;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblInvalidReference, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblInvalidReference, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblInvalidReference, "ScrReferenceFilterDlg.m_lblInvalidReference");
+			this.m_lblInvalidReference.Location = new System.Drawing.Point(67, 68);
+			this.m_lblInvalidReference.Name = "m_lblInvalidReference";
+			this.m_lblInvalidReference.Size = new System.Drawing.Size(131, 13);
+			this.m_lblInvalidReference.TabIndex = 9;
+			this.m_lblInvalidReference.Text = "Invalid Scripture reference";
+			this.m_lblInvalidReference.Visible = false;
+			// 
+			// m_timerWarning
+			// 
+			this.m_timerWarning.Tick += new System.EventHandler(this.ResetOkButtonAndStartToFadeWarning);
 			// 
 			// ScrReferenceFilterDlg
 			// 
@@ -183,7 +205,8 @@ namespace SIL.Transcelerator
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.btnCancel;
-			this.ClientSize = new System.Drawing.Size(264, 114);
+			this.ClientSize = new System.Drawing.Size(264, 126);
+			this.Controls.Add(this.m_lblInvalidReference);
 			this.Controls.Add(this.toolStrip1);
 			this.Controls.Add(this.toolStripFrom);
 			this.Controls.Add(this.btnClearFilter);
@@ -227,5 +250,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ToolStrip toolStrip1;
 		private System.Windows.Forms.ToolStripLabel toolStripLabelTo;
 		private Windows.Forms.Scripture.ToolStripVerseControl scrPsgTo;
+		private System.Windows.Forms.Label m_lblInvalidReference;
+		private System.Windows.Forms.Timer m_timerWarning;
 	}
 }
