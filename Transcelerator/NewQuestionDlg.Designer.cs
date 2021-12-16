@@ -582,6 +582,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.m_scrPsgReference, "NewQuestionDlg.m_scrPsgReference");
 			this.m_scrPsgReference.Name = "m_scrPsgReference";
 			this.m_scrPsgReference.Size = new System.Drawing.Size(191, 24);
+			this.m_scrPsgReference.Leave += new System.EventHandler(this.m_scrPsgReference_Leave);
 			// 
 			// lblEndVerse
 			// 

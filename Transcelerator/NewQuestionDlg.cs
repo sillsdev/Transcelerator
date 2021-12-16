@@ -398,6 +398,11 @@ namespace SIL.Transcelerator
 				m_dataGridViewExistingQuestions.FirstDisplayedScrollingRowIndex = Math.Max(0, rowToSelect - 1);
 			m_previouslySelectedRow = rowToSelect;
 		}
+		
+		private void m_scrPsgReference_Leave(object sender, EventArgs e)
+		{
+			m_scrPsgReference_PassageChanged(sender, new PropertyChangedEventArgs("Passage"));
+		}
 
 		private void m_scrPsgReference_PassageChanged(object sender, PropertyChangedEventArgs e)
 		{
