@@ -9,12 +9,15 @@
 //
 // File: ScrReferenceFilterDlg.cs
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
+using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 using Paratext.PluginInterfaces;
 using SIL.Scripture;
+using SIL.Windows.Forms.Scripture;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -26,12 +29,13 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public partial class ScrReferenceFilterDlg : Form
 	{
-		private readonly IProject m_project;
-
 		#region Data members
+		private readonly IProject m_project;
 		private readonly IVerseRef m_firstAvailableRef;
         private readonly IVerseRef m_lastAvailableRef;
 		private readonly string m_help;
+		private readonly Color m_origWarningLabelColor;
+		private readonly int m_initialDelay;
 		#endregion
 
 		#region Constructor and initialization methods
@@ -68,6 +72,9 @@ namespace SIL.Transcelerator
 			if (initialFromRef.Equals(m_firstAvailableRef) && initialToRef.Equals(m_lastAvailableRef))
 				btnClearFilter.Enabled = false;
 
+			m_origWarningLabelColor = m_lblInvalidReference.ForeColor;
+			m_initialDelay = m_timerWarning.Interval;
+
 			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "filtering.htm");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
@@ -96,7 +103,37 @@ namespace SIL.Transcelerator
 		#region Event handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles change in the from passage
+		/// Handles leaving the to or from passage
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void OnScrPassageLeave(object sender, EventArgs e)
+		{
+			var psgCtrl = (ToolStripVerseControl)sender;
+			try
+			{
+				psgCtrl.VerseControl.AcceptData();
+				ScrPassageChanged(sender, new PropertyChangedEventArgs(psgCtrl.Name));
+			}
+			catch (Exception)
+			{
+				btnOk.DialogResult = DialogResult.None;
+				btnOk.Enabled = false;
+
+				m_timerWarning.Stop();
+				SystemSounds.Beep.Play();
+				psgCtrl.VerseControl.VerseRef = psgCtrl.VerseControl.VerseRef;
+
+				// reset variables and kick off fade operation
+				m_lblInvalidReference.ForeColor = m_origWarningLabelColor;
+				m_timerWarning.Interval = m_initialDelay;
+				m_lblInvalidReference.Show();
+				m_timerWarning.Start();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles change in the to or from passage
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void ScrPassageChanged(object sender, PropertyChangedEventArgs e)
@@ -137,6 +174,58 @@ namespace SIL.Transcelerator
 		{
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
+		}
+
+		private void ResetOkButtonAndStartToFadeWarning(object sender, EventArgs e)
+		{
+			btnOk.DialogResult = DialogResult.OK;
+			btnOk.Enabled = true;
+
+			// timer interval set to 10 to ensure smooth fading
+			m_timerWarning.Interval = 10;
+			m_timerWarning.Tick -= ResetOkButtonAndStartToFadeWarning;
+			m_timerWarning.Tick += FadeWarning;
+
+			FadeWarning(sender, e);
+		}
+
+		private void FadeWarning(object sender, EventArgs e)
+		{
+			btnOk.DialogResult = DialogResult.OK;
+			btnOk.Enabled = true;
+
+			// timer interval set to 10 to ensure smooth fading
+			m_timerWarning.Interval = 10;
+
+			int r = m_lblInvalidReference.ForeColor.R;
+			int g = m_lblInvalidReference.ForeColor.G;
+			int b = m_lblInvalidReference.ForeColor.B;
+			var back = BackColor;
+
+			if (r < back.R)
+				r++;
+			else if (r > back.R)
+				r--;
+			if (g < back.G)
+				g++;
+			else if (g > back.G)
+				g--;
+			if (b < back.B)
+				b++;
+			else if (b > back.B)
+				b--;
+
+			m_lblInvalidReference.ForeColor = Color.FromArgb(255, r, g, b);
+
+			if (r == back.R && g == back.G && b == back.B) // arrived at target
+			{
+				// fade is complete
+				m_timerWarning.Stop();
+				m_timerWarning.Tick -= FadeWarning;
+				// For next time...
+				m_timerWarning.Tick += ResetOkButtonAndStartToFadeWarning;
+				m_lblInvalidReference.Visible = false;
+			}
 		}
 		#endregion
 

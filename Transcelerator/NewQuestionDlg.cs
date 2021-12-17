@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Windows.Forms;
 using DesktopAnalytics;
 using L10NSharp;
@@ -398,6 +399,49 @@ namespace SIL.Transcelerator
 				m_dataGridViewExistingQuestions.FirstDisplayedScrollingRowIndex = Math.Max(0, rowToSelect - 1);
 			m_previouslySelectedRow = rowToSelect;
 		}
+		
+		private void m_scrPsgReference_Leave(object sender, EventArgs e)
+		{
+			var psgCtrl = m_scrPsgReference;
+			try
+			{
+				psgCtrl.VerseControl.AcceptData();
+				m_scrPsgReference_PassageChanged(sender, new PropertyChangedEventArgs(psgCtrl.Name));
+			}
+			catch (Exception)
+			{
+				psgCtrl.VerseControl.VerseRef = psgCtrl.VerseControl.VerseRef;
+				// ENHANCE: If a user ever complains about this mysterious beep, we might want to
+				// do what we do in the Filter by Scripture Reference dialog, and actually
+				// display a fading warning.
+				SystemSounds.Beep.Play();
+				// In case the user clicked OK just now, we don't want to let them close.
+				// if they were trying to change the reference (to an invalid reference),
+				// they probably aren't going to be happy if we create a new question for
+				// the previous reference, which is what we're now reverting back to.
+				IgnoreOkButtonClick();
+			}
+		}
+
+		private void IgnoreOkButtonClick(bool playBeep = false)
+		{
+			if (!btnOk.Focused)
+				return;
+
+			if (playBeep)
+				SystemSounds.Beep.Play();
+
+			btnOk.DialogResult = DialogResult.None;
+			btnOk.Enabled = false;
+
+			m_timerWarning.Start();
+		}
+
+		private void ResetOkButton(object sender, EventArgs e)
+		{
+			btnOk.DialogResult = DialogResult.OK;
+			SetButtonState();
+		}
 
 		private void m_scrPsgReference_PassageChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -463,6 +507,14 @@ namespace SIL.Transcelerator
 
 		private void SetDefaultInsertionLocation()
 		{
+			// In case we got here as the result of a validation kicked off by the
+			// user clicking OK just now, we don't want to let them close.
+			// if they were trying to change the reference, they probably need a
+			// chance to ensure that this new question is going to be positioned where
+			// they want it. This might be confusing to the user, but it'll be rare
+			// (and they'll thank us later).
+			IgnoreOkButtonClick(true);
+
 			if (m_dataGridViewExistingQuestions.RowCount > 0)
 			{
 				var rowToSelect = m_currentExistingPhrases.FindLastIndex(
@@ -485,8 +537,6 @@ namespace SIL.Transcelerator
 			SelectedInsertionLocation = rowToSet + 1;
 			SetRowAndArrowPosition(rowToSet);
 		}
-
-		#endregion
 
 		private void HandleGridRowClicked(object sender, EventArgs e)
 		{
@@ -549,5 +599,7 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
 		}
+		
+		#endregion
 	}
 }
