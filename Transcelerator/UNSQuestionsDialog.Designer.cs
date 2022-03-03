@@ -58,10 +58,10 @@ namespace SIL.Transcelerator
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			this.mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
@@ -145,6 +145,9 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
+			this.zoomInToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.zoomOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -193,14 +196,14 @@ namespace SIL.Transcelerator
 			this.dataGridUns.AllowUserToResizeRows = false;
 			this.dataGridUns.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.dataGridUns.CausesValidation = false;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
 			this.dataGridUns.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dataGridUns.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.m_colReference,
@@ -209,14 +212,14 @@ namespace SIL.Transcelerator
             this.m_colEditQuestion,
             this.m_colUserTranslated,
             this.m_colDebugInfo});
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.dataGridUns.DefaultCellStyle = dataGridViewCellStyle11;
 			this.dataGridUns.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.dataGridUns.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.dataGridUns, null);
@@ -227,14 +230,14 @@ namespace SIL.Transcelerator
 			this.dataGridUns.Margin = new System.Windows.Forms.Padding(8);
 			this.dataGridUns.MultiSelect = false;
 			this.dataGridUns.Name = "dataGridUns";
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridUns.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
 			this.dataGridUns.RowHeadersVisible = false;
 			this.dataGridUns.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
 			this.dataGridUns.Size = new System.Drawing.Size(792, 227);
@@ -270,8 +273,8 @@ namespace SIL.Transcelerator
 			// m_colEnglish
 			// 
 			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle10;
 			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
 			this.m_colEnglish.MinimumWidth = 100;
 			this.m_colEnglish.Name = "m_colEnglish";
@@ -799,6 +802,9 @@ namespace SIL.Transcelerator
             this.mnuViewBiblicalTermsPane,
             this.toolStripSeparator6,
             this.mnuViewExcludedQuestions,
+            this.toolStripSeparator11,
+            this.zoomInToolStripMenuItem,
+            this.zoomOutToolStripMenuItem,
             this.toolStripSeparator9,
             this.mnuDisplayLanguage});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuView, null);
@@ -1213,6 +1219,34 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
 			// 
+			// zoomInToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.zoomInToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.zoomInToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.zoomInToolStripMenuItem, "MainWindow.UNSQuestionsDialog.zoomInToolStripMenuItem");
+			this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
+			this.zoomInToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Oemplus)));
+			this.zoomInToolStripMenuItem.ShowShortcutKeys = false;
+			this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+			this.zoomInToolStripMenuItem.Text = "Zoom In";
+			this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.zoomToolStripMenuItem_Click);
+			// 
+			// zoomOutToolStripMenuItem
+			// 
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.zoomOutToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.zoomOutToolStripMenuItem, null);
+			this.l10NSharpExtender1.SetLocalizingId(this.zoomOutToolStripMenuItem, "MainWindow.UNSQuestionsDialog.zoomOutToolStripMenuItem");
+			this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
+			this.zoomOutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.OemMinus)));
+			this.zoomOutToolStripMenuItem.ShowShortcutKeys = false;
+			this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+			this.zoomOutToolStripMenuItem.Text = "Zoom Out";
+			// 
+			// toolStripSeparator11
+			// 
+			this.toolStripSeparator11.Name = "toolStripSeparator11";
+			this.toolStripSeparator11.Size = new System.Drawing.Size(223, 6);
+			// 
 			// UNSQuestionsDialog
 			// 
 			this.AccessibleName = "Transcelerator Main Window";
@@ -1335,5 +1369,8 @@ namespace SIL.Transcelerator
 		private DataGridViewImageColumn m_colEditQuestion;
 		private DataGridViewCheckBoxColumn m_colUserTranslated;
 		private DataGridViewTextBoxColumn m_colDebugInfo;
+		private ToolStripSeparator toolStripSeparator11;
+		private ToolStripMenuItem zoomInToolStripMenuItem;
+		private ToolStripMenuItem zoomOutToolStripMenuItem;
 	}
 }

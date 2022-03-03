@@ -17,6 +17,6 @@ whenever the crowdin sources are being regenerated.
 It can also be run manually as follows:
 ```
 dotnet tool install -g overcrowdin
-set CROWDIN_TRANSCELERATOR_KEY=TheApiKeyForTheTransceleratorProject
+set CROWDIN_TRANSCELERATOR_KEY=TheApiKeyForTheTransceleratorProject (hint: look in Tools/API)
 msbuild l10n.proj /t:UpdateCrowdin
 ```
