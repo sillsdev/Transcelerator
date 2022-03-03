@@ -1,4 +1,4 @@
-﻿## 3.1.0 1 March 2022
+﻿## 3.1.0 3 March 2022
 * Added ability to control text size in main grid.
 
 ## 3.0.0 17 November 2021
