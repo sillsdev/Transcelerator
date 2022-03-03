@@ -673,6 +673,7 @@
 if %25ERRORLEVEL%25 GEQ 1 goto failed
 
 IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
+@echo ParatextInstallDir = "%25ParatextInstallDir%25"
 IF "%25ParatextInstallDir%25" == "" goto copytoparatext
 IF NOT EXIST "%25ParatextInstallDir%25" goto copytoparatext
 

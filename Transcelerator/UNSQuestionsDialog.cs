@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.   
-// <copyright from='2011' to='2021 company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.   
+// <copyright from='2011' to='2022 company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -38,10 +38,13 @@ using SIL.Windows.Forms;
 using SIL.WritingSystems;
 using static System.Char;
 using static System.String;
+using Action = System.Action;
 using Application = System.Windows.Forms.Application;
+using Clipboard = System.Windows.Forms.Clipboard;
 using DateTime = System.DateTime;
 using File = System.IO.File;
 using FileInfo = System.IO.FileInfo;
+using Label = System.Windows.Forms.Label;
 using Process = System.Diagnostics.Process;
 using Resources = SIL.Transcelerator.Properties.Resources;
 using Task = System.Threading.Tasks.Task;
@@ -3146,7 +3149,33 @@ namespace SIL.Transcelerator
 				TextControl.DoDragDrop(TextControl.SelectedText, DragDropEffects.Copy | DragDropEffects.Move);
 				return true;
 			}
+			if (m.Msg == (int)Msg.WM_KEYDOWN)
+			{
+				var keys = (Keys)m.WParam;
+
+				if (ModifierKeys != Keys.Control || keys == Keys.ControlKey)
+					return false;
+
+				var increaseFontSize = keys == Keys.Add || keys == Keys.Oemplus ? 1.1f :
+					keys == Keys.Subtract || keys == Keys.OemMinus ? .9f : 0;
+
+				if (increaseFontSize == 0)
+					return false;
+
+				Zoom(increaseFontSize);
+			}
 			return false;
+		}
+
+		private void zoomToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Zoom(sender == zoomInToolStripMenuItem ? 1.1f : 0.9f);
+		}
+
+		private void Zoom(float increaseFontSize)
+		{ 
+			var existingFont = dataGridUns.DefaultCellStyle.Font;
+			dataGridUns.DefaultCellStyle.Font = new Font(existingFont.FontFamily, existingFont.Size * increaseFontSize, existingFont.Style);
 		}
 
 		/// ------------------------------------------------------------------------------------
