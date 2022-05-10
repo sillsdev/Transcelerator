@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -1178,6 +1178,40 @@ namespace SIL.Transcelerator
 		    Assert.AreEqual("No", customizations[i].Answer);
 		    Assert.AreEqual(PhraseCustomization.CustomizationType.InsertionBefore, customizations[i].Type);
 		}
+
+	    [Test]
+	    public void CustomizedPhrases_ExcludeNewlyAddedQuestionWithoutEnglishVersion_KeyIdSetCorrectly()
+	    {
+		    var cat = m_sections.Items[0].Categories[0];
+		    var refEph1V2 = new BCVRef(BCVRef.BookToNumber("EPH"), 1, 2).BBCCCVVV;
+		    var origQuestion = AddTestQuestion(cat, "What does this mean?", "EPH 1:2", refEph1V2,
+			    refEph1V2).PhraseInUse;
+			
+			var pth = InitializePhraseTranslationHelper();
+		    var mp = new MasterQuestionParser(MasterQuestionParserTests.s_questionWords, KeyTerms, null, null);
+
+			pth.Sort(PhrasesSortedBy.Reference, true);
+			var qBase1 = pth[0];
+			Assert.AreEqual(origQuestion, qBase1.OriginalPhrase, "Sanity check to make sure we grabbed the correct base question.");
+		    var addedQuestion = new Question(qBase1.QuestionInfo, null, "Yes");
+		    pth.AddQuestion(addedQuestion, qBase1.SectionId, 1, qBase1.SequenceNumber + 1, mp)
+				    .Translation = "Is this an added question that can be excluded?";
+		    qBase1.AddedPhraseAfter = addedQuestion;
+		    addedQuestion.IsExcluded = true;
+
+		    var customizations = pth.CustomizedPhrases;
+		    Assert.AreEqual(2, customizations.Count);
+		    int i = 0;
+		    Assert.IsNull(customizations[i].OriginalPhrase);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.Deletion, customizations[i].Type);
+		    var deletionKeyId = customizations[i].Key.Id;
+		    Assert.That(deletionKeyId, Does.StartWith(Question.kGuidPrefix));
+		    i++;
+		    Assert.AreEqual(origQuestion, customizations[i].OriginalPhrase);
+		    Assert.AreEqual(deletionKeyId, customizations[i].ModifiedPhrase);
+		    Assert.AreEqual("Yes", customizations[i].Answer);
+		    Assert.AreEqual(PhraseCustomization.CustomizationType.AdditionAfter, customizations[i].Type);
+	    }
 
 	    /// <summary>
 	    /// TXL-207: A question should be able to be added after an inserted question without causing them
