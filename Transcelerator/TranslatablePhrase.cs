@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -310,9 +310,17 @@ namespace SIL.Transcelerator
 			set
 			{
 				if (IsExcluded)
-					throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
-				SetHasUserTranslationInternal(!IsNullOrEmpty(value));
-				SetTranslationInternal(value);
+				{
+					if (IsUserAdded)
+						m_sTranslation = value?.Normalize(NormalizationForm.FormC);
+					else
+						throw new InvalidOperationException("Translation can not be set for an excluded phrase.");
+				}
+				else
+				{
+					SetHasUserTranslationInternal(!IsNullOrEmpty(value));
+					SetTranslationInternal(value);
+				}
 			}
 		}
 

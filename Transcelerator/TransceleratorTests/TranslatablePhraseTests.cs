@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2013' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2013' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -555,6 +555,51 @@ namespace SIL.Transcelerator
             Assert.AreEqual("\u00BFQue\u0301 le dijo Dios a Pablo?".Normalize(NormalizationForm.FormC),
                 phrase1.Translation);
             Assert.IsTrue(phrase1.HasUserTranslation);
+        }
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests invalid operation of setting the translation for an excluded factory-supplied
+        /// question.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_ExcludedFactoryQuestion_Throws()
+        {
+	        var cat = m_sections.Items[0].Categories[0];
+
+	        AddTestQuestion(cat, "Is this good?", "is this good");
+
+	        var phrases = new QuestionProvider(GetParsedQuestions(), m_helper, RenderingsRepo).ToList();
+
+	        TranslatablePhrase phrase1 = phrases[0];
+
+	        phrase1.IsExcluded = true;
+
+	        Assert.That(() => { phrase1.Translation = "Esto no es bueno."; }, Throws.InvalidOperationException);
+        }
+
+
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests invalid operation of setting the translation for an excluded factory-supplied
+        /// question.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void SetTranslation_ExcludedUserQuestion_TranslationSetWithoutSideEffects()
+        {
+	        // This demonstrates that setting the ModifiedPhrase property of a
+	        // question that did not start with an English version does
+	        // not prevent a TranslatablePhrase based on that question from
+	        // correctly basing itself on the original (GUID-based) question.
+	        var qk = new Question("TST 5:6", 100005006, 100005006, null, "Si");
+	        var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
+	        Assert.IsTrue(phrase.IsUserAdded);
+	        phrase.IsExcluded = true;
+	        m_helper.Expect(h => h.ProcessTranslation(phrase)).Repeat.Never();
+	        m_helper.Expect(h => h.ProcessChangeInUserTranslationState()).Repeat.Never();
+	        phrase.Translation = "Es esto excelente?";
         }
 
         /// ------------------------------------------------------------------------------------

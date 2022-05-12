@@ -2716,7 +2716,7 @@ namespace SIL.Transcelerator
 					foreach (XmlTranslation unsTranslation in translations.Where(t => !IsNullOrWhiteSpace(t.Translation)))
 					{
 						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.PhraseKey);
-						if (phrase != null && !phrase.IsExcluded)
+						if (phrase != null && (!phrase.IsExcluded || phrase.IsUserAdded))
 							phrase.Translation = unsTranslation.Translation;
 					}
 				}
