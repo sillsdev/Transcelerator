@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International (derivitive work only)
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International (derivative work only)
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 //		This file incorporates work covered by the following permission notice:
