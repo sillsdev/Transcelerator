@@ -158,8 +158,10 @@ namespace SIL.Transcelerator
 			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
 			m_fmtChkEnglishQuestions = m_chkIncludeLWCQuestions.Text;
 			m_fmtChkEnglishAnswers = m_chkIncludeLWCAnswers.Text;
 			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;

@@ -264,8 +264,11 @@ namespace SIL.Transcelerator
 		}
 
 		#region Event handlers and helper methods
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			m_locationFormat = m_lblSelectLocation.Text;
 			m_lblVernacularQuestion.Text = Format(m_lblVernacularQuestion.Text, m_vernLanguage);
 			if (IsHandleCreated)

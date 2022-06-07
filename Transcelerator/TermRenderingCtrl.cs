@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 
@@ -134,8 +135,11 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Event handlers
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, AppName);
 			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, AppName);
 		}

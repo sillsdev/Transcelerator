@@ -7,10 +7,10 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>TransceleratorInstaller</OutputName>
     <OutputType>Package</OutputType>
-	<DefineSolutionProperties>false</DefineSolutionProperties>
+    <DefineSolutionProperties>false</DefineSolutionProperties>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-	<InstallerPlatform>x64</InstallerPlatform>
+    <InstallerPlatform>x64</InstallerPlatform>
     <OutputPath>..\output\installer\</OutputPath>
     <IntermediateOutputPath>output\wixobj\debug</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
@@ -64,10 +64,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
-	<Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
+    <Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
       <Link>GeneratedDocFilesP9.wxs</Link>
     </Compile>
-	<Compile Include="..\output\installer\GeneratedDocFilesP9Beta.wxs">
+    <Compile Include="..\output\installer\GeneratedDocFilesP9Beta.wxs">
       <Link>GeneratedDocFilesP9Beta.wxs</Link>
     </Compile>
   </ItemGroup>

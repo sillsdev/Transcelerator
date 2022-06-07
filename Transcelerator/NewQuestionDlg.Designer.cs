@@ -177,7 +177,7 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblVernacularQuestion, 4);
 			this.m_lblVernacularQuestion.ImeMode = System.Windows.Forms.ImeMode.NoControl;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblVernacularQuestion, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblVernacularQuestion, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblVernacularQuestion, "Param 0: Name of target language");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblVernacularQuestion, "NewQuestionDlg.m_lblVernacularQuestion");
 			this.m_lblVernacularQuestion.Location = new System.Drawing.Point(3, 229);
 			this.m_lblVernacularQuestion.Name = "m_lblVernacularQuestion";
@@ -347,7 +347,7 @@ namespace SIL.Transcelerator
 			this.m_lblSelectLocation.AutoSize = true;
 			this.m_tableLayoutPanel.SetColumnSpan(this.m_lblSelectLocation, 5);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblSelectLocation, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, "Param 1: Currently selected category name; Param 2: Currently selected Scripture " +
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblSelectLocation, "Param 0: Currently selected category name; Param 1: Currently selected Scripture " +
         "reference");
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblSelectLocation, "NewQuestionDlg.m_lblSelectLocation");
 			this.m_lblSelectLocation.Location = new System.Drawing.Point(3, 0);

@@ -31,8 +31,11 @@ namespace SIL.Transcelerator
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			m_linkLabelAddDisplayLanguageUsingInstaller.Text =
 				Format(m_linkLabelAddDisplayLanguageUsingInstaller.Text,
 					m_displayLanguageMenu.Text.Replace("&", "")) + " ";

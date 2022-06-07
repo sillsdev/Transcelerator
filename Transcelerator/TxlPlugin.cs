@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.   
-// <copyright from='2013' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.   
+// <copyright from='2013' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -32,6 +32,8 @@ namespace SIL.Transcelerator
 	public class TxlPlugin : IParatextStandalonePlugin, IPluginErrorHandler
 	{
 		public const string pluginName = "Transcelerator";
+		public const string kDefaultUILocale = "en";
+		public const string kDocsFolder = "docs";
 
 		private static readonly string s_baseInstallFolder;
 		private static readonly string s_company;
@@ -40,8 +42,10 @@ namespace SIL.Transcelerator
 		private static Dictionary<IProject, ProjectState> s_projectStates = new Dictionary<IProject, ProjectState>();
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
+		internal static ILocalizationManager PrimaryLocalizationManager { get; private set; }
+		internal static UserInfo s_userInfo;
 
-		public static Analytics GetAnalytics(IPluginHost host)
+		private static Analytics GetAnalytics(IPluginHost host)
 		{
 			if (s_analytics == null)
 			{
@@ -95,12 +99,12 @@ namespace SIL.Transcelerator
 			
 				host.Log(this, $"Starting {pluginName} for project {project}");
 
-				string preferredUiLocale = "en";
+				string preferredUiLocale = kDefaultUILocale;
 				try
 				{
 					preferredUiLocale = host.UserSettings.UiLocale;
 					if (IsNullOrWhiteSpace(preferredUiLocale))
-						preferredUiLocale = "en";
+						preferredUiLocale = kDefaultUILocale;
 				}
 				catch (Exception)
 				{
@@ -169,7 +173,7 @@ namespace SIL.Transcelerator
 				}
 
 				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(host, project, startRef, endRef,
-					activateKeyboard, sendReference, preferredUiLocale);
+					activateKeyboard, sendReference);
 
 				await Task.Run(() => { InitMainWindow(mainWindow, splashScreen, project); });
 
@@ -309,16 +313,31 @@ namespace SIL.Transcelerator
 					lastName = lastName.Substring(split + 1);
 				}
 			}
-			return new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = "en"};
+			s_userInfo = new UserInfo { FirstName = firstName, LastName = lastName,
+				UILanguageCode = LocalizationManager.UILanguageId};
+			return s_userInfo;
+		}
+
+		public static void UpdateUiLanguageForUser(string languageId)
+		{
+			s_userInfo.UILanguageCode = languageId;
+			Analytics.IdentifyUpdate(s_userInfo);
 		}
 
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
-			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, s_version,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), TxlCore.kEmailAddress,
+			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
+			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, 
+				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
+
+			LocalizationManager.Create(TranslationMemory.XLiff, 
+				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
+				"SIL.Windows.Forms.Reporting");
 		}
 
 		public string GetDescription(string locale)
@@ -350,7 +369,7 @@ namespace SIL.Transcelerator
 			if (File.Exists(path))
 				return path;
 
-			if (partsOfTheSubPath[0].Equals("docs", StringComparison.OrdinalIgnoreCase))
+			if (partsOfTheSubPath[0].Equals(kDocsFolder, StringComparison.OrdinalIgnoreCase))
 				return null; // Help files are optional in installer
 
 			throw new ApplicationException("Could not locate the required file, " + path);

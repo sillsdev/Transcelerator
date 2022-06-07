@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using System.Windows.Forms;
+using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using static System.String;
@@ -29,8 +30,11 @@ namespace SIL.Transcelerator
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			void FormatControlTextWithProductNames(Control ctrl) =>
 				ctrl.Text = Format(ctrl.Text, UNSQuestionsDialog.kScriptureForgeProductName,
 					TxlPlugin.pluginName, m_hostAppName);
