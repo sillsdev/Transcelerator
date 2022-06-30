@@ -117,12 +117,12 @@ namespace SIL.Transcelerator
             this.scrPsgFrom});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripFrom, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripFrom, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripFrom, "toolStrip1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStripFrom, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripFrom, "ScrReferenceFilterDlg.toolStripFrom");
 			this.toolStripFrom.Location = new System.Drawing.Point(8, 8);
 			this.toolStripFrom.Name = "toolStripFrom";
 			this.toolStripFrom.Size = new System.Drawing.Size(248, 27);
 			this.toolStripFrom.TabIndex = 7;
-			this.toolStripFrom.Text = "toolStrip1";
 			// 
 			// toolStripLabelFrom
 			// 
@@ -153,12 +153,12 @@ namespace SIL.Transcelerator
             this.scrPsgTo});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "toolStrip1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStrip1, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "ScrReferenceFilterDlg.toolStrip1");
 			this.toolStrip1.Location = new System.Drawing.Point(8, 35);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(248, 27);
 			this.toolStrip1.TabIndex = 8;
-			this.toolStrip1.Text = "toolStrip1";
 			// 
 			// toolStripLabelTo
 			// 

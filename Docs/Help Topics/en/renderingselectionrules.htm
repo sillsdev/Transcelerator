@@ -1,0 +1,90 @@
+﻿<html>
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+  <title>Biblical Terms Rendering Selection Rules</title>
+  <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
+  <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
+  <link rel="stylesheet" type="text/css" href= "../TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Advanced: Biblical Terms Rendering Selection Rules</h2>
+
+<p>For biblical terms that are used in a lot of questions and have more than one rendering, it can sometimes be advantageous to define a rule that can override the <a href="biblicalterms.htm#default-rendering">default rendering</a> for some questions. This is most likely to be helpful when the renderings represent different surface forms and the correct form can be fairly consistently inferred from nearby words. You might find other useful cases, such as when a term has two different senses and nearby words can be used to guess at which sense is meant in a question. Defining rendering selection rules requires a fairly sophisticated understanding of the target vernacular as well as the ability to think abstractly. In some cases it might also require the ability to write a well-formed <a href="https://wikipedia.org/wiki/Regular_expression">regular expression</a>. If your team does not have anyone with these skills, do not worry. Transcelerator can still be used successfully without defining any rendering selection rules. However, if you find that translators are frequently having to select different default renderings, you can try to see if a rule can simplify their job.</p>
+<p class="note">Since rendering selection rules are used only to select the <span class="emphasis">default</span> rendering, it is not necessary to define them strictly in a way that they can never result in an undesirable selection. As long as they successfully select the correct rendering most of the time, they can be considered helpful. This will become clear in some of the <a href="#examples">examples</a> below.</p>
+<p>To work with rendering selection rules, on the <span class="ui">Advanced</span> menu, select <span class="ui">Biblical Terms Rendering Selection Rules</span>.</p>
+<p>In the <span class="ui">Biblical Terms Rendering Selection Rules</span> dialog box, do any of the following:</p>
+<ul>
+  <li><i class="material-icons">add</i>Create a <span class="ui">New Rule</span></li>
+  <li><i class="material-icons">settings</i><span class="ui">Edit</span> the selected rule</li>
+  <li><i class="material-icons">content_copy</i><span class="ui">Copy</span> the selected rule as a starting place to create a new one</li>
+  <li><i class="material-icons">clear</i><span class="ui">Delete</span> the selected rule</li>
+  <li><i class="material-icons">check</i>Select or clear the check box to enable or disable a rule</li>
+</ul>
+
+<h3>Creating or Editing Biblical Terms Rendering Selection Rules</h3>
+<p>When using the <span class="ui">New Rule</span>/<span class="ui">Edit</span><span class="ui"> Rendering Selection Rule</span> dialog box to define a rule, there are two parts to the process:</p>
+<ol>
+  <li>Describe the <span class="emphasis">condition</span> that a biblical term in the original English question must meet in order for a rule to apply. Select the appropriate type of condition:
+    <ul>
+	  <li><span class="ui">Term has a specific suffix</span> - especially useful when an English inflectional suffix (e.g., <span class="literal">-ed</span> or <span class="literal">-ing</span>) corresponds to an inflectional affix in the target vernacular. Similarly, they can be used when an English derivational suffix (e.g., <span class="literal">-tion</span> or <span class="literal">-ly</span>) consistently results in a particular word class that is easily identified by affixation or some other recognizable feature in the target vernacular. They might also be useful for terms which have multiple senses, where the desired sense can be inferred from a derivational suffix. However, in these cases, it may prove difficult to define a succinct rule to select the correct rendering.</li>
+	  <li><span class="ui">Term has a specific prefix</span> - generally less useful, since English prefixes seldom correspond to a single word class. However in the case of very productive English prefixes (e.g., <span class="literal">un-</span> or <span class="literal">re-</span>), if the vernacular target has a corresponding affix, these can be used to define helpful rules.</li>
+	  <li><span class="ui">Term is immediately preceded by a specific word</span> - probably most likely to be useful with English prepositions (e.g., <span class="literal">for</span>, <span class="literal">from</span>, etc.), when the target vernacular uses a specific case for objects of a proposition and that case can be easily identified by affixation.</li>
+	  <li><span class="ui">Term is immediately followed by a specific word</span> - useful for English terms that are frequently paired with a word such as <span class="literal">girl</span> that conveys gender or some other meaning that is marked in a regular way in the target vernacular.</li>
+	  <li><span class="ui">User-defined condition</span> - the most flexible option, for any condition you can find a way to express using a regular expression. <span class="note">Note: If you select this option, the <span class="ui">OK</span> button will be unavailable until an expression is entered that contains the <span class="text-to-type">{0}</span> placeholder that represents the biblical term. (This will be the entire surface form of the English term as it occurs in a question.) Although <span class="literal">{0}</span> is not legal regular-expression syntax, Transcelerator will properly interpret it in the context of the surrounding valid regular expression. After clicking <span class="ui">OK</span>, if the regular expression seems to be invalid, a message will appear describing the apparent problem.</span></li>
+	</ul>
+  </li>
+  <li>Define the rule that will be used to select the appropriate term <span class="emphasis">rendering</span> when the condition is satisfied. Select the appropriate type of selection rule:
+    <ul>
+	  <li><span class="ui">Rendering has a specific suffix</span> or <span class="ui">Rendering has a specific prefix</span> - Enter a suffix or prefix in the target vernacular that corresponds to the inflected form, word class, etc. of the renderings likely to be most useful for the condition defined in step 1.</li>
+	  <li><span class="ui">Rendering meets a user-defined condition</span> - Unlike the regular expression describe above, this regular expression is a <span class="emphasis">selector</span> for a <span class="emphasis">vernacular</span> rendering. So there is no placeholder. Rather, if a question matches the condition defined in step 1, the known renderings will be tested using the regular expression and the first one that is a match will be used as the default. Most often, the regular expression will just need to define a partial match. If you want the expression to be regarded as a match only when it is a full match of the rendering, then be sure to use a start anchor (<span class="literal">^</span>) and end anchor (<span class="literal">$</span>) in your regular expression. See examples below.</li>
+	</ul>
+  </li>
+</ol>
+<p class="note">Note: When you select <span class="ui">Term is immediately preceded by a specific word</span> or <span class="ui">Term is immediately followed by a specific word</span>, Transcelerator shows a drop-down list with all the words used in any question. You can begin to type the word you have in mind, and Transcelerator will filter the list of words to show only words that start with the letters you have typed. Although you can type any word you want, if it is not one of the words in the existing list, the rule will not apply (unless you add custom questions later that use the word).</p>
+
+<h3 id="examples">Examples</h3>
+<h4 class="example">English Suffix to Target Vernacular Suffix</h4>
+<p class="example">The English suffix <span class="literal">-ing</span> makes one of the inflected forms of verbs, used as a present participle, as a gerund, and sometimes as an independent noun or adjective. In Spanish, the equivalent suffix for <span class="literal" lang="es">-ar</span> verbs is <span class="literal" lang="es">-ando</span>; for <span class="literal" lang="es">-er</span> and <span class="literal" lang="es">-ir</span> verbs it is <span class="literal" lang="es">-iendo</span>. There are a few English words that end in <span class="literal">ing</span> (e.g., <span class="literal">king</span>) that are not inflected verbs and which may be key biblical terms, and there are a few Spanish words that end in <span class="literal" lang="es">ndo</span> (e.g., <span class="literal" lang="es">mando</span>) that are not instances of the <span class="literal" lang="es">-ando</span> or <span class="literal" lang="es">-iendo</span> suffix. However, these are relatively rare and are not very likely to result in an incorrect selection for any pair of words in the two languages. A single rule that matches an English biblical term ending in <span class="literal">ing</span> and then chooses a vernacular (Spanish) verb ending in <span class="literal">ndo</span> (which covers both suffixes and also works for some irregular verbs) can be defined as follows:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">Term has a specific suffix</span> and type <span class="text-to-type">ing</span> in the <span class="ui">Suffix</span> box.</li>
+	<li class="example">Select <span class="ui">Rendering has a specific suffix</span> and type <span class="text-to-type" lang="es">ndo</span> in the <span class="ui">Vernacular suffix</span> box.</li>
+</ol>
+
+<h4 class="example">English Prefix to Target Vernacular Prefix</h4>
+<p class="example">The English prefix <span class="literal">un-</span> means <span class="literal">not</span>, giving negative or opposite force in adjectives and their derivative adverbs and nouns. In Malayalam, the equivalent prefix is <span class="literal" lang="ml">അ-</span>. There are a few English words that begin with <span class="literal">un</span> (e.g., <span class="literal">universe</span>) that are not instances of the prefix <span class="literal">un-</span> which may be key biblical terms, and there are a many Malayalam words that begin with <span class="literal" lang="ml">അ</span> (e.g., <span class="literal" lang="ml">അകം</span>) that are not instances of the prefix <span class="literal" lang="ml">അ-</span>. Sometimes the only way to find out whether a rule will prove useful is to try it. A rule that matches an English biblical term beginning with <span class="literal">un</span> and then chooses a vernacular (Malayalam) word beginning with <span class="literal" lang="ml">അ</span> can be defined as follows:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">Term has a specific prefix</span> and type <span class="text-to-type">un</span> in the <span class="ui">Suffix</span> box.</li>
+	<li class="example">Select <span class="ui">Rendering has a specific prefix</span> and type <span class="text-to-type" lang="ml">അ</span> in the <span class="ui">Vernacular prefix</span> box.</li>
+</ol>
+
+<h4 class="example">Rule to Select a Specific Term Based on the Following Word</h4>
+<p class="example">The biblical term <span class="literal">silver</span> can be used to refer specifically to the metal <span class="literal">silver</span> or more generically to <span class="literal">money</span>. In German, the word for <span class="literal">silver</span> is <span class="literal" lang="de">Silber</span>, but the word for <span class="literal">money</span> is <span class="literal" lang="de">Geld</span>. When the term is used in the expression <span class="literal">"silver cup"</span>, the correct German translation is <span class="literal" lang="de">"silberner Becher"</span>. Although there are a few other biblical terms in Transcelerator's questions that are followed by the word <span class="literal">cup</span> (e.g., <span class="literal">Pharaoh's</span>), there is no prefix or suffix that would help select the correct rendering, nor does not there seem to be any general rule at all. In this case, we can define a rule that matches an English biblical term followed by <span class="literal">cup</span> and then chooses the literal word <span class="literal" lang="de">silberner</span> if it is one of the renderings. (In the case of <span class="literal">"Pharaoh's cup"</span>, <span class="literal" lang="de">silberner</span> will not be one of the renderings for <span class="literal">"Pharaoh"</span>, so the rule simply won't apply.) this rule can be defined as follows:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">Term is immediately followed by a specific word</span> and enter <span class="text-to-type">cup</span> in the <span class="ui">Following word</span> box.</li>
+	<li class="example">Select <span class="ui">Rendering meets a user-defined condition</span> and type <span class="text-to-type" lang="de">silberner</span> as the regular expression.</li>
+</ol>
+<p class="example"> <span class="note">Note: In this case the "regular expression" is merely a literal word. No special regular expression syntax is used. This expression would also match any other renderings that contained the word <span class="literal" lang="de">silberner</span>, so if there were other inflected forms with prefixes or suffixes, the most common one would be selected. To ensure an <span class="emphasis">exact</span> match, you could type <span class="text-to-type" lang="de">\bsilberner\b</span> or <span class="text-to-type" lang="de">^silberner$</span> instead.</span></p>
+
+<h4 class="example">User-defined Rule for a Specific Term</h4>
+<p class="example">Following on from the previous German example, if the target vernacular were Spanish, a more complex rule could be used to ensure that <span class="literal" lang="es">plata</span>, the Spanish word for <span class="literal">silver</span> is selected in cases where that is the desired sense, rather than <span class="literal" lang="es">dinero</span>, meaning <span class="literal">money</span>. In addition to the above expression, the expressions <span class="literal">"gold and silver"</span>, <span class="literal">"gold, silver"</span> and <span class="literal">"silver coin(s)"</span> in English should result in the selection of <span class="literal" lang="es">plata</span> as the best default rendering for <span class="literal">silver</span>. This rule can be defined as follows:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">User-defined condition</span> and type <span class="text-to-type">(gold(( and)|,) {0})|({0} ((cup)|(coin))s?)\b</span> as the regular expression.</li>
+	<li class="example">Select <span class="ui">Rendering meets a user-defined condition</span> and type <span class="text-to-type" lang="es">plata</span> as the regular expression.</li>
+</ol>
+
+<h4 class="example">User-defined Rule for unmarked plurals</h4>
+<p class="example">The base number for nouns in both English and Spanish is singular, and the plural forms in both languages involves the addition of an <span class="literal">-s</span> suffix. So it is quite simple to write a suffix-suffix rule to prefer a rendering that ends in <span class="literal" lang="es">s</span> when the English biblical term ends in an <span class="literal">s</span>. However, for cases where the default rendering of a biblical term is the plural form the word, it could be useful to have a rule that selects the singular form when the English term appears to be singular. This rule can be defined as follows:</p>
+<ol class="example">
+	<li class="example">Select <span class="ui">User-defined condition</span> and type <span class="text-to-type">{0}\b</span> as the regular expression.</li>
+	<li class="example">Select <span class="ui">Rendering meets a user-defined condition</span> and type <span class="text-to-type" lang="es">[^s]$</span> as the regular expression.</li>
+</ol>
+<p class="example"> <span class="hint">Hint: As illustrated here, the English term corresponding to the <span class="literal">{0}</span> will be the uninflected form, so typing a trailing <span class="text-to-type">\b</span> (<a href="https://www.w3schools.com/jsref/jsref_regexp_begin.asp">word boundary</a>) ensures that no suffix is added. To allow for other suffixes but not a final suffix ending in s, you could instead type <span class="text-to-type">{0}.*[^s]\b</span>.</span></p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Home</a>
+</body>
+
+</html>

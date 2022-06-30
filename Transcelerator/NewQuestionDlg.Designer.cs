@@ -557,12 +557,12 @@ namespace SIL.Transcelerator
             this.m_cboEndVerse});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_toolStripReference, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_toolStripReference, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_toolStripReference, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_toolStripReference, "NewQuestionDlg.m_toolStripReference");
 			this.m_toolStripReference.Location = new System.Drawing.Point(0, 0);
 			this.m_toolStripReference.Name = "m_toolStripReference";
 			this.m_toolStripReference.Size = new System.Drawing.Size(518, 27);
 			this.m_toolStripReference.TabIndex = 10;
-			this.m_toolStripReference.Text = "toolStrip1";
 			// 
 			// lblReference
 			// 

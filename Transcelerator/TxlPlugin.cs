@@ -375,6 +375,15 @@ namespace SIL.Transcelerator
 			throw new ApplicationException("Could not locate the required file, " + path);
 		}
 
+		public static string GetHelpFile(string filenameWithoutExtension)
+		{
+			var filename = filenameWithoutExtension + ".htm";
+			return GetFileDistributedWithApplication(kDocsFolder,
+				LocalizationManager.UILanguageId, filename) ??
+				GetFileDistributedWithApplication(kDocsFolder,
+					kDefaultUILocale, filename);
+		}
+
 		private class ProjectState : IDisposable
 		{
 			private TxlSplashScreen SplashScreen { get; set; }

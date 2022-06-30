@@ -250,7 +250,7 @@ namespace SIL.Transcelerator
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "addingquestions.htm");
+			m_help = TxlPlugin.GetHelpFile("addingquestions");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 

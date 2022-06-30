@@ -98,7 +98,7 @@ namespace SIL.Transcelerator
 			else
 				m_pnlAlternatives.Hide();
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "editingquestions.htm");
+			m_help = TxlPlugin.GetHelpFile("editingquestions");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 

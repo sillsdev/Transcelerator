@@ -140,7 +140,7 @@ namespace SIL.Transcelerator
 				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
 			}
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "generatescript.htm");
+			m_help = TxlPlugin.GetHelpFile("generatescript");
 			HelpButton = !IsNullOrEmpty(m_help);
 			
 			m_numBlankLines.ValueChanged += delegate

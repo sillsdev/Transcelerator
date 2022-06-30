@@ -2,29 +2,30 @@
 
 <head>
   <meta http-equiv=Content-Type content="text/html; charset=utf-8">
-  <title>Biblical Terms Rendering Selection Rules</title>
-  <link rel="icon" href="../TXL no TXL.ico">
-  <link rel="stylesheet" type="text/css" href= "TxlHelp.css"/>
+  <title>Reglas para selecionar representaciones de vocablos bíblicos</title>
+  <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
+  <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
+  <link rel="stylesheet" type="text/css" href= "../TxlHelp.css"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body lang=EN-US>
 
-<h2>Advanced: Biblical Terms Rendering Selection Rules</h2>
+<h2>Avanzado: Reglas para selecionar representaciones de vocablos bíblicos</h2>
 
 <p>For biblical terms that are used in a lot of questions and have more than one rendering, it can sometimes be advantageous to define a rule that can override the <a href="biblicalterms.htm#default-rendering">default rendering</a> for some questions. This is most likely to be helpful when the renderings represent different surface forms and the correct form can be fairly consistently inferred from nearby words. You might find other useful cases, such as when a term has two different senses and nearby words can be used to guess at which sense is meant in a question. Defining rendering selection rules requires a fairly sophisticated understanding of the target vernacular as well as the ability to think abstractly. In some cases it might also require the ability to write a well-formed <a href="https://wikipedia.org/wiki/Regular_expression">regular expression</a>. If your team does not have anyone with these skills, do not worry. Transcelerator can still be used successfully without defining any rendering selection rules. However, if you find that translators are frequently having to select different default renderings, you can try to see if a rule can simplify their job.</p>
 <p class="note">Since rendering selection rules are used only to select the <span class="emphasis">default</span> rendering, it is not necessary to define them strictly in a way that they can never result in an undesirable selection. As long as they successfully select the correct rendering most of the time, they can be considered helpful. This will become clear in some of the <a href="#examples">examples</a> below.</p>
-<p>To work with rendering selection rules, on the <span class="ui">Advanced</span> menu, select <span class="ui">Biblical Terms Rendering Selection Rules</span>.</p>
-<p>In the <span class="ui">Biblical Terms Rendering Selection Rules</span> dialog box, do any of the following:</p>
+<p>Para trabajar con las reglas de selección, en el menú <span class="ui">Avanzado</span>, seleccione <span class="ui">Reglas para selecionar representaciones de vocablos bíblicos</span>.</p>
+<p>En el cuadro de diálogo <span class="ui">Reglas para selecionar representaciones de vocablos bíblicos</span>, haga cualquiera de los siguientes:</p>
 <ul>
-  <li><i class="material-icons">add</i>Create a <span class="ui">New Rule</span></li>
-  <li><i class="material-icons">settings</i><span class="ui">Edit</span> the selected rule</li>
-  <li><i class="material-icons">content_copy</i><span class="ui">Copy</span> the selected rule as a starting place to create a new one</li>
-  <li><i class="material-icons">clear</i><span class="ui">Delete</span> the selected rule</li>
-  <li><i class="material-icons">check</i>Select or clear the check box to enable or disable a rule</li>
+  <li><i class="material-icons">add</i>Crear una <span class="ui">nueva regla</span></li>
+  <li><i class="material-icons">settings</i><span class="ui">Editar</span> la regla seleccionada</li>
+  <li><i class="material-icons">content_copy</i><span class="ui">Copiar</span> la regla seleccionada como punto de partida para crear una nueva</li>
+  <li><i class="material-icons">clear</i><span class="ui">Eliminar</span> la regla seleccionada</li>
+  <li><i class="material-icons">check</i>Seleccionar o borrar la casilla para activar o desactivar una regla</li>
 </ul>
 
-<h3>Creating or Editing Biblical Terms Rendering Selection Rules</h3>
+<h3>Crear y editar las reglas para seleccionar representaciones de vocablos bíblicos</h3>
 <p>When using the <span class="ui">New Rule</span>/<span class="ui">Edit</span><span class="ui"> Rendering Selection Rule</span> dialog box to define a rule, there are two parts to the process:</p>
 <ol>
   <li>Describe the <span class="emphasis">condition</span> that a biblical term in the original English question must meet in order for a rule to apply. Select the appropriate type of condition:
@@ -45,7 +46,7 @@
 </ol>
 <p class="note">Note: When you select <span class="ui">Term is immediately preceded by a specific word</span> or <span class="ui">Term is immediately followed by a specific word</span>, Transcelerator shows a drop-down list with all the words used in any question. You can begin to type the word you have in mind, and Transcelerator will filter the list of words to show only words that start with the letters you have typed. Although you can type any word you want, if it is not one of the words in the existing list, the rule will not apply (unless you add custom questions later that use the word).</p>
 
-<h3 id="examples">Examples</h3>
+<h3 id="examples">Ejemplos</h3>
 <h4 class="example">English Suffix to Target Vernacular Suffix</h4>
 <p class="example">The English suffix <span class="literal">-ing</span> makes one of the inflected forms of verbs, used as a present participle, as a gerund, and sometimes as an independent noun or adjective. In Spanish, the equivalent suffix for <span class="literal" lang="es">-ar</span> verbs is <span class="literal" lang="es">-ando</span>; for <span class="literal" lang="es">-er</span> and <span class="literal" lang="es">-ir</span> verbs it is <span class="literal" lang="es">-iendo</span>. There are a few English words that end in <span class="literal">ing</span> (e.g., <span class="literal">king</span>) that are not inflected verbs and which may be key biblical terms, and there are a few Spanish words that end in <span class="literal" lang="es">ndo</span> (e.g., <span class="literal" lang="es">mando</span>) that are not instances of the <span class="literal" lang="es">-ando</span> or <span class="literal" lang="es">-iendo</span> suffix. However, these are relatively rare and are not very likely to result in an incorrect selection for any pair of words in the two languages. A single rule that matches an English biblical term ending in <span class="literal">ing</span> and then chooses a vernacular (Spanish) verb ending in <span class="literal">ndo</span> (which covers both suffixes and also works for some irregular verbs) can be defined as follows:</p>
 <ol class="example">
@@ -83,7 +84,7 @@
 </ol>
 <p class="example"> <span class="hint">Hint: As illustrated here, the English term corresponding to the <span class="literal">{0}</span> will be the uninflected form, so typing a trailing <span class="text-to-type">\b</span> (<a href="https://www.w3schools.com/jsref/jsref_regexp_begin.asp">word boundary</a>) ensures that no suffix is added. To allow for other suffixes but not a final suffix ending in s, you could instead type <span class="text-to-type">{0}.*[^s]\b</span>.</span></p>
 
-<a href="Home.htm"><i class="material-icons">home</i>Home</a>
+<a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
 </body>
 
 </html>

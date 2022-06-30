@@ -70,7 +70,7 @@ namespace SIL.Transcelerator
 			ValidateName = nameValidator;
 			m_txtName.Text = m_rule.Name;
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "renderingselectionrules.htm");
+			m_help = TxlPlugin.GetHelpFile("renderingselectionrules");
 			HelpButton = !IsNullOrEmpty(m_help);
 
 			if (!creating)

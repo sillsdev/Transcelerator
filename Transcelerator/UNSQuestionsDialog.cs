@@ -69,7 +69,6 @@ namespace SIL.Transcelerator
 		private readonly IPluginHost m_host;
 		private readonly IProject m_project;
 		private readonly Action<bool> m_selectKeyboard;
-		private readonly string m_helpHome;
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private BiblicalTermLocalizer m_termLocalizer;
 		private PhraseTranslationHelper m_helper;
@@ -253,6 +252,7 @@ namespace SIL.Transcelerator
 		private bool EditingTranslation => InTranslationCell &&
 			dataGridUns.IsCurrentCellInEditMode;
 
+		private string HelpHome => TxlPlugin.GetHelpFile("Home");
 		#endregion
 
 		#region Constructors
@@ -325,7 +325,6 @@ namespace SIL.Transcelerator
 			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlCore.kQuestionsFilename);
 
-			m_helpHome = TxlPlugin.GetFileDistributedWithApplication("docs", "Home.htm");
 			var preferredUiLocale = LocalizationManager.UILanguageId;
 
 			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
@@ -346,7 +345,7 @@ namespace SIL.Transcelerator
 
 			ClearBiblicalTermsPane();
 
-			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
+			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(HelpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
@@ -2504,7 +2503,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void browseTopicsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Process.Start(m_helpHome);
+			Process.Start(HelpHome);
 		}
 
 		private bool HandleDisplayLanguageSelected(string languageId)

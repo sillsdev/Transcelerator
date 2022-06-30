@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -17,6 +17,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 using SilUtils.Controls;
 using static System.String;
 
@@ -63,6 +65,9 @@ namespace SIL.Transcelerator
 			m_sRemoveItem = m_cboMatchGroup.Items[0] as string;
 			m_cboMatchGroup.Items.Clear();
 
+			HandleStringsLocalized();
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+
 			foreach (Substitution substitution in phraseSubstitutions)
 			{
 				m_dataGridView.Rows.Add(substitution.MatchingPattern, substitution.Replacement,
@@ -76,8 +81,16 @@ namespace SIL.Transcelerator
 			m_txtMatchPrefix.Tag = @"\b{0}";
 			m_txtMatchSuffix.Tag = @"{0}\b";
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "adjustments.htm");
+			m_help = TxlPlugin.GetHelpFile("adjustments");
 			HelpButton = !IsNullOrEmpty(m_help);
+		}
+
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
+		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+			lblInstructions.Text = String.Format(lblInstructions.Text,
+				colReplacement.HeaderText, colIsRegEx.HeaderText, colMatch.HeaderText);
 		}
 		#endregion
 

@@ -39,7 +39,7 @@ namespace SIL.Transcelerator
 			InitializeComponent();
 			selectKeyboard?.Invoke(true);
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "biblicalterms.htm");
+			m_help = TxlPlugin.GetHelpFile("biblicalterms");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 

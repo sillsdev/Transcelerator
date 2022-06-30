@@ -116,12 +116,13 @@ namespace SIL.Transcelerator
 			this.m_lblCopyright.ForeColor = System.Drawing.Color.Black;
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCopyright, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCopyright, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblCopyright, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.m_lblCopyright, "TxlInfo.m_lblCopyright");
 			this.m_lblCopyright.Location = new System.Drawing.Point(386, 105);
 			this.m_lblCopyright.Name = "m_lblCopyright";
 			this.m_lblCopyright.Size = new System.Drawing.Size(175, 119);
 			this.m_lblCopyright.TabIndex = 20;
-			this.m_lblCopyright.Text = "(C) 2011-2021, SIL International.";
+			this.m_lblCopyright.Text = "(C) 2011-2022, SIL International.";
 			this.m_lblCopyright.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// m_picLogo
