@@ -21,7 +21,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         <Package Platform="x64" Compressed="yes" InstallerVersion="200" Manufacturer="SIL International" InstallScope="perMachine" />
 
         <MajorUpgrade Schedule="afterInstallInitialize"
-                      DowngradeErrorMessage="A later version of Transcelerator is already installed. If you really want to downgrade, first uninstall Transcelerator, then do this install again." />
+                      DowngradeErrorMessage="!(loc.DownGradeMsg)" />
 
         <!-- show the license page -->
         <UIRef Id="WixUI_FeatureTree" />
@@ -45,7 +45,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                             Name="Paratext9_Full_Release_AppPath"
                             Type="directory" />
         </Property>
-        <Condition Message="This version of Transcelerator requires Paratext 9.2 or later. For earlier versions of Paratext 9, use the latest version of Transcelerator 2.0. For Paratext 8, use the 32-bit installer (version 1.5.x).">
+        <Condition Message="!(loc.NewerParatextRequiredMsg)">
             <![CDATA[Installed OR PARATEXT9]]>
         </Condition>
 
@@ -54,7 +54,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <FileSearch Name="Paratext.exe" MinVersion="9.2.0.0" />
           </DirectorySearch>
         </Property>
-        <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
+        <Condition Message="!(loc.Paratext92RequiredMsg)">
           <![CDATA[Installed OR PARATEXT92ORGREATER]]>
         </Condition>
 		
@@ -243,7 +243,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </ComponentGroup>
 
 
-        <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
+        <Feature Id="PluginFeature_P9" Level="0" Title="!(loc.PluginForP9FeatureTitle)" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT92ORGREATER]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
 			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
@@ -259,7 +259,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				files that the installer wants to remove gracefully. For now, I
 				think this is not worth additional time trying to figure out. -->
 			</Component>
-            <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
+            <Feature Id="Localization_P9" Level="1" Title="!(loc.LocalizationsFeatureTitle)" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <Feature Id="Localization_P9_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
@@ -276,7 +276,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
                 </Feature>
             </Feature>
-			<Feature Id="Documentation_P9" Level="1" Title="Documentation" InstallDefault="followParent"
+			<Feature Id="Documentation_P9" Level="1" Title="!(loc.DocumentationFeatureTitle)" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <ComponentGroupRef Id="COMPONENTSFORP9Documentation_en" />
             </Feature>

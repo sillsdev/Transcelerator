@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	<String Id="DownGradeMsg">A later version of Transcelerator is already installed. If you really want to downgrade, first uninstall Transcelerator, then do this install again.</String>
+    <String Id="NewerParatextRequiredMsg">This version of Transcelerator requires Paratext 9.2 or later. For earlier versions of Paratext 9, use the latest version of Transcelerator 2.0. For Paratext 8, use the 32-bit installer (version 1.5.x).</String>
+    <String Id="Paratext92RequiredMsg">Before Transcelerator can install, you need to install Paratext 9.2 or later.</String>
+    <String Id="PluginForP9FeatureTitle">Plugin for Paratext 9</String>
+    <String Id="LocalizationsFeatureTitle">Localizations</String>
+    <String Id="DocumentationFeatureTitle">Documentation</String>
+</WixLocalization>
