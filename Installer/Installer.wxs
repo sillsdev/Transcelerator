@@ -100,7 +100,7 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="TxlQuestionWords.xml_P9" ShortName="5yzuh6br.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
             </Component>
             <Component Guid="*">
-                <File Id="Analytics.NET.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.NET.dll" />
+                <File Id="Analytics.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="DesktopAnalytics.dll_P9" ShortName="avcjefr2.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
