@@ -5,7 +5,7 @@
   <title>Resumen de las funciones</title>
   <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
   <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
-  <link rel="stylesheet" type="text/css" href= "../TxlHelp.css"/>
+  <link rel="stylesheet" type="text/css" href="../TxlHelp.css"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
@@ -13,48 +13,54 @@
 
 <h2>Resumen de las funciones básicas</h2>
 
-<h3>File</h3>
+<h3>Archivo</h3>
 <ul class="icon-list">
-  <li><i class="material-icons">save</i><span class="ui">Guardar</span> bajo demanda, o <span class="ui">Auto guardar</span> guarda cada vez que se cambia una traducción (automático por defecto)</li>
-  <li><i class="material-icons">refresh</i><span class="ui">Recargar</span> efectúa un reanálisis de las preguntas para mejorar las traducciones adivinadas (después de editar manualmente o añadir preguntas)</li>
-  <li><span class="ui"><a href="generatescript.htm"><i class="material-icons">grading</i>Generate Checking Script</a></span> produces an HTML-format script by retrieving Scripture portions from Paratext and interleaving them with the relevant questions. The script can be customized in various ways. Once produced, it can be printed or shared electronically.</li>
-  <li><img class="inline-img" src="sf_logo_small.png" style="height:24px; margin-top:0px; position: relative; top: 6px;"><span class="ui">Produce Scripture Forge Files</span> saves translated questions in a format that can be used by <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a>. These files will be automatically synchronized when using Send/Receive in Paratext. <span class="note">Note: Icon displays green when this is toggled <em>on</em>.</span></li>
+  <li><i class="material-icons">save</i><span class="ui">Guardar</span> bajo demanda, o <span class="ui">Autoguardar</span> guarda cada vez que se cambia una traducción (seleccionado por defecto)</li>
+  <li><i class="material-icons">refresh</i><span class="ui">Recargar</span> efectúa un reanálisis de las preguntas para mejorar las traducciones suministradas (después de editar manualmente o añadir preguntas)</li>
+  <li><span class="ui"><a href="generatescript.htm"><i class="material-icons">grading</i>Generar guía de verificación</a></span> produce una guía de formato HTML incluyendo pasajes bíblicos proporcionados por Paratext, los cuales se intercalan con las preguntas relevantes. La guía se puede personalizar de varias maneras. Una vez producido, se puede imprimir o compartir electrónicamente.</li>
+  <li><img class="inline-img" src="sf_logo_small.png" style="height:24px; margin-top:0px; position: relative; top: 6px;"><span class="ui">Producir Archivos para Scripture Forge</span> guarda las preguntas traducidas en un formato que puede ser utilizado por <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a>. Estos archivos se sincronizarán automáticamente al usar Enviar/Recibir en Paratext. <span class="note">Nota: El icono se muestra verde cuando esta función está <em>activada</em>.</span></li>
 </ul>
 
 <h3>Editar y navegar</h3>
-<p>En el menú <span class="ui">Editar</span>, seleccione <span class="ui">Pregunta anterior sin traducir</span> y <span class="ui">Pregunta siguiente no traducida</span> para navegar a la siguiente pregunta que aún no tiene una traducción confirmada. When editing a translation use <span class="ui">Shift Word(s) Right</span> and <span class="ui">Shift Word(s) Left</span> to <a href="reorderingwords.htm"><i class="material-icons">compare_arrows</i>reorder the current or selected word</a>. On the toolbar there are also two buttons that allow the user to control whether to send (<img src="../SendSync.png">) and receive (<img src="../ReceiveSync.png">) Scripture references to keep Transcelerator in sync with other applications (e.g., Paratext) when navigating.</p>
+<p>En el menú <span class="ui">Editar</span>, seleccione <span class="ui">Pregunta anterior sin traducir</span> y <span class="ui">Pregunta siguiente no traducida</span> para navegar a la siguiente pregunta que aún no tiene una traducción confirmada. Al editar una traducción, utilice <span class="ui">Mover palabra(s) a la derecha</span> y <span class="ui">Mover palabra(s) a la izquierda</span> para <a href="reorderingwords.htm"><i class="material-icons">compare_arrows</i>reordenar la palabra actual o el texto seleccionado</a>. En la barra de herramientas también hay dos botones para controlar si Transcelerator debe enviar (<img src="../SendSync.png">) y recibir (<img src="../ReceiveSync.png">) las citas bíblicas para mantenerse sincronizado con otros programas (p. ej., Paratext) al navegar.</p>
 <h4>Personalizar las preguntas</h4>
-<p>Since there are limitations to using a “canned” set of questions to check comprehension, Transcelerator allows the addition of custom questions and the exclusion or modification of existing source questions as needed. The command for customizing the source questions are accessible using the context menu in the main grid:</p>
+<p>Debido a que hay limitaciones al uso de un conjunto de preguntas pre-escritas para comprobar la comprensión, Transcelerator le permite añadir preguntas personalizadas y excluir o redactar las preguntas de origen existentes según sea necesario. Los comandos para personalizar las preguntas de origen son accesibles a través del menú contextual en la cuadrícula principal:</p>
 <ul class="icon-list">
   <li id="exclude-question"><a href="editingquestions.htm#excluding"><i class="material-icons">thumb_down_alt</i><span class="ui">Excluir Pregunta</span></a> que no va a ser útil para los encuestados.</li>
   <li><a href="editingquestions.htm"><i class="material-icons">thumb_up_alt</i><span class="ui">Incluir pregunta</span></a> que previamente fue excluido (ver <a href="#view-excluded"><i class="material-icons">all_inclusive</i>preguntas excluidas</a>).</li>
-  <li><a href="editingquestions.htm"><i class="material-icons">edit</i><span class="ui">Edit Question</span></a> to select an alternate form or manually alter the wording.</li>
-  <li><a href="addingquestions.htm"><i class="material-icons">add</i>Add a <span class="ui">New Question</span></a></li>
+  <li><a href="editingquestions.htm"><i class="material-icons">edit</i><span class="ui">Editar pregunta</span></a> para seleccionar un alternativo o redactar la pregunta manualmente.</li>
+  <li><a href="addingquestions.htm"><i class="material-icons">add</i>Añadir una <span class="ui">Nueva pregunta</span></a></li>
 </ul>
 
 <h3><a href="filtering.htm"><i class="material-icons">filter_alt</i>Filtros</a> y clasificación</h3>
-<p>Transcelerator allows the list of questions to be filtered in the following ways:</p>
+<p>Transcelerator permite filtrar la lista de preguntas de las siguientes maneras:</p>
 <ul>
-  <li>By reference range</li>
-  <li>Textual</li>
-  <li>Based on whether or not biblical terms have renderings (i.e., vernacular equivalents)</li>
+  <li>Por citas bíblicas</li>
+  <li>Por texto</li>
+  <li>Basado en si los vocablos bíblicos tienen traducciones (es decir, equivalentes vernáculos)</li>
 </ul>
-<p>In addition, the questions can be sorted by any of the columns by clicking the column header. Click the header of the sorted column a second time to reverse the sort order.</p>
+<p>Además, las preguntas pueden ser ordenadas por cualquiera de las columnas al hacer clic en el encabezado de la columna. Haga clic en el encabezado de la columna ordenada una segunda vez para invertir el orden de clasificación.</p>
 
 <h3>Ver</h3>
-<p>To eliminate unnecessary elements of the user interface (especially helpful when working on a small display) the following items can be hidden:</p>
+<p>Para eliminar elementos innecesarios de la interfaz de usuario (especialmente útil en las pantallas pequeñas) los siguientes elementos pueden ocultarse:</p>
 <ul>
-  <li><span class="ui">Generated Translation Details</span> - Provides technical analysis details mainly useful for understanding how guessed translations are being determined.</li>
-  <li><span class="ui">Edit Question Column</span> - This column is useful when customizing source questions. (Hidden by default.) See <a href="editingquestions.htm">Editing Questions</a> for more information.</li>
-  <li><span class="ui">Answers and Comments</span> - Often helpful when translating questions, but not strictly necessary.</li>
-  <li><span class="ui">Toolbar</span> - Shows the box for textual filtering, the synchronized navigation buttons and some status information.</li>
-  <li><span class="ui">Biblical Terms Pane</span> - Makes it easy to select the correct rendering for biblical terms used in a question.</li>
+  <li><span class="ui">Detalles de las traducciones generadas</span> — Proporciona detalles de análisis técnico principalmente útiles para entender cómo Transcelerator produjo las traducciones conjeturadas.</li>
+  <li><span class="ui">Columna: Editar pregunta</span> — Esta columna facilita el personalizar las preguntas de origen. (Oculta por defecto.) Vea <a href="editingquestions.htm">Como editar las preguntas</a> para más información.</li>
+  <li><span class="ui">Respuestas y comentarios</span> — Útil a menudo al traducir las preguntas, pero no es absolutamente necesario.</li>
+  <li><span class="ui">Barra de herramientas</span> — Muestra el cuadro para filtrar por texto, los botones de navegación sincronizada y alguna información de estado.</li>
+  <li><span class="ui">Panel de vocablos bíblicos</span> — Facilita el seleccionar la traducción correcta de los vocablos bíblicos utilizados en las preguntas.</li>
 </ul>
 <p id="view-excluded"><i class="material-icons">all_inclusive</i>Si las preguntas han sido <a href="editingquestions.htm#view-excluded-questions">excluidas</a>, pueden mostrarse (principalmente para que puedan volver a incluirse si así lo desea) seleccionando <span class="ui">Preguntas excluidas</span>.</p>
-<p id="view-zoom"><i class="material-icons">zoom_in</i>Use Zoom In (Ctrl + Plus) or Zoom Out (Ctrl + Minus) to increase or decrease the size of the non-vernacular text in the main grid. <span class="note">Note: The font and size of the vernacular text displayed in the <span class="ui">Translation</span> column is determined by the font settings for the vernacular language in Paratext.</p>
-<p><i class="material-icons">language</i>Transcelerator can display the source questions and the user interface in any locale that was included when it was installed. Select the desired language from the <span class="ui">Display Language</span> menu.</p>
+<p id="view-zoom"><i class="material-icons">zoom_in</i>Use <span class="ui">Aumentar</span> (Ctrl+Plus) o <span class="ui">Reducir</span> (Ctrl+Menos) para cambiar el tamaño del texto no vernáculo en la cuadrícula principal. <span class="note">Nota: La fuente y el tamaño del texto del idioma de destino que se muestra en la columna <span class="ui">Traducción</span> se determina por la configuración de la fuente del idioma vernáculo en Paratext.</p>
+<p><i class="material-icons">language</i>Transcelerator puede mostrar las preguntas de origen y la interfaz de usuario en cualquier idioma localizada que se haya incluido cuando se instaló. Seleccione el idioma deseado del menú <span class="ui">Idioma de interfaz</span>.</p>
 
 <a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
+
+<p>Ver esta página en:</p>
+<menu>
+  <li><a class="menuitem" href="../es/featureoverview.htm" lang="es">Español</a></li>
+  <!-- <li><a class="menuitem" href="../fr/featureoverview.htm" lang="fr">français</a></li> -->
+</menu>
 </body>
 
 </html>

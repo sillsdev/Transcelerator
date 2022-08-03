@@ -64,6 +64,99 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
+    <Compile Include="..\output\installer\GeneratedDocFilesP9_es.wxs">
+		<Link>GeneratedDocFilesP9_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9_en-GB.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9_en-GB.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9_es.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9_fr.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9_fr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ar.wxs">
+		<Link>GeneratedUiStringsFilesP9_ar.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_az.wxs">
+		<Link>GeneratedUiStringsFilesP9_az.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_bn.wxs">
+		<Link>GeneratedUiStringsFilesP9_bn.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_de.wxs">
+		<Link>GeneratedUiStringsFilesP9_de.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_es.wxs">
+		<Link>GeneratedUiStringsFilesP9_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_fa.wxs">
+		<Link>GeneratedUiStringsFilesP9_fa.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_fr.wxs">
+		<Link>GeneratedUiStringsFilesP9_fr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_hi.wxs">
+		<Link>GeneratedUiStringsFilesP9_hi.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_hu.wxs">
+		<Link>GeneratedUiStringsFilesP9_hu.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_id.wxs">
+		<Link>GeneratedUiStringsFilesP9_id.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_km.wxs">
+		<Link>GeneratedUiStringsFilesP9_km.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ko.wxs">
+		<Link>GeneratedUiStringsFilesP9_ko.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ms.wxs">
+		<Link>GeneratedUiStringsFilesP9_ms.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_my.wxs">
+		<Link>GeneratedUiStringsFilesP9_my.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ne.wxs">
+		<Link>GeneratedUiStringsFilesP9_ne.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_pt.wxs">
+		<Link>GeneratedUiStringsFilesP9_pt.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ru.wxs">
+		<Link>GeneratedUiStringsFilesP9_ru.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_rw.wxs">
+		<Link>GeneratedUiStringsFilesP9_rw.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_sw.wxs">
+		<Link>GeneratedUiStringsFilesP9_sw.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ta.wxs">
+		<Link>GeneratedUiStringsFilesP9_ta.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_te.wxs">
+		<Link>GeneratedUiStringsFilesP9_te.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_th.wxs">
+		<Link>GeneratedUiStringsFilesP9_th.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_tr.wxs">
+		<Link>GeneratedUiStringsFilesP9_tr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ur.wxs">
+		<Link>GeneratedUiStringsFilesP9_ur.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_vi.wxs">
+		<Link>GeneratedUiStringsFilesP9_vi.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_zh-CN.wxs">
+		<Link>GeneratedUiStringsFilesP9_zh-CN</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_zh.wxs">
+		<Link>GeneratedUiStringsFilesP9_zh.wxs</Link>
+	</Compile>
     <Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
       <Link>GeneratedDocFilesP9.wxs</Link>
     </Compile>

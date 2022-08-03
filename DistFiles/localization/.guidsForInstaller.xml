@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.es.xlf" Guid="8938e3b2-5a35-4689-81b8-32b7023ec779" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Transcelerator.es.xlf" Guid="c088df3e-ce79-4764-9db5-c7bd413e708f" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.fr.xlf" Guid="025bbfec-7c7d-4dd8-b097-7838863450bf" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Transcelerator.fr.xlf" Guid="4d9a4e37-78a7-42a9-aa67-7bbff613cd65" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ar.xlf" Guid="dd551d9a-1352-4b30-95fb-08fc2e0ad85b" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.az.xlf" Guid="00e8e2de-911e-4b52-9bf7-d01c924aa259" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.bn.xlf" Guid="e98e7e46-7d1d-492b-a024-f1c6c95007f3" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.de.xlf" Guid="64d38e4a-5971-406f-9cb7-64dc373fb4b9" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.fa.xlf" Guid="22f26f27-49ab-4e9a-92f1-a5a558c88b28" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.hi.xlf" Guid="20da792b-aae8-4c37-ba11-29597afd2b8e" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.hu.xlf" Guid="fd80b7cb-1868-4422-a19b-39bf17dc2d27" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.id.xlf" Guid="efaf0797-ba24-47a1-be5a-fd8478c4e3be" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.km.xlf" Guid="3a39d1f0-2591-4e43-99cf-3b8b03a83f8c" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ko.xlf" Guid="8fd09221-cd25-4536-9953-dece27233db4" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ms.xlf" Guid="d67532f2-f8f8-4ab1-b3e3-7ad70a6c0c3d" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.my.xlf" Guid="1acfa5dc-b0f2-453c-b634-2771bc73e7bb" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ne.xlf" Guid="485b1ec5-b8c6-48dd-b2d5-5008864a09bf" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.pt.xlf" Guid="abaa78dd-a662-4d14-add2-198e42a4160e" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ru.xlf" Guid="98f7897e-9c1c-4f0f-88f5-476c03980522" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.rw.xlf" Guid="ec388eaa-95ce-4d59-b51a-c4af7acdfab2" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.sw.xlf" Guid="d03cde96-b5e8-4472-a0d3-e0ee5a0d227e" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ta.xlf" Guid="f33d5aa3-915e-47cc-9640-4423c8eab88a" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.te.xlf" Guid="34f38cfc-d1c1-424a-9da4-3cdc505c6fba" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.th.xlf" Guid="4dbc3b36-9d8a-4391-92fd-11191b770739" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.tr.xlf" Guid="f9a1c936-04d0-4166-939e-dc24d4e73faf" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.ur.xlf" Guid="e6c05190-d7be-4c23-9904-d472e338061c" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.vi.xlf" Guid="a53c5ac9-e384-4177-964c-9ac89e68c598" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.zh_CN.xlf" Guid="60b82624-1c6f-4bc6-bf80-e283e7a70e9e" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.zh.xlf" Guid="b1a87203-f189-46b0-aa46-7ae37b090ae8" />
+</InstallerMetadata>

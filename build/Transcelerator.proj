@@ -63,8 +63,45 @@
 	<Import Project="../.nuget/NuGet.targets" />
 
 	<ItemGroup>
-		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(PackagesDir)/&quot;, &quot;NUnit.Console*&quot;, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
-		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(PackagesDir)/&quot;, &quot;NUnit.Extension.*&quot;, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
+		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(PackagesDir)/`, `NUnit.Console*`, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
+		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(PackagesDir)/`, `NUnit.Extension.*`, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_ExcludeEnDir Include="$(RootDir)/Docs/Help Topics/en" />
+		<LocalizedHelpTopicDirs Include="$([System.IO.Directory]::GetDirectories(`$(RootDir)/Docs/Help Topics/`))"
+			Exclude="@(_ExcludeEnDir)">
+			<FolderName>$([System.IO.Path]::GetFileName(`%(Identity)`))</FolderName>
+		</LocalizedHelpTopicDirs>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Note that for locales that have both a Palaso and a Transcelerator	file, this will
+			 include both, which will result in generating the wxs file for that locale twice.
+			 While this is harmless, it takes extra time and might produce some confusion
+			 when looking at the log file. So we exclude any locales like this. We could
+			 probably safely include only the Palaso files and get the same effect, but some
+			 day it's possible there could be a locale that has Transcelerator localizations
+			 but no Palaso localizations. -->
+		<_ExcludeDupLocales Include="$(RootDir)/DistFiles/localization/Transcelerator.es.xlf" />
+		<_ExcludeDupLocales Include="$(RootDir)/DistFiles/localization/Transcelerator.fr.xlf" />
+		<LocalizedUiStringLocales Include="$([System.IO.Directory]::GetFiles(`$(RootDir)/DistFiles/localization/`))"
+			Exclude="@(_ExcludeDupLocales)">
+			<WixIdLocale>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.Path]::GetFileName(`%(Identity)`)),
+				`.+[^.]+\.([^.-]+)-?([^.-]*)\.xlf`, `$1$2`))</WixIdLocale>
+			<FilenameLocale>$([System.Text.RegularExpressions.Regex]::Replace($([System.IO.Path]::GetFileName(`%(Identity)`)),
+				`.+[^.]+\.([^.]+)\.xlf`, `$1`))</FilenameLocale>
+		</LocalizedUiStringLocales>
+	</ItemGroup>
+
+	<ItemGroup>
+		<LocalizedPhrasesFiles Include="$([System.IO.Directory]::GetFiles(`$(RootDir)/Transcelerator/`,
+			`LocalizedPhrases-*.xlf`))">
+			<WixIdLocale>$([System.Text.RegularExpressions.Regex]::Replace(`%(Identity)`,
+				`.+LocalizedPhrases-([^.-]+)-?([^.-]*)\.xlf$`, `$1$2`))</WixIdLocale>
+			<FilenameLocale>$([System.Text.RegularExpressions.Regex]::Replace(`%(Identity)`,
+				`.+LocalizedPhrases-([^.]+)\.xlf$`, `$1`))</FilenameLocale>
+		</LocalizedPhrasesFiles>
 	</ItemGroup>
 	
 	<Target Name="RestoreBuildTasks" DependsOnTargets="CheckPrerequisites">
@@ -122,7 +159,7 @@
 		</CreateItem>
 	</Target>
 
-	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles">
+	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles;MakeWixForLocalizedUiStrings;MakeWixForLocalizedPhrases">
 
 		<!-- set the version number in the installer configuration program.	Perhaps there's a way to just send in the variables rather than this brute-force
 			changing of the script, but I haven't figured that out. -->
@@ -184,7 +221,7 @@
 		<Exec Command='sign "$(RootDir)\output\installer\$(InstallerFileName)"' ContinueOnError="true"></Exec>
 	</Target>
 	
-	<Target Name="MakeWixForHtmlDocFiles">
+	<Target Name="MakeWixForHtmlDocFiles" DependsOnTargets="MakeWixForLocalizedHtmlDocFiles">
 		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
 		<MakeWixForDirTree
 			DirectoryReferenceId="DocsDirP9Beta"
@@ -192,7 +229,7 @@
 			RootDirectory="$(RootDir)\Docs\Help Topics"
 			InstallerSourceDirectory="$(RootDir)\Installer"
 			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9Beta.wxs"
-			MatchRegExPattern=".*"
+			IgnoreRegExPattern="\\e[^n]\\"
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
 		</MakeWixForDirTree>
@@ -202,7 +239,51 @@
 			RootDirectory="$(RootDir)\Docs\Help Topics"
 			InstallerSourceDirectory="$(RootDir)\Installer"
 			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9.wxs"
-			MatchRegExPattern=".*"
+			IgnoreRegExPattern="\\e[^n]\\"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
+	</Target>
+	
+	<Target Name="MakeWixForLocalizedHtmlDocFiles" Outputs="%(LocalizedHelpTopicDirs.Identity)">
+		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedDocFilesP9_%(LocalizedHelpTopicDirs.FolderName).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="DocsDirP9_%(LocalizedHelpTopicDirs.FolderName)"
+			ComponentGroupId="COMPONENTSFORP9Documentation_%(LocalizedHelpTopicDirs.FolderName)"
+			RootDirectory="%(LocalizedHelpTopicDirs.Identity)"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9_%(LocalizedHelpTopicDirs.FolderName).wxs"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
+	</Target>
+	
+	<Target Name="MakeWixForLocalizedUiStrings" Outputs="%(LocalizedUiStringLocales.Identity)">
+		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedUiStringsFilesP9_%(LocalizedUiStringLocales.FilenameLocale).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="INSTALLDIR9_LOCALIZATION"
+			ComponentGroupId="COMPONENTSFORP9PLUGINLOCALIZATION_%(LocalizedUiStringLocales.WixIdLocale)"
+			RootDirectory="$(RootDir)\DistFiles\localization"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedUiStringsFilesP9_%(LocalizedUiStringLocales.FilenameLocale).wxs"
+			MatchRegExPattern="\.%(LocalizedUiStringLocales.FilenameLocale)\.xlf"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
+	</Target>
+	
+	<Target Name="MakeWixForLocalizedPhrases" Outputs="%(LocalizedPhrasesFiles.Identity)">
+		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>		
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedLocalizedPhrasesFilesP9_%(LocalizedPhrasesFiles.FilenameLocale).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="INSTALLDIR9"
+			ComponentGroupId="COMPONENTSFORP9PLUGIN_%(LocalizedPhrasesFiles.WixIdLocale)"
+			RootDirectory="$(RootDir)\Transcelerator\bin\x64\Release"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedLocalizedPhrasesFilesP9_%(LocalizedPhrasesFiles.FilenameLocale).wxs"
+			MatchRegExPattern="LocalizedPhrases-%(LocalizedPhrasesFiles.FilenameLocale)\.xlf"
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
 		</MakeWixForDirTree>

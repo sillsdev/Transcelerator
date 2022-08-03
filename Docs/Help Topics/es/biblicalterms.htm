@@ -2,10 +2,10 @@
 
 <head>
   <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-  <title>Working with Questions that have Biblical Terms</title>
+  <title>Tratando con las preguntas que tienen vocablos bíblicos</title>
   <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
   <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
-  <link rel="stylesheet" type="text/css" href= "../TxlHelp.css"/>
+  <link rel="stylesheet" type="text/css" href="../TxlHelp.css"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
@@ -14,38 +14,43 @@
 <h2>Como traducir las preguntas que tienen vocablos bíblicos</h2>
 
 <h3>Descripción general de los vocablos bíblicos en Transcelerator</h3>
-<p>One of the ways that Transcelerator helps with the translation of questions is by automatically supplying translations for words in questions that it identifies as biblical terms (sometimes also referred to as “key terms”). If a thorough analysis of the Major Biblical Terms list has been completed in Paratext, all the identified renderings for each term will be available to Transcelerator. For any terms that do not yet have identified renderings, Paratext attempts to do a statistical analysis to find likely renderings, so in some cases there can be omissions or incorrect renderings included.</p>
-<p>For the built-in questions in Transcelerator that include proper names and other biblical terms, this knowledge about how terms are rendered in the target vernacular speeds up translation. Not only does the translator not need to keep going back to Paratext to remember how a particular name or other term was rendered, Transcelerator can identify questions that are similar, differing only by the terms (usually names) they use. For these kinds of questions, Transcelerator can figure out what the "frame" is and how that frame is expressed in the target vernacular. Then every question that has that same frame is automatically filled in using the default rendering of the term. Assuming the guesses are correct, the translator can quickly confirm them.</p>
+<p>Una de las maneras en que Transcelerator ayuda en la traducción de preguntas es suministrando automáticamente traducciones para las palabras que son identificados como vocablos bíblicos (a veces llamados “términos claves”). Si se ha completado un análisis exhaustivo de la lista Principales vocablos bíblicos en Paratext, todas las traducciones identificadas para cada término estarán disponibles para Transcelerator. Para cualquier término que aún no tiene traducciones identificadas, Paratext intenta realizar un análisis estadístico para encontrar las traducciones probables; así que en esos casos puede haber omisiones o la inclusión de traducciones incorrectas.</p>
+<p>Para las preguntas incorporadas en Transcelerator que incluyen nombres propios y otros vocablos bíblicos, el conociemiento de las traducciones vernáculas de estos vocablos acelera la traducción al idioma de destino. El traductor no necesita consultar una y otra vez a Paratext para recordar cómo un nombre o vocablo fue traducido. Además Transcelerator puede identificar preguntas similares, que difieren sólo por los vocablos (especialmente los nombres propios) que utilizan. En el caso de tales preguntas, Transcelerator puede determinar cuál es el “marco” de la pregunta y cómo ese marco se expresa en el idioma de destino. Luego cada pregunta que tenga ese mismo “marco” se rellena automáticamente usando la traduccion predeterminada de cada vocablo usado. Con tal de que Transcelerator ha logrado traducir correctamente esas preguntas, el traductor puede confirmarlas rápidamente.</p>
 
-<h3>Working with Renderings in the Biblical Terms Pane</h3>
-<p>In the main window in Transcelerator, when you select a question containing biblical terms, the Biblical Terms Pane will display a list of potential vernacular renderings for each occurrence of each term. If there are no known renderings, the list will be empty, but the English term will still be shown. If the same term occurs more than once in the question, the same list of renderings will be displayed for each occurrence, corresponding to their order in the English question. <span class="note">Note: If the source questions are being displayed in a language other than English, it is possible that the order will not correspond to the order of the terms in that language.</span></p>
-<p>For any term that has one or more known renderings, Transcelerator automatically includes the default rendering in its guessed translation. So in the common case of questions that match a “frame” (e.g., What did <span class="frame-placeholder">Jesus</span> say to <span class="frame-placeholder">Peter</span>?) Transcelerator will usually be able to fill in the names to achieve a guessed translation that is correct and merely needs to be confirmed.
-<p>To change the rendering used in a particular translation, select the desired rendering from the list.</p>
-<p>If the needed rendering is not available in the list, do one of the following:</p>
+<h3>Tratando las traducciones en el panel de vocablos bíblicos</h3>
+<p>En la ventana principal de Transcelerator, al seleccionar una pregunta con vacablos bíblicos, el panel de vocablos bíblicos mostrará una lista de traducciones conocidas para cada instancia de cada vocablo. Si no hay traducciones conocidas, la lista estará vacía con el vocablo en inglés como encabezado. Si el mismo vocablo aparece más de una vez en la pregunta, se mostrará la misma lista de traducciones para cada instancia, correspondiente al orden en que aparecen en la pregunta en inglés. <span class="note">Nota: Si las preguntas de origen se muestran en un idioma distinto del inglés, es posible que el orden no corresponda al orden de los términos en ese idioma.</span></p>
+<p>Al calcular las traducciones suminstradas de las preguntas Transcelerator incluye automáticamente la traducción por defecto de los vocablos que tienen traducciónes conocidas. Así que en el caso común de las preguntas que coinciden con un "marco" (por ejemplo, ¿Qué le dijo <span class="frame-placeholder">Jesús</span> a <span class="frame-placeholder">Pedro</span>?),  Transcelerator generalmente será capaz de llenar los nombres para generar una traducción correcta, la cual simplemente necesita ser confirmada.
+<p>Para cambiar la traducción de un vocablo utilizado en una traducción en particular, selecciónela de la lista.</p>
+<p>Si la traducción necesaria no aparece en la lista, haz uno de los siguientes:</p>
 <ul>
-  <li>Right-click the corresponding occurrence of the term in the Biblical Terms Pane, and in the context menu, select <span class="ui">Add Rendering</span>. In the <span class="ui">Add Rendering</span> dialog box, type the desired rendering, and then click <span class="ui">OK</span>. The newly added rendering will be selected and will automatically replace the previous rendering in the translation.</li>
-  <li>Simply type the desired word in the translation, replacing the default rendering. If the term is not rendered directly in your translation or the rendering you typed is not likely to be useful for other questions that might use that term, there might be very little need to add it as a rendering. Note however that since Transcelerator will not be able to identify any part of the translation as a rendering of that term, no rendering will be selected for that occurrence of the biblical term and it will not be possible for Transcelerator to process this translation as a model for other questions that might have the same frame.</li>
-  <li>If the desired rendering is one that is used in the Scripture translation and you want the Biblical Terms tool in Paratext to include it as a recognized rendering, then do the following:</li>
+  <li>Haga clic derecho en la ocurrencia correspondiente del vocablo en el panel de vocablos bíblicos, y en el menú contextual, seleccione <span class="ui">Agregar traducción</span>. En el cuadro de diálogo <span class="ui">Agregar traducción vernácula</span>, escriba la traducción deseada y haga clic en <span class="ui">Aceptar</span>. La traducción que fue añadida será seleccionado y reemplazará automáticamente la traducción del vocablo en la traducción de la pregunta.</li>
+  <li>Simplemente escriba la palabra deseada en la traducción de la pregunta, reemplazando la traducción predeterminada del vocablo. Si el vocablo no se traduce directamente en la pregunta or si la forma en que el vocablo está traducida en esta pregunta en particular probablemente no sea útil para otras preguntas que usan ese vocablo, hay muy poca razón de agregarlo como nueva traducción. Sin embargo, tenga en cuenta que dado que Transcelerator no podrá identificar ninguna parte de la traducción de la pregunta como una traducción de ese vocablo, no se seleccionará la traducción para esa ocurrencia del vocablo bíblico, ni tampoco será posible que Transcelerator procese esta traducción como un modelo para otras preguntas que podrían tener el mismo marco.</li>
+  <li>Si la traducción del vocablo es una que sí se utiliza en la traducción de la Biblia y desea que se reconozca como una traducción verificada para ese vocablo en la herramienta Vocablos bíblicos en Paratext, haga lo siguiente:</li>
   <ol>
-	<li>Right-click the corresponding occurrence of the term in the Biblical Terms Pane to open the shortcut menu, and then select <span class="ui">Find Term in Paratext</span>.</li>
-	<li>If there are multiple entries corresponding to the term in the Biblical Terms Tool in Paratext, find the one(s) for which the new rendering is appropriate.</li>
-	<li>Add the desired rendering in Paratext using whichever method is most appropriate:
+	<li>Haga clic derecho en la ocurrencia correspondiente del vocablo en el panel de vocablos bíblicos, y en el menú contextual, seleccione <span class="ui">Buscar vocablo en Paratext</span>.</li>
+	<li>Si hay múltiples entradas correspondientes al vocablo en la herramienta de Vocablos bíblicos en Paratext, encuentre aquella(s) para las cuales la nueva traducción es apropiado.</li>
+	<li>Agrega la traducción deseada en Paratext utilizando el método más adecuado:
 	<ul>
-		<li>In the Biblical Terms Tool, highlight the rendering for a term in a verse, go to <span class="ui">Edit</span>, and then select <span class="ui">Add rendering</span>.</li>
-		<li>Use drag-and-drop with the Biblical Terms Renderings tool.</li>
-		<li>Edit the renderings manually.</li>
-		<li>Approve an adapted name or guessed rendering.</li>
+		<li>En la herramienta Vocablos bíblicos, destaca la traducción del vocablo en un versículo; luego en el menú a <span class="ui">Editar</span> selecciona <span class="ui">Agregar traducción</span>.</li>
+		<li>Utilice la opción de arrastrar y soltar en la herramienta Vocablos bíblicos.</li>
+		<li>Edita las traducciones a mano.</li>
+		<li>Aprobar un nombre adaptado o una traducción conjeturada.</li>
 	</ul>
-	Consult Paratext Help for more information.</li>
-	<li>After editing the renderings in Paratext, right-click the header for the key term in Transcelerator to open the shortcut menu, and then select <span class="ui">Refresh renderings from Paratext</span>.</li>
-	<li>When the list of renderings is refreshed, select the correct one for each instance of each term.</li>
+	Consulte la Ayuda en Paratext para más información.</li>
+	<li>Cuando la lista de traducciones de vocablos en Transcelerator se carga, seleccione la traducción correcta para cada instancia de cada vocablo.</li>
   </ol>
 </ul>
 
-<h3 id="default-rendering">Default Renderings</h3>
-<p>In most languages, many terms - proper names, for example - will have a single rendering in the target vernacular. When a term has more than one known rendering, either because there are multiple senses or multiple surface forms, Transcelerator chooses a default one, usually the one used the most often to render the term in the Scripture text. But that might not always be the best default for translating the questions in Transcelerator. To change the default rendering for a particular term, simply right-click the rendering for any occurrence of the term in the Biblical Terms pane and select <span class="ui">Set as default rendering</span>. This rendering will immediately be used for the specific occurrence of the term in the selected question. It will also be the one used for any other occurrences of this biblical term in any guessed (unconfirmed) translation of any question that uses that term - except in the case of questions where a <a href="renderingselectionrules.htm"><i class="material-icons">rule</i>Biblical Terms Rendering Selection Rule</a> results in a different selection.</p>
+<h3 id="default-rendering">Traducciones predeterminadas</h3>
+<p>En la mayoría de los idiomas de destino, muchos vocablos — por ejemplo, los nombres propios — tendrán una sola traducción. Cuando un vocablo tiene más de una traducción reconocida, ya sea porque hay múltiples sentidos del vocablo o múltiples formas infligidas de la palabra en el idoma de destino, Transcelerator elige una por defecto. Por lo general, será la que se utiliza más a menudo para ese vocablo en el texto de la Biblia. Pero no necesariamente será siempre la mejor opción para traducir las preguntas en Transcelerator. Para cambiar la traducción por defecto para un vocablo en particular, simplemente haga clic derecho en la traducción para cualquier ocurrencia del vocablo en el panel de Vocablos bíblicos y seleccione <span class="ui">Establecer como traducción predeterminada</span>. Esta traducción se utilizará inmediatamente para la ocurrencia específica del vocablo en la pregunta seleccionada. También se utilizará para cualquier otra ocurrencia de este vocablo en todas las traducciones conjeturadas (no confirmadas) de cualquier pregunta que use ese vocablo — excepto en el caso de preguntas donde una <a href="renderingselectionrules.htm"><i class="material-icons">rule</i>regla para selecionar traducciones de vocablos bíblicos</a> resulta en una selección diferente.</p>
 
 <a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
+
+<p>Ver esta página en:</p>
+<menu>
+  <li><a class="menuitem" href="../es/biblicalterms.htm" lang="es">Español</a></li>
+  <!-- <li><a class="menuitem" href="../fr/biblicalterms.htm" lang="fr">français</a></li> -->
+</menu>
 </body>
 
 </html>

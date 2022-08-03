@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -131,7 +131,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelFrom, "ScrReferenceFilterDlg.m_lblFrom");
 			this.toolStripLabelFrom.Name = "toolStripLabelFrom";
 			this.toolStripLabelFrom.Size = new System.Drawing.Size(38, 24);
-			this.toolStripLabelFrom.Text = "From:";
+			this.toolStripLabelFrom.Text = "&From:";
 			// 
 			// scrPsgFrom
 			// 
@@ -167,7 +167,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelTo, "ScrReferenceFilterDlg.m_lblTo");
 			this.toolStripLabelTo.Name = "toolStripLabelTo";
 			this.toolStripLabelTo.Size = new System.Drawing.Size(22, 24);
-			this.toolStripLabelTo.Text = "To:";
+			this.toolStripLabelTo.Text = "&To:";
 			// 
 			// scrPsgTo
 			// 

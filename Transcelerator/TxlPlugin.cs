@@ -23,6 +23,7 @@ using L10NSharp;
 using SIL.Scripture;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
+using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Reporting;
 using static System.String;
 
@@ -42,7 +43,9 @@ namespace SIL.Transcelerator
 		private static Dictionary<IProject, ProjectState> s_projectStates = new Dictionary<IProject, ProjectState>();
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
-		internal static ILocalizationManager PrimaryLocalizationManager { get; private set; }
+
+		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
+		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 		internal static UserInfo s_userInfo;
 
 		private static Analytics GetAnalytics(IPluginHost host)
@@ -329,15 +332,36 @@ namespace SIL.Transcelerator
 			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
-			PrimaryLocalizationManager = LocalizationManager.Create(TranslationMemory.XLiff, 
-				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
-				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
-				"SIL.Transcelerator", "SIL.Utils");
+
+			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
+			// language might be available in the XLIFF files for one of the localization managers
+			// but not the other. Normally, part of the creation process for a LM is to check to
+			// see whether the requested language is available. But if the first LM we create does
+			// not have the requested language, the user sees a dialog box alerting them to that
+			// and requiring them to choose a different language. For now, in Transcelerator, we
+			// can work around that by creating the Palaso LM first, since its set of available
+			// languages is a superset of the languages available for Transcelerator. (There is the
+			// case of British English, but since that is still a flavor of "en" it's not a
+			// problem.) But it feels weird not to create the primary LM first, and the day could
+			// come where neither set of languages is a superset, and then this strategy wouldn't
+			// work.
 
 			LocalizationManager.Create(TranslationMemory.XLiff, 
 				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedStringFileFolder,
 				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Windows.Forms.Reporting");
+
+			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, 
+				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
+				"SIL.Transcelerator", "SIL.Utils");
+			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "transcelerator",
+				IssueRequestForLocalization);
+		}
+
+		private static void IssueRequestForLocalization()
+		{
+			Analytics.Track("UI language request", LocIncompleteViewModel.StandardAnalyticsInfo);
 		}
 
 		public string GetDescription(string locale)

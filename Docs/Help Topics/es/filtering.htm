@@ -2,44 +2,53 @@
 
 <head>
   <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
-  <title>Filtering</title>
+  <title>Filtros</title>
   <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
   <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
-  <link rel="stylesheet" type="text/css" href= "../TxlHelp.css"/>
+  <link rel="stylesheet" type="text/css" href="../TxlHelp.css"/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body lang=EN-US>
 
 <h2>Filtros</h2>
-<p>Transcelerator allows the questions in the main window to be filtered in three different ways. When the questions are filtered, it only affects which questions you see in the table, not which questions will be included when generating a checking script or producing <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a> output files. <span >Note: If you do not want to use a particular question at all, you can <a href="editingquestions.htm#excluding">exclude</a> it.</p>
+<p>Transcelerator permite filtrar las preguntas en la ventana principal de tres maneras. Los filtros solo determinan si las preguntas aparecen en la cuadrícula. No afecta en ninguna manera las guías ni los archivos de salida de <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a>. <span >Nota: Si no desea usar alguna pregunta, puede <a href="editingquestions.htm#excluding">excluirla</a> para que tampoco esté incluida en las guías ni los archivos producidos por Transcelerator.</p>
 
-<h3>Reference Range</h3>
-<p>Over the normal course of a Scripture translation project, a team will usually be focusing on checking specific books or portions. Therefore, it is important to be able to filter the questions to see only the ones that are relevant for the passage or passages that are currently of interest. Note that the built-in questions in Transcelerator are based on the "English" versification. When generating scripts, verse numbers are converted to the versification used in the project if necessary; however, this filter dialog box uses the English versification. To filter by reference range, do the following:</p>
+<h3>Por citas bíblicas</h3>
+<p>Durante un proyecto de traducción de las escrituras, un equipo generalmente se centrará por pasos en comprobar ciertos libros o porciones específicos. Por lo tanto, es importante poder filtrar las preguntas para ver solo las que son relevantes para el pasaje o pasajes que son actualmente de interés. Para filtrar por rango de referencia, haga lo siguiente:</p>
 <ol>
-  <li>On the <span class="ui">Filter menu</span> select <span class="ui">Set Reference Range</span>.</li>
-  <li>To enter the start and end references in the <span class="ui">From</span> and <span class="ui">To</span> boxes, do one of the following:</li>
-  <ul>
-    <li>Drop down the list of books and select one. Then select a chapter number fom the list. Finally, select a verse number. <span class="note">Note: The up and down arrow keys and <span class=key-name">Enter</span> can be used to select the desired book.</span></li>
-    <li>Type the full reference using the <a href="https://wiki.crosswire.org/OSIS_Book_Abbreviations">standard Paratext 3-letter book code</a> followed by a space, then the chapter number, a colon and the verse number.</li>
-  </ul>
-  <li>Click <span class="ui">OK</span> to apply the selected reference range</li>
+  <li>En el menú <span class="ui">Filtrar</span>, seleccione <span class="ui">Por citas bíblicas</span>.</li>
+  <li>Los cuadros para seleccionar las citas bíblicas funcionan igual que el selector de referencia en Paratext. Para introducir la cita de inicio y la cita final haga lo siguiente:</li>
+  <ol type="a">
+    <li>Escriba el <a href="https://wiki.crosswire.org/OSIS_Book_Abbreviations">código estándar del libro de 3 letras de Paratext</a> o selecciónelo en la lista desplegable, que está en orden canónico. Las teclas de las flechas arriba y abajo pueden utilizarse para seleccionar el libro deseado. Pulse la <span class="keyname">barra de espacio</span> o la tecla <span class="keyname">tab</span> para avanzar al cuadro de capítulos. (También puede hacer clic en el cuadro con el ratón.)</li>
+    <li>Escriba el número de capítulo (o haga clic en los botones de flecha para incrementar o disminuir el número de capítulo). Pulse la <span class="keyname">barra de espacio</span> o la tecla <span class="keyname">tab</span> para avanzar al cuadro de versículos. <span class="hint">Si está acostumbrado a escribir dos puntos (<span class="keyname">:</span>) entre el capítulo y el versículo, eso también funciona.</span></li>
+	<li>Por último, introduzca el número de versículo.</li>
+	<li>Para navegar entre las cajas <span class="ui">de</span> y <span class="ui">a</span> simplemente haga clic con el ratón, o utilice los atajos de teclado <span class="keyname">Alt+D</span> y <span class="keyname">Alt+A</span>. <span class="hint">El presionar <span class="keyname">Tab</span> en el cuadro del versículo le lleva de vuelta a la lista de libros.</span></li> 
+  </ol>
+  <li>Haga clic en <span class="ui">Aceptar</span> para aplicar las citas bíblicas seleccionadas.</li>
 </ol>
-<p>To remove a reference range filter, in the <span class="ui">Filter by Reference</span> dialog box, click <span class="ui">Clear Filter</span>.</p>
+<p>Para eliminar este filtro, en el cuadro de diálogo <span class="ui">Filtrar por citas bíblicas</span>, haga clic en <span class="ui">Eliminar filtro</span>.</p>
+<p><span class="note">Nota: las preguntas incorporadas en Transcelerator se basan en la versificación <span class="literal" translate="no">“English”</span> y siempre aparecen en la cuadrícula de acuerdo con ese sistema. Por lo tanto, el cuadro de diálogo <span class="ui">Filtrar por citas bíblicas</span> siempre utiliza la versificación <span class="literal" translate="no">English</span> también. Al generar las guías, las citas de las preguntas se convierten a la versificación del proyecto si es necesario.</span></p>
 
 <h3>Preguntas con vocablos bíblicos</h3>
-<p>To filter the list of questions to show only those which have no key biblical terms or whose biblical terms have vernacular renderings, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show Questions Where All Terms Have Renderings</span>. This filter can be used to allow a translator to focus on questions that do not have terms with no identified renderings, perhaps while waiting for decisions to be made about how to render certain terms.</p>
-<p>On the other hand, it might be also be helpful to see questions that use key biblical terms which are lacking renderings in the target vernacular in order to prioritize the decision-making process for those terms. To filter the list of questions to show only those which have key biblical terms lacking any vernacular renderings, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show Questions With Terms Missing Renderings</span>.</p>
-<p>To remove either of the above filters, on the <span class="ui">Filter menu</span>, point to <span class="ui">Biblical Terms</span> and then select <span class="ui">Show All (no filter)</span>. This will not clear the other types of filters.</p>
-<p><span class="note">Note: In cases where a key biblical term does not have any user-confirmed renderings, it is still considered to have a rendering if Paratext is able to make a statistically likely guess at the renderings. See <a href="biblicalterms.htm">more information about biblical terms</a>.</span></p>
+<p>Transcelerator permite filtrar la lista de preguntas al fin de mostrar solo aquellas que no tienen vocablos bíblicos o cuyos vocablos bíblicos tienen traducciones identificadas en el idioma de destino. Para hcerlo, en el menú <span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar preguntas donde todos los vocablos tienen traducciones</span>. Este filtro puede utilizarse para permitir que un traductor se centre en preguntas que no tienen vocablos sin traducciones identificadas, tal vez mientras espera a que se tomen decisiones sobre cómo traducir los demás vocablos.</p>
+<p>Por otro lado, también podría ser útil ver preguntas con vocablos bíblicos que carecen de traducciones en el idioma de destino para dar prioridad al proceso de toma de decisiones para esos vocablos. Para filtrar la lista de preguntas al fin de mostrar solo aquellas que tienen vocablos bíblicos sin traducciones identificadas, en el menú <span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar preguntas con vocablos sin traducción</span>.</p>
+<p>Para eliminar este tipo de filtro, en el menú<span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar todas (sin filtro)</span>. Esto no eliminará los otros tipos de filtros.</p>
+<p><span class="note">Nota: En casos donde un vocablo bíblico no tiene ninguna traducción confirmada por el usuario, todavía se considera que tiene una traducción si Paratext logra identificar una traducción probable utilizando un análisis estadístico. Vea <a href="biblicalterms.htm">más información sobre vocablos bíblicos</a>.</span></p>
 
 <h3>Filtros textuales</h3>
-<p>To look for questions that ask about a specific topic, use a certain term, or have a particular phrase or grammatical construct of interest, Transcelerator offers general textual filtering. This filtering applies to the source questions (in the current user interface language), not to translations. To filter for a particular word or phrase, type it in the <span class="ui">Question Filter</span> box on the main window's toolbar. To match whole words only, on the <span class="ui">Filter menu</span>, select <span class="ui">Match Whole Words When Filtering</span>. To remove a textual filter, simply delete the text in the <span class="ui">Question Filter</span> box.</p>
+<p>Para buscar preguntas sobre un tema específico, o que contienen un término o una frase particular o que utilizan una construcción gramatical de interés, Transcelerator ofrece un filtro textual. Este filtro se aplica a las preguntas de origen (en el idioma actual de la interfaz de usuario), no a las traducciones. Para implementar un filtro textual, escriba la palabra o frase deseada en el cuadro <span class="ui">Filtro de preguntas</span> en la barra de herramientas de la ventana principal. Para hacer coincidir solo palabras completas, en el menú <span class="ui">Filtrar</span>, seleccione <span class="ui">Coincidir palabras completas al filtrar</span>. Para eliminar un filtro textual, simplemente elimine el texto en el cuadro <span class="ui">Filtro de preguntas</span>.</p>
 
 <h3>Estado de filtro</h3>
-<p>The rightmost portion of toolbar in the main widnow indicates whether the data is currently filtered or unfiltered. Next to that you can see the number of questions that remain to be translated of those currently showing. If there is a filter set, these counts will include only those questions that match the filter.</p>
+<p>La parte más a la derecha de la barra de herramientas en la ventana principal indica si las preguntas están actualmente filtradas o no. Junto a eso, aparece el número de preguntas que quedan por traducir de las que se muestran actualmente. Si hay un filtro activo, estos recuentos incluirán solo aquellas preguntas que coincidan con el filtro.</p>
 
 <a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
+
+<p>Ver esta página en:</p>
+<menu>
+  <li><a class="menuitem" href="../es/filtering.htm" lang="es">Español</a></li>
+  <!-- <li><a class="menuitem" href="../fr/filtering.htm" lang="fr">français</a></li> -->
+</menu>
 </body>
 
 </html>

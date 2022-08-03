@@ -550,14 +550,16 @@ namespace SIL.Transcelerator
 		{
 			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
 				return;
-			SetWindowText();
 			SetControlTagsToFormatStringsAndFormatMenus();
+			SetWindowText();
 			UpdateCountsAndFilterStatus();
 		}
 
 		private void SetWindowText()
 		{
-			Text = Format(Text, m_project.ShortName) + ReadonlyAlert;
+			if (Tag == null)
+				Tag = Text;
+			Text = Format((string)Tag, m_project.ShortName) + ReadonlyAlert;
 		}
 
 		private void SetControlTagsToFormatStringsAndFormatMenus()
@@ -594,7 +596,8 @@ namespace SIL.Transcelerator
 				.GroupBy(GetGeneralCode).Where(g => g.Count() > 1).Select(g => g.Key);
 
 			mnuDisplayLanguage.InitializeWithAvailableUILocales(HandleDisplayLanguageSelected,
-				TxlPlugin.PrimaryLocalizationManager, ShowMoreUiLanguagesDlg,
+				TxlPlugin.PrimaryLocalizationManager, TxlPlugin.LocIncompleteViewModel,
+				ShowMoreUiLanguagesDlg,
 				locales.Where(l => languagesNeedingDistinctionByLocale.Contains(
 					GetGeneralCode(l))).ToDictionary(GetLanguageNameWithDetails, l => l));
 		}
@@ -2641,7 +2644,10 @@ namespace SIL.Transcelerator
 	        {
 				UpdateSplashScreenMessage(splashScreen,
 					LocalizationManager.GetString("SplashScreen.MsgParsingQuestions",
-		                "Processing questions for {0} using Major Biblical Terms list...", "Param is project name"));
+		                "Processing questions for {0} using Major Biblical Terms list...",
+		                "Param is the Paratext project name. If localizing into a language into which " +
+		                "Paratext is also localized, the name of the list should exactly match " +
+		                "the name used in Paratext"));
 
 	            List<PhraseCustomization> customizations = null;
 	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);

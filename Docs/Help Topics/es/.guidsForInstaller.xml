@@ -23,4 +23,15 @@
   <File Id="DocsDirP9.es.gettingstarted.htm" Guid="0e23a1ae-4d87-437f-a58e-48b90accb63e" />
   <File Id="DocsDirP9.es.renderingselectionrules.htm" Guid="e35d551d-253d-49d1-91b7-311bba855f89" />
   <File Id="DocsDirP9.es.reorderingwords.htm" Guid="d80c9589-85d9-46a7-b4c7-752e6ce5402f" />
+  <File Id="DocsDirP9_es.addingquestions.htm" Guid="6902fe70-ac60-4424-a5d8-cac4020bb502" />
+  <File Id="DocsDirP9_es.adjustments.htm" Guid="713259f4-522c-4bc8-b796-9a73e3fe100c" />
+  <File Id="DocsDirP9_es.biblicalterms.htm" Guid="02976e6a-00a0-4e9d-af90-18bc74c9bf8c" />
+  <File Id="DocsDirP9_es.editingquestions.htm" Guid="83779170-5cc2-41c0-9fd8-c02fa41e856a" />
+  <File Id="DocsDirP9_es.featureoverview.htm" Guid="9f5e33d0-d99a-4fbd-bf8f-2479cb32f41c" />
+  <File Id="DocsDirP9_es.filtering.htm" Guid="8c6331a6-2822-4cb8-a01d-a6c883f902cd" />
+  <File Id="DocsDirP9_es.generatescript.htm" Guid="7c8e44ec-9b1f-42bc-ae17-9771893b71e6" />
+  <File Id="DocsDirP9_es.gettingstarted.htm" Guid="109a3a52-0861-47a6-8b13-82f3e1cbbe12" />
+  <File Id="DocsDirP9_es.Home.htm" Guid="a174b5a2-a503-4556-bb86-7beef5d770da" />
+  <File Id="DocsDirP9_es.renderingselectionrules.htm" Guid="17f9ffc4-701c-4882-9193-079743e7c3bf" />
+  <File Id="DocsDirP9_es.reorderingwords.htm" Guid="63065ffd-8432-4be3-ae3f-68b831cc8b3d" />
 </InstallerMetadata>
