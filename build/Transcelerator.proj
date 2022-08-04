@@ -110,7 +110,7 @@
 		<!-- first remove any existing packages - if they were installed with appended version numbers nuget refuses to install it again, messing up things -->
 		<RemoveDir Directories="@(PackageDirs)" />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -version 3.11.1 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -version 3.15.2 -solutionDirectory "$(RootDir)"' />
 		<!-- The two extensions are required to show the tests on TC -->
 		<Exec Command='$(NuGetCommand) install NUnit.Extension.NUnitProjectLoader -excludeVersion -version 3.6.0 -solutionDirectory "$(RootDir)"' />
 		<Exec Command='$(NuGetCommand) install NUnit.Extension.TeamCityEventListener -excludeVersion -version 1.0.7 -solutionDirectory "$(RootDir)"' />
@@ -142,7 +142,7 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
-		<Message Text="Running NUnit 3 from $(RootDir)/packages/NUnit.ConsoleRunner.3.11.1/tools"/>
+		<Message Text="Running NUnit 3 from $(RootDir)/packages/NUnit.ConsoleRunner.3.15.2/tools"/>
 		<NUnit3
 			Assemblies="@(TestAssemblies)"
 			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
