@@ -25,6 +25,7 @@ using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
 using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Reporting;
+using SIL.WritingSystems;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -403,7 +404,7 @@ namespace SIL.Transcelerator
 		{
 			var filename = filenameWithoutExtension + ".htm";
 			return GetFileDistributedWithApplication(kDocsFolder,
-				LocalizationManager.UILanguageId, filename) ??
+					IetfLanguageTag.GetGeneralCode(LocalizationManager.UILanguageId), filename) ??
 				GetFileDistributedWithApplication(kDocsFolder,
 					kDefaultUILocale, filename);
 		}
