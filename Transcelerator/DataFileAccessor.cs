@@ -222,7 +222,8 @@ namespace SIL.Transcelerator
 					if (lockForFile == null && required)
 					{
 						ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
-							"Unable to obtain exclusive access to Txl"));
+							"Unable to obtain exclusive write access to data that belongs to Transcelerator: {0}",
+							"Param 0: key that indicates the data file that was to be written"), fileName);
 					}
 
 					m_locks[fileName] = lockForFile;

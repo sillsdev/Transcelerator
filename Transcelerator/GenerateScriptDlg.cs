@@ -140,7 +140,7 @@ namespace SIL.Transcelerator
 				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
 			}
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "generatescript.htm");
+			m_help = TxlPlugin.GetHelpFile("generatescript");
 			HelpButton = !IsNullOrEmpty(m_help);
 			
 			m_numBlankLines.ValueChanged += delegate
@@ -158,8 +158,10 @@ namespace SIL.Transcelerator
 			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
 			m_fmtChkEnglishQuestions = m_chkIncludeLWCQuestions.Text;
 			m_fmtChkEnglishAnswers = m_chkIncludeLWCAnswers.Text;
 			m_fmtChkIncludeComments = m_chkIncludeLWCComments.Text;

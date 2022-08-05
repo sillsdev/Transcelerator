@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="DocsDirP9Beta.es.Home.htm" Guid="bbfc969d-8400-4704-ab24-f2269c338745" />
+  <File Id="DocsDirP9.es.Home.htm" Guid="7214c729-2dc7-485d-851f-ec4ff7df90d6" />
+  <File Id="DocsDirP9Beta.es.addingquestions.htm" Guid="e7928cbb-1127-45c1-9b2d-dc35e59fca3d" />
+  <File Id="DocsDirP9Beta.es.adjustments.htm" Guid="2a7f42cf-5163-4c09-819d-6a93dfce909d" />
+  <File Id="DocsDirP9Beta.es.biblicalterms.htm" Guid="ac696df0-2107-488a-8e77-4898e07e95ad" />
+  <File Id="DocsDirP9Beta.es.editingquestions.htm" Guid="2fe0f1f6-78bd-4d6a-aac5-bfe9fba81031" />
+  <File Id="DocsDirP9Beta.es.featureoverview.htm" Guid="1fa992b5-4631-4c1d-9fc2-1eb761015323" />
+  <File Id="DocsDirP9Beta.es.filtering.htm" Guid="16db19b6-9d6e-4d32-83cd-e59c4fc55a3c" />
+  <File Id="DocsDirP9Beta.es.generatescript.htm" Guid="2a05a88c-9eed-472c-a8e4-6160c1a61562" />
+  <File Id="DocsDirP9Beta.es.gettingstarted.htm" Guid="14dbd894-15a4-4aba-b6cb-129373a363d8" />
+  <File Id="DocsDirP9Beta.es.renderingselectionrules.htm" Guid="c6abb153-b91e-49b4-aa67-a587ce51e94c" />
+  <File Id="DocsDirP9Beta.es.reorderingwords.htm" Guid="a909cc2e-e971-4fb9-9ab6-cf298a48bb6e" />
+  <File Id="DocsDirP9.es.addingquestions.htm" Guid="6c4a2e5d-0e1b-4e5c-9850-c582d443af5b" />
+  <File Id="DocsDirP9.es.adjustments.htm" Guid="913e6435-2b75-479d-8520-b38b5654698f" />
+  <File Id="DocsDirP9.es.biblicalterms.htm" Guid="d7acf206-3281-4762-aaa6-efbb309a2d33" />
+  <File Id="DocsDirP9.es.editingquestions.htm" Guid="2db09322-db80-44df-a558-41fb9ed19589" />
+  <File Id="DocsDirP9.es.featureoverview.htm" Guid="26470dd2-969f-465e-b98c-ca7bc8f9a526" />
+  <File Id="DocsDirP9.es.filtering.htm" Guid="7a1ec18e-8eff-440c-8493-a224823cbb46" />
+  <File Id="DocsDirP9.es.generatescript.htm" Guid="195a8cfd-0d93-476f-a148-d9c2dd2db51d" />
+  <File Id="DocsDirP9.es.gettingstarted.htm" Guid="0e23a1ae-4d87-437f-a58e-48b90accb63e" />
+  <File Id="DocsDirP9.es.renderingselectionrules.htm" Guid="e35d551d-253d-49d1-91b7-311bba855f89" />
+  <File Id="DocsDirP9.es.reorderingwords.htm" Guid="d80c9589-85d9-46a7-b4c7-752e6ce5402f" />
+  <File Id="DocsDirP9_es.addingquestions.htm" Guid="6902fe70-ac60-4424-a5d8-cac4020bb502" />
+  <File Id="DocsDirP9_es.adjustments.htm" Guid="713259f4-522c-4bc8-b796-9a73e3fe100c" />
+  <File Id="DocsDirP9_es.biblicalterms.htm" Guid="02976e6a-00a0-4e9d-af90-18bc74c9bf8c" />
+  <File Id="DocsDirP9_es.editingquestions.htm" Guid="83779170-5cc2-41c0-9fd8-c02fa41e856a" />
+  <File Id="DocsDirP9_es.featureoverview.htm" Guid="9f5e33d0-d99a-4fbd-bf8f-2479cb32f41c" />
+  <File Id="DocsDirP9_es.filtering.htm" Guid="8c6331a6-2822-4cb8-a01d-a6c883f902cd" />
+  <File Id="DocsDirP9_es.generatescript.htm" Guid="7c8e44ec-9b1f-42bc-ae17-9771893b71e6" />
+  <File Id="DocsDirP9_es.gettingstarted.htm" Guid="109a3a52-0861-47a6-8b13-82f3e1cbbe12" />
+  <File Id="DocsDirP9_es.Home.htm" Guid="a174b5a2-a503-4556-bb86-7beef5d770da" />
+  <File Id="DocsDirP9_es.renderingselectionrules.htm" Guid="17f9ffc4-701c-4882-9193-079743e7c3bf" />
+  <File Id="DocsDirP9_es.reorderingwords.htm" Guid="63065ffd-8432-4be3-ae3f-68b831cc8b3d" />
+</InstallerMetadata>

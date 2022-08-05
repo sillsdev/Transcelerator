@@ -1,0 +1,57 @@
+﻿<html> 
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+  <title>Editar preguntas</title>
+  <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
+  <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
+  <link rel="stylesheet" type="text/css" href="../TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Como editar las preguntas</h2>
+
+<p>Transcelerator permite modificar la redacción de las preguntas de origen. Hay dos razones por las que probablemente se deben editar las preguntas de origen:</p>
+<ol>
+  <li>La razón principal es mejorar la redacción para facilitar la traducción al idioma de destino. Por ejemplo, si una pregunta utiliza una palabra o construcción gramatical que es poco probable que sea familiar para la persona que traduce la pregunta, se puede editar la pregunta para expresar la misma idea en forma más sencilla.</li>
+  <li>Incluso si el traductor entiende la redacción de la pregunta de origen, si la pregunta se va traducir de una manera muy diferente en el idioma de destino, el desajuste entre las palabras y las expresiones utilizadas en la pregunta original y la pregunta traducida dificultará a Transcelerator conjeturar una traducicón adecuada. En la mayoría de los casos, esto es de menos importancia, pero en algunos casos, podría valer la pena el esfuerzo por alinear mejor la redacción de la pregunta de origen a la traducción en el idioma de destino.</li>
+</ol>
+<p>Probablemente el caso más común en el que se optará por modificar una pregunta de origen es cuando tiene variantes con <a href="#alternates">redacciones alternativas</a>. <span class="emphasis">No se debe</span> editar una pregunta existente para hacer una pregunta completamente diferente a la original. Las respuestas y comentarios (si existen) correspondientes a la pregunta original no son editables, así que no tendrán sentido si se cambia la pregunta de esta manera. Si desea hacer una pregunta diferente, mejor se debe <a href="#excluding">excluir</a> la pregunta original y <a href="addingquestions.htm">añadir una nueva pregunta</a>.</p>
+
+<h3 id="edit-column">Como utilizar la columna Editar</h3>
+<p>La columna <span class="ui">Editar</span> es útil para ajustar las preguntas de origen. Los iconos que aparecen en esta columna sirven como indicadores del estado de la pregunta (si es modificada, excluida, etc.) asi como botones de acceso directo para que no tenga que abrir el menú contextual para acceder al comando para editar la pregunta. Esto es lo que cada uno de los iconos significa:</p>
+<ul>
+  <li><img src="../iconfinder_edit_3855617.png">El icono normal que se muestra para la mayoría de las preguntas.</li>
+  <li><img src="../iconfinder_edit_3855617 - user-added.png">Indica una pregunta que fue añadida o modificada por el usuario.</li>
+  <li><img src="../iconfinder_edit_3855617 - with-alternatives.png">Este icono más brillante indica una pregunta que tiene opciones de <a href="#alternates">redacciones alternativas</a> predeterminadas pero que no ha sido modificada ni se ha seleccionado una alternativa.</li>
+  <li><img src="../iconfinder_edit_3855617 - excluded.png">Indica una pregunta que el usuario eligió <a href="#excluding">excluir</a>. Este icono solo aparecerá cuando <a href="#view-excluded-questions">se están mostrando preguntas excluidas</a>. A diferencia de los otros iconos de la columna <span class="ui">Editar</span>, hacer clic en este icono no abrirá el cuadro de diálogo <span class="ui">Editar Pregunta</span>; más bien, volverá a incluir la pregunta.</li>
+</ul>
+<p>La columna <span class="ui">Editar</span> está oculta por defecto. Para mostrarlo, en el menú <span class="ui">Ver</span>, seleccione <span class="ui">Columna: Editar pregunta</span>. Para evitar confusión y conservar el espacio en la pantalla, probablemente se debe mantener esta columna oculta cuando está editando traducciones en Transcelerator.</p>
+
+<h3 id="alternates">Preguntas con redacciones alternativas</h3>
+<p>Muchas de las preguntas incorporadas en Transcelerator tienen variantes con redacciones alternativas. En la mayoría de los casos, estas preguntas tendrán barras oblicuas o corchetes cuadrados que indican palabras alternativas y opcionales. Es posible traducir las preguntas para reflejar todas las palabras alternativas y opcionales, utilizando puntuación similar a la utilizada en las preguntas de origen. Sin embargo, esto normalmente dará lugar a preguntas que son más difíciles de leer y entender; así que las traducciones normalmente deben elaborarse en forma sencilla. Las partes opcionales (entre paréntesis) deben incluirse solamente si se supone que esto hará que la pregunta sea más fácil de entender para el encuestado. Si está mostrando la columna <a href="#edit-column"><span class="ui">Editar</span></a>, será fácil ver qué preguntas tienen formularios alternativos, ya que esa columna mostrará el icono <img src="../iconfinder_edit_3855617 - with-alternatives.png">. No es necesario seleccionar una sola forma alternativa de la pregunta (o redactarla en forma personalizada), pero el hacerlo generalmente ayudará a minimizar la confusión al traducirla. La siguiente sección explica cómo Transcelerator facilia esto.</p>
+
+<h3>Como usar el cuadro de diálogo Editar pregunta</h3>
+<p>Para abrir el cuadro de diálogo <span class="ui">Editar pregunta</span> haga clic en el icono en la <a href="#edit-column"><span class="ui">Editar</span> columna</a>, o en el menú contextual en la cuadrícula principal, seleccione <span class="ui">Editar pregunta</span>.</p>
+<p>La parte superior del cuadro de diálogo <span class="ui">Editar pregunta</span> muestra la versión original de la pregunta. Si previamente se ha editado una pregunta y luego se descubre que no era buena la redacción, el hacer clic en el botón <span class="ui">Reiniciar</span> le volverá a la versión original. Si fuere necesario, ésta se puede usar como punto de partida para redactarla de nuevo. <span class="note">Nota: En la mayoría de los casos, si la pregunta tiene variantes con <a href="#alternates">redacciones alternativas</a>, el texto de la pregunta original será una versión confusa que incluye todas las partes alternativas y opcionales.</span></p>
+<p>Si la pregunta tiene variantes con <a href="#alternates">redacciones alternativas</a>, la parte central del cuadro de diálogo <span class="ui">Editar pregunta</span> tendrá una serie de opciones que representan todas las formas alternativas predeterminadas de la pregunta. Normalmente, solo hay unas pocas opciones entre las cuales se pueden seleccionar, pero las preguntas muy complejas pueden tener muchas alternativas. En esos casos, puede ser un poco difícil leer todas las alternativas y asegurarse de que está seleccionando la versión deseada. <span class="hint">Consejo: Si la lista de alternativas está cortada, puede aumentar el tamaño del cuadro de diálogo para que todas sean visibles.</span></p>
+<p>La parte inferior del cuadro de diálogo <span class="ui">Editar pregunta</span> contiene un cuadro para editar la pregunta según sea necesario. Si la pregunta tiene alternativas, primero elija la mejor alternativa, y luego haga cualquier redacción adicional. Al hacer clic en el botón <span class="ui">Aceptar</span>, el texto que aparece en la cuadro <span class="ui">Pregunta para usar</span> es lo que aparecerá en la cuadrícula principal.</p>
+
+<p><span class="note">Nota: Si las preguntas de origen se muestran en un idioma distinto del inglés y Transcelerator tiene la pregunta traducida (localizada) en ese idioma, el cuadro de diálogo <span class="ui">Editar pregunta</span> mostrará la pregunta en el idioma de la interfaz junto con sus alternativas localizadas, si es aplicable. Si guarda una versión redactada de la pregunta que no corresponde exactamente a una alternativa localizada, esa versión (en cualquier idioma que esté escrito) se mostrará en la cuadrícula principal aun si luego cambia para mostrar la interfaz en otro idioma. Lastimosamente, no existe la opción de guardar versiones redactadas de las preguntas en más que un solo idioma.</span></p>
+
+<h3 id="excluding">Como excluir preguntas</h3>
+<p>Si una pregunta es redundante, no parece apropiada ni significativa en la cultura o idioma de destino o no es necesaria, puede ser excluida. Esto hará que desaparezca de la cuadrícula principal y se omitirá de cualquier guía generada por Transcelerator y asimismo de los archivos producidos para ser incluidos en <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a>. Para excluir una pregunta, abra el menú contextual y seleccione <span class="ui">Excluir pregunta</span>.</p>
+<p id="view-excluded-questions"><span class="note">Nota: Si previamente excluyó las preguntas y desea verlas, en el menú <span class="ui">Ver</span>, seleccione <span class="ui">Preguntas excluidas</span>. Las preguntas excluidas se resaltan con un fondo de color para hacerlas más fáciles de distinguir del resto de preguntas. Para volver a incluir una pregunta previamente excluida, utilice el comando <span class="ui">Incluir pregunta</span> en el menú contextual o haga clic en el icono <img src="../iconfinder_edit_3855617 - excluded.png"> en la columna <span class="ui">Editar</span>.</span></p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
+
+<p>Ver esta página en:</p>
+<menu>
+  <li><a class="menuitem" href="../es/editingquestions.htm" lang="es">Español</a></li>
+  <!-- <li><a class="menuitem" href="../fr/editingquestions.htm" lang="fr">français</a></li> -->
+</menu>
+</body>
+
+</html>

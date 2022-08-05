@@ -118,9 +118,6 @@ namespace SIL.Transcelerator
 			this.mnuViewExcludedQuestions = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuDisplayLanguage = new System.Windows.Forms.ToolStripMenuItem();
-			this.en_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripMenuItemMoreLanguages = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuAdvanced = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuPhraseSubstitutions = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuBiblicalTermsRenderingSelectionRules = new System.Windows.Forms.ToolStripMenuItem();
@@ -879,10 +876,6 @@ namespace SIL.Transcelerator
 			// 
 			// mnuDisplayLanguage
 			// 
-			this.mnuDisplayLanguage.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.en_ToolStripMenuItem,
-            this.toolStripSeparator10,
-            this.toolStripMenuItemMoreLanguages});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuDisplayLanguage, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuDisplayLanguage, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
@@ -890,35 +883,6 @@ namespace SIL.Transcelerator
 			this.mnuDisplayLanguage.Name = "mnuDisplayLanguage";
 			this.mnuDisplayLanguage.Size = new System.Drawing.Size(226, 22);
 			this.mnuDisplayLanguage.Text = "&Display Language";
-			// 
-			// en_ToolStripMenuItem
-			// 
-			this.en_ToolStripMenuItem.Checked = true;
-			this.en_ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.en_ToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.en_ToolStripMenuItem, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.en_ToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.en_ToolStripMenuItem, "MainWindow.en_ToolStripMenuItem");
-			this.en_ToolStripMenuItem.Name = "en_ToolStripMenuItem";
-			this.en_ToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
-			this.en_ToolStripMenuItem.Tag = "en-US";
-			this.en_ToolStripMenuItem.Text = "American English";
-			this.en_ToolStripMenuItem.Click += new System.EventHandler(this.HandleDisplayLanguageSelected);
-			// 
-			// toolStripSeparator10
-			// 
-			this.toolStripSeparator10.Name = "toolStripSeparator10";
-			this.toolStripSeparator10.Size = new System.Drawing.Size(163, 6);
-			// 
-			// toolStripMenuItemMoreLanguages
-			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripMenuItemMoreLanguages, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripMenuItemMoreLanguages, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripMenuItemMoreLanguages, "MainWindow.UNSQuestionsDialog.toolStripMenuItemMoreLanguages");
-			this.toolStripMenuItemMoreLanguages.Name = "toolStripMenuItemMoreLanguages";
-			this.toolStripMenuItemMoreLanguages.Size = new System.Drawing.Size(166, 22);
-			this.toolStripMenuItemMoreLanguages.Text = "&More...";
-			this.toolStripMenuItemMoreLanguages.Click += new System.EventHandler(this.toolStripMenuItemMoreLanguages_Click);
 			// 
 			// mnuAdvanced
 			// 
@@ -1355,13 +1319,10 @@ namespace SIL.Transcelerator
 		private ToolStripMenuItem mnuShiftWordsLeft;
 		private ToolStripSeparator toolStripSeparator9;
 		private ToolStripMenuItem mnuDisplayLanguage;
-		private ToolStripMenuItem en_ToolStripMenuItem;
 		private ToolStripMenuItem mnuProduceScriptureForgeFiles;
 		private L10NSharp.UI.L10NSharpExtender l10NSharpExtender1;
 		private ToolStripMenuItem mnuViewDebugInfo;
-		private ToolStripSeparator toolStripSeparator10;
 		private ToolStripMenuItem browseTopicsToolStripMenuItem;
-		private ToolStripMenuItem toolStripMenuItemMoreLanguages;
 		private ToolStripMenuItem mnuViewEditQuestionColumn;
 		private DataGridViewTextBoxColumn m_colReference;
 		private DataGridViewTextBoxColumn m_colEnglish;

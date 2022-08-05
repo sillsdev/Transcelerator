@@ -1,0 +1,54 @@
+﻿<html> 
+
+<head>
+  <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+  <title>Filtros</title>
+  <link rel="icon" href="../../TXL no TXL.ico"> <!-- installed -->
+  <link rel="icon" href="../../../Transcelerator/TXL no TXL.ico"> <!-- dev or github -->
+  <link rel="stylesheet" type="text/css" href="../TxlHelp.css"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body lang=EN-US>
+
+<h2>Filtros</h2>
+<p>Transcelerator permite filtrar las preguntas en la ventana principal de tres maneras. Los filtros solo determinan si las preguntas aparecen en la cuadrícula. No afecta en ninguna manera las guías ni los archivos de salida de <a href="https://software.sil.org/transcelerator/working-with-scripture-forge/">Scripture Forge</a>. <span >Nota: Si no desea usar alguna pregunta, puede <a href="editingquestions.htm#excluding">excluirla</a> para que tampoco esté incluida en las guías ni los archivos producidos por Transcelerator.</p>
+
+<h3>Por citas bíblicas</h3>
+<p>Durante un proyecto de traducción de las escrituras, un equipo generalmente se centrará por pasos en comprobar ciertos libros o porciones específicos. Por lo tanto, es importante poder filtrar las preguntas para ver solo las que son relevantes para el pasaje o pasajes que son actualmente de interés. Para filtrar por rango de referencia, haga lo siguiente:</p>
+<ol>
+  <li>En el menú <span class="ui">Filtrar</span>, seleccione <span class="ui">Por citas bíblicas</span>.</li>
+  <li>Los cuadros para seleccionar las citas bíblicas funcionan igual que el selector de referencia en Paratext. Para introducir la cita de inicio y la cita final haga lo siguiente:</li>
+  <ol type="a">
+    <li>Escriba el <a href="https://wiki.crosswire.org/OSIS_Book_Abbreviations">código estándar del libro de 3 letras de Paratext</a> o selecciónelo en la lista desplegable, que está en orden canónico. Las teclas de las flechas arriba y abajo pueden utilizarse para seleccionar el libro deseado. Pulse la <span class="keyname">barra de espacio</span> o la tecla <span class="keyname">tab</span> para avanzar al cuadro de capítulos. (También puede hacer clic en el cuadro con el ratón.)</li>
+    <li>Escriba el número de capítulo (o haga clic en los botones de flecha para incrementar o disminuir el número de capítulo). Pulse la <span class="keyname">barra de espacio</span> o la tecla <span class="keyname">tab</span> para avanzar al cuadro de versículos. <span class="hint">Si está acostumbrado a escribir dos puntos (<span class="keyname">:</span>) entre el capítulo y el versículo, eso también funciona.</span></li>
+	<li>Por último, introduzca el número de versículo.</li>
+	<li>Para navegar entre las cajas <span class="ui">de</span> y <span class="ui">a</span> simplemente haga clic con el ratón, o utilice los atajos de teclado <span class="keyname">Alt+D</span> y <span class="keyname">Alt+A</span>. <span class="hint">El presionar <span class="keyname">Tab</span> en el cuadro del versículo le lleva de vuelta a la lista de libros.</span></li> 
+  </ol>
+  <li>Haga clic en <span class="ui">Aceptar</span> para aplicar las citas bíblicas seleccionadas.</li>
+</ol>
+<p>Para eliminar este filtro, en el cuadro de diálogo <span class="ui">Filtrar por citas bíblicas</span>, haga clic en <span class="ui">Eliminar filtro</span>.</p>
+<p><span class="note">Nota: las preguntas incorporadas en Transcelerator se basan en la versificación <span class="literal" translate="no">“English”</span> y siempre aparecen en la cuadrícula de acuerdo con ese sistema. Por lo tanto, el cuadro de diálogo <span class="ui">Filtrar por citas bíblicas</span> siempre utiliza la versificación <span class="literal" translate="no">English</span> también. Al generar las guías, las citas de las preguntas se convierten a la versificación del proyecto si es necesario.</span></p>
+
+<h3>Preguntas con vocablos bíblicos</h3>
+<p>Transcelerator permite filtrar la lista de preguntas al fin de mostrar solo aquellas que no tienen vocablos bíblicos o cuyos vocablos bíblicos tienen traducciones identificadas en el idioma de destino. Para hcerlo, en el menú <span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar preguntas donde todos los vocablos tienen traducciones</span>. Este filtro puede utilizarse para permitir que un traductor se centre en preguntas que no tienen vocablos sin traducciones identificadas, tal vez mientras espera a que se tomen decisiones sobre cómo traducir los demás vocablos.</p>
+<p>Por otro lado, también podría ser útil ver preguntas con vocablos bíblicos que carecen de traducciones en el idioma de destino para dar prioridad al proceso de toma de decisiones para esos vocablos. Para filtrar la lista de preguntas al fin de mostrar solo aquellas que tienen vocablos bíblicos sin traducciones identificadas, en el menú <span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar preguntas con vocablos sin traducción</span>.</p>
+<p>Para eliminar este tipo de filtro, en el menú<span class="ui">Filtrar</span>, apunta a <span class="ui">Vocablos bíblicos</span> y luego selecciona <span class="ui">Mostrar todas (sin filtro)</span>. Esto no eliminará los otros tipos de filtros.</p>
+<p><span class="note">Nota: En casos donde un vocablo bíblico no tiene ninguna traducción confirmada por el usuario, todavía se considera que tiene una traducción si Paratext logra identificar una traducción probable utilizando un análisis estadístico. Vea <a href="biblicalterms.htm">más información sobre vocablos bíblicos</a>.</span></p>
+
+<h3>Filtros textuales</h3>
+<p>Para buscar preguntas sobre un tema específico, o que contienen un término o una frase particular o que utilizan una construcción gramatical de interés, Transcelerator ofrece un filtro textual. Este filtro se aplica a las preguntas de origen (en el idioma actual de la interfaz de usuario), no a las traducciones. Para implementar un filtro textual, escriba la palabra o frase deseada en el cuadro <span class="ui">Filtro de preguntas</span> en la barra de herramientas de la ventana principal. Para hacer coincidir solo palabras completas, en el menú <span class="ui">Filtrar</span>, seleccione <span class="ui">Coincidir palabras completas al filtrar</span>. Para eliminar un filtro textual, simplemente elimine el texto en el cuadro <span class="ui">Filtro de preguntas</span>.</p>
+
+<h3>Estado de filtro</h3>
+<p>La parte más a la derecha de la barra de herramientas en la ventana principal indica si las preguntas están actualmente filtradas o no. Junto a eso, aparece el número de preguntas que quedan por traducir de las que se muestran actualmente. Si hay un filtro activo, estos recuentos incluirán solo aquellas preguntas que coincidan con el filtro.</p>
+
+<a href="Home.htm"><i class="material-icons">home</i>Inicio</a>
+
+<p>Ver esta página en:</p>
+<menu>
+  <li><a class="menuitem" href="../es/filtering.htm" lang="es">Español</a></li>
+  <!-- <li><a class="menuitem" href="../fr/filtering.htm" lang="fr">français</a></li> -->
+</menu>
+</body>
+
+</html>

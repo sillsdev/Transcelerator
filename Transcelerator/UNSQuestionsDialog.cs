@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -35,9 +36,10 @@ using L10NSharp.XLiffUtils;
 using Paratext.PluginInterfaces;
 using SIL.Reporting;
 using SIL.Windows.Forms;
-using SIL.WritingSystems;
+using SIL.Windows.Forms.Extensions;
 using static System.Char;
 using static System.String;
+using static SIL.WritingSystems.IetfLanguageTag;
 using Application = System.Windows.Forms.Application;
 using DateTime = System.DateTime;
 using File = System.IO.File;
@@ -67,7 +69,6 @@ namespace SIL.Transcelerator
 		private readonly IPluginHost m_host;
 		private readonly IProject m_project;
 		private readonly Action<bool> m_selectKeyboard;
-		private readonly string m_helpHome;
 		private LocalizationsFileAccessor m_dataLocalizer;
 		private BiblicalTermLocalizer m_termLocalizer;
 		private PhraseTranslationHelper m_helper;
@@ -250,6 +251,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private bool EditingTranslation => InTranslationCell &&
 			dataGridUns.IsCurrentCellInEditMode;
+
+		private string HelpHome => TxlPlugin.GetHelpFile("Home");
 		#endregion
 
 		#region Constructors
@@ -291,12 +294,10 @@ namespace SIL.Transcelerator
 		/// <param name="selectKeyboard">The delegate to select vern/anal keyboard</param>
 		/// <param name="sendReference">The callback to notify the host that Transcelerator is
 		/// looking at a particular Scripture reference.</param>
-		/// <param name="preferredUiLocale">THE BCP-47 locale identifier to use for the user
-		/// interface (including localized questions, answers, etc.)</param>
 		/// ------------------------------------------------------------------------------------
 		public UNSQuestionsDialog(IPluginHost host, IProject project,
 			IVerseRef startRef, IVerseRef endRef,
-			Action<bool> selectKeyboard, Action<BCVRef> sendReference, string preferredUiLocale)
+			Action<bool> selectKeyboard, Action<BCVRef> sendReference)
 		{
 			if (startRef != default && endRef != default && startRef.CompareTo(endRef) > 0)
 				throw new ArgumentException("startRef must be before endRef");
@@ -324,13 +325,12 @@ namespace SIL.Transcelerator
 			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlCore.kQuestionsFilename);
 
-			m_helpHome = TxlPlugin.GetFileDistributedWithApplication("docs", "Home.htm");
+			var preferredUiLocale = LocalizationManager.UILanguageId;
 
 			if (!IsNullOrEmpty(Properties.Settings.Default.OverrideDisplayLanguage))
 			{
 				preferredUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
-				if (preferredUiLocale.Length >= 2 && LocalizationManager.UILanguageId.Length >= 2 &&
-					preferredUiLocale.Substring(0, 2) != LocalizationManager.UILanguageId.Substring(0, 2))
+				if (GetGeneralCode(preferredUiLocale) != GetGeneralCode(LocalizationManager.UILanguageId))
 				{
 					// Unless/until we ship UI strings for different variants of the same language,
 					// there is no need to try to tell the LocalizationManager to load a different
@@ -340,13 +340,12 @@ namespace SIL.Transcelerator
 				}
 			}
 
-			PopulateAvailableLocales();
-			AddAvailableLocalizationsToMenu(preferredUiLocale);
+			AddAvailableLocalizationsToMenu();
 			SetLocalizer(preferredUiLocale);
 
 			ClearBiblicalTermsPane();
 
-			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(m_helpHome);
+			HelpButton = browseTopicsToolStripMenuItem.Enabled = !IsNullOrEmpty(HelpHome);
 
 			mnuShowAllPhrases.Tag = PhraseTranslationHelper.KeyTermFilterType.All;
 			mnuShowPhrasesWithKtRenderings.Tag = PhraseTranslationHelper.KeyTermFilterType.WithRenderings;
@@ -547,16 +546,20 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
-			SetWindowText();
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
 			SetControlTagsToFormatStringsAndFormatMenus();
+			SetWindowText();
 			UpdateCountsAndFilterStatus();
 		}
 
 		private void SetWindowText()
 		{
-			Text = Format(Text, m_project.ShortName) + ReadonlyAlert;
+			if (Tag == null)
+				Tag = Text;
+			Text = Format((string)Tag, m_project.ShortName) + ReadonlyAlert;
 		}
 
 		private void SetControlTagsToFormatStringsAndFormatMenus()
@@ -569,72 +572,34 @@ namespace SIL.Transcelerator
 			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text, kScriptureForgeProductName);
 		}
 
-		private void PopulateAvailableLocales()
+		private static string GetLanguageNameWithDetails(string code)
 		{
-			Sldr.Initialize();
 			try
 			{
-				void AddToAvailableLocales(string name, string locale)
-				{
-					if (AvailableLocales.ContainsValue(locale))
-						return;
-					switch (locale)
-					{
-						case "es":
-						case "es-ES":
-							// Unfortunately, the "native name" includes "alfabetización internacional".
-							// We're aiming for something short and sweet.
-							name = "español";
-							break;
-						case "en-GB":
-							name = "British English";
-							break;
-						case "en-US":
-						case "en":
-							// English (US) is the default. No need to add it.
-							return;
-					}
-
-					AvailableLocales[name] = locale;
-				}
-
-				var repo = GlobalWritingSystemRepository.Initialize();
-				// First add the locales from L10nSharp, since it uses CultureInfo (plus a few hard-coded names)
-				// to provide the native name of the language in some cases.
-				foreach (var lang in LocalizationManager.GetUILanguages(true))
-					AddToAvailableLocales(lang.NativeName, lang.IetfLanguageTag);
-				foreach (var locale in LocalizationsFileAccessor.GetAvailableLocales(m_installDir))
-				{
-					string languageName = repo.TryGet(locale, out WritingSystemDefinition wsDef) ?
-						wsDef.Language.Name : locale;
-					AddToAvailableLocales(languageName, locale);
-				}
+				var ci = CultureInfo.GetCultureInfo(code); // this may throw or produce worthless empty object
+				if (!ci.EnglishName.StartsWith("Unknown Language"))	// Windows .Net behavior
+					return ci.NativeName;
 			}
-			finally
+			catch (Exception e)
 			{
-				Sldr.Cleanup();
+				Logger.WriteError(e);
 			}
+
+			return GetNativeLanguageNameWithEnglishSubtitle(code);
 		}
 
-		private void AddAvailableLocalizationsToMenu(string preferredLocale)
+		private void AddAvailableLocalizationsToMenu()
 		{
-			var menuItemNameSuffix = en_ToolStripMenuItem.Name.Substring(2);
-			int insertAt = mnuDisplayLanguage.DropDownItems.IndexOf(en_ToolStripMenuItem) + 1;
-			foreach (var availableLocalization in AvailableLocales)
-			{
-				var subItem = new ToolStripMenuItem(availableLocalization.Key)
-				{
-					Tag = availableLocalization.Value,
-					Name = availableLocalization.Value + menuItemNameSuffix
-				};
-				mnuDisplayLanguage.DropDownItems.Insert(insertAt++, subItem);
-				if (availableLocalization.Value == preferredLocale)
-				{
-					en_ToolStripMenuItem.Checked = false;
-					subItem.Checked = true;
-				}
-				subItem.Click += HandleDisplayLanguageSelected;
-			}
+			var locales = LocalizationsFileAccessor
+				.GetAvailableLocales(m_installDir).Union(new[] { "en-US" }).ToList();
+			var languagesNeedingDistinctionByLocale = locales
+				.GroupBy(GetGeneralCode).Where(g => g.Count() > 1).Select(g => g.Key);
+
+			mnuDisplayLanguage.InitializeWithAvailableUILocales(HandleDisplayLanguageSelected,
+				TxlPlugin.PrimaryLocalizationManager, TxlPlugin.LocIncompleteViewModel,
+				ShowMoreUiLanguagesDlg,
+				locales.Where(l => languagesNeedingDistinctionByLocale.Contains(
+					GetGeneralCode(l))).ToDictionary(GetLanguageNameWithDetails, l => l));
 		}
 
 		private void SetLocalizer(string preferredUiLocale)
@@ -1575,9 +1540,17 @@ namespace SIL.Transcelerator
 				tw.WriteLine(new UsfmStyleBasedCss(fontInfo.FontFamily, fontInfo.Features,
 					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS());
 			};
+
+			var locales = new Dictionary<string, string>();
+			foreach (var item in mnuDisplayLanguage.DropDownItems)
+			{
+				if (!(item is ToolStripButton menu))
+					break;
+				locales[(string)menu.Tag] = menu.Text;
+			}
 			
 			GenerateScriptDlg generateScriptDlg = new GenerateScriptDlg(m_project.ShortName,
-				defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, AvailableLocales,
+				defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, locales,
 				scriptGenerator);
 
 			ShowModalChild(generateScriptDlg, dlg =>
@@ -2533,34 +2506,36 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void browseTopicsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Process.Start(m_helpHome);
+			Process.Start(HelpHome);
 		}
 
-		private void HandleDisplayLanguageSelected(object sender, EventArgs e)
+		private bool HandleDisplayLanguageSelected(string languageId)
 		{
-			var clickedMenu = (ToolStripMenuItem)sender;
-			if (clickedMenu.Checked)
-				return;
-			clickedMenu.Checked = true;
-			foreach (var subMenu in mnuDisplayLanguage.DropDownItems.OfType<ToolStripMenuItem>().Where(i => i.Tag != null))
-			{
-				if (subMenu != clickedMenu)
-					subMenu.Checked = false;
-			}
-			var localeId = (string)clickedMenu.Tag;
-			SetLocalizer(localeId);
-			Properties.Settings.Default.OverrideDisplayLanguage = localeId;
+			var previousLocale = m_dataLocalizer?.Locale ?? "en-us";
+			Analytics.Track("UI language chosen",
+				new Dictionary<string, string> {
+					{ "Previous", previousLocale },
+					{ "New", languageId } });
+			Logger.WriteEvent("UI language changed from " +
+				$"{previousLocale} to {languageId}");
+			SetLocalizer(languageId);
+			TxlPlugin.UpdateUiLanguageForUser(languageId);
+
+			Properties.Settings.Default.OverrideDisplayLanguage = languageId;
 			if (txtFilterByPart.Text.Trim().Length > 0)
 				ApplyFilter();
 			else
 				dataGridUns.Invalidate();
 			LoadAnswersAndCommentsIfShowing(null, null);
-			LocalizationManager.SetUILanguage(localeId, true);
+			
+			return true;
 		}
-		
-		private void toolStripMenuItemMoreLanguages_Click(object sender, EventArgs e)
+
+		private bool ShowMoreUiLanguagesDlg()
 		{
+			Analytics.Track("Clicked More on UI locale menu");
 			ShowModalChild(new MoreUiLanguagesDlg(mnuDisplayLanguage));
+			return false;
 		}
 		#endregion
 
@@ -2669,7 +2644,10 @@ namespace SIL.Transcelerator
 	        {
 				UpdateSplashScreenMessage(splashScreen,
 					LocalizationManager.GetString("SplashScreen.MsgParsingQuestions",
-		                "Processing questions for {0} using Major Biblical Terms list...", "Param is project name"));
+		                "Processing questions for {0} using Major Biblical Terms list...",
+		                "Param is the Paratext project name. If localizing into a language into which " +
+		                "Paratext is also localized, the name of the list should exactly match " +
+		                "the name used in Paratext"));
 
 	            List<PhraseCustomization> customizations = null;
 	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);

@@ -250,7 +250,7 @@ namespace SIL.Transcelerator
 			// We don't want to hook up this handler until we're all done because it messes up initialization
 			m_dataGridViewExistingQuestions.CellClick += HandleGridRowClicked;
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "addingquestions.htm");
+			m_help = TxlPlugin.GetHelpFile("addingquestions");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
@@ -264,8 +264,11 @@ namespace SIL.Transcelerator
 		}
 
 		#region Event handlers and helper methods
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			m_locationFormat = m_lblSelectLocation.Text;
 			m_lblVernacularQuestion.Text = Format(m_lblVernacularQuestion.Text, m_vernLanguage);
 			if (IsHandleCreated)

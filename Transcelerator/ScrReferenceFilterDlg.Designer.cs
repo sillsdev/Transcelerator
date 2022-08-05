@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2011' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -117,12 +117,12 @@ namespace SIL.Transcelerator
             this.scrPsgFrom});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStripFrom, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStripFrom, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStripFrom, "toolStrip1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStripFrom, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStripFrom, "ScrReferenceFilterDlg.toolStripFrom");
 			this.toolStripFrom.Location = new System.Drawing.Point(8, 8);
 			this.toolStripFrom.Name = "toolStripFrom";
 			this.toolStripFrom.Size = new System.Drawing.Size(248, 27);
 			this.toolStripFrom.TabIndex = 7;
-			this.toolStripFrom.Text = "toolStrip1";
 			// 
 			// toolStripLabelFrom
 			// 
@@ -131,7 +131,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelFrom, "ScrReferenceFilterDlg.m_lblFrom");
 			this.toolStripLabelFrom.Name = "toolStripLabelFrom";
 			this.toolStripLabelFrom.Size = new System.Drawing.Size(38, 24);
-			this.toolStripLabelFrom.Text = "From:";
+			this.toolStripLabelFrom.Text = "&From:";
 			// 
 			// scrPsgFrom
 			// 
@@ -153,12 +153,12 @@ namespace SIL.Transcelerator
             this.scrPsgTo});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.toolStrip1, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.toolStrip1, null);
-			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "toolStrip1");
+			this.l10NSharpExtender1.SetLocalizationPriority(this.toolStrip1, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.toolStrip1, "ScrReferenceFilterDlg.toolStrip1");
 			this.toolStrip1.Location = new System.Drawing.Point(8, 35);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Size = new System.Drawing.Size(248, 27);
 			this.toolStrip1.TabIndex = 8;
-			this.toolStrip1.Text = "toolStrip1";
 			// 
 			// toolStripLabelTo
 			// 
@@ -167,7 +167,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.toolStripLabelTo, "ScrReferenceFilterDlg.m_lblTo");
 			this.toolStripLabelTo.Name = "toolStripLabelTo";
 			this.toolStripLabelTo.Size = new System.Drawing.Size(22, 24);
-			this.toolStripLabelTo.Text = "To:";
+			this.toolStripLabelTo.Text = "&To:";
 			// 
 			// scrPsgTo
 			// 

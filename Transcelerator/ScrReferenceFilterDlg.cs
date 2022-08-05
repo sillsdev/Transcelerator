@@ -75,7 +75,7 @@ namespace SIL.Transcelerator
 			m_origWarningLabelColor = m_lblInvalidReference.ForeColor;
 			m_initialDelay = m_timerWarning.Interval;
 
-			m_help = TxlPlugin.GetFileDistributedWithApplication("docs", "filtering.htm");
+			m_help = TxlPlugin.GetHelpFile("filtering");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 		#endregion

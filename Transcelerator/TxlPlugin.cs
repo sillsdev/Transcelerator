@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.   
-// <copyright from='2013' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2022, SIL International.   
+// <copyright from='2013' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -23,7 +23,9 @@ using L10NSharp;
 using SIL.Scripture;
 using JetBrains.Annotations;
 using Paratext.PluginInterfaces;
+using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Reporting;
+using SIL.WritingSystems;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -32,6 +34,8 @@ namespace SIL.Transcelerator
 	public class TxlPlugin : IParatextStandalonePlugin, IPluginErrorHandler
 	{
 		public const string pluginName = "Transcelerator";
+		public const string kDefaultUILocale = "en";
+		public const string kDocsFolder = "docs";
 
 		private static readonly string s_baseInstallFolder;
 		private static readonly string s_company;
@@ -41,7 +45,11 @@ namespace SIL.Transcelerator
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
 
-		public static Analytics GetAnalytics(IPluginHost host)
+		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
+		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
+		internal static UserInfo s_userInfo;
+
+		private static Analytics GetAnalytics(IPluginHost host)
 		{
 			if (s_analytics == null)
 			{
@@ -95,12 +103,12 @@ namespace SIL.Transcelerator
 			
 				host.Log(this, $"Starting {pluginName} for project {project}");
 
-				string preferredUiLocale = "en";
+				string preferredUiLocale = kDefaultUILocale;
 				try
 				{
 					preferredUiLocale = host.UserSettings.UiLocale;
 					if (IsNullOrWhiteSpace(preferredUiLocale))
-						preferredUiLocale = "en";
+						preferredUiLocale = kDefaultUILocale;
 				}
 				catch (Exception)
 				{
@@ -169,7 +177,7 @@ namespace SIL.Transcelerator
 				}
 
 				UNSQuestionsDialog mainWindow = new UNSQuestionsDialog(host, project, startRef, endRef,
-					activateKeyboard, sendReference, preferredUiLocale);
+					activateKeyboard, sendReference);
 
 				await Task.Run(() => { InitMainWindow(mainWindow, splashScreen, project); });
 
@@ -309,16 +317,52 @@ namespace SIL.Transcelerator
 					lastName = lastName.Substring(split + 1);
 				}
 			}
-			return new UserInfo { FirstName = firstName, LastName = lastName, UILanguageCode = "en"};
+			s_userInfo = new UserInfo { FirstName = firstName, LastName = lastName,
+				UILanguageCode = LocalizationManager.UILanguageId};
+			return s_userInfo;
+		}
+
+		public static void UpdateUiLanguageForUser(string languageId)
+		{
+			s_userInfo.UILanguageCode = languageId;
+			Analytics.IdentifyUpdate(s_userInfo);
 		}
 
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
 			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
-			LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId, pluginName, pluginName, s_version,
-				installedStringFileFolder, relativeSettingPathForLocalizationFolder, new Icon(GetFileDistributedWithApplication("TXL no TXL.ico")), TxlCore.kEmailAddress,
+			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
+
+			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
+			// language might be available in the XLIFF files for one of the localization managers
+			// but not the other. Normally, part of the creation process for a LM is to check to
+			// see whether the requested language is available. But if the first LM we create does
+			// not have the requested language, the user sees a dialog box alerting them to that
+			// and requiring them to choose a different language. For now, in Transcelerator, we
+			// can work around that by creating the Palaso LM first, since its set of available
+			// languages is a superset of the languages available for Transcelerator. (There is the
+			// case of British English, but since that is still a flavor of "en" it's not a
+			// problem.) But it feels weird not to create the primary LM first, and the day could
+			// come where neither set of languages is a superset, and then this strategy wouldn't
+			// work.
+
+			LocalizationManager.Create(TranslationMemory.XLiff, 
+				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
+				"SIL.Windows.Forms.Reporting");
+
+			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, 
+				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
+				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
+			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "transcelerator",
+				IssueRequestForLocalization);
+		}
+
+		private static void IssueRequestForLocalization()
+		{
+			Analytics.Track("UI language request", LocIncompleteViewModel.StandardAnalyticsInfo);
 		}
 
 		public string GetDescription(string locale)
@@ -350,10 +394,19 @@ namespace SIL.Transcelerator
 			if (File.Exists(path))
 				return path;
 
-			if (partsOfTheSubPath[0].Equals("docs", StringComparison.OrdinalIgnoreCase))
+			if (partsOfTheSubPath[0].Equals(kDocsFolder, StringComparison.OrdinalIgnoreCase))
 				return null; // Help files are optional in installer
 
 			throw new ApplicationException("Could not locate the required file, " + path);
+		}
+
+		public static string GetHelpFile(string filenameWithoutExtension)
+		{
+			var filename = filenameWithoutExtension + ".htm";
+			return GetFileDistributedWithApplication(kDocsFolder,
+					IetfLanguageTag.GetGeneralCode(LocalizationManager.UILanguageId), filename) ??
+				GetFileDistributedWithApplication(kDocsFolder,
+					kDefaultUILocale, filename);
 		}
 
 		private class ProjectState : IDisposable

@@ -48,7 +48,20 @@ p.example {
 .note .emphasis, .hint .emphasis {
   text-decoration: underline;
 }
-.literal:lang(ml) {
+menu {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  width: 400px;
+}
+.menuitem {
+  flex-grow: 1;
+  padding: 2;
+  margin-right: 3;
+  background-color: LemonChiffon;
+  border: 1px solid green ;
+}
+.menuitem:lang(ml) {
   font-style:normal;
 }
 .text-to-type {
