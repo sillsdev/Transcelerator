@@ -440,6 +440,7 @@
     <Compile Include="TxlInfo.Designer.cs">
       <DependentUpon>TxlInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxlLocalizationIncompleteViewModel.cs" />
     <Compile Include="TxlPlugin.cs" />
     <Compile Include="TxlSplashScreen.cs" />
     <Compile Include="NewQuestionDlg.cs">
