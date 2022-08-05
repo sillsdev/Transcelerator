@@ -356,7 +356,7 @@ namespace SIL.Transcelerator
 				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
 				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
-			LocIncompleteViewModel = new LocalizationIncompleteViewModel(primaryMgr, "transcelerator",
+			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr, "transcelerator",
 				IssueRequestForLocalization);
 		}
 
