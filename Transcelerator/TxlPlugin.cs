@@ -40,8 +40,9 @@ namespace SIL.Transcelerator
 		private static readonly string s_baseInstallFolder;
 		private static readonly string s_company;
 		private static readonly string s_version;
-		private static Analytics s_analytics;
-		private static Dictionary<IProject, ProjectState> s_projectStates = new Dictionary<IProject, ProjectState>();
+		private static Analytics s_analytics; // Get lock on s_projectStates to set this.
+		private static Dictionary<IProject, ProjectState> s_projectStates =
+			new Dictionary<IProject, ProjectState>();
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
 
@@ -49,6 +50,10 @@ namespace SIL.Transcelerator
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 		internal static UserInfo s_userInfo;
 
+		/// <summary>
+		/// Gets the Analytics singleton. Caller is responsible for ensuring that
+		/// <see cref="s_projectStates"/> is locked.
+		/// </summary>
 		private static Analytics GetAnalytics(IPluginHost host)
 		{
 			if (s_analytics == null)
@@ -299,6 +304,13 @@ namespace SIL.Transcelerator
 
 				foreach (var key in keysToDelete)
 					s_projectStates.Remove(key);
+
+				// TXL-244: Analytics is a singleton and can't be re-created, so we only dispose it
+				// when Paratext says it's shutting down.
+				{
+					s_analytics?.Dispose();
+					s_analytics = null;
+				}
 			}
 		}
 
@@ -427,7 +439,7 @@ namespace SIL.Transcelerator
 				SplashScreen?.Close();
 				SplashScreen?.Dispose();
 				MainWindow?.Dispose();
-				Analytics?.Dispose();
+				Analytics = null; // Singleton; this class is not responsible for disposing this.
 			}
 
 			public bool IsFor(UNSQuestionsDialog window) => MainWindow == window;
@@ -445,7 +457,7 @@ namespace SIL.Transcelerator
 			/// </summary>
 			/// <returns><c>true</c> if the window was closed; <c>false</c> if the main window was not set,
 			/// in which case the objects held by this state object are merely disposed.</returns>
-			public bool Close()
+			private bool Close()
 			{
 				if (MainWindow != null)
 				{
