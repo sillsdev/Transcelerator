@@ -174,8 +174,8 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Analytics, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Analytics.3.6.0\lib\net461\Analytics.dll</HintPath>
+    <Reference Include="Analytics, Version=3.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Analytics.3.8.1\lib\net461\Analytics.dll</HintPath>
     </Reference>
     <Reference Include="AtkSharp, Version=3.24.24.38, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AtkSharp.3.24.24.38\lib\netstandard2.0\AtkSharp.dll</HintPath>
@@ -183,8 +183,8 @@
     <Reference Include="CairoSharp, Version=3.24.24.38, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CairoSharp.3.24.24.38\lib\netstandard2.0\CairoSharp.dll</HintPath>
     </Reference>
-    <Reference Include="DesktopAnalytics, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SIL.DesktopAnalytics.3.0.0\lib\net461\DesktopAnalytics.dll</HintPath>
+    <Reference Include="DesktopAnalytics, Version=3.0.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SIL.DesktopAnalytics.3.0.2\lib\net461\DesktopAnalytics.dll</HintPath>
     </Reference>
     <Reference Include="DialogAdapters, Version=0.1.11.0, Culture=neutral, PublicKeyToken=7dc842182b0626dc, processorArchitecture=MSIL">
       <HintPath>..\packages\DialogAdapters.0.1.11\lib\net461\DialogAdapters.dll</HintPath>
