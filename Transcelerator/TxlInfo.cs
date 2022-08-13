@@ -28,6 +28,8 @@ namespace SIL.Transcelerator
 	public partial class TxlInfo : UserControl
 	{
 		private WebBrowser browserCreditsAndLicense;
+		private string m_version; 
+		private string m_buildDate; 
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -49,10 +51,25 @@ namespace SIL.Transcelerator
 					"Param is copyright information. This is displayed in the Help/About box and the splash screen"),
 				m_lblCopyright.Text.Replace("(C)", "©"));
 
-			string version = assembly.GetName().Version.ToString();
-			m_lblAppVersion.Text = Format(m_lblAppVersion.Text, version);
-			lblBuildDate.Text = Format(lblBuildDate.Text,
-				File.GetLastWriteTime(assembly.Location).ToShortDateString());
+			m_version = assembly.GetName().Version.ToString();
+			FormatAppVersion(m_lblAppVersion, EventArgs.Empty);
+			m_lblAppVersion.TextChanged += FormatAppVersion;
+
+			m_buildDate = File.GetLastWriteTime(assembly.Location).ToShortDateString();
+			FormatBuildDate(m_lblBuildDate, EventArgs.Empty);
+			m_lblBuildDate.TextChanged += FormatBuildDate;
+		}
+
+		private void FormatAppVersion(object sender, EventArgs args)
+		{
+			if (m_lblAppVersion.Text.Contains("{0}"))
+				m_lblAppVersion.Text = Format(m_lblAppVersion.Text, m_version);
+		}
+
+		private void FormatBuildDate(object sender, EventArgs args)
+		{
+			if (m_lblBuildDate.Text.Contains("{0}"))
+				m_lblBuildDate.Text = Format(m_lblBuildDate.Text, m_buildDate);
 		}
 
 		/// ------------------------------------------------------------------------------------

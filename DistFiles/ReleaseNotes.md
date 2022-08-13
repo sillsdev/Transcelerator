@@ -1,4 +1,7 @@
-﻿## 3.1.0 3 March 2022
+﻿## 3.1.3 6 August 2022
+* Internationalized the Help system and localized it into Spanish. (Additional localizations can be done using [crowdin](https://crowdin.com/project/transcelerator).)
+
+## 3.1.0 3 March 2022
 * Added ability to control text size in main grid.
 
 ## 3.0.0 17 November 2021

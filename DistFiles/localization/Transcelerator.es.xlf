@@ -1393,6 +1393,11 @@
         <note>Param is copyright information. This is displayed in the Help/About box and the splash screen</note>
         <target xml:lang="es-ES" state="translated">{0}. Distribuible bajo los términos de la licencia MIT.</target>
       </trans-unit>
+      <trans-unit id="TxlInfo.lblBuildDate">
+        <source xml:lang="en">Built on: {0}</source>
+        <note>ID: TxlInfo.lblBuildDate</note>
+        <target xml:lang="es-ES" state="translated">Compilado {0}</target>
+      </trans-unit>
       <trans-unit id="TxlInfo.m_lblAppVersion">
         <source xml:lang="en">Version {0}</source>
         <note>ID: TxlInfo.m_lblAppVersion</note>
