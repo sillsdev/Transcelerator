@@ -56,9 +56,17 @@ namespace SIL.Transcelerator
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			ErrorReport.AddProperty("Version", $"{assembly.GetName().Version} (apparent build date: {File.GetLastWriteTime(assembly.Location).ToShortDateString()})");
 			ErrorReport.AddProperty("Host Application", hostAppName + " " + hostVersion);
-			ExceptionHandler.Init(new WinFormsExceptionHandler(false));
-
-			ErrorHandlingInitialized = true;
+			try
+			{
+				ExceptionHandler.Init(new WinFormsExceptionHandler(false));
+			}
+			catch (InvalidOperationException)
+			{
+				// Probably a different plugin already set this.
+				// ENHANCE: Upgrade SIL.ErrorReporting to be able to check
+				// ExceptionHandler.TypeOfExistingHandler to deal with this more gracefully.
+				// See https://github.com/sillsdev/libpalaso/pull/1223
+			}
 		}
 	}
 }
