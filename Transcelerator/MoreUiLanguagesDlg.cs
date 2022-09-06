@@ -52,7 +52,7 @@ namespace SIL.Transcelerator
 
 			m_linkLabelCrowdinInformation.Text =
 				Format(m_linkLabelCrowdinInformation.Text,
-					TxlPlugin.pluginName, kCrowdin);
+					TxlCore.kPluginName, kCrowdin);
 			m_linkLabelCrowdinInformation.LinkArea = new LinkArea(
 				m_linkLabelCrowdinInformation.Text.IndexOf(kCrowdin, StringComparison.Ordinal),
 				kCrowdin.Length);

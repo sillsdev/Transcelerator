@@ -906,7 +906,7 @@ namespace SIL.Transcelerator
 			{
 				Analytics.Track("ClipboardSetDataObjectException", new Dictionary<string, string>
 					{{"Message", e.Message}});
-				ShowModalChild(new MessageBoxForm(e.Message, TxlPlugin.pluginName,
+				ShowModalChild(new MessageBoxForm(e.Message, TxlCore.kPluginName,
 					MessageBoxButtons.RetryCancel), form =>
 				{
 					if (form.DialogResult == DialogResult.Retry)
@@ -1130,7 +1130,7 @@ namespace SIL.Transcelerator
 								"There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.") :
 							LocalizationManager.GetString("MainWindow.ClearAllMatchingTranslations.Multiple",
 								"There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.");
-						ShowModalChild(new MessageBoxForm(msg, TxlPlugin.pluginName, MessageBoxButtons.OKCancel), form =>
+						ShowModalChild(new MessageBoxForm(msg, TxlCore.kPluginName, MessageBoxButtons.OKCancel), form =>
 						{
 							if (form.DialogResult == DialogResult.OK)
 							{
@@ -1758,7 +1758,7 @@ namespace SIL.Transcelerator
 						}
 					}
 					dataGridUns.Invalidate();
-					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlPlugin.pluginName, icon:MessageBoxIcon.None));
+					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlCore.kPluginName, icon:MessageBoxIcon.None));
 				}
 			}
 #endif
@@ -2581,7 +2581,7 @@ namespace SIL.Transcelerator
 			var msg = Format(fmt, filename) + " " +
 				Format(LocalizationManager.GetString("General.RerunInstaller",
 					"Please re-run the {0} Installer to repair this problem.",
-					"Parameter is \"Transcelerator\" (plugin name)"), TxlPlugin.pluginName);
+					"Parameter is \"Transcelerator\" (plugin name)"), TxlCore.kPluginName);
 			return msg;
 		}
 
@@ -3316,7 +3316,7 @@ namespace SIL.Transcelerator
 
 		private void DisplayExceptionMessage(Exception ex, string caption = null)
 		{
-			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlPlugin.pluginName));
+			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlCore.kPluginName));
 		}
 	}
 	#endregion
