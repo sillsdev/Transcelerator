@@ -33,7 +33,6 @@ namespace SIL.Transcelerator
 	[PublicAPI]
 	public class TxlPlugin : IParatextStandalonePlugin, IPluginErrorHandler
 	{
-		public const string pluginName = "Transcelerator";
 		public const string kDefaultUILocale = "en";
 		public const string kDocsFolder = "docs";
 
@@ -77,7 +76,7 @@ namespace SIL.Transcelerator
 			return s_analytics;
 		}
 
-		public string Name => pluginName;
+		public string Name => TxlCore.kPluginName;
 		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 		public string VersionString => Version.ToString();
 		public string Publisher => "SIL International";
@@ -106,7 +105,7 @@ namespace SIL.Transcelerator
 				TxlSplashScreen splashScreen;
 				var project = state.Project;
 			
-				host.Log(this, $"Starting {pluginName} for project {project}");
+				host.Log(this, $"Starting {Name} for project {project}");
 
 				string preferredUiLocale = kDefaultUILocale;
 				try
@@ -342,8 +341,8 @@ namespace SIL.Transcelerator
 
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
-			var installedStringFileFolder = Path.Combine(s_baseInstallFolder, "localization");
-			var relativeSettingPathForLocalizationFolder = Path.Combine(s_company, pluginName);
+			var installedLocFolder = Path.Combine(s_baseInstallFolder, "localization");
+			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlCore.kPluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
 
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
@@ -360,16 +359,16 @@ namespace SIL.Transcelerator
 			// work.
 
 			LocalizationManager.Create(TranslationMemory.XLiff, 
-				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedStringFileFolder,
-				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
+				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedLocFolder,
+				relativeSettingPathForLocFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Windows.Forms.Reporting");
 
-			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, 
-				desiredUiLangId, pluginName, pluginName, s_version, installedStringFileFolder,
-				relativeSettingPathForLocalizationFolder, icon, TxlCore.kEmailAddress,
+			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId,
+				TxlCore.kPluginName, TxlCore.kPluginName, s_version, installedLocFolder,
+				relativeSettingPathForLocFolder, icon, TxlCore.kEmailAddress,
 				"SIL.Transcelerator", "SIL.Utils");
-			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr, "transcelerator",
-				IssueRequestForLocalization);
+			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
+				"transcelerator", IssueRequestForLocalization);
 		}
 
 		private static void IssueRequestForLocalization()
@@ -385,16 +384,14 @@ namespace SIL.Transcelerator
 				new [] {locale, LocalizationManager.UILanguageId}, out _);
 		}
 
-		public IDataFileMerger GetMerger(IPluginHost host, string dataIdentifier)
-		{
-			return host.GetXmlMerger(ParatextDataFileAccessor.GetXMLDataMergeInfo(dataIdentifier));
-		}
+		public IDataFileMerger GetMerger(IPluginHost host, string dataIdentifier) =>
+			host.GetXmlMerger(ParatextDataFileAccessor.GetXMLDataMergeInfo(dataIdentifier));
 
 		public IEnumerable<PluginMenuEntry> PluginMenuEntries
 		{
 			get
 			{
-				yield return new PluginMenuEntry(pluginName + "...", Run, PluginMenuLocation.ScrTextTools,
+				yield return new PluginMenuEntry(Name + "...", Run, PluginMenuLocation.ScrTextTools,
 					@"TXL no TXL.ico");
 			}
 		}

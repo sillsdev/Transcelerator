@@ -843,7 +843,7 @@ namespace SIL.Transcelerator
             //    string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
             //    if (unUsedRules.Length > 0)
             //    {
-            //        MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
+            //        MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlCore.kPluginName);
             //    }
             //}
 #endif
