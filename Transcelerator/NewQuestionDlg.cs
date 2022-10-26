@@ -214,7 +214,7 @@ namespace SIL.Transcelerator
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
 			var startRef = m_masterVersification.CreateReference(baseQuestion.StartRef).ChangeVersification(m_projectVersification);
-			m_scrPsgReference.VerseControl.VerseRef = new ScrVersRefAdapter(startRef, project);
+			m_scrPsgReference.VerseControl.VerseRef = new ScrVerseRefAdapter(startRef, project);
 			m_existingStartRef = new BCVRef(startRef.BBBCCCVVV);
 			SetCurrentSections();
 			var endRef = m_masterVersification.CreateReference(baseQuestion.EndRef).ChangeVersification(m_projectVersification);

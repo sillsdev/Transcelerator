@@ -67,8 +67,8 @@ namespace SIL.Transcelerator
 			scrPsgFrom.VerseControl.BooksPresentSet = scrPsgTo.VerseControl.BooksPresentSet = bookSet;
 			scrPsgFrom.VerseControl.ShowEmptyBooks = false;
 			scrPsgTo.VerseControl.ShowEmptyBooks = false;
-			scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(initialFromRef, project);
-            scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(initialToRef, project);
+			scrPsgFrom.VerseControl.VerseRef = new ScrVerseRefAdapter(initialFromRef, project);
+            scrPsgTo.VerseControl.VerseRef = new ScrVerseRefAdapter(initialToRef, project);
 			if (initialFromRef.Equals(m_firstAvailableRef) && initialToRef.Equals(m_lastAvailableRef))
 				btnClearFilter.Enabled = false;
 
@@ -156,8 +156,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void btnClearFilter_Click(object sender, System.EventArgs e)
 		{
-            scrPsgFrom.VerseControl.VerseRef = new ScrVersRefAdapter(m_firstAvailableRef, m_project);
-            scrPsgTo.VerseControl.VerseRef = new ScrVersRefAdapter(m_lastAvailableRef, m_project);
+            scrPsgFrom.VerseControl.VerseRef = new ScrVerseRefAdapter(m_firstAvailableRef, m_project);
+            scrPsgTo.VerseControl.VerseRef = new ScrVerseRefAdapter(m_lastAvailableRef, m_project);
 		}
 
 		/// ------------------------------------------------------------------------------------
