@@ -1,13 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2021' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2021' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
-// File: ScrVersRefAdapter.cs
+// File: ScrVerseRefAdapter.cs
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Linq;
@@ -16,12 +16,12 @@ using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {
-	class ScrVersRefAdapter : IScrVerseRef, IEquatable<IVerseRef>
+	class ScrVerseRefAdapter : IScrVerseRef, IEquatable<IVerseRef>
 	{
 		private IVerseRef m_verseRef;
 		private readonly IProject m_project;
 
-		public ScrVersRefAdapter(IVerseRef verseRef, IProject project)
+		public ScrVerseRefAdapter(IVerseRef verseRef, IProject project)
 		{
 			m_verseRef = verseRef ?? throw new ArgumentNullException(nameof(verseRef));
 			m_project = project ?? throw new ArgumentNullException(nameof(project));
@@ -60,10 +60,25 @@ namespace SIL.Transcelerator
 		{
 		}
 
-		public IScrVerseRef Create(string book, string chapter, string verse) =>
-			new ScrVersRefAdapter(m_verseRef.Versification.CreateReference($"{book} {chapter}:{verse}"), m_project);
+		public IScrVerseRef Create(string book, string chapter, string verse)
+        {
+            var verseRef = m_verseRef.Versification.CreateReference($"{book} {chapter}:{verse}");
+            if (verseRef == null)
+            {
+                // In practice, the book (coming from the VerseControl) should always be valid.
+                if (string.IsNullOrEmpty(book) || BCVRef.BookToNumber(book) < 0)
+                    book = "MAT";
+                if (string.IsNullOrEmpty(chapter))
+                    chapter = "1";
+                if (string.IsNullOrEmpty(verse))
+                    verse = "1";
+                verseRef = m_verseRef.Versification.CreateReference($"{book} {chapter}:{verse}");
+            }
 
-		public IScrVerseRef Clone() => new ScrVersRefAdapter(m_verseRef, m_project);
+            return new ScrVerseRefAdapter(verseRef, m_project);
+        }
+
+        public IScrVerseRef Clone() => new ScrVerseRefAdapter(m_verseRef, m_project);
 
 		public bool NextBook(BookSet present) => GetAdjacent(v => v.GetNextBook(m_project), present);
 

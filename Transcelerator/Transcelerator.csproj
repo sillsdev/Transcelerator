@@ -432,7 +432,7 @@
     <Compile Include="ScriptureForgeInfoDlg.Designer.cs">
       <DependentUpon>ScriptureForgeInfoDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="ScrVersRefAdapter.cs" />
+    <Compile Include="ScrVerseRefAdapter.cs" />
     <Compile Include="TransceleratorSections.cs" />
     <Compile Include="TxlInfo.cs">
       <SubType>UserControl</SubType>
