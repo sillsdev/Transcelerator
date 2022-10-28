@@ -13,8 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using SIL.Extensions;
 
 namespace SIL.Transcelerator
@@ -27,14 +27,14 @@ namespace SIL.Transcelerator
 	[TestFixture]
 	public class MasterQuestionParserTests
 	{
-		private List<IKeyTerm> m_dummyKtList;
+		private List<IBiblicalTerm> m_dummyKtList;
 		private KeyTermRules m_keyTermRules;
 		internal static List<string> s_questionWords = new List<string>(new[] { "who", "what", "when", "why", "how", "where", "which", "how many", "how much", "how long", "how old" });
 
 		[SetUp]
 		public void Setup()
 		{
-			m_dummyKtList = new List<IKeyTerm>();
+			m_dummyKtList = new List<IBiblicalTerm>();
 			m_keyTermRules = null;
 		}
 
@@ -5272,7 +5272,7 @@ namespace SIL.Transcelerator
 				rule.Rule = KeyTermRule.RuleType.MatchForRefOnly;
 				m_keyTermRules.Items.Add(rule);
 			}
-			IKeyTerm mockedKt = KeyTermMatchBuilderTests.AddMockedKeyTerm(term, occurences);
+			IBiblicalTerm mockedKt = KeyTermMatchBuilderTests.AddMockedKeyTerm(term, occurences);
 			m_dummyKtList.Add(mockedKt);
 		}
 

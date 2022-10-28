@@ -252,6 +252,75 @@ namespace SIL.Transcelerator.Localization
 		}
 
 		[Test]
+		public void GetLocalizedString_SameQuestionInTwoVerses_FindsLocalizedQuestionForCorrectVerse()
+		{
+			var sut = new TestLocalizationsFileAccessor();
+
+			var sectionKey1 = new UITestDataString("Acts 3:11-20", LocalizableStringType.SectionHeading, 44003011, 44003020);
+			sut.AddLocalizationEntry(sectionKey1);
+
+			var questionKey1 = new UITestDataString("What did Peter say next about Jesus?", LocalizableStringType.Question, 44003015, 44003015);
+			sut.AddLocalizationEntry(questionKey1, "¿Qué dijo Pedro después acerca de Jesús?");
+
+			var answerKey1 = new UITestDataString("He said that they had killed \"the author of life,\" but God had raised him up to life again. (15)",
+				LocalizableStringType.Answer, 44003015, 44003015, "What did Peter say next about Jesus?");
+			sut.AddLocalizationEntry(answerKey1, "Dijo que habían matado \"al autor de la vida\", pero que Dios lo había resucitado. (15)");
+
+			var existingQuestion = sut.LocalizationsAccessor.Groups[1].SubGroups[0].SubGroups.Single();
+			var localizationOfQuestionInV16 = new Localization
+			{
+				IsLocalized = true,
+				Text = "¿Qué fue la siguiente cosa que Pedro dijo acerca de Jesús?"
+			};
+			var translationUnitOfQuestionInV16 = new TranslationUnit
+			{
+				Id = existingQuestion.TranslationUnits.Single().Id.Replace("15", "16"),
+				Approved = true,
+				English = "What did Peter say next about Jesus?",
+				Target = localizationOfQuestionInV16,
+			};
+			var sameQuestionInV16 = new Group
+			{
+				Id = existingQuestion.Id.Replace("15", "16"),
+				SubGroups = new List<Group>(1),
+				TranslationUnits = new List<TranslationUnit>(1)
+			};
+			var answerInV16 = new Group
+			{
+				Id = existingQuestion.SubGroups.Single().Id.Replace("15", "16"),
+				TranslationUnits = new List<TranslationUnit>(1)
+			};
+			sameQuestionInV16.TranslationUnits.Add(translationUnitOfQuestionInV16);
+			sameQuestionInV16.SubGroups.Add(answerInV16);
+			var localizationOfAnswerInV16 = new Localization
+			{
+				IsLocalized = true,
+				Text = "Dijo que \"por la fe en el nombre de Jesús\" el hombre que había sido un mendigo lisiado se había hecho fuerte. (16)"
+			};
+			var translationUnitOfAnswerInV16 = new TranslationUnit
+			{
+				Id = "a:!ACT!3~16#Answer:What did Peter say next about Jesus?123456789",
+				Approved = true,
+				English = "He said that \"through faith in the name of Jesus\" the man who had been a crippled beggar had been made strong. (16)",
+				Target = localizationOfAnswerInV16,
+			};
+			answerInV16.TranslationUnits.Add(translationUnitOfAnswerInV16);
+			sut.LocalizationsAccessor.Groups[1].SubGroups[0].SubGroups.Add(sameQuestionInV16);
+
+			var questionKey3 = new UITestDataString("What did Peter mean by \"faith in the name of Jesus\"?", LocalizableStringType.Question, 44003016, 44003016);
+			sut.AddLocalizationEntry(questionKey3, "¿Qué quiso decir Pedro con \"fe en el nombre de Jesús\"?");
+
+			Assert.AreEqual("¿Qué dijo Pedro después acerca de Jesús?", sut.GetLocalizedString(questionKey1));
+			Assert.AreEqual("Dijo que habían matado \"al autor de la vida\", pero que Dios lo había resucitado. (15)", sut.GetLocalizedString(answerKey1));
+			var questionKey2 = new UITestDataString("What did Peter say next about Jesus?", LocalizableStringType.Question, 44003016, 44003016);
+			Assert.AreEqual("¿Qué fue la siguiente cosa que Pedro dijo acerca de Jesús?", sut.GetLocalizedString(questionKey2));
+			var answerKey2 = new UITestDataString("He said that \"through faith in the name of Jesus\" the man who had been a crippled beggar had been made strong. (16)",
+				LocalizableStringType.Answer, 44003016, 44003016, "What did Peter say next about Jesus?");
+			Assert.AreEqual("Dijo que \"por la fe en el nombre de Jesús\" el hombre que había sido un mendigo lisiado se había hecho fuerte. (16)", sut.GetLocalizedString(answerKey2));
+			Assert.AreEqual("¿Qué quiso decir Pedro con \"fe en el nombre de Jesús\"?", sut.GetLocalizedString(questionKey3));
+		}
+
+		[Test]
 		public void GetLocalizedString_MidVerseSectionBreak_FindsLocalizedQuestionInSecondSection()
 		{
 			var sut = new TestLocalizationsFileAccessor();

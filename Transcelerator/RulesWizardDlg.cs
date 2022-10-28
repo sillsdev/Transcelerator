@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -15,7 +15,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using L10NSharp;
-using SIL.IO;
+using SIL.Utils;
+using SIL.Windows.Forms;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -25,7 +26,7 @@ namespace SIL.Transcelerator
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class RulesWizardDlg : Form
+	public partial class RulesWizardDlg : ParentFormBase
 	{
 		private RenderingSelectionRule m_rule;
 		private readonly Action<bool> m_selectKeyboard;
@@ -69,7 +70,7 @@ namespace SIL.Transcelerator
 			ValidateName = nameValidator;
 			m_txtName.Text = m_rule.Name;
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "adjustments.htm");
+			m_help = TxlPlugin.GetHelpFile("renderingselectionrules");
 			HelpButton = !IsNullOrEmpty(m_help);
 
 			if (!creating)
@@ -284,15 +285,14 @@ namespace SIL.Transcelerator
 			string name = m_txtName.Text.Trim();
 			if (name.Length == 0)
 			{
-				MessageBox.Show(LocalizationManager.GetString("RulesWizardDlg.NameRequired", 
-					"Name is required."), Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				ShowModalChild(new MessageBoxForm(LocalizationManager.GetString("RulesWizardDlg.NameRequired", 
+					"Name is required."), Text));
 				e.Cancel = true;
 			}
 			else if (!ValidateName(name))
 			{
-				MessageBox.Show(Format(LocalizationManager.GetString("RulesWizardDlg.NameMustBeUnique",
-					"There is already a rule named {0}. Rule names must be unique."), name),
-					Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				ShowModalChild(new MessageBoxForm(Format(LocalizationManager.GetString("RulesWizardDlg.NameMustBeUnique",
+					"There is already a rule named {0}. Rule names must be unique."), name), Text));
 				e.Cancel = true;
 			}
 			m_rule.Name = name;
@@ -310,21 +310,24 @@ namespace SIL.Transcelerator
 						"Invalid condition for determining which rendering to select.") +
 						Environment.NewLine + m_rule.ErrorMessageR;
 
-				switch (MessageBox.Show(errorPartA + Environment.NewLine +
+				ShowModalChild(new MessageBoxForm(errorPartA + Environment.NewLine +
 					LocalizationManager.GetString("RulesWizardDlg.FixConditionNow",
 						"This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?"),
 					LocalizationManager.GetString("RulesWizardDlg.InvalidRegularExpressionCaption",
 						"Regular Expression Invalid"),
 					MessageBoxButtons.YesNoCancel,
-					MessageBoxIcon.Stop))
+					MessageBoxIcon.Stop), form =>
 				{
-					case DialogResult.Yes:
-						return;
-					case DialogResult.No:
-						DialogResult = DialogResult.OK; break;
-					case DialogResult.Cancel:
-						DialogResult = DialogResult.Cancel; break;
-				}
+					switch (form.DialogResult)
+					{
+						case DialogResult.Yes:
+							return;
+						case DialogResult.No:
+							DialogResult = DialogResult.OK; break;
+						case DialogResult.Cancel:
+							DialogResult = DialogResult.Cancel; break;
+					}
+				});
 			}
 			else
 				DialogResult = DialogResult.OK;
@@ -338,7 +341,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			Process.Start(m_help);
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 		#endregion
 

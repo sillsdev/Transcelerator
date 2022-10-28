@@ -6,7 +6,7 @@
 
 * To get set up to use and build Transcelerator, you will need to download [Paratext](https://paratext.org/).
 * There are some post-build commands that will attempt to copy the plugin files to a (potentially) useful location if you are building using the "Debug - Copy to Paratext" or "Release - Copy to Paratext" configurations. Depending on your individual needs, you might want to tweak the details, but if you do, please don't include your tweaks in a pull request. When building the "Release - Copy to Paratext" configuration for the first time, it will attempt to set up the necessary directory structure by copying files into the default install location(s) for Paratext. You need to be running Visual Studio as an administrator, or the robocopy command(s) will fail.
-* To learn to use Transcelerator, see the [wiki](https://bitbucket.org/paratext/transcelerator/wiki/Home), especially the [Getting Started](https://bitbucket.org/paratext/transcelerator/wiki/Getting%20Started) page.
+* To learn to use Transcelerator, see the [wiki](https://github.com/sillsdev/Transcelerator/wiki) and the [Tutorial](https://software.sil.org/transcelerator/features/tutorial/) page on the Transcelerator website.
 * Unit tests depend on [NUnit](https://nunit.org/). I recommend using [Jet Brains Resharper](https://www.jetbrains.com/resharper/), which has built-in test running capabilities.
 * The [Paratext Demo Plugins](https://github.com/ubsicap/paratext_demo_plugins) repository has more advanced information about the Paratext plugin architecture, which will explain more about how to build a plugin like Transcelerator.
 

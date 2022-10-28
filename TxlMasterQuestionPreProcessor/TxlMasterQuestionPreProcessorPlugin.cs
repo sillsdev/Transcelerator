@@ -1,80 +1,57 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2015, SIL International.   
-// <copyright from='2013' to='2015' company='SIL International'>
-//		Copyright (c) 2015, SIL International.   
+#region // Copyright (c) 2021, SIL International.   
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.AddIn;
-using System.AddIn.Pipeline;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
-using AddInSideViews;
+using JetBrains.Annotations;
+using Paratext.PluginInterfaces;
 using SIL.Reporting;
 using SIL.Transcelerator;
 using SIL.Windows.Forms.Reporting;
 
 namespace SIL.TxlMasterQuestionPreProcessor
 {
-	[AddIn(pluginName, Description = "Prepares the master question file for Transcelerator - not for distribution to end-users.",
-		Version = "1.0", Publisher = "SIL International")]
-	[QualificationData(PluginMetaDataKeys.menuText, pluginName + "...")]
-	[QualificationData(PluginMetaDataKeys.insertAfterMenuName, "Paratext|Paratext settings")]
-	[QualificationData(PluginMetaDataKeys.enableWhen, WhenToEnable.always)]
-	public class TxlMasterQuestionPreProcessorPlugin : IParatextAddIn
+	[PublicAPI]
+	public class TxlMasterQuestionPreProcessorPlugin : IParatextStandalonePlugin
 	{
         public const string pluginName = "Transcelerator Question Pre-Processor";
-		private IHost host;
-        private TxlMasterQuestionPreProcessorForm unsMainWindow;
-		public void RequestShutdown()
+
+		public IDataFileMerger GetMerger(IPluginHost host, string dataIdentifier)
 		{
-            InvokeOnMainWindowIfNotNull(delegate 
-            {
-                unsMainWindow.Activate();
-                unsMainWindow.Close();
-            });
+			throw new NotImplementedException();
 		}
 
-	    public Dictionary<string, IPluginDataFileMergeInfo> DataFileKeySpecifications
-	    {
-	        get { return null; }
-	    }
+		public string Name => pluginName;
+		public Version Version => new Version(2, 0);
+		public string VersionString => Version.ToString();
+		public string Publisher => "SIL International";
+		public IEnumerable<PluginMenuEntry> PluginMenuEntries
+		{
+			get
+			{
+				yield return new PluginMenuEntry(pluginName + "...", Run, PluginMenuLocation.MainDefault);
+			}
+		}
 
-	    public void Run(IHost ptHost, string activeProjectName)
+		public void Run(IPluginHost host, IParatextChildState state)
 		{
 			try
 			{
-				host = ptHost;
-//#if DEBUG
-//                MessageBox.Show("Attach debugger now (if you want to)", pluginName);
-//#endif
-				ptHost.WriteLineToLog(this, "Starting " + pluginName);
+				host.Log(this, "Starting " + pluginName);
 
-				Thread mainUIThread = new Thread(() =>
-				{
-					InitializeErrorHandling();
+				TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
 
-					TxlMasterQuestionPreProcessorForm formToShow;
-					lock (this)
-					{
-						formToShow = unsMainWindow = new TxlMasterQuestionPreProcessorForm(
-						    new ScrVers(host, TxlCore.kEnglishVersificationName));
-					}
-					formToShow.ShowDialog();
-					
-					ptHost.WriteLineToLog(this, "Closing " + pluginName);
-					Environment.Exit(0);
-				});
-				mainUIThread.Name = pluginName;
-				mainUIThread.IsBackground = false;
-				mainUIThread.SetApartmentState(ApartmentState.STA);
-				mainUIThread.Start();
-				// Avoid putting any code after this line. Any exceptions thrown will not be able to be reported via the
-				// "green screen" because we are not running in STA.
+				var formToShow = new TxlMasterQuestionPreProcessorForm(host.GetStandardVersification(StandardScrVersType.English));
+				formToShow.Show();
+				
+				host.Log(this, "Closing " + pluginName);
 			}
 			catch (Exception e)
 			{
@@ -83,29 +60,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			}
 		}
 
-		private bool InvokeOnMainWindowIfNotNull(Action action)
-		{
-			lock (this)
-			{
-				if (unsMainWindow != null)
-				{
-					if (unsMainWindow.InvokeRequired)
-						unsMainWindow.Invoke(action);
-					else
-						action();
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private void InitializeErrorHandling()
-		{
-			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = "transcelerator_feedback@sil.org";
-			ErrorReport.AddStandardProperties();
-			ErrorReport.AddProperty("Host Application", host.ApplicationName + " " + host.ApplicationVersion);
-			ExceptionHandler.Init(new WinFormsExceptionHandler());
-		}
+		public string GetDescription(string locale) =>
+			"Prepares the master question file for Transcelerator - not for distribution to end-users.";
 	}
 }

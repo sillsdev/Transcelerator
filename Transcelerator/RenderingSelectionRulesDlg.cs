@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -25,7 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using L10NSharp;
-using SIL.IO;
+using SIL.Windows.Forms;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -35,7 +35,7 @@ namespace SIL.Transcelerator
 	///
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class RenderingSelectionRulesDlg : Form
+	public partial class RenderingSelectionRulesDlg : ParentFormBase
 	{
 		private readonly Action<bool> m_selectKeyboard;
 		private readonly string m_help;
@@ -61,13 +61,23 @@ namespace SIL.Transcelerator
 			}
 			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (m_listRules.SelectedIndex >= 0);
 
-			m_help = FileLocationUtilities.GetFileDistributedWithApplication(true, "docs", "renderingselectionrules.htm");
+			m_help = TxlPlugin.GetHelpFile("renderingselectionrules");
 			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		public IEnumerable<RenderingSelectionRule> Rules
 		{
 			get { return m_listRules.Items.Cast<RenderingSelectionRule>(); }
+		}
+
+		public string ReadonlyAlert
+		{
+			set
+			{
+				Text += value;
+				if (value != null)
+					btnOk.Enabled = false;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -89,15 +99,15 @@ namespace SIL.Transcelerator
 
 			RenderingSelectionRule rule = new RenderingSelectionRule(name);
 
-			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, true, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			ShowModalChild(new RulesWizardDlg(rule, true, Word.AllWords, m_selectKeyboard, nameIsUnique), dlg =>
 			{
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				if (dlg.DialogResult == DialogResult.OK)
 				{
 					m_listRules.SelectedIndex = m_listRules.Items.Add(rule);
 					if (rule.Valid)
 						m_listRules.SetItemChecked(m_listRules.SelectedIndex, true);
 				}
-			}
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -107,14 +117,14 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void btnEdit_Click(object sender, EventArgs e)
 		{
-			RenderingSelectionRule rule = m_listRules.SelectedItem as RenderingSelectionRule;
+			RenderingSelectionRule rule = (RenderingSelectionRule)m_listRules.SelectedItem;
 			string origName = rule.Name;
 			string origQ = rule.QuestionMatchingPattern;
 			string origR = rule.RenderingMatchingPattern;
 			Func<string, bool> nameIsUnique = n => !m_listRules.Items.Cast<RenderingSelectionRule>().Where(r => r != rule).Any(r => r.Name == n);
-			using (RulesWizardDlg dlg = new RulesWizardDlg(rule, false, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			ShowModalChild(new RulesWizardDlg(rule, false, Word.AllWords, m_selectKeyboard, nameIsUnique), dlg =>
 			{
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				if (dlg.DialogResult == DialogResult.OK)
 				{
 					if (!rule.Valid)
 						m_listRules.SetItemChecked(m_listRules.SelectedIndex, false);
@@ -127,7 +137,7 @@ namespace SIL.Transcelerator
 					rule.QuestionMatchingPattern = origQ;
 					rule.RenderingMatchingPattern = origR;
 				}
-			}
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -152,15 +162,15 @@ namespace SIL.Transcelerator
 
 			newRule.Name = name;
 
-			using (RulesWizardDlg dlg = new RulesWizardDlg(newRule, true, Word.AllWords, m_selectKeyboard, nameIsUnique))
+			ShowModalChild(new RulesWizardDlg(newRule, true, Word.AllWords, m_selectKeyboard, nameIsUnique), dlg =>
 			{
-				if (dlg.ShowDialog(this) == DialogResult.OK)
+				if (dlg.DialogResult == DialogResult.OK)
 				{
 					m_listRules.SelectedIndex = m_listRules.Items.Add(newRule);
 					if (newRule.Valid)
 						m_listRules.SetItemChecked(m_listRules.SelectedIndex, m_listRules.GetItemChecked(iOrigRule));
 				}
-			}
+			});
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -196,16 +206,13 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void HandleHelpButtonClick(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			Process.Start(m_help);
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
 		}
-	}
 
-	public class NoToolStripBorderRenderer : ToolStripProfessionalRenderer
-	{
-		protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
 		{
-			// Eat this event.
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
-
 }

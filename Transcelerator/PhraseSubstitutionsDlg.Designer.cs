@@ -58,8 +58,8 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 			System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhraseSubstitutionsDlg));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.m_numTimesToMatch = new System.Windows.Forms.NumericUpDown();
 			this.m_btnMatchSingleWord = new System.Windows.Forms.Button();
 			this.lblMaxMatch = new System.Windows.Forms.Label();
@@ -278,7 +278,7 @@ namespace SIL.Transcelerator
 			this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, "Params are (localized) column/cell names");
 			this.l10NSharpExtender1.SetLocalizingId(this.lblInstructions, "PhraseSubstitutionsDlg.lblInstructions");
 			this.lblInstructions.Location = new System.Drawing.Point(12, 9);
 			this.lblInstructions.Name = "lblInstructions";
@@ -364,9 +364,9 @@ namespace SIL.Transcelerator
 			// colIsRegEx
 			// 
 			this.colIsRegEx.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.NullValue = false;
-			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle1.NullValue = false;
+			this.colIsRegEx.DefaultCellStyle = dataGridViewCellStyle1;
 			this.colIsRegEx.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.RegularExpression!Regular Expression";
 			this.colIsRegEx.Name = "colIsRegEx";
 			this.colIsRegEx.ToolTipText = "Select to interpret as a regular expression";
@@ -375,9 +375,9 @@ namespace SIL.Transcelerator
 			// colMatchCase
 			// 
 			this.colMatchCase.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle6.NullValue = false;
-			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.NullValue = false;
+			this.colMatchCase.DefaultCellStyle = dataGridViewCellStyle2;
 			this.colMatchCase.HeaderText = "_L10N_:PhraseSubstitutionsDlg.Replacements.MatchCase!Match Case";
 			this.colMatchCase.Name = "colMatchCase";
 			this.colMatchCase.ToolTipText = "Select to indicat that matches should be case-sensitive";
@@ -524,8 +524,11 @@ namespace SIL.Transcelerator
 			this.Name = "PhraseSubstitutionsDlg";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Question Adjustments";
 			this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.HandleHelpButtonClick);
+			this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.HandleHelpRequest);
 			tableLayoutPanel1.ResumeLayout(false);
 			tableLayoutPanel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.m_numTimesToMatch)).EndInit();

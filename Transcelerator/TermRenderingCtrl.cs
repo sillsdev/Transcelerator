@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 
@@ -40,17 +41,18 @@ namespace SIL.Transcelerator
 	{
 		#region Data members
 		private readonly KeyTerm m_term;
+		private readonly Action<Exception, string> m_handleAddRenderingError;
 		private Rectangle m_rectToInvalidateOnResize;
-		private readonly Action<bool> m_selectKeyboard;
-		private readonly Action<IEnumerable<string>> m_lookupTerm;
+		private readonly Action<IReadOnlyList<string>> m_lookupTerm;
 
-		internal static string s_AppName;
+		internal static string AppName;
 		#endregion
 
 		#region Events and Delegates
 		public delegate void RenderingChangedHandler(TermRenderingCtrl sender);
 		public event RenderingChangedHandler SelectedRenderingChanged;
 		public Action BestRenderingsChanged;
+		public Action RenderingAddedOrDeleted;
 		#endregion
 
 		#region Constructor
@@ -60,15 +62,18 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public TermRenderingCtrl(KeyTerm term, int endOffsetOfPrev,
-			Action<bool> selectKeyboard, Action<IEnumerable<string>> lookupTerm)
+			Action<Exception, string> handleAddRenderingError,
+			Action<IReadOnlyList<string>> lookupTerm, string termInUiLocale,
+			bool isReadOnly)
 		{
 			InitializeComponent();
 
 			DoubleBuffered = true;
 			m_term = term;
-			m_selectKeyboard = selectKeyboard;
+			m_handleAddRenderingError = handleAddRenderingError;
 			m_lookupTerm = lookupTerm;
-			m_lblKeyTermColHead.Text = term.ToString();
+			Enabled = !isReadOnly;
+			m_lblKeyTermColHead.Text = termInUiLocale ?? term.ToString();
 			EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm = endOffsetOfPrev;
 			PopulateRenderings();
 			term.BestRenderingChanged += term_BestRenderingChanged;
@@ -81,7 +86,7 @@ namespace SIL.Transcelerator
 		#region Public properties
 		public string SelectedRendering
 		{
-			get { return m_lbRenderings.SelectedItem as string; }
+			get => m_lbRenderings.SelectedItem as string;
 			set
 			{
 				if (string.IsNullOrEmpty(value))
@@ -93,7 +98,7 @@ namespace SIL.Transcelerator
 
 		public Font VernacularFont
 		{
-			get { return m_lbRenderings.Font; }
+			get => m_lbRenderings.Font;
 			set
 			{
 				m_lbRenderings.Font = value;
@@ -108,10 +113,7 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Implementation of ITermRenderingInfo
-		public IEnumerable<string> Renderings
-		{
-			get { return m_term.Renderings; }
-		}
+		public IEnumerable<string> Renderings => m_term.Renderings;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -119,11 +121,8 @@ namespace SIL.Transcelerator
 		/// without a vertical scroll bar.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int NaturalHeight
-		{
-			get { return m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
-				(Height - m_lbRenderings.ClientRectangle.Height); }
-		}
+		public int NaturalHeight => m_lbRenderings.Items.Count * m_lbRenderings.ItemHeight +
+			(Height - m_lbRenderings.ClientRectangle.Height);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -136,17 +135,18 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Event handlers
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
-			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, s_AppName);
-			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, s_AppName);
-			mnuRefreshRenderingsH.Text = string.Format(mnuRefreshRenderingsH.Text, s_AppName);
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
+			mnuLookUpTermC.Text = string.Format(mnuLookUpTermC.Text, AppName);
+			mnuLookUpTermH.Text = string.Format(mnuLookUpTermH.Text, AppName);
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles a change (probably from another TermRenderingCtrl) to our term's best
-		/// rendering.
+		/// Handles a change (from another TermRenderingCtrl) to our term's best rendering.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		void term_BestRenderingChanged(KeyTerm sender)
@@ -161,8 +161,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_lbRenderings_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (SelectedRenderingChanged != null)
-				SelectedRenderingChanged(this);
+			SelectedRenderingChanged?.Invoke(this);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -176,8 +175,7 @@ namespace SIL.Transcelerator
 				return; // already the (implicit or explicit default)
 			m_term.BestRendering = SelectedRendering;
 			m_lbRenderings.Invalidate();
-			if (BestRenderingsChanged != null)
-				BestRenderingsChanged();
+			BestRenderingsChanged?.Invoke();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -185,21 +183,22 @@ namespace SIL.Transcelerator
         /// Handles the Click event of the mnuLookUpTermH/mnuLookUpTermC controls.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void LookUpTermInHostApplicaton(object sender, EventArgs e)
+		private void LookUpTermInHostApplication(object sender, EventArgs e)
 		{
 			m_lookupTerm(m_term.AllTermIds);
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles the Click event of the Refresh Renderings from Paratext menu item.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void mnuRefreshRenderingsH_Click(object sender, EventArgs e)
-        {
-            m_term.LoadRenderings();
-            PopulateRenderings();
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Reloads the Renderings from Paratext (plus any TXL-specific ones) and
+		/// populates the display.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		internal void Reload()
+		{
+			m_term.LoadRenderings();
+			PopulateRenderings();
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -309,11 +308,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuAddRendering_Click(object sender, EventArgs e)
 		{
-			using (var dlg = new AddRenderingDlg(m_selectKeyboard))
-			{
-				if (dlg.ShowDialog(FindForm()) == DialogResult.OK)
-					AddRendering(dlg.Rendering, dlg.Text);
-			}
+			var parentForm = ParentForm as UNSQuestionsDialog;
+			parentForm?.ShowAddRenderingDlg(AddRendering);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -337,9 +333,9 @@ namespace SIL.Transcelerator
 		{
 			string rendering = m_lbRenderings.SelectedItem.ToString();
 			SelectedRendering = m_term.BestRendering;
-			if (SelectedRenderingChanged != null)
-				SelectedRenderingChanged(this);
+			SelectedRenderingChanged?.Invoke(this);
 			m_term.DeleteRendering(rendering);
+			RenderingAddedOrDeleted?.Invoke();
 			m_lbRenderings.Items.Remove(rendering);
 		}
 
@@ -352,7 +348,7 @@ namespace SIL.Transcelerator
 		{
 			var newRendering = GetRenderingFromDragDropData(e);
 			if (newRendering != null)
-				AddRendering(newRendering, "Transcelerator");
+				AddRendering(newRendering);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -406,16 +402,17 @@ namespace SIL.Transcelerator
 		/// Adds the given new rendering and selects it as the current one in the list.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void AddRendering(string newRendering, string errorCaption)
+		private void AddRendering(string newRendering, string errorCaption = null)
 		{
 			try
 			{
 				m_term.AddRendering(newRendering);
 				m_lbRenderings.Items.Add(newRendering);
+				RenderingAddedOrDeleted?.Invoke();
 			}
 			catch (ArgumentException ex)
 			{
-				MessageBox.Show(FindForm(), ex.Message, errorCaption);
+				m_handleAddRenderingError(ex, errorCaption);
 			}
 			SelectedRendering = newRendering;
 		}

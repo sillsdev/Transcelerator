@@ -129,9 +129,6 @@
   <data name="mnuLookUpTermH.LocalizationComment" xml:space="preserve">
     <value>Param is the name of the host application ("Paratext"). To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</value>
   </data>
-  <data name="mnuRefreshRenderingsH.LocalizationComment" xml:space="preserve">
-    <value>Param is the name of the host application ("Paratext"). To control which character will be the mnemonic key (underlined when the user presses the ALT key), put the ampersand before the desired character.</value>
-  </data>
   <metadata name="contextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

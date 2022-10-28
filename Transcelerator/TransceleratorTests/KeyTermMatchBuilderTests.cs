@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,10 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AddInSideViews;
 using NUnit.Framework;
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
-using SIL.Utils;
+using SIL.ObjectModel;
+using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {
@@ -55,7 +56,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term consisting of
-		/// a verb with the implictly optional word "to".
+		/// a verb with the implicitly optional word "to".
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -191,7 +192,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the KeyTermMatchBuilder class in the case of a key term where "or" separates
-		/// two three-word phrases, with more text preceeding
+		/// two three-word phrases, with more text preceding
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -268,7 +269,7 @@ namespace SIL.Transcelerator
 			rule.Alternates[0].Name = "Jesus Christ";
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(2, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "jesus", "christ");
 			VerifyKeyTermMatch(bldr, 1, "jesus");
@@ -289,7 +290,7 @@ namespace SIL.Transcelerator
 			rule.Rule = KeyTermRule.RuleType.Exclude;
 			rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm("Jesus"),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(0, bldr.Matches.Count());
 		}
 
@@ -308,7 +309,7 @@ namespace SIL.Transcelerator
 			rule.Rule = KeyTermRule.RuleType.MatchForRefOnly;
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id, 34),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(1, bldr.Matches.Count());
 			KeyTermMatch ktm = VerifyKeyTermMatch(bldr, 0, false, "ask");
 			Assert.IsFalse(ktm.AppliesTo(30, 33));
@@ -335,7 +336,7 @@ namespace SIL.Transcelerator
 			rule.Alternates[2].Name = "pray";
 			rules[rule.id] = rule;
 			KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
 			Assert.AreEqual(3, bldr.Matches.Count());
 			VerifyKeyTermMatch(bldr, 0, "worship");
 			VerifyKeyTermMatch(bldr, 1, "praise", "exuberantly");
@@ -362,7 +363,7 @@ namespace SIL.Transcelerator
             rule.Alternates[1].Name = "pray";
             rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
             Assert.AreEqual(2, bldr.Matches.Count());
             VerifyKeyTermMatch(bldr, 0, false, "ask");
             VerifyKeyTermMatch(bldr, 1, true, "pray");
@@ -387,7 +388,7 @@ namespace SIL.Transcelerator
             rule.Alternates[1].Name = "fast or pray";
             rules[rule.id] = rule;
             KeyTermMatchBuilder bldr = new KeyTermMatchBuilder(AddMockedKeyTerm(rule.id),
-                new ReadonlyDictionary<string, KeyTermRule>(rules), null);
+                new ReadOnlyDictionary<string, KeyTermRule>(rules));
             Assert.AreEqual(2, bldr.Matches.Count());
             VerifyKeyTermMatch(bldr, 0, true, "to", "fast");
             VerifyKeyTermMatch(bldr, 1, true, "fast", "or", "pray");
@@ -429,7 +430,7 @@ namespace SIL.Transcelerator
                 AddMockedKeyTerm("(1) Judah: (a) son of Jacob, his tribe, his territory; (b)" +
                 " person in the genealogy of Jesus; (2) Judas: (a) the betrayer of Jesus; (b)" +
                 " a brother of Jesus; (c) an apostle, the son of James; (d) member of the" +
-                " Jerusalem church, called Barsabbas; (3) a disciple in Damsacus; (f)" +
+                " Jerusalem church, called Barsabbas; (3) a disciple in Damascus; (f)" +
                 " revolutionary leader"), null,
                 new[] { regexSingleProperName, regexMultipleProperNames });
             Assert.AreEqual(2, bldr.Matches.Count());
@@ -779,12 +780,12 @@ namespace SIL.Transcelerator
 		/// Adds the mocked key term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal static IKeyTerm AddMockedKeyTerm(string term, params int[] occurences)
+		internal static IBiblicalTerm AddMockedKeyTerm(string term, params int[] occurrences)
 		{
-			IKeyTerm mockedKt = MockRepository.GenerateStub<IKeyTerm>();
-			mockedKt.Stub(kt => kt.Term).Return(term);
-			mockedKt.Stub(kt => kt.BcvOccurences).Return(occurences.Length > 0 ? occurences : new[] { 0 });
-		    mockedKt.Stub(kt => kt.Id).Return(new string(term.Reverse().ToArray()));
+			IBiblicalTerm mockedKt = MockRepository.GenerateStub<IBiblicalTerm>();
+			mockedKt.Stub(kt => kt.Gloss(Arg<string>.Is.Anything)).Return(term);
+			mockedKt.Stub(kt => kt.Occurrences).Return(occurrences.Length > 0 ? occurrences.Select(o => (IVerseRef)new BcvRefIVerseAdapter(new BCVRef(o))).ToList() : new List<IVerseRef>());
+		    mockedKt.Stub(kt => kt.Lemma).Return(new string(term.Reverse().ToArray()));
 			return mockedKt;
 		}
 

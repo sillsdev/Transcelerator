@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,13 +13,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using AddInSideViews;
 using SIL.Utils;
 using System;
-using System.Windows.Forms;
 using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Xml;
+using Paratext.PluginInterfaces;
 
 namespace SIL.Transcelerator
 {
@@ -38,8 +37,8 @@ namespace SIL.Transcelerator
 		private class Customizations // All customizations that share a key (used to match to a question)
 		{
 			private bool m_isResolved = true;
-			private List<PhraseCustomization> AdditionsAndInsertions { get; set; }
-			private List<PhraseCustomization> Deletions { get; set; }
+			private List<PhraseCustomization> AdditionsAndInsertions { get; }
+			private List<PhraseCustomization> Deletions { get; }
 			private PhraseCustomization Modification { get; set; }
 			private List<string> AllAnswers;
 
@@ -260,7 +259,7 @@ namespace SIL.Transcelerator
 					while (i + 1 < AdditionsAndInsertions.Count)
 					{
 						// We assume that earlier ones in the list are older versions whose answers are less likely to be the most desirable
-						// one, so we delete ealier ones first so that the last one survives (and its answer will be inserted first in the
+						// one, so we delete earlier ones first so that the last one survives (and its answer will be inserted first in the
 						// list. Sadly, this is probably the best we can do.
 						var iNewBase = AdditionsAndInsertions.FindIndex(i + 1, a => a.ModifiedPhrase == baseAddition);
 						if (iNewBase < 0)
@@ -340,7 +339,7 @@ namespace SIL.Transcelerator
 		/// actual key term objects.</summary>
 		private readonly Dictionary<Word, List<KeyTermMatch>> m_keyTermsTable;
 		/// <summary>A double lookup table of all parts in all phrases managed by this class.
-		/// For improved performance, outer lookup is by wordcount.</summary>
+		/// For improved performance, outer lookup is by word count.</summary>
         private readonly SortedDictionary<int, Dictionary<Word, List<ParsedPart>>> m_partsTable;
 
 		private readonly IDictionary<int, List<List<Word>>> m_questionWordsLookupTable;
@@ -369,7 +368,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(string filename, IEnumerable<string> questionWords,
-            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
             this(XmlSerializationHelper.DeserializeFromFile<QuestionSections>(filename),
@@ -385,7 +384,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public MasterQuestionParser(IEnumerable<string> questionWords,
-			IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+			IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
 			IEnumerable<Substitution> phraseSubstitutions) : this(default(QuestionSections), questionWords,
 			keyTerms, keyTermRules, null, phraseSubstitutions)
 		{
@@ -397,7 +396,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
         public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
-            IEnumerable<IKeyTerm> keyTerms, KeyTermRules keyTermRules,
+            IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
@@ -422,13 +421,11 @@ namespace SIL.Transcelerator
 				foreach (var customization in customizations)
 				{
 					var bookKey = customization.ScrStartReference.Book;
-					SortedDictionary<QuestionKey, Customizations> customizationsForBook;
-					if (!m_customizations.TryGetValue(bookKey, out customizationsForBook))
+					if (!m_customizations.TryGetValue(bookKey, out var customizationsForBook))
 						m_customizations[bookKey] = customizationsForBook = new SortedDictionary<QuestionKey, Customizations>();
 
 					var customizationsKey = customization.Key;
-					Customizations customizationsForKey;
-					if (!customizationsForBook.TryGetValue(customizationsKey, out customizationsForKey))
+					if (!customizationsForBook.TryGetValue(customizationsKey, out var customizationsForKey))
 					{
 						customizationsForBook[customizationsKey] = customizationsForKey = new Customizations();
 					}
@@ -466,8 +463,7 @@ namespace SIL.Transcelerator
 
 	        for (int wordCount = m_partsTable.Keys.Max(); wordCount > 0; wordCount--)
 	        {
-	            Dictionary<Word, List<ParsedPart>> partsTable;
-	            if (!m_partsTable.TryGetValue(wordCount, out partsTable))
+				if (!m_partsTable.TryGetValue(wordCount, out var partsTable))
 	                continue;
 
 	            int maxAllowableOccurrencesForSplitting = Math.Max(2, (26 - 2^wordCount)/2);
@@ -495,9 +491,9 @@ namespace SIL.Transcelerator
 	                            // Deal with any preceding remainder
 	                            if (match.StartIndex > 0)
 	                            {
-	                                ParsedPart preceedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex),
+	                                ParsedPart precedingPart = GetOrCreatePart(part.GetSubWords(0, match.StartIndex),
 	                                     owningPhraseOfPart);
-	                                owningPhraseOfPart.ParsedParts.Insert(iPart++, preceedingPart);
+	                                owningPhraseOfPart.ParsedParts.Insert(iPart++, precedingPart);
 	                            }
 	                            match.Part.AddOwningPhrase(owningPhraseOfPart);
 	                            owningPhraseOfPart.ParsedParts[iPart++] = match.Part;
@@ -525,7 +521,7 @@ namespace SIL.Transcelerator
 	        }
 	    }
 
-		public void ParseQuestion(Question question)
+		private void ParseQuestion(Question question)
 		{
 			if (question.IsParsable)
 			{
@@ -587,8 +583,7 @@ namespace SIL.Transcelerator
 	        SortedDictionary<QuestionKey, Customizations> customizations,
 	        bool processAllAdditionsForRef = false)
         {
-	        Customizations customizationsForQuestion;
-			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out customizationsForQuestion))
+			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out var customizationsForQuestion))
 			{
 				customizationsForQuestion.ApplyToQuestion(q, category.Questions);
 				if (q.InsertedQuestionBefore != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.InsertedQuestionBefore)))
@@ -821,20 +816,17 @@ namespace SIL.Transcelerator
 		/// Populates the key terms table.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateKeyTermsTable(IEnumerable<IKeyTerm> keyTerms, KeyTermRules rules)
+		private void PopulateKeyTermsTable(IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules rules)
 		{
-			KeyTermMatchBuilder matchBuilder;
-
-			foreach (IKeyTerm keyTerm in keyTerms)
+			foreach (IBiblicalTerm keyTerm in keyTerms)
 			{
-			    matchBuilder = new KeyTermMatchBuilder(keyTerm,
-                    rules == null ? null : rules.RulesDictionary, rules == null ? null : rules.RegexRules);
+				var matchBuilder = new KeyTermMatchBuilder(keyTerm, rules?.RulesDictionary,
+					rules?.RegexRules);
 
-			    foreach (KeyTermMatch matcher in matchBuilder.Matches.Where(matcher => matcher.WordCount != 0))
+				foreach (KeyTermMatch matcher in matchBuilder.Matches.Where(matcher => matcher.WordCount != 0))
 			    {
-			        List<KeyTermMatch> foundMatchers;
-			        Word firstWord = matcher[0];
-			        if (!m_keyTermsTable.TryGetValue(firstWord, out foundMatchers))
+					Word firstWord = matcher[0];
+			        if (!m_keyTermsTable.TryGetValue(firstWord, out var foundMatchers))
 			            m_keyTermsTable[firstWord] = foundMatchers = new List<KeyTermMatch>();
 
 			        KeyTermMatch existingMatcher = foundMatchers.FirstOrDefault(m => m.Equals(matcher));
@@ -846,14 +838,14 @@ namespace SIL.Transcelerator
 			}
 
 #if DEBUG
-            if (rules != null)
-            {
-                string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
-                if (unUsedRules.Length > 0)
-                {
-                    MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlPlugin.pluginName);
-                }
-            }
+            //if (rules != null)
+            //{
+            //    string unUsedRules = rules.RulesDictionary.Values.Where(r => !r.Used).ToString(Environment.NewLine);
+            //    if (unUsedRules.Length > 0)
+            //    {
+            //        MessageBox.Show("Unused KeyTerm Rules: \n" + unUsedRules, TxlCore.kPluginName);
+            //    }
+            //}
 #endif
 		}
 
@@ -869,9 +861,8 @@ namespace SIL.Transcelerator
 			Debug.Assert(words.Any());
             ParsedPart part = null;
 
-			Dictionary<Word, List<ParsedPart>> partsTable;
 			List<ParsedPart> parts = null;
-			if (m_partsTable.TryGetValue(words.Count(), out partsTable))
+			if (m_partsTable.TryGetValue(words.Count(), out var partsTable))
 			{
 				if (partsTable.TryGetValue(words.First(), out parts))
 					part = parts.FirstOrDefault(x => x.Words.SequenceEqual(words));
@@ -907,8 +898,7 @@ namespace SIL.Transcelerator
 			int partWordCount = part.Words.Count;
 			for (int subPhraseWordCount = partWordCount - 1; subPhraseWordCount > 0; subPhraseWordCount--)
 			{
-				Dictionary<Word, List<ParsedPart>> subPhraseTable;
-				if (!m_partsTable.TryGetValue(subPhraseWordCount, out subPhraseTable))
+				if (!m_partsTable.TryGetValue(subPhraseWordCount, out var subPhraseTable))
 					continue;
 
 				for (int iWord = 0; iWord < partWordCount; iWord++)
@@ -919,17 +909,16 @@ namespace SIL.Transcelerator
                     if (subPhraseWordCount == 1 && prepositionsAndArticles.Contains(word))
 				        break; // Don't want to split a phrase using a part that consists of a single preposition or article.
 
-					List<ParsedPart> possibleSubParts;
-					if (subPhraseTable.TryGetValue(word, out possibleSubParts))
+					if (subPhraseTable.TryGetValue(word, out var possibleSubParts))
 					{
 						foreach (ParsedPart possibleSubPart in possibleSubParts)
 						{
 							int iWordTemp = iWord + 1;
-							int isubWord = 1;
+							int iSubWord = 1;
 							int possiblePartWordCount = possibleSubPart.Words.Count;
-							while (isubWord < possiblePartWordCount && possibleSubPart.Words[isubWord] == part.Words[iWordTemp++])
-								isubWord++;
-							if (isubWord == possiblePartWordCount)
+							while (iSubWord < possiblePartWordCount && possibleSubPart.Words[iSubWord] == part.Words[iWordTemp++])
+								iSubWord++;
+							if (iSubWord == possiblePartWordCount)
 								return new SubPhraseMatch(iWord, possibleSubPart);
 						}
 					}

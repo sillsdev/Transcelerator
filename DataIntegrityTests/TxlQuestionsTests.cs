@@ -13,7 +13,7 @@ namespace DataIntegrityTests
 {
 	public class Tests
 	{
-		Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
+		readonly Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
 
 			private class MatchedXmlLine
 		{
@@ -447,12 +447,12 @@ namespace DataIntegrityTests
 								if (countOfQuestionsInCurrentPairOfGroups == 1)
 								{
 									Assert.AreEqual(group, firstGroup,
-										"For first occurence of instructions, first group ID should match current group: " + line);
+										"For first occurrence of instructions, first group ID should match current group: " + line);
 								}
 								else
 								{
 									Assert.AreEqual(group, secondGroup,
-										"For second occurence of instructions, second group ID should match current group: " + line);
+										"For second occurrence of instructions, second group ID should match current group: " + line);
 								}
 							}
 							else if (matchedLine.Match.Groups["useEitherQuestion"].Value != Empty)

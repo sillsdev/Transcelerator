@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AddInSideViews;
+using Paratext.PluginInterfaces;
 using SIL.Utils;
 
 namespace SIL.Transcelerator
@@ -21,7 +21,7 @@ namespace SIL.Transcelerator
 	{
 		#region Data members
 		private readonly List<Word> m_words;
-		private readonly List<IKeyTerm> m_terms;
+		private readonly List<IBiblicalTerm> m_terms;
 		private HashSet<int> m_occurrences;
 		private KeyTermMatchSurrogate m_surrogate; // Cached for efficiency
 		#endregion
@@ -35,7 +35,7 @@ namespace SIL.Transcelerator
         /// <param name="term">The term.</param>
         /// <param name="matchForRefOnly">if set to <c>true</c> [match for ref only].</param>
         /// ------------------------------------------------------------------------------------
-        internal KeyTermMatch(IKeyTerm term, bool matchForRefOnly) :
+        internal KeyTermMatch(IBiblicalTerm term, bool matchForRefOnly) :
             this(new Word[0], term, matchForRefOnly)
         {
         }
@@ -64,11 +64,11 @@ namespace SIL.Transcelerator
 		/// <param name="term">The term.</param>
 		/// <param name="matchForRefOnly">if set to <c>true</c> [match for ref only].</param>
 		/// ------------------------------------------------------------------------------------
-		internal KeyTermMatch(IEnumerable<Word> words, IKeyTerm term, bool matchForRefOnly)
+		internal KeyTermMatch(IEnumerable<Word> words, IBiblicalTerm term, bool matchForRefOnly)
 		{
 			MatchForRefOnly = matchForRefOnly;
 			m_words = words.ToList();
-			m_terms = new List<IKeyTerm>();
+			m_terms = new List<IBiblicalTerm>();
 			m_terms.Add(term);
 		}
 		#endregion
@@ -133,7 +133,7 @@ namespace SIL.Transcelerator
 		/// Gets the term Id.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string Id => m_terms.First().Id;
+		public string Id => m_terms.First().Lemma;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -152,19 +152,19 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the references of all occurences of this key term as integers in the form
+		/// Gets the references of all occurrences of this key term as integers in the form
 		/// BBBCCCVVV.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IList<int> BcvOccurences =>
-			m_terms.SelectMany(keyTerm => keyTerm.BcvOccurences).Distinct().ToList();
+			m_terms.SelectMany(keyTerm => keyTerm.Occurrences.Select(o => o.BBBCCCVVV)).Distinct().ToList();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets all the key terms for this match.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<IKeyTerm> AllTerms => m_terms;
+		public IEnumerable<IBiblicalTerm> AllTerms => m_terms;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -191,7 +191,7 @@ namespace SIL.Transcelerator
 			if (!MatchForRefOnly)
 				return true;
 			if (m_occurrences == null)
-				m_occurrences = new HashSet<int>(m_terms.SelectMany(term => term.BcvOccurences));
+				m_occurrences = new HashSet<int>(m_terms.SelectMany(term => term.Occurrences.Select(o => o.BBBCCCVVV)));
 			return m_occurrences.Any(o => startRef <= o && endRef >= o);
         }
 
@@ -211,7 +211,7 @@ namespace SIL.Transcelerator
             if (match.m_surrogate == null)
             {
                 match.m_surrogate = new KeyTermMatchSurrogate(match.ToString(),
-                    match.m_terms.Select(t => t.Id).ToArray());
+                    match.m_terms.Select(t => t.Lemma).ToArray());
             }
             return match.m_surrogate;
         }
@@ -224,7 +224,7 @@ namespace SIL.Transcelerator
         /// other(s)
         /// </summary>
         /// ------------------------------------------------------------------------------------
-        internal void AddTerm(IKeyTerm keyTerm)
+        internal void AddTerm(IBiblicalTerm keyTerm)
 		{
 			if (keyTerm == null)
 				throw new ArgumentNullException("keyTerm");

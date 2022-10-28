@@ -21,8 +21,6 @@ namespace SIL.Utils
 	[TestFixture]
 	public class PorterStemmerEnhancementTests
 	{
-		private static PorterStemmer s_stemmer = new PorterStemmer();
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the Stem method for word ending in "-ying"
@@ -31,14 +29,14 @@ namespace SIL.Utils
 		[Test]
 		public void YingSuffix()
 		{
-			Assert.AreEqual("pray", s_stemmer.stemTerm("praying"));
-			Assert.AreEqual("buy", s_stemmer.stemTerm("buying"));
-			Assert.AreEqual("ly", s_stemmer.stemTerm("lying"));
-			Assert.AreEqual("obey", s_stemmer.stemTerm("obeying"));
-			Assert.AreEqual("repli", s_stemmer.stemTerm("replying"));
-			Assert.AreEqual("studi", s_stemmer.stemTerm("studying"));
-			Assert.AreEqual("tidi", s_stemmer.stemTerm("tidying"));
-			Assert.AreEqual("ying", s_stemmer.stemTerm("ying"));
+			Assert.AreEqual("pray", PorterStemmer.StemTerm("praying"));
+			Assert.AreEqual("buy", PorterStemmer.StemTerm("buying"));
+			Assert.AreEqual("ly", PorterStemmer.StemTerm("lying"));
+			Assert.AreEqual("obey", PorterStemmer.StemTerm("obeying"));
+			Assert.AreEqual("repli", PorterStemmer.StemTerm("replying"));
+			Assert.AreEqual("studi", PorterStemmer.StemTerm("studying"));
+			Assert.AreEqual("tidi", PorterStemmer.StemTerm("tidying"));
+			Assert.AreEqual("ying", PorterStemmer.StemTerm("ying"));
         }
 
         /// ------------------------------------------------------------------------------------
@@ -49,13 +47,13 @@ namespace SIL.Utils
         [Test]
         public void LeSuffix()
         {
-            Assert.AreEqual("disciple", s_stemmer.stemTerm("disciples"));
-            Assert.AreEqual("temple", s_stemmer.stemTerm("temples"));
-            Assert.AreEqual("people", s_stemmer.stemTerm("people"));
-            Assert.AreEqual("cripple", s_stemmer.stemTerm("cripple"));
-            Assert.AreEqual("ample", s_stemmer.stemTerm("ample"));
-            Assert.AreEqual("battle", s_stemmer.stemTerm("battles"));
-            Assert.AreEqual("apostle", s_stemmer.stemTerm("apostles"));
+            Assert.AreEqual("disciple", PorterStemmer.StemTerm("disciples"));
+            Assert.AreEqual("temple", PorterStemmer.StemTerm("temples"));
+            Assert.AreEqual("people", PorterStemmer.StemTerm("people"));
+            Assert.AreEqual("cripple", PorterStemmer.StemTerm("cripple"));
+            Assert.AreEqual("ample", PorterStemmer.StemTerm("ample"));
+            Assert.AreEqual("battle", PorterStemmer.StemTerm("battles"));
+            Assert.AreEqual("apostle", PorterStemmer.StemTerm("apostles"));
         }
 
         /// ------------------------------------------------------------------------------------
@@ -66,21 +64,21 @@ namespace SIL.Utils
         [Test]
         public void ShortWordsEndingInE()
         {
-            Assert.AreEqual("one", s_stemmer.stemTerm("one"));
-            Assert.AreEqual("one", s_stemmer.stemTerm("ones"));
-            Assert.AreEqual("ire", s_stemmer.stemTerm("ire"));
-            Assert.AreEqual("are", s_stemmer.stemTerm("are"));
-            Assert.AreEqual("ore", s_stemmer.stemTerm("ore"));
-            Assert.AreEqual("ore", s_stemmer.stemTerm("ores"));
-            Assert.AreEqual("core", s_stemmer.stemTerm("core"));
-            Assert.AreEqual("bare", s_stemmer.stemTerm("bare"));
-            Assert.AreEqual("there", s_stemmer.stemTerm("there"));
-            Assert.AreEqual("bye", s_stemmer.stemTerm("bye"));
-	        Assert.AreEqual("lie", s_stemmer.stemTerm("lie"));
-	        Assert.AreEqual("doe", s_stemmer.stemTerm("doe"));
+            Assert.AreEqual("one", PorterStemmer.StemTerm("one"));
+            Assert.AreEqual("one", PorterStemmer.StemTerm("ones"));
+            Assert.AreEqual("ire", PorterStemmer.StemTerm("ire"));
+            Assert.AreEqual("are", PorterStemmer.StemTerm("are"));
+            Assert.AreEqual("ore", PorterStemmer.StemTerm("ore"));
+            Assert.AreEqual("ore", PorterStemmer.StemTerm("ores"));
+            Assert.AreEqual("core", PorterStemmer.StemTerm("core"));
+            Assert.AreEqual("bare", PorterStemmer.StemTerm("bare"));
+            Assert.AreEqual("there", PorterStemmer.StemTerm("there"));
+            Assert.AreEqual("bye", PorterStemmer.StemTerm("bye"));
+	        Assert.AreEqual("lie", PorterStemmer.StemTerm("lie"));
+	        Assert.AreEqual("doe", PorterStemmer.StemTerm("doe"));
 			// The stem of "does" could be either "do" or "doe". Although "do" is the more likely one,
 			// it is better to have it stem to "doe" because we will never have "do" as a ley term. 
-	        //Assert.AreEqual("do", s_stemmer.stemTerm("does"));
+	        //Assert.AreEqual("do", PorterStemmer.StemTerm("does"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -91,11 +89,11 @@ namespace SIL.Utils
 		[Test]
 		public void WordsEndingInLy()
 		{
-			Assert.AreEqual("real", s_stemmer.stemTerm("really"));
-			Assert.AreEqual("final", s_stemmer.stemTerm("finally"));
-			Assert.AreEqual("full", s_stemmer.stemTerm("fully"));
-			Assert.AreEqual("bliss", s_stemmer.stemTerm("blissfully"));
-			Assert.AreEqual("pure", s_stemmer.stemTerm("purely"));
+			Assert.AreEqual("real", PorterStemmer.StemTerm("really"));
+			Assert.AreEqual("final", PorterStemmer.StemTerm("finally"));
+			Assert.AreEqual("full", PorterStemmer.StemTerm("fully"));
+			Assert.AreEqual("bliss", PorterStemmer.StemTerm("blissfully"));
+			Assert.AreEqual("pure", PorterStemmer.StemTerm("purely"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -106,13 +104,13 @@ namespace SIL.Utils
 		[Test]
 		public void WordsEndingInEli()
 		{
-			Assert.AreEqual("strang", s_stemmer.stemTerm("strangely")); // "y" gets turned into "i"
-			Assert.AreEqual("gingeli", s_stemmer.stemTerm("gingeli"));
-			Assert.AreEqual("gingeli", s_stemmer.stemTerm("gingelis"));
-			Assert.AreEqual("deli", s_stemmer.stemTerm("deli"));
-			Assert.AreEqual("deli", s_stemmer.stemTerm("delis"));
-			Assert.AreEqual("obel", s_stemmer.stemTerm("obeli"));
-			Assert.AreEqual("Areli", s_stemmer.stemTerm("Areli"));
+			Assert.AreEqual("strang", PorterStemmer.StemTerm("strangely")); // "y" gets turned into "i"
+			Assert.AreEqual("gingeli", PorterStemmer.StemTerm("gingeli"));
+			Assert.AreEqual("gingeli", PorterStemmer.StemTerm("gingelis"));
+			Assert.AreEqual("deli", PorterStemmer.StemTerm("deli"));
+			Assert.AreEqual("deli", PorterStemmer.StemTerm("delis"));
+			Assert.AreEqual("obel", PorterStemmer.StemTerm("obeli"));
+			Assert.AreEqual("Areli", PorterStemmer.StemTerm("Areli"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -123,31 +121,31 @@ namespace SIL.Utils
 		[Test]
 		public void SpecialCaseNouns()
 		{
-			Assert.AreEqual("morning", s_stemmer.stemTerm("morning"));
-			Assert.AreEqual("midmorning", s_stemmer.stemTerm("midmorning"));
-			Assert.AreEqual("even", s_stemmer.stemTerm("evening")); // because this could be the verb, rather than the noun
-			Assert.AreEqual("olive", s_stemmer.stemTerm("olives"));
+			Assert.AreEqual("morning", PorterStemmer.StemTerm("morning"));
+			Assert.AreEqual("midmorning", PorterStemmer.StemTerm("midmorning"));
+			Assert.AreEqual("even", PorterStemmer.StemTerm("evening")); // because this could be the verb, rather than the noun
+			Assert.AreEqual("olive", PorterStemmer.StemTerm("olives"));
 
-			Assert.AreEqual("someone", s_stemmer.stemTerm("someone"));
-			Assert.AreEqual("anyone", s_stemmer.stemTerm("anyone"));
-			Assert.AreEqual("everyone", s_stemmer.stemTerm("everyone"));
-			Assert.AreEqual("someone", s_stemmer.stemTerm("someone's"));
-			Assert.AreEqual("anyone", s_stemmer.stemTerm("anyone's"));
-			Assert.AreEqual("everyone", s_stemmer.stemTerm("everyone's"));
+			Assert.AreEqual("someone", PorterStemmer.StemTerm("someone"));
+			Assert.AreEqual("anyone", PorterStemmer.StemTerm("anyone"));
+			Assert.AreEqual("everyone", PorterStemmer.StemTerm("everyone"));
+			Assert.AreEqual("someone", PorterStemmer.StemTerm("someone's"));
+			Assert.AreEqual("anyone", PorterStemmer.StemTerm("anyone's"));
+			Assert.AreEqual("everyone", PorterStemmer.StemTerm("everyone's"));
 
-			Assert.AreEqual("something", s_stemmer.stemTerm("something"));
-			Assert.AreEqual("anything", s_stemmer.stemTerm("anything"));
-			Assert.AreEqual("everything", s_stemmer.stemTerm("everything"));
-			Assert.AreEqual("something", s_stemmer.stemTerm("something's"));
-			Assert.AreEqual("anything", s_stemmer.stemTerm("anything's"));
-			Assert.AreEqual("everything", s_stemmer.stemTerm("everything's"));
+			Assert.AreEqual("something", PorterStemmer.StemTerm("something"));
+			Assert.AreEqual("anything", PorterStemmer.StemTerm("anything"));
+			Assert.AreEqual("everything", PorterStemmer.StemTerm("everything"));
+			Assert.AreEqual("something", PorterStemmer.StemTerm("something's"));
+			Assert.AreEqual("anything", PorterStemmer.StemTerm("anything's"));
+			Assert.AreEqual("everything", PorterStemmer.StemTerm("everything's"));
 
-			Assert.AreEqual("somebody", s_stemmer.stemTerm("somebody"));
-			Assert.AreEqual("anybody", s_stemmer.stemTerm("anybody"));
-			Assert.AreEqual("everybody", s_stemmer.stemTerm("everybody"));
-			Assert.AreEqual("somebody", s_stemmer.stemTerm("somebody's"));
-			Assert.AreEqual("anybody", s_stemmer.stemTerm("anybody's"));
-			Assert.AreEqual("everybody", s_stemmer.stemTerm("everybody's"));
+			Assert.AreEqual("somebody", PorterStemmer.StemTerm("somebody"));
+			Assert.AreEqual("anybody", PorterStemmer.StemTerm("anybody"));
+			Assert.AreEqual("everybody", PorterStemmer.StemTerm("everybody"));
+			Assert.AreEqual("somebody", PorterStemmer.StemTerm("somebody's"));
+			Assert.AreEqual("anybody", PorterStemmer.StemTerm("anybody's"));
+			Assert.AreEqual("everybody", PorterStemmer.StemTerm("everybody's"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,19 +157,19 @@ namespace SIL.Utils
 		[Test]
 		public void HyphenatedNouns()
 		{
-			Assert.AreEqual("burial-place", s_stemmer.stemTerm("burial-place"));
-			Assert.AreEqual("burial-place", s_stemmer.stemTerm("burial-places"));
-			Assert.AreEqual("mid-morning", s_stemmer.stemTerm("mid-morning"));
-			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-fly"));
-			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-fly's"));
-			Assert.AreEqual("fire-fly", s_stemmer.stemTerm("fire-flies"));
-			Assert.AreEqual("raisin-cake", s_stemmer.stemTerm("raisin-cake"));
-			Assert.AreEqual("raisin-cake", s_stemmer.stemTerm("raisin-cakes"));
-			Assert.AreEqual("drink-offering", s_stemmer.stemTerm("drink-offering"));
-			Assert.AreEqual("drink-offering", s_stemmer.stemTerm("drink-offerings"));
-			Assert.AreEqual("drink-offering", s_stemmer.stemTerm("drink-offerings'"));
-			Assert.AreEqual("threshing-sledge", s_stemmer.stemTerm("threshing-sledge"));
-			Assert.AreEqual("threshing-sledge", s_stemmer.stemTerm("threshing-sledges"));
+			Assert.AreEqual("burial-place", PorterStemmer.StemTerm("burial-place"));
+			Assert.AreEqual("burial-place", PorterStemmer.StemTerm("burial-places"));
+			Assert.AreEqual("mid-morning", PorterStemmer.StemTerm("mid-morning"));
+			Assert.AreEqual("fire-fly", PorterStemmer.StemTerm("fire-fly"));
+			Assert.AreEqual("fire-fly", PorterStemmer.StemTerm("fire-fly's"));
+			Assert.AreEqual("fire-fly", PorterStemmer.StemTerm("fire-flies"));
+			Assert.AreEqual("raisin-cake", PorterStemmer.StemTerm("raisin-cake"));
+			Assert.AreEqual("raisin-cake", PorterStemmer.StemTerm("raisin-cakes"));
+			Assert.AreEqual("drink-offering", PorterStemmer.StemTerm("drink-offering"));
+			Assert.AreEqual("drink-offering", PorterStemmer.StemTerm("drink-offerings"));
+			Assert.AreEqual("drink-offering", PorterStemmer.StemTerm("drink-offerings'"));
+			Assert.AreEqual("threshing-sledge", PorterStemmer.StemTerm("threshing-sledge"));
+			Assert.AreEqual("threshing-sledge", PorterStemmer.StemTerm("threshing-sledges"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -184,18 +182,18 @@ namespace SIL.Utils
 		[Test]
 		public void WordsEndingInUs()
 		{
-			Assert.AreEqual("us", s_stemmer.stemTerm("us"));
-			Assert.AreEqual("bus", s_stemmer.stemTerm("bus"));
-			Assert.AreEqual("Jesus", s_stemmer.stemTerm("Jesus"));
-			Assert.AreEqual("mumu", s_stemmer.stemTerm("mumus"));
-			Assert.AreEqual("court", s_stemmer.stemTerm("courteous")); // "court" is actually an archaic root
-			Assert.AreEqual("gener", s_stemmer.stemTerm("generous"));
-			Assert.AreEqual("blasphem", s_stemmer.stemTerm("blasphemous"));
-			Assert.AreEqual("jabiru", s_stemmer.stemTerm("jabirus"));
-			Assert.AreEqual("vertu", s_stemmer.stemTerm("vertus"));
-			Assert.AreEqual("tutu", s_stemmer.stemTerm("tutus"));
-			Assert.AreEqual("Festus", s_stemmer.stemTerm("Festus"));
-			Assert.AreEqual("flu", s_stemmer.stemTerm("flus"));
+			Assert.AreEqual("us", PorterStemmer.StemTerm("us"));
+			Assert.AreEqual("bus", PorterStemmer.StemTerm("bus"));
+			Assert.AreEqual("Jesus", PorterStemmer.StemTerm("Jesus"));
+			Assert.AreEqual("mumu", PorterStemmer.StemTerm("mumus"));
+			Assert.AreEqual("court", PorterStemmer.StemTerm("courteous")); // "court" is actually an archaic root
+			Assert.AreEqual("gener", PorterStemmer.StemTerm("generous"));
+			Assert.AreEqual("blasphem", PorterStemmer.StemTerm("blasphemous"));
+			Assert.AreEqual("jabiru", PorterStemmer.StemTerm("jabirus"));
+			Assert.AreEqual("vertu", PorterStemmer.StemTerm("vertus"));
+			Assert.AreEqual("tutu", PorterStemmer.StemTerm("tutus"));
+			Assert.AreEqual("Festus", PorterStemmer.StemTerm("Festus"));
+			Assert.AreEqual("flu", PorterStemmer.StemTerm("flus"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -206,30 +204,20 @@ namespace SIL.Utils
 		[Test]
 		public void StagedStemming()
 		{
-			s_stemmer.StagedStemming = true;
-			try
-			{
-				Assert.AreEqual("renderer", s_stemmer.stemTerm("renderers'"));
-				Assert.AreEqual("render", s_stemmer.stemTerm("renderer"));
-				Assert.AreEqual("render", s_stemmer.stemTerm("render"));
+			Assert.That(PorterStemmer.GetStemmedForms("renderers'"),
+				Is.EquivalentTo(new [] {"renderer", "render"}));
 
-				Assert.AreEqual("standardization", s_stemmer.stemTerm("standardizations"));
-				Assert.AreEqual("standardize", s_stemmer.stemTerm("standardization"));
-				Assert.AreEqual("standard", s_stemmer.stemTerm("standardize"));
-				Assert.AreEqual("standard", s_stemmer.stemTerm("standard"));
+			Assert.That(PorterStemmer.GetStemmedForms("standardizations"),
+				Is.EquivalentTo(new [] {"standardization", "standardize", "standard"}));
 
-				Assert.AreEqual("strange", s_stemmer.stemTerm("strangely"));
-				Assert.AreEqual("strang", s_stemmer.stemTerm("strange"));
-				Assert.AreEqual("strang", s_stemmer.stemTerm("strang"));
+			Assert.That(PorterStemmer.GetStemmedForms("strangely"),
+				Is.EquivalentTo(new [] {"strange", "strang"}));
 
-				Assert.AreEqual("realize", s_stemmer.stemTerm("realizing"));
-				Assert.AreEqual("realiz", s_stemmer.stemTerm("realize"));
-				Assert.AreEqual("realiz", s_stemmer.stemTerm("realiz"));
-			}
-			finally 
-			{
-				s_stemmer.StagedStemming = false;
-			}
+			Assert.That(PorterStemmer.GetStemmedForms("realizing"),
+				Is.EquivalentTo(new [] {"realize", "realiz"}));
+
+			Assert.That(PorterStemmer.GetStemmedForms("nobody"), Is.Empty);
+
 		}
 	}
 }
