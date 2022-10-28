@@ -17,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SIL.Transcelerator;
 using System.Linq;
+using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Xml;
 
@@ -411,7 +412,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			}
 		}
 
-        internal static int MakeStandardFormatQuestions(StreamReader reader, StreamWriter writer, IScrVers vers)
+        internal static int MakeStandardFormatQuestions(StreamReader reader, StreamWriter writer, IVersification vers)
         {
             int problemsFound = 0;
             MultilingScrBooks multilingScrBooks = new MultilingScrBooks();

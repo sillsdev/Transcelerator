@@ -145,10 +145,11 @@ namespace SIL.Transcelerator
         public PhraseCustomization(TranslatablePhrase tp) : this()
 		{
 			Reference = tp.Reference;
-			OriginalPhrase = tp.OriginalPhrase;
+			OriginalPhrase = tp.IsUserAdded && string.IsNullOrEmpty(tp.OriginalPhrase) ?
+				tp.ModifiedPhrase : tp.OriginalPhrase;
 			ModifiedPhrase = tp.ModifiedPhrase;
 			Type = tp.IsExcluded ? CustomizationType.Deletion : CustomizationType.Modification;
-			if (Type == CustomizationType.Modification)
+			if (Type == CustomizationType.Modification || Type == CustomizationType.Deletion)
 				SetKeyBasedOn(tp);
 		}
 
@@ -215,7 +216,7 @@ namespace SIL.Transcelerator
 			if (x.Type == PhraseCustomization.CustomizationType.Deletion)
 			{
 				return y.Type == PhraseCustomization.CustomizationType.Deletion &&
-					x.OriginalPhrase == y.OriginalPhrase;
+					(x.ImmutableKey ?? x.OriginalPhrase) == (y.ImmutableKey ?? y.OriginalPhrase);
 			}
 			return x.ModifiedPhrase == y.ModifiedPhrase;
 		}
@@ -230,7 +231,7 @@ namespace SIL.Transcelerator
 				else
 				{
 					Debug.Assert(cust.Type == PhraseCustomization.CustomizationType.Deletion);
-					hashCode = (hashCode * 397) ^ cust.OriginalPhrase.GetHashCode();
+					hashCode = (hashCode * 397) ^ (cust.ImmutableKey ??cust.OriginalPhrase).GetHashCode();
 					hashCode = (hashCode * 397) ^ (int)cust.Type;
 				}
 

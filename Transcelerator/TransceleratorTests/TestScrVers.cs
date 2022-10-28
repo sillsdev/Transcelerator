@@ -1,7 +1,7 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2013' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,12 +9,13 @@
 // 
 // File: TestScrVers.cs
 // --------------------------------------------------------------------------------------------
+using Paratext.PluginInterfaces;
 using Rhino.Mocks;
 using SIL.Scripture;
 
 namespace SIL.Transcelerator
 {
-	public class TestScrVers : IScrVers
+	public class TestScrVers : IVersification
 	{
 		private readonly IScrVers m_vers;
 
@@ -40,14 +41,34 @@ namespace SIL.Transcelerator
 			m_vers.Stub(v => v.GetLastVerse(66, 1)).Return(20);
 		}
 
-		public int GetLastBook()
-		{
-			return Canon.LastBook;
-		}
+		//public int GetLastBook()
+		//{
+		//	return Canon.LastBook;
+		//}
 
 		public int GetLastChapter(int bookNum)
 		{
 			return m_vers.GetLastChapter(bookNum);
+		}
+
+		public IVerseRef CreateReference(int bookNum, int chapterNum, int verseNum)
+		{
+			return new BcvRefIVerseAdapter(new BCVRef(bookNum, chapterNum, verseNum));
+		}
+
+		public IVerseRef CreateReference(string refStr)
+		{
+			var start = new BCVRef();
+			var end = new BCVRef();
+			BCVRef.ParseRefRange(refStr, ref start, ref end);
+			return new BcvRefIVerseAdapter(start);
+		}
+
+		public IVerseRef ChangeVersification(IVerseRef verseRef)
+		{
+			if (verseRef.Versification is TestScrVers)
+				return verseRef;
+			throw new System.NotImplementedException();
 		}
 
 		public int GetLastVerse(int bookNum, int chapterNum)
@@ -55,36 +76,41 @@ namespace SIL.Transcelerator
 			return m_vers.GetLastVerse(bookNum, chapterNum);
 		}
 
-		public int ChangeVersification(int reference, IScrVers scrVersSource)
-		{
-			return m_vers.ChangeVersification(reference, scrVersSource);
-		}
+		//public int ChangeVersification(int reference, IScrVers scrVersSource)
+		//{
+		//	return m_vers.ChangeVersification(reference, scrVersSource);
+		//}
 
-		public bool IsExcluded(int bbbcccvvv)
-		{
-			throw new System.NotImplementedException();
-		}
+		public bool IsExcluded(int bbbcccvvv) => false;
 
-		public VerseRef? FirstIncludedVerse(int bookNum, int chapterNum)
-		{
-			throw new System.NotImplementedException();
-		}
+		public StandardScrVersType Type => StandardScrVersType.English;
 
-		public string[] VerseSegments(int bbbcccvvv)
-		{
-			throw new System.NotImplementedException();
-		}
+		public bool IsCustomized => true;
 
-		public void ChangeVersification(ref VerseRef reference)
-		{
-			throw new System.NotImplementedException();
-		}
+		//public VerseRef? FirstIncludedVerse(int bookNum, int chapterNum)
+		//{
+		//	throw new System.NotImplementedException();
+		//}
 
-		public bool ChangeVersificationWithRanges(VerseRef reference, out VerseRef newReference)
-		{
-			throw new System.NotImplementedException();
-		}
+		//public string[] VerseSegments(int bbbcccvvv)
+		//{
+		//	throw new System.NotImplementedException();
+		//}
 
-		public string Name => "Test versification thingy";
+		//public void ChangeVersification(ref VerseRef reference)
+		//{
+		//	throw new System.NotImplementedException();
+		//}
+
+		//public bool ChangeVersificationWithRanges(VerseRef reference, out VerseRef newReference)
+		//{
+		//	throw new System.NotImplementedException();
+		//}
+
+		//public string Name => "Test versification thingy";
+		public bool Equals(IVersification other)
+		{
+			return other is TestScrVers;
+		}
 	}
 }

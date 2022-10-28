@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Rhino.Mocks;
 
 namespace SIL.Transcelerator
 {
@@ -66,7 +67,7 @@ namespace SIL.Transcelerator
 			q.Text = "What question did the apostles ask Jesus about his kingdom?";
 			q.Answers = new [] { "The apostles asked Jesus whether he was soon going to set up his kingdom in a way that everybody could see and cause the people of Israel to have power in that kingdom." };
 
-			QuestionProvider qp = new QuestionProvider(qs, null);
+			QuestionProvider qp = new QuestionProvider(qs);
 
 			Assert.AreEqual(2, qp.SectionInfo.Count);
 			Assert.AreEqual("Acts 1:1-5 Introduction to the book.", qp.SectionInfo.Find(44001001).Heading);
@@ -204,7 +205,7 @@ namespace SIL.Transcelerator
             q = qs.Items[iS].Categories[0].Questions[0];
             q.Text = "q4";
 
-            QuestionProvider qp = new QuestionProvider(qs, null);
+            QuestionProvider qp = new QuestionProvider(qs);
 
             Assert.AreEqual(4, qp.SectionInfo.Count);
             var keys = qp.SectionInfo.AllSectionStartRefs;
@@ -314,7 +315,8 @@ namespace SIL.Transcelerator
                 "read this",
                 "again"                
             };
-            QuestionProvider qp = new QuestionProvider(pq);
+            QuestionProvider qp = new QuestionProvider(pq, MockRepository.GenerateMock<IPhraseTranslationHelper>(),
+				MockRepository.GenerateMock<ITermRenderingsRepo>());
             List<TranslatablePhrase> phrases = qp.ToList();
             Assert.AreEqual(8, phrases.Count);
 
@@ -378,7 +380,7 @@ namespace SIL.Transcelerator
 			q.Text = "Who wrote this book?";
 			q.Answers = new[] { "Paul." };
 
-			QuestionProvider qp = new QuestionProvider(qs, null);
+			QuestionProvider qp = new QuestionProvider(qs);
 
 			Assert.AreEqual(1, qp.SectionInfo.Count);
 			Assert.AreEqual("Romans 1:1-17 Introduction to the book.", qp.SectionInfo.Find(s.StartRef).Heading);
@@ -442,7 +444,7 @@ namespace SIL.Transcelerator
 			q.Text = "What question did the apostles ask Jesus about his kingdom?";
 			q.Answers = new[] { "The apostles asked Jesus whether he was soon going to set up his kingdom in a way that everybody could see and cause the people of Israel to have power in that kingdom." };
 
-			QuestionProvider qp = new QuestionProvider(qs, null);
+			QuestionProvider qp = new QuestionProvider(qs);
 
 			List<TranslatablePhrase> phrases = qp.ToList();
 			Assert.AreEqual(6, phrases.Count);

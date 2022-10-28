@@ -56,7 +56,6 @@ namespace SIL.Transcelerator
 			this.headerContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mnuAddRenderingH = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuLookUpTermH = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuRefreshRenderingsH = new System.Windows.Forms.ToolStripMenuItem();
 			this.m_lbRenderings = new System.Windows.Forms.ListBox();
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.mnuDeleteRendering = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,14 +118,13 @@ namespace SIL.Transcelerator
 			// 
 			this.headerContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuAddRenderingH,
-            this.mnuLookUpTermH,
-            this.mnuRefreshRenderingsH});
+            this.mnuLookUpTermH});
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.headerContextMenuStrip, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.headerContextMenuStrip, null);
 			this.l10NSharpExtender1.SetLocalizationPriority(this.headerContextMenuStrip, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.headerContextMenuStrip, "TermRenderingCtrl.contextMenuStrip1");
 			this.headerContextMenuStrip.Name = "contextMenuStrip1";
-			this.headerContextMenuStrip.Size = new System.Drawing.Size(222, 70);
+			this.headerContextMenuStrip.Size = new System.Drawing.Size(166, 48);
 			// 
 			// mnuAddRenderingH
 			// 
@@ -136,7 +134,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddRenderingH, "TermRenderingCtrl.mnuAddRenderingH");
 			this.mnuAddRenderingH.Name = "mnuAddRenderingH";
-			this.mnuAddRenderingH.Size = new System.Drawing.Size(221, 22);
+			this.mnuAddRenderingH.Size = new System.Drawing.Size(165, 22);
 			this.mnuAddRenderingH.Text = "&Add rendering...";
 			this.mnuAddRenderingH.Click += new System.EventHandler(this.mnuAddRendering_Click);
 			// 
@@ -147,20 +145,9 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLookUpTermH, resources.GetString("mnuLookUpTermH.LocalizationComment"));
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuLookUpTermH, "TermRenderingCtrl.mnuLookUpTermH");
 			this.mnuLookUpTermH.Name = "mnuLookUpTermH";
-			this.mnuLookUpTermH.Size = new System.Drawing.Size(221, 22);
+			this.mnuLookUpTermH.Size = new System.Drawing.Size(165, 22);
 			this.mnuLookUpTermH.Text = "Find &Term in {0}...";
-			this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
-			// 
-			// mnuRefreshRenderingsH
-			// 
-			this.mnuRefreshRenderingsH.Image = global::SIL.Transcelerator.Properties.Resources.Refresh;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuRefreshRenderingsH, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuRefreshRenderingsH, resources.GetString("mnuRefreshRenderingsH.LocalizationComment"));
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuRefreshRenderingsH, "TermRenderingCtrl.mnuRefreshRenderingsH");
-			this.mnuRefreshRenderingsH.Name = "mnuRefreshRenderingsH";
-			this.mnuRefreshRenderingsH.Size = new System.Drawing.Size(221, 22);
-			this.mnuRefreshRenderingsH.Text = "Refresh Renderings from {0}";
-			this.mnuRefreshRenderingsH.Click += new System.EventHandler(this.mnuRefreshRenderingsH_Click);
+			this.mnuLookUpTermH.Click += new System.EventHandler(this.LookUpTermInHostApplication);
 			// 
 			// m_lbRenderings
 			// 
@@ -217,7 +204,7 @@ namespace SIL.Transcelerator
 			this.mnuLookUpTermC.Name = "mnuLookUpTermC";
 			this.mnuLookUpTermC.Size = new System.Drawing.Size(198, 22);
 			this.mnuLookUpTermC.Text = "Find &Term in {0}...";
-			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplicaton);
+			this.mnuLookUpTermC.Click += new System.EventHandler(this.LookUpTermInHostApplication);
 			// 
 			// l10NSharpExtender1
 			// 
@@ -258,7 +245,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.ContextMenuStrip headerContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem mnuLookUpTermH;
         private System.Windows.Forms.ToolStripMenuItem mnuAddRenderingH;
-        private System.Windows.Forms.ToolStripMenuItem mnuRefreshRenderingsH;
         private System.Windows.Forms.ToolStripMenuItem mnuSetAsDefault;
 		private L10NSharpExtender l10NSharpExtender1;
 		private System.Windows.Forms.ToolStripMenuItem mnuAddRenderingC;

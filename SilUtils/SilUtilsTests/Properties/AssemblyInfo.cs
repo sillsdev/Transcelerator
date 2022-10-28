@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("SilUtils")]
-[assembly: AssemblyCopyright("Copyright © 2009-2021 SIL International")]
+[assembly: AssemblyCopyright("Copyright © 2009-2022 SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2011' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,12 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.ObjectModel;
 
 namespace SIL.Transcelerator
 {
@@ -33,7 +32,7 @@ namespace SIL.Transcelerator
 	public class KeyTermRules
 	{
 	    private List<Regex> m_regexRules;
-        private ReadonlyDictionary<string, KeyTermRule> m_rulesDictionary;
+        private ReadOnlyDictionary<string, KeyTermRule> m_rulesDictionary;
 
 	    [XmlElement("KeyTermRule", Form=XmlSchemaForm.Unqualified)]
 		public List<KeyTermRule> Items { get; set; }
@@ -61,7 +60,7 @@ namespace SIL.Transcelerator
         /// <remarks>Wanted to make this class actually BE a ReadonlyDictionary, but that prevented
         /// it from being XML Serializable</remarks>
         [XmlIgnore]
-        public ReadonlyDictionary<string, KeyTermRule> RulesDictionary
+        public IReadOnlyDictionary<string, KeyTermRule> RulesDictionary
         {
 	        get
             {
@@ -86,7 +85,7 @@ namespace SIL.Transcelerator
                 else
                     dictionary[keyTermRule.id] = keyTermRule;
             }
-            m_rulesDictionary = new ReadonlyDictionary<string, KeyTermRule>(dictionary);
+            m_rulesDictionary = new ReadOnlyDictionary<string, KeyTermRule>(dictionary);
 	    }
 	}
 	
@@ -120,8 +119,8 @@ namespace SIL.Transcelerator
 		[XmlAttribute]
 		public string id
 		{
-			get { return m_id; }
-			set { m_id = value.ToLowerInvariant().Normalize(NormalizationForm.FormC); }
+			get => m_id;
+			set => m_id = value.ToLowerInvariant().Normalize(NormalizationForm.FormC);
 		}
 		
 		/// --------------------------------------------------------------------------------
@@ -132,23 +131,15 @@ namespace SIL.Transcelerator
 		[XmlAttribute("rule")]
 		public string RuleStr
 		{
-			get
-			{
-				return Rule == null ? null : Rule.ToString();
-			}
-			set
-			{
-				if (value == null || !Enum.IsDefined(typeof(RuleType), value))
-					Rule = null;
-				else
-					Rule = (RuleType)Enum.Parse(typeof(RuleType), value, true);
-			}
+			get => Rule == null ? null : Rule.ToString();
+			set => Rule = value == null || !Enum.IsDefined(typeof(RuleType), value) ?
+				(RuleType?)null : (RuleType)Enum.Parse(typeof(RuleType), value, true);
 		}
 		
 		/// --------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets whether this rule's id should be interpreted as a regular
-		/// expresssion, rather than an exact string match.
+		/// expression, rather than an exact string match.
 		/// </summary>
 		/// --------------------------------------------------------------------------------
         [XmlAttribute("regex")]
@@ -202,8 +193,8 @@ namespace SIL.Transcelerator
 		[XmlAttribute("name")]
 		public string Name
 		{
-			get { return m_name; }
-			set { m_name = value.ToLowerInvariant().Normalize(NormalizationForm.FormC); }
+			get => m_name;
+			set => m_name = value.ToLowerInvariant().Normalize(NormalizationForm.FormC);
 		}
 
         /// --------------------------------------------------------------------------------

@@ -1,4 +1,7 @@
-﻿namespace SIL.Transcelerator
+﻿using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
+
+namespace SIL.Transcelerator
 {
 	partial class MoreUiLanguagesDlg
 	{
@@ -13,9 +16,10 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && (components != null))
+			if (disposing)
 			{
-				components.Dispose();
+				components?.Dispose();
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized -= HandleStringsLocalized;
 			}
 			base.Dispose(disposing);
 		}

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2018, SIL International.
-// <copyright from='2018' to='2018' company='SIL International'>
-//		Copyright (c) 2018, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2018' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator;
 using SIL.Transcelerator.Localization;
@@ -24,10 +25,10 @@ namespace SIL.TxlMasterQuestionPreProcessor
 {
 	public partial class TxlMasterQuestionPreProcessorForm : Form
 	{
-		private readonly IScrVers m_masterVersification;
+		private readonly IVersification m_masterVersification;
 		private string m_sfmSourceLabelText;
 
-		public TxlMasterQuestionPreProcessorForm(IScrVers englishVersification)
+		public TxlMasterQuestionPreProcessorForm(IVersification englishVersification)
 		{
 			InitializeComponent();
 
@@ -102,7 +103,17 @@ namespace SIL.TxlMasterQuestionPreProcessor
 
 		private string TryGenerateQuestionLocalizationsFile(out string missingFileName)
 		{
-			var txlLocalizationManager = new LocalizationsFileGenerator(DestinationDirectory, txtLocale.Text);
+			LocalizationsFileGenerator txlLocalizationManager;
+			try
+			{
+				txlLocalizationManager = new LocalizationsFileGenerator(DestinationDirectory, txtLocale.Text);
+			}
+			catch (FileNotFoundException e)
+			{
+				missingFileName = e.FileName;
+				return null;
+			}
+
 			var existingTranslationsFilename = String.IsNullOrWhiteSpace(txtSourceFile.Text) ? null : txtSourceFile.Text;
 			var finfoExistingTxlTranslations = existingTranslationsFilename == null ? null : new FileInfo(txtSourceFile.Text);
 			var finfoMasterQuestionFile = new FileInfo(txtXmlQuestionFile.Text);

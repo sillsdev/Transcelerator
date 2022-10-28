@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International.
-// <copyright from='2018' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International.
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2018' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -154,6 +154,7 @@ namespace SIL.Transcelerator.Localization
 		}
 		internal const string kSectionIdPrefix = "S:";
 		internal const string kQuestionIdPrefix = "Q:";
+		internal const string kQuestionGroupRefSeparator = "+";
 		internal const string kAlternatesGroupId = "Alternates";
 		internal const string kAnswersGroupId = "Answers";
 		internal const string kNotesGroupId = "Notes";
@@ -263,15 +264,15 @@ namespace SIL.Transcelerator.Localization
 				case 0:
 					return null;
 				case 1:
-					return sections[0].FindQuestionGroup(data.Question);
+					return sections[0].FindQuestionGroup(data);
 				default:
 					foreach (var section in sections)
 					{
-						var group = section.FindQuestionGroup(data.Question);
+						var group = section.FindQuestionGroup(data);
 						if (group != null)
 							return group;
 					}
-			   return null;
+					return null;
 			}
 		}
 
@@ -486,12 +487,23 @@ namespace SIL.Transcelerator.Localization
 			return newSubGroup;
 		}
 
-		internal Group FindQuestionGroup(string question)
+		internal Group FindQuestionGroup(UIDataString data)
 		{
 			if (!Id.StartsWith(FileBody.kSectionIdPrefix))
 				throw new InvalidOperationException("FindQuestionGroup should only be called on a section group.");
 
-			return SubGroups.SelectMany(g => g.SubGroups).FirstOrDefault(qGrp => qGrp.Id.EndsWith(question));
+			// There will almost always be only one matching "group", but it is possible for the same exact question to
+			// be asked in two different verses in a section (and they could have different translations).
+			Group bestGroup = null;
+			foreach (var group in SubGroups.SelectMany(g => g.SubGroups).Where(qGrp => qGrp.Id.EndsWith(FileBody.kQuestionGroupRefSeparator + data.Question)))
+			{
+				if (bestGroup == null)
+					bestGroup = group;
+				else if (!bestGroup.Id.Contains(data.ScriptureReference) && group.Id.Contains(data.ScriptureReference))
+					bestGroup = group;
+			}
+
+			return bestGroup;
 		}
 	}
 	#endregion
@@ -555,7 +567,7 @@ namespace SIL.Transcelerator.Localization
 					default: IsLocalized = false; break;
 					case "translated":
 					case "final": // This is what we get from Crowdin
-					case "signed-off": // Defined in XLIFF 1.2, but no loonger used in TXL's XLIFF files
+					case "signed-off": // Defined in XLIFF 1.2, but no longer used in TXL's XLIFF files
 						IsLocalized = true; break;
 				}
 			}

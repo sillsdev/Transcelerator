@@ -11,10 +11,12 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using SIL.Transcelerator.Localization;
+using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -27,6 +29,7 @@ namespace SIL.Transcelerator
 	{
 		private readonly TranslatablePhrase m_question;
 		private readonly List<string> m_existingQuestionsForRef;
+		private readonly string m_help;
 
 		internal string ModifiedPhrase
 		{
@@ -94,19 +97,17 @@ namespace SIL.Transcelerator
 			}
 			else
 				m_pnlAlternatives.Hide();
+
+			m_help = TxlPlugin.GetHelpFile("editingquestions");
+			HelpButton = !IsNullOrEmpty(m_help);
 		}
 
 		private void InitializeRadioButton(RadioButton btn, int index, LocalizationsFileAccessor dataLocalizer)
 		{
 			var alternateForm = m_question.QuestionInfo.Alternatives[index].Text;
-			if (dataLocalizer == null)
-				btn.Text = alternateForm;
-			else
-			{
-				btn.Text = dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
-				btn.Tag = alternateForm;
-
-			}
+			btn.Text = dataLocalizer == null ? alternateForm :
+				dataLocalizer.GetLocalizedDataString(new UIAlternateDataString(m_question.QuestionInfo, index, false), out _);
+			btn.Tag = alternateForm;
 			btn.Checked = m_txtModified.Text == btn.Text;
 		}
 
@@ -132,6 +133,22 @@ namespace SIL.Transcelerator
 			foreach (RadioButton rdoAlt in m_pnlAlternatives.Controls.OfType<RadioButton>())
 				rdoAlt.Checked = false;
 			m_txtModified.Text = m_txtOriginal.Text;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the Help button.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void HandleHelpButtonClick(object sender, CancelEventArgs e)
+		{
+			HandleHelpRequest(sender, new HelpEventArgs(MousePosition));
+		}
+
+		private void HandleHelpRequest(object sender, HelpEventArgs args)
+		{
+			if (!IsNullOrEmpty(m_help))
+				Process.Start(m_help);
 		}
 	}
 }

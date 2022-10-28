@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--This file is generated and then updated by an MSBuild task.  It preserves the automatically-generated guids assigned files that will be installed on user machines. So it should be held in source control.-->
+<InstallerMetadata>
+  <File Id="DocsDirP9Beta.en.addingquestions.htm" Guid="76c8f2a7-e983-4c36-aac6-4b85fce93b1c" />
+  <File Id="DocsDirP9Beta.en.adjustments.htm" Guid="4430b5fb-47c2-4db5-9f94-60ca176364ef" />
+  <File Id="DocsDirP9Beta.en.biblicalterms.htm" Guid="23d91991-eec5-4c18-a11e-fb83c66edc9c" />
+  <File Id="DocsDirP9Beta.en.editingquestions.htm" Guid="354429ce-8f53-4ea3-814c-b912c18ef9b9" />
+  <File Id="DocsDirP9Beta.en.featureoverview.htm" Guid="97966d6a-0742-4a19-b561-894f5188329a" />
+  <File Id="DocsDirP9Beta.en.filtering.htm" Guid="00920cb5-5829-4680-9cde-8f2963eb25de" />
+  <File Id="DocsDirP9Beta.en.generatescript.htm" Guid="3f85f14a-60fa-479b-bb03-3932d3fde8a0" />
+  <File Id="DocsDirP9Beta.en.gettingstarted.htm" Guid="8d4344fb-b971-4472-bbe4-47bda743c4a2" />
+  <File Id="DocsDirP9Beta.en.Home.htm" Guid="e2276f28-a233-4661-88e6-307356d31cbb" />
+  <File Id="DocsDirP9Beta.en.renderingselectionrules.htm" Guid="ce0ce3ab-eb0e-4d10-8127-9cc6a292b928" />
+  <File Id="DocsDirP9Beta.en.reorderingwords.htm" Guid="0b0c369d-3068-4773-9e43-2f19b35146c4" />
+  <File Id="DocsDirP9.en.addingquestions.htm" Guid="80d0985c-e3e4-4be0-8d43-934c90bfaa41" />
+  <File Id="DocsDirP9.en.adjustments.htm" Guid="96252b02-cf09-40fe-bae0-b15234fb410d" />
+  <File Id="DocsDirP9.en.biblicalterms.htm" Guid="85e1d693-d99c-4192-922b-0a507395ba6f" />
+  <File Id="DocsDirP9.en.editingquestions.htm" Guid="4bc82435-bf2c-4004-b354-dad0e0a9a39b" />
+  <File Id="DocsDirP9.en.featureoverview.htm" Guid="a0187fb5-39b8-4f68-97fe-5c82f192fe5a" />
+  <File Id="DocsDirP9.en.filtering.htm" Guid="5bea1327-201b-4a88-96b6-93c9177ea679" />
+  <File Id="DocsDirP9.en.generatescript.htm" Guid="63790eb6-56ca-4b91-b8ff-efa1dcc8fadb" />
+  <File Id="DocsDirP9.en.gettingstarted.htm" Guid="659fcd80-68a7-4483-bc8f-9ca7d7a2cfa3" />
+  <File Id="DocsDirP9.en.Home.htm" Guid="aee3f4f2-1434-4f71-b866-6c043f09b882" />
+  <File Id="DocsDirP9.en.renderingselectionrules.htm" Guid="5698e559-40cb-43fa-890e-0fb252fd5964" />
+  <File Id="DocsDirP9.en.reorderingwords.htm" Guid="5733581f-2a0d-42e9-ba9e-9a88e6895c92" />
+</InstallerMetadata>

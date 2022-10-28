@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2012' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2022, SIL International.
+// <copyright from='2012' to='2022' company='SIL International'>
+//		Copyright (c) 2022, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -116,9 +116,9 @@ namespace SIL.Transcelerator
 			get => m_text;
 			set
 			{
-				var newValue = value.Normalize(NormalizationForm.FormC);
+				var newValue = value?.Normalize(NormalizationForm.FormC);
 				EnsureKeySetWhenChangingText(newValue);
-				m_text = value.Normalize(NormalizationForm.FormC); 
+				m_text = newValue; 
 			}
 		}
 

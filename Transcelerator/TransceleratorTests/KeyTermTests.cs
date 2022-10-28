@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2021, SIL International.
+// <copyright from='2013' to='2021' company='SIL International'>
+//		Copyright (c) 2021, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,29 +9,27 @@
 // 
 // File: KeyTermTests.cs
 // ---------------------------------------------------------------------------------------------
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Paratext.PluginInterfaces;
+using Rhino.Mocks;
+using Is = NUnit.Framework.Is;
 
 namespace SIL.Transcelerator
 {
 	[TestFixture]
 	public class KeyTermTests
 	{
-	    private TestKeyTermRenderingDataFileAccessor m_testFileAccessor;
-	    private Dictionary<string, string[]> m_renderings = new Dictionary<string, string[]>();
+		private ITermRenderingsRepo m_repo;
 
         [SetUp]
         public void TestSetup()
-        {
-            KeyTerm.FileAccessor = m_testFileAccessor = new TestKeyTermRenderingDataFileAccessor();
-            KeyTerm.GetTermRenderings = s =>
-                {
-                    string[] renderings;
-                    return (m_renderings.TryGetValue(s, out renderings)) ? new List<string>(renderings) : null;
-                };
-        }
+		{
+			m_repo = MockRepository.GenerateStrictMock<ITermRenderingsRepo>();
+		}
 
         /// ------------------------------------------------------------------------------------
         /// <summary>
@@ -41,9 +39,10 @@ namespace SIL.Transcelerator
         [Test]
         public void GetRenderings_SurrogateIsForSingleBiblicalTermWithTwoRenderings_ReturnsBothRenderings()
         {
-            string[] renderings = new[] { "abc", "xyz" };
-            m_renderings["GreekWord"] = renderings;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+            string[] renderings = { "abc", "xyz" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord")).Return(renderings);
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(null);
+            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"), m_repo);
             Assert.IsTrue(kt.Renderings.SequenceEqual(renderings));
             Assert.AreEqual("abc", kt.BestRendering);
         }
@@ -56,11 +55,14 @@ namespace SIL.Transcelerator
         [Test]
         public void GetRenderings_SurrogateIsForThreeBiblicalTermsOneOfWhichHasNoRenderings_ReturnsCombinedRenderings()
         {
-            string[] renderings1 = new[] { "abc", "xyz" };
-            string[] renderings2 = new[] { "xyz", "def", "qrs" };
-            m_renderings["GreekWord1"] = renderings1;
-            m_renderings["HebrewWord"] = renderings2;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord1", "GreekWord2", "HebrewWord"));
+            string[] renderings1 = { "abc", "xyz" };
+            string[] renderings2 = { "xyz", "def", "qrs" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord1")).Return(renderings1);
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord2")).Return(new string[0]);
+			m_repo.Stub(r => r.GetTermRenderings("HebrewWord")).Return(renderings2);
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(null);
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord1",
+				"GreekWord2", "HebrewWord"), m_repo);
             Assert.IsTrue(kt.Renderings.SequenceEqual(new [] { "abc", "xyz", "def", "qrs" }));
             Assert.AreEqual("xyz", kt.BestRendering);
         }
@@ -71,21 +73,55 @@ namespace SIL.Transcelerator
         /// </summary>
         /// ------------------------------------------------------------------------------------
         [Test]
-        public void AddAndRemoveRenderings()
-        {
-            string[] renderings = new[] { "abc", "xyz" };
-            m_renderings["GreekWord"] = renderings;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
-            Assert.IsFalse(m_testFileAccessor.Exists(DataFileAccessor.DataFileId.KeyTermRenderingInfo));
-            kt.AddRendering("wunkyboo");
-            Assert.IsTrue(m_testFileAccessor.Exists(DataFileAccessor.DataFileId.KeyTermRenderingInfo));
-            Assert.AreEqual(3, kt.Renderings.Count());
-            Assert.IsTrue(kt.Renderings.Contains("wunkyboo"));
+        public void AddAndRemoveRenderings_NoExistingInfo()
+		{
+			MockRenderingRepoForGreekWordWithNoExistingInfo();
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"), m_repo);
+			kt.AddRendering("wunkyboo");
+			Assert.AreEqual(3, kt.Renderings.Count());
+			Assert.IsTrue(kt.Renderings.Contains("wunkyboo"));
             Assert.IsTrue(kt.CanRenderingBeDeleted("wunkyboo"));
             Assert.IsFalse(kt.CanRenderingBeDeleted("abc"));
             kt.DeleteRendering("wunkyboo");
             Assert.IsFalse(kt.Renderings.Contains("wunkyboo"));
-        }
+		}
+
+		private void MockRenderingRepoForGreekWordWithNoExistingInfo()
+		{
+			var project = MockRepository.GenerateMock<IProject>();
+			var term = MockRepository.GenerateMock<IBiblicalTerm>();
+			term.Stub(t => t.Lemma).Return("GreekWord");
+			var renderings = MockRepository.GenerateMock<IBiblicalTermRenderings>();
+			renderings.Stub(r => r.Renderings).Return(new List<string> {"abc", "xyz"});
+			project.Stub(p => p.GetBiblicalTermRenderings(term, true)).Return(renderings);
+			var termsList = new TestTermsList(new List<IBiblicalTerm> {term});
+			project.Stub(p => p.BiblicalTermList).Return(termsList);
+			m_repo = new ParatextTermRenderingsRepo(new TestKeyTermRenderingDataFileAccessor(), project);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the ability to add and remove additional renderings.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void AddAndRemoveRenderings_ExistingInfo()
+		{
+			string[] renderings = { "abc", "xyz" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord")).Return(renderings);
+			var info = new KeyTermRenderingInfo("diversion", "abc");
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(info);
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"), m_repo);
+			kt.AddRendering("wunkyboo");
+			Assert.AreEqual(3, kt.Renderings.Count());
+			Assert.That(info.AddlRenderings.Contains("wunkyboo"));
+			Assert.IsTrue(kt.Renderings.Contains("wunkyboo"));
+			Assert.IsTrue(kt.CanRenderingBeDeleted("wunkyboo"));
+			Assert.IsFalse(kt.CanRenderingBeDeleted("abc"));
+			kt.DeleteRendering("wunkyboo");
+			Assert.IsFalse(kt.Renderings.Contains("wunkyboo"));
+			Assert.That(info.AddlRenderings, Does.Not.Contain("wunkyboo"));
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -96,8 +132,11 @@ namespace SIL.Transcelerator
 		[Test]
 		public void AddRendering_NoOtherRenderings_AddedRenderingIsDefault()
 		{
-			m_renderings["GreekWord"] = new string[0];
-			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			m_repo = new TermRenderingsRepo();
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
+			int renderingChangedHandlerCalls = 0;
+			kt.BestRenderingChanged += delegate { renderingChangedHandlerCalls++; };
 			kt.AddRendering("wunkyboo");
 			Assert.AreEqual(1, kt.Renderings.Count());
 			Assert.AreEqual("wunkyboo", kt.BestRendering);
@@ -108,6 +147,7 @@ namespace SIL.Transcelerator
 			kt.DeleteRendering("wunkyboo");
 			Assert.AreEqual(string.Empty, kt.BestRendering);
 			Assert.AreEqual(string.Empty, kt.Translation);
+			Assert.That(renderingChangedHandlerCalls, Is.EqualTo(0));
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -119,9 +159,12 @@ namespace SIL.Transcelerator
         [Test]
         public void AddRenderingFailsToAddDuplicate()
         {
-            string[] renderings = new[] { "abc", "xyz" };
-            m_renderings["GreekWord"] = renderings;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+            string[] renderings = { "abc", "xyz" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord")).Return(renderings);
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(null);
+
+            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
             Assert.Throws(typeof(ArgumentException), () => kt.AddRendering("abc"));
         }
 
@@ -134,9 +177,16 @@ namespace SIL.Transcelerator
         [Test]
         public void CanRenderingBeDeleted_NonExistentRendering_ReturnsFalse()
         {
-            string[] renderings = new[] { "abc", "xyz" };
-            m_renderings["GreekWord"] = renderings;
-            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+            string[] renderings = { "abc", "bwe" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord")).Return(renderings);
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(
+				new KeyTermRenderingInfo("diversion", "bwe")
+				{
+					AddlRenderings = new List<string> {"fgj"}
+				});
+
+            var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
             Assert.IsFalse(kt.CanRenderingBeDeleted("xyz"));
 		}
 
@@ -149,9 +199,12 @@ namespace SIL.Transcelerator
 		[Test]
 		public void CanRenderingBeDeleted_NotUserAdded_ReturnsFalse()
 		{
-			string[] renderings = new[] { "abc", "xyz" };
-			m_renderings["GreekWord"] = renderings;
-			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			string[] renderings = { "abc", "xyz" };
+			m_repo.Stub(r => r.GetTermRenderings("GreekWord")).Return(renderings);
+			m_repo.Stub(r => r.GetRenderingInfo("diversion")).Return(null);
+
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
 			Assert.IsFalse(kt.CanRenderingBeDeleted("xyz"));
 		}
 
@@ -164,12 +217,20 @@ namespace SIL.Transcelerator
 		[Test]
 		public void CanRenderingBeDeleted_ExplicitDefaultRendering_ReturnsFalse()
 		{
-			string[] renderings = new[] { "abc", "xyz" };
-			m_renderings["GreekWord"] = renderings;
-			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			MockRenderingRepoForGreekWordWithNoExistingInfo();
+
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
+			int renderingChangedHandlerCalls = 0;
+            kt.BestRenderingChanged += delegate(KeyTerm sender) 
+			{
+				Assert.That(sender, Is.EqualTo(kt));
+				renderingChangedHandlerCalls++;
+			};
 			kt.AddRendering("bestest");
 			kt.BestRendering = "bestest";
 			Assert.IsFalse(kt.CanRenderingBeDeleted("bestest"));
+            Assert.That(renderingChangedHandlerCalls, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -181,8 +242,10 @@ namespace SIL.Transcelerator
 		[Test]
 		public void CanRenderingBeDeleted_ImplicitDefaultRendering_ReturnsTrue()
 		{
-			m_renderings["GreekWord"] = new string[0];
-			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"));
+			m_repo = new TermRenderingsRepo();
+
+			var kt = new KeyTerm(new KeyTermMatchSurrogate("diversion", "GreekWord"),
+				m_repo);
 			kt.AddRendering("bestest");
 			Assert.IsTrue(kt.CanRenderingBeDeleted("bestest"));
 		}
@@ -228,4 +291,29 @@ namespace SIL.Transcelerator
             throw new NotImplementedException();
         }
     }
+
+	internal class TestTermsList : IBiblicalTermList
+	{
+		private readonly List<IBiblicalTerm> m_list;
+
+		internal TestTermsList(List<IBiblicalTerm> list)
+		{
+			m_list = list;
+		}
+
+		public IEnumerator<IBiblicalTerm> GetEnumerator()
+		{
+			return m_list.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public bool Equals(IBiblicalTermList other) => false;
+
+		public bool IsAvailable => true;
+		public string LocalizedName => "Major Biblical Terms";
+	}
 }

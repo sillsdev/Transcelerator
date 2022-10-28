@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.   
-// <copyright from='2020' to='2020 company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2022, SIL International.   
+// <copyright from='2020' to='2022 company='SIL International'>
+//		Copyright (c) 2022, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,13 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using L10NSharp;
 using L10NSharp.UI;
@@ -38,8 +31,11 @@ namespace SIL.Transcelerator
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 		}
 
-		private void HandleStringsLocalized()
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
 			m_linkLabelAddDisplayLanguageUsingInstaller.Text =
 				Format(m_linkLabelAddDisplayLanguageUsingInstaller.Text,
 					m_displayLanguageMenu.Text.Replace("&", "")) + " ";
@@ -56,7 +52,7 @@ namespace SIL.Transcelerator
 
 			m_linkLabelCrowdinInformation.Text =
 				Format(m_linkLabelCrowdinInformation.Text,
-					TxlPlugin.pluginName, kCrowdin);
+					TxlCore.kPluginName, kCrowdin);
 			m_linkLabelCrowdinInformation.LinkArea = new LinkArea(
 				m_linkLabelCrowdinInformation.Text.IndexOf(kCrowdin, StringComparison.Ordinal),
 				kCrowdin.Length);
