@@ -1091,6 +1091,7 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblAnswerLabel
 			// 
+			this.m_lblAnswerLabel.AutoSize = true;
 			this.m_lblAnswerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblAnswerLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblAnswerLabel, null);
@@ -1119,6 +1120,7 @@ namespace SIL.Transcelerator
 			// 
 			// m_lblCommentLabel
 			// 
+			this.m_lblCommentLabel.AutoSize = true;
 			this.m_lblCommentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblCommentLabel, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblCommentLabel, null);
