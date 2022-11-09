@@ -142,7 +142,7 @@ namespace SIL.Transcelerator
 			var toReference = GetRef(scrPsgTo.VerseControl.VerseRef);
 			if (fromReference.CompareTo(toReference) > 0)
 			{
-				if (sender == scrPsgFrom.VerseControl)
+				if (sender == scrPsgFrom)
 					scrPsgTo.VerseControl.VerseRef = scrPsgFrom.VerseControl.VerseRef.Clone();
 				else
 					scrPsgFrom.VerseControl.VerseRef = scrPsgTo.VerseControl.VerseRef.Clone();
