@@ -162,10 +162,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="L10NSharp">
-      <Version>5.0.0</Version>
+      <Version>6.0.0-beta0017</Version>
     </PackageReference>
     <PackageReference Include="SIL.Core">
-      <Version>11.0.0-beta0027</Version>
+      <Version>11.0.0-beta0041</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
