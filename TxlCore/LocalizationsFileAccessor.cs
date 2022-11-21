@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using SIL.WritingSystems;
 
 namespace SIL.Transcelerator.Localization
 {
@@ -44,6 +45,17 @@ namespace SIL.Transcelerator.Localization
 			FileName = locale == "en" ?
 				Path.Combine(DirectoryName, $"{kBaseFilename}{kLocaleFilenameExtension}") :
 				Path.Combine(DirectoryName, $"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
+
+			if (!Exists)
+            {
+                var langCode = IetfLanguageTag.GetGeneralCode(locale);
+                if (langCode != locale)
+                {
+                    Locale = langCode;
+                    FileName = Path.Combine(DirectoryName,
+                        $"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
+                }
+            }
 
 			if (Exists)
 			{
