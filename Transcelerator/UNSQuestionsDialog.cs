@@ -1118,6 +1118,7 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet &&
+                e.RowIndex >= 0 && e.RowIndex < m_helper.FilteredPhraseCount &&
 				m_helper[e.RowIndex].Translation.Any(IsLetter) && !m_fileAccessor.IsReadonly && !IsShowingModalForm)
 			{
 				if (m_helper[e.RowIndex].HasUserTranslation)
