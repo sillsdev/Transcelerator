@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2018' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2018' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using SIL.Xml;
+using static System.String;
 
 namespace SIL.Transcelerator.Localization
 {
@@ -28,8 +29,8 @@ namespace SIL.Transcelerator.Localization
 		}
 
 		// For testing only
-		internal LocalizationsFileGenerator() : base()
-		{
+		internal LocalizationsFileGenerator()
+        {
 		}
 
 		public void GenerateOrUpdateFromMasterQuestions(string masterQuestionsFilename, string existingTxlTranslationsFilename = null, bool retainOnlyTranslatedStrings = false)
@@ -104,12 +105,11 @@ namespace SIL.Transcelerator.Localization
 				}
 			}
 
-			UIDataString key;
-			foreach (var section in questions.Items)
+            foreach (var section in questions.Items)
 			{
 				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
-				key = new UISectionHeadDataString(section);
+				UIDataString key = new UISectionHeadDataString(section);
 				AddTranslationUnit(sectionGroup, key);
 				
 				foreach (Category category in section.Categories)
@@ -124,7 +124,7 @@ namespace SIL.Transcelerator.Localization
 						}
 					}
 
-					foreach (Question q in category.Questions.Where(q => !String.IsNullOrWhiteSpace(q.Text)))
+					foreach (Question q in category.Questions.Where(q => !IsNullOrWhiteSpace(q.Text)))
 					{
 						if (q.ScriptureReference == null)
 						{
@@ -154,16 +154,18 @@ namespace SIL.Transcelerator.Localization
 			AddTranslationUnit = null;
 		}
 
-		private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
+        private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
 		{
-			var alternatives = q.Alternatives;
-			if (alternatives != null && alternatives.Any())
+			bool IncludeAsLocalizable(AlternativeForm af) => !af.Hide && !IsNullOrWhiteSpace(af.Text);
+
+            var alternatives = q.Alternatives;
+			if (alternatives != null && alternatives.Any(IncludeAsLocalizable))
 			{
 				var subGroup = questionGroup.GetQuestionSubGroup(LocalizableStringType.Alternate) ?? questionGroup.AddSubGroup(LocalizableStringType.Alternate.SubQuestionGroupId());
 				for (var index = 0; index < alternatives.Length; index++)
 				{
 					// No need for localizing hidden alternatives
-					if (alternatives[index].Hide || String.IsNullOrWhiteSpace(alternatives[index].Text))
+					if (!IncludeAsLocalizable(alternatives[index]))
 						continue;
 
 					var key = new UIAlternateDataString(q, index, false);
@@ -180,7 +182,7 @@ namespace SIL.Transcelerator.Localization
 				var subGroup = questionGroup.GetQuestionSubGroup(type) ?? questionGroup.AddSubGroup(type.SubQuestionGroupId());
 				for (var index = 0; index < stringsToAdd.Length; index++)
 				{
-					if (String.IsNullOrWhiteSpace(stringsToAdd[index]))
+					if (IsNullOrWhiteSpace(stringsToAdd[index]))
 						continue;
 
 					var key = new UIAnswerOrNoteDataString(q, type, index);

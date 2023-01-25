@@ -347,17 +347,22 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)\$(TargetName).ptxplg" /y
+    <PostBuildEvent>@echo ProjectName = "$(ProjectName)"
+
+@echo copying "$(TargetPath)" to "$(TargetDir)$(TargetName).ptxplg"
+copy "$(TargetPath)" "$(TargetDir)\$(TargetName).ptxplg" /y
 if %25ERRORLEVEL%25 GEQ 1 goto failed
 
 IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
+@echo ParatextInstallDir = "%25ParatextInstallDir%25"
 IF "%25ParatextInstallDir%25" == "" goto copytoparatext
 IF NOT EXIST "%25ParatextInstallDir%25" goto copytoparatext
 
-robocopy "$(TargetDir)$" "%25ParatextInstallDir%25\plugins\$(ProjectName)"
-
-robocopy $(TargetDir) ..\..\..\..\..\Paratext\Paratext\$(OutDir)plugins\$(ProjectName) *.* /R:0 /NFL /NDL /np
+robocopy "$(TargetDir)." "%25ParatextInstallDir%25\plugins\$(ProjectName)"
 if %25ERRORLEVEL%25 GEQ 8 goto failed
+@REM Remove files we know are not needed:
+IF EXIST "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll" del "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll"
+
 goto copytoparatext
 
 :release
