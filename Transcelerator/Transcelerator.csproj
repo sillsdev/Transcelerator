@@ -594,6 +594,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="LocalizedPhrases-ar.xlf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LocalizedPhrases-en-GB.xlf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

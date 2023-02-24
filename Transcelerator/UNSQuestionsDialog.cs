@@ -604,6 +604,17 @@ namespace SIL.Transcelerator
 
 		private void SetLocalizer(string preferredUiLocale)
 		{
+            if (preferredUiLocale == "ar")
+            {
+                RightToLeftLayout = true;
+				RightToLeft = RightToLeft.Yes;
+            }
+			else
+            {
+                RightToLeftLayout = false;
+                RightToLeft = RightToLeft.No;
+            }
+
 			m_dataLocalizer = GetDataLocalizer(preferredUiLocale);
 
 			m_termLocalizer = m_dataLocalizer == null ||
@@ -2519,7 +2530,8 @@ namespace SIL.Transcelerator
 					{ "New", languageId } });
 			Logger.WriteEvent("UI language changed from " +
 				$"{previousLocale} to {languageId}");
-			SetLocalizer(languageId);
+
+            SetLocalizer(languageId);
 			TxlPlugin.UpdateUiLanguageForUser(languageId);
 
 			Properties.Settings.Default.OverrideDisplayLanguage = languageId;
