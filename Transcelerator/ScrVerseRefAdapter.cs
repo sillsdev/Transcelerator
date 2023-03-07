@@ -13,6 +13,7 @@ using System;
 using System.Linq;
 using Paratext.PluginInterfaces;
 using SIL.Scripture;
+using static System.Int32;
 
 namespace SIL.Transcelerator
 {
@@ -68,11 +69,19 @@ namespace SIL.Transcelerator
                 // In practice, the book (coming from the VerseControl) should always be valid.
                 if (string.IsNullOrEmpty(book) || BCVRef.BookToNumber(book) < 0)
                     book = "MAT";
-                if (string.IsNullOrEmpty(chapter))
-                    chapter = "1";
-                if (string.IsNullOrEmpty(verse))
-                    verse = "1";
-                verseRef = m_verseRef.Versification.CreateReference($"{book} {chapter}:{verse}");
+                
+                var bookNum = BCVRef.BookToNumber(book);
+                if (string.IsNullOrEmpty(chapter) || !TryParse(chapter, out var c))
+                    c = 1;
+                else
+					c = Math.Min(c, m_verseRef.Versification.GetLastChapter(bookNum));
+
+                if (string.IsNullOrEmpty(verse) || !TryParse(verse, out var v))
+                    v = 1;
+                else
+					v = Math.Min(v, m_verseRef.Versification.GetLastVerse(bookNum, c));
+
+                verseRef = m_verseRef.Versification.CreateReference(bookNum, c, v);
             }
 
             return new ScrVerseRefAdapter(verseRef, m_project);
