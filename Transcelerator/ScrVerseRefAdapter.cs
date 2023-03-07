@@ -71,17 +71,15 @@ namespace SIL.Transcelerator
                     book = "MAT";
                 
                 var bookNum = BCVRef.BookToNumber(book);
-                if (string.IsNullOrEmpty(chapter) || !TryParse(chapter, out var c) ||
-                    c > m_verseRef.Versification.GetLastChapter(bookNum))
-                {
+                if (string.IsNullOrEmpty(chapter) || !TryParse(chapter, out var c))
                     c = 1;
-                }
+                else
+					c = Math.Min(c, m_verseRef.Versification.GetLastChapter(bookNum));
 
-                if (string.IsNullOrEmpty(verse) || !TryParse(verse, out var v) ||
-                    v > m_verseRef.Versification.GetLastVerse(bookNum, c))
-                {
+                if (string.IsNullOrEmpty(verse) || !TryParse(verse, out var v))
                     v = 1;
-                }
+                else
+					v = Math.Min(v, m_verseRef.Versification.GetLastVerse(bookNum, c));
 
                 verseRef = m_verseRef.Versification.CreateReference(bookNum, c, v);
             }
