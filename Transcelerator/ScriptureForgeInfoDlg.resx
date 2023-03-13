@@ -120,7 +120,10 @@
   <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="l10NSharpExtender1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
+  <data name="m_lblExplanation.LocalizationComment" xml:space="preserve">
+    <value>Params are product names: 0) "Scripture Forge"; 1) "Transcelerator"; 2) "Paratext"; 3) Ptxprint.  Consult localized version of Paratext to ensure that "Send/Receive Projects" is translated in a consistent fashion.</value>
+  </data>
+  <data name="m_lblExplanation.Text" xml:space="preserve">
+    <value>By selecting the option to produce {0} and {3} files, {1} will automatically generate output that these external programs will be able to use. These files will be synchronized using Send/Receive Projects in {2}.</value>
+  </data>
 </root>
