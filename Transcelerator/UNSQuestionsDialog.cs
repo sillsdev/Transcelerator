@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.   
-// <copyright from='2011' to='2022 company='SIL International'>
-//		Copyright (c) 2022, SIL International.   
+#region // Copyright (c) 2023, SIL International.   
+// <copyright from='2011' to='2023 company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -60,6 +60,7 @@ namespace SIL.Transcelerator
 	{
 		#region Constants
 		public const string kScriptureForgeProductName = "Scripture Forge";
+		public const string kPTXPrintProductName = "PTXprint";
 		#endregion
 
 		#region Member Data
@@ -569,7 +570,8 @@ namespace SIL.Transcelerator
 			lblFilterIndicator.Tag = lblFilterIndicator.Text;
 			lblRemainingWork.Tag = lblRemainingWork.Text;
 
-			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text, kScriptureForgeProductName);
+			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text,
+                kScriptureForgeProductName, kPTXPrintProductName);
 		}
 
 		private static string GetLanguageNameWithDetails(string code)
