@@ -108,10 +108,6 @@ namespace SIL.Transcelerator
 		private DataFileAccessor.DataFileId m_lockToHold = DataFileAccessor.DataFileId.Translations;
 		#endregion
 
-		#region Delegates
-		public Func<IEnumerable<int>> GetAvailableBooks { private get; set; }
-		#endregion
-
 		#region Properties
 		private DataGridViewTextBoxEditingControl TextControl => dataGridUns.EditingControl as DataGridViewTextBoxEditingControl;
 		private bool RefreshNeeded { get; set; }
@@ -175,22 +171,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private IEnumerable<int> AvailableBookIds
-		{
-			get
-			{
-				if (GetAvailableBooks != null)
-				{
-					foreach (int i in GetAvailableBooks())
-						yield return i;
-				}
-				else
-				{
-					for (int i = 1; i <= BCVRef.LastBook; i++)
-						yield return i;
-				}
-			}
-		}
+		private IEnumerable<int> AvailableBookIds => m_project.AvailableBooks.Select(b => b.Number);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -308,6 +289,11 @@ namespace SIL.Transcelerator
 			m_sendReference = sendReference;
 
 			InitializeComponent();
+			
+			// No longer want to show this by default. No setting for this; user will have to
+			// show it each time if desired.
+			dataGridUns.Columns.Remove(m_colDebugInfo);
+
 			Icon = Resources.TXL_no_TXL;
 
 			m_host = host;
@@ -322,7 +308,7 @@ namespace SIL.Transcelerator
 			m_masterVersification = m_host.GetStandardVersification(StandardScrVersType.English);
 
 			m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
-            
+
 			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
 			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlCore.kQuestionsFilename);
 
@@ -438,7 +424,25 @@ namespace SIL.Transcelerator
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
+			bool ascending = true;
+			int iSortColumn = -1; 
+			foreach (DataGridViewColumn column in dataGridUns.Columns)
+			{
+				if (column.Visible && column.Name == Properties.Settings.Default.SortColumnName)
+				{
+					Debug.Assert(column.SortMode != DataGridViewColumnSortMode.NotSortable);
+					ascending = Properties.Settings.Default.SortColumnAscending;
+					column.HeaderCell.SortGlyphDirection = ascending ? SortOrder.Ascending :
+						SortOrder.Descending;
+					iSortColumn = column.Index;
+					break;
+				}
+			}
+
 			InitFromHostProject();
+
+			if (iSortColumn >= 0)
+				SortByColumn(iSortColumn, ascending);
 
 			m_project.ProjectDataChanged += OnProjectDataChanged;
 
@@ -571,7 +575,7 @@ namespace SIL.Transcelerator
 			lblRemainingWork.Tag = lblRemainingWork.Text;
 
 			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text,
-                kScriptureForgeProductName, kPTXPrintProductName);
+				kScriptureForgeProductName, kPTXPrintProductName);
 		}
 
 		private static string GetLanguageNameWithDetails(string code)
@@ -636,14 +640,14 @@ namespace SIL.Transcelerator
 		/// </param>
 		/// ------------------------------------------------------------------------------------
 		protected override void OnShown(EventArgs e)
-        {
-            base.OnShown(e);
+		{
+			base.OnShown(e);
 			// REVIEW: XP is no longer supported. Is this code needed?
-            // On Windows XP, TXL comes up underneath Paratext. See if this fixes it:
-            TopMost = true;
-            TopMost = false;
+			// On Windows XP, TXL comes up underneath Paratext. See if this fixes it:
+			TopMost = true;
+			TopMost = false;
 			Application.AddMessageFilter(this);
-        }
+		}
 		
 
 		public void RequestClose(CancelEventArgs cancelEventArgs)
@@ -732,167 +736,167 @@ namespace SIL.Transcelerator
 		}
 
 		/// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Cut cell contents (Translation column only) - from context menu for cell, not in
-        /// editing mode
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CutToClipboard();
-        }
-
-	    /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Copy cell contents - from context menu for cell, not in editing mode
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CopyToClipboard();
-        }
-
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Paste cell contents (Translation column only)
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PasteClipboardValue();
-        }
-
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Cuts cell contents (single Translation cell only)
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (txtFilterByPart.Focused)
-                txtFilterByPart.Copy();
-            else if (EditingTranslation)
-			{
-				TrySetClipboardData(TextControl.SelectedText);
-				TextControl.SelectedText = Empty;
-            }
-            else
-            {
-                CutToClipboard();
-            }
-		}
-
-        private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
-        {
-	        SetScrForgeMenuIcon();
-	        Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
-
-	        if (mnuProduceScriptureForgeFiles.Checked && mnuProduceScriptureForgeFiles.Tag == null)
-	        {
-		        mnuProduceScriptureForgeFiles.Tag = "shown";
-
-				ShowModalChild(new ScriptureForgeInfoDlg(m_host.ApplicationName));
-	        }
+		/// <summary>
+		/// Cut cell contents (Translation column only) - from context menu for cell, not in
+		/// editing mode
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			CutToClipboard();
 		}
 
 		/// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles copying and pasting cell contents (TXL-100)
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void mnuCopy_Click(object sender, EventArgs e)
-        {
-            if (txtFilterByPart.Focused)
-                txtFilterByPart.Copy();
-            else if (EditingTranslation)
-            {
-                string text = TextControl.SelectedText;
-                if (text != null)
-                    TrySetClipboardData(text);
-            }
-            else
-            {
-                CopyToClipboard();
-            }
-        }
+		/// <summary>
+		/// Copy cell contents - from context menu for cell, not in editing mode
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			CopyToClipboard();
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles copying and pasting cell contents (TXL-100)
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void mnuPaste_Click(object sender, EventArgs e)
-        {
-            if (txtFilterByPart.Focused)
-                txtFilterByPart.Paste();
-            else if (EditingTranslation)
-            {
-                var text = TryGetClipboardText();
-                if (text != null)
-                    TextControl.SelectedText = text;
-            }
-            else
-            {
-                PasteClipboardValue();
-            }
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Paste cell contents (Translation column only)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			PasteClipboardValue();
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Cut is only valid for a single Translation cell. Puts the formatted values that
-        /// represent the contents of the selected cells onto the
-        /// <see cref="T:System.Windows.Forms.Clipboard"/> and clears the existing cell value.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void CutToClipboard()
-        {
-            if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
-                dataGridUns.SelectedCells.Count > 1)
-                return;
-
-            CopyToClipboard(() =>
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Cuts cell contents (single Translation cell only)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void cutToolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Focused)
+				txtFilterByPart.Copy();
+			else if (EditingTranslation)
 			{
-	            // If copy succeeds, then make it a "cut" by clearing the selected cell
-	            dataGridUns.SelectedCells[0].Value = Empty;
-	            m_helper[dataGridUns.CurrentCell.RowIndex].HasUserTranslation = false;
-	            SaveNeeded = true;
-	            dataGridUns.InvalidateRow(dataGridUns.CurrentCell.RowIndex);
-			});
-        }
+				TrySetClipboardData(TextControl.SelectedText);
+				TextControl.SelectedText = Empty;
+			}
+			else
+			{
+				CutToClipboard();
+			}
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Puts the formatted values that represent the contents of the selected cells onto the
-        /// <see cref="T:System.Windows.Forms.Clipboard"/>.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void CopyToClipboard(Action cutAction = null)
-        {
-            var dataObj = dataGridUns.GetClipboardContent();
+		private void mnuProduceScriptureForgeFiles_CheckedChanged(object sender, EventArgs e)
+		{
+			SetScrForgeMenuIcon();
+			Properties.Settings.Default.ProduceScriptureForgeFiles = mnuProduceScriptureForgeFiles.Checked;
+
+			if (mnuProduceScriptureForgeFiles.Checked && mnuProduceScriptureForgeFiles.Tag == null)
+			{
+				mnuProduceScriptureForgeFiles.Tag = "shown";
+
+				ShowModalChild(new ScriptureForgeInfoDlg(m_host.ApplicationName));
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles copying and pasting cell contents (TXL-100)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuCopy_Click(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Focused)
+				txtFilterByPart.Copy();
+			else if (EditingTranslation)
+			{
+				string text = TextControl.SelectedText;
+				if (text != null)
+					TrySetClipboardData(text);
+			}
+			else
+			{
+				CopyToClipboard();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles copying and pasting cell contents (TXL-100)
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuPaste_Click(object sender, EventArgs e)
+		{
+			if (txtFilterByPart.Focused)
+				txtFilterByPart.Paste();
+			else if (EditingTranslation)
+			{
+				var text = TryGetClipboardText();
+				if (text != null)
+					TextControl.SelectedText = text;
+			}
+			else
+			{
+				PasteClipboardValue();
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Cut is only valid for a single Translation cell. Puts the formatted values that
+		/// represent the contents of the selected cells onto the
+		/// <see cref="T:System.Windows.Forms.Clipboard"/> and clears the existing cell value.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void CutToClipboard()
+		{
+			if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
+				dataGridUns.SelectedCells.Count > 1)
+				return;
+
+			CopyToClipboard(() =>
+			{
+				// If copy succeeds, then make it a "cut" by clearing the selected cell
+				dataGridUns.SelectedCells[0].Value = Empty;
+				m_helper[dataGridUns.CurrentCell.RowIndex].HasUserTranslation = false;
+				SaveNeeded = true;
+				dataGridUns.InvalidateRow(dataGridUns.CurrentCell.RowIndex);
+			});
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Puts the formatted values that represent the contents of the selected cells onto the
+		/// <see cref="T:System.Windows.Forms.Clipboard"/>.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void CopyToClipboard(Action cutAction = null)
+		{
+			var dataObj = dataGridUns.GetClipboardContent();
 			if (dataObj != null)
 				TrySetClipboardData(dataObj, cutAction);
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Paste is only valid for a single Translation cell. Sets the value of the current
-        /// cell from the text value on the <see cref="T:System.Windows.Forms.Clipboard"/>. To
-        /// prevent pasting garbage, if clipboard contains any line breaks, this does nothing.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void PasteClipboardValue()
-        {
-            if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
-                dataGridUns.SelectedCells.Count > 1)
-                return;
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Paste is only valid for a single Translation cell. Sets the value of the current
+		/// cell from the text value on the <see cref="T:System.Windows.Forms.Clipboard"/>. To
+		/// prevent pasting garbage, if clipboard contains any line breaks, this does nothing.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void PasteClipboardValue()
+		{
+			if (dataGridUns.CurrentCell.ColumnIndex != m_colTranslation.Index ||
+				dataGridUns.SelectedCells.Count > 1)
+				return;
 
-            var clipboardText = TryGetClipboardText();
+			var clipboardText = TryGetClipboardText();
 			if (clipboardText == null)
 				return;
-            
+			
 			dataGridUns.CurrentCell.Value = clipboardText;
-            SaveNeeded = true;
-        }
+			SaveNeeded = true;
+		}
 		
 		private void TrySetClipboardData(string data) => TrySetClipboardData(new DataObject(data));
 
@@ -936,14 +940,14 @@ namespace SIL.Transcelerator
 			return !IsNullOrWhiteSpace(text) && (allowNewlines || !text.Contains('\n')) ? text : null;
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Navigates to the next untranslated question in the grid. Beeps if all currently
-        /// filtered questions have been translated
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void nextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Navigates to the next untranslated question in the grid. Beeps if all currently
+		/// filtered questions have been translated
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void nextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			if (dataGridUns.CurrentRow != null)
 			{
 				for (int iRow = dataGridUns.CurrentRow.Index + 1; iRow < m_helper.FilteredPhraseCount; iRow++)
@@ -957,16 +961,16 @@ namespace SIL.Transcelerator
 			}
 
 			SystemSounds.Beep.Play();
-        }
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Navigates to the previous untranslated question in the grid. Beeps if all currently
-        /// filtered questions have been translated
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void prevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Navigates to the previous untranslated question in the grid. Beeps if all currently
+		/// filtered questions have been translated
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void prevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			if (dataGridUns.CurrentRow != null)
 			{
 				for (int iRow = dataGridUns.CurrentRow.Index - 1; iRow >= 0; iRow--)
@@ -980,9 +984,9 @@ namespace SIL.Transcelerator
 			}
 
 			SystemSounds.Beep.Play();
-        }
+		}
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Refreshes the data grid when the translations change.
 		/// </summary>
@@ -1120,7 +1124,7 @@ namespace SIL.Transcelerator
 		private void dataGridUns_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.ColumnIndex == m_colUserTranslated.Index && e.RowIndex != m_lastTranslationSet &&
-                e.RowIndex >= 0 && e.RowIndex < m_helper.FilteredPhraseCount &&
+				e.RowIndex >= 0 && e.RowIndex < m_helper.FilteredPhraseCount &&
 				m_helper[e.RowIndex].Translation.Any(IsLetter) && !m_fileAccessor.IsReadonly && !IsShowingModalForm)
 			{
 				if (m_helper[e.RowIndex].HasUserTranslation)
@@ -1192,6 +1196,9 @@ namespace SIL.Transcelerator
 						SortOrder.Ascending : SortOrder.None;
 				}
 			}
+
+			Properties.Settings.Default.SortColumnName = clickedColumn.Name;
+			Properties.Settings.Default.SortColumnAscending = sortAscending;
 
 			var refreshAction = new Action(() =>
 			{
@@ -1302,7 +1309,7 @@ namespace SIL.Transcelerator
 				RememberCurrentSelection();
 				clearCurrentSelection = true;
 			}
-            var refFilter = m_startRef == null ? null :
+			var refFilter = m_startRef == null ? null :
 				new Func<int, int, string, bool>((start, end, scrRef) => m_endRef.BBBCCCVVV >= start && m_startRef.BBBCCCVVV <= end);
 
 			SetUiForLongTask(true, () =>
@@ -1521,7 +1528,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-            GenerateScript(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+			GenerateScript(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1544,13 +1551,8 @@ namespace SIL.Transcelerator
 					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS());
 			};
 
-			var locales = new Dictionary<string, string>();
-			foreach (var item in mnuDisplayLanguage.DropDownItems)
-			{
-				if (!(item is ToolStripButton menu))
-					break;
-				locales[(string)menu.Tag] = menu.Text;
-			}
+			var locales = LocalizationsFileAccessor.GetAvailableLocales(m_installDir)
+				.ToDictionary(GetLanguageNameWithDetails, i => i);
 			
 			GenerateScriptDlg generateScriptDlg = new GenerateScriptDlg(m_project.ShortName,
 				defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, locales,
@@ -1707,16 +1709,16 @@ namespace SIL.Transcelerator
 									//var qi = phrase.QuestionInfo;
 									//if (qi != null)
 									//{
-									//    if (qi.Answers != null)
-									//    {
-									//        foreach (string a in qi.Answers)
-									//            sw.WriteLine("A: " + a);
-									//    }
-									//    if (qi.Notes != null)
-									//    {
-									//        foreach (string n in qi.Notes)
-									//            sw.WriteLine("Note: " + n);
-									//    }
+									//	if (qi.Answers != null)
+									//	{
+									//		foreach (string a in qi.Answers)
+									//			sw.WriteLine("A: " + a);
+									//	}
+									//	if (qi.Notes != null)
+									//	{
+									//		foreach (string n in qi.Notes)
+									//			sw.WriteLine("Note: " + n);
+									//	}
 									//}
 								}
 							}
@@ -1814,7 +1816,7 @@ namespace SIL.Transcelerator
 				{
 					PhraseSubstitutions.Clear();
 					PhraseSubstitutions.AddRange(dlg.Substitutions);
-                    m_fileAccessor.Write(DataFileAccessor.DataFileId.PhraseSubstitutions,
+					m_fileAccessor.Write(DataFileAccessor.DataFileId.PhraseSubstitutions,
 						PhraseSubstitutions);
 
 					Reload(false);
@@ -2292,34 +2294,34 @@ namespace SIL.Transcelerator
 			if (dataGridUns.ColumnCount == (m_colDebugInfo.Index + 1))
 				dataGridUns.InvalidateColumn(m_colDebugInfo.Index);
 			SaveRenderings();
-        }
+		}
 
 		private void SaveRenderings()
 		{
 			m_renderingsRepo.Save();
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles the CheckStateChanged event of the btnSendScrReferences control.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.SendScrRefs = btnSendScrReferences.Checked;
-            if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
-                SendScrReference(dataGridUns.CurrentRow.Index);
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckStateChanged event of the btnSendScrReferences control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void btnSendScrReferences_CheckStateChanged(object sender, EventArgs e)
+		{
+			Properties.Settings.Default.SendScrRefs = btnSendScrReferences.Checked;
+			if (btnSendScrReferences.Checked && dataGridUns.CurrentRow != null)
+				SendScrReference(dataGridUns.CurrentRow.Index);
+		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Handles the CheckStateChanged event of the btnSendScrReferences control.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void btnReceiveScrReferences_CheckStateChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.ReceiveScrRefs = btnReceiveScrReferences.Checked;
-        }
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the CheckStateChanged event of the btnSendScrReferences control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void btnReceiveScrReferences_CheckStateChanged(object sender, EventArgs e)
+		{
+			Properties.Settings.Default.ReceiveScrRefs = btnReceiveScrReferences.Checked;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2492,7 +2494,7 @@ namespace SIL.Transcelerator
 				TextControl.Select(TextControl.TextLength, 0);
 		}
 
-        /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Handles the Click event of the aboutTransceleratorToolStripMenuItem control.
 		/// </summary>
@@ -2600,11 +2602,11 @@ namespace SIL.Transcelerator
 				splashScreen.Message = Format(fmt, m_project.ShortName);
 		}
 
-	    /// ------------------------------------------------------------------------------------
-	    /// <summary>
-	    /// Loads the translations.
-	    /// </summary>
-	    /// ------------------------------------------------------------------------------------
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the translations.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
 		public void LoadTranslations(IProgressMessage splashScreen)
 		{
 			UpdateSplashScreenMessage(splashScreen,
@@ -2617,8 +2619,8 @@ namespace SIL.Transcelerator
 
 			string keyTermRulesFilename = Path.Combine(m_installDir, TxlCore.kKeyTermRulesFilename);
 
-            FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
-            if (!finfoKtRules.Exists)
+			FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
+			if (!finfoKtRules.Exists)
 				ReportMissingInstalledFile(keyTermRulesFilename);
 
 			string questionWordsFilename = Path.Combine(m_installDir, TxlCore.kQuestionWordsFilename);
@@ -2629,34 +2631,34 @@ namespace SIL.Transcelerator
 
 			FileInfo finfoParsedQuestions = new FileInfo(m_parsedQuestionsFilename);
 
-	        FileInfo finfoTxlDll = new FileInfo(Assembly.GetExecutingAssembly().Location);
+			FileInfo finfoTxlDll = new FileInfo(Assembly.GetExecutingAssembly().Location);
 
-            Exception e;
-	        ParsedQuestions parsedQuestions;
-	        if (finfoParsedQuestions.Exists &&
-                finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+			Exception e;
+			ParsedQuestions parsedQuestions;
+			if (finfoParsedQuestions.Exists &&
+				finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
 				finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
 				(!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
 				(!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
-                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc &&
-                m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc)
-	        {
-	            parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
-	        }
-	        else
-	        {
+				m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc &&
+				m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc)
+			{
+				parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
+			}
+			else
+			{
 				UpdateSplashScreenMessage(splashScreen,
 					LocalizationManager.GetString("SplashScreen.MsgParsingQuestions",
-		                "Processing questions for {0} using Major Biblical Terms list...",
-		                "Param is the Paratext project name. If localizing into a language into which " +
-		                "Paratext is also localized, the name of the list should exactly match " +
-		                "the name used in Paratext"));
+						"Processing questions for {0} using Major Biblical Terms list...",
+						"Param is the Paratext project name. If localizing into a language into which " +
+						"Paratext is also localized, the name of the list should exactly match " +
+						"the name used in Paratext"));
 
-	            List<PhraseCustomization> customizations = null;
-	            string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
-	            if (!IsNullOrEmpty(phraseCustData))
-	            {
-	                customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
+				List<PhraseCustomization> customizations = null;
+				string phraseCustData = m_fileAccessor.Read(DataFileAccessor.DataFileId.QuestionCustomizations);
+				if (!IsNullOrEmpty(phraseCustData))
+				{
+					customizations = XmlSerializationHelper.DeserializeFromString<List<PhraseCustomization>>(phraseCustData, out e);
 					if (e != null)
 					{
 						ErrorReport.NotifyUserOfProblem(e, LocalizationManager.GetString("General.LoadingCustomizationsFailed",
@@ -2664,22 +2666,22 @@ namespace SIL.Transcelerator
 					}
 				}
 
-		        m_parser = new MasterQuestionParser(m_masterQuestionsFilename, GetQuestionWords(),
-                    m_getKeyTerms(), GetKeyTermRules(keyTermRulesFilename), customizations, PhraseSubstitutions);
-	            parsedQuestions = m_parser.Result;
-		        Directory.CreateDirectory(Path.GetDirectoryName(m_parsedQuestionsFilename));
-	            XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
-	        }
+				m_parser = new MasterQuestionParser(m_masterQuestionsFilename, GetQuestionWords(),
+					m_getKeyTerms(), GetKeyTermRules(keyTermRulesFilename), customizations, PhraseSubstitutions);
+				parsedQuestions = m_parser.Result;
+				Directory.CreateDirectory(Path.GetDirectoryName(m_parsedQuestionsFilename));
+				XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
+			}
 
 			m_renderingsRepo = new ParatextTermRenderingsRepo(m_fileAccessor, m_project);
 			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms, m_renderingsRepo);
-	        var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
-            m_helper = new PhraseTranslationHelper(qp);
+			var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
+			m_helper = new PhraseTranslationHelper(qp);
 			m_helper.VernacularStringComparer = m_project.Language.StringComparer;
-		    m_helper.FileProxy = m_fileAccessor;
-	        m_sectionInfo = qp.SectionInfo;
+			m_helper.FileProxy = m_fileAccessor;
+			m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
-		    string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
+			string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
 			if (!IsNullOrEmpty(translationData))
 			{
 				UpdateSplashScreenMessage(splashScreen,
@@ -2706,12 +2708,12 @@ namespace SIL.Transcelerator
 			m_helper.TranslationsChanged += m_helper_TranslationsChanged;
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Loads the phrase substitutions if not already loaded
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private List<Substitution> PhraseSubstitutions =>
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Loads the phrase substitutions if not already loaded
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private List<Substitution> PhraseSubstitutions =>
 			m_cachedPhraseSubstitutions ??
 			(m_cachedPhraseSubstitutions = ListSerializationHelper.LoadOrCreateListFromString<Substitution>(
 				m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true));
@@ -2815,11 +2817,11 @@ namespace SIL.Transcelerator
 		private void LookupTerm(IReadOnlyList<string> termIds)
 		{
 			var majorTerms = m_host.GetBiblicalTermList(BiblicalTermListType.Major);
-		    List<IBiblicalTerm> termsToLoad = new List<IBiblicalTerm>();
-		    int startRef = CurrentPhrase.StartRef;
-		    int endRef = CurrentPhrase.EndRef;
+			List<IBiblicalTerm> termsToLoad = new List<IBiblicalTerm>();
+			int startRef = CurrentPhrase.StartRef;
+			int endRef = CurrentPhrase.EndRef;
 			bool foundPriorityTerm = false;
-            foreach (var term in majorTerms.Where(t => termIds.Contains(t.Lemma) ))
+			foreach (var term in majorTerms.Where(t => termIds.Contains(t.Lemma) ))
 			{
 				if (term.Occurrences.Select(o => o.BBBCCCVVV).Any(o => o >= startRef && o <= endRef))
 				{
@@ -2832,7 +2834,7 @@ namespace SIL.Transcelerator
 				else if (foundPriorityTerm)
 					continue;
 				termsToLoad.Add(term);
-            }
+			}
 
 			m_host.BiblicalTermsWindow.LoadFilteredList(m_project, termsToLoad, majorTerms);
 		}
@@ -2933,8 +2935,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void ProcessCurrentVerseRefChange(BCVRef reference)
 		{
-            if (dataGridUns.IsCurrentCellInEditMode)
-                return;
+			if (dataGridUns.IsCurrentCellInEditMode)
+				return;
 
 			lock (this)
 			{
@@ -2957,10 +2959,10 @@ namespace SIL.Transcelerator
 		/// Goes to the first row in the data grid corresponding to the given reference,
 		/// preferably for a detail question.
 		/// </summary>
-        /// <param name="reference">The reference to check against</param>
-        /// <param name="currentPhraseIndex">The index of the currently selected question</param>
-        /// ------------------------------------------------------------------------------------
-        private void GoToReference(BCVRef reference, int currentPhraseIndex)
+		/// <param name="reference">The reference to check against</param>
+		/// <param name="currentPhraseIndex">The index of the currently selected question</param>
+		/// ------------------------------------------------------------------------------------
+		private void GoToReference(BCVRef reference, int currentPhraseIndex)
 		{
 			Action<Task<int>> completionAction = t =>
 			{
@@ -3226,12 +3228,12 @@ namespace SIL.Transcelerator
 			//var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(MousePosition));
 
 			//if (e.Effect == DragDropEffects.Move && TextControl.SelectionLength > 0 &&
-			//    ichInsert >= TextControl.SelectionStart &&
-			//    ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
+			//	ichInsert >= TextControl.SelectionStart &&
+			//	ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
 			//{
-			//    // Dropping selected text onto itself just removes the selection.
-			//    e.UseDefaultCursors = false; // TODO: This doesn't do anything!
-			//    return;
+			//	// Dropping selected text onto itself just removes the selection.
+			//	e.UseDefaultCursors = false; // TODO: This doesn't do anything!
+			//	return;
 			//}
 			//e.UseDefaultCursors = true;
 			//// TODO: Need to return early (just do default behavior) if not over the TextControl

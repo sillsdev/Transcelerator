@@ -12,7 +12,7 @@ namespace SIL.Transcelerator.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -430,7 +430,7 @@ namespace SIL.Transcelerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string GenerateTemplateUseLWC {
             get {
                 return ((string)(this["GenerateTemplateUseLWC"]));
@@ -490,7 +490,7 @@ namespace SIL.Transcelerator.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowEditColumn {
             get {
                 return ((bool)(this["ShowEditColumn"]));
@@ -509,6 +509,30 @@ namespace SIL.Transcelerator.Properties {
             }
             set {
                 this["LastProjectCustomVersificationNotice"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("m_colReference")]
+        public string SortColumnName {
+            get {
+                return ((string)(this["SortColumnName"]));
+            }
+            set {
+                this["SortColumnName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SortColumnAscending {
+            get {
+                return ((bool)(this["SortColumnAscending"]));
+            }
+            set {
+                this["SortColumnAscending"] = value;
             }
         }
     }

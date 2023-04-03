@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='201' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -59,7 +59,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, string defaultFolder,
 			IEnumerable<int> canonicalBookIds, IList<ISectionInfo> sections,
-			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs, HtmlScriptGenerator generator)
+			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs,
+			HtmlScriptGenerator generator)
 		{
 			m_projectName = projectName;
 			InitializeComponent();
@@ -117,7 +118,7 @@ namespace SIL.Transcelerator
 
 			m_rdoOutputPassageForOutOfOrderQuestions.Checked = m_generator.OutputPassageForOutOfOrderQuestions;
 
-            m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
+			m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
 
 			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
 			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
@@ -282,8 +283,8 @@ namespace SIL.Transcelerator
 				dlg.AddExtension = true;
 				dlg.CheckPathExists = true;
 				dlg.DefaultExt = "." + Path.GetExtension(m_txtFilename.Text);
-                var description = LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page");
-                dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
+				var description = LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page");
+				dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
 				dlg.FilterIndex = 0;
 				dlg.OverwritePrompt = true;
 				dlg.InitialDirectory = m_lblFolder.Text;
@@ -307,7 +308,7 @@ namespace SIL.Transcelerator
 
 		private void UpdateTitleAndFilenameForSingleSection(object sender, EventArgs e)
 		{
-		    UpdateOkButtonEnabledState();
+			UpdateOkButtonEnabledState();
 			if (m_cboSection.SelectedIndex < 0)
 				return;
 			var info = m_sections[m_cboSection.SelectedIndex];
@@ -317,7 +318,7 @@ namespace SIL.Transcelerator
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
 
-	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
+		private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
 		{
 			if (txt.Tag == null || txt.Text == (string)txt.Tag)
 				txt.Tag = txt.Text = Format(fmt, passage);
@@ -415,8 +416,8 @@ namespace SIL.Transcelerator
 				m_cboEndSection.SelectedIndex = m_cboStartSection.SelectedIndex;
 			if (UpdateSectionRangeStartRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
-        }
+			UpdateOkButtonEnabledState();
+		}
 
 		private void m_cboEndSection_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -424,24 +425,24 @@ namespace SIL.Transcelerator
 				m_cboStartSection.SelectedIndex = m_cboEndSection.SelectedIndex;
 			if (UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
+			UpdateOkButtonEnabledState();
 		}
 
 		private void m_rdoSectionRange_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rdoSectionRange.Checked && UpdateSectionRangeStartRef() && UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
-        }
+			UpdateOkButtonEnabledState();
+		}
 
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            if (m_rdoWholeBook.Checked)
+		private void btnOk_Click(object sender, EventArgs e)
+		{
+			if (m_rdoWholeBook.Checked)
 			{
 				m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.WholeBook;
 				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
-            }
-            else
+			}
+			else
 			{
 				m_generator.SelectedBook = null;
 
@@ -454,8 +455,8 @@ namespace SIL.Transcelerator
 				else
 				{
 					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.RangeOfSections;
-				    Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
-				    Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
+					Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
+					Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
 				}
 
 				m_generator.VerseRangeStartRef = VerseRangeStartRef;
@@ -524,13 +525,13 @@ namespace SIL.Transcelerator
 					});
 				}
 			}
-        }
+		}
 
-        private void ComboTextUpdate(object sender, EventArgs e)
-        {
-            ComboBox cbo = (ComboBox)sender;
-            if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
-                cbo.SelectedIndex = -1;
+		private void ComboTextUpdate(object sender, EventArgs e)
+		{
+			ComboBox cbo = (ComboBox)sender;
+			if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
+				cbo.SelectedIndex = -1;
 		}
 
 		private void HandleLWCSelectedIndexChanged(object sender, EventArgs e)
@@ -580,13 +581,13 @@ namespace SIL.Transcelerator
 
 		#region Private helper methods
 		private void UpdateOkButtonEnabledState()
-        {
-            btnOk.Enabled = true;
-            if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
-                btnOk.Enabled = false;
-            else if (m_rdoSectionRange.Checked && (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0))
-                btnOk.Enabled = false;
-        }
+		{
+			btnOk.Enabled = true;
+			if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
+				btnOk.Enabled = false;
+			else if (m_rdoSectionRange.Checked && (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0))
+				btnOk.Enabled = false;
+		}
 
 		private bool UpdateSectionRangeStartRef()
 		{

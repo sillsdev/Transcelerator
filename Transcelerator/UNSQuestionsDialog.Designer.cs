@@ -164,7 +164,7 @@ namespace SIL.Transcelerator
             // 
             this.mnuViewDebugInfo.Checked = true;
             this.mnuViewDebugInfo.CheckOnClick = true;
-            this.mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mnuViewDebugInfo.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuViewDebugInfo, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewDebugInfo, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
