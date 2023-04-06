@@ -171,7 +171,11 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private IEnumerable<int> AvailableBookIds => m_project.AvailableBooks.Select(b => b.Number);
+		private bool DoesDataExistInProject(int book, int chapter)
+		{
+			return chapter == 0 ? m_project.AvailableBooks.Any(b => b.Number == book) :
+				m_project.GetUSFMTokens(book, chapter)?.Any() ?? false;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -558,6 +562,7 @@ namespace SIL.Transcelerator
 			SetControlTagsToFormatStringsAndFormatMenus();
 			SetWindowText();
 			UpdateCountsAndFilterStatus();
+			SetReferenceColumnWidth();
 		}
 
 		private void SetWindowText()
@@ -576,6 +581,35 @@ namespace SIL.Transcelerator
 
 			mnuProduceScriptureForgeFiles.Text = Format(mnuProduceScriptureForgeFiles.Text,
 				kScriptureForgeProductName, kPTXPrintProductName);
+		}
+		
+		private void SetReferenceColumnWidth()
+		{
+			// Several "bugs" in the DGV conspire to cause the sorting glyph to not display if the
+			// column is too narrow and neither DisplayedCells nor ColumnHeader takes into
+			// consideration that the glyph needs to be displayed. Furthermore, MinimumWidth only
+			// controls how small the user can make it and is not used when resizing it
+			// programatically. Turns out that in Spanish "Cita" is plenty narrow enough to allow
+			// for the glyph to display, but "Reference" is not.
+			var font = m_colReference.HeaderCell.HasStyle?
+				m_colReference.HeaderCell.Style.Font : dataGridUns.Font;
+			// Allow some extra space for the sorting direction glyph
+			var colWidth = TextRenderer.MeasureText(m_colReference.HeaderText, font).Width + 25;
+
+			var startBook = m_startRef?.BookNum ?? 1;
+			var endBook = m_endRef?.BookNum ?? BCVRef.LastBook;
+			font = m_colReference.HasDefaultCellStyle ?
+				m_colReference.DefaultCellStyle.Font : dataGridUns.Font;
+			for (int b = startBook; b <= endBook; b++)
+			{
+				int lastChapter = m_masterVersification.GetLastChapter(b);
+				int lastVerse = m_masterVersification.GetLastVerse(b, lastChapter);
+				string maxRef = BCVRef.NumberToBookCode(b) + " " + lastChapter + ":" +
+					(lastVerse - 1) + "-" + lastVerse;
+				colWidth = Math.Max(colWidth, TextRenderer.MeasureText(maxRef, font).Width);
+			}
+
+			m_colReference.Width = colWidth;
 		}
 
 		private static string GetLanguageNameWithDetails(string code)
@@ -946,7 +980,7 @@ namespace SIL.Transcelerator
 		/// filtered questions have been translated
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void nextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+		private void NextUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (dataGridUns.CurrentRow != null)
 			{
@@ -969,7 +1003,7 @@ namespace SIL.Transcelerator
 		/// filtered questions have been translated
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void prevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+		private void PrevUntranslatedQuestionToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (dataGridUns.CurrentRow != null)
 			{
@@ -991,7 +1025,7 @@ namespace SIL.Transcelerator
 		/// Refreshes the data grid when the translations change.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void m_helper_TranslationsChanged()
+		private void HandleTranslationsChanged()
 		{
 			if (PostponeRefresh)
 				RefreshNeeded = true;
@@ -1553,9 +1587,9 @@ namespace SIL.Transcelerator
 
 			var locales = LocalizationsFileAccessor.GetAvailableLocales(m_installDir)
 				.ToDictionary(GetLanguageNameWithDetails, i => i);
-			
+
 			GenerateScriptDlg generateScriptDlg = new GenerateScriptDlg(m_project.ShortName,
-				defaultFolder, AvailableBookIds, m_sectionInfo.AllSections, locales,
+				defaultFolder, DoesDataExistInProject, m_sectionInfo.AllSections, locales,
 				scriptGenerator);
 
 			ShowModalChild(generateScriptDlg, dlg =>
@@ -1865,7 +1899,7 @@ namespace SIL.Transcelerator
 		{
 			SetUiForLongTask(true, () =>
 			{
-				m_helper.TranslationsChanged -= m_helper_TranslationsChanged; 
+				m_helper.TranslationsChanged -= HandleTranslationsChanged; 
 				lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
 			});
 
@@ -2230,6 +2264,7 @@ namespace SIL.Transcelerator
 						Properties.Settings.Default.FilterStartRef = m_startRef?.BBBCCCVVV ?? 0;
 						Properties.Settings.Default.FilterEndRef = m_endRef?.BBBCCCVVV ?? 0;
 						ApplyFilter();
+						SetReferenceColumnWidth();
 					}
 				}
 			});
@@ -2705,7 +2740,7 @@ namespace SIL.Transcelerator
 				}
 			}
 			m_helper.ProcessAllTranslations();
-			m_helper.TranslationsChanged += m_helper_TranslationsChanged;
+			m_helper.TranslationsChanged += HandleTranslationsChanged;
 		}
 
 		/// ------------------------------------------------------------------------------------

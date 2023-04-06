@@ -42,6 +42,7 @@ namespace SIL.Transcelerator
 		private readonly IList<ISectionInfo> m_sections;
 		private readonly HtmlScriptGenerator m_generator;
 		private readonly string m_projectName;
+		private Func<int, int, bool> DoesDataExistInProject { get; }
 		private List<string> m_lwcLocaleIds;
 		private string m_fmtChkEnglishQuestions;
 		private string m_fmtChkEnglishAnswers;
@@ -58,11 +59,12 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, string defaultFolder,
-			IEnumerable<int> canonicalBookIds, IList<ISectionInfo> sections,
+			Func<int, int, bool> doesDataExistInProject, IList<ISectionInfo> sections,
 			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs,
 			HtmlScriptGenerator generator)
 		{
 			m_projectName = projectName;
+			DoesDataExistInProject = doesDataExistInProject;
 			InitializeComponent();
 			m_chkIncludeLWCQuestions.Tag = m_btnChooseLWCQuestionColor;
 			m_chkIncludeLWCAnswers.Tag = m_btnChooseLWCAnswerColor;
@@ -74,7 +76,7 @@ namespace SIL.Transcelerator
 			HandleStringsLocalized();
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
-			LoadBooks(canonicalBookIds);
+			LoadBooks();
 			m_sections = sections;
 			m_generator = generator;
 			LoadSectionCombos();
@@ -186,15 +188,23 @@ namespace SIL.Transcelerator
 				cbo.SelectedIndex = i;
 		}
 
+		IEnumerable<int> GetBookIdsToInclude()
+		{
+			for (var i = 1; i <= BCVRef.LastBook; i++)
+			{
+				if (m_chkShowUnavailable.Checked || DoesDataExistInProject(i, 0))
+					yield return i;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the combo box with the appropriate book ids
 		/// </summary>
-		/// <param name="canonicalBookIds">1-based Canonical book numbers</param>
 		/// ------------------------------------------------------------------------------------
-		private void LoadBooks(IEnumerable<int> canonicalBookIds)
+		private void LoadBooks()
 		{
-			foreach (int canonicalBookId in canonicalBookIds)
+			foreach (int canonicalBookId in GetBookIdsToInclude())
 			{
 				string bookCode = BCVRef.NumberToBookCode(canonicalBookId);
 				m_cboBooks.Items.Add(bookCode);
@@ -211,11 +221,44 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void LoadSectionCombos()
 		{
-			foreach (var sectionInfo in m_sections)
+			m_cboSection.Items.Clear();
+			m_cboStartSection.Items.Clear();
+			m_cboEndSection.Items.Clear();
+
+			IEnumerable<ISectionInfo> sectionsToInclude;
+			if (m_chkShowUnavailable.Checked)
+				sectionsToInclude = m_sections;
+			else
 			{
-				m_cboSection.Items.Add(sectionInfo);
-				m_cboStartSection.Items.Add(sectionInfo);
-				m_cboEndSection.Items.Add(sectionInfo);
+				var bookIds = new HashSet<int>(GetBookIdsToInclude());
+				var list = new List<ISectionInfo>();
+				foreach (var sectionInfo in m_sections)
+				{
+					var bcvStart = new BCVRef(sectionInfo.StartRef);
+					if (bookIds.Contains(bcvStart.Book))
+					{
+						for (int c = bcvStart.Chapter; c <= BCVRef.GetChapterFromBcv(sectionInfo.EndRef); c++)
+						{
+							if (DoesDataExistInProject(bcvStart.Book, c))
+							{
+								list.Add(sectionInfo);
+								break;
+							}
+						}
+					}
+				}
+
+				sectionsToInclude = list;
+			}
+
+			using (new WaitCursor(this))
+			{
+				foreach (var sectionInfo in sectionsToInclude)
+				{
+					m_cboSection.Items.Add(sectionInfo);
+					m_cboStartSection.Items.Add(sectionInfo);
+					m_cboEndSection.Items.Add(sectionInfo);
+				}
 			}
 		}
 
@@ -576,6 +619,12 @@ namespace SIL.Transcelerator
 		{
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
+		}
+
+		private void m_chkShowUnavailable_CheckedChanged(object sender, EventArgs e)
+		{
+			LoadBooks();
+			LoadSectionCombos();
 		}
 		#endregion
 

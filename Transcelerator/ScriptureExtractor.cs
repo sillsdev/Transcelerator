@@ -44,6 +44,12 @@ namespace SIL.Transcelerator
 		{
 			m_startRef = m_makeVerseRef(startRef);
 			m_endRef = m_makeVerseRef(endRef);
+
+			int chapter = m_startRef.ChapterNum == m_endRef.ChapterNum ? m_startRef.ChapterNum : 0;
+			var tokens = m_project.GetUSFMTokens(m_startRef.BookNum, chapter);
+			if (tokens == null)
+				return string.Empty;
+
 			WriteParagraph = null;
 			WriteVerse = null;
 			WriteChapter = null;
@@ -55,11 +61,9 @@ namespace SIL.Transcelerator
 
 			using (var xmlw = fragment.CreateNavigator().AppendChild())
 			{
-				int chapter = m_startRef.ChapterNum == m_endRef.ChapterNum ? m_startRef.ChapterNum : 0;
-
 				List<IUSFMMarkerToken> openingTokens = new List<IUSFMMarkerToken>();
 
-				foreach (var tok in m_project.GetUSFMTokens(m_startRef.BookNum, chapter))
+				foreach (var tok in tokens)
 				{
 					if (!tok.IsPublishableVernacular || tok.IsSpecial)
 					{
