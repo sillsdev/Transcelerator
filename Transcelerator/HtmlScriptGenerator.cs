@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2021 to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2021 to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -18,6 +18,7 @@ using System.Text;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
+using static SIL.Transcelerator.Localization.LocalizationsFileAccessor;
 
 namespace SIL.Transcelerator
 {
@@ -220,17 +221,26 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateTemplateNumberQuestions = value;
 		}
 
-		public string LwcLocale
-		{
-			get => Properties.Settings.Default.GenerateTemplateUseLWC;
-			set
-			{
-				Properties.Settings.Default.GenerateTemplateUseLWC = value;
-				m_dataLoc = DataLocalizerNeeded?.Invoke(this, value);
-			}
-		}
+        public string LwcLocale
+        {
+            get 
+            {
+                if (!IsNullOrEmpty(Properties.Settings.Default.GenerateTemplateUseLWC))
+                    return Properties.Settings.Default.GenerateTemplateUseLWC;
+                var currentUiLocale = Properties.Settings.Default.OverrideDisplayLanguage;
+                return IsNullOrEmpty(currentUiLocale) ||
+                    !TxlPlugin.PrimaryLocalizationManager.GetAvailableUILanguageTags().Contains(currentUiLocale) ?
+                    "en-US" : currentUiLocale;
+            }
+            set
+            {
+                Properties.Settings.Default.GenerateTemplateUseLWC =
+                    AreEquivalentLocales(Properties.Settings.Default.OverrideDisplayLanguage, value) ? null : value;
+                m_dataLoc = DataLocalizerNeeded?.Invoke(this, value);
+            }
+        }
 
-		public IEnumerable<TranslatablePhrase> QuestionsToInclude
+        public IEnumerable<TranslatablePhrase> QuestionsToInclude
 		{
 			get
 			{

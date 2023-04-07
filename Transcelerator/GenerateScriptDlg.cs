@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='201' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -42,6 +42,7 @@ namespace SIL.Transcelerator
 		private readonly IList<ISectionInfo> m_sections;
 		private readonly HtmlScriptGenerator m_generator;
 		private readonly string m_projectName;
+		private Func<int, int, bool> DoesDataExistInProject { get; }
 		private List<string> m_lwcLocaleIds;
 		private string m_fmtChkEnglishQuestions;
 		private string m_fmtChkEnglishAnswers;
@@ -58,10 +59,12 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		internal GenerateScriptDlg(string projectName, string defaultFolder,
-			IEnumerable<int> canonicalBookIds, IList<ISectionInfo> sections,
-			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs, HtmlScriptGenerator generator)
+			Func<int, int, bool> doesDataExistInProject, IList<ISectionInfo> sections,
+			IEnumerable<KeyValuePair<string, string>> availableAdditionalLWCs,
+			HtmlScriptGenerator generator)
 		{
 			m_projectName = projectName;
+			DoesDataExistInProject = doesDataExistInProject;
 			InitializeComponent();
 			m_chkIncludeLWCQuestions.Tag = m_btnChooseLWCQuestionColor;
 			m_chkIncludeLWCAnswers.Tag = m_btnChooseLWCAnswerColor;
@@ -73,7 +76,7 @@ namespace SIL.Transcelerator
 			HandleStringsLocalized();
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
-			LoadBooks(canonicalBookIds);
+			LoadBooks();
 			m_sections = sections;
 			m_generator = generator;
 			LoadSectionCombos();
@@ -117,7 +120,7 @@ namespace SIL.Transcelerator
 
 			m_rdoOutputPassageForOutOfOrderQuestions.Checked = m_generator.OutputPassageForOutOfOrderQuestions;
 
-            m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
+			m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
 
 			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
 			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
@@ -185,15 +188,23 @@ namespace SIL.Transcelerator
 				cbo.SelectedIndex = i;
 		}
 
+		IEnumerable<int> GetBookIdsToInclude()
+		{
+			for (var i = 1; i <= BCVRef.LastBook; i++)
+			{
+				if (m_chkShowUnavailable.Checked || DoesDataExistInProject(i, 0))
+					yield return i;
+			}
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the combo box with the appropriate book ids
 		/// </summary>
-		/// <param name="canonicalBookIds">1-based Canonical book numbers</param>
 		/// ------------------------------------------------------------------------------------
-		private void LoadBooks(IEnumerable<int> canonicalBookIds)
+		private void LoadBooks()
 		{
-			foreach (int canonicalBookId in canonicalBookIds)
+			foreach (int canonicalBookId in GetBookIdsToInclude())
 			{
 				string bookCode = BCVRef.NumberToBookCode(canonicalBookId);
 				m_cboBooks.Items.Add(bookCode);
@@ -210,11 +221,44 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void LoadSectionCombos()
 		{
-			foreach (var sectionInfo in m_sections)
+			m_cboSection.Items.Clear();
+			m_cboStartSection.Items.Clear();
+			m_cboEndSection.Items.Clear();
+
+			IEnumerable<ISectionInfo> sectionsToInclude;
+			if (m_chkShowUnavailable.Checked)
+				sectionsToInclude = m_sections;
+			else
 			{
-				m_cboSection.Items.Add(sectionInfo);
-				m_cboStartSection.Items.Add(sectionInfo);
-				m_cboEndSection.Items.Add(sectionInfo);
+				var bookIds = new HashSet<int>(GetBookIdsToInclude());
+				var list = new List<ISectionInfo>();
+				foreach (var sectionInfo in m_sections)
+				{
+					var bcvStart = new BCVRef(sectionInfo.StartRef);
+					if (bookIds.Contains(bcvStart.Book))
+					{
+						for (int c = bcvStart.Chapter; c <= BCVRef.GetChapterFromBcv(sectionInfo.EndRef); c++)
+						{
+							if (DoesDataExistInProject(bcvStart.Book, c))
+							{
+								list.Add(sectionInfo);
+								break;
+							}
+						}
+					}
+				}
+
+				sectionsToInclude = list;
+			}
+
+			using (new WaitCursor(this))
+			{
+				foreach (var sectionInfo in sectionsToInclude)
+				{
+					m_cboSection.Items.Add(sectionInfo);
+					m_cboStartSection.Items.Add(sectionInfo);
+					m_cboEndSection.Items.Add(sectionInfo);
+				}
 			}
 		}
 
@@ -282,8 +326,8 @@ namespace SIL.Transcelerator
 				dlg.AddExtension = true;
 				dlg.CheckPathExists = true;
 				dlg.DefaultExt = "." + Path.GetExtension(m_txtFilename.Text);
-                var description = LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page");
-                dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
+				var description = LocalizationManager.GetString("GenerateScriptDlg.HtmlFileDescription", "Web Page");
+				dlg.Filter = Format("{0} (*{1})|*{1}", description, dlg.DefaultExt);
 				dlg.FilterIndex = 0;
 				dlg.OverwritePrompt = true;
 				dlg.InitialDirectory = m_lblFolder.Text;
@@ -307,7 +351,7 @@ namespace SIL.Transcelerator
 
 		private void UpdateTitleAndFilenameForSingleSection(object sender, EventArgs e)
 		{
-		    UpdateOkButtonEnabledState();
+			UpdateOkButtonEnabledState();
 			if (m_cboSection.SelectedIndex < 0)
 				return;
 			var info = m_sections[m_cboSection.SelectedIndex];
@@ -317,7 +361,7 @@ namespace SIL.Transcelerator
 			UpdateTextBoxWithSelectedPassage(m_txtTitle, info.Heading, m_sTitleTemplate);
 		}
 
-	    private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
+		private static void UpdateTextBoxWithSelectedPassage(TextBox txt, string passage, string fmt)
 		{
 			if (txt.Tag == null || txt.Text == (string)txt.Tag)
 				txt.Tag = txt.Text = Format(fmt, passage);
@@ -415,8 +459,8 @@ namespace SIL.Transcelerator
 				m_cboEndSection.SelectedIndex = m_cboStartSection.SelectedIndex;
 			if (UpdateSectionRangeStartRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
-        }
+			UpdateOkButtonEnabledState();
+		}
 
 		private void m_cboEndSection_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -424,24 +468,24 @@ namespace SIL.Transcelerator
 				m_cboStartSection.SelectedIndex = m_cboEndSection.SelectedIndex;
 			if (UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
+			UpdateOkButtonEnabledState();
 		}
 
 		private void m_rdoSectionRange_CheckedChanged(object sender, EventArgs e)
 		{
 			if (m_rdoSectionRange.Checked && UpdateSectionRangeStartRef() && UpdateSectionRangeEndRef())
 				UpdateTitleAndFilenameForSectionRange();
-            UpdateOkButtonEnabledState();
-        }
+			UpdateOkButtonEnabledState();
+		}
 
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            if (m_rdoWholeBook.Checked)
+		private void btnOk_Click(object sender, EventArgs e)
+		{
+			if (m_rdoWholeBook.Checked)
 			{
 				m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.WholeBook;
 				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
-            }
-            else
+			}
+			else
 			{
 				m_generator.SelectedBook = null;
 
@@ -454,8 +498,8 @@ namespace SIL.Transcelerator
 				else
 				{
 					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.RangeOfSections;
-				    Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
-				    Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
+					Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
+					Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
 				}
 
 				m_generator.VerseRangeStartRef = VerseRangeStartRef;
@@ -524,13 +568,13 @@ namespace SIL.Transcelerator
 					});
 				}
 			}
-        }
+		}
 
-        private void ComboTextUpdate(object sender, EventArgs e)
-        {
-            ComboBox cbo = (ComboBox)sender;
-            if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
-                cbo.SelectedIndex = -1;
+		private void ComboTextUpdate(object sender, EventArgs e)
+		{
+			ComboBox cbo = (ComboBox)sender;
+			if (cbo.SelectedItem == null || cbo.Text != cbo.SelectedItem.ToString())
+				cbo.SelectedIndex = -1;
 		}
 
 		private void HandleLWCSelectedIndexChanged(object sender, EventArgs e)
@@ -576,17 +620,23 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
 		}
+
+		private void m_chkShowUnavailable_CheckedChanged(object sender, EventArgs e)
+		{
+			LoadBooks();
+			LoadSectionCombos();
+		}
 		#endregion
 
 		#region Private helper methods
 		private void UpdateOkButtonEnabledState()
-        {
-            btnOk.Enabled = true;
-            if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
-                btnOk.Enabled = false;
-            else if (m_rdoSectionRange.Checked && (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0))
-                btnOk.Enabled = false;
-        }
+		{
+			btnOk.Enabled = true;
+			if (m_rdoSingleSection.Checked && m_cboSection.SelectedIndex < 0)
+				btnOk.Enabled = false;
+			else if (m_rdoSectionRange.Checked && (m_cboStartSection.SelectedIndex < 0 || m_cboEndSection.SelectedIndex < 0))
+				btnOk.Enabled = false;
+		}
 
 		private bool UpdateSectionRangeStartRef()
 		{
