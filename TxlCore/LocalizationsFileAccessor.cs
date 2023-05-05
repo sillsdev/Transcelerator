@@ -17,6 +17,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using SIL.WritingSystems;
+using static System.String;
 
 namespace SIL.Transcelerator.Localization
 {
@@ -36,6 +37,20 @@ namespace SIL.Transcelerator.Localization
 		private XmlSerializer Serializer => new XmlSerializer(typeof(Localizations),
 			"urn:oasis:names:tc:xliff:document:1.2");
 
+		public static bool AreEquivalentLocales(string fullLocale, string shortLocale)
+		{
+			if (fullLocale == shortLocale)
+				return true;
+
+			switch (shortLocale)
+			{
+				case "es":
+					return fullLocale == "es-ES";
+				default:
+					return false;
+			}
+		}
+
 		public LocalizationsFileAccessor(string directory, string locale)
 		{
 			if (!Directory.Exists(directory))
@@ -47,15 +62,15 @@ namespace SIL.Transcelerator.Localization
 				Path.Combine(DirectoryName, $"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
 
 			if (!Exists)
-            {
-                var langCode = IetfLanguageTag.GetGeneralCode(locale);
-                if (langCode != locale)
-                {
-                    Locale = langCode;
-                    FileName = Path.Combine(DirectoryName,
-                        $"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
-                }
-            }
+			{
+				var langCode = IetfLanguageTag.GetGeneralCode(locale);
+				if (langCode != locale)
+				{
+					Locale = langCode;
+					FileName = Path.Combine(DirectoryName,
+						$"{kLocaleFilenamePrefix}{Locale}{kLocaleFilenameExtension}");
+				}
+			}
 
 			if (Exists)
 			{
@@ -71,10 +86,11 @@ namespace SIL.Transcelerator.Localization
 
 				if (!m_xliffRoot.IsValid(out string error))
 					throw new DataException(error);
-				// Crowdin now supports Language Mapping but used to insist on using "es-ES" (Spanish as spoken in Spain), rather than supporting generic Spanish.
-				if (String.IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage) || (m_xliffRoot.File.TargetLanguage == "es-ES" && locale == "es"))
+				// Crowdin now supports Language Mapping but used to insist on using "es-ES"
+				// (Spanish as spoken in Spain), rather than supporting generic Spanish.
+				if (IsNullOrWhiteSpace(m_xliffRoot.File.TargetLanguage) || AreEquivalentLocales(m_xliffRoot.File.TargetLanguage, locale))
 					m_xliffRoot.File.TargetLanguage = locale;
-				else if (m_xliffRoot.File.TargetLanguage != locale)
+				else
 					throw new DataException($"The target language ({m_xliffRoot.File.TargetLanguage}) specified in the data does not match the locale indicated by the file name: {FileName}");
 				Localizations = m_xliffRoot.File.Body;
 				InitializeLookupTable();
