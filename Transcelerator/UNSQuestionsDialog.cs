@@ -476,6 +476,14 @@ namespace SIL.Transcelerator
 
 		private void OnProjectDataChanged(IProject sender, ProjectDataChangeType details)
 		{
+			if (InvokeRequired)
+				Invoke(new Action(() => { OnProjectDataChanged(details); }));
+			else
+				OnProjectDataChanged(details);
+		}
+
+		private void OnProjectDataChanged(ProjectDataChangeType details)
+		{
 			// REVIEW: Does this handle global changes from Send/Receive properly?
 			InitFromHostProject(details);
 			if (details == ProjectDataChangeType.WholeProject)
