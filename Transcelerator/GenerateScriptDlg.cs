@@ -352,9 +352,8 @@ namespace SIL.Transcelerator
 		private void UpdateTitleAndFilenameForSingleSection(object sender, EventArgs e)
 		{
 			UpdateOkButtonEnabledState();
-			if (m_cboSection.SelectedIndex < 0)
+			if (!(m_cboSection.SelectedItem is Section info))
 				return;
-			var info = m_sections[m_cboSection.SelectedIndex];
 			VerseRangeStartRef = new BCVRef(info.StartRef);
 			VerseRangeEndRef = new BCVRef(info.EndRef);
 			UpdateTextBoxWithSelectedPassage(m_txtFilename, info.Heading.SanitizeFilename('_', true), m_sFilenameTemplate);
@@ -640,18 +639,24 @@ namespace SIL.Transcelerator
 
 		private bool UpdateSectionRangeStartRef()
 		{
-			if (m_cboStartSection.SelectedIndex < 0)
-				return false;
-			VerseRangeStartRef = m_sections[m_cboStartSection.SelectedIndex].StartRef;
-			return true;
+			if (m_cboStartSection.SelectedItem is Section section)
+			{
+				VerseRangeStartRef = section.StartRef;
+				return true;
+			}
+
+			return false;
 		}
 
 		private bool UpdateSectionRangeEndRef()
 		{
-			if (m_cboEndSection.SelectedIndex < 0)
-				return false;
-			VerseRangeEndRef = m_sections[m_cboEndSection.SelectedIndex].EndRef;
-			return true;
+			if (m_cboEndSection.SelectedItem is Section section)
+			{
+				VerseRangeEndRef = section.EndRef;
+				return true;
+			}
+
+			return false;
 		}
 
 		private void UpdateTitleAndFilenameForSectionRange()
