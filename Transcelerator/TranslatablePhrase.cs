@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.   
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -854,10 +854,12 @@ namespace SIL.Transcelerator
 			// will be the character offset following the occurrence of the rendering of
 			// the preceding term in the translation.
 			int ichStart = renderingInfo.EndOffsetOfRenderingOfPreviousOccurrenceOfThisTerm;
-			int indexOfMatch = Int32.MaxValue;
+			int indexOfMatch = int.MaxValue;
 			int lengthOfMatch = 0;
 			foreach (string rendering in renderingInfo.Renderings)
 			{
+				if (ichStart >= translation.Length)
+					return null; // Translation was shortened/deleted
 				int ich = translation.IndexOf(rendering, ichStart, StringComparison.Ordinal);
 				if (ich >= 0 && (ich < indexOfMatch || (ich == indexOfMatch && rendering.Length > lengthOfMatch)))
 				{
