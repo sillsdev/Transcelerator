@@ -4,7 +4,7 @@
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
 		<PackagesDir>$(RootDir)/packages</PackagesDir>
-		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner/tools</NunitConsoleRunnerDir>
+		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner.3.16.3/tools</NunitConsoleRunnerDir>
 		<BuildTasksDll>$(PackagesDir)/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
 		<Solution>Transcelerator.sln</Solution>
 		<ApplicationName>Transcelerator</ApplicationName>
