@@ -176,7 +176,7 @@
   <ItemGroup>
     <Reference Include="Analytics, Version=3.8.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Analytics.3.8.1\lib\net461\Analytics.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Include="AtkSharp, Version=3.24.24.95, Culture=neutral, PublicKeyToken=f6892ebcc5dd81ba, processorArchitecture=MSIL">
       <HintPath>..\packages\AtkSharp.3.24.24.95\lib\netstandard2.0\AtkSharp.dll</HintPath>
     </Reference>
@@ -197,7 +197,7 @@
     </Reference>
     <Reference Include="icu.net, Version=2.8.0.0, Culture=neutral, PublicKeyToken=416fdd914afa6b66, processorArchitecture=MSIL">
       <HintPath>..\packages\icu.net.2.8.1\lib\net451\icu.net.dll</HintPath>
-	</Reference>
+    </Reference>
     <Reference Include="GtkSharp, Version=3.24.24.95, Culture=neutral, PublicKeyToken=f6892ebcc5dd81ba, processorArchitecture=MSIL">
       <HintPath>..\packages\GtkSharp.3.24.24.95\lib\netstandard2.0\GtkSharp.dll</HintPath>
     </Reference>
@@ -277,7 +277,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
+      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
