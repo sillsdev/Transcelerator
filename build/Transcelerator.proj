@@ -143,10 +143,10 @@
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
-		<Message Text="Running NUnit 3 from $(RootDir)/packages/NUnit.ConsoleRunner/tools"/>
+		<Message Text="Running NUnit 3 from $(NunitConsoleRunnerDir)"/>
 		<NUnit3
 			Assemblies="@(TestAssemblies)"
-			ToolPath="$(RootDir)/packages/NUnit.ConsoleRunner/tools"
+			ToolPath="$(NunitConsoleRunnerDir)"
 			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
 			WorkingDirectory="$(RootDir)/output/$(Configuration)"
 			Force32Bit="false"
