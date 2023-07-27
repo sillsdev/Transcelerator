@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using L10NSharp;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using static System.String;
 
@@ -302,7 +301,10 @@ namespace SIL.Transcelerator
 		{
 			if (!m_rule.Valid)
 			{
-				string errorPartA = (m_rule.ErrorMessageQ != null) ?
+				string errorPartA = m_rule.KeyTermPlaceHolderMissing ? 
+					LocalizationManager.GetString("RenderingSelectionRule.KeyTermPlaceHolderMissing", 
+						"Question-matching pattern must have a place holder for the key term.") :
+					m_rule.ErrorMessageQ != null ?
 					LocalizationManager.GetString("RulesWizardDlg.InvalidQuestionCondition",
 						"Invalid condition for determining when rule applies.") +
 						Environment.NewLine + m_rule.ErrorMessageQ :
@@ -354,7 +356,7 @@ namespace SIL.Transcelerator
 		#region Private helper methods
 		private void UpdateStatus()
 		{
-			m_lblDescription.Text = m_rule.Description;
+			m_lblDescription.Text = RenderingSelectionRulesDlg.GetDescription(m_rule);
 			btnOk.Enabled = m_txtName.Text != Empty &&
 				m_rule.QuestionMatchCriteriaType != RenderingSelectionRule.QuestionMatchType.Undefined;
 		}

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>SIL.Transcelerator</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TxlDataTests\**" />
+    <EmbeddedResource Remove="TxlDataTests\**" />
+    <None Remove="TxlDataTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="keyTermRules.xml" />
+    <None Remove="keyTermRules.xsd" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="keyTermRules.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="keyTermRules.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>keyTermRules.Designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageReference Include="ParatextPluginInterfaces" Version="2.0.23" />
+    <PackageReference Include="SIL.Scripture" Version="12.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="12.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TxlShared\TxlShared.csproj" />
+  </ItemGroup>
+
+</Project>

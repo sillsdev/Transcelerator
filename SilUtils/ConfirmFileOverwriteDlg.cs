@@ -16,6 +16,7 @@ namespace SIL.Utils
 {
 	public partial class ConfirmFileOverwriteDlg : Form
 	{
+		[Obsolete("Use version in SIL.Windows.Forms.FileSystem")]
 		public ConfirmFileOverwriteDlg(string filename)
 		{
 			InitializeComponent();
@@ -23,6 +24,7 @@ namespace SIL.Utils
 			lblFilename.Text = filename;
 		}
 
+		[Obsolete("Use version in SIL.Windows.Forms.FileSystem")]
 		public ConfirmFileOverwriteDlg(string filename, bool yesIsDefault)
 			: this(filename)
 		{
@@ -30,12 +32,14 @@ namespace SIL.Utils
 				DefaultResult = DialogResult.Yes;
 		}
 
+		[Obsolete("Use version in SIL.Windows.Forms.FileSystem")]
 		public ConfirmFileOverwriteDlg(string filename, string title)
 			: this(filename)
 		{
 			Title = title;
 		}
 
+		[Obsolete("Use version in SIL.Windows.Forms.FileSystem")]
 		public ConfirmFileOverwriteDlg(string filename, string title, bool yesIsDefault) :
 			this(filename, yesIsDefault)
 		{

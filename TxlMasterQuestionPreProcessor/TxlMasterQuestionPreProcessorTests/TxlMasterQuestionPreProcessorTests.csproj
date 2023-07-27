@@ -106,9 +106,9 @@
     <Compile Include="QuestionSfmFileAccessorTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TxlCore\TxlCore.csproj">
-      <Project>{140A72D9-B0B3-4E19-AA3B-0127C3014D39}</Project>
-      <Name>TxlCore</Name>
+    <ProjectReference Include="..\..\TxlShared\TxlShared.csproj">
+      <Project>{dd64c074-cede-45f2-b95b-d1f68891aa3d}</Project>
+      <Name>TxlShared</Name>
     </ProjectReference>
     <ProjectReference Include="..\TxlMasterQuestionPreProcessor.csproj">
       <Project>{54363E9B-3A5A-46D6-9ACA-3F1626572647}</Project>

@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.   
-// <copyright from='2002' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.   
+#region // Copyright (c) 2023, SIL International.   
+// <copyright from='2002' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -52,6 +52,7 @@ namespace SIL.Utils
 		/// Initializes a new instance of the <see cref="T:WaitCursor"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use version in SIL.Windows.Forms.Miscellaneous")]
 		public WaitCursor() : this(null, false)
 		{
 		}
@@ -62,6 +63,7 @@ namespace SIL.Utils
 		/// </summary>
 		/// <param name="parent">Parent control</param>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use version in SIL.Windows.Forms.Miscellaneous")]
 		public WaitCursor(Control parent) : this(parent, false)
 		{
 		}
@@ -74,6 +76,7 @@ namespace SIL.Utils
 		/// <param name="showBusyCursor">True to show a busy cursor (arrow with an
 		/// hourglass) instead of the hourglass by itself.</param>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use version in SIL.Windows.Forms.Miscellaneous")]
 		public WaitCursor(Control parent, bool showBusyCursor)
 		{
 			if (parent == null && showBusyCursor)
@@ -220,7 +223,7 @@ namespace SIL.Utils
 		/// Restore the previous cursor
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public void Restore()
+		private void Restore()
 		{
 			CheckDisposed();
 

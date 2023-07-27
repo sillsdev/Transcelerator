@@ -25,7 +25,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	public partial class TxlMasterQuestionPreProcessorForm : Form
 	{
 		private readonly IVersification m_masterVersification;
-		private string m_sfmSourceLabelText;
+		private readonly string m_sfmSourceLabelText;
 
 		public TxlMasterQuestionPreProcessorForm(IVersification englishVersification)
 		{
@@ -35,7 +35,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			m_sfmSourceLabelText = lblSource.Text;
 
 			SetDefaultSfmSourceFile();
-			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlCore.kQuestionsFilename);
+			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlData.kQuestionsFilename);
 		}
 
 		private void SetDefaultSfmSourceFile()

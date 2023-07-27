@@ -307,23 +307,17 @@
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="BiblicalTermLocalizer.cs" />
-    <Compile Include="IHtmlScriptureExtractor.cs" />
-    <Compile Include="IPhrasePart.cs" />
-    <Compile Include="IPhraseTranslationHelper.cs" />
-    <Compile Include="TermRenderingsRepo.cs" />
-    <Compile Include="ITermRenderingsRepo.cs" />
-    <Compile Include="ScriptGenerator.cs" />
+    <Compile Include="HtmlScriptGenerationSettings.cs" />
+    <Compile Include="MessageBoxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MoreUiLanguagesDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MoreUiLanguagesDlg.Designer.cs">
       <DependentUpon>MoreUiLanguagesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Number.cs" />
     <Compile Include="IProgressMessage.cs" />
-    <Compile Include="KeyTerm.cs" />
-    <Compile Include="MasterQuestionParser.cs" />
-    <Compile Include="DataFileAccessor.cs" />
     <Compile Include="HelpAboutDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -335,13 +329,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PhrasePartManager.cs" />
     <Compile Include="RealSplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\Settings.cs" />
-    <Compile Include="HtmlScriptGenerator.cs" />
-    <Compile Include="ScriptureExtractor.cs" />
     <Compile Include="ScriptureForgeInfoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -349,7 +340,7 @@
       <DependentUpon>ScriptureForgeInfoDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="ScrVerseRefAdapter.cs" />
-    <Compile Include="TransceleratorSections.cs" />
+    <Compile Include="TextBoxExtensions.cs" />
     <Compile Include="TxlInfo.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -371,30 +362,24 @@
     <Compile Include="EditQuestionDlg.Designer.cs">
       <DependentUpon>EditQuestionDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="PhraseCustomization.cs" />
-    <Compile Include="QuestionProvider.cs" />
     <Compile Include="RulesWizardDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="RulesWizardDlg.Designer.cs">
       <DependentUpon>RulesWizardDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="RenderingSelectionRule.cs" />
     <Compile Include="RenderingSelectionRulesDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="RenderingSelectionRulesDlg.Designer.cs">
       <DependentUpon>RenderingSelectionRulesDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyTermRenderingInfo.cs" />
-    <Compile Include="ITermRenderingInfo.cs" />
     <Compile Include="ScrReferenceFilterDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ScrReferenceFilterDlg.Designer.cs">
       <DependentUpon>ScrReferenceFilterDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Substitution.cs" />
     <Compile Include="PhraseSubstitutionsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -407,10 +392,6 @@
     <Compile Include="GenerateScriptDlg.Designer.cs">
       <DependentUpon>GenerateScriptDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyTermMatch.cs" />
-    <Compile Include="KeyTermMatchBuilder.cs" />
-    <Compile Include="KeyTermRules.cs" />
-    <Compile Include="PhraseParser.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -429,10 +410,7 @@
     <Compile Include="UNSQuestionsDialog.Designer.cs">
       <DependentUpon>UNSQuestionsDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Part.cs" />
-    <Compile Include="PhraseTranslationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TranslatablePhrase.cs" />
     <Compile Include="UsfmStyleBasedCss.cs" />
     <Compile Include="VersificationExtensions.cs" />
   </ItemGroup>
@@ -541,10 +519,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="icu4c.readme.txt" />
-    <Content Include="keyTermRules.xsd">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -569,17 +543,21 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComprehensionCheckingData\ComprehensionCheckingData.csproj">
-      <Project>{c6474f83-4e0a-462f-bd87-883c197f1be6}</Project>
-      <Name>ComprehensionCheckingData</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SilUtils\SilUtils.csproj">
       <Project>{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}</Project>
       <Name>SilUtils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TxlCore\TxlCore.csproj">
-      <Project>{140A72D9-B0B3-4E19-AA3B-0127C3014D39}</Project>
-      <Name>TxlCore</Name>
+    <ProjectReference Include="..\TxlData\TxlData.csproj">
+      <Project>{78b291bf-a845-4fe1-bed7-6b44905fa483}</Project>
+      <Name>TxlData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TxlShared.Windows.Forms\TxlShared.Windows.Forms.csproj">
+      <Project>{4a902293-7afa-4770-af67-e7b1ec8acd56}</Project>
+      <Name>TxlShared.Windows.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TxlShared\TxlShared.csproj">
+      <Project>{dd64c074-cede-45f2-b95b-d1f68891aa3d}</Project>
+      <Name>TxlShared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -599,16 +577,6 @@
     <Content Include="TxlQuestionWords.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="keyTermRules.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="keyTermRules.xsc">
-      <DependentUpon>keyTermRules.xsd</DependentUpon>
-    </None>
-    <None Include="keyTermRules.xss">
-      <DependentUpon>keyTermRules.xsd</DependentUpon>
-    </None>
     <None Include="Properties\Refresh.png" />
     <None Include="Properties\Arrow-Down-icon.png" />
     <None Include="Properties\Arrow-Up-icon.png" />

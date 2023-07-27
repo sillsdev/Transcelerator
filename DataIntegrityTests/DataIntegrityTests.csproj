@@ -103,9 +103,9 @@
       <Project>{3a4bf2af-23b5-487e-bea5-5d65a0a01bf7}</Project>
       <Name>Transcelerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TxlCore\TxlCore.csproj">
-      <Project>{140a72d9-b0b3-4e19-aa3b-0127c3014d39}</Project>
-      <Name>TxlCore</Name>
+    <ProjectReference Include="..\TxlShared\TxlShared.csproj">
+      <Project>{dd64c074-cede-45f2-b95b-d1f68891aa3d}</Project>
+      <Name>TxlShared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

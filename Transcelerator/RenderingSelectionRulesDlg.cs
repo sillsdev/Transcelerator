@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -154,7 +154,7 @@ namespace SIL.Transcelerator
 			var copiedSelectionRuleNameTemplate = LocalizationManager.GetString("RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate",
 				"{0} - Copy{1}", "Param 0: the original rule name; Param 1: an optional numeric suffix to prevent duplicates (if needed)");
 			int i = 1;
-			var name = Format(copiedSelectionRuleNameTemplate, origRule.Name, string.Empty);
+			var name = Format(copiedSelectionRuleNameTemplate, origRule.Name, Empty);
 
 			Func<string, bool> nameIsUnique = n => !m_listRules.Items.Cast<RenderingSelectionRule>().Any(r => r.Name == n);
 			while (!nameIsUnique(name))
@@ -186,12 +186,12 @@ namespace SIL.Transcelerator
 				m_listRules.SelectedIndex = m_listRules.Items.Count > i ? i : i - 1;
 		}
 
-		private void m_listRules_SelectedIndexChanged(object sender, System.EventArgs e)
+		private void m_listRules_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			RenderingSelectionRule rule = m_listRules.SelectedItem as RenderingSelectionRule;
-			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = (rule != null);
+			var rule = m_listRules.SelectedItem as RenderingSelectionRule;
+			btnEdit.Enabled = btnCopy.Enabled = btnDelete.Enabled = rule != null;
 			if (rule != null)
-				m_lblDescription.Text = rule.Description;
+				m_lblDescription.Text = GetDescription(rule);
 		}
 
 		private void m_listRules_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -213,6 +213,133 @@ namespace SIL.Transcelerator
 		{
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
+		}
+		
+		internal static string GetDescription(RenderingSelectionRule rule)
+		{
+			string fmt;
+			switch (rule.QuestionMatchCriteriaType)
+			{
+				case RenderingSelectionRule.QuestionMatchType.Suffix:
+					switch (rule.RenderingMatchCriteriaType)
+					{
+						case RenderingSelectionRule.RenderingMatchType.Suffix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith",
+								"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.",
+								"Param 0: an English word suffix/ending; Param 1: an English word suffix/ending");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Prefix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaStartsWith",
+								"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that starts with {1}.",
+								"Param 0: an English word suffix/ending; Param 1: an English word prefix/beginning");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Custom:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.CriteriaCustom",
+								"When the biblical term in the original question ends with {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+								"Param 0: an English word suffix/ending; Param 1: a \"regular expression\"");
+							break;
+						default:
+							return Empty;
+					}
+
+					break;
+				case RenderingSelectionRule.QuestionMatchType.Prefix:
+					switch (rule.RenderingMatchCriteriaType)
+					{
+						case RenderingSelectionRule.RenderingMatchType.Suffix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith",
+								"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.",
+								"Param 0: an English word prefix/beginning; Param 1: an English word suffix/ending");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Prefix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith",
+								"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.",
+								"Param 0: an English word prefix/beginning; Param 1: an English word prefix/beginning");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Custom:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom",
+								"When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+								"Param 0: an English word prefix/beginning; Param 1: a \"regular expression\"");
+							break;
+						default:
+							return Empty;
+					}
+
+					break;
+				case RenderingSelectionRule.QuestionMatchType.PrecedingWord:
+					switch (rule.RenderingMatchCriteriaType)
+					{
+						case RenderingSelectionRule.RenderingMatchType.Suffix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith",
+								"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.",
+								"Param 0: an English word (or phrase); Param 1: an English word suffix/ending");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Prefix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith",
+								"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.",
+								"Param 0: an English word (or phrase); Param 1: an English word prefix/beginning");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Custom:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom",
+								"When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+								"Param 0: an English word (or phrase); Param 1: a \"regular expression\"");
+							break;
+						default:
+							return Empty;
+					}
+
+					break;
+				case RenderingSelectionRule.QuestionMatchType.FollowingWord:
+					switch (rule.RenderingMatchCriteriaType)
+					{
+						case RenderingSelectionRule.RenderingMatchType.Suffix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith",
+								"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.",
+								"Param 0: an English word (or phrase); Param 1: an English word suffix/ending");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Prefix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith",
+								"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.",
+								"Param 0: an English word (or phrase); Param 1: an English word prefix/beginning");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Custom:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom",
+								"When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression \"{1}\".",
+								"Param 0: an English word (or phrase); Param 1: a \"regular expression\"");
+							break;
+						default:
+							return Empty;
+					}
+
+					break;
+				case RenderingSelectionRule.QuestionMatchType.Custom:
+					switch (rule.RenderingMatchCriteriaType)
+					{
+						case RenderingSelectionRule.RenderingMatchType.Suffix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith",
+								"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that ends with {1}.",
+								"Param 0: a \"regular expression\"; Param 1: an English word suffix/ending");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Prefix:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith",
+								"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that starts with {1}.",
+								"Param 0: a \"regular expression\"; Param 1: an English word prefix/beginning");
+							break;
+						case RenderingSelectionRule.RenderingMatchType.Custom:
+							fmt = LocalizationManager.GetString("RenderingSelectionRule.QuestionConditionCustom.CriteriaCustom",
+								"When the biblical term in the original question matches the regular expression \"{0}\", then select the first vernacular rendering that matches the regular expression \"{1}\".",
+								"Param 0: a \"regular expression\"; Param 1: a \"regular expression\"");
+							break;
+						default:
+							return Empty;
+					}
+
+					break;
+				default:
+					return Empty;
+			}
+
+			return Format(fmt, rule.QuestionVariable, rule.ResultVariable);
 		}
 	}
 }

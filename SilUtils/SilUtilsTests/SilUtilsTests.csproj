@@ -96,7 +96,7 @@
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\..\output\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>7.3</LangVersion>
@@ -144,11 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Compile Include="PorterStemmerEnhancementTests.cs" />
-    <Compile Include="ListUtilsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringUtilsTests.cs" />
-    <Compile Include="TextBoxExtensionsTests.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -84,15 +84,15 @@ namespace SIL.Transcelerator
 
 			switch (m_generator.GenerateTemplateRange)
 			{
-				case HtmlScriptGenerator.RangeOption.WholeBook:
+				case RangeOption.WholeBook:
 					m_rdoWholeBook.Checked = true;
 					TrySelectItem(m_cboBooks, m_generator.SelectedBook);
 					break;
-				case HtmlScriptGenerator.RangeOption.SingleSection:
+				case RangeOption.SingleSection:
 					m_rdoSingleSection.Checked = true;
 					TrySelectItem(m_cboSection, Properties.Settings.Default.GenerateTemplateSection);
 					break;
-				case HtmlScriptGenerator.RangeOption.RangeOfSections:
+				case RangeOption.RangeOfSections:
 					m_rdoSectionRange.Checked = true;
 					TrySelectItem(m_cboStartSection, Properties.Settings.Default.GenerateTemplateSection);
 					TrySelectItem(m_cboEndSection, Properties.Settings.Default.GenerateTemplateEndSection);
@@ -105,13 +105,13 @@ namespace SIL.Transcelerator
 
 			switch (m_generator.HandlingOfUntranslatedQuestions)
 			{
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn:
+				case HandleUntranslatedQuestionsOption.Warn:
 					m_rdoDisplayWarning.Checked = true;
 					break;
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC:
+				case HandleUntranslatedQuestionsOption.UseLWC:
 					m_rdoUseOriginal.Checked = true;
 					break;
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Skip:
+				case HandleUntranslatedQuestionsOption.Skip:
 					m_rdoSkipUntranslated.Checked = true;
 					break;
 				default:
@@ -481,7 +481,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_rdoWholeBook.Checked)
 			{
-				m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.WholeBook;
+				m_generator.GenerateTemplateRange = RangeOption.WholeBook;
 				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
 			}
 			else
@@ -490,13 +490,13 @@ namespace SIL.Transcelerator
 
 				if (m_rdoSingleSection.Checked)
 				{
-					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.SingleSection;
+					m_generator.GenerateTemplateRange = RangeOption.SingleSection;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = "";
 				}
 				else
 				{
-					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.RangeOfSections;
+					m_generator.GenerateTemplateRange = RangeOption.RangeOfSections;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
 				}
@@ -531,13 +531,13 @@ namespace SIL.Transcelerator
 			m_generator.IncludeLWCComments = m_chkIncludeLWCComments.Checked;
 
 			if (m_rdoDisplayWarning.Checked)
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Warn;
 			else if (m_rdoUseOriginal.Checked)
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.UseLWC;
 			else
 			{
 				Debug.Assert(m_rdoDisplayWarning.Checked);
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Warn;
 			}
 
 			m_generator.Folder = m_lblFolder.Text;
@@ -560,7 +560,7 @@ namespace SIL.Transcelerator
 							"There are {0} questions in the selected range that do not have confirmed translations. These questions " +
 							"will be excluded from the checking script.",
 							"Param is a number."), untranslatedQuestions),
-						TxlCore.kPluginName, MessageBoxButtons.OKCancel), form =>
+						TxlData.kPluginName, MessageBoxButtons.OKCancel), form =>
 					{
 						DialogResult = form.DialogResult;
 						form.Disposed += (o, args) => { Close(); };
