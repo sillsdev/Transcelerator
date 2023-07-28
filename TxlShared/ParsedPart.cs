@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2013' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2013' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Serialization;
-using SIL.Utils;
+using SIL.Extensions;
 
 namespace SIL.Transcelerator
 {

@@ -1,4 +1,13 @@
-﻿using System;
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2022' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rhino.Mocks;
@@ -205,13 +214,15 @@ namespace SIL.Transcelerator
 			var startRef = new BCVRef(bookNumActs, 6, 15);
 			var endRef = new BCVRef(bookNumActs, 7, 2);
 
-			List<IUSFMToken> acts6Tokens = new List<IUSFMToken>();
-			acts6Tokens.Add(StubbedToken.GetChapter(BCVRef.BookToNumber("ACT"), 6));
-			acts6Tokens.Add(StubbedToken.GetParagraph("p"));
-			acts6Tokens.Add(StubbedToken.GetVerse(1));
-			acts6Tokens.Add(StubbedToken.GetScriptureText("Verse one. "));
-			acts6Tokens.Add(StubbedToken.GetVerse(15));
-			acts6Tokens.Add(StubbedToken.GetScriptureText("Todo los del consejo miraron a Esteban que su rostro parecía el de un ángel."));
+			List<IUSFMToken> acts6Tokens = new List<IUSFMToken>
+			{
+				StubbedToken.GetChapter(BCVRef.BookToNumber("ACT"), 6),
+				StubbedToken.GetParagraph("p"),
+				StubbedToken.GetVerse(1),
+				StubbedToken.GetScriptureText("Verse one. "),
+				StubbedToken.GetVerse(15),
+				StubbedToken.GetScriptureText("Todo los del consejo miraron a Esteban que su rostro parecía el de un ángel.")
+			};
 
 			mockedProject.Stub(p => p.GetUSFMTokens(bookNumActs)).Return(acts6Tokens.Union(GetActs7Tokens(true)));
 

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -47,7 +47,7 @@ namespace SIL.Transcelerator
 	    internal QuestionProvider(QuestionSections sections)
 		{
 			m_sections = sections;
-            m_manager = new PhrasePartManager(new string[0], null, null);
+            m_manager = new PhrasePartManager(Array.Empty<string>(), null, null);
         }
 
 		/// ------------------------------------------------------------------------------------

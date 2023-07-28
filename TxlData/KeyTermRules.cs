@@ -1,13 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 //
-// File: KeyTermRule.cs
+// File: KeyTermRules.cs
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;

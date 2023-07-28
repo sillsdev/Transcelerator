@@ -49,12 +49,14 @@ namespace SIL.Transcelerator
 
 		static DataFileAccessor()
 		{
-			s_dataFileIdMap = new Dictionary<DataFileId, string>(5);
-			s_dataFileIdMap[DataFileId.Translations] = "Translations of Checking Questions.xml";
-			s_dataFileIdMap[DataFileId.QuestionCustomizations] = "Question Customizations.xml";
-			s_dataFileIdMap[DataFileId.PhraseSubstitutions] = "Phrase substitutions.xml";
-			s_dataFileIdMap[DataFileId.KeyTermRenderingInfo] = "Key term rendering info.xml";
-			s_dataFileIdMap[DataFileId.TermRenderingSelectionRules] = "Term rendering selection rules.xml";
+			s_dataFileIdMap = new Dictionary<DataFileId, string>(5)
+			{
+				[DataFileId.Translations] = "Translations of Checking Questions.xml",
+				[DataFileId.QuestionCustomizations] = "Question Customizations.xml",
+				[DataFileId.PhraseSubstitutions] = "Phrase substitutions.xml",
+				[DataFileId.KeyTermRenderingInfo] = "Key term rendering info.xml",
+				[DataFileId.TermRenderingSelectionRules] = "Term rendering selection rules.xml"
+			};
 		}
 
 		protected static string GetFileName(DataFileId fileId)

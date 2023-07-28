@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2013' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.   
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2013' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -773,7 +773,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests breaking up phrases into parts where a non-empty key terms list is supplied,
-		/// with some more complicated muli-word terms, including some with apostrophes. 
+		/// with some more complicated multi-word terms, including some with apostrophes. 
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1099,7 +1099,7 @@ namespace SIL.Transcelerator
 				"Can you say a sentence that is seven words long?",
 				"high priest",
 				"If the high priest wants you to forgive God, can he ask you using a sentence that is seven words long or not?",
-				"Is this sentence that is seven dwarves?"); 
+				"Is this sentence that is seven dwarfs?"); 
 			
 			Assert.AreEqual(7, pq.KeyTerms.Length, "Only the key terms actually used should be counted.");
 			
@@ -1145,12 +1145,12 @@ namespace SIL.Transcelerator
 				new KeyTermPart("sentence that is seven words long"),
 				"or not");
 
-			VerifyParts(questions[i++], "Is this sentence that is seven dwarves?",
+			VerifyParts(questions[i++], "Is this sentence that is seven dwarfs?",
 				"is this",
 				new KeyTermPart("sentence"),
 				"that is",
 				new KeyTermPart("seven"),
-				"dwarves");
+				"dwarfs");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1344,20 +1344,24 @@ namespace SIL.Transcelerator
 		/// Tests breaking up phrases into parts where a terms list is supplied that contains
 		/// a phrase that begins with an inflected form of a verb and a term that contains a
 		/// one-word uninflected form of that word. Phrases that contain the inflected form of
-		/// the verb but do not macth the whole phrase should match the uninflected term.
+		/// the verb but do not match the whole phrase should match the uninflected term.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
 		public void GetResult_KeyTermsWithMultipleWordsAndPhrasesWithWordsWhichNeedToBeStemmed()
 		{
-			m_keyTermRules = new KeyTermRules();
-			m_keyTermRules.Items = new List<KeyTermRule>();
+			m_keyTermRules = new KeyTermRules
+			{
+				Items = new List<KeyTermRule>()
+			};
 
 			AddMockedKeyTerm("Blessed One", 1);
 			AddMockedKeyTerm("bless; praise");
-			KeyTermRule rule = new KeyTermRule();
-			rule.id = "bless; praise";
-			rule.Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate { Name = "blessed" } };
+			KeyTermRule rule = new KeyTermRule
+			{
+				id = "bless; praise",
+				Alternates = new[] { new KeyTermRulesKeyTermRuleAlternate { Name = "blessed" } }
+			};
 			m_keyTermRules.Items.Add(rule);
 			AddMockedKeyTerm("blessed; worthy of praise");
 			AddMockedKeyTerm("Jacob");
@@ -1412,7 +1416,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests sub-part matching logic in case where breaking a phrase into smaller subparts
+		/// Tests sub-part matching logic in case where breaking a phrase into smaller sub-parts
 		/// causes a remainder which is an existing part (in use in another phrase).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -1445,8 +1449,8 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tests sub-part matching logic in case where breaking a phrase into smaller subparts
-		/// causes both a preceeding and a following remainder.
+		/// Tests sub-part matching logic in case where breaking a phrase into smaller sub-parts
+		/// causes both a preceding and a following remainder.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
@@ -1472,7 +1476,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests sub-part matching logic in case where a phrase could theoretically match a
-		/// sub-phrase  on smoething other than a word boundary.
+		/// sub-phrase on something other than a word boundary.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]

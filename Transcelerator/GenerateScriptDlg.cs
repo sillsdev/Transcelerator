@@ -22,8 +22,8 @@ using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using SIL.Extensions;
 using SIL.Scripture;
-using SIL.Utils;
 using SIL.Windows.Forms;
+using SIL.Windows.Forms.Miscellaneous;
 using static System.String;
 using File = System.IO.File;
 

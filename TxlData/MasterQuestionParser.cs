@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2013' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2013' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,7 +13,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using SIL.Utils;
 using System;
 using SIL.Extensions;
 using SIL.Scripture;
@@ -367,7 +366,7 @@ namespace SIL.Transcelerator
         /// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(string filename, IEnumerable<string> questionWords,
+        public MasterQuestionParser(string filename, IReadOnlyCollection<string> questionWords,
             IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions) :
@@ -383,7 +382,7 @@ namespace SIL.Transcelerator
 		/// it does not take an initial collection of sections with questions to be parsed.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public MasterQuestionParser(IEnumerable<string> questionWords,
+		public MasterQuestionParser(IReadOnlyCollection<string> questionWords,
 			IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
 			IEnumerable<Substitution> phraseSubstitutions) : this(default(QuestionSections), questionWords,
 			keyTerms, keyTermRules, null, phraseSubstitutions)
@@ -395,7 +394,8 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="MasterQuestionParser"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-        public MasterQuestionParser(QuestionSections sections, IEnumerable<string> questionWords,
+        public MasterQuestionParser(QuestionSections sections,
+			IReadOnlyCollection<string> questionWords,
             IEnumerable<IBiblicalTerm> keyTerms, KeyTermRules keyTermRules,
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
@@ -409,8 +409,7 @@ namespace SIL.Transcelerator
 		        {
 			        List<Word> listOfWordsInQuestion = questionWordPhrase.Split(' ').Select(w => (Word) w).ToList();
 			        int count = listOfWordsInQuestion.Count;
-			        List<List<Word>> listOfQuestionsForCount;
-			        if (!m_questionWordsLookupTable.TryGetValue(count, out listOfQuestionsForCount))
+			        if (!m_questionWordsLookupTable.TryGetValue(count, out var listOfQuestionsForCount))
 				        m_questionWordsLookupTable[count] = listOfQuestionsForCount = new List<List<Word>>();
 			        listOfQuestionsForCount.Add(listOfWordsInQuestion);
 		        }

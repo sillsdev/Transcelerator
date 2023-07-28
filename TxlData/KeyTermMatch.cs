@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Paratext.PluginInterfaces;
-using SIL.Utils;
+using SIL.Extensions;
 
 namespace SIL.Transcelerator
 {
@@ -68,8 +68,7 @@ namespace SIL.Transcelerator
 		{
 			MatchForRefOnly = matchForRefOnly;
 			m_words = words.ToList();
-			m_terms = new List<IBiblicalTerm>();
-			m_terms.Add(term);
+			m_terms = new List<IBiblicalTerm> { term };
 		}
 		#endregion
 
@@ -90,10 +89,10 @@ namespace SIL.Transcelerator
 		{
 			switch (obj)
 			{
-				case KeyTermMatch _:
-					return m_words.SequenceEqual(((KeyTermMatch)obj).m_words);
-				case IEnumerable<Word> _:
-					return m_words.SequenceEqual((IEnumerable<Word>)obj);
+				case KeyTermMatch match:
+					return m_words.SequenceEqual(match.m_words);
+				case IEnumerable<Word> words:
+					return m_words.SequenceEqual(words);
 			}
 			return base.Equals(obj);
 		}
@@ -152,30 +151,12 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the references of all occurrences of this key term as integers in the form
-		/// BBBCCCVVV.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IList<int> BcvOccurences =>
-			m_terms.SelectMany(keyTerm => keyTerm.Occurrences.Select(o => o.BBBCCCVVV)).Distinct().ToList();
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets all the key terms for this match.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		public IEnumerable<IBiblicalTerm> AllTerms => m_terms;
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Gets the ith Word in the sequence of words on which this object matches
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public Word this[int i]
-        {
-            get { return m_words[i]; }
-        }
-        #endregion
+		public Word this[int i] => m_words[i];
+
+		#endregion
 
         #region Public methods
         /// ------------------------------------------------------------------------------------
@@ -227,7 +208,7 @@ namespace SIL.Transcelerator
         internal void AddTerm(IBiblicalTerm keyTerm)
 		{
 			if (keyTerm == null)
-				throw new ArgumentNullException("keyTerm");
+				throw new ArgumentNullException(nameof(keyTerm));
 			m_terms.Add(keyTerm);
             m_surrogate = null;
 		}
@@ -241,7 +222,7 @@ namespace SIL.Transcelerator
         internal void AddWord(Word word)
 		{
 			if (word == null)
-				throw new ArgumentNullException("word");
+				throw new ArgumentNullException(nameof(word));
 			m_words.Add(word);
             m_surrogate = null;
         }

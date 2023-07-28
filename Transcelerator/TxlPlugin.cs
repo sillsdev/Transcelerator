@@ -372,7 +372,7 @@ namespace SIL.Transcelerator
 			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId,
 				TxlData.kPluginName, TxlData.kPluginName, s_version, installedLocFolder,
 				relativeSettingPathForLocFolder, icon, TxlData.kEmailAddress,
-				"SIL.Transcelerator", "SIL.Utils");
+				"SIL.Transcelerator");
 			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
 				"transcelerator", IssueRequestForLocalization);
 		}

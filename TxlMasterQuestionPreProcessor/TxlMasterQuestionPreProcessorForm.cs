@@ -17,7 +17,8 @@ using System.Windows.Forms;
 using Paratext.PluginInterfaces;
 using SIL.Transcelerator;
 using SIL.Transcelerator.Localization;
-using SIL.Utils;
+using SIL.Windows.Forms.FileSystem;
+using SIL.Windows.Forms.Miscellaneous;
 using File = System.IO.File;
 
 namespace SIL.TxlMasterQuestionPreProcessor
@@ -222,7 +223,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 						sb.Append("\n");
 						sb.Append(fileToWrite);
 						if (problemsFound > 0)
-							sb.Append(string.Format(", with {0} problems!", problemsFound));
+							sb.Append($", with {problemsFound} problems!");
 						else
 							successfullyProcessedFiles.Add(fileToWrite);
 					}

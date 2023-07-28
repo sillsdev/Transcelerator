@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2020, SIL International.
-// <copyright from='2011' to='2020' company='SIL International'>
-//		Copyright (c) 2020, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2011' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -16,7 +16,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using static System.String;
-using SIL.Utils;
+using SIL.Extensions;
 
 namespace SIL.Transcelerator
 {

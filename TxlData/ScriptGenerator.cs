@@ -1,4 +1,13 @@
-﻿using System;
+﻿// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2022' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
+//
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright>
+#endregion
+// ---------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.IO;
 

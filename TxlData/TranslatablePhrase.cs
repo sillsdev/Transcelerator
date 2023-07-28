@@ -16,10 +16,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using SIL.Data;
 using SIL.Extensions;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
-using SIL.Utils;
 using static System.Char;
 using static System.String;
 
@@ -712,7 +712,7 @@ namespace SIL.Transcelerator
 			var firstPart = TranslatableParts.FirstOrDefault();
 			if (firstPart != null)
 				return firstPart.OwningPhrases.Where(phrase => phrase != this && phrase.HasUserTranslation);
-			return new TranslatablePhrase[0];
+			return Array.Empty<TranslatablePhrase>();
 		}
 
 		/// ------------------------------------------------------------------------------------

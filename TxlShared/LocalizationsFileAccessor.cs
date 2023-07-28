@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2013' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2013' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -140,16 +140,16 @@ namespace SIL.Transcelerator.Localization
 			catch (Exception)
 			{
 				// Bad path or something
-				return new string[0];
+				return Array.Empty<string>();
 			}
 		}
 
 		public FileInfo FileInfo => new FileInfo(FileName);
 		public bool Exists => FileInfo.Exists;
 
-		public string GetLocalizedString(UIDataString key, bool failoverToEnglish = true)
+		public string GetLocalizedString(UIDataString key, bool failOverToEnglish = true)
 		{
-			return TryGetLocalizedString(key, out string localized) ? localized : (failoverToEnglish ? key.SourceUIString : null);
+			return TryGetLocalizedString(key, out string localized) ? localized : (failOverToEnglish ? key.SourceUIString : null);
 		}
 
 		public string GetLocalizedDataString(UIDataString key, out string localeID)

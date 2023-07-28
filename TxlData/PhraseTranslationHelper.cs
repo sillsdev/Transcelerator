@@ -1003,15 +1003,15 @@ namespace SIL.Transcelerator
 		{
 			string originalTranslation = part.Translation;
 
-			List<string> userTranslations = new List<string>();
+			var userTranslations = new List<string>();
 			foreach (TranslatablePhrase phrase in part.OwningPhrases.Where(op => op.HasUserTranslation))
 			{
 				StringBuilder toAdd = new StringBuilder(phrase.UserTransSansOuterPunctuation);
 				foreach (IPhrasePart otherPart in phrase.GetParts().Where(otherPart => otherPart != part))
 				{
-					if (otherPart is KeyTerm)
+					if (otherPart is KeyTerm term)
 					{
-						foreach (string ktTrans in ((KeyTerm)otherPart).Renderings)
+						foreach (string ktTrans in term.Renderings)
 						{
 							int ich = toAdd.ToString().IndexOf(ktTrans, StringComparison.Ordinal);
 							if (ich >= 0)
@@ -1044,7 +1044,7 @@ namespace SIL.Transcelerator
 				// The translation of the part has shrunk
 				return part.OwningPhrases.Where(phr => phr.HasUserTranslation).SelectMany(otherPhrases => otherPhrases.TranslatableParts).Distinct();
 			}
-			return new Part[0];
+			return Array.Empty<Part>();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1077,8 +1077,7 @@ namespace SIL.Transcelerator
 						fCommonSubstringIsWholeWord, out fCommonSubstringIsWholeWord).Trim();
 					if (sCommonSubstring.Length > 1 || (sCommonSubstring.Length == 1 && Char.IsLetter(sCommonSubstring[0])))
 					{
-						double val;
-						commonSubstrings.TryGetValue(sCommonSubstring, out val);
+						commonSubstrings.TryGetValue(sCommonSubstring, out var val);
 						val += Math.Sqrt(sCommonSubstring.Length);
 						commonSubstrings[sCommonSubstring] = val;
 						// A whole-word match always trumps a partial-word match.
@@ -1151,8 +1150,7 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         public string InitialPunctuationForType(TypeOfPhrase type)
 		{
-			string p;
-			return m_initialPunct.TryGetValue(type, out p) ? p : Empty;
+			return m_initialPunct.TryGetValue(type, out var p) ? p : Empty;
 		}
 
         /// ------------------------------------------------------------------------------------
@@ -1164,8 +1162,7 @@ namespace SIL.Transcelerator
         /// ------------------------------------------------------------------------------------
         public string FinalPunctuationForType(TypeOfPhrase type)
 		{
-			string p;
-			return m_finalPunct.TryGetValue(type, out p) ? p : Empty;
+			return m_finalPunct.TryGetValue(type, out var p) ? p : Empty;
 		}
 
 		public void ProcessAllTranslations()
@@ -1234,8 +1231,10 @@ namespace SIL.Transcelerator
 				NoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
 				!NumberFormatInfo.NumberGroupSizes.SequenceEqual(digitGroups))
 			{
-				NumberFormatInfo = new NumberFormatInfo();
-				NumberFormatInfo.DigitSubstitution = DigitShapes.NativeNational;
+				NumberFormatInfo = new NumberFormatInfo
+				{
+					DigitSubstitution = DigitShapes.NativeNational
+				};
 				var nativeDigits = new string[10];
 				for (int i = 0; i <= 9; i++)
 					nativeDigits[i] = ((char) (nativeZero + i)).ToString(CultureInfo.InvariantCulture);

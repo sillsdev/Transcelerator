@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcelerator", "Transcele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransceleratorTests", "Transcelerator\TransceleratorTests\TransceleratorTests.csproj", "{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtilsTests", "SilUtils\SilUtilsTests\SilUtilsTests.csproj", "{F023F83B-EC39-48D4-A98C-F65E43609B20}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtils", "SilUtils\SilUtils.csproj", "{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessor", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessor.csproj", "{54363E9B-3A5A-46D6-9ACA-3F1626572647}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessorTests", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessorTests\TxlMasterQuestionPreProcessorTests.csproj", "{6DE38973-4256-4AD7-A48F-56675CA826E2}"
@@ -39,7 +35,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlShared.Windows.Forms", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlDataTests", "TxlData\TxlDataTests\TxlDataTests.csproj", "{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlShared", "TxlShared\TxlShared.csproj", "{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TxlShared", "TxlShared\TxlShared.csproj", "{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlSharedTests", "TxlShared\TxlSharedTests\TxlSharedTests.csproj", "{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}"
 EndProject
@@ -87,38 +83,6 @@ Global
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|x64.ActiveCfg = Release|x64
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|x64.Build.0 = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|x64.ActiveCfg = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|x64.Build.0 = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|Any CPU.ActiveCfg = Release|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|Any CPU.Build.0 = Release|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|x64.ActiveCfg = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|x64.Build.0 = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|x64.ActiveCfg = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|x64.Build.0 = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|Any CPU.ActiveCfg = Release|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|Any CPU.Build.0 = Release|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.ActiveCfg = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.Build.0 = Release|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug - Copy To Paratext|x86
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.ActiveCfg = Debug - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.Build.0 = Debug - Copy To Paratext|x64

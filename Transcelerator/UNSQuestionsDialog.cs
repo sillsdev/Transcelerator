@@ -11,8 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
-using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
+using SIL.Extensions;
 using SIL.Xml;
 using System;
 using System.Collections.Generic;
@@ -37,6 +37,7 @@ using Paratext.PluginInterfaces;
 using SIL.Reporting;
 using SIL.Windows.Forms;
 using SIL.Windows.Forms.Extensions;
+using SIL.Windows.Forms.Miscellaneous;
 using static System.Char;
 using static System.String;
 using static SIL.WritingSystems.IetfLanguageTag;
@@ -532,8 +533,10 @@ namespace SIL.Transcelerator
 			var fontInfo = m_project.Language.Font;
 			m_vernFont?.Dispose();
 			m_vernFont = new Font(fontInfo.FontFamily, fontInfo.Size);
-			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
-			translationCellStyle.Font = m_vernFont;
+			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle
+			{
+				Font = m_vernFont
+			};
 			m_colTranslation.DefaultCellStyle = translationCellStyle;
 
 			if (m_project.Language.IsRtoL)
@@ -2178,7 +2181,7 @@ namespace SIL.Transcelerator
 		private void AddNewQuestion(object sender, EventArgs e)
 		{
 			m_selectKeyboard?.Invoke(false);
-			string language = Format("{0} ({1})", m_project.LanguageName, m_project.Language.Id);
+			string language = $"{m_project.LanguageName} ({m_project.Language.Id})";
 			var newQuestionDlg = new NewQuestionDlg(m_project, CurrentPhrase, language, m_sectionInfo,
 				m_project.Versification, m_masterVersification, m_helper, m_selectKeyboard);
 
@@ -2448,7 +2451,7 @@ namespace SIL.Transcelerator
 			m_host.VerseRefChanged += OnHostOnVerseRefChanged;
 		}
 
-		private void OnHostOnVerseRefChanged(IPluginHost host, IVerseRef reference, SyncReferenceGroup @group)
+		private void OnHostOnVerseRefChanged(IPluginHost host, IVerseRef reference, SyncReferenceGroup group)
 		{
 			lock (this)
 			{
