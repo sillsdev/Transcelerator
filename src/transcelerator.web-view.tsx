@@ -4,7 +4,7 @@ import {
   DoStuffEvent,
   ExtensionVerseDataProvider,
   ExtensionVerseDataTypes,
-} from 'paranext-extension-template';
+} from 'transcelerator';
 import { Button } from 'papi-components';
 import { QuickVerseDataTypes } from 'quick-verse';
 
@@ -15,34 +15,34 @@ const {
   logger,
 } = papi;
 
-globalThis.webViewComponent = function ExtensionTemplate2() {
+globalThis.webViewComponent = function ExtensionTemplate() {
   const [clicks, setClicks] = useState(0);
 
   useEvent<DoStuffEvent>(
-    'extensionTemplate.doStuff',
+    'transcelerator.doStuff',
     useCallback(({ count }) => setClicks(count), []),
   );
 
   const extensionVerseDataProvider = useDataProvider<ExtensionVerseDataProvider>(
-    'paranextExtensionTemplate.quickVerse',
+    'transcelerator.quickVerse',
   );
 
   const [latestExtensionVerseText] = useData.Verse<ExtensionVerseDataTypes, 'Verse'>(
     extensionVerseDataProvider,
     'latest',
-    'Loading latest Scripture text from extension template...',
+    'Loading latest Scripture text from Transcelerator...',
   );
 
   const [latestQuickVerseText] = useData.Verse<QuickVerseDataTypes, 'Verse'>(
     'quickVerse.quickVerse',
     'latest',
-    'Loading latest Scripture text from extension template...',
+    'Loading latest Scripture text from Transcelerator...',
   );
 
   return (
     <>
       <div className="title">
-        Extension Template <span className="framework">React 2</span>
+        Transcelerator <span className="framework">React</span>
       </div>
       <div>{latestExtensionVerseText}</div>
       <div>{latestQuickVerseText}</div>
@@ -51,12 +51,12 @@ globalThis.webViewComponent = function ExtensionTemplate2() {
           onClick={async () => {
             const start = performance.now();
             const result = await papi.commands.sendCommand(
-              'extensionTemplate.doStuff',
-              'Extension Template React Component',
+              'transcelerator.doStuff',
+              'Transcelerator React Component',
             );
             setClicks(clicks + 1);
             logger.info(
-              `command:extensionTemplate.doStuff '${result.response}' took ${
+              `command:transcelerator.doStuff '${result.response}' took ${
                 performance.now() - start
               } ms`,
             );

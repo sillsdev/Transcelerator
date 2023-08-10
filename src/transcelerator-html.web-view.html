@@ -8,9 +8,9 @@
     </style>
   </head>
   <body>
-    <div class="title">Extension Template HTML</div>
+    <div class="title">Transcelerator HTML</div>
     <div>
-      <input id="name-input" value="Bill" />
+      <input id="name-input" value="Traxyl" />
       <button id="greetings-button" type="button">Greet</button>
       <button id="delete-button" type="button">Delete</button>
     </div>
@@ -18,11 +18,11 @@
     <div>
       <input
         id="set-greetings-input"
-        value="Hey, my name is Bill. I got set by the webview!"
+        value="Hey, my name is Traxyl. I got set by the webview!"
       /><button id="set-greetings-button" type="button">Set Greeting</button>
     </div>
     <div>
-      <input id="set-age-input" type="number" value="43" /><button
+      <input id="set-age-input" type="number" value="10" /><button
         id="set-age-button"
         type="button"
       >
@@ -31,10 +31,10 @@
     </div>
     <div id="people-data"></div>
     <div id="people-update-count">People Updates: 0</div>
-    <div id="bill-any-greetings-update-count">Any Greetings Updates (via Bill): 0</div>
-    <div id="bill-greetings-update-count">Bill Greetings Updates: 0</div>
-    <div id="bill-any-age-update-count">Any Age Updates (via Bill): 0</div>
-    <div id="bill-age-update-count">Bill Age Updates: 0</div>
+    <div id="traxyl-any-greetings-update-count">Any Greetings Updates (via Traxyl): 0</div>
+    <div id="traxyl-greetings-update-count">Traxyl Greetings Updates: 0</div>
+    <div id="traxyl-any-age-update-count">Any Age Updates (via Traxyl): 0</div>
+    <div id="traxyl-age-update-count">Traxyl Age Updates: 0</div>
     <script>
       function print(input) {
         papi.logger.info(input);
@@ -141,10 +141,10 @@
           () => {
             billAnyGreetingsUpdateCount += 1;
             const billAnyGreetingsUpdateCountDiv = document.getElementById(
-              'bill-any-greetings-update-count',
+              'traxyl-any-greetings-update-count',
             );
             billAnyGreetingsUpdateCountDiv.textContent = papi.util.htmlEncode(
-              `Any Greetings Updates (via Bill): ${billAnyGreetingsUpdateCount}`,
+              `Any Greetings Updates (via Traxyl): ${billAnyGreetingsUpdateCount}`,
             );
           },
           { retrieveDataImmediately: false, whichUpdates: '*' },
@@ -155,10 +155,10 @@
         peopleDataProvider.subscribeGreeting('bIlL', () => {
           billGreetingsUpdateCount += 1;
           const billGreetingsUpdateCountDiv = document.getElementById(
-            'bill-greetings-update-count',
+            'traxyl-greetings-update-count',
           );
           billGreetingsUpdateCountDiv.textContent = papi.util.htmlEncode(
-            `Bill Greetings Updates: ${billGreetingsUpdateCount}`,
+            `Traxyl Greetings Updates: ${billGreetingsUpdateCount}`,
           );
         });
 
@@ -168,9 +168,9 @@
           'BiLl',
           () => {
             billAnyAgeUpdateCount += 1;
-            const billAnyAgeUpdateCountDiv = document.getElementById('bill-any-age-update-count');
+            const billAnyAgeUpdateCountDiv = document.getElementById('traxyl-any-age-update-count');
             billAnyAgeUpdateCountDiv.textContent = papi.util.htmlEncode(
-              `Any Age Updates (via Bill): ${billAnyAgeUpdateCount}`,
+              `Any Age Updates (via Traxyl): ${billAnyAgeUpdateCount}`,
             );
           },
           { retrieveDataImmediately: false, whichUpdates: '*' },
@@ -180,9 +180,9 @@
         let billAgeUpdateCount = -1;
         peopleDataProvider.subscribeAge('bIlL', () => {
           billAgeUpdateCount += 1;
-          const billAgeUpdateCountDiv = document.getElementById('bill-age-update-count');
+          const billAgeUpdateCountDiv = document.getElementById('traxyl-age-update-count');
           billAgeUpdateCountDiv.textContent = papi.util.htmlEncode(
-            `Bill Age Updates: ${billAgeUpdateCount}`,
+            `Traxyl Age Updates: ${billAgeUpdateCount}`,
           );
         });
       }
@@ -191,7 +191,7 @@
         document.addEventListener('DOMContentLoaded', setupWebView);
       else setupWebView();
 
-      //# sourceURL=extension-template-html.web-view.html
+      //# sourceURL=transcelerator-html.web-view.html
     </script>
   </body>
 </html>

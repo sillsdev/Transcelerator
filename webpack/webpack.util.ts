@@ -39,7 +39,7 @@ function getWebViewTsxPaths() {
 
 /**
  * Gets the bundled WebView path for a WebView file path
- * @param webViewPath relative path to webView e.g. './src/extension-template.web-view.tsx'
+ * @param webViewPath relative path to webView e.g. './src/transcelerator.web-view.tsx'
  * @param join function to use to join the paths together
  * @returns WebView path with temporary WebView directory inserted into the module path
  */

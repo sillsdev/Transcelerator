@@ -1,10 +1,10 @@
 import { VerseRef } from '@sillsdev/scripture';
 import papi from 'papi-backend';
 import IDataProviderEngine from 'shared/models/data-provider-engine.model';
-import extensionTemplateReact from './extension-template.web-view?inline';
-import extensionTemplateReact2 from './extension-template-2.web-view?inline';
-import extensionTemplateReactStyles from './extension-template.web-view.scss?inline';
-import extensionTemplateHtml from './extension-template-html.web-view.html?inline';
+import extensionTemplateReact from './transcelerator.web-view?inline';
+import extensionTemplateReact2 from './transcelerator-2.web-view?inline';
+import extensionTemplateReactStyles from './transcelerator.web-view.scss?inline';
+import extensionTemplateHtml from './transcelerator-html.web-view.html?inline';
 import type {
   SavedWebViewDefinition,
   WebViewContentType,
@@ -14,7 +14,7 @@ import type {
   DoStuffEvent,
   ExtensionVerseDataTypes,
   ExtensionVerseSetData,
-} from 'paranext-extension-template';
+} from 'transcelerator';
 import type { DataProviderUpdateInstructions } from 'shared/models/data-provider.model';
 import { ExecutionActivationContext } from 'extension-host/extension-types/extension-activation-context.model';
 import type { IWebViewProvider } from 'shared/models/web-view-provider.model';
@@ -27,7 +27,7 @@ const {
 
 console.log(process.env.NODE_ENV);
 
-logger.info('Extension template is importing!');
+logger.info('Transcelerator is importing!');
 
 /**
  * Example data provider engine that provides easy access to Scripture from an internet API.
@@ -290,7 +290,7 @@ const htmlWebViewProvider: IWebViewProvider = {
       );
     return {
       ...savedWebView,
-      title: 'Extension Template HTML',
+      title: 'Transcelerator HTML',
       contentType: 'html' as WebViewContentType.HTML,
       content: extensionTemplateHtml,
     };
@@ -310,7 +310,7 @@ const reactWebViewProvider: IWebViewProvider = {
       );
     return {
       ...savedWebView,
-      title: 'Extension Template React',
+      title: 'Transcelerator React',
       content: extensionTemplateReact,
       styles: extensionTemplateReactStyles,
     };
@@ -330,7 +330,7 @@ const reactWebViewProvider2: IWebViewProvider = {
       );
     return {
       ...savedWebView,
-      title: 'Extension Template React 2',
+      title: 'Transcelerator React 2',
       content: extensionTemplateReact2,
       styles: extensionTemplateReactStyles,
     };
@@ -338,7 +338,7 @@ const reactWebViewProvider2: IWebViewProvider = {
 };
 
 export async function activate(context: ExecutionActivationContext) {
-  logger.info('Extension template is activating!');
+  logger.info('Transcelerator is activating!');
 
   const warning = await papi.storage.readTextFileFromInstallDirectory(
     context.executionToken,
@@ -357,7 +357,7 @@ export async function activate(context: ExecutionActivationContext) {
   engine.heresyCount = storedHeresyCount;
 
   const quickVerseDataProviderPromise = papi.dataProvider.registerEngine<ExtensionVerseDataTypes>(
-    'paranextExtensionTemplate.quickVerse',
+    'transcelerator.quickVerse',
     engine,
   );
 
@@ -378,11 +378,11 @@ export async function activate(context: ExecutionActivationContext) {
 
   // Emitter to tell subscribers how many times we have done stuff
   const onDoStuffEmitter = papi.network.createNetworkEventEmitter<DoStuffEvent>(
-    'extensionTemplate.doStuff',
+    'transcelerator.doStuff',
   );
 
   let doStuffCount = 0;
-  const doStuffCommandPromise = papi.commands.registerCommand('extensionTemplate.doStuff', (message: string) => {
+  const doStuffCommandPromise = papi.commands.registerCommand('transcelerator.doStuff', (message: string) => {
     doStuffCount += 1;
     // Inform subscribers of the update
     onDoStuffEmitter.emit({ count: doStuffCount });
@@ -414,9 +414,9 @@ export async function activate(context: ExecutionActivationContext) {
     await doStuffCommandPromise
   );
 
-  logger.info('Extension template is finished activating!');
+  logger.info('Transcelerator is finished activating!');
 }
 
 export async function deactivate() {
-  logger.info('Extension template is deactivating!');
+  logger.info('Transcelerator is deactivating!');
 }
