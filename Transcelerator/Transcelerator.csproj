@@ -5,7 +5,7 @@
   <Import Project="..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.props" Condition="Exists('..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3A4BF2AF-23B5-487E-BEA5-5D65A0A01BF7}</ProjectGuid>
