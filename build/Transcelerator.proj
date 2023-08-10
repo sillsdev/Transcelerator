@@ -172,16 +172,14 @@
 		<Delete Files="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" TreatErrorsAsWarnings="false" />
 		<Copy SourceFiles="$(RootDir)\Installer\FeatureFragment.wxs"
 			DestinationFiles="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" />
-		<!-- TODO: Get updated SIL.BuildTasks (see PR #63 for issue #62) and replace hard-coded 9's below with regex
-			 \\d+ and use $0 in ReplacementText just in case there is ever a Paratext 10. -->
-		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='Plugin for Paratext 9'
-			ReplacementText ='Plugin for Paratext 9 Beta' />
+        <FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='Plugin for Paratext \d+'
+                    ReplacementText ='$0 Beta' />
 		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='FFFD2FB8-E7EE-4806-8910-96B2D166FD14'
 			ReplacementText ='CFB970EC-655A-49AA-8D35-FD3F437CAD4B' />
 		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='INSTALLDIR9'
-			ReplacementText ='INSTALLDIR9BETA' />
+			ReplacementText ='$0BETA' />
 		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='P9'
-			ReplacementText ='P9Beta' />
+			ReplacementText ='$0Beta' />
 		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='PARATEXT92ORGREATER'
 			ReplacementText ='PARATEXT94BETAORGREATER' />
 
