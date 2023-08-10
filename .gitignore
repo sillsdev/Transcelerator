@@ -1,16 +1,47 @@
+# Windows Explorer files
+Thumbs.db
+
+# C-sharp Build and nuget packaging
 output/
 obj/
 bin/
 packages/
-*.suo
 *.user
 *.pdb
 **/.vs
 .nuget/NuGet.exe
-Thumbs.db
 /XLIFF/*
+
+# Misc Transcelerator-specific local developer files
 /British English localization notes.txt
 /CpTxlToP75.bat
 /Transcelerator/LocalizedPhrases.xlf
 /SilUtils/SilUtilsTests/SimianDomains/
 /Docs/Paratext.reg
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+release
+dist-ssr
+*.local
+
+# Editor directories and files
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sw?
+
+# Temporary intermediate build files
+temp-build
+
