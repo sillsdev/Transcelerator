@@ -64,6 +64,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Installer.wxs" />
+    <Compile Include="FeatureFragment.wxs" />
+    <Compile Include="..\output\installer\GeneratedFeatureFragmentP9Beta.wxs">
+		<Link>GeneratedFeatureFragmentP9Beta.wxs</Link>
+	</Compile>
     <Compile Include="..\output\installer\GeneratedDocFilesP9_es.wxs">
 		<Link>GeneratedDocFilesP9_es.wxs</Link>
 	</Compile>
@@ -160,6 +164,99 @@
     <Compile Include="..\output\installer\GeneratedDocFilesP9.wxs">
       <Link>GeneratedDocFilesP9.wxs</Link>
     </Compile>
+	    <Compile Include="..\output\installer\GeneratedDocFilesP9Beta_es.wxs">
+		<Link>GeneratedDocFilesP9Beta_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_en-GB.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9Beta_en-GB.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_es.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9Beta_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_fr.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9Beta_fr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ar.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ar.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_az.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_az.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_bn.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_bn.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_de.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_de.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_es.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_es.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_fa.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_fa.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_fr.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_fr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_hi.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_hi.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_hu.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_hu.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_id.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_id.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_km.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_km.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ko.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ko.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ms.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ms.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_my.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_my.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ne.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ne.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_pt.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_pt.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ru.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ru.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_rw.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_rw.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_sw.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_sw.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ta.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ta.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_te.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_te.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_th.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_th.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_tr.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_tr.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ur.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_ur.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_vi.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_vi.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_zh-CN.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_zh-CN</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_zh.wxs">
+		<Link>GeneratedUiStringsFilesP9Beta_zh.wxs</Link>
+	</Compile>
     <Compile Include="..\output\installer\GeneratedDocFilesP9Beta.wxs">
       <Link>GeneratedDocFilesP9Beta.wxs</Link>
     </Compile>

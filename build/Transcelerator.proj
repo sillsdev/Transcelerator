@@ -166,7 +166,22 @@
 			changing of the script, but I haven't figured that out. -->
 
 		<FileUpdate File="$(RootDir)\Installer\Installer.wxs" Regex='Property_ProductVersion = ".*"'
-			ReplacementText ="Property_ProductVersion = &quot;$(Version)&quot;" />
+			ReplacementText="Property_ProductVersion = &quot;$(Version)&quot;" />
+			
+		<!-- Make a copy of the P9 feature fragment and update its contents for the Beta feature. -->
+		<Delete Files="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" TreatErrorsAsWarnings="false" />
+		<Copy SourceFiles="$(RootDir)\Installer\FeatureFragment.wxs"
+			DestinationFiles="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" />
+        <FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='Plugin for Paratext \d+'
+                    ReplacementText ='$0 Beta' />
+		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='FFFD2FB8-E7EE-4806-8910-96B2D166FD14'
+			ReplacementText ='CFB970EC-655A-49AA-8D35-FD3F437CAD4B' />
+		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='INSTALLDIR9'
+			ReplacementText ='$0BETA' />
+		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='P9'
+			ReplacementText ='$0Beta' />
+		<FileUpdate File="$(RootDir)\output\installer\GeneratedFeatureFragmentP9Beta.wxs" Regex='PARATEXT92ORGREATER'
+			ReplacementText ='PARATEXT94BETAORGREATER' />
 
 		<Message Text="Making Installer Version: $(Version)" Importance="high" />
 
@@ -184,23 +199,23 @@
 		<Delete Files="$(RootDir)\output\installer\TransceleratorInstaller.msi" TreatErrorsAsWarnings="false" />
 
 		<!-- copy it so we aren't modifying the original, which then is a pain on dev machines -->
-		<Copy SourceFiles ="$(RootDir)\installer\template.download_info"
-			DestinationFiles ="$(RootDir)\output\installer\$(DownloadInfoFileName)"/>
+		<Copy SourceFiles="$(RootDir)\installer\template.download_info"
+			DestinationFiles="$(RootDir)\output\installer\$(DownloadInfoFileName)"/>
 
 		<FileUpdate File="$(RootDir)\output\installer\$(DownloadInfoFileName)"
 			DatePlaceHolder='_DATE_'
 			DateFormat='yyyy-MM-dd'
 			Regex='_VERSION_'
-			ReplacementText ="$(Version)" />
+			ReplacementText="$(Version)" />
 			
-		<Copy SourceFiles ="$(RootDir)\DistFiles\template.releasenotes.download_info"
-			DestinationFiles ="$(RootDir)\output\releasenotes.download_info"/>
+		<Copy SourceFiles="$(RootDir)\DistFiles\template.releasenotes.download_info"
+			DestinationFiles="$(RootDir)\output\releasenotes.download_info"/>
 
 		<FileUpdate File="$(RootDir)\output\releasenotes.download_info"
 			DatePlaceHolder='_DATE_'
 			DateFormat='yyyy-MM-dd'
 			Regex='_VERSION_'
-			ReplacementText ="$(Version)" />
+			ReplacementText="$(Version)" />
 	</Target>
 
 	<!-- These targets are designed to be additional steps on TeamCity after running target Installer. Pick the appropriate one
@@ -216,7 +231,8 @@
 	</Target>
 	
 	<Target Name="MakeWixForHtmlDocFiles" DependsOnTargets="MakeWixForLocalizedHtmlDocFiles">
-		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
+		<MakeDir Directories="$(RootDir)\output\installer" ContinueOnError="true"/>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedDocFilesP9Beta.wxs" />
 		<MakeWixForDirTree
 			DirectoryReferenceId="DocsDirP9Beta"
 			ComponentGroupId="COMPONENTSFORP9BetaDocumentation_en"
@@ -227,6 +243,7 @@
 			>
 			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
 		</MakeWixForDirTree>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedDocFilesP9.wxs" />
 		<MakeWixForDirTree
 			DirectoryReferenceId="DocsDirP9"
 			ComponentGroupId="COMPONENTSFORP9Documentation_en"
@@ -240,8 +257,18 @@
 	</Target>
 	
 	<Target Name="MakeWixForLocalizedHtmlDocFiles" Outputs="%(LocalizedHelpTopicDirs.Identity)">
-		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
-		<Message Text="Generating $(RootDir)\output\installer\GeneratedDocFilesP9_%(LocalizedHelpTopicDirs.FolderName).wxs" />
+		<MakeDir Directories="$(RootDir)\output\installer" ContinueOnError="true"/>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedDocFilesP9Beta_%(LocalizedHelpTopicDirs.FolderName).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="DocsDirP9Beta_%(LocalizedHelpTopicDirs.FolderName)"
+			ComponentGroupId="COMPONENTSFORP9BetaDocumentation_%(LocalizedHelpTopicDirs.FolderName)"
+			RootDirectory="%(LocalizedHelpTopicDirs.Identity)"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedDocFilesP9Beta_%(LocalizedHelpTopicDirs.FolderName).wxs"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
+		<Message Text="Generating $(RootDir)\output\installer\GGeneratedDocFilesP9_%(LocalizedHelpTopicDirs.FolderName).wxs" />
 		<MakeWixForDirTree
 			DirectoryReferenceId="DocsDirP9_%(LocalizedHelpTopicDirs.FolderName)"
 			ComponentGroupId="COMPONENTSFORP9Documentation_%(LocalizedHelpTopicDirs.FolderName)"
@@ -254,7 +281,18 @@
 	</Target>
 	
 	<Target Name="MakeWixForLocalizedUiStrings" Outputs="%(LocalizedUiStringLocales.Identity)">
-		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>
+		<MakeDir Directories="$(RootDir)\output\installer" ContinueOnError="true"/>
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedUiStringsFilesP9Beta_%(LocalizedUiStringLocales.FilenameLocale).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="INSTALLDIR9BETA_LOCALIZATION"
+			ComponentGroupId="COMPONENTSFORP9BetaPLUGINLOCALIZATION_%(LocalizedUiStringLocales.WixIdLocale)"
+			RootDirectory="$(RootDir)\DistFiles\localization"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedUiStringsFilesP9Beta_%(LocalizedUiStringLocales.FilenameLocale).wxs"
+			MatchRegExPattern="\.%(LocalizedUiStringLocales.FilenameLocale)\.xlf"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
 		<Message Text="Generating $(RootDir)\output\installer\GeneratedUiStringsFilesP9_%(LocalizedUiStringLocales.FilenameLocale).wxs" />
 		<MakeWixForDirTree
 			DirectoryReferenceId="INSTALLDIR9_LOCALIZATION"
@@ -269,7 +307,18 @@
 	</Target>
 	
 	<Target Name="MakeWixForLocalizedPhrases" Outputs="%(LocalizedPhrasesFiles.Identity)">
-		<MakeDir Directories ="$(RootDir)\output\installer" ContinueOnError ="true"/>		
+		<MakeDir Directories="$(RootDir)\output\installer" ContinueOnError="true"/>		
+		<Message Text="Generating $(RootDir)\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_%(LocalizedPhrasesFiles.FilenameLocale).wxs" />
+		<MakeWixForDirTree
+			DirectoryReferenceId="INSTALLDIR9BETA"
+			ComponentGroupId="COMPONENTSFORP9BetaPLUGIN_%(LocalizedPhrasesFiles.WixIdLocale)"
+			RootDirectory="$(RootDir)\Transcelerator\bin\x64\Release"
+			InstallerSourceDirectory="$(RootDir)\Installer"
+			OutputFilePath="$(RootDir)\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_%(LocalizedPhrasesFiles.FilenameLocale).wxs"
+			MatchRegExPattern="LocalizedPhrases-%(LocalizedPhrasesFiles.FilenameLocale)\.xlf"
+			>
+			<Output TaskParameter="OutputFilePath" ItemName="Compile" />
+		</MakeWixForDirTree>
 		<Message Text="Generating $(RootDir)\output\installer\GeneratedLocalizedPhrasesFilesP9_%(LocalizedPhrasesFiles.FilenameLocale).wxs" />
 		<MakeWixForDirTree
 			DirectoryReferenceId="INSTALLDIR9"
