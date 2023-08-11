@@ -115,7 +115,8 @@ Global
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.ActiveCfg = Release|x64
 		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.Build.0 = Release|x64
-		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug - Copy To Paratext|x86
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug - Copy To Paratext|Any CPU
+		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug - Copy To Paratext|Any CPU
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.ActiveCfg = Debug - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.Build.0 = Debug - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -178,7 +179,8 @@ Global
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x64.ActiveCfg = Release|x64
 		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x64.Build.0 = Release|x64
-		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|x86
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|Any CPU.Build.0 = Debug|Any CPU
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
