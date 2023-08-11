@@ -30,4 +30,33 @@
   <File Id="INSTALLDIR9_LOCALIZATION.Palaso.vi.xlf" Guid="a53c5ac9-e384-4177-964c-9ac89e68c598" />
   <File Id="INSTALLDIR9_LOCALIZATION.Palaso.zh_CN.xlf" Guid="60b82624-1c6f-4bc6-bf80-e283e7a70e9e" />
   <File Id="INSTALLDIR9_LOCALIZATION.Palaso.zh.xlf" Guid="b1a87203-f189-46b0-aa46-7ae37b090ae8" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ar.xlf" Guid="80137e36-e9f2-48a5-bb7f-c89b5960a6ca" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.az.xlf" Guid="ec486531-50dc-4b50-8a29-57f0f699c43d" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.bn.xlf" Guid="10fcdf35-a48b-48c9-8c5b-0c6718b3b471" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.de.xlf" Guid="ac6f9ff4-1661-4347-bd61-d6c3962e3f15" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.es.xlf" Guid="f8784a8c-eaf6-40ea-90a6-e8e17d6fdad7" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Transcelerator.es.xlf" Guid="066aa7f7-928c-417d-a050-ab8738475def" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.fa.xlf" Guid="a9cf68d3-ee47-4187-b1d2-63c779d01275" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.fr.xlf" Guid="195ff083-fe51-4863-b2ce-2c47fb2f0444" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Transcelerator.fr.xlf" Guid="3fc27bd8-814f-409a-961c-dd0b9c45f086" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.hi.xlf" Guid="51b2f0e1-a990-46ad-8aee-44ff213080b1" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.hu.xlf" Guid="f9e6966c-697c-435c-808b-cd8c4e80456d" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.id.xlf" Guid="33966fce-e4cd-42aa-b6b6-0e3b4c0dc84b" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.km.xlf" Guid="ae40b818-31cb-41cb-a2bf-04b3ebf28e33" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ko.xlf" Guid="7a5c0d16-f543-4359-a4fd-96634a4d6993" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ms.xlf" Guid="f17b16c4-14e1-4e7c-ab61-70f703675f7c" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.my.xlf" Guid="cda286f1-1bf9-496e-bb61-7a9ab91e9025" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ne.xlf" Guid="265d08ac-8f14-4257-afae-87f8995b43a1" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.pt.xlf" Guid="3c7dd193-11e1-4ce2-9d7d-13fc1c5cd425" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ru.xlf" Guid="478241a7-bd8b-400f-aec0-e29d8f52d79d" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.rw.xlf" Guid="7b3697ff-2690-4cd7-8d60-544ef7217013" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.sw.xlf" Guid="c206e7e6-c8d1-4362-b1f1-9ec167ac0178" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ta.xlf" Guid="a483c503-3877-41b2-b5b0-502b785f685a" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.te.xlf" Guid="3120edb0-0ab4-4902-8838-a992bdd58a85" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.th.xlf" Guid="177d7803-daf1-4504-8ba2-fcbf4c292900" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.tr.xlf" Guid="471e7127-d556-4e2d-a7fb-747889c66170" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.ur.xlf" Guid="ba409c87-5d57-4ba1-8ed3-460baf114c50" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.vi.xlf" Guid="168e2ff2-942e-473e-ab56-fd8c15331c97" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.zh_CN.xlf" Guid="2308a5db-2deb-4217-9cf2-4b26a2f9c24e" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.zh.xlf" Guid="a70f8191-0c6b-437d-9db5-4acb455540be" />
 </InstallerMetadata>
