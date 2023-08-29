@@ -71,7 +71,7 @@ To package the Transcelerator extension into a zip file for distribution:
 
 ## To update
 
-The `paranext-extension-template` will be updated regularly, and will sometimes receive updates that help with breaking changes on `paranext-core`. So we recommend you periodically update your extension by merging the latest template updates into your extension. You can do so by following [these instructions](https://github.com/paranext/paranext-extension-template/wiki/Merging-Template-Changes-into-Your-Extension).
+The `paranext-extension-template` will be updated regularly, and will sometimes receive updates that help with breaking changes on `paranext-core`. So we recommend you periodically update the Transcelerator extension by merging in the latest template updates. You can do so by following [these instructions](https://github.com/paranext/paranext-extension-template/wiki/Merging-Template-Changes-into-Your-Extension).
 
 ### Special features of the template
 
