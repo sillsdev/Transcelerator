@@ -19,7 +19,7 @@ declare module 'transcelerator' {
   export type ExtensionVerseDataProvider = IDataProvider<ExtensionVerseDataTypes>;
 }
 
-declare module 'papi-commands' {
+declare module 'papi-shared-types' {
   export interface CommandHandlers {
     'transcelerator.doStuff': (message: string) => { response: string; occurrence: number };
   }

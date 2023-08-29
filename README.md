@@ -1,5 +1,6 @@
 ## What is Transcelerator?
 
+
 * Transcelerator helps Bible translation teams translate comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation. Transcelerator functions both as a plugin in Paratext and as a platform.Bible extension.
 
 ## How do I get set up to develop Transcelerator as a Paratext plugin?
@@ -68,6 +69,10 @@ To package the Transcelerator extension into a zip file for distribution:
 
 `npm run package`
 
+## To update
+
+The `paranext-extension-template` will be updated regularly, and will sometimes receive updates that help with breaking changes on `paranext-core`. So we recommend you periodically update your extension by merging the latest template updates into your extension. You can do so by following [these instructions](https://github.com/paranext/paranext-extension-template/wiki/Merging-Template-Changes-into-Your-Extension).
+
 ### Special features of the template
 
 The paranext-extension-template has special features and specific configuration to make building an extension for Paranext easier. Following are a few important notes:
@@ -98,6 +103,7 @@ This extension is built by webpack (`webpack.config.ts`) in two steps: a WebView
 ##### Build 1: TypeScript WebView bundling
 
 Webpack (`./webpack/webpack.config.web-view.ts`) prepares TypeScript WebViews for use and outputs them into temporary build folders adjacent to the WebView files:
+
 - Formats WebViews to match how they should look to work in Paranext
 - Transpiles React/TypeScript WebViews into JavaScript
 - Bundles dependencies into the WebViews
@@ -106,6 +112,7 @@ Webpack (`./webpack/webpack.config.web-view.ts`) prepares TypeScript WebViews fo
 ##### Build 2: Main and final bundling
 
 Webpack (`./webpack/webpack.config.main.ts`) prepares the main extension file and bundles the extension together into the `dist` folder:
+
 - Transpiles the main TypeScript file and its imported modules into JavaScript
 - Injects the bundled WebViews into the main file
 - Bundles dependencies into the main file
