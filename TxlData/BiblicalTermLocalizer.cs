@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.   
-// <copyright from='2021' to='2021 company='SIL International'>
-//		Copyright (c) 2021, SIL International.   
+#region // Copyright (c) 2023, SIL International.   
+// <copyright from='2021' to='2023 company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -16,7 +16,7 @@ using Paratext.PluginInterfaces;
 
 namespace SIL.Transcelerator
 {
-	internal class BiblicalTermLocalizer
+	public class BiblicalTermLocalizer
 	{
 		private readonly Dictionary<KeyTerm, string> m_dict = new Dictionary<KeyTerm, string>();
 		private readonly string m_locale;

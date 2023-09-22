@@ -227,7 +227,6 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="BiblicalTermLocalizer.cs" />
     <Compile Include="HtmlScriptGenerationSettings.cs" />
     <Compile Include="MessageBoxForm.cs">
       <SubType>Form</SubType>

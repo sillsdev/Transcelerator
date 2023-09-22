@@ -136,10 +136,6 @@ body::before {
 					sb.AppendLine(bold ? "bold;" : "normal;");
 				}
 
-				// TODO: Figure out how to implement ToHtml. Apparently not available in .Net Standard.
-				// Also, note that we probably want TxlData to not reference System.Drawing at all for
-				// maximum portability. In the new version of the non-Windows paratext plugin interfaces,
-				// mrkrInfo.Color won't be a System.Drawing.Color.
 				if (mrkrInfo.Color is Color color && (color.R != 0 || color.G != 0 || color.B != 0))
 					sb.AppendFormat(" color:{0};\n", ColorTranslator.ToHtml(color));
                 
