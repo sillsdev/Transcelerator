@@ -1,0 +1,9 @@
+{
+  "name": "Transcelerator",
+  "version": "0.0.1",
+  "description": "Assists in rapid translation of Scripture comprehension checking questions.",
+  "author": "SIL",
+  "license": "MIT",
+  "main": "transcelerator.ts",
+  "activationEvents": []
+}

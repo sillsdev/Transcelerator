@@ -2,19 +2,22 @@
 	<PropertyGroup>
 		<RootDir Condition="'$(teamcity_version)' == ''">$(MSBuildProjectDirectory)\..</RootDir>
 		<RootDir Condition="'$(teamcity_version)' != ''">$(teamcity_build_checkoutDir)</RootDir>
+		<OutputDir>$(RootDir)/output</OutputDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
 		<PackagesDir>$(RootDir)/packages</PackagesDir>
 		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner.3.16.3/tools</NunitConsoleRunnerDir>
 		<BuildTasksDll>$(PackagesDir)/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
+		<SILReleaseTasksProps>$(PackagesDir)/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props</SILReleaseTasksProps>
 		<Solution>Transcelerator.sln</Solution>
 		<ApplicationName>Transcelerator</ApplicationName>
-		<Configuration>Release</Configuration>
+		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
 		<TeamCity Condition="'$(teamcity_version)' != ''">true</TeamCity>
 		<TeamCity Condition="'$(teamcity_version)' == ''">false</TeamCity>
-		<TestOutputXmlFile Condition="'$(teamcity_version)' == ''">$(RootDir)/output/$(Configuration)/TestResults.xml</TestOutputXmlFile>
+		<TestOutputXmlFile Condition="'$(teamcity_version)' == ''">$(OutputDir)/$(Configuration)/TestResults.xml</TestOutputXmlFile>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,</ExtraExcludeCategories>
-		<RestartBuild Condition="!Exists('$(BuildTasksDll)') Or !Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') Or !Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') Or !Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(BuildTasksDll)') And Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') And Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') And Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(BuildTasksDll)') Or !Exists('$(SILReleaseTasksProps)') Or !Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') Or !Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') Or !Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(BuildTasksDll)') And Exists('$(SILReleaseTasksProps)') And Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') And Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') And Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">false</RestartBuild>
+		<Platform>x64</Platform>
 	</PropertyGroup>
 
 	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(BuildTasksDll)"
@@ -60,6 +63,7 @@
 	</Target>
 	
 	<Import Project="../.nuget/NuGet.targets" />
+	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
 
 	<ItemGroup>
 		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(PackagesDir)/`, `NUnit.Console*`, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
@@ -111,6 +115,7 @@
 		<Message Text="Calling $(NuGetCommand) restore ../$(Solution)" />
 		<Exec Command='$(NuGetCommand) restore ../$(Solution)' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
+		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -version 3.16.3 -solutionDirectory "$(RootDir)"' />
 		<!-- The two extensions are required to show the tests on TC -->
 		<Exec Command='$(NuGetCommand) install NUnit.Extension.NUnitProjectLoader -excludeVersion -version 3.6.0 -solutionDirectory "$(RootDir)"' />
@@ -148,16 +153,21 @@
 			Assemblies="@(TestAssemblies)"
 			ToolPath="$(NunitConsoleRunnerDir)"
 			ExcludeCategory="$(ExtraExcludeCategories)$(excludedCategories)"
-			WorkingDirectory="$(RootDir)/output/$(Configuration)"
+			WorkingDirectory="$(OutputDir)/$(Configuration)"
 			Force32Bit="false"
 			Verbose="true"
 			TeamCity="$(TeamCity)"/>
 	</Target>
 
 	<Target Name="SetTestAssemblies">
-		<CreateItem Include="$(RootDir)/output/$(Configuration)/*Tests.dll">
+		<CreateItem Include="$(OutputDir)/$(Configuration)/*Tests.dll">
 			<Output ItemName="TestAssemblies" TaskParameter="Include" />
 		</CreateItem>
+	</Target>
+	
+	<Target Name="ConvertReleaseNotesToHtml">
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
+			HtmlFile="$(OutputDir)/ReleaseNotes.htm" />
 	</Target>
 
 	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles;MakeWixForLocalizedUiStrings;MakeWixForLocalizedPhrases">
