@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2011' to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -1061,7 +1061,7 @@ namespace SIL.Transcelerator
 			if (userTranslations.Count == 0)
 				return null;
 
-			string commonTranslation = GetSCommonSubstring(userTranslations);
+			string commonTranslation = GetCommonSubstring(userTranslations);
 			if (commonTranslation != null && commonTranslation.Length > 5) // 5 is a "magic number" - We don't want to accept really small words without considering a possibly better match statistically
 				return commonTranslation;
 
@@ -1102,7 +1102,7 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <param name="strings">The strings to consider.</param>
 		/// ------------------------------------------------------------------------------------
-		public static string GetSCommonSubstring(IList<string> strings)
+		public static string GetCommonSubstring(IList<string> strings)
 		{
 			string firstOne = strings[0];
 			string sCommonSubstring;

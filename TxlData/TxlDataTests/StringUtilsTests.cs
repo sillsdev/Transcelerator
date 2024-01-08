@@ -9,6 +9,7 @@
 //
 // File: StringUtilsTests.cs
 // ---------------------------------------------------------------------------------------------
+using System.Diagnostics;
 using System.Text;
 using NUnit.Framework;
 
@@ -337,6 +338,39 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(string.Empty, string.Empty, false, out fWholeWord));
 			Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(null, string.Empty, false, out fWholeWord));
 			Assert.AreEqual(string.Empty, StringUtils.LongestUsefulCommonSubstring(string.Empty, "Hello there", false, out fWholeWord));
+		}
+
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test the LongestUsefulCommonSubstring method
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[TestCase("Hello", "Hello")]
+		[TestCase("Whatever", "Hello")]
+		[TestCase("Whatever the guy who said Hello said.", "Hello")]
+		[TestCase("short guy", "The short guy is over there.")]
+		public void LongestUsefulCommonSubstring_RepeatedPerformance(string s1, string s2)
+		{
+			Stopwatch sw = new Stopwatch();
+			sw.Start();
+
+			var expectedResult = StringUtils.LongestUsefulCommonSubstring(s1, s2, true, out var fWholeWord);
+
+			var timeForFirstCall = sw.ElapsedTicks;
+
+			Assert.AreEqual(expectedResult, StringUtils.LongestUsefulCommonSubstring(s1, s2, true, out var ww));
+			Assert.AreEqual(fWholeWord, ww);
+
+			for (int i = 0; i < 2000; i++)
+				StringUtils.LongestUsefulCommonSubstring(s1, s2, true, out _);
+
+			sw.Stop();
+
+			TestContext.WriteLine(timeForFirstCall);
+			TestContext.WriteLine(sw.ElapsedTicks);
+
+			Assert.That(sw.ElapsedTicks < timeForFirstCall * 100);
 		}
 
 		///// ------------------------------------------------------------------------------------

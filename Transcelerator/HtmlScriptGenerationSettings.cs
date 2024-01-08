@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2023 to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -95,25 +95,25 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateTemplateFolder = value;
 		}
 
-		public Color QuestionGroupHeadingsTextColor
+		public string QuestionGroupHeadingsTextColor
 		{
-			get => Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor;
-			set => Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = value;
+			get => ColorTranslator.ToHtml(Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor);
+			set => Properties.Settings.Default.GenerateTemplateQuestionGroupHeadingsColor = ColorTranslator.FromHtml(value);
 		}
-		public Color LWCQuestionTextColor
+		public string LWCQuestionTextColor
 		{
-			get => Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor;
-			set => Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = value;
+			get =>  ColorTranslator.ToHtml(Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor);
+			set => Properties.Settings.Default.GenerateTemplateEnglishQuestionTextColor = ColorTranslator.FromHtml(value);
 		}
-		public Color LWCAnswerTextColor
+		public string LWCAnswerTextColor
 		{
-			get => Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor;
-			set => Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = value;
+			get =>  ColorTranslator.ToHtml(Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor);
+			set => Properties.Settings.Default.GenerateTemplateEnglishAnswerTextColor = ColorTranslator.FromHtml(value);
 		}
-		public Color CommentTextColor
+		public string CommentTextColor
 		{
-			get => Properties.Settings.Default.GenerateTemplateCommentTextColor;
-			set => Properties.Settings.Default.GenerateTemplateCommentTextColor = value;
+			get => ColorTranslator.ToHtml( Properties.Settings.Default.GenerateTemplateCommentTextColor);
+			set => Properties.Settings.Default.GenerateTemplateCommentTextColor = ColorTranslator.FromHtml(value);
 		}
 		public int NumberOfBlankLinesForAnswer
 		{

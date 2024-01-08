@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2013' to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -125,11 +125,12 @@ namespace SIL.Transcelerator
         public abstract DateTime ModifiedTime(DataFileId fileId);
     }
 
-    public class ParatextDataFileAccessor : DataFileAccessor, IPluginObject
+    public class ParatextDataFileAccessor : DataFileAccessor
     {
 	    public delegate void FileEventHandler(string filename);
 	    public static event FileEventHandler OnFailedToObtainWriteLock;
 
+		private readonly IPluginObject m_plugin;
 		private readonly IProject m_project;
 		private readonly Func<DataFileId, Task> m_writeLockReleaseRequestHandler;
 		// Dictionary of file names to their corresponding write locks
@@ -145,8 +146,9 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public ParatextDataFileAccessor(IProject project, Func<DataFileId, Task> writeLockReleaseRequestHandler)
+		public ParatextDataFileAccessor(IPluginObject plugin, IProject project, Func<DataFileId, Task> writeLockReleaseRequestHandler)
 		{
+			m_plugin = plugin;
 			m_project = project;
 			m_writeLockReleaseRequestHandler = writeLockReleaseRequestHandler;
 		}
@@ -186,7 +188,7 @@ namespace SIL.Transcelerator
 			lock (m_locks)
 			{
 				var fileName = GetFileName(fileId);
-				m_project.PutPluginData(EnsureLock(fileName, true), this, fileName,
+				m_project.PutPluginData(EnsureLock(fileName, true), m_plugin, fileName,
 					writer => { writer.Write(data); });
 			}
 		}
@@ -196,7 +198,7 @@ namespace SIL.Transcelerator
 			lock (m_locks)
 			{
 				var fileName = GetBookSpecificFileName(fileId, bookId);
-				m_project.PutPluginData(EnsureLock(fileName, true), this, fileName,
+				m_project.PutPluginData(EnsureLock(fileName, true), m_plugin, fileName,
 					writer => { writer.Write(data); });
 			}
 		}
@@ -206,7 +208,7 @@ namespace SIL.Transcelerator
 			var fileName = GetFileName(fileId);
 			EnsureLock(fileName, false); // Lock is not needed for reading, but this way we'll find out of something else tries to access a file we've already read.
 
-			using (var reader = m_project.GetPluginData(this, fileName))
+			using (var reader = m_project.GetPluginData(m_plugin, fileName))
 				return reader?.ReadToEnd();
 		}
 
@@ -221,7 +223,7 @@ namespace SIL.Transcelerator
 			{
 				if (!m_locks.TryGetValue(fileName, out var lockForFile) || lockForFile == null)
 				{
-					lockForFile = m_project.RequestWriteLock(this, ReleaseRequested, fileName);
+					lockForFile = m_project.RequestWriteLock(m_plugin, ReleaseRequested, fileName);
 					if (lockForFile == null && required)
 						OnFailedToObtainWriteLock?.Invoke(fileName);
 
@@ -275,10 +277,10 @@ namespace SIL.Transcelerator
 		}
 
 		public override bool Exists(DataFileId fileId) =>
-			Exists(m_project.GetPluginData(this, GetFileName(fileId)));
+			Exists(m_project.GetPluginData(m_plugin, GetFileName(fileId)));
 
 		public override bool BookSpecificDataExists(BookSpecificDataFileId fileId, string bookId) => 
-			Exists(m_project.GetPluginData(this, GetBookSpecificFileName(fileId, bookId)));
+			Exists(m_project.GetPluginData(m_plugin, GetBookSpecificFileName(fileId, bookId)));
 
 		private bool Exists(TextReader reader)
 		{
@@ -290,7 +292,7 @@ namespace SIL.Transcelerator
 
         public override DateTime ModifiedTime(DataFileId fileId)
 		{
-			return m_project.GetPluginDataModifiedTime(this, GetFileName(fileId));
+			return m_project.GetPluginDataModifiedTime(m_plugin, GetFileName(fileId));
         }
     }
 }

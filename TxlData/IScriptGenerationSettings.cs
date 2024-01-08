@@ -1,5 +1,3 @@
-﻿using System.Drawing;
-
 namespace SIL.Transcelerator
 {
 	public enum RangeOption
@@ -31,10 +29,10 @@ namespace SIL.Transcelerator
 		string CssFile { get; set; }
 		bool UseAbsolutePathForCssFile { get; set; }
 		string Folder { get; set; }
-		Color QuestionGroupHeadingsTextColor { get; set; }
-		Color LWCQuestionTextColor { get; set; }
-		Color LWCAnswerTextColor { get; set; }
-		Color CommentTextColor { get; set; }
+		string QuestionGroupHeadingsTextColor { get; set; }
+		string LWCQuestionTextColor { get; set; }
+		string LWCAnswerTextColor { get; set; }
+		string CommentTextColor { get; set; }
 		int NumberOfBlankLinesForAnswer { get; set; }
 		bool NumberQuestions { get; set; }
         string LwcLocale { get; set; }

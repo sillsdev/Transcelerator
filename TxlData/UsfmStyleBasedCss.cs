@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+// TODO: Remove dependency on System.Drawing for version of Transcelerator that will work in
+// Platform.Bible (upgrade to ParatextPluginInterfaces 2.0.100)
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -33,7 +36,7 @@ body::before {
     width: 100%;
     height: 4px;
 }";
-        internal UsfmStyleBasedCss(string defaultFont, string defaultFontFeature, string defaultLang, float defaultFontSize, bool rtl,
+        public UsfmStyleBasedCss(string defaultFont, string defaultFontFeature, string defaultLang, float defaultFontSize, bool rtl,
             IReadOnlyList<IMarkerInfo> markers, bool vertical = false)
 		{
 			m_defaultFont = defaultFont;
@@ -48,7 +51,7 @@ body::before {
         /// <summary>
         /// Create a cascading stylesheet with the given information.
         /// </summary>
-        public string CreateCSS()
+        public string CreateCSS(Func<Color, string> colorToHtml) // TODO: Remove dependency on System.Drawing for version of Transcelerator that will work in Platform.Bible (upgrade to ParatextPluginInterfaces 2.0.100)
 		{
 			if (s_css != null && m_defaultFont == s_lastFont &&
 				m_defaultFontFeature == s_lastFontFeature &&
@@ -104,7 +107,7 @@ body::before {
             sb.AppendLine(m_rtl ? "text-align:left;" : "text-align:right;");
             sb.AppendLine("}");
 
-            sb.Append(CreateUsfmCss());
+            sb.Append(CreateUsfmCss(colorToHtml));
 
             s_css = sb.ToString();
 			s_lastFont = m_defaultFont;
@@ -115,7 +118,8 @@ body::before {
 			return s_css;
 		}
 
-		private string CreateUsfmCss()
+		// TODO: Remove dependency on System.Drawing for version of Transcelerator that will work in Platform.Bible (upgrade to ParatextPluginInterfaces 2.0.100)
+		private string CreateUsfmCss(Func<Color, string> colorToHtml)
         {
             var sb = new StringBuilder();
 
@@ -137,7 +141,7 @@ body::before {
 				}
 
 				if (mrkrInfo.Color is Color color && (color.R != 0 || color.G != 0 || color.B != 0))
-					sb.AppendFormat(" color:{0};\n", ColorTranslator.ToHtml(color));
+					sb.AppendFormat(" color:{0};\n", colorToHtml(color));
                 
 				IParagraphMarkerInfo paraInfo = mrkrInfo as IParagraphMarkerInfo;
 
@@ -150,7 +154,8 @@ body::before {
 				if (mrkrInfo.FontSize > 0)
 				{
 					// Don't multiply by zoom. It's a percentage of the zoomed font size above.
-					sb.AppendFormat(CultureInfo.InvariantCulture, " font-size:{0}%;\n", mrkrInfo.FontSize * 100 / 12);
+					sb.AppendFormat(CultureInfo.InvariantCulture, " font-size:{0}%;\n",
+						mrkrInfo.FontSize * 100 / 12);
 				}
 
 				if (mrkrInfo.SmallCaps is bool smallCaps)
@@ -336,8 +341,7 @@ body::before {
 			{
 				var featureParts = option.Split('=');
 				newFontFeatureString.Append(featureParts.Length == 1
-					? Format("\"{0}\"", featureParts[0])
-					: Format("\"{0}\" {1}", featureParts[0], featureParts[1]));
+					? $"\"{featureParts[0]}\"" : $"\"{featureParts[0]}\" {featureParts[1]}");
 
 				newFontFeatureString.Append(",");
 			}

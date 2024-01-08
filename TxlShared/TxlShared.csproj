@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SIL.Scripture" Version="13.0.0-beta0050" />
-    <PackageReference Include="SIL.WritingSystems" Version="13.0.0-beta0050" />
+    <PackageReference Include="SIL.Scripture" Version="13.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="13.0.0" />
   </ItemGroup>
 
 </Project>

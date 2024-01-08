@@ -123,14 +123,14 @@ namespace SIL.Transcelerator
 			m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
 
 			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
-			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
-				m_lblQuestionGroupHeadingsColor.ForeColor = m_generator.QuestionGroupHeadingsTextColor;
-			if (!m_generator.LWCQuestionTextColor.IsEmpty)
-				m_lblLWCQuestionColor.ForeColor = m_generator.LWCQuestionTextColor;
-			if (!m_generator.LWCAnswerTextColor.IsEmpty)
-				m_lblLWCAnswerTextColor.ForeColor = m_generator.LWCAnswerTextColor;
-			if (!m_generator.CommentTextColor.IsEmpty)
-				m_lblCommentTextColor.ForeColor = m_generator.CommentTextColor;
+			if (!IsNullOrEmpty(m_generator.QuestionGroupHeadingsTextColor))
+				m_lblQuestionGroupHeadingsColor.ForeColor = ColorTranslator.FromHtml(m_generator.QuestionGroupHeadingsTextColor);
+			if (!IsNullOrEmpty(m_generator.LWCQuestionTextColor))
+				m_lblLWCQuestionColor.ForeColor = ColorTranslator.FromHtml(m_generator.LWCQuestionTextColor);
+			if (!IsNullOrEmpty(m_generator.LWCAnswerTextColor))
+				m_lblLWCAnswerTextColor.ForeColor = ColorTranslator.FromHtml(m_generator.LWCAnswerTextColor);
+			if (!IsNullOrEmpty(m_generator.CommentTextColor))
+				m_lblCommentTextColor.ForeColor = ColorTranslator.FromHtml(m_generator.CommentTextColor);
 			m_chkNumberQuestions.Checked = m_generator.NumberQuestions;
 
 			m_rdoUseExternalCss.Checked = m_generator.UseExternalCss;
@@ -151,13 +151,13 @@ namespace SIL.Transcelerator
 				m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && !m_numBlankLines.Value.Equals(m_generator.NumberOfBlankLinesForAnswer);
 			};
 
-			m_lblCommentTextColor.Tag = new Func<Color>(() => m_generator.CommentTextColor);
+			m_lblCommentTextColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.CommentTextColor));
 			m_lblCommentTextColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => m_generator.LWCAnswerTextColor);
+			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.LWCAnswerTextColor));
 			m_lblLWCAnswerTextColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblLWCQuestionColor.Tag = new Func<Color>(() => m_generator.LWCQuestionTextColor);
+			m_lblLWCQuestionColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.LWCQuestionTextColor));
 			m_lblLWCQuestionColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => m_generator.QuestionGroupHeadingsTextColor);
+			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.QuestionGroupHeadingsTextColor));
 			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
@@ -513,10 +513,10 @@ namespace SIL.Transcelerator
 			m_generator.OutputFullPassageAtStartOfSection = m_chkPassageBeforeOverview.Checked;
 			m_generator.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
 
-			m_generator.QuestionGroupHeadingsTextColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-			m_generator.LWCQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
-			m_generator.LWCAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
-			m_generator.CommentTextColor = m_lblCommentTextColor.ForeColor;
+			m_generator.QuestionGroupHeadingsTextColor = ColorTranslator.ToHtml(m_lblQuestionGroupHeadingsColor.ForeColor);
+			m_generator.LWCQuestionTextColor = ColorTranslator.ToHtml(m_lblLWCQuestionColor.ForeColor);
+			m_generator.LWCAnswerTextColor = ColorTranslator.ToHtml(m_lblLWCAnswerTextColor.ForeColor);
+			m_generator.CommentTextColor = ColorTranslator.ToHtml(m_lblCommentTextColor.ForeColor);
 			m_generator.NumberOfBlankLinesForAnswer = (int)m_numBlankLines.Value;
 			m_generator.NumberQuestions = m_chkNumberQuestions.Checked;
 

@@ -57,7 +57,7 @@ namespace SIL.Transcelerator
 	/// UNSQuestionsDialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class UNSQuestionsDialog : ParentFormBase, IMessageFilter
+	public partial class UNSQuestionsDialog : ParentFormBase, IMessageFilter, IPluginObject
 	{
 		#region Constants
 		public const string kScriptureForgeProductName = "Scripture Forge";
@@ -304,7 +304,7 @@ namespace SIL.Transcelerator
 			m_host = host;
 			m_project = project;
 
-			m_fileAccessor = new ParatextDataFileAccessor(m_project, HandleWriteLockReleased);
+			m_fileAccessor = new ParatextDataFileAccessor(this, m_project, HandleWriteLockReleased);
 
 			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major).Where(t => t.Occurrences.Any(o => o.BookNum < 67));
 
@@ -1605,7 +1605,7 @@ namespace SIL.Transcelerator
 				var fontInfo = languageInfo.Font;
 
 				tw.WriteLine(new UsfmStyleBasedCss(fontInfo.FontFamily, fontInfo.Features,
-					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS());
+					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS(System.Drawing.ColorTranslator.ToHtml));
 			};
 
 			var locales = LocalizationsFileAccessor.GetAvailableLocales(m_installDir)
@@ -1742,7 +1742,7 @@ namespace SIL.Transcelerator
 									sw.WriteLine();
 								}
 								string sVerse = " (" + ((startRef.Verse != endRef.Verse)
-									? startRef.Verse.ToString() + "-" + endRef.Verse.ToString()
+									? startRef.Verse + "-" + endRef.Verse
 									: startRef.Verse.ToString()) + ")";
 
 								if (phrase.IsUserAdded)

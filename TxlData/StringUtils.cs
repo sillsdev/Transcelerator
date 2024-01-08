@@ -10,9 +10,11 @@
 // File: StringUtils.cs
 // --------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using SIL.Extensions;
 using static System.Char;
 
 namespace SIL.Transcelerator
@@ -192,6 +194,8 @@ namespace SIL.Transcelerator
 			return useThisMatch;
 		}
 
+		private static readonly Dictionary<string, Dictionary<string, string>> s_substringCache = new Dictionary<string, Dictionary<string, string>>();
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the longest substring that two strings have in common. The substring returned
@@ -215,123 +219,25 @@ namespace SIL.Transcelerator
 			if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
 				return string.Empty;
 
-			string bestMatch = string.Empty;
-			for (int ich = 0; ich + bestMatch.Length < s1.Length; ich++)
+			if (wholeWordOnly)
 			{
-				if (s1[ich] == kChObject || IsWhiteSpace(s1[ich]))
-					continue;
-
-				int cchMatch = bestMatch.Trim().Length;
-				string bestCandidate = string.Empty;
-
-				do
+				if (s_substringCache.TryGetValue(s1, out var subDict))
 				{
-					cchMatch++;
-				}
-				while (ich + cchMatch < s1.Length && IsLetter(s1[ich + cchMatch])); // Need CPE?
-
-				//if (cchMatch > maxLength)
-				//{
-				//    ich += cchMatch;
-				//    continue;
-				//}
-				string candidate = s1.Substring(ich, cchMatch);
-				int ichOrc = candidate.IndexOf(kszObject, StringComparison.Ordinal);
-				if (ichOrc >= 0)
-				{
-					ich += ichOrc;
-					continue;
-				}
-				int ichMatch = 0;
-				do
-				{
-					ichMatch = s2.IndexOf(candidate, ichMatch, StringComparison.Ordinal);
-					if (ichMatch < 0)
-						break;
-					bestCandidate = candidate;
-					if (ich + cchMatch == s1.Length || s1[ich + cchMatch] == kChObject)
-						break;
-					if (!IsLetter(s1[ich + cchMatch]))
+					if (subDict.TryGetValue(s2, out var s))
 					{
-						if (!IsWhiteSpace(s1[ich + cchMatch]))
-							candidate = s1.Substring(ich, cchMatch + 1); // include punctuation
-						cchMatch++;
-						//if (cchMatch > maxLength)
-						//    break;
+						return s;
 					}
-					else
-					{
-						do
-						{
-							cchMatch++;
-						}
-						while (ich + cchMatch < s1.Length && IsLetter(s1[ich + cchMatch])); // Need CPE?
-						//if (cchMatch > maxLength)
-						//    break;
-						candidate = s1.Substring(ich, cchMatch);
-					}
-				} while (true);
-				if (bestCandidate.Trim().Length > bestMatch.Trim().Length)
-					bestMatch = bestCandidate;
-				if (IsLetter(s1[ich]))
-				{
-					ich = s1.IndexOf(" ", ich, StringComparison.Ordinal);
-					if (ich < 0)
-						break;
 				}
-			}
-
-			if (bestMatch.Length > 0 || wholeWordOnly)
-				return bestMatch;
-
-			foundWholeWords = false;
-
-			string longestStr, shortestStr;
-			if (s1.Length > s2.Length)
-			{
-				longestStr = s1;
-				shortestStr = s2;
-			}
-			else
-			{
-				longestStr = s2;
-				shortestStr = s1;
-			}
-			int cchMinUsefulMatch = (int)(.15 * shortestStr.Length);
-			int shortestLen = shortestStr.Length;
-			int cchBestMatch = 0;
-			for (int ich = 0; ich < shortestLen - cchMinUsefulMatch; ich++)
-			{
-				int cchMatch = cchMinUsefulMatch;
-				string bestCandidate = string.Empty;
-				string candidate = shortestStr.Substring(ich, cchMatch);
-				int ichOrc = candidate.IndexOf(kszObject, StringComparison.Ordinal);
-				if (ichOrc >= 0)
+				else
 				{
-					ich += ichOrc;
-					continue;
+					s_substringCache[s1] = subDict = new Dictionary<string, string>();
 				}
-				int ichMatch = 0;
-				do
-				{
-					ichMatch = longestStr.IndexOf(candidate, ichMatch, StringComparison.Ordinal);
-					if (ichMatch < 0 || ichMatch < shortestLen && shortestStr[ichMatch] == kChObject)
-						break;
-					bestCandidate = candidate;
-					if (ich + cchMatch == shortestLen)
-						break;
-                    if (shortestStr[ich + cchMatch] == kChObject)
-                        break;
-					candidate = shortestStr.Substring(ich, ++cchMatch);
-				} while (true);
-				if (cchMatch > cchBestMatch && bestCandidate.Any(c => !IsWhiteSpace(c)))
-				{
-					cchMinUsefulMatch = cchBestMatch = cchMatch;
-					bestMatch = bestCandidate;
-				}
+				var substring = s1.GetLongestUsefulCommonSubstring(s2, out foundWholeWords, 1.0D);
+				subDict[s2] = substring;
+				return substring;
 			}
 
-			return bestMatch;
+			return s1.GetLongestUsefulCommonSubstring(s2, out foundWholeWords, .15);
 		}
 	}
 }

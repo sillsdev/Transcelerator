@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2021 to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -11,7 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -174,23 +173,34 @@ namespace SIL.Transcelerator
 			get => m_settings.Folder;
 			set => m_settings.Folder = value;
 		}
-
-		public Color QuestionGroupHeadingsTextColor
+		/// <summary>
+		/// The question group headings color as a CSS keyword or RGB hex value (with leading #)
+		/// </summary>
+		public string QuestionGroupHeadingsTextColor
 		{
 			get => m_settings.QuestionGroupHeadingsTextColor;
 			set => m_settings.QuestionGroupHeadingsTextColor = value;
 		}
-		public Color LWCQuestionTextColor
+		/// <summary>
+		/// The LWC question color as a CSS keyword or RGB hex value (with leading #)
+		/// </summary>
+		public string LWCQuestionTextColor
 		{
 			get => m_settings.LWCQuestionTextColor;
 			set => m_settings.LWCQuestionTextColor = value;
 		}
-		public Color LWCAnswerTextColor
+		/// <summary>
+		/// The LWC answer color as a CSS keyword or RGB hex value (with leading #)
+		/// </summary>
+		public string LWCAnswerTextColor
 		{
 			get => m_settings.LWCAnswerTextColor;
 			set => m_settings.LWCAnswerTextColor = value;
 		}
-		public Color CommentTextColor
+		/// <summary>
+		/// The comment color as a CSS keyword or RGB hex value (with leading #)
+		/// </summary>
+		public string CommentTextColor
 		{
 			get => m_settings.CommentTextColor;
 			set => m_settings.CommentTextColor = value;
@@ -459,15 +469,21 @@ namespace SIL.Transcelerator
 		/// Writes the CSS style info.
 		/// </summary>
 		/// <param name="tw">The text writer.</param>
-		/// <param name="questionGroupHeadingsClr">The question group headings CLR.</param>
-		/// <param name="englishQuestionClr">The english question CLR.</param>
-		/// <param name="englishAnswerClr">The english answer CLR.</param>
-		/// <param name="commentClr">The comment CLR.</param>
-		/// <param name="cBlankLines">The c blank lines.</param>
-		/// <param name="fNumberQuestions">if set to <c>true</c> [f number questions].</param>
+		/// <param name="questionGroupHeadingsClr">The question group headings color as a CSS
+		/// keyword or RGB hex value (with leading #).</param>
+		/// <param name="lwcQuestionClr">The LWC question color as a CSS keyword or RGB hex
+		/// value (with leading #).</param>
+		/// <param name="lwcAnswerClr">The LWC answer color as a CSS keyword or RGB hex value
+		/// (with leading #).</param>
+		/// <param name="commentClr">The comment color as a CSS keyword or RGB hex value (with
+		/// leading #).</param>
+		/// <param name="cBlankLines">The number of blank lines to include in the script to
+		/// allow space for writing in answers or other notes (i.e, on a printed script).</param>
+		/// <param name="fNumberQuestions">flag indicating whether or not to number questions
+		/// sequentially.</param>
 		/// ------------------------------------------------------------------------------------
-		private void WriteCssStyleInfo(TextWriter tw, Color questionGroupHeadingsClr,
-			Color englishQuestionClr, Color englishAnswerClr, Color commentClr, int cBlankLines,
+		private void WriteCssStyleInfo(TextWriter tw, string questionGroupHeadingsClr,
+			string lwcQuestionClr, string lwcAnswerClr, string commentClr, int cBlankLines,
 			bool fNumberQuestions)
 		{
 			if (fNumberQuestions)
@@ -492,10 +508,10 @@ namespace SIL.Transcelerator
 			tw.WriteLine("p:lang(en) {font-family:serif;");
   			tw.WriteLine("font-size:0.85em;}");
 			tw.WriteLine(".verse {vertical-align: super; font-size: .80em; color:DimGray;}");
-			tw.WriteLine("h3 {color:" + questionGroupHeadingsClr.Name + ";}");
-			tw.WriteLine("." + kLwcQuestionClassName + " {color:" + englishQuestionClr.Name + ";}");
-			tw.WriteLine(".answer {color:" + englishAnswerClr.Name + ";}");
-			tw.WriteLine(".comment {color:" + commentClr.Name + ";}");
+			tw.WriteLine("h3 {color:" + questionGroupHeadingsClr + ";}");
+			tw.WriteLine("." + kLwcQuestionClassName + " {color:" + lwcQuestionClr + ";}");
+			tw.WriteLine(".answer {color:" + lwcAnswerClr + ";}");
+			tw.WriteLine(".comment {color:" + commentClr + ";}");
 			tw.WriteLine(".extras {margin-bottom:" + cBlankLines + "em;}");
 
 			AddProjectSpecificCssEntries?.Invoke(tw);

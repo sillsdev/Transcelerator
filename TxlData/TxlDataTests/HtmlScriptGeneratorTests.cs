@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.
-// <copyright from='2021' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2021' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,7 +11,6 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,7 +83,7 @@ namespace SIL.Transcelerator
 			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("What is this?", "EXO 10.4",
 				2010004, 2010004, null), 0, 1, 0, m_helper));
 
-			var generator = new HtmlScriptGenerator(new TesScriptGenerationSettings(), "fr",
+			var generator = new HtmlScriptGenerator(new TestScriptGenerationSettings(), "fr",
 				repo.GetPhrases, "Comic Sans", tp => sectionInfo);
 			generator.Extractor = new TestHtmlExtractor();
 			generator.Title = "My Title";
@@ -123,7 +122,7 @@ namespace SIL.Transcelerator
 				Translation = "Fmugh zorb wis Blen#"
 			});
 
-			var generator = new HtmlScriptGenerator(new TesScriptGenerationSettings(), "xyz",
+			var generator = new HtmlScriptGenerator(new TestScriptGenerationSettings(), "xyz",
 				repo.GetPhrases, "Arial", tp => sectionInfo);
 			generator.Extractor = new TestHtmlExtractor();
 			generator.Title = "My Title";
@@ -180,7 +179,7 @@ namespace SIL.Transcelerator
 				Translation = "Klumpf zad 'op#"
 			});
 
-			var generator = new HtmlScriptGenerator(new TesScriptGenerationSettings(), "xyz",
+			var generator = new HtmlScriptGenerator(new TestScriptGenerationSettings(), "xyz",
 				repo.GetPhrases, "Arial", tp => tp.SectionId == 0 ? sectionInfo1 : sectionInfo2);
 			generator.Extractor = new TestHtmlExtractor();
 			generator.Title = "Questions for Exodus";
@@ -228,7 +227,7 @@ namespace SIL.Transcelerator
 			repo.SourcePhrases.Add(new TranslatablePhrase(new TestQ("Can I go back and ask something?",
 				"EXO 10.2-3", 2010002, 2010003, null), 0, 1, 1, m_helper));
 
-			var generator = new HtmlScriptGenerator(new TesScriptGenerationSettings(), "fr",
+			var generator = new HtmlScriptGenerator(new TestScriptGenerationSettings(), "fr",
 				repo.GetPhrases, "Comic Sans", tp => sectionInfo);
 			generator.Extractor = new TestHtmlExtractor();
 			generator.Title = "My Title";
@@ -321,7 +320,7 @@ namespace SIL.Transcelerator
 		}
 	}
 
-	class TesScriptGenerationSettings : IScriptGenerationSettings
+	class TestScriptGenerationSettings : IScriptGenerationSettings
 	{
 		public RangeOption GenerateTemplateRange { get; set; }
 		public string SelectedBook { get; set; }
@@ -336,10 +335,10 @@ namespace SIL.Transcelerator
 		public string CssFile { get; set; } = "ComprehensionChecking.css";
 		public bool UseAbsolutePathForCssFile { get; set; }
 		public string Folder { get; set; }
-		public Color QuestionGroupHeadingsTextColor { get; set; } = Color.Blue;
-		public Color LWCQuestionTextColor { get; set; } = Color.Gray;
-		public Color LWCAnswerTextColor { get; set; } = Color.Green;
-		public Color CommentTextColor { get; set; } = Color.Red;
+		public string QuestionGroupHeadingsTextColor { get; set; } = "Blue";
+		public string LWCQuestionTextColor { get; set; } = "Gray";
+		public string LWCAnswerTextColor { get; set; } = "Green";
+		public string CommentTextColor { get; set; } = "Red";
 		public int NumberOfBlankLinesForAnswer { get; set; }
 		public bool NumberQuestions { get; set; } = true;
 		public string LwcLocale { get; set; } = "en-US";
