@@ -1,5 +1,6 @@
+import { logger } from '@papi/backend';
 import { VerseRef } from '@sillsdev/scripture';
-import papi from 'papi-backend';
+import papi from '@papi/backend';
 import IDataProviderEngine from 'shared/models/data-provider-engine.model';
 import extensionTemplateReact from './transcelerator.web-view?inline';
 import extensionTemplateReact2 from './transcelerator-2.web-view?inline';
