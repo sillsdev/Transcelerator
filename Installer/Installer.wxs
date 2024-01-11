@@ -111,6 +111,15 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="*">
                 <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
             </Component>
+			<Component Guid="*">
+                <File Id="TxlData.dll_P9" ShortName="ttl1s8od.dll" KeyPath="yes" Name="TxlData.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.Windows.Forms.dll_P9" ShortName="telg6my6.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.dll_P9" ShortName="vyey6mw8.dll" KeyPath="yes" Name="TxlShared.dll" />
+            </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
             </Component>
@@ -220,6 +229,15 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				 the WIX documentation that it would be, and searching the Internet, it seems it might not be. -->
             <Component Guid="*">
                 <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlData.dll_P9Beta" ShortName="292ks4c3.dll" KeyPath="yes" Name="TxlData.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.Windows.Forms.dll_P9Beta" ShortName="l7ydhpx8.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.dll_P9Beta" ShortName="bly1tb4q.dll" KeyPath="yes" Name="TxlShared.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
