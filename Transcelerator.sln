@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomInstallerActions", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataIntegrityTests", "DataIntegrityTests\DataIntegrityTests.csproj", "{E71615C2-2056-491D-AC85-FFEB0FC9D34A}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "Paratext", "..\Paratext\Output\Debug\Paratext.exe", "{64795DCD-9F35-4E20-9A1F-888A6416329A}"
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "Paratext", "%ParatextInstallDir%\Paratext.exe", "{64795DCD-9F35-4E20-9A1F-888A6416329A}"
 	ProjectSection(DebuggerProjectSystem) = preProject
 		PortSupplier = 00000000-0000-0000-0000-000000000000
 		Executable = %ParatextInstallDir%\Paratext.exe
