@@ -127,8 +127,9 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
-    <Reference Include="Microsoft.Extensions.DependencyModel, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.6.0.0\lib\net461\Microsoft.Extensions.DependencyModel.dll</HintPath>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyModel, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyModel.7.0.0\lib\netstandard2.0\Microsoft.Extensions.DependencyModel.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Unix, Version=7.1.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -146,8 +147,8 @@
     <Reference Include="PangoSharp, Version=3.24.24.95, Culture=neutral, PublicKeyToken=f6892ebcc5dd81ba, processorArchitecture=MSIL">
       <HintPath>..\packages\PangoSharp.3.24.24.95\lib\netstandard2.0\PangoSharp.dll</HintPath>
     </Reference>
-    <Reference Include="PluginInterfaces, Version=2.0.9.0, Culture=neutral, PublicKeyToken=583bede96b7c94a3, processorArchitecture=MSIL">
-      <HintPath>..\packages\ParatextPluginInterfaces.2.0.9\lib\netstandard2.0\PluginInterfaces.dll</HintPath>
+    <Reference Include="PluginInterfaces, Version=2.0.23.0, Culture=neutral, PublicKeyToken=583bede96b7c94a3, processorArchitecture=MSIL">
+      <HintPath>..\packages\ParatextPluginInterfaces.2.0.23\lib\netstandard2.0\PluginInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="SIL.Core, Version=12.0.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=MSIL">
       <HintPath>..\packages\SIL.Core.12.0.0\lib\net461\SIL.Core.dll</HintPath>
@@ -189,10 +190,12 @@
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Net" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Resources.Extensions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Resources.Extensions.7.0.0\lib\netstandard2.0\System.Resources.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Security" />
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net463\System.Security.Cryptography.Algorithms.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Security.Cryptography.ProtectedData, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Cryptography.ProtectedData.7.0.0\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ServiceModel" />
@@ -414,6 +417,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
+    <None Include="LocalizedPhrases-ar.xlf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="LocalizedPhrases-en-GB.xlf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -594,7 +600,6 @@ exit 1</PostBuildEvent>
     <Error Condition="!Exists('..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets'))" />
     <Error Condition="!Exists('..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.props'))" />
     <Error Condition="!Exists('..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.targets'))" />
-    <Error Condition="!Exists('..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets'))" />
     <Error Condition="!Exists('..\packages\Mono.Unix.7.1.0-final.1.21458.1\build\Mono.Unix.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Mono.Unix.7.1.0-final.1.21458.1\build\Mono.Unix.targets'))" />
     <Error Condition="!Exists('..\packages\icu.net.2.8.1\build\icu.net.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\icu.net.2.8.1\build\icu.net.props'))" />
     <Error Condition="!Exists('..\packages\icu.net.2.8.1\build\icu.net.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\icu.net.2.8.1\build\icu.net.targets'))" />
@@ -606,7 +611,6 @@ exit 1</PostBuildEvent>
   <Import Project="..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets" Condition="Exists('..\packages\NDesk.DBus.0.15.0\build\NDesk.DBus.targets')" />
   <Import Project="..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets" Condition="Exists('..\packages\Icu4c.Win.Min.62.2.1-beta\build\Icu4c.Win.Min.targets')" />
   <Import Project="..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.targets" Condition="Exists('..\packages\SIL.ReleaseTasks.2.5.0\build\SIL.ReleaseTasks.targets')" />
-  <Import Project="..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" />
   <Import Project="..\packages\Mono.Unix.7.1.0-final.1.21458.1\build\Mono.Unix.targets" Condition="Exists('..\packages\Mono.Unix.7.1.0-final.1.21458.1\build\Mono.Unix.targets')" />
   <Import Project="..\packages\icu.net.2.8.1\build\icu.net.targets" Condition="Exists('..\packages\icu.net.2.8.1\build\icu.net.targets')" />
   <Import Project="..\packages\SIL.Windows.Forms.Keyboarding.12.0.0\build\SIL.Windows.Forms.Keyboarding.targets" Condition="Exists('..\packages\SIL.Windows.Forms.Keyboarding.12.0.0\build\SIL.Windows.Forms.Keyboarding.targets')" />
