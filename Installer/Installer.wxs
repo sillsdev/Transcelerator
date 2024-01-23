@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- These variables define the Windows Installer product version, product code and upgrade code. They   -->
 <!-- will be used later on in this file.  this value should be B U I L D_SCRIPT_MUST_REPLACE_AT_RUNTIME (in quotes) -->
-<?define Property_ProductVersion = "BUILD_SCRIPT_MUST_REPLACE_AT_RUNTIME" ?>
+<?define Property_ProductVersion = "3.1.0" ?>
 
 <!-- * means auto-generate a new guid each time. This is "a unique identifier for the particular product release" -->
 <?define Property_ProductCode = "*" ?>
@@ -220,44 +220,26 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="ReleaseNotes.md_P9" Guid="*">
                 <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
             </Component>
-            <Component Id="System.Buffers.dll_P9" Guid="*">
-                <File Id="System.Buffers.dll_P9" ShortName="porfvqgf.dll" Source="System.Buffers.dll" />
+            <Component Guid="*">
+                <File Id="System.Memory.dll_P9" ShortName="hjh4jlxc.dll" KeyPath="yes" Name="System.Memory.dll" />
             </Component>
-            <Component Id="System.Drawing.Common.dll_P9" Guid="*">
-                <File Id="System.Drawing.Common.dll_P9" ShortName="rjjtklhw.dll" Source="System.Drawing.Common.dll" />
+            <Component Guid="*">
+                <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
             </Component>
-            <Component Id="System.Memory.dll_P9" Guid="*">
-                <File Id="System.Memory.dll_P9" ShortName="hjh4jlxc.dll" Source="System.Memory.dll" />
+            <Component Guid="*">
+                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9" ShortName="cactnnw4.dll" KeyPath="yes" Name="System.Runtime.CompilerServices.Unsafe.dll" />
             </Component>
-            <Component Id="System.Numerics.Vectors.dll_P9" Guid="*">
-                <File Id="System.Numerics.Vectors.dll_P9" ShortName="zhc0dbeg.dll" Source="System.Numerics.Vectors.dll" />
+            <Component Guid="*">
+                <File Id="System.Security.Cryptography.ProtectedData.dll_P9" ShortName="xhrb3vo7.dll" KeyPath="yes" Name="System.Security.Cryptography.ProtectedData.dll" />
             </Component>
-            <Component Id="System.Resources.Extensions.dll_P9" Guid="*">
-                <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" Source="System.Resources.Extensions.dll" />
+            <Component Guid="*">
+                <File Id="System.Text.Encodings.Web.dll_P9" ShortName="hcw8rjma.dll" KeyPath="yes" Name="System.Text.Encodings.Web.dll" />
             </Component>
-            <Component Id="System.Runtime.CompilerServices.Unsafe.dll_P9" Guid="*">
-                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9" ShortName="cactnnw4.dll" Source="System.Runtime.CompilerServices.Unsafe.dll" />
+            <Component Guid="*">
+                <File Id="System.Threading.Tasks.Extensions.dll_P9" ShortName="a99p60ns.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
             </Component>
-            <Component Id="System.Security.AccessControl.dll_P9" Guid="*">
-                <File Id="System.Security.AccessControl.dll_P9" ShortName="qg8ljlcw.dll" Source="System.Security.AccessControl.dll" />
-            </Component>
-            <Component Id="System.Security.Cryptography.ProtectedData.dll_P9" Guid="*">
-                <File Id="System.Security.Cryptography.ProtectedData.dll_P9" ShortName="xhrb3vo7.dll" Source="System.Security.Cryptography.ProtectedData.dll" />
-            </Component>
-            <Component Id="System.Security.Permissions.dll_P9" Guid="*">
-                <File Id="System.Security.Permissions.dll_P9" ShortName="5er6kj38.dll" Source="System.Security.Permissions.dll" />
-            </Component>
-            <Component Id="System.Text.Encodings.Web.dll_P9" Guid="*">
-                <File Id="System.Text.Encodings.Web.dll_P9" ShortName="hcw8rjma.dll" Source="System.Text.Encodings.Web.dll" />
-            </Component>
-            <Component Id="System.Text.Json.dll_P9" Guid="*">
-                <File Id="System.Text.Json.dll_P9" ShortName="lguxz61u.dll" Source="System.Text.Json.dll" />
-            </Component>
-            <Component Id="System.Threading.Tasks.Extensions.dll_P9" Guid="*">
-                <File Id="System.Threading.Tasks.Extensions.dll_P9" ShortName="a99p60ns.dll" Source="System.Threading.Tasks.Extensions.dll" />
-            </Component>
-            <Component Id="System.ValueTuple.dll_P9" Guid="*">
-                <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" Source="System.ValueTuple.dll" />
+            <Component Guid="*">
+                <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
             </Component>
         </ComponentGroup>
 
@@ -378,44 +360,26 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
                 <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
             </Component>
-            <Component Id="System.Buffers.dll_P9Beta" Guid="*">
-                <File Id="System.Buffers.dll_P9Beta" ShortName="hjdqzupe.dll" Source="System.Buffers.dll" />
+            <Component Guid="*">
+                <File Id="System.Memory.dll_P9Beta" ShortName="qrfzh24y.dll" KeyPath="yes" Name="System.Memory.dll" />
             </Component>
-            <Component Id="System.Drawing.Common.dll_P9Beta" Guid="*">
-                <File Id="System.Drawing.Common.dll_P9Beta" ShortName="k1lj7yfd.dll" Source="System.Drawing.Common.dll" />
+            <Component Guid="*">
+                <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
             </Component>
-            <Component Id="System.Memory.dll_P9Beta" Guid="*">
-                <File Id="System.Memory.dll_P9Beta" ShortName="qrfzh24y.dll" Source="System.Memory.dll" />
+            <Component Guid="*">
+                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9Beta" ShortName="yzfjcqf3.dll" KeyPath="yes" Name="System.Runtime.CompilerServices.Unsafe.dll" />
             </Component>
-            <Component Id="System.Numerics.Vectors.dll_P9Beta" Guid="*">
-                <File Id="System.Numerics.Vectors.dll_P9Beta" ShortName="ej2lyjcw.dll" Source="System.Numerics.Vectors.dll" />
+            <Component Guid="*">
+                <File Id="System.Security.Cryptography.ProtectedData.dll_P9Beta" ShortName="gs93uyil.dll" KeyPath="yes" Name="System.Security.Cryptography.ProtectedData.dll" />
             </Component>
-            <Component Id="System.Resources.Extensions.dll_P9Beta" Guid="*">
-                <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" Source="System.Resources.Extensions.dll" />
+            <Component Guid="*">
+                <File Id="System.Text.Encodings.Web.dll_P9Beta" ShortName="317oj4o2.dll" KeyPath="yes" Name="System.Text.Encodings.Web.dll" />
             </Component>
-            <Component Id="System.Runtime.CompilerServices.Unsafe.dll_P9Beta" Guid="*">
-                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9Beta" ShortName="yzfjcqf3.dll" Source="System.Runtime.CompilerServices.Unsafe.dll" />
+            <Component Guid="*">
+                <File Id="System.Threading.Tasks.Extensions.dll_P9Beta" ShortName="eno2hqld.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
             </Component>
-            <Component Id="System.Security.AccessControl.dll_P9Beta" Guid="*">
-                <File Id="System.Security.AccessControl.dll_P9Beta" ShortName="p7mu6yr0.dll" Source="System.Security.AccessControl.dll" />
-            </Component>
-            <Component Id="System.Security.Cryptography.ProtectedData.dll_P9Beta" Guid="*">
-                <File Id="System.Security.Cryptography.ProtectedData.dll_P9Beta" ShortName="gs93uyil.dll" Source="System.Security.Cryptography.ProtectedData.dll" />
-            </Component>
-            <Component Id="System.Security.Permissions.dll_P9Beta" Guid="*">
-                <File Id="System.Security.Permissions.dll_P9Beta" ShortName="83b71hxp.dll" Source="System.Security.Permissions.dll" />
-            </Component>
-            <Component Id="System.Text.Encodings.Web.dll_P9Beta" Guid="*">
-                <File Id="System.Text.Encodings.Web.dll_P9Beta" ShortName="317oj4o2.dll" Source="System.Text.Encodings.Web.dll" />
-            </Component>
-            <Component Id="System.Text.Json.dll_P9Beta" Guid="*">
-                <File Id="System.Text.Json.dll_P9Beta" ShortName="8341ydz5.dll" Source="System.Text.Json.dll" />
-            </Component>
-            <Component Id="System.Threading.Tasks.Extensions.dll_P9Beta" Guid="*">
-                <File Id="System.Threading.Tasks.Extensions.dll_P9Beta" ShortName="eno2hqld.dll" Source="System.Threading.Tasks.Extensions.dll" />
-            </Component>
-            <Component Id="System.ValueTuple.dll_P9Beta" Guid="*">
-                <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" Source="System.ValueTuple.dll" />
+            <Component Guid="*">
+                <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
             </Component>
         </ComponentGroup>
 
