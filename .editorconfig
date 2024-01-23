@@ -20,3 +20,6 @@ max_line_length = 0
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.cs]
+indent_size = 4

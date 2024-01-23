@@ -19,6 +19,8 @@ packages/
 /SilUtils/SilUtilsTests/SimianDomains/
 /Docs/Paratext.reg
 
+# #region shared with https://github.com/paranext/paranext-multi-extension-template/blob/main/.gitignore
+
 # Logs
 logs
 *.log
@@ -34,6 +36,9 @@ release
 dist-ssr
 *.local
 
+# formatting and linting
+.eslintcache
+
 # Editor directories and files
 .idea
 .DS_Store
@@ -45,3 +50,4 @@ dist-ssr
 # Temporary intermediate build files
 temp-build
 
+# #endregion

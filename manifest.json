@@ -4,6 +4,7 @@
   "description": "Assists in rapid translation of Scripture comprehension checking questions.",
   "author": "SIL",
   "license": "MIT",
-  "main": "transcelerator.ts",
+  "main": "src/main.ts",
+  "types": "src/types/transcelerator.d.ts",
   "activationEvents": []
 }
