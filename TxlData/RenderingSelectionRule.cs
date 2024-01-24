@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -248,8 +248,11 @@ namespace SIL.Transcelerator
 		#region Non-serializable (XML) Properties
 		public bool Valid => !KeyTermPlaceHolderMissing && ErrorMessageQ == null && ErrorMessageR == null;
 
+		[XmlIgnore]
 		public bool KeyTermPlaceHolderMissing { get; private set; }
+		[XmlIgnore]
 		public string ErrorMessageQ { get; private set; }
+		[XmlIgnore]
 		public string ErrorMessageR { get; private set; }
 
 		public QuestionMatchType QuestionMatchCriteriaType

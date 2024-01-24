@@ -48,6 +48,7 @@
     <Compile Include="KeyTermMatchTests.cs" />
     <Compile Include="KeyTermRulesTests.cs" />
     <Compile Include="KeyTermTests.cs" />
+    <Compile Include="ListSerializationHelperTests.cs" />
     <Compile Include="MasterQuestionParserTests.cs" />
     <Compile Include="PhraseCustomizationTests.cs" />
     <Compile Include="SubstitutionMatchGroupTests.cs" />

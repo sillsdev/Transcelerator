@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -194,7 +194,9 @@ namespace SIL.Transcelerator
 			Exception,
 		}
 
+		[XmlIgnore]
 		public Exception RegExError { get; private set; }
+		[XmlIgnore]
 		public RegExErrorType ErrorType { get; private set; }
 		#endregion
 	}

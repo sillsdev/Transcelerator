@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2013, SIL International.
-// <copyright from='2011' to='2013' company='SIL International'>
-//		Copyright (c) 2013, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,6 +9,7 @@
 //
 // File: RenderingSelectionRuleTests.cs
 // ---------------------------------------------------------------------------------------------
+using System.Linq;
 using NUnit.Framework;
 
 namespace SIL.Transcelerator
@@ -343,6 +344,24 @@ namespace SIL.Transcelerator
 			Assert.IsNull(rule.RenderingMatchSuffix);
 			Assert.IsNull(rule.RenderingMatchPrefix);
 			Assert.AreEqual(" ", rule.RenderingMatchingPattern);
+		}
+
+		/// <summary>
+		/// This demonstrates that RenderingSelectionRule is serializable as a list.
+		/// </summary>
+		[Test]
+		public void LoadOrCreateListFromString_ListOfRenderingSelectionRule_LoadsList()
+		{
+			var result = 
+				ListSerializationHelper.LoadOrCreateListFromString<RenderingSelectionRule>("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
+					"<ArrayOfRenderingSelectionRule>\r\n" +
+					"<RenderingSelectionRule name=\"Past tense - helping verb implies accented o\" disabled=\"false\" questionMatcher=\".*\\bdid .*{0}\" renderingSelector=\"ó$\" />\r\n" +
+					"<RenderingSelectionRule name=\"Un-&gt;in-\" disabled=\"false\" questionMatcher=\"\\bun\\w*{0}\" renderingSelector=\"^in\" />\r\n" +
+					"</ArrayOfRenderingSelectionRule>\r\n", out var ex);
+			Assert.IsNull(ex);
+			Assert.That(result.Count, Is.EqualTo(2));
+			Assert.That(result.Where(r => r.Name == "Un->in-").Count, Is.EqualTo(1));
+			Assert.That(result.Where(r => r.RenderingMatchingPattern == "ó$").Count, Is.EqualTo(1));
 		}
 	}
 }
