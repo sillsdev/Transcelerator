@@ -224,18 +224,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
             </Component>
             <Component Guid="*">
-                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9" ShortName="cactnnw4.dll" KeyPath="yes" Name="System.Runtime.CompilerServices.Unsafe.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Security.Cryptography.ProtectedData.dll_P9" ShortName="xhrb3vo7.dll" KeyPath="yes" Name="System.Security.Cryptography.ProtectedData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Text.Encodings.Web.dll_P9" ShortName="hcw8rjma.dll" KeyPath="yes" Name="System.Text.Encodings.Web.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Threading.Tasks.Extensions.dll_P9" ShortName="a99p60ns.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
-            </Component>
-            <Component Guid="*">
                 <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
             </Component>
         </ComponentGroup>
@@ -359,18 +347,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
             <Component Guid="*">
                 <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Runtime.CompilerServices.Unsafe.dll_P9Beta" ShortName="yzfjcqf3.dll" KeyPath="yes" Name="System.Runtime.CompilerServices.Unsafe.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Security.Cryptography.ProtectedData.dll_P9Beta" ShortName="gs93uyil.dll" KeyPath="yes" Name="System.Security.Cryptography.ProtectedData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Text.Encodings.Web.dll_P9Beta" ShortName="317oj4o2.dll" KeyPath="yes" Name="System.Text.Encodings.Web.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Threading.Tasks.Extensions.dll_P9Beta" ShortName="eno2hqld.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
