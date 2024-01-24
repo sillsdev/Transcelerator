@@ -221,9 +221,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
             </Component>
             <Component Guid="*">
-                <File Id="System.Memory.dll_P9" ShortName="hjh4jlxc.dll" KeyPath="yes" Name="System.Memory.dll" />
-            </Component>
-            <Component Guid="*">
                 <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
             </Component>
             <Component Guid="*">
@@ -359,9 +356,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
             <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
                 <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Memory.dll_P9Beta" ShortName="qrfzh24y.dll" KeyPath="yes" Name="System.Memory.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />

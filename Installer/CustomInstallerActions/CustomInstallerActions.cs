@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2017, SIL International.   
-// <copyright from='2017' to='2017 company='SIL International'>
-//		Copyright (c) 2017, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.   
+// <copyright from='2017' to='2024 company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.IO;
+using JetBrains.Annotations;
 using Microsoft.Deployment.WindowsInstaller;
 using Microsoft.Win32;
 
@@ -19,6 +20,7 @@ namespace CustomInstallerActions
 	public class CustomInstallerActions
 	{
 		[CustomAction]
+		[PublicAPI]
 		public static ActionResult RemoveAllTransceleratorUserCacheFiles(Session session)
 		{
 			session.Log("Begin RemoveAllTransceleratorUserCacheFiles");
