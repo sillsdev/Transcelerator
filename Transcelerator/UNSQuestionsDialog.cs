@@ -251,7 +251,7 @@ namespace SIL.Transcelerator
 				var deprecatedProgramDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Transcelerator");
 				if (Directory.Exists(deprecatedProgramDataFolder))
 				{
-					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlData.kQuestionsFilename);
+					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlConstants.kQuestionsFilename);
 					if (File.Exists(cachedQuestionsFilename))
 						File.Delete(cachedQuestionsFilename);
 					Directory.Delete(deprecatedProgramDataFolder);
@@ -314,8 +314,8 @@ namespace SIL.Transcelerator
 
 			m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
 
-			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlData.kQuestionsFilename);
-			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlData.kQuestionsFilename);
+			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionsFilename);
+			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlConstants.kQuestionsFilename);
 
 			var preferredUiLocale = LocalizationManager.UILanguageId;
 
@@ -968,7 +968,7 @@ namespace SIL.Transcelerator
 			{
 				Analytics.Track("ClipboardSetDataObjectException", new Dictionary<string, string>
 					{{"Message", e.Message}});
-				ShowModalChild(new MessageBoxForm(e.Message, TxlData.kPluginName,
+				ShowModalChild(new MessageBoxForm(e.Message, TxlConstants.kPluginName,
 					MessageBoxButtons.RetryCancel), form =>
 				{
 					if (form.DialogResult == DialogResult.Retry)
@@ -1193,7 +1193,7 @@ namespace SIL.Transcelerator
 								"There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.") :
 							LocalizationManager.GetString("MainWindow.ClearAllMatchingTranslations.Multiple",
 								"There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.");
-						ShowModalChild(new MessageBoxForm(msg, TxlData.kPluginName, MessageBoxButtons.OKCancel), form =>
+						ShowModalChild(new MessageBoxForm(msg, TxlConstants.kPluginName, MessageBoxButtons.OKCancel), form =>
 						{
 							if (form.DialogResult == DialogResult.OK)
 							{
@@ -1820,7 +1820,7 @@ namespace SIL.Transcelerator
 						}
 					}
 					dataGridUns.Invalidate();
-					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlData.kPluginName, icon:MessageBoxIcon.None));
+					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlConstants.kPluginName, icon:MessageBoxIcon.None));
 				}
 			}
 #endif
@@ -2646,7 +2646,7 @@ namespace SIL.Transcelerator
 			var msg = Format(fmt, filename) + " " +
 				Format(LocalizationManager.GetString("General.RerunInstaller",
 					"Please re-run the {0} Installer to repair this problem.",
-					"Parameter is \"Transcelerator\" (plugin name)"), TxlData.kPluginName);
+					"Parameter is \"Transcelerator\" (plugin name)"), TxlConstants.kPluginName);
 			return msg;
 		}
 
@@ -2677,13 +2677,13 @@ namespace SIL.Transcelerator
 			if (!finfoMasterQuestions.Exists)
 				throw new FileNotFoundException(GetMissingInstalledFileMessage(true, m_masterQuestionsFilename));
 
-			string keyTermRulesFilename = Path.Combine(m_installDir, TxlData.kKeyTermRulesFilename);
+			string keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
 
 			FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
 			if (!finfoKtRules.Exists)
 				ReportMissingInstalledFile(keyTermRulesFilename);
 
-			string questionWordsFilename = Path.Combine(m_installDir, TxlData.kQuestionWordsFilename);
+			string questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
@@ -2816,7 +2816,7 @@ namespace SIL.Transcelerator
 		private KeyTermRules GetKeyTermRules(string keyTermRulesFilename = null)
 		{
 			if (keyTermRulesFilename == null)
-				keyTermRulesFilename = Path.Combine(m_installDir, TxlData.kKeyTermRulesFilename);
+				keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
 
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out var e);
 			if (e != null)
@@ -2833,7 +2833,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private string[] GetQuestionWords()
 		{
-			var questionWordsFilename = Path.Combine(m_installDir, TxlData.kQuestionWordsFilename);
+			var questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
 			var questionWords = XmlSerializationHelper.DeserializeFromFile<QuestionWords>(questionWordsFilename, out var e);
 			if (e != null)
 				throw new ParatextPluginException(e);
@@ -3411,7 +3411,7 @@ namespace SIL.Transcelerator
 
 		private void DisplayExceptionMessage(Exception ex, string caption = null)
 		{
-			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlData.kPluginName));
+			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlConstants.kPluginName));
 		}
 	}
 	#endregion

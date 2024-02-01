@@ -36,7 +36,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			m_sfmSourceLabelText = lblSource.Text;
 
 			SetDefaultSfmSourceFile();
-			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlData.kQuestionsFilename);
+			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlConstants.kQuestionsFilename);
 		}
 
 		private void SetDefaultSfmSourceFile()

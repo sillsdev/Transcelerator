@@ -560,7 +560,7 @@ namespace SIL.Transcelerator
 							"There are {0} questions in the selected range that do not have confirmed translations. These questions " +
 							"will be excluded from the checking script.",
 							"Param is a number."), untranslatedQuestions),
-						TxlData.kPluginName, MessageBoxButtons.OKCancel), form =>
+						TxlConstants.kPluginName, MessageBoxButtons.OKCancel), form =>
 					{
 						DialogResult = form.DialogResult;
 						form.Disposed += (o, args) => { Close(); };

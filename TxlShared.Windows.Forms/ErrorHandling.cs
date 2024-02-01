@@ -27,12 +27,12 @@ namespace SIL.Transcelerator
 			ErrorHandlingInitialized = true;
 
 			ErrorReport.SetErrorReporter(new WinFormsErrorReporter());
-			ErrorReport.EmailAddress = TxlData.kEmailAddress;
+			ErrorReport.EmailAddress = TxlConstants.kEmailAddress;
 			ErrorReport.AddStandardProperties();
 			// The version that gets added to the report by default is for the entry assembly, which is
 			// AddInProcess32.exe. Even if if reported a version (which it doesn't), it wouldn't be very
 			// useful.
-			ErrorReport.AddProperty("Plugin Name", TxlData.kPluginName);
+			ErrorReport.AddProperty("Plugin Name", TxlConstants.kPluginName);
 			Assembly assembly = Assembly.GetExecutingAssembly();
 			ErrorReport.AddProperty("Version", $"{assembly.GetName().Version} (apparent build date: {File.GetLastWriteTime(assembly.Location).ToShortDateString()})");
 			ErrorReport.AddProperty("Host Application", hostAppName + " " + hostVersion);
@@ -50,7 +50,7 @@ namespace SIL.Transcelerator
 				// Give developer a chance to explore this situation and determine if there will be
 				// any negative implications.
 				if (!typeof(WinFormsExceptionHandler).IsAssignableFrom(existing))
-					MessageBox.Show(msg, TxlData.kPluginName);
+					MessageBox.Show(msg, TxlConstants.kPluginName);
 #endif
 			}
 		}

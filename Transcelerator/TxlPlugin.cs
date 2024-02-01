@@ -76,7 +76,7 @@ namespace SIL.Transcelerator
 			return s_analytics;
 		}
 
-		public string Name => TxlData.kPluginName;
+		public string Name => TxlConstants.kPluginName;
 		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 		public string VersionString => Version.ToString();
 		public string Publisher => "SIL International";
@@ -348,7 +348,7 @@ namespace SIL.Transcelerator
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedLocFolder = Path.Combine(s_baseInstallFolder, "localization");
-			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlData.kPluginName);
+			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlConstants.kPluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
 
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
@@ -366,12 +366,12 @@ namespace SIL.Transcelerator
 
 			LocalizationManager.Create(TranslationMemory.XLiff, 
 				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlData.kEmailAddress,
+				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
 				"SIL.Windows.Forms.Reporting");
 
 			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId,
-				TxlData.kPluginName, TxlData.kPluginName, s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlData.kEmailAddress,
+				TxlConstants.kPluginName, TxlConstants.kPluginName, s_version, installedLocFolder,
+				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
 				"SIL.Transcelerator");
 			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
 				"transcelerator", IssueRequestForLocalization);

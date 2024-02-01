@@ -578,7 +578,7 @@ namespace SIL.Transcelerator
 					"feature will now be requested for you."),
 				Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
 						"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
-					TxlData.kPluginName),
+					TxlConstants.kPluginName),
 				MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
 				if (form.DialogResult == DialogResult.OK)
