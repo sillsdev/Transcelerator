@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2023 to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2023 to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -126,7 +126,7 @@ namespace SIL.Transcelerator
 			set => Properties.Settings.Default.GenerateTemplateNumberQuestions = value;
 		}
 
-        public string LwcLocale
+        public string LWCLocale
         {
             get 
             {

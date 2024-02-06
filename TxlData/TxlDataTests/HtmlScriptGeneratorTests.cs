@@ -341,7 +341,7 @@ namespace SIL.Transcelerator
 		public string CommentTextColor { get; set; } = "Red";
 		public int NumberOfBlankLinesForAnswer { get; set; }
 		public bool NumberQuestions { get; set; } = true;
-		public string LwcLocale { get; set; } = "en-US";
+		public string LWCLocale { get; set; } = "en-US";
 	}
 }
 

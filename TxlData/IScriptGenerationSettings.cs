@@ -1,3 +1,12 @@
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2023 to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
+//    
+//		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
+// </copyright> 
+#endregion
+// ---------------------------------------------------------------------------------------------
 namespace SIL.Transcelerator
 {
 	public enum RangeOption
@@ -35,6 +44,6 @@ namespace SIL.Transcelerator
 		string CommentTextColor { get; set; }
 		int NumberOfBlankLinesForAnswer { get; set; }
 		bool NumberQuestions { get; set; }
-        string LwcLocale { get; set; }
+        string LWCLocale { get; set; }
 	}
 }

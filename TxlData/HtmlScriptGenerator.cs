@@ -218,10 +218,10 @@ namespace SIL.Transcelerator
 
         public string LwcLocale
         {
-            get => m_settings.LwcLocale;
+            get => m_settings.LWCLocale;
             set
             {
-	            m_settings.LwcLocale = value;
+	            m_settings.LWCLocale = value;
                 m_dataLoc = DataLocalizerNeeded?.Invoke(this, value);
             }
         }

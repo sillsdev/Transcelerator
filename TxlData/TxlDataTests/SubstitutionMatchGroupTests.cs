@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2023' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2023' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -99,7 +99,7 @@ namespace SIL.Transcelerator
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// This is similar to the above test, except it allows us to ensure the correct out/ref
-		/// parameters when the expected selection occurs more tha once in the result.
+		/// parameters when the expected selection occurs more than once in the result.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[TestCase(2, "abc{1,2}def", 11, 0, 11, 5, "When IP is at the end of the text not " +
