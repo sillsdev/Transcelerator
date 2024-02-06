@@ -556,7 +556,7 @@ namespace DataIntegrityTests
 					folder = Path.Combine(sourceXmlFolder, "Transcelerator");
 			}
 
-			using (var reader = new StreamReader(new FileStream(Path.Combine(folder, TxlCore.kQuestionsFilename), FileMode.Open)))
+			using (var reader = new StreamReader(new FileStream(Path.Combine(folder, TxlConstants.kQuestionsFilename), FileMode.Open)))
 			{
 				Assert.IsNotNull(reader);
 				var lineNumber = 1;

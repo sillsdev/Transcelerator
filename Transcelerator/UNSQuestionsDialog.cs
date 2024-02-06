@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.   
-// <copyright from='2011' to='2023 company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+#region // Copyright (c) 2024, SIL International.   
+// <copyright from='2011' to='2024 company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,8 +11,8 @@
 // ---------------------------------------------------------------------------------------------
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
-using SIL.Utils;
 using SIL.Windows.Forms.FileDialogExtender;
+using SIL.Extensions;
 using SIL.Xml;
 using System;
 using System.Collections.Generic;
@@ -37,6 +37,7 @@ using Paratext.PluginInterfaces;
 using SIL.Reporting;
 using SIL.Windows.Forms;
 using SIL.Windows.Forms.Extensions;
+using SIL.Windows.Forms.Miscellaneous;
 using static System.Char;
 using static System.String;
 using static SIL.WritingSystems.IetfLanguageTag;
@@ -56,7 +57,7 @@ namespace SIL.Transcelerator
 	/// UNSQuestionsDialog.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public partial class UNSQuestionsDialog : ParentFormBase, IMessageFilter
+	public partial class UNSQuestionsDialog : ParentFormBase, IMessageFilter, IPluginObject
 	{
 		#region Constants
 		public const string kScriptureForgeProductName = "Scripture Forge";
@@ -250,7 +251,7 @@ namespace SIL.Transcelerator
 				var deprecatedProgramDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Transcelerator");
 				if (Directory.Exists(deprecatedProgramDataFolder))
 				{
-					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlCore.kQuestionsFilename);
+					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlConstants.kQuestionsFilename);
 					if (File.Exists(cachedQuestionsFilename))
 						File.Delete(cachedQuestionsFilename);
 					Directory.Delete(deprecatedProgramDataFolder);
@@ -303,7 +304,7 @@ namespace SIL.Transcelerator
 			m_host = host;
 			m_project = project;
 
-			m_fileAccessor = new ParatextDataFileAccessor(m_project, HandleWriteLockReleased);
+			m_fileAccessor = new ParatextDataFileAccessor(this, m_project, HandleWriteLockReleased);
 
 			m_getKeyTerms = () => m_host.GetBiblicalTermList(BiblicalTermListType.Major).Where(t => t.Occurrences.Any(o => o.BookNum < 67));
 
@@ -313,8 +314,8 @@ namespace SIL.Transcelerator
 
 			m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
 
-			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlCore.kQuestionsFilename);
-			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlCore.kQuestionsFilename);
+			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionsFilename);
+			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlConstants.kQuestionsFilename);
 
 			var preferredUiLocale = LocalizationManager.UILanguageId;
 
@@ -532,8 +533,10 @@ namespace SIL.Transcelerator
 			var fontInfo = m_project.Language.Font;
 			m_vernFont?.Dispose();
 			m_vernFont = new Font(fontInfo.FontFamily, fontInfo.Size);
-			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle();
-			translationCellStyle.Font = m_vernFont;
+			DataGridViewCellStyle translationCellStyle = new DataGridViewCellStyle
+			{
+				Font = m_vernFont
+			};
 			m_colTranslation.DefaultCellStyle = translationCellStyle;
 
 			if (m_project.Language.IsRtoL)
@@ -652,6 +655,17 @@ namespace SIL.Transcelerator
 
 		private void SetLocalizer(string preferredUiLocale)
 		{
+			if (preferredUiLocale == "ar")
+			{
+				RightToLeftLayout = true;
+				RightToLeft = RightToLeft.Yes;
+			}
+			else
+			{
+				RightToLeftLayout = false;
+				RightToLeft = RightToLeft.No;
+			}
+
 			m_dataLocalizer = GetDataLocalizer(preferredUiLocale);
 
 			m_termLocalizer = m_dataLocalizer == null ||
@@ -954,7 +968,7 @@ namespace SIL.Transcelerator
 			{
 				Analytics.Track("ClipboardSetDataObjectException", new Dictionary<string, string>
 					{{"Message", e.Message}});
-				ShowModalChild(new MessageBoxForm(e.Message, TxlCore.kPluginName,
+				ShowModalChild(new MessageBoxForm(e.Message, TxlConstants.kPluginName,
 					MessageBoxButtons.RetryCancel), form =>
 				{
 					if (form.DialogResult == DialogResult.Retry)
@@ -1179,7 +1193,7 @@ namespace SIL.Transcelerator
 								"There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.") :
 							LocalizationManager.GetString("MainWindow.ClearAllMatchingTranslations.Multiple",
 								"There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.");
-						ShowModalChild(new MessageBoxForm(msg, TxlCore.kPluginName, MessageBoxButtons.OKCancel), form =>
+						ShowModalChild(new MessageBoxForm(msg, TxlConstants.kPluginName, MessageBoxButtons.OKCancel), form =>
 						{
 							if (form.DialogResult == DialogResult.OK)
 							{
@@ -1580,7 +1594,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void GenerateScript(string defaultFolder)
 		{
-			var scriptGenerator = new HtmlScriptGenerator(m_project.Language.Id, f => m_helper.AllActivePhrasesWhere(f),
+			var scriptGenerator = new HtmlScriptGenerator(new HtmlScriptGenerationSettings(),
+				m_project.Language.Id, f => m_helper.AllActivePhrasesWhere(f),
 				m_colTranslation.DefaultCellStyle.Font.FontFamily.Name, p => m_sectionInfo.Find(p));
 			scriptGenerator.DataLocalizerNeeded += (sender, id) => GetDataLocalizer(id);
 			scriptGenerator.ChangeVersification = input => m_project.Versification.ChangeVersification(m_masterVersification.CreateReference(input)).BBBCCCVVV;
@@ -1590,7 +1605,7 @@ namespace SIL.Transcelerator
 				var fontInfo = languageInfo.Font;
 
 				tw.WriteLine(new UsfmStyleBasedCss(fontInfo.FontFamily, fontInfo.Features,
-					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS());
+					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS(System.Drawing.ColorTranslator.ToHtml));
 			};
 
 			var locales = LocalizationsFileAccessor.GetAvailableLocales(m_installDir)
@@ -1727,7 +1742,7 @@ namespace SIL.Transcelerator
 									sw.WriteLine();
 								}
 								string sVerse = " (" + ((startRef.Verse != endRef.Verse)
-									? startRef.Verse.ToString() + "-" + endRef.Verse.ToString()
+									? startRef.Verse + "-" + endRef.Verse
 									: startRef.Verse.ToString()) + ")";
 
 								if (phrase.IsUserAdded)
@@ -1805,7 +1820,7 @@ namespace SIL.Transcelerator
 						}
 					}
 					dataGridUns.Invalidate();
-					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlCore.kPluginName, icon:MessageBoxIcon.None));
+					ShowModalChild(new MessageBoxForm($"Finished! See report in {reportFilename}", TxlConstants.kPluginName, icon:MessageBoxIcon.None));
 				}
 			}
 #endif
@@ -2166,7 +2181,7 @@ namespace SIL.Transcelerator
 		private void AddNewQuestion(object sender, EventArgs e)
 		{
 			m_selectKeyboard?.Invoke(false);
-			string language = Format("{0} ({1})", m_project.LanguageName, m_project.Language.Id);
+			string language = $"{m_project.LanguageName} ({m_project.Language.Id})";
 			var newQuestionDlg = new NewQuestionDlg(m_project, CurrentPhrase, language, m_sectionInfo,
 				m_project.Versification, m_masterVersification, m_helper, m_selectKeyboard);
 
@@ -2291,7 +2306,8 @@ namespace SIL.Transcelerator
 				return;
 			int rowIndex = dataGridUns.CurrentRow.Index;
 
-			var selection = TextControl == null ? null : new SubstringDescriptor(TextControl);
+			var selection = TextControl == null ? null :
+				new SubstringDescriptor(TextControl.SelectionStart, TextControl.SelectionLength);
 
 			var phrase = m_helper[rowIndex];
 
@@ -2435,7 +2451,7 @@ namespace SIL.Transcelerator
 			m_host.VerseRefChanged += OnHostOnVerseRefChanged;
 		}
 
-		private void OnHostOnVerseRefChanged(IPluginHost host, IVerseRef reference, SyncReferenceGroup @group)
+		private void OnHostOnVerseRefChanged(IPluginHost host, IVerseRef reference, SyncReferenceGroup group)
 		{
 			lock (this)
 			{
@@ -2566,6 +2582,7 @@ namespace SIL.Transcelerator
 					{ "New", languageId } });
 			Logger.WriteEvent("UI language changed from " +
 				$"{previousLocale} to {languageId}");
+
 			SetLocalizer(languageId);
 			TxlPlugin.UpdateUiLanguageForUser(languageId);
 
@@ -2629,7 +2646,7 @@ namespace SIL.Transcelerator
 			var msg = Format(fmt, filename) + " " +
 				Format(LocalizationManager.GetString("General.RerunInstaller",
 					"Please re-run the {0} Installer to repair this problem.",
-					"Parameter is \"Transcelerator\" (plugin name)"), TxlCore.kPluginName);
+					"Parameter is \"Transcelerator\" (plugin name)"), TxlConstants.kPluginName);
 			return msg;
 		}
 
@@ -2660,13 +2677,13 @@ namespace SIL.Transcelerator
 			if (!finfoMasterQuestions.Exists)
 				throw new FileNotFoundException(GetMissingInstalledFileMessage(true, m_masterQuestionsFilename));
 
-			string keyTermRulesFilename = Path.Combine(m_installDir, TxlCore.kKeyTermRulesFilename);
+			string keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
 
 			FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
 			if (!finfoKtRules.Exists)
 				ReportMissingInstalledFile(keyTermRulesFilename);
 
-			string questionWordsFilename = Path.Combine(m_installDir, TxlCore.kQuestionWordsFilename);
+			string questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
@@ -2717,11 +2734,26 @@ namespace SIL.Transcelerator
 			}
 
 			m_renderingsRepo = new ParatextTermRenderingsRepo(m_fileAccessor, m_project);
+			if (m_renderingsRepo.NonFatalLoadError != null)
+			{
+				ErrorReport.NotifyUserOfProblem(m_renderingsRepo.NonFatalLoadError,
+					LocalizationManager.GetString("General.LoadingTermRenderingsFailed",
+					"Unable to load user-added term renderings. Only renderings from {0} will be displayed.",
+					"Param 0: host application name (Paratext); "),
+					m_host.ApplicationName);
+			}
 			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms, m_renderingsRepo);
 			var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
 			m_helper = new PhraseTranslationHelper(qp);
 			m_helper.VernacularStringComparer = m_project.Language.StringComparer;
-			m_helper.FileProxy = m_fileAccessor;
+			m_helper.SetFileProxy(m_fileAccessor, out var termRenderingSelectionRulesException);
+			if (termRenderingSelectionRulesException != null)
+			{
+				ErrorReport.NotifyUserOfProblem(termRenderingSelectionRulesException,
+					LocalizationManager.GetString("General.LoadingRenderingSelectionRulesFailed",
+						"The Biblical term rendering selection rules could not be loaded. Default rules will be used."));
+			}
+
 			m_sectionInfo = qp.SectionInfo;
 			m_availableBookIds = qp.AvailableBookIds;
 			string translationData = m_fileAccessor.Read(DataFileAccessor.DataFileId.Translations);
@@ -2756,10 +2788,25 @@ namespace SIL.Transcelerator
 		/// Loads the phrase substitutions if not already loaded
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private List<Substitution> PhraseSubstitutions =>
-			m_cachedPhraseSubstitutions ??
-			(m_cachedPhraseSubstitutions = ListSerializationHelper.LoadOrCreateListFromString<Substitution>(
-				m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), true));
+		private List<Substitution> PhraseSubstitutions
+		{
+			get
+			{
+				if (m_cachedPhraseSubstitutions == null)
+				{
+					m_cachedPhraseSubstitutions = ListSerializationHelper.LoadOrCreateListFromString<Substitution>(
+						m_fileAccessor.Read(DataFileAccessor.DataFileId.PhraseSubstitutions), out var e);
+					if (e != null)
+					{
+						ErrorReport.NotifyUserOfProblem(e, LocalizationManager.GetString(
+							"General.LoadingQuestionAdjustmentsFailed",
+							"The Question Adjustments could not be loaded."));
+					}
+				}
+
+				return m_cachedPhraseSubstitutions;
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -2769,7 +2816,7 @@ namespace SIL.Transcelerator
 		private KeyTermRules GetKeyTermRules(string keyTermRulesFilename = null)
 		{
 			if (keyTermRulesFilename == null)
-				keyTermRulesFilename = Path.Combine(m_installDir, TxlCore.kKeyTermRulesFilename);
+				keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
 
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out var e);
 			if (e != null)
@@ -2786,7 +2833,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private string[] GetQuestionWords()
 		{
-			var questionWordsFilename = Path.Combine(m_installDir, TxlCore.kQuestionWordsFilename);
+			var questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
 			var questionWords = XmlSerializationHelper.DeserializeFromFile<QuestionWords>(questionWordsFilename, out var e);
 			if (e != null)
 				throw new ParatextPluginException(e);
@@ -3364,7 +3411,7 @@ namespace SIL.Transcelerator
 
 		private void DisplayExceptionMessage(Exception ex, string caption = null)
 		{
-			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlCore.kPluginName));
+			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlConstants.kPluginName));
 		}
 	}
 	#endregion

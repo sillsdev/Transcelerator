@@ -19,7 +19,7 @@ using System.Windows.Forms;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
-using SilUtils.Controls;
+using SIL.Windows.Forms.Widgets;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -35,12 +35,9 @@ namespace SIL.Transcelerator
 		protected TextBox TextControl { get; set; }
 		private readonly CustomDropDown m_regexMatchDropDown = new CustomDropDown();
 		private readonly CustomDropDown m_regexReplaceDropDown = new CustomDropDown();
-		private static readonly Regex s_matchNTimes = new Regex(@"(?<expressionToRepeat>\(.*\)|.)\{(?<minMatches>\d+,)?(?<maxMatches>\d+)\}");
-		private static readonly Regex s_matchSubstGroup = new Regex(@"\$((?<numeric>(\d+)|&)|(\{(?<named>\w[a-zA-Z_0-9]*)\}))");
-		public const string kEntireMatch = "Entire match";
-		private const string kContiguousLettersMatchExpr = @"(\w+)";
-		protected readonly string m_sRemoveItem;
 		private readonly string m_help;
+		protected string m_removeItem;
+		private string m_entireMatch;
 
 		#region Constructor and initialization methods
 		/// ------------------------------------------------------------------------------------
@@ -62,7 +59,6 @@ namespace SIL.Transcelerator
 			m_regexReplaceDropDown.AutoCloseWhenMouseLeaves = false;
 			m_regexMatchDropDown.AddControl(m_regexMatchHelper);
 			m_regexReplaceDropDown.AddControl(m_regexReplacementHelper);
-			m_sRemoveItem = m_cboMatchGroup.Items[0] as string;
 			m_cboMatchGroup.Items.Clear();
 
 			HandleStringsLocalized();
@@ -78,8 +74,8 @@ namespace SIL.Transcelerator
 			if (m_cboPreviewQuestion.Items.Count > 0)
 				m_cboPreviewQuestion.SelectedIndex = iDefaultTestPhrase;
 
-			m_txtMatchPrefix.Tag = @"\b{0}";
-			m_txtMatchSuffix.Tag = @"{0}\b";
+			m_txtMatchPrefix.Tag = AffixType.Prefix;
+			m_txtMatchSuffix.Tag = AffixType.Suffix;
 
 			m_help = TxlPlugin.GetHelpFile("adjustments");
 			HelpButton = !IsNullOrEmpty(m_help);
@@ -89,8 +85,12 @@ namespace SIL.Transcelerator
 		{
 			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
 				return;
-			lblInstructions.Text = String.Format(lblInstructions.Text,
+			lblInstructions.Text = Format(lblInstructions.Text,
 				colReplacement.HeaderText, colIsRegEx.HeaderText, colMatch.HeaderText);
+			// The remove item will always be there in production, just not in tests.
+			m_removeItem = m_cboMatchGroup.Items.Count > 0 ? m_cboMatchGroup.Items[0] as string : "Remove";
+			m_entireMatch = LocalizationManager.GetString("PhraseSubstitutionDlg.EntireMatch",
+				"Entire match");
 		}
 		#endregion
 
@@ -110,14 +110,9 @@ namespace SIL.Transcelerator
 		/// Gets the substitutions.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		internal IEnumerable<Substitution> Substitutions
-		{
-			get
-			{
-				return m_dataGridView.Rows.Cast<DataGridViewRow>().Select(row =>
-					GetSubstitutionForRow(row)).Where(sub => !Substitution.IsNullOrEmpty(sub));
-			}
-		}
+		internal IEnumerable<Substitution> Substitutions => 
+			m_dataGridView.Rows.Cast<DataGridViewRow>().Select(GetSubstitutionForRow)
+				.Where(sub => !Substitution.IsNullOrEmpty(sub));
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -128,14 +123,8 @@ namespace SIL.Transcelerator
 		/// column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int ExistingMatchCountValue
-		{
-			get
-			{
-				Match match = FindSelectedMatch(s_matchNTimes);
-				return match.Success? int.Parse(match.Result("${maxMatches}")) : 1;
-			}
-		}
+		public int ExistingMatchCountValue => SubstitutionMatchGroup.GetRangeMax(TextControl.Text,
+			TextControl.SelectionStart);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -145,13 +134,7 @@ namespace SIL.Transcelerator
 		/// empty string. Intended to be used only when the current column is the "Match" column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ExistingPrefix
-		{
-			get
-			{
-				return GetExistingAffix((string)m_txtMatchPrefix.Tag);
-			}
-		}
+		public string ExistingPrefix => GetExistingAffix((AffixType)m_txtMatchPrefix.Tag);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -161,13 +144,7 @@ namespace SIL.Transcelerator
 		/// empty string. Intended to be used only when the current column is the "Match" column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ExistingSuffix
-		{
-			get
-			{
-				return GetExistingAffix((string)m_txtMatchSuffix.Tag);
-			}
-		}
+		public string ExistingSuffix => GetExistingAffix((AffixType)m_txtMatchSuffix.Tag);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -178,15 +155,18 @@ namespace SIL.Transcelerator
 		/// "Replacement" column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ExistingMatchGroup
+		internal string ExistingMatchGroup
 		{
 			get
 			{
-				Match match = FindSelectedMatch(s_matchSubstGroup);
-				string group = match.Success ? match.Result("${numeric}${named}") : Empty;
-				return (group == "0" || group == "&") ? kEntireMatch : group;
+				var group = SubstitutionMatchGroup.GetExistingMatchGroup(TextControl.Text,
+					TextControl.SelectionStart);
+				return group == null ? Empty :
+					group.Type == SubstitutionMatchGroup.MatchGroupType.EntireMatch ? m_entireMatch :
+					group.Group;
 			}
 		}
+
 		#endregion
 
 		#region Event handlers
@@ -199,6 +179,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_dataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
 		{
+			var currentRow = m_dataGridView.CurrentRow;
+			if (currentRow == null)
+				return;
 			Debug.Assert(TextControl == null && !m_regexMatchDropDown.Visible && !m_regexReplaceDropDown.Visible);
 			if (IsRegEx(m_dataGridView.CurrentRow))
 				TextControl = e.Control as DataGridViewTextBoxEditingControl;
@@ -214,12 +197,12 @@ namespace SIL.Transcelerator
 			}
 			else
 			{
-				string[] matchGroups = GetMatchGroups((string)m_dataGridView.CurrentRow.Cells[colMatch.Index].Value);
+				var matchGroups = GetMatchGroups((string)currentRow.Cells[colMatch.Index].Value);
 				if (matchGroups.Length > 0)
 				{
 					m_cboMatchGroup.Items.AddRange(matchGroups);
 					string sGroup = ExistingMatchGroup;
-					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? m_sRemoveItem : Empty);
+					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? m_removeItem : Empty);
 					m_regexReplaceDropDown.Show(m_dataGridView, cellDisplayRect.Left, cellDisplayRect.Bottom + 1);
 				}
 				else
@@ -283,8 +266,8 @@ namespace SIL.Transcelerator
 		private void m_btnMatchSingleWord_Click(object sender, EventArgs e)
 		{
 			int selStart = TextControl.SelectionStart;
-			ReplaceSelectedTextInCurrentEditControl(kContiguousLettersMatchExpr);
-			TextControl.SelectionStart = selStart + kContiguousLettersMatchExpr.Length;
+			ReplaceSelectedTextInCurrentEditControl(SubstitutionMatchGroup.kContiguousLettersMatchExpr);
+			TextControl.SelectionStart = selStart + SubstitutionMatchGroup.kContiguousLettersMatchExpr.Length;
 			TextControl.SelectionLength = 0;
 			TextControl.Focus();
 		}
@@ -299,11 +282,11 @@ namespace SIL.Transcelerator
 		protected void SuffixOrPrefixChanged(object sender, EventArgs e)
 		{
 			TextBox textBox = (TextBox)sender;
-			string format = (string)textBox.Tag;
+			var affixType = (AffixType)textBox.Tag;
 			string sText = textBox.Text.Trim();
 			if (sText.Length == 0)
 			{
-				Match match = FindAffixExpression(format);
+				Match match = FindAffixExpression(affixType);
 				if (match.Success)
 				{
 					TextControl.Text = match.Result("$`$'");
@@ -312,9 +295,10 @@ namespace SIL.Transcelerator
 				}
 				return;
 			}
-			SelectExistingPrefixOrSuffix(format);
-			int selRestore = TextControl.SelectionStart + format.IndexOf("{0}");
-			ReplaceSelectedTextInCurrentEditControl(Format(format, sText));
+			// REVIEW: See if this can be done using a single method in SubstitutionMatchGroup, so it's more easily testable
+			SelectExistingPrefixOrSuffix(affixType);
+			int selRestore = TextControl.SelectionStart + SubstitutionMatchGroup.GetAffixPlaceholderPosition(affixType);
+			ReplaceSelectedTextInCurrentEditControl(SubstitutionMatchGroup.FormatAffix(affixType, sText));
 			TextControl.SelectionStart = selRestore;
 			TextControl.SelectionLength = sText.Length;
 			UpdateRegExHelperControls();
@@ -344,13 +328,13 @@ namespace SIL.Transcelerator
 		void m_cboMatchGroup_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var selectedItemText = m_cboMatchGroup.Text;
-			if (selectedItemText == String.Empty)
+			if (selectedItemText == Empty)
 				return;
 			TextControl.TextChanged -= txtControl_TextChanged;
 			UpdateMatchGroup(selectedItemText);
 			int i = m_cboMatchGroup.SelectedIndex;
 			m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-			m_cboMatchGroup.Items[0] = selectedItemText != m_sRemoveItem ? m_sRemoveItem : Empty;
+			m_cboMatchGroup.Items[0] = selectedItemText != m_removeItem ? m_removeItem : Empty;
 			m_cboMatchGroup.SelectedIndex = i;
 			m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
 			TextControl.TextChanged += txtControl_TextChanged;
@@ -477,18 +461,17 @@ namespace SIL.Transcelerator
 		#region Private/protected helper methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Looks for a prefix or suffix expression (as determined by the format parameter)
-		/// covered, partially covered, or immediately preceding the selected text in the edit
-		/// control for the data grid view cell currently being edited.Selects the existing
-		/// prefix or suffix. If one is found, the selection in the text box edit control is
-		/// set to cover the entire expression representing the prefix or suffix, i.e.,
-		/// including the regular expression marker.
+		/// Looks for a prefix or suffix expression covered, partially covered, or immediately
+		/// preceding the selected text in the edit control for the data grid view cell currently
+		/// being edited.Selects the existing prefix or suffix. If one is found, the selection
+		/// in the text box edit control is set to cover the entire expression representing the
+		/// prefix or suffix, i.e., including the regular expression marker.
 		/// </summary>
-		/// <param name="format">The format.</param>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
 		/// ------------------------------------------------------------------------------------
-		private void SelectExistingPrefixOrSuffix(string format)
+		private void SelectExistingPrefixOrSuffix(AffixType affixType)
 		{
-			Match match = FindAffixExpression(format);
+			Match match = FindAffixExpression(affixType);
 			if (!match.Success)
 				return;
 			TextControl.SelectionStart = match.Index;
@@ -502,11 +485,11 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void UpdatePreview()
 		{
-			Substitution sub;
 			string sample = m_cboPreviewQuestion.Text;
 			for (int index = 0; index < m_dataGridView.Rows.Count; index++)
 			{
 				var row = m_dataGridView.Rows[index];
+				Substitution sub;
 				if (TextControl == null || m_dataGridView.CurrentCellAddress.Y != index)
 					sub = GetSubstitutionForRow(row);
 				else
@@ -521,11 +504,13 @@ namespace SIL.Transcelerator
 				}
 				if (sub.Valid)
 				{
-					string sResult = sub.RegEx.Replace(sample, sub.RegExReplacementString);
+					var sResult = sub.Apply(sample);
 					if (sResult == sample)
 					{
-						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
-						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Goldenrod;
+						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle
+						{
+							ForeColor = Color.Goldenrod
+						};
 						row.Cells[colPreviewResult.Index].Value = LocalizationManager.GetString(
 							"QuestionAdjustmentsDlg.RuleDidNotChangeResult", "No Change");
 					}
@@ -538,16 +523,31 @@ namespace SIL.Transcelerator
 				}
 				else
 				{
-					if (index == m_dataGridView.RowCount - 1 && IsNullOrEmpty(sub.MatchingPattern))
+					if ((index == m_dataGridView.RowCount - 1 && IsNullOrEmpty(sub.MatchingPattern)) ||
+					    sub.ErrorType == Substitution.RegExErrorType.None)
 					{
 						// Don't display error message in the "New" row.
 						row.Cells[colPreviewResult.Index].Value = Empty;
 					}
 					else
 					{
-						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle();
-						row.Cells[colPreviewResult.Index].Style.ForeColor = Color.Red;
-						row.Cells[colPreviewResult.Index].Value = sub.ErrorMessage;
+						row.Cells[colPreviewResult.Index].Style = new DataGridViewCellStyle
+						{
+							ForeColor = Color.Red
+						};
+						switch (sub.ErrorType)
+						{
+							case Substitution.RegExErrorType.Empty:
+								row.Cells[colPreviewResult.Index].Value = 
+									LocalizationManager.GetString("PhraseSubstitutionsDlg.EmptyRegEx",
+										"Nothing to match.");
+								break;
+							case Substitution.RegExErrorType.Exception:
+								row.Cells[colPreviewResult.Index].Value = sub.RegExError.Message;
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
 					}
 				}
 			}
@@ -574,7 +574,7 @@ namespace SIL.Transcelerator
 			{
 				string sExisting = ExistingMatchGroup;
 				m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-				m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? m_sRemoveItem : Empty;
+				m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? m_removeItem : Empty;
 				m_cboMatchGroup.SelectedIndex = m_cboMatchGroup.FindStringExact(sExisting);
 				m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
 			}
@@ -603,53 +603,10 @@ namespace SIL.Transcelerator
 		protected void UpdateMatchCount(int numTimesToMatch)
 		{
 			int insertAt = TextControl.SelectionStart;
-			if (insertAt == 0 && TextControl.SelectionLength == 0)
-				return;
-			int length = 0;
 			string text = TextControl.Text;
-			Match match = FindSelectedMatch(s_matchNTimes);
-			if (match.Success)
-			{
-				if (numTimesToMatch > 1)
-				{
-					string minRange = match.Result("${minMatches}");
-					if (IsNullOrEmpty(minRange))
-						minRange = "1,";
-					text = match.Result("$`${expressionToRepeat}");
-					insertAt = text.Length;
-					text += match.Result("{" + minRange + numTimesToMatch + "}");
-					length = text.Length - insertAt;
-					text += match.Result("$'");
-				}
-				else
-				{
-					text = match.Result("$`${expressionToRepeat}");
-					insertAt = text.Length;
-					length = 0;
-					text += match.Result("$'");
-				}
-			}
-			else
-			{
-				if (TextControl.SelectionLength > 1)
-				{
-					if (text[insertAt + TextControl.SelectionLength - 1] != ')' || text[insertAt] != '(')
-					{
-						text = text.Insert(insertAt + TextControl.SelectionLength, ")");
-						text = text.Insert(insertAt, "(");
-						insertAt += TextControl.SelectionLength + 2;
-					}
-					else
-						insertAt += TextControl.SelectionLength;
-				}
-				if (numTimesToMatch > 1)
-				{
-					string sTextToInsert = "{1," + numTimesToMatch + "}";
-					length = sTextToInsert.Length;
-					text = text.Insert(insertAt, sTextToInsert);
-				}
-			}
-			TextControl.Text = text;
+
+			TextControl.Text = SubstitutionMatchGroup.UpdateRangeMax(numTimesToMatch, text, ref insertAt,
+				TextControl.SelectionLength, out int length);;
 			TextControl.SelectionStart = insertAt;
 			TextControl.SelectionLength = length;
 		}
@@ -660,86 +617,41 @@ namespace SIL.Transcelerator
 		/// selection) in the edit control for the data grid view cell currently being edited,
 		/// or inserts a new match group substitution expression if there isn't one already.
 		/// </summary>
-		/// <param name="sGroup">The s group.</param>
+		/// <param name="sGroup">The group.</param>
 		/// ------------------------------------------------------------------------------------
 		protected void UpdateMatchGroup(string sGroup)
 		{
-			if (IsNullOrEmpty(sGroup))
-				throw new ArgumentException("Parameter must not be null or empty", "sGroup");
+			var group = sGroup == m_entireMatch ? SubstitutionMatchGroup.EntireMatch :
+				sGroup == m_removeItem ? SubstitutionMatchGroup.RemoveGroup : new SubstitutionMatchGroup(sGroup);
 
-			if (sGroup == kEntireMatch)
-				sGroup = "&";
 			int insertAt = TextControl.SelectionStart;
-			int length = sGroup.Length;
 			string text = TextControl.Text;
-			Match match = FindSelectedMatch(s_matchSubstGroup);
-			if (match.Success)
-			{
-				if (sGroup != m_sRemoveItem)
-				{
-					text = match.Result(@"$`$$");
-					insertAt = text.Length;
 
-					if (!char.IsNumber(sGroup[0]) && sGroup != "&")
-					{
-						text += "{" + sGroup + "}";
-						insertAt++;
-					}
-					else
-					{
-						text += sGroup;
-					}
-
-					text += match.Result("$'");
-				}
-				else
-				{
-					text = match.Result("$`");
-					insertAt = text.Length;
-					length = 0;
-					text += match.Result("$'");
-				}
-			}
-			else
-			{
-				if (TextControl.SelectionLength > 1)
-					text = text.Remove(insertAt, TextControl.SelectionLength);
-
-				if (!char.IsNumber(sGroup[0]) && sGroup != "&")
-				{
-					text = text.Insert(insertAt, "${" + sGroup + "}");
-					insertAt++;
-				}
-				else
-				{
-					text = text.Insert(insertAt, "$" + sGroup);
-				}
-				insertAt++; // Don't want to select the $
-			}
-			TextControl.Text = text;
+			TextControl.Text = group.UpdateMatchGroup(text, ref insertAt,
+				TextControl.SelectionLength, out int length);
 			TextControl.SelectionStart = insertAt;
 			TextControl.SelectionLength = length;
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets a list of strings that can be used to describe the regular expression match
-		/// groups found in the given expression.
+		/// Gets an array of objects that can be used to describe the regular
+		/// expression match groups found in the given expression.
 		/// </summary>
+		/// <remarks>Actually, all of the objects in the array are strings, but they are
+		/// returned as an object array because that makes the caller happier.</remarks>
 		/// ------------------------------------------------------------------------------------
-		protected string[] GetMatchGroups(string matchExpression)
+		protected object[] GetMatchGroups(string matchExpression)
 		{
-			try
+			return SubstitutionMatchGroup.GetMatchGroups(matchExpression).Select(g =>
 			{
-				Regex r = new Regex(matchExpression);
-				string[] matchGroups = r.GetGroupNames();
-				matchGroups[0] = kEntireMatch;
-				return matchGroups;
-			}
-			catch (ArgumentException)
-			{
-				return new string[0];
-			}
+				switch (g.Type)
+				{
+					case SubstitutionMatchGroup.MatchGroupType.Normal: return (object)g.Group;
+					case SubstitutionMatchGroup.MatchGroupType.EntireMatch: return m_entireMatch;
+					default: throw new ArgumentOutOfRangeException();
+				}
+			}).ToArray();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -759,14 +671,13 @@ namespace SIL.Transcelerator
 		/// partially covered, or immediately preceding the selected text in the edit control
 		/// for the data grid view cell currently being edited.
 		/// </summary>
-		/// <param name="format">Format string in the form "\b{0}" (indicating a prefix) or
-		/// "{0}\b" (indicating a suffix).</param>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
 		/// <returns>The (English) text portion of the prefix or suffix, i.e., without the
 		/// regular expression marker</returns>
 		/// ------------------------------------------------------------------------------------
-		private string GetExistingAffix(string format)
+		private string GetExistingAffix(AffixType affixType)
 		{
-			Match match = FindAffixExpression(format);
+			Match match = FindAffixExpression(affixType);
 			return (match.Success) ? match.Result("$1") : Empty;
 		}
 
@@ -776,32 +687,12 @@ namespace SIL.Transcelerator
 		/// preceding the selected text in the edit control for the data grid view cell
 		/// currently being edited.
 		/// </summary>
-		/// <param name="format">Format string in the form "\b{0}" (indicating a prefix) or
-		/// "{0}\b" (indicating a suffix).</param>
 		/// <returns>A Match object representing the regular expression for the prefix or
 		/// suffix</returns>
 		/// ------------------------------------------------------------------------------------
-		private Match FindAffixExpression(string format)
-		{
-			Regex matchPattern = new Regex(Format(format.Replace(@"\b", @"\\b"), kContiguousLettersMatchExpr));
-			return FindSelectedMatch(matchPattern);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the expression covered, partially covered, or immediately preceding the
-		/// selected text in the edit control for the data grid view cell currently being edited.
-		/// </summary>
-		/// <param name="matchPattern">The match pattern.</param>
-		/// <returns>A Match object representing the text found.</returns>
-		/// ------------------------------------------------------------------------------------
-		private Match FindSelectedMatch(Regex matchPattern)
-		{
-			Match match = matchPattern.Match(TextControl.Text);
-			while (match.Success && match.Index + match.Length < TextControl.SelectionStart)
-				match = match.NextMatch();
-			return (match.Success && match.Index <= TextControl.SelectionStart) ? match : Match.Empty;
-		}
+		private Match FindAffixExpression(AffixType affixType) =>
+			SubstitutionMatchGroup.FindAffixExpressionAt(affixType, TextControl.Text,
+				TextControl.SelectionStart);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -811,7 +702,7 @@ namespace SIL.Transcelerator
 		private Substitution GetSubstitutionForRow(DataGridViewRow row)
 		{
 			return GetSubstitutionForRow(row.Cells[colMatch.Index].Value as string,
-				row.Cells[colReplacement.Index].Value as String, row);
+				row.Cells[colReplacement.Index].Value as string, row);
 		}
 
 		/// ------------------------------------------------------------------------------------

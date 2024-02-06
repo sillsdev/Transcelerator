@@ -44,7 +44,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			{
 				host.Log(this, "Starting " + pluginName);
 
-				TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
+				ErrorHandling.Initialize(host.ApplicationName, host.ApplicationVersion);
 
 				var formToShow = new TxlMasterQuestionPreProcessorForm(host.GetStandardVersification(StandardScrVersType.English));
 				formToShow.Show();

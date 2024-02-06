@@ -38,7 +38,7 @@ namespace SIL.Transcelerator
 			void FormatControlTextWithProductNames(Control ctrl)
             {
                 ctrl.Text = Format(ctrl.Text, UNSQuestionsDialog.kScriptureForgeProductName,
-                    TxlCore.kPluginName, m_hostAppName, UNSQuestionsDialog.kPTXPrintProductName);
+                    TxlConstants.kPluginName, m_hostAppName, UNSQuestionsDialog.kPTXPrintProductName);
             }
 
             void DealWithOutdatedTranslation(Control ctrl)

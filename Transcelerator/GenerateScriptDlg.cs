@@ -22,8 +22,8 @@ using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
 using SIL.Extensions;
 using SIL.Scripture;
-using SIL.Utils;
 using SIL.Windows.Forms;
+using SIL.Windows.Forms.Miscellaneous;
 using static System.String;
 using File = System.IO.File;
 
@@ -84,15 +84,15 @@ namespace SIL.Transcelerator
 
 			switch (m_generator.GenerateTemplateRange)
 			{
-				case HtmlScriptGenerator.RangeOption.WholeBook:
+				case RangeOption.WholeBook:
 					m_rdoWholeBook.Checked = true;
 					TrySelectItem(m_cboBooks, m_generator.SelectedBook);
 					break;
-				case HtmlScriptGenerator.RangeOption.SingleSection:
+				case RangeOption.SingleSection:
 					m_rdoSingleSection.Checked = true;
 					TrySelectItem(m_cboSection, Properties.Settings.Default.GenerateTemplateSection);
 					break;
-				case HtmlScriptGenerator.RangeOption.RangeOfSections:
+				case RangeOption.RangeOfSections:
 					m_rdoSectionRange.Checked = true;
 					TrySelectItem(m_cboStartSection, Properties.Settings.Default.GenerateTemplateSection);
 					TrySelectItem(m_cboEndSection, Properties.Settings.Default.GenerateTemplateEndSection);
@@ -105,13 +105,13 @@ namespace SIL.Transcelerator
 
 			switch (m_generator.HandlingOfUntranslatedQuestions)
 			{
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn:
+				case HandleUntranslatedQuestionsOption.Warn:
 					m_rdoDisplayWarning.Checked = true;
 					break;
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC:
+				case HandleUntranslatedQuestionsOption.UseLWC:
 					m_rdoUseOriginal.Checked = true;
 					break;
-				case HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Skip:
+				case HandleUntranslatedQuestionsOption.Skip:
 					m_rdoSkipUntranslated.Checked = true;
 					break;
 				default:
@@ -123,14 +123,14 @@ namespace SIL.Transcelerator
 			m_lblFolder.Text = m_generator.Folder ?? defaultFolder;
 
 			m_numBlankLines.Value = m_generator.NumberOfBlankLinesForAnswer;
-			if (!m_generator.QuestionGroupHeadingsTextColor.IsEmpty)
-				m_lblQuestionGroupHeadingsColor.ForeColor = m_generator.QuestionGroupHeadingsTextColor;
-			if (!m_generator.LWCQuestionTextColor.IsEmpty)
-				m_lblLWCQuestionColor.ForeColor = m_generator.LWCQuestionTextColor;
-			if (!m_generator.LWCAnswerTextColor.IsEmpty)
-				m_lblLWCAnswerTextColor.ForeColor = m_generator.LWCAnswerTextColor;
-			if (!m_generator.CommentTextColor.IsEmpty)
-				m_lblCommentTextColor.ForeColor = m_generator.CommentTextColor;
+			if (!IsNullOrEmpty(m_generator.QuestionGroupHeadingsTextColor))
+				m_lblQuestionGroupHeadingsColor.ForeColor = ColorTranslator.FromHtml(m_generator.QuestionGroupHeadingsTextColor);
+			if (!IsNullOrEmpty(m_generator.LWCQuestionTextColor))
+				m_lblLWCQuestionColor.ForeColor = ColorTranslator.FromHtml(m_generator.LWCQuestionTextColor);
+			if (!IsNullOrEmpty(m_generator.LWCAnswerTextColor))
+				m_lblLWCAnswerTextColor.ForeColor = ColorTranslator.FromHtml(m_generator.LWCAnswerTextColor);
+			if (!IsNullOrEmpty(m_generator.CommentTextColor))
+				m_lblCommentTextColor.ForeColor = ColorTranslator.FromHtml(m_generator.CommentTextColor);
 			m_chkNumberQuestions.Checked = m_generator.NumberQuestions;
 
 			m_rdoUseExternalCss.Checked = m_generator.UseExternalCss;
@@ -151,13 +151,13 @@ namespace SIL.Transcelerator
 				m_chkOverwriteCss.Checked |= m_chkOverwriteCss.Enabled && !m_numBlankLines.Value.Equals(m_generator.NumberOfBlankLinesForAnswer);
 			};
 
-			m_lblCommentTextColor.Tag = new Func<Color>(() => m_generator.CommentTextColor);
+			m_lblCommentTextColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.CommentTextColor));
 			m_lblCommentTextColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => m_generator.LWCAnswerTextColor);
+			m_lblLWCAnswerTextColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.LWCAnswerTextColor));
 			m_lblLWCAnswerTextColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblLWCQuestionColor.Tag = new Func<Color>(() => m_generator.LWCQuestionTextColor);
+			m_lblLWCQuestionColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.LWCQuestionTextColor));
 			m_lblLWCQuestionColor.ForeColorChanged += OnLblForeColorChanged;
-			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => m_generator.QuestionGroupHeadingsTextColor);
+			m_lblQuestionGroupHeadingsColor.Tag = new Func<Color>(() => ColorTranslator.FromHtml(m_generator.QuestionGroupHeadingsTextColor));
 			m_lblQuestionGroupHeadingsColor.ForeColorChanged += OnLblForeColorChanged;
 		}
 
@@ -481,7 +481,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_rdoWholeBook.Checked)
 			{
-				m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.WholeBook;
+				m_generator.GenerateTemplateRange = RangeOption.WholeBook;
 				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
 			}
 			else
@@ -490,13 +490,13 @@ namespace SIL.Transcelerator
 
 				if (m_rdoSingleSection.Checked)
 				{
-					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.SingleSection;
+					m_generator.GenerateTemplateRange = RangeOption.SingleSection;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = "";
 				}
 				else
 				{
-					m_generator.GenerateTemplateRange = HtmlScriptGenerator.RangeOption.RangeOfSections;
+					m_generator.GenerateTemplateRange = RangeOption.RangeOfSections;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
 				}
@@ -513,10 +513,10 @@ namespace SIL.Transcelerator
 			m_generator.OutputFullPassageAtStartOfSection = m_chkPassageBeforeOverview.Checked;
 			m_generator.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
 
-			m_generator.QuestionGroupHeadingsTextColor = m_lblQuestionGroupHeadingsColor.ForeColor;
-			m_generator.LWCQuestionTextColor = m_lblLWCQuestionColor.ForeColor;
-			m_generator.LWCAnswerTextColor = m_lblLWCAnswerTextColor.ForeColor;
-			m_generator.CommentTextColor = m_lblCommentTextColor.ForeColor;
+			m_generator.QuestionGroupHeadingsTextColor = ColorTranslator.ToHtml(m_lblQuestionGroupHeadingsColor.ForeColor);
+			m_generator.LWCQuestionTextColor = ColorTranslator.ToHtml(m_lblLWCQuestionColor.ForeColor);
+			m_generator.LWCAnswerTextColor = ColorTranslator.ToHtml(m_lblLWCAnswerTextColor.ForeColor);
+			m_generator.CommentTextColor = ColorTranslator.ToHtml(m_lblCommentTextColor.ForeColor);
 			m_generator.NumberOfBlankLinesForAnswer = (int)m_numBlankLines.Value;
 			m_generator.NumberQuestions = m_chkNumberQuestions.Checked;
 
@@ -531,13 +531,13 @@ namespace SIL.Transcelerator
 			m_generator.IncludeLWCComments = m_chkIncludeLWCComments.Checked;
 
 			if (m_rdoDisplayWarning.Checked)
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Warn;
 			else if (m_rdoUseOriginal.Checked)
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.UseLWC;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.UseLWC;
 			else
 			{
 				Debug.Assert(m_rdoDisplayWarning.Checked);
-				m_generator.HandlingOfUntranslatedQuestions = HtmlScriptGenerator.HandleUntranslatedQuestionsOption.Warn;
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Warn;
 			}
 
 			m_generator.Folder = m_lblFolder.Text;
@@ -560,7 +560,7 @@ namespace SIL.Transcelerator
 							"There are {0} questions in the selected range that do not have confirmed translations. These questions " +
 							"will be excluded from the checking script.",
 							"Param is a number."), untranslatedQuestions),
-						TxlCore.kPluginName, MessageBoxButtons.OKCancel), form =>
+						TxlConstants.kPluginName, MessageBoxButtons.OKCancel), form =>
 					{
 						DialogResult = form.DialogResult;
 						form.Disposed += (o, args) => { Close(); };
