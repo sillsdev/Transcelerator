@@ -643,13 +643,26 @@ namespace SIL.Transcelerator
 		{
 			var locales = LocalizationsFileAccessor
 				.GetAvailableLocales(m_installDir).Union(new[] { "en-US" }).ToList();
-			var languagesNeedingDistinctionByLocale = locales
-				.GroupBy(GetGeneralCode).Where(g => g.Count() > 1).Select(g => g.Key);
+
+			TxlPlugin.LocIncompleteViewModel.LocalesWithLocalizedQuestions = locales;
+
+			var localesByGeneralCode = locales.Select(GetGeneralCode).GroupBy(c => c).ToList();
+
+			// In addition to the languages that will be included by virtue of the existence
+			// of localized UI strings in a LocalizationManager, we also need to include specific
+			// variants (e.g., American vs. British English) where we distinguish those in our
+			// LocalizedPhrases files as well as any languages that have localized questions
+			// but no localized UI strings.
+			var additionalLocales = localesByGeneralCode.Where(g => g.Count() > 1)
+				.Select(g => g.Key)
+				.Union(localesByGeneralCode.Select(g => g.Key)
+					.Where(gc => !LocalizationManager.GetUILanguages(true)
+					.Any(l => l.IetfLanguageTag == gc)));
 
 			mnuDisplayLanguage.InitializeWithAvailableUILocales(HandleDisplayLanguageSelected,
 				TxlPlugin.PrimaryLocalizationManager, TxlPlugin.LocIncompleteViewModel,
 				ShowMoreUiLanguagesDlg,
-				locales.Where(l => languagesNeedingDistinctionByLocale.Contains(
+				locales.Where(l => additionalLocales.Contains(
 					GetGeneralCode(l))).ToDictionary(GetLanguageNameWithDetails, l => l));
 		}
 
