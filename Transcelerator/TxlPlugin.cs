@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.   
-// <copyright from='2013' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.   
+// <copyright from='2013' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -45,7 +45,7 @@ namespace SIL.Transcelerator
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
 
-		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
+		internal static TxlLocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 		internal static UserInfo s_userInfo;
 
