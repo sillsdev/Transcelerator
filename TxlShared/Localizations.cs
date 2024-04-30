@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2018' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2018' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
@@ -345,6 +346,29 @@ namespace SIL.Transcelerator.Localization
 			}
 			groups.RemoveAll(g => g.SubGroups == null && g.TranslationUnits == null);
 		}
+
+		
+
+		public void DeleteEmptyGroups()
+		{
+			DeleteEmptyGroups(Groups);
+			if (!Groups.Any())
+				Groups = null;
+		}
+
+		private static void DeleteEmptyGroups(List<Group> groups)
+		{
+			foreach (var group in groups)
+			{
+				if (group.SubGroups != null)
+				{
+					DeleteEmptyGroups(group.SubGroups);
+					if (!group.SubGroups.Any())
+						group.SubGroups = null;
+				}
+			}
+			groups.RemoveAll(g => g.SubGroups == null && (g.TranslationUnits == null || g.TranslationUnits.Count == 0));
+		}
 	}
 	#endregion
 
@@ -414,12 +438,12 @@ namespace SIL.Transcelerator.Localization
 			TranslationUnits.Add(tu);
 		}
 
-		public TranslationUnit AddTranslationUnit(UIDataString data, string translation = null, bool isLocalized = true)
+		public TranslationUnit AddTranslationUnit(UIDataString data, bool markApproved, string translation = null, bool isLocalized = true)
 		{
-			// Note: In the context of this method, if a translation string is provided that the caller deems to be a valid
-			// localization for the data string, then it is always regarded as being an "approved" translation.
 			if (translation == null)
 				isLocalized = false;
+			if (!isLocalized)
+				markApproved = false;
 			var idPrefix = $"{data.Type.IdLetter()}:";
 			var idSuffix = "";
 			string context;
@@ -452,7 +476,9 @@ namespace SIL.Transcelerator.Localization
 							{
 								existing.Target.Text = translation;
 								existing.Target.IsLocalized = isLocalized;
-								existing.Approved = isLocalized; // see Note above
+								if (markApproved)
+									existing.Target.Approved = true;
+								existing.Approved = isLocalized && markApproved;
 							}
 							return existing;
 						}
@@ -471,9 +497,11 @@ namespace SIL.Transcelerator.Localization
 			{
 				target.Text = translation;
 				target.IsLocalized = isLocalized;
+				if (markApproved)
+					target.Approved = true;
 			}
 			var newTu = new TranslationUnit {Id = $"{idPrefix}{context}{idSuffix}", English = data.SourceUIString,
-				Target = target, Context = context, Approved = isLocalized}; // see Note above re: Approved
+				Target = target, Context = context, Approved = markApproved};
 			AddTranslationUnit(newTu);
 			return newTu;
 		}
@@ -519,8 +547,9 @@ namespace SIL.Transcelerator.Localization
 		[XmlAttribute(AttributeName = "id")]
 		public string Id { get; set; }
 
-		// Although the XLIFF 1.2 standard says a Target can have a "signed-off" State, crowdin doesn't use this.
-		// Instead it indicates this by means of an "approved" attribute on the TranslationUnit itself.
+		// Although the XLIFF 1.2 standard says a Target can have a "signed-off" State, Crowdin indicates
+		// this by means of an "approved" attribute on the TranslationUnit itself as well as marking the
+		// Target state as "final".
 		[XmlAttribute(AttributeName = "approved")]
 		[DefaultValue(null)]
 		public string ApprovedStr
@@ -554,21 +583,29 @@ namespace SIL.Transcelerator.Localization
 	[XmlRoot(ElementName = "target")]
 	public class Localization
 	{
+		private const string kFinal = "final";
+		private const string kTranslated = "translated";
+
 		private bool m_isLocalized;
+		private string m_state;
 
 		[XmlAttribute(AttributeName = "state")]
 		public string State
 		{
-			get => IsLocalized ? "translated" : "needs-translation";
+			get => m_state ?? (IsLocalized ? kTranslated : "needs-translation");
 			set
 			{
 				switch (value)
 				{
 					default: IsLocalized = false; break;
-					case "translated":
-					case "final": // This is what we get from Crowdin
+					case kTranslated:
+					case kFinal: // This is what we get from Crowdin
+						IsLocalized = true; 
+						m_state = value;
+						break;
 					case "signed-off": // Defined in XLIFF 1.2, but no longer used in TXL's XLIFF files
-						IsLocalized = true; break;
+						Approved = true;
+						break;
 				}
 			}
 		}
@@ -582,6 +619,17 @@ namespace SIL.Transcelerator.Localization
 
 		[XmlText]
 		public string Text { get; set; }
+
+		[XmlIgnore]
+		public bool Approved
+		{
+			get => IsLocalized && State == kFinal;
+			set
+			{
+				IsLocalized = true;
+				State = kFinal;
+			}
+		}
 	}
 	#endregion
 
