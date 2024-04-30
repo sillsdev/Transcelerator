@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2012' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2023, SIL International.
+// <copyright from='2012' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -24,7 +24,6 @@ using L10NSharp.XLiffUtils;
 using Paratext.PluginInterfaces;
 using SIL.ObjectModel;
 using SIL.Scripture;
-using SIL.Utils;
 using SIL.Windows.Forms;
 using static System.Int32;
 using static System.String;
@@ -269,6 +268,9 @@ namespace SIL.Transcelerator
 			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
 				return;
 
+			TranslatablePhrase.NoEnglishVersionExplanation = LocalizationManager.GetString("General.UserAddedEmptyPhrase",
+				"User-added question with no English version");
+
 			m_locationFormat = m_lblSelectLocation.Text;
 			m_lblVernacularQuestion.Text = Format(m_lblVernacularQuestion.Text, m_vernLanguage);
 			if (IsHandleCreated)
@@ -332,7 +334,7 @@ namespace SIL.Transcelerator
 				{
 					btnOk.Enabled = true;
 					if (m_ptHelper.GetMatchingPhrases(StartReference, EndReference)
-						.Any(mp => mp.PhraseToDisplayInUI == m_txtEnglishQuestion.Text))
+						.Any(mp => mp.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion && mp.PhraseInUse == m_txtEnglishQuestion.Text))
 					{
 						btnOk.Enabled = false;
 						m_chkNoEnglish.Visible = false;
@@ -576,7 +578,7 @@ namespace SIL.Transcelerator
 					"feature will now be requested for you."),
 				Format(LocalizationManager.GetString("NewQuestionDlg.RequestFeatureCaption",
 						"{0} Feature Request", "Parameter is \"Transcelerator\" (plugin name)"),
-					TxlCore.kPluginName),
+					TxlConstants.kPluginName),
 				MessageBoxButtons.OKCancel, MessageBoxIcon.None), form =>
 			{
 				if (form.DialogResult == DialogResult.OK)

@@ -29,10 +29,7 @@ namespace SIL.Transcelerator
 			TextControl = new TextBox();
 		}
 
-		internal TextBox FauxEditedTextControl
-		{
-			get { return TextControl; }
-		}
+		internal TextBox FauxEditedTextControl => TextControl;
 
 		internal void ChangeSuffix(string suffix)
 		{
@@ -49,15 +46,10 @@ namespace SIL.Transcelerator
 			UpdateMatchCount(c);
 		}
 
-		public string[] CallGetMatchGroups(string expression)
-		{
-			return GetMatchGroups(expression);
-		}
-
 		public void ChangeMatchGroup(string s)
 		{
 			if (s == string.Empty)
-				s = m_sRemoveItem;
+				s = m_removeItem;
 			UpdateMatchGroup(s);
 		}
 	}
@@ -850,152 +842,6 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region GetMatchGroups tests
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is an empty string.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_EmptyMatchExpr()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups(string.Empty);
-			Assert.AreEqual(1, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with no match groups.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_NoMatchGroupsInExpr()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups("No match groups here, folks!");
-			Assert.AreEqual(1, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with no match groups
-		/// but has literal parentheses.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_NoMatchGroupsInExpr_LiteralParens()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups(@"No \(match groups\) here, folks!");
-			Assert.AreEqual(1, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input consists of a single match group.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_EntireExprIsAGroup()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups("(1 match group here)");
-			Assert.AreEqual(2, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("1", matches[1]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with 1 un-named match
-		/// group.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprContainsOneGroup_UnNamed()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups("before (1 match group here) after");
-			Assert.AreEqual(2, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("1", matches[1]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with 1 named match
-		/// group.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprContainsOneGroup_Named()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups("before (?<grp1>1 match group here) after");
-			Assert.AreEqual(2, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("grp1", matches[1]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with two
-		/// un-nested match groups.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprContainsTwoGroups_UnNested_UnNamed()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups(@"before (\S+) verb(\bed) after");
-			Assert.AreEqual(3, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("1", matches[1]);
-			Assert.AreEqual("2", matches[2]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with two
-		/// un-nested match groups.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprContainsTwoGroups_UnNested_Named()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups(@"before (?'word'\S+) verb(?<edSuffix>\bed) after");
-			Assert.AreEqual(3, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("word", matches[1]);
-			Assert.AreEqual("edSuffix", matches[2]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string with a match group
-		/// nested inside another.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprContainsTwoGroups_NestedNamedAndUnNamed()
-		{
-			string[] matches = m_dlg.CallGetMatchGroups(@"before (?<namedGroup>why (\S+) not\?) after");
-			Assert.AreEqual(3, matches.Length);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, matches[0]);
-			Assert.AreEqual("1", matches[1]);
-			Assert.AreEqual("namedGroup", matches[2]);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Tests ability to get the match groups when input is a string that cannot
-		/// be interpreted as a legal regular expression.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		[Test]
-		public void GetMatchGroups_ExprInvalid()
-		{
-			Assert.AreEqual(0, m_dlg.CallGetMatchGroups(@"before (?<named group>why (\S+) not\?) after").Length);
-		}
-		#endregion
-
 		#region MatchGroup tests
 		///--------------------------------------------------------------------------------------
 		/// <summary>
@@ -1042,10 +888,10 @@ namespace SIL.Transcelerator
 		[Test]
 		public void MatchGroup_InsertEntireMatch_EmptyTextBox()
 		{
-			m_dlg.ChangeMatchGroup(PhraseSubstitutionsDlg.kEntireMatch);
+			m_dlg.ChangeMatchGroup("Entire match");
 			Assert.AreEqual("$&", m_textBox.Text);
 			Assert.AreEqual("&", m_textBox.SelectedText);
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, m_dlg.ExistingMatchGroup);
+			Assert.AreEqual("Entire match", m_dlg.ExistingMatchGroup);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -1071,8 +917,7 @@ namespace SIL.Transcelerator
 		///--------------------------------------------------------------------------------------
 		/// <summary>
 		/// Tests the ExistingMatchGroup and UpdateMatchGroup methods when the selection
-		/// follows all the text in the text box, and there is no explicit number of occurrences
-		/// specified.
+		/// follows all the text in the text box, and there is no match group.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
@@ -1102,7 +947,7 @@ namespace SIL.Transcelerator
 			m_textBox.Text = "abc $0";
 			m_textBox.SelectionStart = m_textBox.Text.Length;
 			m_textBox.SelectionLength = 0;
-			Assert.AreEqual(PhraseSubstitutionsDlg.kEntireMatch, m_dlg.ExistingMatchGroup);
+			Assert.AreEqual("Entire match", m_dlg.ExistingMatchGroup);
 			m_dlg.ChangeMatchGroup(string.Empty);
 			Assert.AreEqual("abc ", m_textBox.Text);
 			Assert.AreEqual(4, m_textBox.SelectionStart);

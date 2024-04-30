@@ -111,6 +111,15 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="*">
                 <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
             </Component>
+			<Component Guid="*">
+                <File Id="TxlData.dll_P9" ShortName="ttl1s8od.dll" KeyPath="yes" Name="TxlData.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.Windows.Forms.dll_P9" ShortName="telg6my6.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.dll_P9" ShortName="vyey6mw8.dll" KeyPath="yes" Name="TxlShared.dll" />
+            </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
             </Component>
@@ -132,15 +141,9 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Guid="*">
                 <File Id="Newtonsoft.Json.dll_P9" ShortName="malr336y.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
             </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.dll_P9" ShortName="47v9a799.dll" KeyPath="yes" Name="TxlCore.dll" />
-            </Component>
-            <Component Guid="*">
+          <Component Guid="*">
                 <File Id="L10NSharp.dll_P9" ShortName="apdq6l10.dll" KeyPath="yes"
                       Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.dll_P9" ShortName="mdx6az21.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="SIL.WritingSystems.dll_P9" ShortName="u3wozlbp.dll" KeyPath="yes"
@@ -205,20 +208,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.pdb_P9" ShortName="8o1biihw.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
             </Component>
             <Component Guid="*">
-                <File Id="ComprehensionCheckingData.dll_P9" ShortName="nr1q7tyv.dll" KeyPath="yes"
-                      Name="ComprehensionCheckingData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.pdb_P9" ShortName="f7c1i78x.pdb" KeyPath="yes"
-                      Name="ComprehensionCheckingData.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.pdb_P9" ShortName="j8i37ie7.pdb" KeyPath="yes" Name="TxlCore.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.pdb_P9" ShortName="lcaifco3.pdb" KeyPath="yes" Name="SilUtils.pdb" />
-            </Component>
-            <Component Guid="*">
                 <File Id="Icon_P9" ShortName="44tpy8ze.ico" KeyPath="yes" Name="TXL no TXL.ico" />
             </Component>
             <Component Guid="*">
@@ -231,6 +220,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <Component Id="ReleaseNotes.md_P9" Guid="*">
                 <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
             </Component>
+            <Component Guid="*">
+                <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
+            </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA" Source="..\Transcelerator\bin\x64\Release">
@@ -240,6 +235,15 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
 				 the WIX documentation that it would be, and searching the Internet, it seems it might not be. -->
             <Component Guid="*">
                 <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlData.dll_P9Beta" ShortName="292ks4c3.dll" KeyPath="yes" Name="TxlData.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.Windows.Forms.dll_P9Beta" ShortName="l7ydhpx8.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
+            </Component>
+			<Component Guid="*">
+                <File Id="TxlShared.dll_P9Beta" ShortName="bly1tb4q.dll" KeyPath="yes" Name="TxlShared.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
@@ -263,14 +267,8 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Newtonsoft.Json.dll_P9Beta" ShortName="2yd4aev9.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
             </Component>
             <Component Guid="*">
-                <File Id="TxlCore.dll_P9Beta" ShortName="uk0wei71.dll" KeyPath="yes" Name="TxlCore.dll" />
-            </Component>
-            <Component Guid="*">
                 <File Id="L10NSharp.dll_P9Beta" ShortName="qywkwk5r.dll" KeyPath="yes"
                       Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.dll_P9Beta" ShortName="t5lk78ie.dll" KeyPath="yes" Name="SilUtils.dll" />
             </Component>
             <Component Guid="*">
                 <File Id="SIL.WritingSystems.dll_P9Beta" ShortName="0dmsdv4y.dll" KeyPath="yes"
@@ -335,20 +333,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                 <File Id="Transcelerator.pdb_P9Beta" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
             </Component>
             <Component Guid="*">
-                <File Id="ComprehensionCheckingData.dll_P9Beta" ShortName="vp29mioj.dll" KeyPath="yes"
-                      Name="ComprehensionCheckingData.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="ComprehensionCheckingData.pdb_P9Beta" ShortName="jmjj2d6f.pdb" KeyPath="yes"
-                      Name="ComprehensionCheckingData.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlCore.pdb_P9Beta" ShortName="l1xkhgcz.pdb" KeyPath="yes" Name="TxlCore.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SilUtils.pdb_P9Beta" ShortName="gty40lss.pdb" KeyPath="yes" Name="SilUtils.pdb" />
-            </Component>
-            <Component Guid="*">
                 <File Id="Icon_P9Beta" ShortName="fihp0pz8.ico" KeyPath="yes" Name="TXL no TXL.ico" />
             </Component>
             <Component Guid="*">
@@ -360,6 +344,12 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             </Component>
             <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
                 <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
+            </Component>
+            <Component Guid="*">
+                <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
+            </Component>
+            <Component Guid="*">
+                <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
             </Component>
         </ComponentGroup>
 

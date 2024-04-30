@@ -7,21 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transcelerator", "Transcele
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransceleratorTests", "Transcelerator\TransceleratorTests\TransceleratorTests.csproj", "{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtilsTests", "SilUtils\SilUtilsTests\SilUtilsTests.csproj", "{F023F83B-EC39-48D4-A98C-F65E43609B20}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SilUtils", "SilUtils\SilUtils.csproj", "{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessor", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessor.csproj", "{54363E9B-3A5A-46D6-9ACA-3F1626572647}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCore", "TxlCore\TxlCore.csproj", "{140A72D9-B0B3-4E19-AA3B-0127C3014D39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlMasterQuestionPreProcessorTests", "TxlMasterQuestionPreProcessor\TxlMasterQuestionPreProcessorTests\TxlMasterQuestionPreProcessorTests.csproj", "{6DE38973-4256-4AD7-A48F-56675CA826E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlCoreTests", "TxlCore\TxlCoreTests\TxlCoreTests.csproj", "{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomInstallerActions", "Installer\CustomInstallerActions\CustomInstallerActions.csproj", "{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComprehensionCheckingData", "ComprehensionCheckingData\ComprehensionCheckingData.csproj", "{C6474F83-4E0A-462F-BD87-883C197F1BE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataIntegrityTests", "DataIntegrityTests\DataIntegrityTests.csproj", "{E71615C2-2056-491D-AC85-FFEB0FC9D34A}"
 EndProject
@@ -38,6 +28,16 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "Paratext", "%ParatextInstal
 		AttachLaunchAction = No
 		IORedirection = Auto
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TxlData", "TxlData\TxlData.csproj", "{78B291BF-A845-4FE1-BED7-6B44905FA483}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlShared.Windows.Forms", "TxlShared.Windows.Forms\TxlShared.Windows.Forms.csproj", "{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlDataTests", "TxlData\TxlDataTests\TxlDataTests.csproj", "{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TxlShared", "TxlShared\TxlShared.csproj", "{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TxlSharedTests", "TxlShared\TxlSharedTests\TxlSharedTests.csproj", "{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,22 +63,6 @@ Global
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release - Copy To Paratext|x64.Build.0 = Release|x64
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|x64.ActiveCfg = Release|x64
 		{DB5B6E93-353D-4C21-92F1-F9BF83F173E4}.Release|x64.Build.0 = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|x64.ActiveCfg = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Debug|x64.Build.0 = Debug|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|x64.ActiveCfg = Release|x64
-		{F023F83B-EC39-48D4-A98C-F65E43609B20}.Release|x64.Build.0 = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|x64.ActiveCfg = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Debug|x64.Build.0 = Debug|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.ActiveCfg = Release|x64
-		{4E4CE84F-BB35-416A-8E4F-B8C096DA32B7}.Release|x64.Build.0 = Release|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.ActiveCfg = Debug - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug - Copy To Paratext|x64.Build.0 = Debug - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Debug|x64.ActiveCfg = Debug|x64
@@ -87,14 +71,6 @@ Global
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release - Copy To Paratext|x64.Build.0 = Release - Copy To Paratext|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release|x64.ActiveCfg = Release|x64
 		{54363E9B-3A5A-46D6-9ACA-3F1626572647}.Release|x64.Build.0 = Release|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug|x64.ActiveCfg = Debug|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Debug|x64.Build.0 = Debug|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|x64.ActiveCfg = Release|x64
-		{140A72D9-B0B3-4E19-AA3B-0127C3014D39}.Release|x64.Build.0 = Release|x64
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Debug|x64.ActiveCfg = Debug|x64
@@ -103,28 +79,12 @@ Global
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Release - Copy To Paratext|x64.Build.0 = Release|x64
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Release|x64.ActiveCfg = Release|x64
 		{6DE38973-4256-4AD7-A48F-56675CA826E2}.Release|x64.Build.0 = Release|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Debug|x64.ActiveCfg = Debug|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Debug|x64.Build.0 = Debug|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x64.ActiveCfg = Release|x64
-		{884A12C9-4F3B-4861-A4F2-CA3309C49C2E}.Release|x64.Build.0 = Release|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Debug|x64.ActiveCfg = Debug|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release - Copy To Paratext|x64.Build.0 = Release|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release|x64.ActiveCfg = Release|x64
 		{D5CF7D63-5DE2-450A-B1AF-3A6FC0459508}.Release|x64.Build.0 = Release|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Debug|x64.ActiveCfg = Debug|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Debug|x64.Build.0 = Debug|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Release - Copy To Paratext|x64.Build.0 = Release|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Release|x64.ActiveCfg = Release|x64
-		{C6474F83-4E0A-462F-BD87-883C197F1BE6}.Release|x64.Build.0 = Release|x64
 		{E71615C2-2056-491D-AC85-FFEB0FC9D34A}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|x64
 		{E71615C2-2056-491D-AC85-FFEB0FC9D34A}.Debug - Copy To Paratext|x64.Build.0 = Debug|x64
 		{E71615C2-2056-491D-AC85-FFEB0FC9D34A}.Debug|x64.ActiveCfg = Debug|x64
@@ -137,6 +97,46 @@ Global
 		{64795DCD-9F35-4E20-9A1F-888A6416329A}.Debug|x64.ActiveCfg = Release|x64
 		{64795DCD-9F35-4E20-9A1F-888A6416329A}.Release - Copy To Paratext|x64.ActiveCfg = Release|x64
 		{64795DCD-9F35-4E20-9A1F-888A6416329A}.Release|x64.ActiveCfg = Release|x64
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Debug - Copy To Paratext|x64.Build.0 = Debug|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Debug|x64.Build.0 = Debug|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Release - Copy To Paratext|x64.ActiveCfg = Release|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Release - Copy To Paratext|x64.Build.0 = Release|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Release|x64.ActiveCfg = Release|Any CPU
+		{78B291BF-A845-4FE1-BED7-6B44905FA483}.Release|x64.Build.0 = Release|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Debug - Copy To Paratext|x64.Build.0 = Debug|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Debug|x64.Build.0 = Debug|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Release - Copy To Paratext|x64.ActiveCfg = Release|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Release - Copy To Paratext|x64.Build.0 = Release|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Release|x64.ActiveCfg = Release|Any CPU
+		{4A902293-7AFA-4770-AF67-E7B1EC8ACD56}.Release|x64.Build.0 = Release|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Debug - Copy To Paratext|x64.Build.0 = Debug|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Debug|x64.Build.0 = Debug|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Release - Copy To Paratext|x64.ActiveCfg = Release|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Release - Copy To Paratext|x64.Build.0 = Release|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Release|x64.ActiveCfg = Release|Any CPU
+		{8F984318-A2B1-4D5F-85E1-3FB53463F2DA}.Release|x64.Build.0 = Release|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Debug - Copy To Paratext|x64.Build.0 = Debug|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Debug|x64.Build.0 = Debug|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Release - Copy To Paratext|x64.ActiveCfg = Release|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Release - Copy To Paratext|x64.Build.0 = Release|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Release|x64.ActiveCfg = Release|Any CPU
+		{DD64C074-CEDE-45F2-B95B-D1F68891AA3D}.Release|x64.Build.0 = Release|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Debug - Copy To Paratext|x64.ActiveCfg = Debug|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Debug - Copy To Paratext|x64.Build.0 = Debug|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Debug|x64.Build.0 = Debug|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Release - Copy To Paratext|x64.ActiveCfg = Release|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Release - Copy To Paratext|x64.Build.0 = Release|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Release|x64.ActiveCfg = Release|Any CPU
+		{FF16A8B8-532C-426C-ADA4-7BC412EEA2AF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -27,7 +27,7 @@ namespace DataIntegrityTests
 			
 			XmlSchemaSet schema = new XmlSchemaSet();  
 			schema.Add("", Path.Combine(folder, "keyTermRules.xsd"));
-			XmlReader rd = XmlReader.Create(Path.Combine(folder, TxlCore.kKeyTermRulesFilename));
+			XmlReader rd = XmlReader.Create(Path.Combine(folder, TxlConstants.kKeyTermRulesFilename));
 			XDocument doc = XDocument.Load(rd);  
 			doc.Validate(schema, delegate(object sender, ValidationEventArgs e)
 			{

@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.   
-// <copyright from='2013' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.   
+#region // Copyright (c) 2023, SIL International.   
+// <copyright from='2013' to='2023' company='SIL International'>
+//		Copyright (c) 2023, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -76,7 +76,7 @@ namespace SIL.Transcelerator
 			return s_analytics;
 		}
 
-		public string Name => TxlCore.kPluginName;
+		public string Name => TxlConstants.kPluginName;
 		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 		public string VersionString => Version.ToString();
 		public string Publisher => "SIL International";
@@ -93,7 +93,13 @@ namespace SIL.Transcelerator
 		public TxlPlugin(IPluginHost host)
 		{
 			Host = host;
-			TxlCore.InitializeErrorHandling(host.ApplicationName, host.ApplicationVersion);
+			ErrorHandling.Initialize(host.ApplicationName, host.ApplicationVersion);
+			ParatextDataFileAccessor.OnFailedToObtainWriteLock += fileName =>
+			{
+				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
+					"Unable to obtain exclusive write access to data that belongs to Transcelerator: {0}",
+					"Param 0: key that indicates the data file that was to be written"), fileName);
+			};
 		}
 
 	    public async void Run(IPluginHost host, IParatextChildState state)
@@ -342,7 +348,7 @@ namespace SIL.Transcelerator
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedLocFolder = Path.Combine(s_baseInstallFolder, "localization");
-			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlCore.kPluginName);
+			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlConstants.kPluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
 
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
@@ -360,13 +366,13 @@ namespace SIL.Transcelerator
 
 			LocalizationManager.Create(TranslationMemory.XLiff, 
 				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlCore.kEmailAddress,
+				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
 				"SIL.Windows.Forms.Reporting");
 
 			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId,
-				TxlCore.kPluginName, TxlCore.kPluginName, s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlCore.kEmailAddress,
-				"SIL.Transcelerator", "SIL.Utils");
+				TxlConstants.kPluginName, TxlConstants.kPluginName, s_version, installedLocFolder,
+				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
+				"SIL.Transcelerator");
 			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
 				"transcelerator", IssueRequestForLocalization);
 		}

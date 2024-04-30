@@ -17,7 +17,8 @@ using System.Windows.Forms;
 using Paratext.PluginInterfaces;
 using SIL.Transcelerator;
 using SIL.Transcelerator.Localization;
-using SIL.Utils;
+using SIL.Windows.Forms.FileSystem;
+using SIL.Windows.Forms.Miscellaneous;
 using File = System.IO.File;
 
 namespace SIL.TxlMasterQuestionPreProcessor
@@ -25,7 +26,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	public partial class TxlMasterQuestionPreProcessorForm : Form
 	{
 		private readonly IVersification m_masterVersification;
-		private string m_sfmSourceLabelText;
+		private readonly string m_sfmSourceLabelText;
 
 		public TxlMasterQuestionPreProcessorForm(IVersification englishVersification)
 		{
@@ -35,7 +36,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			m_sfmSourceLabelText = lblSource.Text;
 
 			SetDefaultSfmSourceFile();
-			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlCore.kQuestionsFilename);
+			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlConstants.kQuestionsFilename);
 		}
 
 		private void SetDefaultSfmSourceFile()
@@ -222,7 +223,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 						sb.Append("\n");
 						sb.Append(fileToWrite);
 						if (problemsFound > 0)
-							sb.Append(string.Format(", with {0} problems!", problemsFound));
+							sb.Append($", with {problemsFound} problems!");
 						else
 							successfullyProcessedFiles.Add(fileToWrite);
 					}

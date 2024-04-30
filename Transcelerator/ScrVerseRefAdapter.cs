@@ -17,7 +17,7 @@ using static System.Int32;
 
 namespace SIL.Transcelerator
 {
-	class ScrVerseRefAdapter : IScrVerseRef, IEquatable<IVerseRef>
+	public class ScrVerseRefAdapter : IScrVerseRef, IEquatable<IVerseRef>
 	{
 		private IVerseRef m_verseRef;
 		private readonly IProject m_project;

@@ -13,7 +13,7 @@
 * Includes some new questions (primarily in the Old Testament)
 
 ## 2.0.5 22 January 2021
-* Changed verse numbers to output using <span class="verse"> so they can be formatted using styles in word processing programs (e.g., MS Word) that recognize the span elements that have the class attribute set. Note: If you use an external CSS, you will need to regenerate it or manually edit it in order for verse numbers to display as superscripted in the generated HTML checking script files. (To regenerate the external CSS, in the __Generate Checking Script__ dialog box on the __Appearance__ tab, select the __Overwrite Existing CSS File__ option.)
+* Changed verse numbers to output using a span element with class "verse" so they can be formatted using styles in word processing programs (e.g., MS Word) that recognize the span elements that have the class attribute set. Note: If you use an external CSS, you will need to regenerate it or manually edit it in order for verse numbers to display as superscripted in the generated HTML checking script files. (To regenerate the external CSS, in the __Generate Checking Script__ dialog box on the __Appearance__ tab, select the __Overwrite Existing CSS File__ option.)
 
 ## 2.0.3 11 January 2021
 * Added Help system
