@@ -44,7 +44,7 @@
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-    <PackageReference Include="SIL.Scripture" Version="13.0.1" />
+    <PackageReference Include="SIL.Scripture" Version="14.0.0" />
     <PackageReference Include="System.Buffers">
       <Version>4.5.1</Version>
     </PackageReference>
