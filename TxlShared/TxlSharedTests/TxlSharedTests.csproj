@@ -64,7 +64,7 @@
       <Version>3.16.3</Version>
     </PackageReference>
     <PackageReference Include="SIL.TestUtilities">
-      <Version>13.0.1</Version>
+      <Version>14.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
