@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.   
 // <copyright from='2013' to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -70,7 +70,7 @@ namespace SIL.Transcelerator
 
                     const string key = "3iuv313n8t";
 #endif
-				s_analytics = new Analytics(key, GetUserInfo(host), allowTracking);
+				s_analytics = new Analytics(key, GetUserInfo(host), allowTracking, useCallingAssemblyVersion:true);
 			}
 
 			return s_analytics;
@@ -122,6 +122,7 @@ namespace SIL.Transcelerator
 				}
 				catch (Exception)
 				{
+					// If something goes wrong, just use the default
 				}
 
 				lock (s_projectStates)
@@ -364,15 +365,14 @@ namespace SIL.Transcelerator
 			// come where neither set of languages is a superset, and then this strategy wouldn't
 			// work.
 
-			LocalizationManager.Create(TranslationMemory.XLiff, 
-				desiredUiLangId, "Palaso", "SIL Shared Strings", s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
-				"SIL.Windows.Forms.Reporting");
+			LocalizationManager.Create(desiredUiLangId, "Palaso", "SIL Shared Strings", s_version,
+				installedLocFolder, relativeSettingPathForLocFolder, icon,
+				TxlConstants.kEmailAddress, new [] {"SIL.Windows.Forms.Reporting"});
 
-			var primaryMgr = LocalizationManager.Create(TranslationMemory.XLiff, desiredUiLangId,
-				TxlConstants.kPluginName, TxlConstants.kPluginName, s_version, installedLocFolder,
+			var primaryMgr = LocalizationManager.Create(desiredUiLangId, TxlConstants.kPluginName,
+				TxlConstants.kPluginName, s_version, installedLocFolder,
 				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
-				"SIL.Transcelerator");
+				new [] {"SIL.Transcelerator"});
 			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
 				"transcelerator", IssueRequestForLocalization);
 		}
