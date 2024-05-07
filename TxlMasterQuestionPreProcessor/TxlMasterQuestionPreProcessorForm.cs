@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2018' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2018' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -11,14 +11,18 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Paratext.PluginInterfaces;
 using SIL.Transcelerator;
 using SIL.Transcelerator.Localization;
 using SIL.Windows.Forms.FileSystem;
 using SIL.Windows.Forms.Miscellaneous;
+using static System.String;
+using static SIL.Transcelerator.Localization.LocalizationsFileGenerator;
 using File = System.IO.File;
 
 namespace SIL.TxlMasterQuestionPreProcessor
@@ -51,7 +55,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			get
 			{
 				var baseFile = chkWriteTempFile.Checked ? txtSourceFile.Text : txtXmlQuestionFile.Text;
-				return (String.IsNullOrWhiteSpace(baseFile)) ? String.Empty : Path.GetDirectoryName(baseFile);
+				return (IsNullOrWhiteSpace(baseFile)) ? Empty : Path.GetDirectoryName(baseFile);
 			}
 		}
 
@@ -68,7 +72,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				MessageBox.Show(this, "Created/Updated file:\n" + generatedFileName, TxlMasterQuestionPreProcessorPlugin.pluginName);
 			else
 				MessageBox.Show("Required file not found:\n" + missingFileName, Text);
-			UpdateGenerateButtonEnabledState(null, null);
+			UpdateGenerateButtonEnabledState();
 		}
 
 		private string TryGenerateMasterQuestionFile(out string missingFileName)
@@ -76,15 +80,15 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			missingFileName = null;
 			string destQuestionsFilename = chkWriteTempFile.Checked ? Path.ChangeExtension(txtSourceFile.Text, "xml") :
 				txtXmlQuestionFile.Text;
-			string alternativesFilename = Path.Combine(Path.GetDirectoryName(txtSourceFile.Text) ?? string.Empty,
+			string alternativesFilename = Path.Combine(Path.GetDirectoryName(txtSourceFile.Text) ?? Empty,
 				Path.ChangeExtension(Path.GetFileNameWithoutExtension(txtSourceFile.Text) + " - AlternateFormOverrides", "xml"));
 			FileInfo finfoSfmQuestions = new FileInfo(txtSourceFile.Text);
 			FileInfo finfoXmlQuestions = new FileInfo(destQuestionsFilename);
 			FileInfo finfoAlternatives = new FileInfo(alternativesFilename);
 
 			if ((!finfoXmlQuestions.Exists ||
-					(finfoSfmQuestions.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoSfmQuestions.LastWriteTimeUtc) ||
-					(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc)) ||
+				(finfoSfmQuestions.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoSfmQuestions.LastWriteTimeUtc) ||
+				(finfoSfmQuestions.Exists && finfoAlternatives.Exists && finfoXmlQuestions.LastWriteTimeUtc < finfoAlternatives.LastWriteTimeUtc)) ||
 				MessageBox.Show("File " + destQuestionsFilename + " already exists and appears to be up-to-date relative to " + finfoSfmQuestions.Name +
 					" and " + finfoAlternatives.Name + ". Do you want to re-generate it anyway?", Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
 			{
@@ -114,7 +118,11 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				return null;
 			}
 
-			var existingTranslationsFilename = String.IsNullOrWhiteSpace(txtSourceFile.Text) ? null : txtSourceFile.Text;
+			txlLocalizationManager.RegexLocIdsToSet = RegexToMatchLocIDs;
+			txlLocalizationManager.Overwrite = (OverwriteOption)cboOverwrite.SelectedIndex;
+			txlLocalizationManager.MarkApproved = chkMarkApproved.Checked;
+
+			var existingTranslationsFilename = IsNullOrWhiteSpace(txtSourceFile.Text) ? null : txtSourceFile.Text;
 			var finfoExistingTxlTranslations = existingTranslationsFilename == null ? null : new FileInfo(txtSourceFile.Text);
 			var finfoMasterQuestionFile = new FileInfo(txtXmlQuestionFile.Text);
 
@@ -263,31 +271,50 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				lblLocale.Enabled = txtLocale.Enabled = false;
 				lblSource.Text = m_sfmSourceLabelText;
 				chkWriteTempFile.Enabled = true;
-				m_chkRetainOnlyTranslated.Visible = false;
+				m_chkRetainOnlyTranslated.Visible = lblRegexFilterForLocIds.Visible =
+					lblOverwrite.Visible = cboOverwrite.Visible = chkMarkApproved.Visible =
+					txtRegexToMatchRefs.Visible = false;
 			}
 			else
 			{
 				if (!SourceHasExpectedExtension)
-					txtSourceFile.Text = String.Empty;
+					txtSourceFile.Text = Empty;
 				lblLocale.Enabled = txtLocale.Enabled = true;
 				lblSource.Text = "Existing Translations from Transcelerator (optional):";
 				chkWriteTempFile.Enabled = chkWriteTempFile.Checked = false;
-				m_chkRetainOnlyTranslated.Visible = true;
+				m_chkRetainOnlyTranslated.Visible = lblRegexFilterForLocIds.Visible =
+					chkMarkApproved.Visible = txtRegexToMatchRefs.Visible = true;
+				lblOverwrite.Visible = cboOverwrite.Visible = txtSourceFile.Text != Empty;
 			}
 		}
 
-		private void UpdateGenerateButtonEnabledState(object sender, EventArgs e)
+		private void HandleSourceFileChanged(object sender, EventArgs e)
+		{
+			if (!rdoSfmToXml.Checked)
+			{
+				btnGenerate.Enabled = (IsNullOrWhiteSpace(txtSourceFile.Text) || SourceHasExpectedExtension) &&
+					!IsNullOrWhiteSpace(txtLocale.Text);
+				lblOverwrite.Visible = cboOverwrite.Visible = txtSourceFile.Text != Empty;
+			}
+
+			UpdateGenerateButtonEnabledState();
+		}
+
+		private void UpdateGenerateButtonEnabledState()
 		{
 			if (rdoSfmToXml.Checked)
 			{
-				btnGenerate.Enabled = !String.IsNullOrWhiteSpace(txtSourceFile.Text) && SourceHasExpectedExtension;
+				btnGenerate.Enabled = !IsNullOrWhiteSpace(txtSourceFile.Text) && SourceHasExpectedExtension;
 			}
 			else
 			{
-				btnGenerate.Enabled = (String.IsNullOrWhiteSpace(txtSourceFile.Text) || SourceHasExpectedExtension) &&
-					!String.IsNullOrWhiteSpace(txtLocale.Text);
+				btnGenerate.Enabled = (IsNullOrWhiteSpace(txtSourceFile.Text) || SourceHasExpectedExtension) &&
+					!IsNullOrWhiteSpace(txtLocale.Text);
 			}
 			btnGenerate.Enabled &= Directory.Exists(DestinationDirectory);
+
+			if (lblRegexFilterForLocIds.Visible && lblRegexFilterForLocIds.ForeColor == Color.Red)
+				btnGenerate.Enabled = false;
 		}
 
 		private void btnNavigateToSourceFile_Click(object sender, EventArgs e)
@@ -299,6 +326,25 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				if (dlg.ShowDialog() == DialogResult.OK)
 					txtSourceFile.Text = dlg.FileName;
 			}
+		}
+
+		private Regex RegexToMatchLocIDs { get; set; }
+
+		private void txtRegexToMatchLocIDs_TextChanged(object sender, EventArgs e)
+		{
+			bool valid;
+			try
+			{
+				if (txtRegexToMatchRefs.Text != Empty)
+					RegexToMatchLocIDs = new Regex(txtRegexToMatchRefs.Text, RegexOptions.Compiled);
+				valid = true;
+			}
+			catch
+			{
+				valid = false;
+			}
+
+			lblRegexFilterForLocIds.ForeColor = valid ? lblLocale.ForeColor : Color.Red;
 		}
 	}
 }

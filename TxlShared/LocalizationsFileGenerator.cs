@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2018' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2018' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using SIL.Xml;
 using static System.String;
@@ -21,8 +22,19 @@ namespace SIL.Transcelerator.Localization
 {
 	public class LocalizationsFileGenerator : LocalizationsFileAccessor
 	{
+		public enum OverwriteOption
+		{
+			None,
+			Unapproved,
+			All,
+		}
+
 		private XmlSerializer Serializer => new XmlSerializer(typeof(Localizations),
 			"urn:oasis:names:tc:xliff:document:1.2");
+
+		public Regex RegexLocIdsToSet { get; set; }
+		public bool MarkApproved { get; set; }
+		public OverwriteOption Overwrite { get; set; }
 
 		public LocalizationsFileGenerator(string directory, string locale) : base(directory, locale)
 		{
@@ -32,6 +44,10 @@ namespace SIL.Transcelerator.Localization
 		internal LocalizationsFileGenerator()
         {
 		}
+
+		// For testing only
+		internal bool AreLocalizationsValid(out string error) => Localizations.IsValid(out error);
+
 
 		public void GenerateOrUpdateFromMasterQuestions(string masterQuestionsFilename, string existingTxlTranslationsFilename = null, bool retainOnlyTranslatedStrings = false)
 		{
@@ -49,7 +65,7 @@ namespace SIL.Transcelerator.Localization
 				Serializer.Serialize(writer, XliffRoot);
 		}
 
-		private Action<Group, UIDataString> AddTranslationUnit { get; set; }
+		private Action<Group, UIDataString> AddTranslationUnitIfIncluded { get; set; }
 
 		internal void GenerateOrUpdateFromMasterQuestions(QuestionSections questions, List<XmlTranslation> existingTxlTranslations = null, bool retainOnlyTranslatedStrings = false)
 		{
@@ -67,17 +83,19 @@ namespace SIL.Transcelerator.Localization
 
 			InitializeLocalizations();
 
+			Action<Group, UIDataString> AddTranslationUnit;
+
 			if (existingTxlTranslations == null)
 			{
 				if (existingLocalizations == null)
-					AddTranslationUnit = (group, data) => group.AddTranslationUnit(data);
+					AddTranslationUnit = (group, data) => group.AddTranslationUnit(data, MarkApproved);
 				else
 				{
 					AddTranslationUnit = (group, data) =>
 					{
 						var tu = existingLocalizations.GetStringLocalization(data);
 						if (tu == null)
-							group.AddTranslationUnit(data);
+							group.AddTranslationUnit(data, MarkApproved);
 						else
 							group.AddTranslationUnit(tu);
 					};
@@ -89,7 +107,7 @@ namespace SIL.Transcelerator.Localization
 				{
 					AddTranslationUnit = (group, data) =>
 					{
-						group.AddTranslationUnit(data, LookupTranslation(existingTxlTranslations, data));
+						group.AddTranslationUnit(data, MarkApproved, LookupTranslation(existingTxlTranslations, data));
 					};
 				}
 				else
@@ -97,20 +115,39 @@ namespace SIL.Transcelerator.Localization
 					AddTranslationUnit = (group, data) =>
 					{
 						var tu = existingLocalizations.GetStringLocalization(data);
+
 						if (tu == null)
-							group.AddTranslationUnit(data, LookupTranslation(existingTxlTranslations, data));
-						else
+							group.AddTranslationUnit(data, MarkApproved, LookupTranslation(existingTxlTranslations, data));
+						else if (ShouldOverwrite(tu))
+						{
+							var localization = LookupTranslation(existingTxlTranslations, data);
+							if (localization != null)
+							{
+								tu = null;
+								group.AddTranslationUnit(data, MarkApproved, localization);
+							}
+						}
+
+						if (tu != null)
 							group.AddTranslationUnit(tu);
 					};
 				}
 			}
+
+			AddTranslationUnitIfIncluded = RegexLocIdsToSet == null ?
+				AddTranslationUnit : (group, data) =>
+				{
+					if (!IsNullOrEmpty(data.ScriptureReference) && RegexLocIdsToSet.IsMatch(data.ScriptureReference))
+						AddTranslationUnit(group, data);
+				};
+
 
             foreach (var section in questions.Items)
 			{
 				var sectionGroup = new Group {Id = FileBody.GetSectionId(section)};
 				Localizations.Groups.Add(sectionGroup);
 				UIDataString key = new UISectionHeadDataString(section);
-				AddTranslationUnit(sectionGroup, key);
+				AddTranslationUnitIfIncluded(sectionGroup, key);
 				
 				foreach (Category category in section.Categories)
 				{
@@ -120,7 +157,7 @@ namespace SIL.Transcelerator.Localization
 						if (!Localizations.Categories.TranslationUnits.Any(tu => tu.English == category.Type))
 						{
 							key = new UISimpleDataString(category.Type, LocalizableStringType.Category);
-							AddTranslationUnit(Localizations.Categories, key);
+							AddTranslationUnitIfIncluded(Localizations.Categories, key);
 						}
 					}
 
@@ -138,7 +175,7 @@ namespace SIL.Transcelerator.Localization
 						{
 							questionGroup = categoryGroup.AddSubGroup($"{FileBody.kQuestionIdPrefix}{q.ScriptureReference}{FileBody.kQuestionGroupRefSeparator}{q.PhraseInUse}");
 							key = new UIQuestionDataString(q, true, false);
-							AddTranslationUnit(questionGroup, key);
+							AddTranslationUnitIfIncluded(questionGroup, key);
 						}
 
 						AddAlternatesSubgroupAndLocalizableStringsIfNeeded(q, questionGroup);
@@ -150,11 +187,28 @@ namespace SIL.Transcelerator.Localization
 
 			if (retainOnlyTranslatedStrings)
 				Localizations.DeleteGroupsWithoutLocalizations();
+			else if (RegexLocIdsToSet != null)
+				Localizations.DeleteEmptyGroups();
 
-			AddTranslationUnit = null;
+			AddTranslationUnitIfIncluded = null;
 		}
 
-        private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
+		private bool ShouldOverwrite(TranslationUnit tu)
+		{
+			switch (Overwrite)
+			{
+				case OverwriteOption.None:
+					return false;
+				case OverwriteOption.Unapproved:
+					return !tu.Approved;
+				case OverwriteOption.All:
+					return true;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		private void AddAlternatesSubgroupAndLocalizableStringsIfNeeded(Question q, Group questionGroup)
 		{
 			bool IncludeAsLocalizable(AlternativeForm af) => !af.Hide && !IsNullOrWhiteSpace(af.Text);
 
@@ -169,7 +223,7 @@ namespace SIL.Transcelerator.Localization
 						continue;
 
 					var key = new UIAlternateDataString(q, index, false);
-					AddTranslationUnit(subGroup, key);
+					AddTranslationUnitIfIncluded(subGroup, key);
 				}
 			}
 		}
@@ -186,7 +240,7 @@ namespace SIL.Transcelerator.Localization
 						continue;
 
 					var key = new UIAnswerOrNoteDataString(q, type, index);
-					AddTranslationUnit(subGroup, key);
+					AddTranslationUnitIfIncluded(subGroup, key);
 				}
 			}
 		}
