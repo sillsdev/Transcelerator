@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2019, SIL International.
-// <copyright from='2013' to='2019' company='SIL International'>
-//		Copyright (c) 2019, SIL International.
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2013' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -18,7 +18,7 @@ namespace SIL.Transcelerator.Localization
 {
 	public class TestLocalizationsFileAccessor : LocalizationsFileGenerator
 	{
-		public TranslationUnit AddLocalizationEntry(UIDataString data, string localizedString = null, bool isLocalized = true, int specificSection = 0)
+		public TranslationUnit AddLocalizationEntry(UIDataString data, bool markApproved = true, string localizedString = null, bool isLocalized = true, int specificSection = 0)
 		{
 			if (String.IsNullOrWhiteSpace(data?.SourceUIString))
 				throw new ArgumentException("Invalid key!", nameof(data));
@@ -32,7 +32,7 @@ namespace SIL.Transcelerator.Localization
 			{
 				existing = Localizations.Categories.TranslationUnits.SingleOrDefault(c => c.Id == data.SourceUIString);
 				if (existing == null)
-					return Localizations.Categories.AddTranslationUnit(data, localizedString, isLocalized);
+					return Localizations.Categories.AddTranslationUnit(data, markApproved, localizedString, isLocalized);
 			}
 			else if (type == LocalizableStringType.SectionHeading)
 			{
@@ -43,7 +43,7 @@ namespace SIL.Transcelerator.Localization
 					var sectionGroup = new Group {Id = id};
 					Localizations.Groups.Add(sectionGroup);
 					sectionGroup.SubGroups = new List<Group>();
-					return sectionGroup.AddTranslationUnit(data, localizedString, isLocalized);
+					return sectionGroup.AddTranslationUnit(data, markApproved, localizedString, isLocalized);
 				}
 			}
 			else
@@ -76,7 +76,7 @@ namespace SIL.Transcelerator.Localization
 			if (existing == null)
 			{
 				Debug.Assert(group != null);
-				return group.AddTranslationUnit(data, localizedString, isLocalized);
+				return group.AddTranslationUnit(data, markApproved, localizedString, isLocalized);
 			}
 			existing.Target.Text = localizedString;
 			existing.Target.IsLocalized = isLocalized;
