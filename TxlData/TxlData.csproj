@@ -33,7 +33,7 @@
     <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageReference Include="ParatextPluginInterfaces" Version="2.0.100" />
     <PackageReference Include="SIL.Scripture" Version="14.0.0" />
-    <PackageReference Include="SIL.WritingSystems" Version="14.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="14.1.0-beta0005" />
   </ItemGroup>
 
   <ItemGroup>

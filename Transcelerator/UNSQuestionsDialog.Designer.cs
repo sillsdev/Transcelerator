@@ -456,7 +456,7 @@ namespace SIL.Transcelerator
             // mnuProduceScriptureForgeFiles
             // 
             this.mnuProduceScriptureForgeFiles.CheckOnClick = true;
-            this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.sf_logo_medium;
+            this.mnuProduceScriptureForgeFiles.Image = global::SIL.Transcelerator.Properties.Resources.publish_gray;
             this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuProduceScriptureForgeFiles, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, "Param 0: \"Scripture Forge\" (product name); Param 1: \"PTXprint\" (Product name)");
             this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.Menu.File.ProduceScriptureForgeFiles");

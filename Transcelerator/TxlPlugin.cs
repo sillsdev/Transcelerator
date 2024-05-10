@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.   
-// <copyright from='2013' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+#region // Copyright (c) 2024, SIL International.   
+// <copyright from='2013' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -22,10 +22,13 @@ using DesktopAnalytics;
 using L10NSharp;
 using SIL.Scripture;
 using JetBrains.Annotations;
+using Microsoft.Web.WebView2.Core;
 using Paratext.PluginInterfaces;
 using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Reporting;
 using SIL.WritingSystems;
+using static System.Environment;
+using static System.Environment.SpecialFolder;
 using static System.String;
 
 namespace SIL.Transcelerator
@@ -35,19 +38,23 @@ namespace SIL.Transcelerator
 	{
 		public const string kDefaultUILocale = "en";
 		public const string kDocsFolder = "docs";
-
-		private static readonly string s_baseInstallFolder;
+		
 		private static readonly string s_company;
 		private static readonly string s_version;
+		private static UserInfo s_userInfo;
+
 		private static Analytics s_analytics; // Get lock on s_projectStates to set this.
 		private static Dictionary<IProject, ProjectState> s_projectStates =
 			new Dictionary<IProject, ProjectState>();
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
 
+		internal static string InstallDir { get; }
+		internal static string ProgramDataFolder { get; }
+		internal static CoreWebView2Environment WebView2Environment { get; set; }
+
 		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
-		internal static UserInfo s_userInfo;
 
 		/// <summary>
 		/// Gets the Analytics singleton. Caller is responsible for ensuring that
@@ -84,10 +91,35 @@ namespace SIL.Transcelerator
 		static TxlPlugin()
 		{
 			var assembly = Assembly.GetExecutingAssembly();
-			s_baseInstallFolder = Path.GetDirectoryName(assembly.Location);
+			InstallDir = Path.GetDirectoryName(assembly.Location);
 			var attributes = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 			s_company = attributes.Length == 0 ? "SIL" : ((AssemblyCompanyAttribute)attributes[0]).Company;
 			s_version = assembly.GetName().Version.ToString();
+
+			// On Windows, CommonApplicationData is actually the preferred location for this
+			// because it is not user-specific, but we do it this way to make it work on Linux.
+			try
+			{
+				var deprecatedProgramDataFolder = Path.Combine(GetFolderPath(CommonApplicationData),
+					"SIL", "Transcelerator");
+				if (Directory.Exists(deprecatedProgramDataFolder))
+				{
+					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder,
+						TxlConstants.kQuestionsFilename);
+					if (File.Exists(cachedQuestionsFilename))
+						File.Delete(cachedQuestionsFilename);
+					Directory.Delete(deprecatedProgramDataFolder);
+				}
+			}
+			catch (Exception)
+			{
+				// This was just a clean-up step from a possible previous version of Transcelerator, so if
+				// something goes wrong, ignore it.
+			}
+
+			ProgramDataFolder = Path.Combine(GetFolderPath(LocalApplicationData), "SIL", "Transcelerator");
+			if (!Directory.Exists(ProgramDataFolder))
+				Directory.CreateDirectory(ProgramDataFolder);
 		}
 
 		public TxlPlugin(IPluginHost host)
@@ -124,6 +156,8 @@ namespace SIL.Transcelerator
 				{
 					// If something goes wrong, just use the default
 				}
+
+				CreateCoreWebView2Environment(preferredUiLocale);
 
 				lock (s_projectStates)
 				{
@@ -226,7 +260,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private void CleanUpForFatalException(IProject projectToKill = null)
+	    private void CleanUpForFatalException(IProject projectToKill = null)
 		{
 			bool lockTaken = false;
 			try
@@ -344,11 +378,38 @@ namespace SIL.Transcelerator
 		{
 			s_userInfo.UILanguageCode = languageId;
 			Analytics.IdentifyUpdate(s_userInfo);
+			CreateCoreWebView2Environment(languageId);
+		}
+
+		/// <summary>
+		/// Set up a writable folder for WebView2 (used currently for splash screen and Help About)
+		/// to store local user data (cookies, etc.)
+		/// </summary>
+		/// <param name="language">The locale of the language used for controls in the browser
+		/// (e.g., for the context menu).</param>
+		private static async void CreateCoreWebView2Environment(string language)
+		{
+			try
+			{
+				var userDataFolder = Path.Combine(ProgramDataFolder, "WebView2");
+				Directory.CreateDirectory(userDataFolder);
+				var task = CoreWebView2Environment.CreateAsync(null, userDataFolder,
+					new CoreWebView2EnvironmentOptions(null, language));
+
+				await task.ContinueWith(t =>
+				{
+					WebView2Environment = t.Result;
+				});
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError(e);
+			}
 		}
 
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
-			var installedLocFolder = Path.Combine(s_baseInstallFolder, "localization");
+			var installedLocFolder = Path.Combine(InstallDir, "localization");
 			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlConstants.kPluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
 
@@ -404,7 +465,7 @@ namespace SIL.Transcelerator
 
 		public static string GetFileDistributedWithApplication(params string[] partsOfTheSubPath)
 		{
-			var path = partsOfTheSubPath.Aggregate(s_baseInstallFolder, Path.Combine);
+			var path = partsOfTheSubPath.Aggregate(InstallDir, Path.Combine);
 
 			if (File.Exists(path))
 				return path;

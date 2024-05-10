@@ -40,9 +40,9 @@ namespace SIL.Transcelerator
             this.m_btnOk = new System.Windows.Forms.Button();
             this.m_linkLabelWorkingWithScriptureForge = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.m_linkLabelPtxPrint = new System.Windows.Forms.LinkLabel();
             this.m_linkLabelScriptureForge = new System.Windows.Forms.LinkLabel();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-            this.m_linkLabelPtxPrint = new System.Windows.Forms.LinkLabel();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
             this.SuspendLayout();
@@ -52,13 +52,15 @@ namespace SIL.Transcelerator
             this.m_lblExplanation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_lblExplanation.AutoSize = true;
+            this.m_lblExplanation.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblExplanation, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_lblExplanation, resources.GetString("m_lblExplanation.LocalizationComment"));
             this.l10NSharpExtender1.SetLocalizingId(this.m_lblExplanation, "ScriptureForgeInfoDlg.m_lblExplanation");
             this.m_lblExplanation.Location = new System.Drawing.Point(3, 0);
             this.m_lblExplanation.Name = "m_lblExplanation";
-            this.m_lblExplanation.Size = new System.Drawing.Size(442, 39);
+            this.m_lblExplanation.Size = new System.Drawing.Size(443, 48);
             this.m_lblExplanation.TabIndex = 3;
+            this.m_lblExplanation.Tag = "TM";
             this.m_lblExplanation.Text = resources.GetString("m_lblExplanation.Text");
             // 
             // m_lblMoreInfoOnline
@@ -66,13 +68,14 @@ namespace SIL.Transcelerator
             this.m_lblMoreInfoOnline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_lblMoreInfoOnline.AutoSize = true;
+            this.m_lblMoreInfoOnline.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblMoreInfoOnline, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_lblMoreInfoOnline, null);
             this.l10NSharpExtender1.SetLocalizingId(this.m_lblMoreInfoOnline, "ScriptureForgeInfoDlg.m_lblMoreInfoOnline");
-            this.m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 42);
+            this.m_lblMoreInfoOnline.Location = new System.Drawing.Point(3, 51);
             this.m_lblMoreInfoOnline.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.m_lblMoreInfoOnline.Name = "m_lblMoreInfoOnline";
-            this.m_lblMoreInfoOnline.Size = new System.Drawing.Size(442, 13);
+            this.m_lblMoreInfoOnline.Size = new System.Drawing.Size(443, 16);
             this.m_lblMoreInfoOnline.TabIndex = 4;
             this.m_lblMoreInfoOnline.Text = "More information is available on-line:";
             // 
@@ -83,7 +86,7 @@ namespace SIL.Transcelerator
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_btnOk, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_btnOk, null);
             this.l10NSharpExtender1.SetLocalizingId(this.m_btnOk, "Common.OK");
-            this.m_btnOk.Location = new System.Drawing.Point(200, 143);
+            this.m_btnOk.Location = new System.Drawing.Point(201, 180);
             this.m_btnOk.Name = "m_btnOk";
             this.m_btnOk.Size = new System.Drawing.Size(75, 23);
             this.m_btnOk.TabIndex = 1;
@@ -93,14 +96,15 @@ namespace SIL.Transcelerator
             // m_linkLabelWorkingWithScriptureForge
             // 
             this.m_linkLabelWorkingWithScriptureForge.AutoSize = true;
+            this.m_linkLabelWorkingWithScriptureForge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_linkLabelWorkingWithScriptureForge.LinkArea = new System.Windows.Forms.LinkArea(16, 44);
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelWorkingWithScriptureForge, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelWorkingWithScriptureForge, "Params are product names 0) \"Scripture Forge\"; 1) \"Transcelerator\"");
             this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelWorkingWithScriptureForge, "ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge");
-            this.m_linkLabelWorkingWithScriptureForge.Location = new System.Drawing.Point(3, 61);
+            this.m_linkLabelWorkingWithScriptureForge.Location = new System.Drawing.Point(3, 73);
             this.m_linkLabelWorkingWithScriptureForge.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
             this.m_linkLabelWorkingWithScriptureForge.Name = "m_linkLabelWorkingWithScriptureForge";
-            this.m_linkLabelWorkingWithScriptureForge.Size = new System.Drawing.Size(108, 17);
+            this.m_linkLabelWorkingWithScriptureForge.Size = new System.Drawing.Size(128, 20);
             this.m_linkLabelWorkingWithScriptureForge.TabIndex = 2;
             this.m_linkLabelWorkingWithScriptureForge.TabStop = true;
             this.m_linkLabelWorkingWithScriptureForge.Tag = "https://software.sil.org/transcelerator/working-with-scripture-forge/";
@@ -110,7 +114,8 @@ namespace SIL.Transcelerator
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -125,21 +130,39 @@ namespace SIL.Transcelerator
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(448, 117);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(449, 154);
             this.tableLayoutPanel1.TabIndex = 4;
+            // 
+            // m_linkLabelPtxPrint
+            // 
+            this.m_linkLabelPtxPrint.AutoSize = true;
+            this.m_linkLabelPtxPrint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelPtxPrint, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelPtxPrint, "Param (3) is \"PTXprint\" (product name)");
+            this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelPtxPrint, "ScriptureForgeInfoDlg.m_linkLabelPtxPrint");
+            this.m_linkLabelPtxPrint.Location = new System.Drawing.Point(3, 121);
+            this.m_linkLabelPtxPrint.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
+            this.m_linkLabelPtxPrint.Name = "m_linkLabelPtxPrint";
+            this.m_linkLabelPtxPrint.Size = new System.Drawing.Size(73, 16);
+            this.m_linkLabelPtxPrint.TabIndex = 6;
+            this.m_linkLabelPtxPrint.TabStop = true;
+            this.m_linkLabelPtxPrint.Tag = "https://software.sil.org/ptxprint/";
+            this.m_linkLabelPtxPrint.Text = "{3} website";
+            this.m_linkLabelPtxPrint.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HandleLinkClicked);
             // 
             // m_linkLabelScriptureForge
             // 
             this.m_linkLabelScriptureForge.AutoSize = true;
+            this.m_linkLabelScriptureForge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelScriptureForge, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelScriptureForge, "Param is \"Scripture Forge\" (product name)");
             this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelScriptureForge, "ScriptureForgeInfoDlg.m_linkLabelScriptureForge");
-            this.m_linkLabelScriptureForge.Location = new System.Drawing.Point(3, 84);
+            this.m_linkLabelScriptureForge.Location = new System.Drawing.Point(3, 99);
             this.m_linkLabelScriptureForge.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
             this.m_linkLabelScriptureForge.Name = "m_linkLabelScriptureForge";
-            this.m_linkLabelScriptureForge.Size = new System.Drawing.Size(60, 13);
+            this.m_linkLabelScriptureForge.Size = new System.Drawing.Size(73, 16);
             this.m_linkLabelScriptureForge.TabIndex = 5;
             this.m_linkLabelScriptureForge.TabStop = true;
             this.m_linkLabelScriptureForge.Tag = "http://scriptureforge.org/";
@@ -151,36 +174,20 @@ namespace SIL.Transcelerator
             this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
             this.l10NSharpExtender1.PrefixForNewItems = null;
             // 
-            // m_linkLabelPtxPrint
-            // 
-            this.m_linkLabelPtxPrint.AutoSize = true;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_linkLabelPtxPrint, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.m_linkLabelPtxPrint, "Param (3) is \"PTXprint\" (product name)");
-            this.l10NSharpExtender1.SetLocalizingId(this.m_linkLabelPtxPrint, "ScriptureForgeInfoDlg.m_linkLabelPtxPrint");
-            this.m_linkLabelPtxPrint.Location = new System.Drawing.Point(3, 104);
-            this.m_linkLabelPtxPrint.Margin = new System.Windows.Forms.Padding(3, 6, 3, 0);
-            this.m_linkLabelPtxPrint.Name = "m_linkLabelPtxPrint";
-            this.m_linkLabelPtxPrint.Size = new System.Drawing.Size(60, 13);
-            this.m_linkLabelPtxPrint.TabIndex = 6;
-            this.m_linkLabelPtxPrint.TabStop = true;
-            this.m_linkLabelPtxPrint.Tag = "https://software.sil.org/ptxprint/";
-            this.m_linkLabelPtxPrint.Text = "{3} website";
-            this.m_linkLabelPtxPrint.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HandleLinkClicked);
-            // 
             // ScriptureForgeInfoDlg
             // 
             this.AcceptButton = this.m_btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 178);
+            this.ClientSize = new System.Drawing.Size(476, 215);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.m_btnOk);
             this.l10NSharpExtender1.SetLocalizableToolTip(this, null);
             this.l10NSharpExtender1.SetLocalizationComment(this, "Param is \"Scripture Forge\" (product name)");
             this.l10NSharpExtender1.SetLocalizingId(this, "ScriptureForgeInfoDlg.WindowTitle");
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(491, 217);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(450, 200);
             this.Name = "ScriptureForgeInfoDlg";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

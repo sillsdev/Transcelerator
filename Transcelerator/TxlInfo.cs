@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.
-// <copyright from='2012' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2012' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -13,9 +13,17 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
+using Microsoft.Web.WebView2.Core;
+using SIL.Reporting;
+using SIL.Transcelerator.Properties;
 using static System.String;
+using static SIL.Transcelerator.TxlPlugin;
 
 namespace SIL.Transcelerator
 {
@@ -27,9 +35,17 @@ namespace SIL.Transcelerator
 	[Serializable]
 	public partial class TxlInfo : UserControl
 	{
-		private WebBrowser browserCreditsAndLicense;
-		private string m_version; 
-		private string m_buildDate; 
+		private const string kTempResources = "Temp";
+
+		private string m_versionStr;
+		private string m_buildDate;
+		private string m_copyright;
+		private string m_htmlTemplate;
+		private string m_tempTxlLogoPath;
+		private string m_tempSilLogoPath;
+		private string m_creditsAndLicense;
+		private bool m_webBrowserReady;
+		private bool m_allowInternetAccess;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -43,87 +59,160 @@ namespace SIL.Transcelerator
 			// Get copyright information from assembly info. By doing this we don't have
 			// to update the splash screen each year.
 			var assembly = Assembly.GetExecutingAssembly();
+			m_versionStr = assembly.GetName().Version.ToString();
+			m_buildDate = File.GetLastWriteTime(assembly.Location).ToShortDateString();
+
 			object[] attributes = assembly.GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
-				m_lblCopyright.Text = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
-			m_lblCopyright.Text = Format(LocalizationManager.GetString("TransceleratorInfo.CopyrightFmt",
+				m_copyright = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
+
+			var htmlPath = Path.Combine(InstallDir, "TxlInfo.htm");
+
+			m_tempTxlLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
+			Resources.Transcelerator.Save(m_tempTxlLogoPath);
+			m_tempSilLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
+			Windows.Forms.Widgets.SilResources.SilLogo101x113.Save(m_tempSilLogoPath);
+
+			m_htmlTemplate = File.ReadAllText(htmlPath)
+				.Replace("src=\"Properties/Transcelerator.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempTxlLogoPath)}")
+				.Replace("src=\"DevResources/SILLogoBlue101x113.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempSilLogoPath)}");
+
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+		}
+
+		private async void OnLoad(object sender, EventArgs e)
+		{
+			await InitializeWebBrowserAsync();
+			m_webBrowserReady = true;
+			_webBrowser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+			SetHtmlDocument();
+		}
+
+		private async Task InitializeWebBrowserAsync()
+		{
+			try
+			{
+				await _webBrowser.EnsureCoreWebView2Async(WebView2Environment);
+			}
+			catch (Exception e)
+			{
+				ErrorReport.ReportNonFatalException(e);
+			}
+		}
+
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
+		{
+			if (lm == null || lm == PrimaryLocalizationManager)
+				SetHtmlDocument();
+		}
+
+		private void SetHtmlDocument()
+		{
+			if (!m_webBrowserReady)
+				return;
+
+			InitializeWebBrowserUserInteractionSettings();
+
+			var versionInfo = Format(LocalizationManager.GetString("TxlInfo.m_lblAppVersion",
+				"Version {0}"), m_versionStr);
+
+			var buildDateInfo = Format(LocalizationManager.GetString("TxlInfo.lblBuildDate",
+				"Built on: {0}"), m_buildDate);
+
+			var htmlContents = Format(m_htmlTemplate, versionInfo, buildDateInfo,
+				m_creditsAndLicense ?? Empty,
+				// This is the CSS for the credits class. Cannot put it in the file because the
+				// curly braces cause an exception when calling string.Format. Could be done in
+				// and external CSS file, but it's a hassle because we're loading the HTML as a
+				// string, not using a URI to load an actual file.
+				"{flex: 1; overflow-y: auto; border: 1.5px solid gray; margin: 8px; padding: 4px 8px 4px;}");
+
+			var matchCopyright = Regex.Match(htmlContents, "&#169;[^<]*");
+
+			if (m_copyright == null && matchCopyright.Success)
+				m_copyright = matchCopyright.ToString();
+
+			var fullCopyrightNotice = Format(LocalizationManager.GetString("TransceleratorInfo.CopyrightFmt",
 					"{0}. Distributable under the terms of the MIT License.",
 					"Param is copyright information. This is displayed in the Help/About box and the splash screen"),
-				m_lblCopyright.Text.Replace("(C)", "©"));
+				m_copyright);
 
-			m_version = assembly.GetName().Version.ToString();
-			FormatAppVersion(m_lblAppVersion, EventArgs.Empty);
-			m_lblAppVersion.TextChanged += FormatAppVersion;
+			if (matchCopyright.Success)
+				htmlContents = matchCopyright.Result("$`" + fullCopyrightNotice + "$'");
 
-			m_buildDate = File.GetLastWriteTime(assembly.Location).ToShortDateString();
-			FormatBuildDate(m_lblBuildDate, EventArgs.Empty);
-			m_lblBuildDate.TextChanged += FormatBuildDate;
+			try
+			{
+				_webBrowser.CoreWebView2.SetVirtualHostNameToFolderMapping(kTempResources,
+					Path.GetDirectoryName(m_tempTxlLogoPath),
+					CoreWebView2HostResourceAccessKind.Allow);
+				_webBrowser.NavigateToString(htmlContents);
+			}
+			catch (Exception e)
+			{
+				ErrorReport.ReportNonFatalException(e);
+			}
 		}
 
-		private void FormatAppVersion(object sender, EventArgs args)
+		public void InitializeWebBrowserUserInteractionSettings()
 		{
-			if (m_lblAppVersion.Text.Contains("{0}"))
-				m_lblAppVersion.Text = Format(m_lblAppVersion.Text, m_version);
-		}
-
-		private void FormatBuildDate(object sender, EventArgs args)
-		{
-			if (m_lblBuildDate.Text.Contains("{0}"))
-				m_lblBuildDate.Text = Format(m_lblBuildDate.Text, m_buildDate);
+			var interactionAllowed = m_creditsAndLicense != null;
+			_webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = interactionAllowed;
+			_webBrowser.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = interactionAllowed;
+			#if DEBUG
+				_webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = true;
+			#else
+				_webBrowser.CoreWebView2.Settings.AreDevToolsEnabled = false;
+			#endif
 		}
 
 		/// ------------------------------------------------------------------------------------
-		public bool ShowCreditsAndLicense
+		public void ShowCreditsAndLicense(bool allowInternetAccess)
 		{
-			set
-			{
-				if (value)
-				{
-					if (browserCreditsAndLicense == null)
-					{	
-						panelBrowser.BorderStyle = BorderStyle.Fixed3D;
-						browserCreditsAndLicense = new WebBrowser();
-						browserCreditsAndLicense.AllowWebBrowserDrop = false;
-						browserCreditsAndLicense.AllowNavigation = true;
-						browserCreditsAndLicense.AutoSize = true;
-						panelBrowser.Controls.Add(browserCreditsAndLicense);
-						browserCreditsAndLicense.Dock = DockStyle.Fill;
-					}
-					if (browserCreditsAndLicense.IsHandleCreated)
-						LoadCreditsAndLicense();
-					else
-						browserCreditsAndLicense.HandleCreated += delegate { LoadCreditsAndLicense(); };
-				}
-				else if (browserCreditsAndLicense != null)
-				{
-					browserCreditsAndLicense.Dispose();
-					browserCreditsAndLicense = null;
-					panelBrowser.BorderStyle = BorderStyle.None;
-				}
-			}
+			m_allowInternetAccess = allowInternetAccess;
+			if (m_creditsAndLicense == null)
+				LoadCreditsAndLicense();
+
+			SetHtmlDocument();
 		}
 
 		/// ------------------------------------------------------------------------------------
 		private void LoadCreditsAndLicense()
 		{
-			if (InvokeRequired)
+			var htmlPath = Path.Combine(InstallDir, "CreditsAndLicense.htm");
+			try
 			{
-				Invoke(new Action(LoadCreditsAndLicense));
-				return;
+				var html = File.ReadAllText(htmlPath);
+				m_creditsAndLicense = Regex.Match(html, @"<div [\S\s]*<\/div>").ToString();
 			}
-			browserCreditsAndLicense.Navigate(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-				"CreditsAndLicense.htm"));
-
-			browserCreditsAndLicense.Navigating += browserCreditsAndLicense_Navigating;
+			catch (Exception e)
+			{
+				ErrorReport.ReportNonFatalException(e);
+			}
 		}
 
-		/// ------------------------------------------------------------------------------------
-		void browserCreditsAndLicense_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+		/// <summary>
+		/// By default, links that are clicked in the Credits and License pane would open in
+		/// Edge. This causes them to open in the default browser instead. If Internet access
+		/// is not allowed, the user is informed and the link is not followed.
+		/// </summary>
+		private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
 		{
-			var url = e.Url.ToString();
-			e.Cancel = true;
+			var url = e.Uri;
 			if (!IsNullOrEmpty(url))
-				Process.Start(url);
+			{
+				if (m_allowInternetAccess)
+					Process.Start(url);
+				else
+				{
+					MessageBox.Show(ParentForm,
+						LocalizationManager.GetString("TxlInfo.InternetDisabled",
+						"Internet access is disabled via 'Paratext > Paratext settings'",
+						"The text of this message should be identical to the on Paratext displays (in HelpManagerBase.cs)"),
+						TxlConstants.kPluginName);
+				}
+			}
+
+			e.Handled = true;
 		}
 
 		/// <summary>
@@ -135,10 +224,16 @@ namespace SIL.Transcelerator
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
 			{
+				m_webBrowserReady = false;
+
 				if (components != null)
 					components.Dispose();
-				if (browserCreditsAndLicense != null)
-					browserCreditsAndLicense.Dispose();
+				if (_webBrowser != null && !_webBrowser.IsDisposed)
+					_webBrowser.Dispose();
+				if (m_tempTxlLogoPath != null)
+					File.Delete(m_tempTxlLogoPath);
+				if (m_tempSilLogoPath != null)
+					File.Delete(m_tempSilLogoPath);
 			}
 			base.Dispose(disposing);
 		}
