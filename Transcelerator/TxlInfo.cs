@@ -120,12 +120,7 @@ namespace SIL.Transcelerator
 				"Built on: {0}"), m_buildDate);
 
 			var htmlContents = Format(m_htmlTemplate, versionInfo, buildDateInfo,
-				m_creditsAndLicense ?? Empty,
-				// This is the CSS for the credits class. Cannot put it in the file because the
-				// curly braces cause an exception when calling string.Format. Could be done in
-				// and external CSS file, but it's a hassle because we're loading the HTML as a
-				// string, not using a URI to load an actual file.
-				"{flex: 1; overflow-y: auto; border: 1.5px solid gray; margin: 8px; padding: 4px 8px 4px;}");
+				m_creditsAndLicense ?? Empty);
 
 			var matchCopyright = Regex.Match(htmlContents, "&#169;[^<]*");
 

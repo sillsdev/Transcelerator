@@ -1,1 +1,1 @@
-Files in this folder should not be distributed as pert of the installer. They are merely for development purposes.
+Files in this folder should not be distributed as part of the installer. They are merely for development purposes.

@@ -136,10 +136,19 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <File Id="Coroutine.NET.dll_P9" ShortName="cortnp9.dll" KeyPath="yes" Name="Coroutine.NET.dll" />
           </Component>
           <Component Guid="*">
+            <File Id="Serialization.NET.dll_P9" ShortName="s11nnet9.dll" KeyPath="yes" Name="Serialization.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Sovran.NET.dll_P9" ShortName="sovran9.dll" KeyPath="yes" Name="Sovran.NET.dll" />
+          </Component>
+          <Component Guid="*">
             <File Id="Analytics.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.dll" />
           </Component>
           <Component Guid="*">
             <File Id="DesktopAnalytics.dll_P9" ShortName="avcjefr2.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Segment.Analytics.CSharp.dll_P9" ShortName="segacsp9.dll" KeyPath="yes" Name="Segment.Analytics.CSharp.dll" />
           </Component>
           <Component Guid="*">
             <File Id="Newtonsoft.Json.dll_P9" ShortName="malr336y.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
@@ -267,10 +276,19 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <File Id="Coroutine.NET.dll_P9Beta" ShortName="cortnp9b.dll" KeyPath="yes" Name="Coroutine.NET.dll" />
           </Component>
           <Component Guid="*">
+            <File Id="Serialization.NET.dll_P9Beta" ShortName="s11n9b.dll" KeyPath="yes" Name="Serialization.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Sovran.NET.dll_P9Beta" ShortName="sovran9b.dll" KeyPath="yes" Name="Sovran.NET.dll" />
+          </Component>
+          <Component Guid="*">
                 <File Id="Analytics.dll_P9Beta" ShortName="q934y2pn.dll" KeyPath="yes" Name="Analytics.dll" />
           </Component>
           <Component Guid="*">
                 <File Id="DesktopAnalytics.dll_P9Beta" ShortName="mcmisnhb.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Segment.Analytics.CSharp.dll_P9Beta" ShortName="sacsp9b.dll" KeyPath="yes" Name="Segment.Analytics.CSharp.dll" />
           </Component>
           <Component Guid="*">
                 <File Id="Newtonsoft.Json.dll_P9Beta" ShortName="2yd4aev9.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
