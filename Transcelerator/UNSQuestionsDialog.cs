@@ -545,6 +545,7 @@ namespace SIL.Transcelerator
 			SetWindowText();
 			UpdateCountsAndFilterStatus();
 			SetReferenceColumnWidth();
+			mnuHelpAbout.Text = Format(mnuHelpAbout.Text, TxlConstants.kPluginName);
 		}
 
 		private void SetWindowText()

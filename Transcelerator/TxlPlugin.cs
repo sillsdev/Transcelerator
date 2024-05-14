@@ -30,6 +30,7 @@ using SIL.WritingSystems;
 using static System.Environment;
 using static System.Environment.SpecialFolder;
 using static System.String;
+using static SIL.Transcelerator.TxlConstants;
 
 namespace SIL.Transcelerator
 {
@@ -83,7 +84,7 @@ namespace SIL.Transcelerator
 			return s_analytics;
 		}
 
-		public string Name => TxlConstants.kPluginName;
+		public string Name => kPluginName;
 		public Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 		public string VersionString => Version.ToString();
 		public string Publisher => "SIL International";
@@ -105,7 +106,7 @@ namespace SIL.Transcelerator
 				if (Directory.Exists(deprecatedProgramDataFolder))
 				{
 					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder,
-						TxlConstants.kQuestionsFilename);
+						kQuestionsFilename);
 					if (File.Exists(cachedQuestionsFilename))
 						File.Delete(cachedQuestionsFilename);
 					Directory.Delete(deprecatedProgramDataFolder);
@@ -129,8 +130,9 @@ namespace SIL.Transcelerator
 			ParatextDataFileAccessor.OnFailedToObtainWriteLock += fileName =>
 			{
 				ErrorReport.NotifyUserOfProblem(LocalizationManager.GetString("General.RequestLockError",
-					"Unable to obtain exclusive write access to data that belongs to Transcelerator: {0}",
-					"Param 0: key that indicates the data file that was to be written"), fileName);
+					"Unable to obtain exclusive write access to data that belongs to {1}: {0}",
+					"Param 0: key that indicates the data file that was to be written;" +
+					"Param 1: \"Transcelerator\" (plugin name)"), fileName, kPluginName);
 			};
 		}
 
@@ -410,7 +412,7 @@ namespace SIL.Transcelerator
 		private static void SetUpLocalization(string desiredUiLangId)
 		{
 			var installedLocFolder = Path.Combine(InstallDir, "localization");
-			var relativeSettingPathForLocFolder = Path.Combine(s_company, TxlConstants.kPluginName);
+			var relativeSettingPathForLocFolder = Path.Combine(s_company, kPluginName);
 			var icon = new Icon(GetFileDistributedWithApplication("TXL no TXL.ico"));
 
 			// ENHANCE (L10nSharp): Not sure what the best way is to deal with this: the desired UI
@@ -428,11 +430,11 @@ namespace SIL.Transcelerator
 
 			LocalizationManager.Create(desiredUiLangId, "Palaso", "SIL Shared Strings", s_version,
 				installedLocFolder, relativeSettingPathForLocFolder, icon,
-				TxlConstants.kEmailAddress, new [] {"SIL.Windows.Forms.Reporting"});
+				kEmailAddress, new [] {"SIL.Windows.Forms.Reporting"});
 
-			var primaryMgr = LocalizationManager.Create(desiredUiLangId, TxlConstants.kPluginName,
-				TxlConstants.kPluginName, s_version, installedLocFolder,
-				relativeSettingPathForLocFolder, icon, TxlConstants.kEmailAddress,
+			var primaryMgr = LocalizationManager.Create(desiredUiLangId, kPluginName,
+				kPluginName, s_version, installedLocFolder,
+				relativeSettingPathForLocFolder, icon, kEmailAddress,
 				new [] {"SIL.Transcelerator"});
 			LocIncompleteViewModel = new TxlLocalizationIncompleteViewModel(primaryMgr,
 				"transcelerator", IssueRequestForLocalization);

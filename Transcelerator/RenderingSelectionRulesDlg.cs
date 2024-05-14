@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -25,8 +25,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using L10NSharp;
+using L10NSharp.UI;
+using L10NSharp.XLiffUtils;
 using SIL.Windows.Forms;
 using static System.String;
+using NoToolStripBorderRenderer = SIL.Windows.Forms.NoToolStripBorderRenderer;
 
 namespace SIL.Transcelerator
 {
@@ -63,6 +66,17 @@ namespace SIL.Transcelerator
 
 			m_help = TxlPlugin.GetHelpFile("renderingselectionrules");
 			HelpButton = !IsNullOrEmpty(m_help);
+
+			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+			HandleStringsLocalized();
+		}
+
+		private void HandleStringsLocalized(ILocalizationManager lm = null)
+		{
+			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+				return;
+
+			lblInstructions.Text = Format(lblInstructions.Text, TxlConstants.kPluginName);
 		}
 
 		public IEnumerable<RenderingSelectionRule> Rules

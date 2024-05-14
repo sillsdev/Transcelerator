@@ -37,8 +37,8 @@ namespace SIL.Transcelerator
 	{
 		private const string kTempResources = "Temp";
 
-		private string m_versionStr;
-		private string m_buildDate;
+		private readonly string m_versionStr;
+		private readonly string m_buildDate;
 		private string m_copyright;
 		private string m_htmlTemplate;
 		private string m_tempTxlLogoPath;
@@ -65,7 +65,10 @@ namespace SIL.Transcelerator
 			object[] attributes = assembly.GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
 				m_copyright = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
+		}
 
+		private async void OnLoad(object sender, EventArgs e)
+		{
 			var htmlPath = Path.Combine(InstallDir, "TxlInfo.htm");
 
 			m_tempTxlLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
@@ -78,10 +81,7 @@ namespace SIL.Transcelerator
 				.Replace("src=\"DevResources/SILLogoBlue101x113.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempSilLogoPath)}");
 
 			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
-		}
 
-		private async void OnLoad(object sender, EventArgs e)
-		{
 			await InitializeWebBrowserAsync();
 			m_webBrowserReady = true;
 			_webBrowser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
@@ -202,7 +202,7 @@ namespace SIL.Transcelerator
 					MessageBox.Show(ParentForm,
 						LocalizationManager.GetString("TxlInfo.InternetDisabled",
 						"Internet access is disabled via 'Paratext > Paratext settings'",
-						"The text of this message should be identical to the on Paratext displays (in HelpManagerBase.cs)"),
+						"The text of this message should be identical to the one Paratext displays (in HelpManagerBase.cs)"),
 						TxlConstants.kPluginName);
 				}
 			}
