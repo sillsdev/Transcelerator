@@ -430,7 +430,7 @@ namespace SIL.Transcelerator
 
 			LocalizationManager.Create(desiredUiLangId, "Palaso", "SIL Shared Strings", s_version,
 				installedLocFolder, relativeSettingPathForLocFolder, icon,
-				kEmailAddress, new [] {"SIL.Windows.Forms.Reporting"});
+				kEmailAddress, new [] {"SIL.Windows.Forms.Reporting", "SIL.Windows.Forms.ReleaseNotes"});
 
 			var primaryMgr = LocalizationManager.Create(desiredUiLangId, kPluginName,
 				kPluginName, s_version, installedLocFolder,
