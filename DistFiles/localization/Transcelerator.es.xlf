@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.0.0.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="3.1.20.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
         <target xml:lang="es-ES" state="translated">Agregar traducción vernácula</target>
         <note>ID: AddRenderingDlg.WindowTitle</note>
-      </trans-unit>
-      <trans-unit id="BiblicalTerm.RenderingExists">
-        <source xml:lang="en">Rendering already exists.</source>
-        <target xml:lang="es-ES" state="translated">Esa traducción ya está representada en la lista.</target>
-        <note>ID: BiblicalTerm.RenderingExists</note>
       </trans-unit>
       <trans-unit id="Common.Cancel">
         <source xml:lang="en">Cancel</source>
@@ -62,6 +57,21 @@
         <target xml:lang="es-ES" state="translated">No se pueden cargar las personalizaciones de las preguntas.</target>
         <note>ID: General.LoadingCustomizationsFailed</note>
       </trans-unit>
+      <trans-unit id="General.LoadingQuestionAdjustmentsFailed">
+        <source xml:lang="en">The Question Adjustments could not be loaded.</source>
+        <target xml:lang="es-ES" state="translated">No se pudieron cargar los ajustes de preprocesamiento para adaptar las preguntas.</target>
+        <note>ID: General.LoadingQuestionAdjustmentsFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingRenderingSelectionRulesFailed">
+        <source xml:lang="en">The Biblical term rendering selection rules could not be loaded. Default rules will be used.</source>
+        <target xml:lang="es-ES" state="translated">No se pudieron cargar las reglas para seleccionar traducciones de vocablos bíblicos. Se utilizarán las reglas predeterminadas.</target>
+        <note>ID: General.LoadingRenderingSelectionRulesFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingTermRenderingsFailed">
+        <source xml:lang="en">Unable to load user-added term renderings. Only renderings from {0} will be displayed.</source>
+        <target xml:lang="es-ES" state="translated">No se pudieron cargar las traducciones de vocablos añadidos por el usuario. Solo se mostrarán las traducciones provistas por {0}.</target>
+        <note>ID: General.LoadingTermRenderingsFailed</note>
+      </trans-unit>
       <trans-unit id="General.LoadingTranslationsFailed">
         <source xml:lang="en">Unable to load translations.</source>
         <target xml:lang="es-ES" state="translated">No se pueden cargar las traducciones.</target>
@@ -73,8 +83,8 @@
         <note>ID: General.ReadonlyWindowAlert</note>
       </trans-unit>
       <trans-unit id="General.RequestLockError">
-        <source xml:lang="en">Unable to obtain exclusive write access to data that belongs to Transcelerator: {0}</source>
-        <target xml:lang="es-ES" state="translated">No se puede obtener acceso de escritura exclusivo a datos que pertenecen al Transcelerator: {0}</target>
+        <source xml:lang="en">Unable to obtain exclusive write access to data that belongs to {1}: {0}</source>
+        <target xml:lang="es-ES" state="translated">No se puede obtener acceso de escritura exclusivo a datos que pertenecen a {1}: {0}</target>
         <note>ID: General.RequestLockError</note>
       </trans-unit>
       <trans-unit id="General.RequiredInstalledFileMissing">
@@ -298,13 +308,13 @@
         <note>ID: GenerateScriptDlg.tabOptions</note>
       </trans-unit>
       <trans-unit id="HelpAboutDlg.WindowTitle">
-        <source xml:lang="en">About Transcelerator</source>
-        <target xml:lang="es-ES" state="translated">Acerca de Transcelerator</target>
+        <source xml:lang="en">About {0}</source>
+        <target xml:lang="es-ES" state="translated">Acerca de {0}</target>
         <note>ID: HelpAboutDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="HelpAboutDlg.m_linkLabelReleaseNotes">
         <source xml:lang="en">Release notes...</source>
-        <target xml:lang="es-ES" state="translated">Notas de la versión (inglés)...</target>
+        <target xml:lang="es-ES" state="translated">Notas de la versión...</target>
         <note>ID: HelpAboutDlg.m_linkLabelReleaseNotes</note>
       </trans-unit>
       <trans-unit id="MainWindow.AnswersLabel">
@@ -349,7 +359,7 @@
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules">
         <source xml:lang="en">Biblical Terms &amp;Rendering Selection Rules...</source>
-        <target xml:lang="es-ES" state="translated">&amp;Reglas para selecionar traducciones de vocablos bíblicos...</target>
+        <target xml:lang="es-ES" state="translated">&amp;Reglas para seleccionar traducciones de vocablos bíblicos...</target>
         <note>ID: MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules</note>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments">
@@ -463,8 +473,8 @@
         <note>ID: MainWindow.Menu.Help</note>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.Help.About">
-        <source xml:lang="en">&amp;About Transcelerator</source>
-        <target xml:lang="es-ES" state="translated">&amp;Acerca de Transcelerator</target>
+        <source xml:lang="en">&amp;About {0}</source>
+        <target xml:lang="es-ES" state="translated">&amp;Acerca de {0}</target>
         <note>ID: MainWindow.Menu.Help.About</note>
       </trans-unit>
       <trans-unit id="MainWindow.Menu.View">
@@ -787,6 +797,16 @@
         <target xml:lang="es-ES" state="translated">Traduccion</target>
         <note>ID: NewQuestionsDlg.ExistingQuestions.Translation</note>
       </trans-unit>
+      <trans-unit id="PhraseSubstitutionDlg.EntireMatch">
+        <source xml:lang="en">Entire match</source>
+        <target xml:lang="es-ES" state="translated">Coincidencia entera</target>
+        <note>ID: PhraseSubstitutionDlg.EntireMatch</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.EmptyRegEx">
+        <source xml:lang="en">Nothing to match.</source>
+        <target xml:lang="es-ES" state="translated">Nada que coincidir.</target>
+        <note>ID: PhraseSubstitutionsDlg.EmptyRegEx</note>
+      </trans-unit>
       <trans-unit id="PhraseSubstitutionsDlg.Replacements.MatchCase">
         <source xml:lang="en">Match Case</source>
         <target xml:lang="es-ES" state="translated">Coincidir mayúsculas/minúsculas</target>
@@ -969,7 +989,7 @@
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.WindowTitle">
         <source xml:lang="en">Biblical Terms Rendering Selection Rules</source>
-        <target xml:lang="es-ES" state="translated">Reglas para selecionar traducciones de vocablos bíblicos</target>
+        <target xml:lang="es-ES" state="translated">Reglas para seleccionar traducciones de vocablos bíblicos</target>
         <note>ID: RenderingSelectionRulesDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.btnCopy">
@@ -993,8 +1013,8 @@
         <note>ID: RenderingSelectionRulesDlg.btnNew</note>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.lblInstructions">
-        <source xml:lang="en">Define rules to enable Transcelerator to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</source>
-        <target xml:lang="es-ES" state="translated">Definir reglas para que Transcelerator pueda elegir la mejor traducción vernácula para los vocablos bíblicos. Para desactivar una regla, anule la selección de la casilla.</target>
+        <source xml:lang="en">Define rules to enable {0} to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</source>
+        <target xml:lang="es-ES" state="translated">Definir reglas para que {0} pueda elegir la mejor traducción vernácula para los vocablos bíblicos. Para desactivar una regla, anule la selección de la casilla.</target>
         <note>ID: RenderingSelectionRulesDlg.lblInstructions</note>
       </trans-unit>
       <trans-unit id="RenderingSelectionRulesDlg.lblRuleDescription">
@@ -1004,7 +1024,7 @@
       </trans-unit>
       <trans-unit id="RulesWizardDlg.EditRuleCaption">
         <source xml:lang="en">Edit Rendering Selection Rule</source>
-        <target xml:lang="es-ES" state="translated">Editar regla para selecionar representaciones de vocablos bíblicos</target>
+        <target xml:lang="es-ES" state="translated">Editar regla para seleccionar representaciones de vocablos bíblicos</target>
         <note>ID: RulesWizardDlg.EditRuleCaption</note>
       </trans-unit>
       <trans-unit id="RulesWizardDlg.FixConditionNow">
@@ -1187,9 +1207,9 @@
         <target xml:lang="es-ES" state="final">&amp;a:</target>
         <note>ID: ScrReferenceFilterDlg.m_lblTo</note>
       </trans-unit>
-      <trans-unit id="ScriptureForgeInfoDlg.WindowTitle">
+      <trans-unit id="ScriptureForgeInfoDlg.WindowTitle" approved="yes">
         <source xml:lang="en">External Application Integration</source>
-        <target xml:lang="es-ES" state="translated">Integración con aplicaciones externas</target>
+        <target xml:lang="es-ES" state="final">Integración con aplicaciones externas</target>
         <note>ID: ScriptureForgeInfoDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="ScriptureForgeInfoDlg.m_lblExplanation">
@@ -1202,14 +1222,14 @@
         <target xml:lang="es-ES" state="translated">Más información disponible en línea:</target>
         <note>ID: ScriptureForgeInfoDlg.m_lblMoreInfoOnline</note>
       </trans-unit>
-      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelPtxPrint">
+      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelPtxPrint" approved="yes">
         <source xml:lang="en">{3} website</source>
-        <target xml:lang="es-ES" state="translated">Sitio web de {3}</target>
+        <target xml:lang="es-ES" state="final">Sitio web de {3}</target>
         <note>ID: ScriptureForgeInfoDlg.m_linkLabelPtxPrint</note>
       </trans-unit>
-      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelScriptureForge">
+      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelScriptureForge" approved="yes">
         <source xml:lang="en">{0} website</source>
-        <target xml:lang="es-ES" state="translated">Sitio web de {0}</target>
+        <target xml:lang="es-ES" state="final">Sitio web de {0}</target>
         <note>ID: ScriptureForgeInfoDlg.m_linkLabelScriptureForge</note>
       </trans-unit>
       <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge">
@@ -1217,19 +1237,19 @@
         <target xml:lang="es-ES" state="translated">Transcelerador: Interoperando con {0}</target>
         <note>ID: ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge</note>
       </trans-unit>
-      <trans-unit id="SplashScreen.MsgLoadingQuestions">
+      <trans-unit id="SplashScreen.MsgLoadingQuestions" approved="yes">
         <source xml:lang="en">Loading questions for {0}...</source>
-        <target xml:lang="es-ES" state="translated">Cargando preguntas para {0}...</target>
+        <target xml:lang="es-ES" state="final">Cargando preguntas para {0}...</target>
         <note>ID: SplashScreen.MsgLoadingQuestions</note>
       </trans-unit>
-      <trans-unit id="SplashScreen.MsgLoadingTranslations">
+      <trans-unit id="SplashScreen.MsgLoadingTranslations" approved="yes">
         <source xml:lang="en">Loading translations for {0}...</source>
-        <target xml:lang="es-ES" state="translated">Cargando traducciones para {0}...</target>
+        <target xml:lang="es-ES" state="final">Cargando traducciones para {0}...</target>
         <note>ID: SplashScreen.MsgLoadingTranslations</note>
       </trans-unit>
       <trans-unit id="SplashScreen.MsgParsingQuestions">
         <source xml:lang="en">Processing questions for {0} using Major Biblical Terms list...</source>
-        <target xml:lang="es-ES" state="translated">Procesando preguntas para {0} usando la lista Principales vocablos bíblicos...</target>
+        <target xml:lang="es-ES" state="translated">Procesando preguntas para {0} usando la lista "Principales vocablos bíblicos"...</target>
         <note>ID: SplashScreen.MsgParsingQuestions</note>
       </trans-unit>
       <trans-unit id="SplashScreen.MsgRetrievingDataFromCaller">
@@ -1271,6 +1291,11 @@
         <source xml:lang="en">{0}. Distributable under the terms of the MIT License.</source>
         <target xml:lang="es-ES" state="translated">{0}. Distribuible bajo los términos de la licencia MIT.</target>
         <note>ID: TransceleratorInfo.CopyrightFmt</note>
+      </trans-unit>
+      <trans-unit id="TxlInfo.InternetDisabled">
+        <source xml:lang="en">Internet access is disabled via 'Paratext &gt; Paratext settings'</source>
+        <target xml:lang="es-ES" state="translated">El acceso a Internet está desactivado en 'Paratext &gt; Configuración de Paratext'</target>
+        <note>ID: TxlInfo.InternetDisabled</note>
       </trans-unit>
       <trans-unit id="TxlInfo.lblBuildDate">
         <source xml:lang="en">Built on: {0}</source>
