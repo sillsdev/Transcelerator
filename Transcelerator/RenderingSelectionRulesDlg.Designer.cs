@@ -93,13 +93,13 @@ namespace SIL.Transcelerator
 			this.lblInstructions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.lblInstructions, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.lblInstructions, "Parameter is \"Transcelerator\" (plugin name).");
 			this.l10NSharpExtender1.SetLocalizingId(this.lblInstructions, "RenderingSelectionRulesDlg.lblInstructions");
 			this.lblInstructions.Location = new System.Drawing.Point(12, 9);
 			this.lblInstructions.Name = "lblInstructions";
 			this.lblInstructions.Size = new System.Drawing.Size(509, 37);
 			this.lblInstructions.TabIndex = 2;
-			this.lblInstructions.Text = "Define rules to enable Transcelerator to more successfully choose the best render" +
+			this.lblInstructions.Text = "Define rules to enable {0} to more successfully choose the best render" +
     "ing for biblical terms. To disable a rule, clear its check box.";
 			// 
 			// m_listRules

@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.   
 // <copyright from='2019' to='2023 company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -37,8 +37,9 @@ namespace SIL.Transcelerator
 
 			void FormatControlTextWithProductNames(Control ctrl)
             {
-                ctrl.Text = Format(ctrl.Text, UNSQuestionsDialog.kScriptureForgeProductName,
-                    TxlConstants.kPluginName, m_hostAppName, UNSQuestionsDialog.kPTXPrintProductName);
+				var tmSuffix = (ctrl.Tag as string == "TM") ? "™" : Empty;
+                ctrl.Text = Format(ctrl.Text, UNSQuestionsDialog.kScriptureForgeProductName + tmSuffix,
+                    TxlConstants.kPluginName, m_hostAppName, UNSQuestionsDialog.kPTXPrintProductName + tmSuffix);
             }
 
             void DealWithOutdatedTranslation(Control ctrl)
