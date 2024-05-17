@@ -64,14 +64,14 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
         </Property>
         <Property Id="PARATEXT94BETAORGREATER" Secure="yes">
           <DirectorySearch Id="ParatextBetaExeVersion" Path="[PARATEXT9BETA]">
-			<!-- We could still allow for installing in Paratext 9.3 Beta, but no one should still be using that. -->
+            <!-- We could still allow for installing in Paratext 9.3 Beta, but no one should still be using that. -->
             <FileSearch Name="Paratext.exe" MinVersion="9.4.0.0" />
           </DirectorySearch>
         </Property>
         <Condition Message="Before Transcelerator can install, you need to install Paratext 9.2 or later.">
           <![CDATA[Installed OR PARATEXT92ORGREATER OR PARATEXT94BETAORGREATER]]>
         </Condition>
-		
+
         <Binary Id="CustomInstallerActions.CA.dll"
                 SourceFile="CustomInstallerActions/bin/x64/Release/CustomInstallerActions.CA.dll" />
 
@@ -83,286 +83,325 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
                       DllEntry="RemoveAllTransceleratorUserCacheFiles" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFiles64Folder" Name="PFiles">
-				<Directory Id="PARATEXT9" Name="ParatextDir9">
-					<Directory Id="PLUGINDIR9" Name="plugins">
-						<Directory Id="INSTALLDIR9" Name="Transcelerator">
-							<Directory Id="INSTALLDIR9_LOCALIZATION" Name="localization"/>
-							<Directory Id="DocsDirP9" Name="docs">
-								<Directory Id="DocsDirP9_es" Name="es"/>
-							</Directory>
-						</Directory>
-					</Directory>
-				</Directory>
-				<Directory Id="PARATEXT9BETA" Name="ParatextDir9Beta">
-					<Directory Id="PLUGINDIR9BETA" Name="plugins">
-						<Directory Id="INSTALLDIR9BETA" Name="Transcelerator">
-							<Directory Id="INSTALLDIR9BETA_LOCALIZATION" Name="localization"/>
-							<Directory Id="DocsDirP9Beta" Name="docs">
-								<Directory Id="DocsDirP9Beta_es" Name="es"/>
-							</Directory>
-						</Directory>
-					</Directory>
-				</Directory>
-			</Directory>
+			    <Directory Id="ProgramFiles64Folder" Name="PFiles">
+				    <Directory Id="PARATEXT9" Name="ParatextDir9">
+					    <Directory Id="PLUGINDIR9" Name="plugins">
+						    <Directory Id="INSTALLDIR9" Name="Transcelerator">
+							    <Directory Id="INSTALLDIR9_LOCALIZATION" Name="localization"/>
+							    <Directory Id="DocsDirP9" Name="docs">
+								    <Directory Id="DocsDirP9_es" Name="es"/>
+							    </Directory>
+						    </Directory>
+					    </Directory>
+				    </Directory>
+				    <Directory Id="PARATEXT9BETA" Name="ParatextDir9Beta">
+					    <Directory Id="PLUGINDIR9BETA" Name="plugins">
+						    <Directory Id="INSTALLDIR9BETA" Name="Transcelerator">
+							    <Directory Id="INSTALLDIR9BETA_LOCALIZATION" Name="localization"/>
+							    <Directory Id="DocsDirP9Beta" Name="docs">
+								    <Directory Id="DocsDirP9Beta_es" Name="es"/>
+							    </Directory>
+						    </Directory>
+					    </Directory>
+				    </Directory>
+			    </Directory>
         </Directory>
 
         <ComponentGroup Id="COMPONENTSFORP9PLUGIN" Directory="INSTALLDIR9" Source="..\Transcelerator\bin\x64\Release">
-            <Component Guid="*">
-                <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
-            </Component>
-			<Component Guid="*">
-                <File Id="TxlData.dll_P9" ShortName="ttl1s8od.dll" KeyPath="yes" Name="TxlData.dll" />
-            </Component>
-			<Component Guid="*">
-                <File Id="TxlShared.Windows.Forms.dll_P9" ShortName="telg6my6.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
-            </Component>
-			<Component Guid="*">
-                <File Id="TxlShared.dll_P9" ShortName="vyey6mw8.dll" KeyPath="yes" Name="TxlShared.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="keyTermRules.xsd_P9" ShortName="34caw2bf.xsd" KeyPath="yes" Name="keyTermRules.xsd" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestions.xml_P9" ShortName="12jl5fgc.xml" KeyPath="yes" Name="TxlQuestions.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="TxlQuestionWords.xml_P9" ShortName="5yzuh6br.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Analytics.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="DesktopAnalytics.dll_P9" ShortName="avcjefr2.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Newtonsoft.Json.dll_P9" ShortName="malr336y.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
-            </Component>
           <Component Guid="*">
-                <File Id="L10NSharp.dll_P9" ShortName="apdq6l10.dll" KeyPath="yes"
-                      Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.WritingSystems.dll_P9" ShortName="u3wozlbp.dll" KeyPath="yes"
-                      Name="SIL.WritingSystems.dll" />
-            </Component>
-			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
-				But the code would also need to be made to handle the case of no icu.net.dll (by catching
-				exception?)-->
-			<Component Guid="*">
-				<File Id="icu.net.dll_P9" ShortName="icunetp9.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="Microsoft.Extensions.DependencyModel.dll_P9" ShortName="msedmp9.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
-			</Component>
-			<Component Guid="*">
-				<File Id="icudt62.dll_86_P9" ShortName="dt62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuin62.dll_86_P9" ShortName="in62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuuc62.dll_86_P9" ShortName="uc62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
-			</Component>
-			<!-- End ICU -->
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Keyboarding.dll_P9" ShortName="tp04hoif.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Keyboarding.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman7Interop.dll_P9" ShortName="t39ghpsp.dll" KeyPath="yes"
-                      Name="Keyman7Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman10Interop.dll_P9" ShortName="j7kojtod.dll" KeyPath="yes"
-                      Name="Keyman10Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes"
-                      Name="KeymanLink.dll" />
-            </Component>
-		    <Component Guid="*">
-			    <File Id="Markdig.Signed.dll_P9" ShortName="x8d4bn3u.dll" KeyPath="yes"
-                      Name="Markdig.Signed.dll" />
-		    </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Scripture.dll_P9" ShortName="hq9z3a0z.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.dll_P9" ShortName="6cm4n2mk.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.dll_P9" ShortName="fqfi7v4n.dll" KeyPath="yes" Name="SIL.Core.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.Desktop.dll_P9" ShortName="3ibsrrdb.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Transcelerator.pdb_P9" ShortName="8o1biihw.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Icon_P9" ShortName="44tpy8ze.ico" KeyPath="yes" Name="TXL no TXL.ico" />
-            </Component>
-            <Component Guid="*">
-                <File Id="CreditsAndLicense.htm_P9" ShortName="qgigfgzl.htm" KeyPath="yes" Name="CreditsAndLicense.htm" />
-            </Component>
-            <Component Id="Transcelerator.dll.config_P9" Guid="*">
-                <File Id="Transcelerator.dll.config_P9" ShortName="abh9z0kp.cfg" KeyPath="yes"
-                      Name="Transcelerator.dll.config" />
-            </Component>
-            <Component Id="ReleaseNotes.md_P9" Guid="*">
-                <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
-            </Component>
+            <File Id="Transcelerator.dll_P9" ShortName="x6bjjpu5.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlData.dll_P9" ShortName="ttl1s8od.dll" KeyPath="yes" Name="TxlData.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlShared.Windows.Forms.dll_P9" ShortName="telg6my6.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlShared.dll_P9" ShortName="vyey6mw8.dll" KeyPath="yes" Name="TxlShared.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="keyTermRules.xml_P9" ShortName="y9ks2bq7.xml" KeyPath="yes" Name="keyTermRules.xml" />
+          </Component>
+          <Component Guid="*">
+            <File Id="keyTermRules.xsd_P9" ShortName="34caw2bf.xsd" KeyPath="yes" Name="keyTermRules.xsd" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlQuestions.xml_P9" ShortName="12jl5fgc.xml" KeyPath="yes" Name="TxlQuestions.xml" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlQuestionWords.xml_P9" ShortName="5yzuh6br.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Coroutine.NET.dll_P9" ShortName="cortnp9.dll" KeyPath="yes" Name="Coroutine.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Serialization.NET.dll_P9" ShortName="s11nnet9.dll" KeyPath="yes" Name="Serialization.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Sovran.NET.dll_P9" ShortName="sovran9.dll" KeyPath="yes" Name="Sovran.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Analytics.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="DesktopAnalytics.dll_P9" ShortName="avcjefr2.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Segment.Analytics.CSharp.dll_P9" ShortName="segacsp9.dll" KeyPath="yes" Name="Segment.Analytics.CSharp.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Newtonsoft.Json.dll_P9" ShortName="malr336y.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="L10NSharp.dll_P9" ShortName="apdq6l10.dll" KeyPath="yes" Name="L10NSharp.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.WritingSystems.dll_P9" ShortName="u3wozlbp.dll" KeyPath="yes" Name="SIL.WritingSystems.dll" />
+          </Component>
+          <!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+          But the code would also need to be made to handle the case of no icu.net.dll (by catching
+          exception?)-->
+          <Component Guid="*">
+            <File Id="icu.net.dll_P9" ShortName="icunetp9.dll" KeyPath="yes" Name="icu.net.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Extensions.DependencyModel.dll_P9" ShortName="msedmp9.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Web.WebView2.Core.dll_P9" ShortName="mwwv2cp9.dll" KeyPath="yes" Name="Microsoft.Web.WebView2.Core.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Web.WebView2.WinForms.dll_P9" ShortName="mwwv2wp9.dll" KeyPath="yes" Name="Microsoft.Web.WebView2.WinForms.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="WebView2Loader.dll_P9" ShortName="wv2lp9.dll" KeyPath="yes"  Source="..\Transcelerator\bin\x64\Release\runtimes\win-x64\native\WebView2Loader.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="icudt62.dll_86_P9" ShortName="dt62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
+          </Component>
+          <Component Guid="*">
+             <File Id="icuin62.dll_86_P9" ShortName="in62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="icuuc62.dll_86_P9" ShortName="uc62p9.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
+          </Component>
+          <!-- End ICU -->
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.Keyboarding.dll_P9" ShortName="tp04hoif.dll" KeyPath="yes" Name="SIL.Windows.Forms.Keyboarding.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Keyman7Interop.dll_P9" ShortName="t39ghpsp.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Keyman10Interop.dll_P9" ShortName="j7kojtod.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes" Name="KeymanLink.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Markdig.Signed.dll_P9" ShortName="x8d4bn3u.dll" KeyPath="yes" Name="Markdig.Signed.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.Scripture.dll_P9" ShortName="avbbno1j.dll" KeyPath="yes" Name="SIL.Windows.Forms.Scripture.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Scripture.dll_P9" ShortName="hq9z3a0z.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.dll_P9" ShortName="6cm4n2mk.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Core.dll_P9" ShortName="fqfi7v4n.dll" KeyPath="yes" Name="SIL.Core.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Core.Desktop.dll_P9" ShortName="3ibsrrdb.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Transcelerator.pdb_P9" ShortName="8o1biihw.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Icon_P9" ShortName="44tpy8ze.ico" KeyPath="yes" Name="TXL no TXL.ico" />
+          </Component>
+          <Component Guid="*">
+            <File Id="CreditsAndLicense.htm_P9" ShortName="qgigfgzl.htm" KeyPath="yes" Name="CreditsAndLicense.htm" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlInfo.htm_P9" ShortName="saqmhwhh.htm" KeyPath="yes" Name="TxlInfo.htm" />
+          </Component>
+          <Component Id="Transcelerator.dll.config_P9" Guid="*">
+            <File Id="Transcelerator.dll.config_P9" ShortName="abh9z0kp.cfg" KeyPath="yes" Name="Transcelerator.dll.config" />
+          </Component>
+          <Component Id="ReleaseNotes.md_P9" Guid="*">
+            <File Id="ReleaseNotes.md_P9" ShortName="p0rdflid.md" Source="..\DistFiles\ReleaseNotes.md" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
+          </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA" Source="..\Transcelerator\bin\x64\Release">
-			<!-- The component group for the beta should have exactly the same files as the primary component
-				 group. It probably could/should be generated, but note that the short names are all unique.
-				 Since they are going into a different folders, that might be okay, but it's not clear from 
-				 the WIX documentation that it would be, and searching the Internet, it seems it might not be. -->
-            <Component Guid="*">
+          <!-- The component group for the beta should have exactly the same files as the primary component
+          group. It probably could/should be generated, but note that the short names are all unique.
+          Since they are going into a different folders, that might be okay, but it's not clear from 
+          the WIX documentation that it would be, and searching the Internet, it seems it might not be. -->
+          <Component Guid="*">
                 <File Id="Transcelerator.dll_P9Beta" ShortName="9fsib2cv.dll" KeyPath="yes" Name="Transcelerator.ptxplg" />
-            </Component>
-			<Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="TxlData.dll_P9Beta" ShortName="292ks4c3.dll" KeyPath="yes" Name="TxlData.dll" />
-            </Component>
-			<Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="TxlShared.Windows.Forms.dll_P9Beta" ShortName="l7ydhpx8.dll" KeyPath="yes" Name="TxlShared.Windows.Forms.dll" />
             </Component>
-			<Component Guid="*">
+          <Component Guid="*">
                 <File Id="TxlShared.dll_P9Beta" ShortName="bly1tb4q.dll" KeyPath="yes" Name="TxlShared.dll" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="keyTermRules.xml_P9Beta" ShortName="d92j03fs.xml" KeyPath="yes" Name="keyTermRules.xml" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="keyTermRules.xsd_P9Beta" ShortName="1194exg5.xsd" KeyPath="yes" Name="keyTermRules.xsd" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="TxlQuestions.xml_P9Beta" ShortName="pr7gvp5k.xml" KeyPath="yes" Name="TxlQuestions.xml" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="TxlQuestionWords.xml_P9Beta" ShortName="4m95zkrf.xml" KeyPath="yes" Name="TxlQuestionWords.xml" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
+            <File Id="Coroutine.NET.dll_P9Beta" ShortName="cortnp9b.dll" KeyPath="yes" Name="Coroutine.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Serialization.NET.dll_P9Beta" ShortName="s11n9b.dll" KeyPath="yes" Name="Serialization.NET.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Sovran.NET.dll_P9Beta" ShortName="sovran9b.dll" KeyPath="yes" Name="Sovran.NET.dll" />
+          </Component>
+          <Component Guid="*">
                 <File Id="Analytics.dll_P9Beta" ShortName="q934y2pn.dll" KeyPath="yes" Name="Analytics.dll" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="DesktopAnalytics.dll_P9Beta" ShortName="mcmisnhb.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
+            <File Id="Segment.Analytics.CSharp.dll_P9Beta" ShortName="sacsp9b.dll" KeyPath="yes" Name="Segment.Analytics.CSharp.dll" />
+          </Component>
+          <Component Guid="*">
                 <File Id="Newtonsoft.Json.dll_P9Beta" ShortName="2yd4aev9.dll" KeyPath="yes" Name="Newtonsoft.Json.dll" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="L10NSharp.dll_P9Beta" ShortName="qywkwk5r.dll" KeyPath="yes"
                       Name="L10NSharp.dll" />
-            </Component>
-            <Component Guid="*">
+          </Component>
+          <Component Guid="*">
                 <File Id="SIL.WritingSystems.dll_P9Beta" ShortName="0dmsdv4y.dll" KeyPath="yes"
                       Name="SIL.WritingSystems.dll" />
-            </Component>
-			<!-- ICU and dependencies - Could make these conditional if no localizations are installed.
-				But the code would also need to be made to handle the case of no icu.net.dll (by catching
-				exception?)-->
-			<Component Guid="*">
-				<File Id="icu.net.dll_P9Beta" ShortName="icunet9t.dll" KeyPath="yes" Name="icu.net.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp9t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
-			</Component>
-			<Component Guid="*">
-				<File Id="icudt62.dll_86_P9Beta" ShortName="dt62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuin62.dll_86_P9Beta" ShortName="in62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
-			</Component>
-			<Component Guid="*">
-				<File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
-			</Component>
-			<!-- End ICU -->
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Keyboarding.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
-                      Name="Keyman7Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
-                      Name="Keyman10Interop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
-                      Name="KeymanLink.dll" />
-            </Component>
-		    <Component Guid="*">
-			    <File Id="Markdig.Signed.dll_P9Beta" ShortName="ho9myfa3.dll" KeyPath="yes"
-                      Name="Markdig.Signed.dll" />
-		    </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
-                      Name="SIL.Windows.Forms.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Scripture.dll_P9Beta" ShortName="qpybzotc.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Windows.Forms.dll_P9Beta" ShortName="5j3m7jap.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.dll_P9Beta" ShortName="yifsuyy7.dll" KeyPath="yes" Name="SIL.Core.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="SIL.Core.Desktop.dll_P9Beta" ShortName="q3763bq8.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Transcelerator.pdb_P9Beta" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
-            </Component>
-            <Component Guid="*">
-                <File Id="Icon_P9Beta" ShortName="fihp0pz8.ico" KeyPath="yes" Name="TXL no TXL.ico" />
-            </Component>
-            <Component Guid="*">
-                <File Id="CreditsAndLicense.htm_P9Beta" ShortName="2gd8uwk5.htm" KeyPath="yes" Name="CreditsAndLicense.htm" />
-            </Component>
-            <Component Id="Transcelerator.dll.config_P9Beta" Guid="*">
-                <File Id="Transcelerator.dll.config_P9Beta" ShortName="eemr572z.cfg" KeyPath="yes"
-                      Name="Transcelerator.dll.config" />
-            </Component>
-            <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
-                <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
-            </Component>
-            <Component Guid="*">
-                <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
-            </Component>
+          </Component>
+          <!-- ICU and dependencies - Could make these conditional if no localizations are installed.
+          But the code would also need to be made to handle the case of no icu.net.dll (by catching
+          exception?)-->
+          <Component Guid="*">
+            <File Id="icu.net.dll_P9Beta" ShortName="icunet9t.dll" KeyPath="yes" Name="icu.net.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Extensions.DependencyModel.dll_P9Beta" ShortName="msedmp9t.dll" KeyPath="yes" Name="Microsoft.Extensions.DependencyModel.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Web.WebView2.Core.dll_P9Beta" ShortName="mwwv2c9b.dll" KeyPath="yes" Name="Microsoft.Web.WebView2.Core.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="Microsoft.Web.WebView2.WinForms.dll_P9Beta" ShortName="mwwv2w9b.dll" KeyPath="yes" Name="Microsoft.Web.WebView2.WinForms.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="WebView2Loader.dll_P9Beta" ShortName="wv2lp9b.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\runtimes\win-x64\native\WebView2Loader.dll"/>
+          </Component>
+          <Component Guid="*">
+            <File Id="icudt62.dll_86_P9Beta" ShortName="dt62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icudt62.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="icuin62.dll_86_P9Beta" ShortName="in62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuin62.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="icuuc62.dll_86_P9Beta" ShortName="uc62p9t.dll" KeyPath="yes" Source="..\Transcelerator\bin\x64\Release\lib\win-x64\icuuc62.dll" />
+          </Component>
+          <!-- End ICU -->
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
+              Name="SIL.Windows.Forms.Keyboarding.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
+              Name="Keyman7Interop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
+              Name="Keyman10Interop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
+              Name="KeymanLink.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Markdig.Signed.dll_P9Beta" ShortName="ho9myfa3.dll" KeyPath="yes"
+              Name="Markdig.Signed.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.Scripture.dll_P9Beta" ShortName="7wglaoxs.dll" KeyPath="yes"
+              Name="SIL.Windows.Forms.Scripture.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Scripture.dll_P9Beta" ShortName="qpybzotc.dll" KeyPath="yes" Name="SIL.Scripture.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Windows.Forms.dll_P9Beta" ShortName="5j3m7jap.dll" KeyPath="yes" Name="SIL.Windows.Forms.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Core.dll_P9Beta" ShortName="yifsuyy7.dll" KeyPath="yes" Name="SIL.Core.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="SIL.Core.Desktop.dll_P9Beta" ShortName="q3763bq8.dll" KeyPath="yes" Name="SIL.Core.Desktop.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Transcelerator.pdb_P9Beta" ShortName="4ut3f5jb.pdb" KeyPath="yes" Name="Transcelerator.pdb" />
+          </Component>
+          <Component Guid="*">
+            <File Id="Icon_P9Beta" ShortName="fihp0pz8.ico" KeyPath="yes" Name="TXL no TXL.ico" />
+          </Component>
+          <Component Guid="*">
+            <File Id="CreditsAndLicense.htm_P9Beta" ShortName="2gd8uwk5.htm" KeyPath="yes" Name="CreditsAndLicense.htm" />
+          </Component>
+          <Component Guid="*">
+            <File Id="TxlInfo.htm_P9Beta" ShortName="zqrtonbi.htm" KeyPath="yes" Name="TxlInfo.htm" />
+          </Component>
+          <Component Id="Transcelerator.dll.config_P9Beta" Guid="*">
+            <File Id="Transcelerator.dll.config_P9Beta" ShortName="eemr572z.cfg" KeyPath="yes"
+              Name="Transcelerator.dll.config" />
+          </Component>
+          <Component Id="ReleaseNotes.md_P9Beta" Guid="*">
+            <File Id="ReleaseNotes.md_P9Beta" ShortName="eqghs9lt.md" Source="..\DistFiles\ReleaseNotes.md" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.Resources.Extensions.dll_P9Beta" ShortName="zvzi6010.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
+          </Component>
         </ComponentGroup>
 
-		<!-- This feature is defined in FeatureFragment.wxs -->
+        <!-- This feature is defined in FeatureFragment.wxs -->
         <FeatureRef Id="PluginFeature_P9" />
-		<!-- The Beta feature is derived from the normal feature during the build as part of the
-			 Install task and can be found in output\installer\GeneratedFeatureFragmentP9Beta.wxs-->
+        <!-- The Beta feature is derived from the normal feature during the build as part of the
+        Install task and can be found in output\installer\GeneratedFeatureFragmentP9Beta.wxs-->
         <FeatureRef Id="PluginFeature_P9Beta" />
-					  
+  
         <!-- INSTALLSTATE_LOCAL = 3 -->
-		<!-- INSTALLSTATE_ABSENT = 2 -->
+        <!-- INSTALLSTATE_ABSENT = 2 -->
         <InstallExecuteSequence>
-            <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
+          <Custom Action="RemoveAllTransceleratorUserCacheFiles" After="RemoveRegistryValues"></Custom>
         </InstallExecuteSequence>
 
         <Media Id="1" Cabinet="product.cab" EmbedCab="yes" />

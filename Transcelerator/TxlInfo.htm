@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <title>Transcelerator Information</title>
+    <base target="_blank" rel="noopener noreferrer"><!-- Links (in Credits) should open in new window -->
+  </head>
+  <!-- The credits div (if present) will fill the remaining space below the table have a vertical scrollbar.
+  Double curly braces are needed to allow string.Format to work. (They can be temporarily replaced with 
+  single braces for testing changes to the HTML in a browser window.)  -->
+  <style type="text/css">
+    .credits {{flex: 1; overflow-y: auto; border: 1.5px solid gray; margin: 8px; padding: 4px 8px 4px;}}
+  </style>
+  <!-- Set body height to slightly less than viewport height and hide body overflow to prevent double scrollbar. -->
+  <body style="font-family: sans-serif; font-size: 80%; height: 97vh;  padding: 6px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; height: 100%;">
+      <table style="width:100%;"> <!-- Note: the image paths below will be replaced at runtime with paths to temp files containing the images. If the img src attribute values are changed here, the code will need to be changed as well. -->
+        <tr>
+          <td style="min-width:210px; max-width:150px;"><img style="width:100%; height:auto; object-fit:contain;" src="Properties/Transcelerator.png" alt="Transcelerator logo" /></td>
+          <td>
+            <table style="max-height:100%;">
+              <tr>
+                <td colspan="2" style="text-align: center;">
+                  <svg viewBox="0 0 120 18">
+                     <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle">Transcelerator</text><text font-size="25%" x="94%" y="28%">&#8482;</text>
+                  </svg>
+                </td>
+              </tr>
+              <tr><td colspan="2" style="text-align: center;">{0}<!-- Version information --></td></tr>
+              <tr><td colspan="2" style="text-align: center;">{1}<!-- Build date information --></td></tr>
+              <tr>
+                 <!-- Copyright information normally replaced at runtime -->
+                 <td style="text-align: center;">&#169; 2011-2024, SIL International</td>
+                 <td><img style="display: block; margin-right:3px;" src="DevResources/SILLogoBlue101x113.png" alt="SIL logo" /></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+      <!-- Credits and License (optional) -->
+      {2}
+    </div>
+  </body>
+</html>

@@ -45,9 +45,11 @@ namespace SIL.Transcelerator
         public override int EndRef { get; set; }
 
         [XmlAttribute("exclude")]
+		[DefaultValue(false)]
         public bool IsExcluded { get; set; }
 
 		[XmlAttribute("user")]
+		[DefaultValue(false)]
 		public bool IsUserAdded
 		{
 			get => m_isUserAdded;

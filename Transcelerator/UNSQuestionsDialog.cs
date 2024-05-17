@@ -40,10 +40,10 @@ using SIL.Windows.Forms.Extensions;
 using SIL.Windows.Forms.Miscellaneous;
 using static System.Char;
 using static System.String;
+using static SIL.Transcelerator.TxlPlugin;
 using static SIL.WritingSystems.IetfLanguageTag;
 using Application = System.Windows.Forms.Application;
 using DateTime = System.DateTime;
-using File = System.IO.File;
 using FileInfo = System.IO.FileInfo;
 using Process = System.Diagnostics.Process;
 using Resources = SIL.Transcelerator.Properties.Resources;
@@ -76,7 +76,6 @@ namespace SIL.Transcelerator
 		private PhraseTranslationHelper m_helper;
 		private readonly ParatextDataFileAccessor m_fileAccessor;
 		private ParatextTermRenderingsRepo m_renderingsRepo;
-		private readonly string m_installDir;
 		private readonly IVersification m_masterVersification;
 		private IVerseRef m_startRef;
 		private IVerseRef m_endRef;
@@ -84,7 +83,6 @@ namespace SIL.Transcelerator
 		private TransceleratorSections m_sectionInfo;
 		private int[] m_availableBookIds;
 		private readonly string m_masterQuestionsFilename;
-		private static readonly string s_programDataFolder;
 		private readonly string m_parsedQuestionsFilename;
 		private DateTime m_lastSaveTime;
 		private MasterQuestionParser m_parser;
@@ -95,17 +93,17 @@ namespace SIL.Transcelerator
 		private BCVRef m_queuedReference;
 		private int m_longTaskStackCount = 0;
 		private int m_lastRowEntered = -1;
-		private TranslatablePhrase m_currentPhrase = null;
+		private TranslatablePhrase m_currentPhrase;
 		private int m_iCurrentColumn = -1;
 		private int m_normalRowHeight = -1;
 		private int m_lastTranslationSet = -1;
 		private bool m_translationEditWasCommitted;
-		private bool m_saving = false;
+		private bool m_saving;
 		private bool m_postponeRefresh;
 		private int m_maximumHeightOfKeyTermsPane;
-		private bool m_loadingBiblicalTermsPane = false;
-		private bool m_preventReEntrantCommitEditDuringSave = false;
-		private bool m_forceSaveOnCloseModal = false;
+		private bool m_loadingBiblicalTermsPane;
+		private bool m_preventReEntrantCommitEditDuringSave;
+		private bool m_forceSaveOnCloseModal;
 		private DataFileAccessor.DataFileId m_lockToHold = DataFileAccessor.DataFileId.Translations;
 		#endregion
 
@@ -239,35 +237,10 @@ namespace SIL.Transcelerator
 		private bool EditingTranslation => InTranslationCell &&
 			dataGridUns.IsCurrentCellInEditMode;
 
-		private string HelpHome => TxlPlugin.GetHelpFile("Home");
+		private string HelpHome => GetHelpFile("Home");
 		#endregion
 
-		#region Constructors
-		static UNSQuestionsDialog()
-		{
-			// On Windows, CommonApplicationData is actually the preferred location for this because it is not user-specific, but we do it this way to make it work on Linux.
-			try
-			{
-				var deprecatedProgramDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "SIL", "Transcelerator");
-				if (Directory.Exists(deprecatedProgramDataFolder))
-				{
-					var cachedQuestionsFilename = Path.Combine(deprecatedProgramDataFolder, TxlConstants.kQuestionsFilename);
-					if (File.Exists(cachedQuestionsFilename))
-						File.Delete(cachedQuestionsFilename);
-					Directory.Delete(deprecatedProgramDataFolder);
-				}
-			}
-			catch (Exception)
-			{
-				// This was just a clean-up step from a possible previous version of Transcelerator, so if something goes
-				// wrong, ignore it.
-			}
-
-			s_programDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SIL", "Transcelerator");
-			if (!Directory.Exists(s_programDataFolder))
-				Directory.CreateDirectory(s_programDataFolder);
-		}
-
+		#region Constructor
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Constructs a new instance of the <see cref="UNSQuestionsDialog"/> class.
@@ -312,10 +285,8 @@ namespace SIL.Transcelerator
 
 			m_masterVersification = m_host.GetStandardVersification(StandardScrVersType.English);
 
-			m_installDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? Empty;
-
-			m_masterQuestionsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionsFilename);
-			m_parsedQuestionsFilename = Path.Combine(s_programDataFolder, m_project.ShortName, TxlConstants.kQuestionsFilename);
+			m_masterQuestionsFilename = Path.Combine(InstallDir, TxlConstants.kQuestionsFilename);
+			m_parsedQuestionsFilename = Path.Combine(ProgramDataFolder, m_project.ShortName, TxlConstants.kQuestionsFilename);
 
 			var preferredUiLocale = LocalizationManager.UILanguageId;
 
@@ -568,12 +539,13 @@ namespace SIL.Transcelerator
 
 		private void HandleStringsLocalized(ILocalizationManager lm = null)
 		{
-			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
+			if (lm != null && lm != PrimaryLocalizationManager)
 				return;
 			SetControlTagsToFormatStringsAndFormatMenus();
 			SetWindowText();
 			UpdateCountsAndFilterStatus();
 			SetReferenceColumnWidth();
+			mnuHelpAbout.Text = Format(mnuHelpAbout.Text, TxlConstants.kPluginName);
 		}
 
 		private void SetWindowText()
@@ -642,7 +614,7 @@ namespace SIL.Transcelerator
 		private void AddAvailableLocalizationsToMenu()
 		{
 			var locales = LocalizationsFileAccessor
-				.GetAvailableLocales(m_installDir).Union(new[] { "en-US" }).ToList();
+				.GetAvailableLocales(InstallDir).Union(new[] { "en-US" }).ToList();
 
 			TxlPlugin.LocIncompleteViewModel.LocalesWithLocalizedQuestions = locales;
 
@@ -660,7 +632,7 @@ namespace SIL.Transcelerator
 					.Any(l => l.IetfLanguageTag == gc)));
 
 			mnuDisplayLanguage.InitializeWithAvailableUILocales(HandleDisplayLanguageSelected,
-				TxlPlugin.PrimaryLocalizationManager, TxlPlugin.LocIncompleteViewModel,
+				PrimaryLocalizationManager, LocIncompleteViewModel,
 				ShowMoreUiLanguagesDlg,
 				locales.Where(l => additionalLocales.Contains(
 					GetGeneralCode(l))).ToDictionary(GetLanguageNameWithDetails, l => l));
@@ -694,7 +666,7 @@ namespace SIL.Transcelerator
 			if (m_dataLocalizer?.Locale == localeId)
 				return m_dataLocalizer;
 
-			var dataLocalizer = new LocalizationsFileAccessor(m_installDir, localeId);
+			var dataLocalizer = new LocalizationsFileAccessor(InstallDir, localeId);
 			return dataLocalizer.Exists ? dataLocalizer : null;
 		}
 
@@ -1621,7 +1593,7 @@ namespace SIL.Transcelerator
 					languageInfo.Id, fontInfo.Size, languageInfo.IsRtoL, m_project.ScriptureMarkerInformation).CreateCSS(System.Drawing.ColorTranslator.ToHtml));
 			};
 
-			var locales = LocalizationsFileAccessor.GetAvailableLocales(m_installDir)
+			var locales = LocalizationsFileAccessor.GetAvailableLocales(InstallDir)
 				.ToDictionary(GetLanguageNameWithDetails, i => i);
 
 			GenerateScriptDlg generateScriptDlg = new GenerateScriptDlg(m_project.ShortName,
@@ -1655,7 +1627,7 @@ namespace SIL.Transcelerator
 
 			using (new WaitCursor(this))
 			{
-				var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(m_installDir).Select(GetDataLocalizer).ToList();
+				var allAvailableLocalizers = LocalizationsFileAccessor.GetAvailableLocales(InstallDir).Select(GetDataLocalizer).ToList();
 
 				// TXL-233: If Scripture Forge output files are created for a book but the user
 				// later goes back and removes user-confirmed translations such that the book has
@@ -2573,7 +2545,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuHelpAbout_Click(object sender, EventArgs e)
 		{
-			ShowModalChild(new HelpAboutDlg(Icon));
+			ShowModalChild(new HelpAboutDlg(Icon, m_host.UserSettings.IsInternetAccessEnabled));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2597,7 +2569,7 @@ namespace SIL.Transcelerator
 				$"{previousLocale} to {languageId}");
 
 			SetLocalizer(languageId);
-			TxlPlugin.UpdateUiLanguageForUser(languageId);
+			UpdateUiLanguageForUser(languageId);
 
 			Properties.Settings.Default.OverrideDisplayLanguage = languageId;
 			if (txtFilterByPart.Text.Trim().Length > 0)
@@ -2666,7 +2638,7 @@ namespace SIL.Transcelerator
 		private void SetScrForgeMenuIcon()
 		{
 			mnuProduceScriptureForgeFiles.Image = mnuProduceScriptureForgeFiles.Checked ?
-				Resources.sf_logo_medium___selected : Resources.sf_logo_medium;
+				Resources.publish_green : Resources.publish_gray;
 		}
 
 		private void UpdateSplashScreenMessage(IProgressMessage splashScreen, string fmt)
@@ -2690,13 +2662,13 @@ namespace SIL.Transcelerator
 			if (!finfoMasterQuestions.Exists)
 				throw new FileNotFoundException(GetMissingInstalledFileMessage(true, m_masterQuestionsFilename));
 
-			string keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
+			string keyTermRulesFilename = Path.Combine(InstallDir, TxlConstants.kKeyTermRulesFilename);
 
 			FileInfo finfoKtRules = new FileInfo(keyTermRulesFilename);
 			if (!finfoKtRules.Exists)
 				ReportMissingInstalledFile(keyTermRulesFilename);
 
-			string questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
+			string questionWordsFilename = Path.Combine(InstallDir, TxlConstants.kQuestionWordsFilename);
 
 			FileInfo finfoQuestionWords = new FileInfo(questionWordsFilename);
 			if (!finfoQuestionWords.Exists)
@@ -2829,7 +2801,7 @@ namespace SIL.Transcelerator
 		private KeyTermRules GetKeyTermRules(string keyTermRulesFilename = null)
 		{
 			if (keyTermRulesFilename == null)
-				keyTermRulesFilename = Path.Combine(m_installDir, TxlConstants.kKeyTermRulesFilename);
+				keyTermRulesFilename = Path.Combine(InstallDir, TxlConstants.kKeyTermRulesFilename);
 
 			KeyTermRules rules = XmlSerializationHelper.DeserializeFromFile<KeyTermRules>(keyTermRulesFilename, out var e);
 			if (e != null)
@@ -2846,7 +2818,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private string[] GetQuestionWords()
 		{
-			var questionWordsFilename = Path.Combine(m_installDir, TxlConstants.kQuestionWordsFilename);
+			var questionWordsFilename = Path.Combine(InstallDir, TxlConstants.kQuestionWordsFilename);
 			var questionWords = XmlSerializationHelper.DeserializeFromFile<QuestionWords>(questionWordsFilename, out var e);
 			if (e != null)
 				throw new ParatextPluginException(e);
