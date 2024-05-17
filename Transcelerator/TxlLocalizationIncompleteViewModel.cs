@@ -28,7 +28,7 @@ namespace SIL.Transcelerator
 			// If we have LocalizedQuestions for the language, even if none of the UI is localized,
 			// we should not show the dialog.
 			if (LocalesWithLocalizedQuestions.Contains(languageId))
-				return true; // TODO: When fix comes through in libpalaso, change this back to false
+				return false;
 			if (languageId.StartsWith("en-"))
 				languageId = IetfLanguageTag.GetGeneralCode(languageId);
 			return base.ShouldShowDialog(languageId);

@@ -10,35 +10,35 @@
         <Feature Id="PluginFeature_P9" Level="0" Title="Plugin for Paratext 9" AllowAdvertise="no">
             <Condition Level="1"><![CDATA[PARATEXT92ORGREATER]]></Condition>
             <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN" />
-			<Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
-				<CreateFolder />
-				<!-- Note: Transcelerator requires this folder even if none
-				of the "Localizations" sub-features is installed. Unfortunately,
-				it seems that even with a RemoveFolder element, this folder does
-				not get removed. Though it seems counterintuitive, my guess is
-				that the uninstall order is such that the remove is attempted
-				before the installed xlf files are removed. If this hypothesis
-				is correct, presumably RemoveEx could solve this, but then it
-				might cause another problem because it would prematurely delete
-				files that the installer wants to remove gracefully. For now, I
-				think this is not worth additional time trying to figure out. -->
-			</Component>
-            <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
+        <Component Id="CreateP9LocalizationFolder" Directory="INSTALLDIR9_LOCALIZATION" Guid="{FFFD2FB8-E7EE-4806-8910-96B2D166FD14}">
+        	<CreateFolder />
+        	<!-- Note: Transcelerator requires this folder even if none
+        	of the "Localizations" sub-features is installed. Unfortunately,
+        	it seems that even with a RemoveFolder element, this folder does
+        	not get removed. Though it seems counterintuitive, my guess is
+        	that the uninstall order is such that the remove is attempted
+        	before the installed xlf files are removed. If this hypothesis
+        	is correct, presumably RemoveEx could solve this, but then it
+        	might cause another problem because it would prematurely delete
+        	files that the installer wants to remove gracefully. For now, I
+        	think this is not worth additional time trying to figure out. -->
+        </Component>
+        <Feature Id="Localization_P9" Level="1" Title="Localizations" InstallDefault="followParent"
+                 AllowAdvertise="no">
+            <Feature Id="Localization_P9_enGB" Level="1" Title="English (United Kingdom)" InstallDefault="followParent"
                      AllowAdvertise="no">
-                <Feature Id="Localization_P9_enGB" Level="1" Title="English (United Kingdom)" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_enGB" />
-                </Feature>
-                <Feature Id="Localization_P9_es" Level="1" Title="español" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_es" />
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_es" />
-                </Feature>
-                <Feature Id="Localization_P9_fr" Level="1" Title="français" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_fr" />
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
-                </Feature>
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_enGB" />
+            </Feature>
+            <Feature Id="Localization_P9_es" Level="1" Title="español" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_es" />
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_es" />
+            </Feature>
+            <Feature Id="Localization_P9_fr" Level="1" Title="français" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_fr" />
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
+            </Feature>
                 <Feature Id="Localization_P9_tpi" Level="1" Title="Tok Pisin" InstallDefault="followParent"
                          AllowAdvertise="no">
                     <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_tpi" />
@@ -51,113 +51,116 @@
 				codepage. It gives an error if this file contains UI strings that are not in
 				the default/specified codepage (1252 in this case). For reference purposes,
 				I have noted in a comment the preferred title. -->
-                <Feature Id="Localization_P9_ar" Level="1" Title="Arabic" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: العربية (Arabic) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ar" />
-                </Feature>
-                <Feature Id="Localization_P9_az" Level="1" Title="Azerbaijani" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: azərbaycan -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_az" />
-                </Feature>
-                <Feature Id="Localization_P9_id" Level="1" Title="Bahasa Indonesia" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_id" />
-                </Feature>
-                <Feature Id="Localization_P9_bn" Level="1" Title="Bangla" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: বাংলা (Bangla) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_bn" />
-                </Feature>
-                <Feature Id="Localization_P9_my" Level="1" Title="Burmese" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: ဗမာ (Burmese) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_my" />
-                </Feature>
-                <Feature Id="Localization_P9_zh" Level="1" Title="Chinese (Traditional)" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: 中文(台灣) (Chinese (Traditional)) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_zh" />
-                </Feature>
-                <Feature Id="Localization_P9_zhCN" Level="1" Title="Chinese (Simplified)" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: 中文(中国) (Chinese (Simplified)) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_zhCN" />
-                </Feature>
-                <Feature Id="Localization_P9_de" Level="1" Title="Deutsch" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_de" />
-                </Feature>
-                <Feature Id="Localization_P9_hi" Level="1" Title="Hindi" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: हिन्दी (Hindi) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_hi" />
-                </Feature>
-                <Feature Id="Localization_P9_km" Level="1" Title="Khmer" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: ខ្មែរ (Khmer) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_km" />
-                </Feature>
-                <Feature Id="Localization_P9_rw" Level="1" Title="Kinyarwanda" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_rw" />
-                </Feature>
-                <Feature Id="Localization_P9_sw" Level="1" Title="Kiswahili" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_sw" />
-                </Feature>
-                <Feature Id="Localization_P9_ko" Level="1" Title="Korean" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: 한국어 (Korean) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ko" />
-                </Feature>
-                <Feature Id="Localization_P9_hu" Level="1" Title="magyar" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_hu" />
-                </Feature>
-                <Feature Id="Localization_P9_ms" Level="1" Title="Melayu" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ms" />
-                </Feature>
-                <Feature Id="Localization_P9_ne" Level="1" Title="Nepali" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: नेपाली (Nepali) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ne" />
-                </Feature>
-                <Feature Id="Localization_P9_fa" Level="1" Title="Persian" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: فارسی (Persian) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fa" />
-                </Feature>
-                <Feature Id="Localization_P9_pt" Level="1" Title="português" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_pt" />
-                </Feature>
-                <Feature Id="Localization_P9_ru" Level="1" Title="Russian" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: русский (Russian) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ru" />
-                </Feature>
-                <Feature Id="Localization_P9_ta" Level="1" Title="Tamil" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: தமிழ் (Tamil) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ta" />
-                </Feature>
-                <Feature Id="Localization_P9_te" Level="1" Title="Telugu" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: తెలుగు (Telugu) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_te" />
-                </Feature>
-                <Feature Id="Localization_P9_th" Level="1" Title="Thai" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: ไทย (Thai) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_th" />
-                </Feature>
-                <Feature Id="Localization_P9_tr" Level="1" Title="Türkçe" InstallDefault="followParent"
-                         AllowAdvertise="no">
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_tr" />
-                </Feature>
-                <Feature Id="Localization_P9_ur" Level="1" Title="Urdu" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: اُردو (Urdu) -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ur" />
-                </Feature>
-                <Feature Id="Localization_P9_vi" Level="1" Title="Vietnamese" InstallDefault="followParent"
-                         AllowAdvertise="no"> <!-- Preferred title: Tiếng Việt -->
-                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_vi" />
-                </Feature>
+            <Feature Id="Localization_P9_ar" Level="1" Title="Arabic" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: العربية (Arabic) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ar" />
             </Feature>
-			<Feature Id="Documentation_P9" Level="1" Title="Documentation" InstallDefault="followParent"
+            <Feature Id="Localization_P9_az" Level="1" Title="Azerbaijani" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: azərbaycan -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_az" />
+            </Feature>
+            <Feature Id="Localization_P9_id" Level="1" Title="Bahasa Indonesia" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_id" />
+            </Feature>
+            <Feature Id="Localization_P9_bn" Level="1" Title="Bangla" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: বাংলা (Bangla) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_bn" />
+            </Feature>
+            <Feature Id="Localization_P9_my" Level="1" Title="Burmese" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: ဗမာ (Burmese) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_my" />
+            </Feature>
+            <Feature Id="Localization_P9_zh" Level="1" Title="Chinese (Traditional)" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: 中文(台灣) (Chinese (Traditional)) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_zh" />
+            </Feature>
+            <Feature Id="Localization_P9_zhCN" Level="1" Title="Chinese (Simplified)" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: 中文(中国) (Chinese (Simplified)) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_zhCN" />
+            </Feature>
+            <Feature Id="Localization_P9_de" Level="1" Title="Deutsch" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_de" />
+            </Feature>
+            <Feature Id="Localization_P9_hi" Level="1" Title="Hindi" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: हिन्दी (Hindi) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_hi" />
+            </Feature>
+            <Feature Id="Localization_P9_km" Level="1" Title="Khmer" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: ខ្មែរ (Khmer) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_km" />
+            </Feature>
+            <Feature Id="Localization_P9_rw" Level="1" Title="Kinyarwanda" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_rw" />
+            </Feature>
+            <Feature Id="Localization_P9_sw" Level="1" Title="Kiswahili" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_sw" />
+            </Feature>
+            <Feature Id="Localization_P9_ko" Level="1" Title="Korean" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: 한국어 (Korean) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ko" />
+            </Feature>
+            <Feature Id="Localization_P9_hu" Level="1" Title="magyar" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_hu" />
+            </Feature>
+            <Feature Id="Localization_P9_ms" Level="1" Title="Melayu" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ms" />
+            </Feature>
+            <Feature Id="Localization_P9_ne" Level="1" Title="Nepali" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: नेपाली (Nepali) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ne" />
+            </Feature>
+            <Feature Id="Localization_P9_fa" Level="1" Title="Persian" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: فارسی (Persian) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fa" />
+            </Feature>
+            <Feature Id="Localization_P9_pt" Level="1" Title="português" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_pt" />
+            </Feature>
+            <Feature Id="Localization_P9_ru" Level="1" Title="Russian" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: русский (Russian) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ru" />
+            </Feature>
+            <Feature Id="Localization_P9_ta" Level="1" Title="Tamil" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: தமிழ் (Tamil) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ta" />
+            </Feature>
+            <Feature Id="Localization_P9_te" Level="1" Title="Telugu" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: తెలుగు (Telugu) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_te" />
+            </Feature>
+            <Feature Id="Localization_P9_th" Level="1" Title="Thai" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: ไทย (Thai) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_th" />
+            </Feature>
+            <Feature Id="Localization_P9_tr" Level="1" Title="Türkçe" InstallDefault="followParent"
+                     AllowAdvertise="no">
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_tr" />
+            </Feature>
+            <Feature Id="Localization_P9_ur" Level="1" Title="Urdu" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: اُردو (Urdu) -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_ur" />
+            </Feature>
+            <Feature Id="Localization_P9_vi" Level="1" Title="Vietnamese" InstallDefault="followParent"
+                     AllowAdvertise="no"> <!-- Preferred title: Tiếng Việt -->
+                <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_vi" />
+            </Feature>
+            </Feature>
+            <Feature Id="Documentation_P9" Level="1" Title="Documentation" InstallDefault="followParent"
                      AllowAdvertise="no">
                 <ComponentGroupRef Id="COMPONENTSFORP9Documentation_en" />
-				<Feature Id="Documentation_P9_es" Level="1" Title="español" InstallDefault="followParent"
+				        <Feature Id="Documentation_P9_es" Level="1" Title="español" InstallDefault="followParent"
                          AllowAdvertise="no">
-					<ComponentGroupRef Id="COMPONENTSFORP9Documentation_es" />
+					          <ComponentGroupRef Id="COMPONENTSFORP9Documentation_es" />
+                    <Component Id="INSTALLDIR9.ReleaseNotes_es.md" Guid="*" Directory="INSTALLDIR9">
+                      <File Id="INSTALLDIR9.ReleaseNotes.es.md" Name="ReleaseNotes.es.md" KeyPath="yes" Source="..\DistFiles\ReleaseNotes.es.md" />
+                    </Component>
                 </Feature>
             </Feature>
         </Feature>
