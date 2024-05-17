@@ -1,7 +1,6 @@
 ## What is Transcelerator?
 
-
-* Transcelerator helps Bible translation teams translate comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation. Transcelerator functions both as a plugin in Paratext and as a platform.Bible extension.
+Transcelerator™ helps Bible translation teams translate comprehension checking questions in order to prepare to test the quality and clarity of the vernacular Scripture translation. Transcelerator functions both as a plugin in Paratext and as a platform.Bible extension.
 
 ## How do I get set up to develop Transcelerator as a Paratext plugin?
 
@@ -11,7 +10,9 @@
 * Unit tests depend on [NUnit](https://nunit.org/). I recommend using [Jet Brains Resharper](https://www.jetbrains.com/resharper/), which has built-in test running capabilities.
 * The [Paratext Demo Plugins](https://github.com/ubsicap/paratext_demo_plugins) repository has more advanced information about the Paratext plugin architecture, which will explain more about how to build a plugin like Transcelerator.
 
-## How do I get set up to develop Transcelerator as a platform.Bible (aka, "Paranext") extension? 
+## How do I get set up to develop Transcelerator as a platform.Bible (aka, "Paranext") extension?
+
+This is still under development. Transcelerator cannot yet be used in Platform.Bible
 
 ### Outline of file and folder structure
 
