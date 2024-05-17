@@ -1,7 +1,7 @@
 // --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using SIL.Extensions;
 using static System.Char;
@@ -26,8 +25,6 @@ namespace SIL.Transcelerator
 	/// ----------------------------------------------------------------------------------------
 	public static class StringUtils
 	{
-		private const char kChObject = Extensions.StringExtensions.kObjReplacementChar;
-
 		/// <summary>String is interpreted as object</summary>
 		public static readonly string kszObject = "\uFFFC";
 
@@ -66,8 +63,8 @@ namespace SIL.Transcelerator
 		/// <param name="str1">first string to compare</param>
 		/// <param name="str2">second string to compare</param>
 		/// <returns>The index of the first difference or -1 if not found</returns>
-		/// TODO-Linux FWNX-150: mono compiler was have problems thinking calls to FindStringDifference was
-		/// ambiguous. So renamed to FindStringDifference_
+		/// TODO-Linux FWNX-150: mono compiler was having problems thinking that calls to
+		/// FindStringDifference was ambiguous. So renamed to FindStringDifference_
 		/// ------------------------------------------------------------------------------------
 		private static int FindStringDifference_(string str1, string str2)
 		{
@@ -194,7 +191,8 @@ namespace SIL.Transcelerator
 			return useThisMatch;
 		}
 
-		private static readonly Dictionary<string, Dictionary<string, string>> s_substringCache = new Dictionary<string, Dictionary<string, string>>();
+		private static readonly Dictionary<string, Dictionary<string, string>> s_substringCache =
+			new Dictionary<string, Dictionary<string, string>>();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
