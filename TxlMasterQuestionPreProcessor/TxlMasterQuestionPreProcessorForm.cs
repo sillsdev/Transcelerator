@@ -39,6 +39,8 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			m_masterVersification = englishVersification;
 			m_sfmSourceLabelText = lblSource.Text;
 
+			cboOverwrite.SelectedIndex = 1;
+
 			SetDefaultSfmSourceFile();
 			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlConstants.kQuestionsFilename);
 		}
