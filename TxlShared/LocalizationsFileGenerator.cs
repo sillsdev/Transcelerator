@@ -121,7 +121,7 @@ namespace SIL.Transcelerator.Localization
 						else if (ShouldOverwrite(tu))
 						{
 							var localization = LookupTranslation(existingTxlTranslations, data);
-							if (localization != null)
+							if (localization != null && (tu.Target.Text != localization || !tu.Approved && MarkApproved))
 							{
 								tu = null;
 								group.AddTranslationUnit(data, MarkApproved, localization);
