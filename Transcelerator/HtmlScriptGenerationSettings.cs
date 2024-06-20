@@ -7,6 +7,7 @@
 // </copyright> 
 #endregion
 // ---------------------------------------------------------------------------------------------
+using System;
 using System.Drawing;
 using System.Linq;
 using static System.String;
@@ -44,6 +45,12 @@ namespace SIL.Transcelerator
 		{
 			get => Properties.Settings.Default.GenerateTemplatePassageBeforeOverview;
 			set => Properties.Settings.Default.GenerateTemplatePassageBeforeOverview = value;
+		}
+
+		public bool OutputScriptureForQuestions
+		{
+			get => !Properties.Settings.Default.OmitScriptureForQuestions;
+			set => Properties.Settings.Default.OmitScriptureForQuestions = !value;
 		}
 
 		public bool IncludeVerseNumbers

@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -309,7 +309,6 @@ namespace SIL.Transcelerator
             section.Categories = new Category[2];
 
             var cat = section.Categories[0] = new Category { IsOverview = true };
-	        cat.IsOverview = true;
             AddTestQuestion(cat, "What is the meaning of life?", "A-D", 1, 4);
             AddTestQuestion(cat, "Why is there evil?", "E-F", 5, 6);
             AddTestQuestion(cat, "Why am I here?", "A-D", 1, 4);
@@ -4421,6 +4420,92 @@ namespace SIL.Transcelerator
 			public bool IsGuess => false;
 			public IReadOnlyList<string> Renderings => RenderingList;
 		}
+        #endregion
+
+        #region GetCategoryName tests
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting category names when the localizer is not set and the categories are
+        /// not translated.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetCategoryName_NotTranslatedAndNoLocalizerSet_GetsEnglishNames()
+        {
+            var section = m_sections.Items[0];
+            section.Categories = new Category[2];
+
+            section.Categories[0] = new Category { Type = "Overview", IsOverview = true };
+            section.Categories[1] = new Category { Type = "Details", IsOverview = false };
+
+            var pth = InitializePhraseTranslationHelper();
+
+			Assert.That(pth.GetCategoryName(0, out var lang), Is.EqualTo("Overview"));
+			Assert.That(lang, Is.EqualTo("en-US"));
+			Assert.That(pth.GetCategoryName(1, out lang), Is.EqualTo("Details"));
+			Assert.That(lang, Is.EqualTo("en-US"));
+        }
+		
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting category names when the categories are translated into the target
+        /// vernacular.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetCategoryName_Translated_GetsVernacularNames()
+        {
+	        var section = m_sections.Items[0];
+	        section.Categories = new Category[2];
+
+	        section.Categories[0] = new Category { Type = "Overview", IsOverview = true };
+	        section.Categories[1] = new Category { Type = "Details", IsOverview = false };
+
+	        var pth = InitializePhraseTranslationHelper();
+
+	        pth.UnfilteredPhrases.Single(p => p.IsCategoryName && p.PhraseInUse == "Overview").Translation = "Summary";
+	        pth.UnfilteredPhrases.Single(p => p.IsCategoryName && p.PhraseInUse == "Details").Translation = "Specifics";
+
+	        Assert.That(pth.GetCategoryName(0, out var lang), Is.EqualTo("Summary"));
+	        Assert.That(lang, Is.Null);
+	        Assert.That(pth.GetCategoryName(1, out lang), Is.EqualTo("Specifics"));
+	        Assert.That(lang, Is.Null);
+        }
+		
+        /// ------------------------------------------------------------------------------------
+        /// <summary>
+        /// Tests getting category names when the categories are translated but the localizer is
+        /// set and can provide a localized category name.
+        /// </summary>
+        /// ------------------------------------------------------------------------------------
+        [Test]
+        public void GetCategoryName_UntranslatedButLocalized_GetsLocalizedNames()
+        {
+	        var dataLoc = MockRepository.GenerateStub<ILocalizationsProvider>();
+			dataLoc.Stub(l => l.Locale).Return("fr");
+			dataLoc.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(
+					u => u.Type == LocalizableStringType.Category && u.SourceUIString == "Overview"),
+				out Arg<string>.Out("French for Overview").Dummy)).Return(true);
+			dataLoc.Stub(l => l.TryGetLocalizedString(Arg<UIDataString>.Matches(
+					u => u.Type == LocalizableStringType.Category && u.SourceUIString == "Details"),
+				out Arg<string>.Out("French for Details").Dummy)).Return(true);
+
+			var section = m_sections.Items[0];
+	        section.Categories = new Category[2];
+
+	        section.Categories[0] = new Category { Type = "Overview", IsOverview = true };
+	        section.Categories[1] = new Category { Type = "Details", IsOverview = false };
+
+	        var pq = GetParsedQuestions();
+	        var phrasePartManager = new PhrasePartManager(pq.TranslatableParts, pq.KeyTerms, RenderingsRepo);
+	        var qp = new QuestionProvider(pq, phrasePartManager);
+	        PhraseTranslationHelper pth = new PhraseTranslationHelper(qp, dataLoc);
+
+	        Assert.That(pth.GetCategoryName(0, out var lang), Is.EqualTo("French for Overview"));
+	        Assert.That(lang, Is.EqualTo("fr"));
+	        Assert.That(pth.GetCategoryName(1, out lang), Is.EqualTo("French for Details"));
+	        Assert.That(lang, Is.EqualTo("fr"));
+        }
         #endregion
 
 		#region Private helper methods
