@@ -24,7 +24,6 @@ using SIL.Scripture;
 using JetBrains.Annotations;
 using Microsoft.Web.WebView2.Core;
 using Paratext.PluginInterfaces;
-using SIL.Windows.Forms.LocalizationIncompleteDlg;
 using SIL.Reporting;
 using SIL.WritingSystems;
 using static System.Environment;
@@ -50,11 +49,11 @@ namespace SIL.Transcelerator
 		private static IProject s_currentProject;
 		private static IPluginHost Host { get; set; }
 
+		internal static TxlLocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
 		internal static string InstallDir { get; }
 		internal static string ProgramDataFolder { get; }
 		internal static CoreWebView2Environment WebView2Environment { get; set; }
 
-		internal static LocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 
 		/// <summary>
