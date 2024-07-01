@@ -30,6 +30,7 @@ namespace SIL.Transcelerator
 		HandleUntranslatedQuestionsOption HandlingOfUntranslatedQuestions { get; set; }
 		bool OutputPassageForOutOfOrderQuestions { get; set; }
 		bool OutputFullPassageAtStartOfSection { get; set; }
+		bool OutputScriptureForQuestions { get; set; }
 		bool IncludeVerseNumbers { get; set; }
 		bool IncludeLWCQuestions { get; set; }
 		bool IncludeLWCAnswers { get; set; }

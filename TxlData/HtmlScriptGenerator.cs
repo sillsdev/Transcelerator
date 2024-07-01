@@ -113,6 +113,12 @@ namespace SIL.Transcelerator
 			set => m_settings.OutputFullPassageAtStartOfSection = value;
 		}
 
+		public bool OutputScriptureForQuestions
+		{
+			get => m_settings.OutputScriptureForQuestions;
+			set => m_settings.OutputScriptureForQuestions = value;
+		}
+
 		public bool IncludeVerseNumbers
 		{
 			get => m_settings.IncludeVerseNumbers;
@@ -370,7 +376,9 @@ namespace SIL.Transcelerator
 						OutputScripture(section.StartRef, section.EndRef);
 					}
 
-					var lwcCategoryName = GetDataString(new UISimpleDataString(phrase.CategoryName, LocalizableStringType.Category), out lang);
+					var lwcCategoryName = phrase.GetCategoryName(out lang);
+					if (lang == null)
+						lang = VernIcuLocale;
 					WriteParagraphElement(tw, null, lwcCategoryName, VernIcuLocale, lang, "h3");
 
 					prevCategory = phrase.Category;
@@ -418,7 +426,8 @@ namespace SIL.Transcelerator
 					{
 						int startRef = ChangeVersification(phrase.StartRef);
 						int endRef = ChangeVersification(phrase.EndRef);
-						OutputScripture(startRef, endRef);
+						if (OutputScriptureForQuestions)
+							OutputScripture(startRef, endRef);
 					}
 
 					prevQuestionStartRef = phrase.StartRef;
