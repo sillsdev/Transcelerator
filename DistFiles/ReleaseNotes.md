@@ -1,4 +1,7 @@
-﻿## 3.1.3 6 August 2022
+## 3.2.0 3 July 2024
+* Added an option to omit the Scripture verses before each question in the generated script.
+
+## 3.1.3 6 August 2022
 * Internationalized the Help system and localized it into Spanish. (Additional localizations can be done using [crowdin](https://crowdin.com/project/transcelerator).)
 
 ## 3.1.0 3 March 2022

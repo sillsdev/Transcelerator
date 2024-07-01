@@ -101,6 +101,8 @@ namespace SIL.Transcelerator
 
 			m_chkPassageBeforeOverview.Checked = m_generator.OutputFullPassageAtStartOfSection;
 			m_chkIncludeVerseNumbers.Checked = m_generator.IncludeVerseNumbers;
+			m_chkIncludeScriptureForQuestions.Checked = m_generator.OutputScriptureForQuestions;
+
 			SetDefaultCheckedStateForLWCOptions();
 
 			switch (m_generator.HandlingOfUntranslatedQuestions)
@@ -284,7 +286,7 @@ namespace SIL.Transcelerator
 		public string SelectedBook => m_rdoWholeBook.Checked ? (string)m_cboBooks.SelectedItem : null;
 
 		// ENHANCE: It's less than ideal to provide the selected "sections" in terms of
-		// start and end refs because there are couple sections that start/end mid-verse.
+		// start and end refs because there are a couple sections that start/end mid-verse.
 		// If the user selects one of these as a single section or starts/ends the section
 		// range in one of these, the generated script is going to include one of more
 		// questions from the adjacent section. From a task-oriented perspective this is
@@ -512,6 +514,7 @@ namespace SIL.Transcelerator
 
 			m_generator.OutputFullPassageAtStartOfSection = m_chkPassageBeforeOverview.Checked;
 			m_generator.IncludeVerseNumbers = m_chkIncludeVerseNumbers.Checked;
+			m_generator.OutputScriptureForQuestions= m_chkIncludeScriptureForQuestions.Checked;
 
 			m_generator.QuestionGroupHeadingsTextColor = ColorTranslator.ToHtml(m_lblQuestionGroupHeadingsColor.ForeColor);
 			m_generator.LWCQuestionTextColor = ColorTranslator.ToHtml(m_lblLWCQuestionColor.ForeColor);
@@ -536,8 +539,8 @@ namespace SIL.Transcelerator
 				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.UseLWC;
 			else
 			{
-				Debug.Assert(m_rdoDisplayWarning.Checked);
-				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Warn;
+				Debug.Assert(m_rdoSkipUntranslated.Checked);
+				m_generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Skip;
 			}
 
 			m_generator.Folder = m_lblFolder.Text;
