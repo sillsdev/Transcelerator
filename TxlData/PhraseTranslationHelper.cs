@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2011' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -21,6 +21,8 @@ using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
+using Icu;
+using static System.Char;
 
 namespace SIL.Transcelerator
 {
@@ -42,6 +44,10 @@ namespace SIL.Transcelerator
 	/// --------------------------------------------------------------------------------------------
     public class PhraseTranslationHelper : IPhraseTranslationHelper
 	{
+		private const string kDefaultLang = "en-US";
+
+		private readonly ILocalizationsProvider m_dataLoc;
+
 		#region Events
 		public event Action TranslationsChanged;
 		#endregion
@@ -80,8 +86,9 @@ namespace SIL.Transcelerator
 		/// Initializes a new instance of the <see cref="PhraseTranslationHelper"/> class.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public PhraseTranslationHelper(QuestionProvider qp)
+		public PhraseTranslationHelper(QuestionProvider qp, ILocalizationsProvider dataLoc = null)
 		{
+			m_dataLoc = dataLoc;
 			m_phrasePartManager = qp.PhrasePartManager;
 			qp.Helper = this;
 
@@ -443,8 +450,8 @@ namespace SIL.Transcelerator
 			var list = new List<StringAlt> {new StringAlt {Lang = vernIcuLocale, Text = question.Translation}};
 			string variant = null;
 			var locKey = question.ToUIDataString();
-			if (vernIcuLocale != "en-US")
-				list.Add(new StringAlt { Lang = "en-US", Text = locKey.SourceUIString });
+			if (vernIcuLocale != kDefaultLang)
+				list.Add(new StringAlt { Lang = kDefaultLang, Text = locKey.SourceUIString });
 			list.AddRange(from loc in localizers.Where(l => l.Locale != vernIcuLocale)
 				where loc.TryGetLocalizedString(locKey, out variant)
 				select new StringAlt { Lang = loc.Locale, Text = variant });
@@ -464,7 +471,7 @@ namespace SIL.Transcelerator
 			{
 				var locKey = new UIAnswerOrNoteDataString(question, type, i);
 				variant = null;
-				List<StringAlt> list = new List<StringAlt> {new StringAlt {Lang = "en-US", Text = sourceStrings[i]}};
+				List<StringAlt> list = new List<StringAlt> {new StringAlt {Lang = kDefaultLang, Text = sourceStrings[i]}};
 				list.AddRange(from loc in localizers
 					where loc.TryGetLocalizedString(locKey, out variant)
 					select new StringAlt {Lang = loc.Locale, Text = variant});
@@ -618,14 +625,32 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the translation of the requested category; if not translated, use the English.
+		/// Gets the translation of the requested category; if not translated, use the current
+		/// UI localization (falling back to English). If translated, lang will be null;
+		/// otherwise, it will be the UI locale used.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string GetCategoryName(int categoryId)
+		public string GetCategoryName(int categoryId, out string lang)
 		{
 			string catName = m_categories[categoryId].Translation;
 			if (IsNullOrEmpty(catName))
-				catName = m_categories[categoryId].PhraseInUse;
+			{
+				var englishCategoryName = m_categories[categoryId].OriginalPhrase;
+				if (m_dataLoc == null)
+				{
+					lang = kDefaultLang;
+					catName = englishCategoryName;
+				}
+				else
+				{
+					var key = new UISimpleDataString(englishCategoryName, LocalizableStringType.Category);
+					lang = m_dataLoc.TryGetLocalizedString(key, out catName) ? m_dataLoc.Locale : "en";
+				}
+			}
+			else
+			{
+				lang = null;
+			}
 			return catName;
 		}
 
@@ -639,7 +664,7 @@ namespace SIL.Transcelerator
 			get
 			{
 				for (var i = 0; i < m_categories.Count; i++)
-					yield return GetCategoryName(i);
+					yield return GetCategoryName(i, out _);
 			}
 		}
 
@@ -807,10 +832,10 @@ namespace SIL.Transcelerator
 					BCVRef startRef = multilingScrBooks.ParseRefString(sBookAndChapter + ":1");
 					foreach (char c in sVersesCoveredByQuestion)
 					{
-						if (!Char.IsDigit(c))
+						if (!IsDigit(c))
 							break;
 						startVerse *= 10;
-						startVerse += (int)Char.GetNumericValue(c);
+						startVerse += (int)GetNumericValue(c);
 					}
 					if (startVerse > 0)
 						startRef.Verse = startVerse;
@@ -821,9 +846,9 @@ namespace SIL.Transcelerator
 					for (int i = sVersesCoveredByQuestion.Length - 1; i >= 0; i--)
 					{
 						char c = sVersesCoveredByQuestion[i];
-						if (!Char.IsDigit(c))
+						if (!IsDigit(c))
 							break;
-						endVerse += (int)Char.GetNumericValue(c) * factor;
+						endVerse += (int)GetNumericValue(c) * factor;
 						factor *= 10;
 					}
 					if (endVerse > 0)
@@ -912,7 +937,7 @@ namespace SIL.Transcelerator
 				initialPunct = InitialPunctuationForType(tp.TypeOfPhrase);
 
 			bldr.Length = 0;
-			foreach (char t in tp.Translation.Reverse().TakeWhile(Char.IsPunctuation))
+			foreach (char t in tp.Translation.Reverse().TakeWhile(IsPunctuation))
 				bldr.Insert(0, t);
 			if (bldr.Length > 0 && bldr.Length < tp.Translation.Length)
 				m_finalPunct[tp.TypeOfPhrase] = finalPunct = bldr.ToString();
@@ -1075,7 +1100,7 @@ namespace SIL.Transcelerator
 				{
 					string sCommonSubstring = StringUtils.LongestUsefulCommonSubstring(userTranslations[i], userTranslations[j],
 						fCommonSubstringIsWholeWord, out fCommonSubstringIsWholeWord).Trim();
-					if (sCommonSubstring.Length > 1 || (sCommonSubstring.Length == 1 && Char.IsLetter(sCommonSubstring[0])))
+					if (sCommonSubstring.Length > 1 || (sCommonSubstring.Length == 1 && IsLetter(sCommonSubstring[0])))
 					{
 						commonSubstrings.TryGetValue(sCommonSubstring, out var val);
 						val += Math.Sqrt(sCommonSubstring.Length);
@@ -1225,7 +1250,7 @@ namespace SIL.Transcelerator
 		public void SetNumericFormat(char exampleDigit, string groupingPunctuation,
 			IReadOnlyList<int> digitGroups, bool fNoGroupPunctForShortNumbers)
 		{
-			char nativeZero = (char)(exampleDigit - (int)char.GetNumericValue(exampleDigit));
+			char nativeZero = (char)(exampleDigit - (int)GetNumericValue(exampleDigit));
 			if (nativeZero.ToString(CultureInfo.InvariantCulture) != NumberFormatInfo.NativeDigits[0] ||
 				groupingPunctuation != NumberFormatInfo.NumberGroupSeparator ||
 				NoGroupPunctForShortNumbers != fNoGroupPunctForShortNumbers ||
