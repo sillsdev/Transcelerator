@@ -17,6 +17,7 @@ using System.Text;
 using NUnit.Framework;
 using Rhino.Mocks;
 using SIL.Scripture;
+using Is = NUnit.Framework.Is;
 
 namespace SIL.Transcelerator
 {
@@ -25,7 +26,7 @@ namespace SIL.Transcelerator
 	{
 		private const string kHtmlSection = "<h2 lang=\"en-US\">%SECTIONHEADORREF%</h2>\r\n" + 
 			"<p>%SECTVERSENUM%This is the section head Scripture.</p>\r\n" + 
-			"<h3 lang=\"en-US\">%CATEGORY%</h3>\r\n";
+			"<h3%CATEGORY_LANG%>%CATEGORY%</h3>\r\n";
 
 		private const string kHtmlStart = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n" + 
 		"<html>\r\n" + 
@@ -70,8 +71,8 @@ namespace SIL.Transcelerator
 		[OneTimeSetUp]
 		public void FixtureSetup()
 		{
-			m_helper.Stub(h => h.GetCategoryName(0)).Return("Overview");
-			m_helper.Stub(h => h.GetCategoryName(1)).Return("Details");
+			m_helper.Stub(h => h.GetCategoryName(Arg<int>.Matches(i => i == 0), out Arg<string>.Out("en-US").Dummy)).Return("Overview");
+			m_helper.Stub(h => h.GetCategoryName(Arg<int>.Matches(i => i == 1), out Arg<string>.Out(null).Dummy)).Return("Details-translated");
 		}
 
 		[TestCase("EXO")]
@@ -100,7 +101,8 @@ namespace SIL.Transcelerator
 				.Replace("%BLANKLINES%", 0.ToString())
 				.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
 				.Replace("%SECTVERSENUM%", "")
-				.Replace("%CATEGORY%", "Details") +
+				.Replace("%CATEGORY_LANG%", "")
+				.Replace("%CATEGORY%", "Details-translated") +
 				"<p>This is the Scripture.</p>\r\n" +
 				kHtmlExtrasDiv +
 				"<p class=\"question\" lang=\"en-US\">What is this?</p>\r\n</div>\r\n" +
@@ -142,7 +144,8 @@ namespace SIL.Transcelerator
 					.Replace("%BLANKLINES%", 0.ToString())
 					.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
 					.Replace("%SECTVERSENUM%", "1")
-					.Replace("%CATEGORY%", "Details") +
+					.Replace("%CATEGORY_LANG%", "")
+					.Replace("%CATEGORY%", "Details-translated") +
 				"<p>4This is the Scripture.</p>\r\n" +
 				kHtmlExtrasDiv +
 				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n</div>\r\n" +
@@ -199,16 +202,78 @@ namespace SIL.Transcelerator
 					.Replace("%BLANKLINES%", 0.ToString())
 					.Replace("%SECTIONHEADORREF%", sectionInfo1.Heading)
 					.Replace("%SECTVERSENUM%", "")
-					.Replace("%CATEGORY%", "Details") +
+					.Replace("%CATEGORY_LANG%", "")
+					.Replace("%CATEGORY%", "Details-translated") +
 				"<p>This is the Scripture.</p>\r\n" +
 				kHtmlExtrasDiv +
 				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n</div>\r\n" +
 				kHtmlSection.Replace("%SECTIONHEADORREF%", sectionInfo2.Heading)
 					.Replace("%SECTVERSENUM%", "")
+					.Replace("%CATEGORY_LANG%", " lang=\"en-US\"")
 					.Replace("%CATEGORY%", "Overview") +
 				kHtmlExtrasDiv +
 				"<p class=\"question\">Klumpf zad 'op#</p>\r\n</div>\r\n" +
 				(includeComments ? "<p class=\"comment\">This is a comment.</p>\r\n" : "") +
+				kHtmlEnd;
+
+			Assert.That(sb.ToString(), Is.EqualTo(expected));
+		}
+
+		[Test]
+		public void Generate_ExcludeLWCQuestionsAndAnswers_ExcludeScriptureForQuestions_GeneratesValidHtml()
+		{
+			const string book = "EXO";
+
+			ISectionInfo sectionInfo1 = GetSectionInfoForExo1V1ThruV15();
+			ISectionInfo sectionInfo2 = GetSectionInfo("Somebody Does Something", "Exodus 11:1-7", 2, 11, 1, 7);
+
+			var repo = new PhraseRepo();
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 10.4",
+				2010004, 2010004, "What is this?", "Nothing"), 0, 1, 0, m_helper)
+			{
+				Translation = "Fmugh zorb wis Blen#"
+			});
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.5-6",
+				2011005, 2011006, "Why is this not translated?", null), 1, 0, 0, m_helper));
+			repo.SourcePhrases.Add(new TranslatablePhrase(new Question("EXO 11.6-7",
+				2011006, 2011007, "Who did what?", null)
+			{
+				Notes = new []{"This is a comment."} }, 1, 0, 1, m_helper)
+			{
+				Translation = "Klumpf zad 'op#"
+			});
+
+			var generator = new HtmlScriptGenerator(new TestScriptGenerationSettings(), "xyz",
+				repo.GetPhrases, "Arial", tp => tp.SectionId == 0 ? sectionInfo1 : sectionInfo2);
+			generator.Extractor = new TestHtmlExtractor();
+			generator.Title = "Questions for Exodus";
+			generator.HandlingOfUntranslatedQuestions = HandleUntranslatedQuestionsOption.Skip;
+			generator.IncludeLWCQuestions = false;
+			generator.IncludeLWCAnswers = false;
+			generator.IncludeLWCComments = false;
+			generator.OutputScriptureForQuestions = false;
+			SetRefRange(generator, book, null);
+			
+			var sb = new StringBuilder();
+			using (var tw = new StringWriter(sb))
+				generator.Generate(tw);
+
+			var expected = kHtmlStart.Replace("%TITLE%", "Questions for Exodus")
+					.Replace("%VERNLOCALE%", "xyz")
+					.Replace("%VERNFONT%", "Arial")
+					.Replace("%BLANKLINES%", 0.ToString())
+					.Replace("%SECTIONHEADORREF%", sectionInfo1.Heading)
+					.Replace("%SECTVERSENUM%", "")
+					.Replace("%CATEGORY_LANG%", "")
+					.Replace("%CATEGORY%", "Details-translated") +
+				kHtmlExtrasDiv +
+				"<p class=\"question\">Fmugh zorb wis Blen#</p>\r\n</div>\r\n" +
+				kHtmlSection.Replace("%SECTIONHEADORREF%", sectionInfo2.Heading)
+					.Replace("%SECTVERSENUM%", "")
+					.Replace("%CATEGORY_LANG%", " lang=\"en-US\"")
+					.Replace("%CATEGORY%", "Overview") +
+				kHtmlExtrasDiv +
+				"<p class=\"question\">Klumpf zad 'op#</p>\r\n</div>\r\n" +
 				kHtmlEnd;
 
 			Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -246,10 +311,11 @@ namespace SIL.Transcelerator
 					.Replace("%BLANKLINES%", 0.ToString())
 					.Replace("%SECTIONHEADORREF%", sectionInfo.Heading)
 					.Replace("%SECTVERSENUM%", "1")
+					.Replace("%CATEGORY_LANG%", " lang=\"en-US\"")
 					.Replace("%CATEGORY%", "Overview") +
 				kHtmlExtrasDiv +
 				"<p class=\"question\" lang=\"en-US\">Tell me some stuff.</p>\r\n</div>\r\n" +
-				"<h3 lang=\"en-US\">Details</h3>\r\n" +
+				"<h3>Details-translated</h3>\r\n" +
 				"<p>4This is the Scripture.</p>\r\n" +
 				kHtmlExtrasDiv +
 				"<p class=\"question\" lang=\"en-US\">What is this?</p>\r\n</div>\r\n" +
@@ -327,6 +393,7 @@ namespace SIL.Transcelerator
 		public HandleUntranslatedQuestionsOption HandlingOfUntranslatedQuestions { get; set; }
 		public bool OutputPassageForOutOfOrderQuestions { get; set; }
 		public bool OutputFullPassageAtStartOfSection { get; set; } = true;
+		public bool OutputScriptureForQuestions { get; set; } = true;
 		public bool IncludeVerseNumbers { get; set; }
 		public bool IncludeLWCQuestions { get; set; } = true;
 		public bool IncludeLWCAnswers { get; set; } = true;

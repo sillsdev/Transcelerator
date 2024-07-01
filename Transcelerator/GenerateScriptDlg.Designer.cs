@@ -65,12 +65,14 @@ namespace SIL.Transcelerator
             this.lblDetailQuestionsOutOfOrder = new System.Windows.Forms.Label();
             this.m_rdoWholeBook = new System.Windows.Forms.RadioButton();
             this.m_grpRange = new System.Windows.Forms.GroupBox();
+            this.m_tableLayoutPanelRange = new System.Windows.Forms.TableLayoutPanel();
             this.m_cboBooks = new System.Windows.Forms.ComboBox();
             this.m_cboEndSection = new System.Windows.Forms.ComboBox();
-            this.m_cboStartSection = new System.Windows.Forms.ComboBox();
-            this.m_rdoSectionRange = new System.Windows.Forms.RadioButton();
-            this.m_cboSection = new System.Windows.Forms.ComboBox();
             this.m_rdoSingleSection = new System.Windows.Forms.RadioButton();
+            this.m_cboStartSection = new System.Windows.Forms.ComboBox();
+            this.m_cboSection = new System.Windows.Forms.ComboBox();
+            this.m_rdoSectionRange = new System.Windows.Forms.RadioButton();
+            this.m_chkShowUnavailable = new System.Windows.Forms.CheckBox();
             this.m_chkPassageBeforeOverview = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.m_rdoSkipUntranslated = new System.Windows.Forms.RadioButton();
@@ -105,6 +107,7 @@ namespace SIL.Transcelerator
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.tabOptions = new System.Windows.Forms.TabPage();
+            this.m_chkIncludeScriptureForQuestions = new System.Windows.Forms.CheckBox();
             this.m_chkIncludeVerseNumbers = new System.Windows.Forms.CheckBox();
             this.panel3 = new System.Windows.Forms.Panel();
             this.m_rdoDisplayReferenceForOutOfOrderQuestions = new System.Windows.Forms.RadioButton();
@@ -114,10 +117,9 @@ namespace SIL.Transcelerator
             this.lblUseLWC = new System.Windows.Forms.Label();
             this.tabAppearance = new System.Windows.Forms.TabPage();
             this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-            this.m_tableLayoutPanelRange = new System.Windows.Forms.TableLayoutPanel();
-            this.m_chkShowUnavailable = new System.Windows.Forms.CheckBox();
             this.groupBoxDocument.SuspendLayout();
             this.m_grpRange.SuspendLayout();
+            this.m_tableLayoutPanelRange.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_numBlankLines)).BeginInit();
             this.panel2.SuspendLayout();
@@ -128,7 +130,6 @@ namespace SIL.Transcelerator
             this.panel3.SuspendLayout();
             this.tabAppearance.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
-            this.m_tableLayoutPanelRange.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblSectionRangeTo
@@ -329,6 +330,33 @@ namespace SIL.Transcelerator
             this.m_grpRange.TabStop = false;
             this.m_grpRange.Text = "Range";
             // 
+            // m_tableLayoutPanelRange
+            // 
+            this.m_tableLayoutPanelRange.ColumnCount = 4;
+            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboBooks, 1, 0);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboEndSection, 3, 2);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoWholeBook, 0, 0);
+            this.m_tableLayoutPanelRange.Controls.Add(this.lblSectionRangeTo, 2, 2);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoSingleSection, 0, 1);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboStartSection, 1, 2);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboSection, 1, 1);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoSectionRange, 0, 2);
+            this.m_tableLayoutPanelRange.Controls.Add(this.m_chkShowUnavailable, 3, 0);
+            this.m_tableLayoutPanelRange.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_tableLayoutPanelRange.Location = new System.Drawing.Point(6, 16);
+            this.m_tableLayoutPanelRange.Margin = new System.Windows.Forms.Padding(0);
+            this.m_tableLayoutPanelRange.Name = "m_tableLayoutPanelRange";
+            this.m_tableLayoutPanelRange.RowCount = 3;
+            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.m_tableLayoutPanelRange.Size = new System.Drawing.Size(487, 80);
+            this.m_tableLayoutPanelRange.TabIndex = 7;
+            // 
             // m_cboBooks
             // 
             this.m_cboBooks.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
@@ -367,6 +395,22 @@ namespace SIL.Transcelerator
             this.m_cboEndSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             this.m_cboEndSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
             // 
+            // m_rdoSingleSection
+            // 
+            this.m_rdoSingleSection.AutoSize = true;
+            this.m_rdoSingleSection.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSingleSection, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSingleSection, "To control which character will be the mnemonic key (underlined when the user pre" +
+        "sses the ALT key), put the ampersand before the desired character.");
+            this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSingleSection, "GenerateScriptDlg.m_rdoSingleSection");
+            this.m_rdoSingleSection.Location = new System.Drawing.Point(3, 30);
+            this.m_rdoSingleSection.Name = "m_rdoSingleSection";
+            this.m_rdoSingleSection.Size = new System.Drawing.Size(93, 17);
+            this.m_rdoSingleSection.TabIndex = 2;
+            this.m_rdoSingleSection.Text = "&Single Section";
+            this.m_rdoSingleSection.UseVisualStyleBackColor = true;
+            this.m_rdoSingleSection.CheckedChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
+            // 
             // m_cboStartSection
             // 
             this.m_cboStartSection.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
@@ -387,22 +431,6 @@ namespace SIL.Transcelerator
             this.m_cboStartSection.SelectedIndexChanged += new System.EventHandler(this.m_cboStartSection_SelectedIndexChanged);
             this.m_cboStartSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             this.m_cboStartSection.Enter += new System.EventHandler(this.SectionRangeCombo_Enter);
-            // 
-            // m_rdoSectionRange
-            // 
-            this.m_rdoSectionRange.AutoSize = true;
-            this.m_rdoSectionRange.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSectionRange, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSectionRange, "To control which character will be the mnemonic key (underlined when the user pre" +
-        "sses the ALT key), put the ampersand before the desired character.");
-            this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSectionRange, "GenerateScriptDlg.m_rdoSectionRange");
-            this.m_rdoSectionRange.Location = new System.Drawing.Point(3, 57);
-            this.m_rdoSectionRange.Name = "m_rdoSectionRange";
-            this.m_rdoSectionRange.Size = new System.Drawing.Size(113, 17);
-            this.m_rdoSectionRange.TabIndex = 4;
-            this.m_rdoSectionRange.Text = "&Range of Sections";
-            this.m_rdoSectionRange.UseVisualStyleBackColor = true;
-            this.m_rdoSectionRange.CheckedChanged += new System.EventHandler(this.m_rdoSectionRange_CheckedChanged);
             // 
             // m_cboSection
             // 
@@ -425,21 +453,36 @@ namespace SIL.Transcelerator
             this.m_cboSection.TextUpdate += new System.EventHandler(this.ComboTextUpdate);
             this.m_cboSection.Enter += new System.EventHandler(this.m_cboSection_Enter);
             // 
-            // m_rdoSingleSection
+            // m_rdoSectionRange
             // 
-            this.m_rdoSingleSection.AutoSize = true;
-            this.m_rdoSingleSection.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSingleSection, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSingleSection, "To control which character will be the mnemonic key (underlined when the user pre" +
+            this.m_rdoSectionRange.AutoSize = true;
+            this.m_rdoSectionRange.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_rdoSectionRange, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this.m_rdoSectionRange, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
-            this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSingleSection, "GenerateScriptDlg.m_rdoSingleSection");
-            this.m_rdoSingleSection.Location = new System.Drawing.Point(3, 30);
-            this.m_rdoSingleSection.Name = "m_rdoSingleSection";
-            this.m_rdoSingleSection.Size = new System.Drawing.Size(93, 17);
-            this.m_rdoSingleSection.TabIndex = 2;
-            this.m_rdoSingleSection.Text = "&Single Section";
-            this.m_rdoSingleSection.UseVisualStyleBackColor = true;
-            this.m_rdoSingleSection.CheckedChanged += new System.EventHandler(this.UpdateTitleAndFilenameForSingleSection);
+            this.l10NSharpExtender1.SetLocalizingId(this.m_rdoSectionRange, "GenerateScriptDlg.m_rdoSectionRange");
+            this.m_rdoSectionRange.Location = new System.Drawing.Point(3, 57);
+            this.m_rdoSectionRange.Name = "m_rdoSectionRange";
+            this.m_rdoSectionRange.Size = new System.Drawing.Size(113, 17);
+            this.m_rdoSectionRange.TabIndex = 4;
+            this.m_rdoSectionRange.Text = "&Range of Sections";
+            this.m_rdoSectionRange.UseVisualStyleBackColor = true;
+            this.m_rdoSectionRange.CheckedChanged += new System.EventHandler(this.m_rdoSectionRange_CheckedChanged);
+            // 
+            // m_chkShowUnavailable
+            // 
+            this.m_chkShowUnavailable.AutoSize = true;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkShowUnavailable, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this.m_chkShowUnavailable, null);
+            this.l10NSharpExtender1.SetLocalizationPriority(this.m_chkShowUnavailable, L10NSharp.LocalizationPriority.NotLocalizable);
+            this.l10NSharpExtender1.SetLocalizingId(this.m_chkShowUnavailable, "GenerateScriptDlg.m_chkShowUnavailable");
+            this.m_chkShowUnavailable.Location = new System.Drawing.Point(317, 3);
+            this.m_chkShowUnavailable.Name = "m_chkShowUnavailable";
+            this.m_chkShowUnavailable.Size = new System.Drawing.Size(142, 17);
+            this.m_chkShowUnavailable.TabIndex = 8;
+            this.m_chkShowUnavailable.Text = "Show unavailable books";
+            this.m_chkShowUnavailable.UseVisualStyleBackColor = true;
+            this.m_chkShowUnavailable.CheckedChanged += new System.EventHandler(this.m_chkShowUnavailable_CheckedChanged);
             // 
             // m_chkPassageBeforeOverview
             // 
@@ -940,6 +983,7 @@ namespace SIL.Transcelerator
             // 
             // tabOptions
             // 
+            this.tabOptions.Controls.Add(this.m_chkIncludeScriptureForQuestions);
             this.tabOptions.Controls.Add(this.m_chkIncludeVerseNumbers);
             this.tabOptions.Controls.Add(this.panel3);
             this.tabOptions.Controls.Add(this.m_cboUseLWC);
@@ -959,6 +1003,21 @@ namespace SIL.Transcelerator
             this.tabOptions.TabIndex = 1;
             this.tabOptions.Text = "Options";
             this.tabOptions.UseVisualStyleBackColor = true;
+            // 
+            // m_chkIncludeScriptureForQuestions
+            // 
+            this.m_chkIncludeScriptureForQuestions.AutoSize = true;
+            this.m_chkIncludeScriptureForQuestions.Checked = true;
+            this.m_chkIncludeScriptureForQuestions.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkIncludeScriptureForQuestions, null);
+            this.l10NSharpExtender1.SetLocalizationComment(this.m_chkIncludeScriptureForQuestions, null);
+            this.l10NSharpExtender1.SetLocalizingId(this.m_chkIncludeScriptureForQuestions, "GenerateScriptDlg.m_chkIncludeScriptureForQuestions");
+            this.m_chkIncludeScriptureForQuestions.Location = new System.Drawing.Point(8, 58);
+            this.m_chkIncludeScriptureForQuestions.Name = "m_chkIncludeScriptureForQuestions";
+            this.m_chkIncludeScriptureForQuestions.Size = new System.Drawing.Size(187, 17);
+            this.m_chkIncludeScriptureForQuestions.TabIndex = 7;
+            this.m_chkIncludeScriptureForQuestions.Text = "Include Scripture before questions";
+            this.m_chkIncludeScriptureForQuestions.UseVisualStyleBackColor = true;
             // 
             // m_chkIncludeVerseNumbers
             // 
@@ -1084,48 +1143,6 @@ namespace SIL.Transcelerator
             this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
             this.l10NSharpExtender1.PrefixForNewItems = null;
             // 
-            // m_tableLayoutPanelRange
-            // 
-            this.m_tableLayoutPanelRange.ColumnCount = 4;
-            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.m_tableLayoutPanelRange.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboBooks, 1, 0);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboEndSection, 3, 2);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoWholeBook, 0, 0);
-            this.m_tableLayoutPanelRange.Controls.Add(this.lblSectionRangeTo, 2, 2);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoSingleSection, 0, 1);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboStartSection, 1, 2);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_cboSection, 1, 1);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_rdoSectionRange, 0, 2);
-            this.m_tableLayoutPanelRange.Controls.Add(this.m_chkShowUnavailable, 3, 0);
-            this.m_tableLayoutPanelRange.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_tableLayoutPanelRange.Location = new System.Drawing.Point(6, 16);
-            this.m_tableLayoutPanelRange.Margin = new System.Windows.Forms.Padding(0);
-            this.m_tableLayoutPanelRange.Name = "m_tableLayoutPanelRange";
-            this.m_tableLayoutPanelRange.RowCount = 3;
-            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.m_tableLayoutPanelRange.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.m_tableLayoutPanelRange.Size = new System.Drawing.Size(487, 80);
-            this.m_tableLayoutPanelRange.TabIndex = 7;
-            // 
-            // m_chkShowUnavailable
-            // 
-            this.m_chkShowUnavailable.AutoSize = true;
-            this.l10NSharpExtender1.SetLocalizableToolTip(this.m_chkShowUnavailable, null);
-            this.l10NSharpExtender1.SetLocalizationComment(this.m_chkShowUnavailable, null);
-            this.l10NSharpExtender1.SetLocalizationPriority(this.m_chkShowUnavailable, L10NSharp.LocalizationPriority.NotLocalizable);
-            this.l10NSharpExtender1.SetLocalizingId(this.m_chkShowUnavailable, "GenerateScriptDlg.m_chkShowUnavailable");
-            this.m_chkShowUnavailable.Location = new System.Drawing.Point(317, 3);
-            this.m_chkShowUnavailable.Name = "m_chkShowUnavailable";
-            this.m_chkShowUnavailable.Size = new System.Drawing.Size(142, 17);
-            this.m_chkShowUnavailable.TabIndex = 8;
-            this.m_chkShowUnavailable.Text = "Show unavailable books";
-            this.m_chkShowUnavailable.UseVisualStyleBackColor = true;
-            this.m_chkShowUnavailable.CheckedChanged += new System.EventHandler(this.m_chkShowUnavailable_CheckedChanged);
-            // 
             // GenerateScriptDlg
             // 
             this.AcceptButton = this.btnOk;
@@ -1155,6 +1172,8 @@ namespace SIL.Transcelerator
             this.groupBoxDocument.ResumeLayout(false);
             this.groupBoxDocument.PerformLayout();
             this.m_grpRange.ResumeLayout(false);
+            this.m_tableLayoutPanelRange.ResumeLayout(false);
+            this.m_tableLayoutPanelRange.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_numBlankLines)).EndInit();
@@ -1171,8 +1190,6 @@ namespace SIL.Transcelerator
             this.tabAppearance.ResumeLayout(false);
             this.tabAppearance.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).EndInit();
-            this.m_tableLayoutPanelRange.ResumeLayout(false);
-            this.m_tableLayoutPanelRange.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1244,5 +1261,6 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.Label lblDetailQuestionsOutOfOrder;
 		private System.Windows.Forms.TableLayoutPanel m_tableLayoutPanelRange;
 		private System.Windows.Forms.CheckBox m_chkShowUnavailable;
+		private System.Windows.Forms.CheckBox m_chkIncludeScriptureForQuestions;
 	}
 }
