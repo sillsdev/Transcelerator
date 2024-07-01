@@ -1,7 +1,7 @@
-﻿// ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2021' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2024, SIL International.
+// <copyright from='2021' to='2024' company='SIL International'>
+//		Copyright (c) 2024, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -9,6 +9,7 @@
 // 
 // File: IPhraseTranslationHelper.cs
 // ---------------------------------------------------------------------------------------------
+using SIL.Transcelerator.Localization;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -35,7 +36,7 @@ namespace SIL.Transcelerator
 
 		string FinalPunctuationForType(TypeOfPhrase type);
 
-		string GetCategoryName(int category);
+		string GetCategoryName(int category, out string lang);
 
 		List<RenderingSelectionRule> TermRenderingSelectionRules { get; }
 
