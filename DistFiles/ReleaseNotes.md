@@ -1,4 +1,4 @@
-## 3.2.0 8 July 2024
+## 3.2.0 9 July 2024
 * Added an option to omit the Scripture verses before each question in the generated script.
 * Added alternatives to several questions, added a few new questions and made a few small edits (mostly punctuation and spelling corrections) to answers and notes.
 * Updated the British English localization
