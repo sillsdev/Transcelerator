@@ -175,6 +175,13 @@
               <target state="final">What did Stephen say was the reason the Israelites had turned to worshipping false gods?</target>
               <note>!ACT!7~42#Question:What did Stephen say was the reason the Israelites had turned to worshiping false gods?</note>
             </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!ACT!7~42#Alternate:What did Stephen say was the reason the Israelites had turned to worshiping false gods?1041369502" approved="yes">
+                <source>According to Stephen, why had the Israelites had turned to worshiping false gods?</source>
+                <target state="final">According to Stephen, why had the Israelites had turned to worshipping false gods?</target>
+                <note>!ACT!7~42#Alternate:What did Stephen say was the reason the Israelites had turned to worshiping false gods?</note>
+              </trans-unit>
+            </group>
           </group>
           <group id="Q:ACT 7.42-43+What did God say about the sacrifices that the Israelites offered when they were in the desert?">
             <group id="Answers">
@@ -2819,6 +2826,18 @@
               <target state="final">What about those people then who worshipped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?</target>
               <note>!HEB!9~15#Question:What about those people then who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?</note>
             </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!HEB!9~15#Alternate:What about those people then who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?1440408723" approved="yes">
+                <source>How can God forgive the sins of those people who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins)?</source>
+                <target state="final">How can God forgive the sins of those people who worshipped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins)?</target>
+                <note>!HEB!9~15#Alternate:What about those people then who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?</note>
+              </trans-unit>
+              <trans-unit id="l:!HEB!9~15#Alternate:What about those people then who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?1593722540" approved="yes">
+                <source>How can God forgive the sins of those people who worshiped God by offering animal sacrifices according to the First Agreement?</source>
+                <target state="final">How can God forgive the sins of those people who worshipped God by offering animal sacrifices according to the First Agreement?</target>
+                <note>!HEB!9~15#Alternate:What about those people then who worshiped God according to the First Agreement (and only offered animals which were not sufficient to completely pay for their sins), how can God forgive their sins?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
       </group>
@@ -4617,9 +4636,9 @@
           </group>
           <group id="Q:LUK 10.29+What was the man's next question?">
             <group id="Answers">
-              <trans-unit id="a:!LUK!10~25#Answer:What was the man's next question?1093482812" approved="yes">
-                <source>"Who is my neighbor?"/"To whom does [that word] "neighbor" [really] refer"? (29)</source>
-                <target state="final">"Who is my neighbour?"/"To whom does [that word] "neighbour" [really] refer"? (29)</target>
+              <trans-unit id="a:!LUK!10~25#Answer:What was the man's next question?-1585200346" approved="yes">
+                <source>"Who is my neighbor?"/"To whom does [that word] 'neighbor' [really] refer"? (29)</source>
+                <target state="final">"Who is my neighbour?"/"To whom does [that word] 'neighbour' [really] refer"? (29)</target>
                 <note>!LUK!10~25#Answer:What was the man's next question?</note>
               </trans-unit>
             </group>
@@ -6199,6 +6218,18 @@
               <target state="final">Would God be pleased with people who fasted just to make other people think that they were seriously worshipping God?</target>
               <note>!MAT!6~16#Question:Would God be pleased with people who fasted just to make other people think that they were seriously worshiping God?</note>
             </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!MAT!6~16#Alternate:Would God be pleased with people who fasted just to make other people think that they were seriously worshiping God?789617972" approved="yes">
+                <source>Would God be pleased with people who fasted just to make other people think that they were seriously worshiping him?</source>
+                <target state="final">Would God be pleased with people who fasted just to make other people think that they were seriously worshipping him?</target>
+                <note>!MAT!6~16#Alternate:Would God be pleased with people who fasted just to make other people think that they were seriously worshiping God?</note>
+              </trans-unit>
+              <trans-unit id="l:!MAT!6~16#Alternate:Would God be pleased with people who fasted just to make other people think that they were seriously worshiping God?-879486827" approved="yes">
+                <source>Would God be pleased with people who fasted just to make other people think that they were sincerely worshiping him?</source>
+                <target state="final">Would God be pleased with people who fasted just to make other people think that they were sincerely worshipping him?</target>
+                <note>!MAT!6~16#Alternate:Would God be pleased with people who fasted just to make other people think that they were seriously worshiping God?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
       </group>
@@ -6983,6 +7014,13 @@
               <target state="final">What are some of the things that the twenty-four elders said, as they worshipped God?</target>
               <note>!REV!11~16#Question:What are some of the things that the twenty-four elders said, as they worshiped God?</note>
             </trans-unit>
+            <group id="Alternates">
+              <trans-unit id="l:!REV!11~16#Alternate:What are some of the things that the twenty-four elders said, as they worshiped God?253833244" approved="yes">
+                <source>What did the twenty-four elders say as they worshiped God?</source>
+                <target state="final">What did the twenty-four elders say as they worshipped God?</target>
+                <note>!REV!11~16#Alternate:What are some of the things that the twenty-four elders said, as they worshiped God?</note>
+              </trans-unit>
+            </group>
           </group>
         </group>
       </group>
@@ -9926,14 +9964,14 @@
                 <target state="final">He did what was evil in the sight of the LORD, following the detestable practises of the nations the Lord had driven out before the Israelites. (2)</target>
                 <note>!2CH!33~1#Answer:How did Manasseh lead Judah?</note>
               </trans-unit>
-              <trans-unit id="a:!2CH!33~1#Answer:How did Manasseh lead Judah?-1434452331" approved="yes">
-                <source>He rebuilt the high places, erected altars for the Baals (false gods), worshiped all the host of heaven and built altars for them in the two courts of the house of the LORD (3-5)</source>
-                <target state="final">He rebuilt the high places, erected altars for the Baals (false gods), worshipped all the host of heaven and built altars for them in the two courts of the house of the LORD (3-5)</target>
+              <trans-unit id="a:!2CH!33~1#Answer:How did Manasseh lead Judah?180196287" approved="yes">
+                <source>He rebuilt the high places, erected altars for the Baals (false gods), worshiped all the host of heaven and built altars for them in the two courts of the house of the LORD. (3-5)</source>
+                <target state="final">He rebuilt the high places, erected altars for the Baals (false gods), worshipped all the host of heaven and built altars for them in the two courts of the house of the LORD. (3-5)</target>
                 <note>!2CH!33~1#Answer:How did Manasseh lead Judah?</note>
               </trans-unit>
-              <trans-unit id="a:!2CH!33~1#Answer:How did Manasseh lead Judah?20743876" approved="yes">
-                <source>He sacrificed his children by fire, practiced divination and witchcraft, used enchantments, consulted mediums and spiritists (6)</source>
-                <target state="final">He sacrificed his children by fire, practised divination and witchcraft, used enchantments, consulted mediums and spiritists (6)</target>
+              <trans-unit id="a:!2CH!33~1#Answer:How did Manasseh lead Judah?-631096467" approved="yes">
+                <source>He sacrificed his children by fire, practiced divination and witchcraft, used enchantments, and consulted mediums and spiritists. (6)</source>
+                <target state="final">He sacrificed his children by fire, practised divination and witchcraft, used enchantments, and consulted mediums and spiritists. (6)</target>
                 <note>!2CH!33~1#Answer:How did Manasseh lead Judah?</note>
               </trans-unit>
             </group>
