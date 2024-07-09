@@ -11,6 +11,7 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -36,8 +37,59 @@ namespace SIL.Transcelerator.Localization
 		public bool MarkApproved { get; set; }
 		public OverwriteOption Overwrite { get; set; }
 
+		private static Regex s_regexAmericanToBritish;
+
+		static readonly Dictionary<string, string> AmericanToBritish = new Dictionary<string, string>
+		{
+			{"plow", "plough"},
+			{"scepter", "sceptre"},
+			{"center", "centre"},
+			{"fiber", "fibre"},
+			{"liters", "litres"},
+			{"meters", "metres"},
+			{"centimeters", "centimetres"},
+			{"kilometers", "kilometres"},
+			{"sepulcher", "sepulchre"},
+			{"theater", "theatre"},
+			{"neighbor", "neighbour"},
+			{"color", "colour"},
+			{"armor", "armour"},
+			{"favor", "favour"},
+			{"honor", "honour"},
+			{"flavor", "flavour"},
+			{"behavior", "behaviour"},
+			{"offense", "offence"},
+			{"defense", "defence"},
+			{"license", "licence"},
+			{"pluralize", "pluralise"},
+			{"practice", "practise"},
+			{"practicing", "practising"},
+			{"judgment", "judgement"},
+			{"fulfill", "fulfil"}, // This gets special handling in regex to prevent partial-word match
+			{"fulfills", "fulfils"},
+			{"worshipe", "worshippe"},
+			{"worshiping", "worshipping"},
+			{"apologize", "apologise"},
+			{"recognize", "recognise"},
+			{"recognizing", "recognising"},
+			{"traveler", "traveller"},
+			{"traveling", "travelling"},
+			{"jewelery", "jewellery"},
+			{"gray", "grey"},
+			{"mold", "mould"},
+			{"sulfur", "sulphur"},
+			{"program", "programme"},
+			{"canceling", "cancelling"},
+			{"canceled", "cancelled"}
+		};
+
 		public LocalizationsFileGenerator(string directory, string locale) : base(directory, locale)
 		{
+			if (locale == "en-GB")
+			{
+				var pattern = @"\b(" + Join("|", AmericanToBritish.Keys) + ")";
+				s_regexAmericanToBritish = new Regex(pattern.Replace("fulfill|", @"fulfill\b|"), RegexOptions.Compiled | RegexOptions.IgnoreCase);
+			}
 		}
 
 		// For testing only
@@ -47,7 +99,6 @@ namespace SIL.Transcelerator.Localization
 
 		// For testing only
 		internal bool AreLocalizationsValid(out string error) => Localizations.IsValid(out error);
-
 
 		public void GenerateOrUpdateFromMasterQuestions(string masterQuestionsFilename, string existingTxlTranslationsFilename = null, bool retainOnlyTranslatedStrings = false)
 		{
@@ -78,9 +129,6 @@ namespace SIL.Transcelerator.Localization
 			if (existingLocalizations.Groups == null)
 				existingLocalizations = null;
 
-			if (existingTxlTranslations == null && retainOnlyTranslatedStrings)
-				return;
-
 			InitializeLocalizations();
 
 			Action<Group, UIDataString> AddTranslationUnit;
@@ -93,9 +141,14 @@ namespace SIL.Transcelerator.Localization
 				{
 					AddTranslationUnit = (group, data) =>
 					{
-						var tu = existingLocalizations.GetStringLocalization(data);
+						var tu = GetStringLocalization(existingLocalizations, data);
 						if (tu == null)
-							group.AddTranslationUnit(data, MarkApproved);
+						{
+							var localization = Locale == "en-GB" ? GetBritishLocalization(data.SourceUIString) : null;
+							if (localization == data.SourceUIString)
+								localization = null;
+							group.AddTranslationUnit(data, MarkApproved, localization);
+						}
 						else
 							group.AddTranslationUnit(tu);
 					};
@@ -114,7 +167,7 @@ namespace SIL.Transcelerator.Localization
 				{
 					AddTranslationUnit = (group, data) =>
 					{
-						var tu = existingLocalizations.GetStringLocalization(data);
+						var tu = GetStringLocalization(existingLocalizations, data);
 
 						if (tu == null)
 							group.AddTranslationUnit(data, MarkApproved, LookupTranslation(existingTxlTranslations, data));
@@ -191,6 +244,28 @@ namespace SIL.Transcelerator.Localization
 				Localizations.DeleteEmptyGroups();
 
 			AddTranslationUnitIfIncluded = null;
+		}
+
+		private TranslationUnit GetStringLocalization(FileBody existingLocalizations, UIDataString data)
+		{
+			var tu = existingLocalizations.GetStringLocalization(data);
+			if (tu != null && Locale == "en-GB")
+				tu.Target.Text = GetBritishLocalization(data.SourceUIString);
+
+			return tu;
+		}
+
+		private static string GetBritishLocalization(string source)
+		{
+			return s_regexAmericanToBritish.Replace(source, m =>
+			{
+				string american = m.Value;
+				string british = AmericanToBritish[american.ToLower(CultureInfo.GetCultureInfo("en-US"))];
+				// Preserve casing for the first character if it was uppercase in the original string
+				if (char.IsUpper(american[0]))
+					british = char.ToUpper(british[0]) + british.Substring(1);
+				return british;
+			});
 		}
 
 		private bool ShouldOverwrite(TranslationUnit tu)
