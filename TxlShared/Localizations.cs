@@ -520,6 +520,9 @@ namespace SIL.Transcelerator.Localization
 			if (!Id.StartsWith(FileBody.kSectionIdPrefix))
 				throw new InvalidOperationException("FindQuestionGroup should only be called on a section group.");
 
+			if (SubGroups == null)
+				return null; // Localization file might only have a trans-unit (e.g., for the section heading)
+
 			// There will almost always be only one matching "group", but it is possible for the same exact question to
 			// be asked in two different verses in a section (and they could have different translations).
 			Group bestGroup = null;
