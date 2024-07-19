@@ -290,7 +290,7 @@ namespace DataIntegrityTests
 			var regexGroupedQuestion = new Regex("<Questions [^>]*\\bscrref=\"(?<book>[1-3]?[A-Z]{2,3}) " +
 				"((?<chapter>\\d{1,3})\\.)?(?<verses>[^\"]+)\"[^>]*\\bgroup=\"", RegexOptions.Compiled);
 			var regexGroupRelatedNote = new Regex("<Note>((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
-				$"(?<useEitherGroup>For \\w+ ((?<chapter>\\d+):)?{kVerseOrBridge}, use either the group (?<firstGroup>[ACEGIKMOQSUWY]) questions or the group (?<secondGroup>[BDFHJLNPRTVXZ]) questions. It would be redundant to ask all (?<count>\\d+) questions.)|" +
+				$"(?<useEitherGroup>For (\\d )?\\w+ ((?<chapter>\\d+):)?{kVerseOrBridge}, use either the group (?<firstGroup>[ACEGIKMOQSUWY]) questions or the group (?<secondGroup>[BDFHJLNPRTVXZ]) questions. It would be redundant to ask all (?<count>\\d+) questions.)|" +
 				"(?<useEitherQuestion>Use either this question \\((?<thisGroup>[A-Z])\\) or the ((?<following>following)|(preceding)) question \\((?<otherGroup>[A-Z])\\). It would be redundant to ask both questions.)<\\/Note>", RegexOptions.Compiled);
 
 			var regexGroupAttrib = new Regex($"{kVerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
@@ -405,15 +405,17 @@ namespace DataIntegrityTests
 							Assert.IsFalse(groupInstructionsMissing,
 								$"Instructions - with correct group letters - should come before Note with {type} information: " + line);
 
+							Assert.IsTrue(line.Contains($"{chapter}:{verses}"), $"Found {type} instructions for question that is not identified as having groups:" + line);
+
 							if (type == "group")
 							{
 								Assert.IsTrue(expectedTotalQuestionsInCurrentPairOfGroups > 2,
-									"Note should use \"group\" when there are more than 2 questions involved :" + line);
+									"Note should use \"group\" only when there are more than 2 questions involved:" + line);
 							}
 							else
 							{
 								Assert.AreEqual(2, expectedTotalQuestionsInCurrentPairOfGroups,
-									"Note should use \"question\" when there are only 2 questions involved :" + line);
+									"Note should use \"question\" only when there are only 2 questions involved:" + line);
 							}
 
 							Assert.That(bookIdInGroupId.Equals(bookId, StringComparison.OrdinalIgnoreCase),
