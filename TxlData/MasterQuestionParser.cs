@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2013' to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -35,6 +35,11 @@ namespace SIL.Transcelerator
 
 		private class Customizations // All customizations that share a key (used to match to a question)
 		{
+			#region Events and Delegates
+			internal delegate void ModifiedPhraseEventHandler(Customizations sender, IModifiedPhrase phrase);
+			internal static event ModifiedPhraseEventHandler ModifiedPhraseFoundInExistingQuestions;
+			#endregion
+
 			private bool m_isResolved = true;
 			private List<PhraseCustomization> AdditionsAndInsertions { get; }
 			private List<PhraseCustomization> Deletions { get; }
@@ -92,6 +97,7 @@ namespace SIL.Transcelerator
 						Modification.OriginalPhrase == e.Alternatives?.SingleOrDefault(a => a.IsKey)?.Text)))
 					{
 						question.IsExcluded = true;
+						ModifiedPhraseFoundInExistingQuestions?.Invoke(this, Modification);
 					}
 					else
 						question.ModifiedPhrase = ModifiedPhrase;
@@ -343,8 +349,9 @@ namespace SIL.Transcelerator
 
 		private readonly IDictionary<int, List<List<Word>>> m_questionWordsLookupTable;
 		private readonly IEnumerable<string> m_questionWords;
+		private List<IModifiedPhrase> m_temporaryAdditionalLookups;
 
-	    #endregion
+		#endregion
 
         #region SubPhraseMatch class
         private class SubPhraseMatch
@@ -400,7 +407,7 @@ namespace SIL.Transcelerator
             IEnumerable<PhraseCustomization> customizations,
             IEnumerable<Substitution> phraseSubstitutions)
 		{
-            m_sections = sections;
+			m_sections = sections;
 	        m_questionWords = questionWords;
 	        if (questionWords != null)
 	        {
@@ -416,6 +423,8 @@ namespace SIL.Transcelerator
 	        }
 			if (customizations != null)
 			{
+				Customizations.ModifiedPhraseFoundInExistingQuestions += Customizations_ModifiedPhraseFoundInExistingQuestions;
+
 				m_customizations = new Dictionary<int, SortedDictionary<QuestionKey, Customizations>>();
 				foreach (var customization in customizations)
 				{
@@ -447,12 +456,19 @@ namespace SIL.Transcelerator
             m_partsTable = new SortedDictionary<int, Dictionary<Word, List<ParsedPart>>>();
 		}
 
-        /// ------------------------------------------------------------------------------------
-        /// <summary>
-        /// Performs the parsing logic to divide question text into translatable parts and key term parts.
-        /// </summary>
-        /// ------------------------------------------------------------------------------------
-        private void Parse()
+		private void Customizations_ModifiedPhraseFoundInExistingQuestions(Customizations sender, IModifiedPhrase phrase)
+		{
+			if (m_temporaryAdditionalLookups == null)
+				m_temporaryAdditionalLookups = new List<IModifiedPhrase>();
+			m_temporaryAdditionalLookups.Add(phrase);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Performs the parsing logic to divide question text into translatable parts and key term parts.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void Parse()
 	    {
 			if (m_partsTable.Any())
 				throw new InvalidOperationException("Parse called more than once.");
@@ -568,7 +584,10 @@ namespace SIL.Transcelerator
 	            return result;
 	        }
 	    }
-        #endregion
+
+	    public IEnumerable<IModifiedPhrase> TemporaryAdditionalLookups => m_temporaryAdditionalLookups;
+
+	    #endregion
 
         #region Private helper methods
         /// ------------------------------------------------------------------------------------
@@ -582,7 +601,7 @@ namespace SIL.Transcelerator
 	        SortedDictionary<QuestionKey, Customizations> customizations,
 	        bool processAllAdditionsForRef = false)
         {
-			if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out var customizationsForQuestion))
+	        if (TryPopCustomizationForQuestion(customizations, q, sectionRange, out var customizationsForQuestion))
 			{
 				customizationsForQuestion.ApplyToQuestion(q, category.Questions);
 				if (q.InsertedQuestionBefore != null && !category.Questions.Any(existing => !existing.IsExcluded && existing.Matches(q.InsertedQuestionBefore)))
