@@ -1,6 +1,10 @@
 {
   "metadata": {},
   "localizedStrings": {
-    "en": {}
+    "en": {
+      "%mainMenu_openTranscelerator%": "Transcelerator",
+      "%dialogTitle_openTranscelerator%": "Open Transcelerator",
+      "%dialogPrompt_selectProject%": "Please select project to open in Transcelerator:"
+    }
   }
 }

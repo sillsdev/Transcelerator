@@ -2,7 +2,16 @@
   "mainMenu": {
     "columns": {},
     "groups": {},
-    "items": []
+    "items": [
+      {
+        "label": "%mainMenu_openTranscelerator%",
+        "localizeNotes": "Application main menu > Project > Transcelerator. Typically should not need to be localized.",
+        "group": "platform.projectResources",
+        "order": -99.8,
+        "command": "transcelerator.open",
+        "iconPathBefore": "TXL80x80"
+      }
+    ]
   },
   "defaultWebViewTopMenu": {
     "columns": {},

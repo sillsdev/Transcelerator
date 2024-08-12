@@ -76,5 +76,5 @@ This project has special features and specific configuration to make building an
 ## Who do I talk to?
 
 * Technical lead: [Tom Bogle](mailto:Transcelerator_feedback@sil.org)
-* To discuss the concepts and principles behind Transcelerator (e.g., if you disagree with the idea of using "canned" questions as basis for checking comprehension), contact your translation consultant and/or local translation department representative.
+* To discuss the overall approach to comprehension checking and explore what strategies will work best in your context (e.g., whether translating "canned" questions is appropriate), contact your translation consultant and/or local translation department representative. If you would like to share success stories or expressions of gratitude, or discuss novel use cases for Transcelerator and its checking questions, please use the above email address.
 

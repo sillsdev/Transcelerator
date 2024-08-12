@@ -2,7 +2,7 @@
   "name": "transcelerator",
   "version": "0.0.1",
   "displayData": "assets/displayData.json",
-  "description": "Assists in rapid translation of Scripture comprehension checking questions.",
+  "description": "Assists in preparation of Scripture comprehension checking questions.",
   "author": "SIL",
   "license": "MIT",
   "main": "src/main.ts",
