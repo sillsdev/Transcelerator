@@ -4,11 +4,23 @@
     "en": {
       "%mainMenu_openTranscelerator%": "Transcelerator",
       "%dialogTitle_openTranscelerator%": "Open Transcelerator",
-      "%dialogPrompt_selectProject%": "Please select project to open in Transcelerator:"
+      "%dialogPrompt_selectProject%": "Please select project to open in Transcelerator:",
+      "%file%": "File",
+      "%edit%": "Edit",
+      "%view%": "View",
+      "%advanced%": "Advanced",
+      "%help%": "Help",
+      "%showHelp%": "Show Help"
     },
     "es": {
       "%dialogTitle_openTranscelerator%": "Abrir Transcelerator",
-      "%dialogPrompt_selectProject%": "Favor de seleccionar el proyecto que desea abrir en Transcelerator:"
+      "%dialogPrompt_selectProject%": "Favor de seleccionar el proyecto que desea abrir en Transcelerator:",
+      "%file%": "Archivo",
+      "%edit%": "Editar",
+      "%view%": "Vista",
+      "%advanced%": "Avanzado",
+      "%help%": "Ayuda",
+      "%showHelp%": "Mostrar Ayuda"
     }
   }
 }

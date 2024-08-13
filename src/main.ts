@@ -11,10 +11,20 @@ import {
 import transceleratorMain from './transcelerator-main.web-view?inline';
 import transceleratorMainReactStyles from './transcelerator-main.web-view.scss?inline';
 import helpHtml from '../Docs/Help Topics/en/Home.htm?inline';
+import addingQuestionsHelpHtml from '../Docs/Help Topics/en/addingquestions.htm?inline';
+import adjustmentsHelpHtml from '../Docs/Help Topics/en/adjustments.htm?inline';
+import biblicalTermsHelpHtml from '../Docs/Help Topics/en/biblicalterms.htm?inline';
+import editingQuestionsHelpHtml from '../Docs/Help Topics/en/editingquestions.htm?inline';
+import featureOverviewHelpHtml from '../Docs/Help Topics/en/featureoverview.htm?inline';
+import filteringHelpHtml from '../Docs/Help Topics/en/filtering.htm?inline';
+import generateScriptHelpHtml from '../Docs/Help Topics/en/generatescript.htm?inline';
+import gettingStartedHelpHtml from '../Docs/Help Topics/en/gettingstarted.htm?inline';
+import renderingSelectionRulesHelpHtml from '../Docs/Help Topics/en/renderingselectionrules.htm?inline';
+import reorderingWordsHelpHtml from '../Docs/Help Topics/en/reorderingwords.htm?inline';
 
 logger.info('Transcelerator is importing!');
 
-const TRANSCELERATOR_MAIN_WEB_VIEW_TYPE = 'transcelerator.react';
+const TRANSCELERATOR_MAIN_WEB_VIEW_TYPE = 'transcelerator.main';
 const HTML_HELP_WEB_VIEW_TYPE = 'transceleratorHelp.html';
 
 /**
@@ -22,17 +32,58 @@ const HTML_HELP_WEB_VIEW_TYPE = 'transceleratorHelp.html';
  * them
  */
 const htmlWebViewProvider: IWebViewProvider = {
-  async getWebView(savedWebView: SavedWebViewDefinition): Promise<WebViewDefinition | undefined> {
+  async getWebView(
+    savedWebView: SavedWebViewDefinition,
+    options: GetWebViewOptions & { topic: string | undefined },
+  ): Promise<WebViewDefinition | undefined> {
     if (savedWebView.webViewType !== HTML_HELP_WEB_VIEW_TYPE)
       throw new Error(
         `${HTML_HELP_WEB_VIEW_TYPE} provider received request to provide a ${savedWebView.webViewType} web view`,
       );
+
+    let content = helpHtml;
+    switch (options.topic) {
+      case 'addingQuestions':
+        content = addingQuestionsHelpHtml;
+        break;
+      case 'adjustments':
+        content = adjustmentsHelpHtml;
+        break;
+      case 'biblicalTerms':
+        content = biblicalTermsHelpHtml;
+        break;
+      case 'editingQuestions':
+        content = editingQuestionsHelpHtml;
+        break;
+      case 'featureOverview':
+        content = featureOverviewHelpHtml;
+        break;
+      case 'filteringHelp':
+        content = filteringHelpHtml;
+        break;
+      case 'generateScript':
+        content = generateScriptHelpHtml;
+        break;
+      case 'gettingStarted':
+        content = gettingStartedHelpHtml;
+        break;
+      case 'renderingSelectionRules':
+        content = renderingSelectionRulesHelpHtml;
+        break;
+      case 'reorderingWords':
+        content = reorderingWordsHelpHtml;
+        break;
+      default:
+        content = helpHtml;
+    }
+
     return {
       ...savedWebView,
       title: 'Transcelerator Help',
+      // Can't use the enum value from a definition file so assert the type from the string literal.
       // eslint-disable-next-line no-type-assertion/no-type-assertion
       contentType: 'html' as WebViewContentType.HTML,
-      content: helpHtml,
+      content,
     };
   },
 };
@@ -113,6 +164,20 @@ export async function activate(context: ExecutionActivationContext) {
         // eslint-disable-next-line no-type-assertion/no-type-assertion
         {
           projectId: projectIdForWebView,
+        } as GetWebViewOptions,
+      );
+    }),
+  );
+
+  context.registrations.add(
+    await papi.commands.registerCommand('transcelerator.help', async (topic) => {
+      return papi.webViews.getWebView(
+        HTML_HELP_WEB_VIEW_TYPE,
+        { type: 'float', floatSize: { width: 775, height: 815 } },
+        // Type assert because GetWebViewOptions is not yet typed to be generic and allow extra inputs
+        // eslint-disable-next-line no-type-assertion/no-type-assertion
+        {
+          topic: topic ?? 'home',
         } as GetWebViewOptions,
       );
     }),
