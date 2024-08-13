@@ -5,6 +5,10 @@
       "%mainMenu_openTranscelerator%": "Transcelerator",
       "%dialogTitle_openTranscelerator%": "Open Transcelerator",
       "%dialogPrompt_selectProject%": "Please select project to open in Transcelerator:"
+    },
+    "es": {
+      "%dialogTitle_openTranscelerator%": "Abrir Transcelerator",
+      "%dialogPrompt_selectProject%": "Favor de seleccionar el proyecto que desea abrir en Transcelerator:"
     }
   }
 }

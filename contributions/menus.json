@@ -9,7 +9,7 @@
         "group": "platform.projectResources",
         "order": -99.8,
         "command": "transcelerator.open",
-        "iconPathBefore": "TXL80x80"
+        "iconPathBefore": "papi-extension://transcelerator/assets/TXL80x80.png"
       }
     ]
   },
