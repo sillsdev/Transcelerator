@@ -1,0 +1,17 @@
+{
+  "name": "transcelerator",
+  "version": "0.0.1",
+  "displayData": "assets/displayData.json",
+  "description": "Assists in preparation of Scripture comprehension checking questions.",
+  "author": "SIL",
+  "license": "MIT",
+  "main": "src/main.ts",
+  "extensionDependencies": {},
+  "elevatedPrivileges": [],
+  "types": "src/types/transcelerator.d.ts",
+  "menus": "contributions/menus.json",
+  "settings": "contributions/settings.json",
+  "projectSettings": "contributions/projectSettings.json",
+  "localizedStrings": "contributions/localizedStrings.json",
+  "activationEvents": []
+}

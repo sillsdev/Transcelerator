@@ -9,7 +9,6 @@
 // 
 // File: IPhraseTranslationHelper.cs
 // ---------------------------------------------------------------------------------------------
-using SIL.Transcelerator.Localization;
 using System.Collections.Generic;
 using System.Globalization;
 

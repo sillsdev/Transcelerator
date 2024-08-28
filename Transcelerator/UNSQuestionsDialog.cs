@@ -2680,13 +2680,14 @@ namespace SIL.Transcelerator
 
 			Exception e;
 			ParsedQuestions parsedQuestions;
+			List<IModifiedPhrase> temporaryAdditionalLookups = null;
 			if (finfoParsedQuestions.Exists &&
-				finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
-				finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
-				(!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
-				(!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
-				m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc &&
-				m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc)
+			    finfoMasterQuestions.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+			    finfoTxlDll.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc &&
+			    (!finfoKtRules.Exists || finfoKtRules.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
+			    (!finfoQuestionWords.Exists || finfoQuestionWords.LastWriteTimeUtc < finfoParsedQuestions.LastWriteTimeUtc) &&
+			    m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.QuestionCustomizations).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc &&
+			    m_fileAccessor.ModifiedTime(DataFileAccessor.DataFileId.PhraseSubstitutions).ToUniversalTime() < finfoParsedQuestions.LastWriteTimeUtc)
 			{
 				parsedQuestions = XmlSerializationHelper.DeserializeFromFile<ParsedQuestions>(m_parsedQuestionsFilename);
 			}
@@ -2714,6 +2715,7 @@ namespace SIL.Transcelerator
 				m_parser = new MasterQuestionParser(m_masterQuestionsFilename, GetQuestionWords(),
 					m_getKeyTerms(), GetKeyTermRules(keyTermRulesFilename), customizations, PhraseSubstitutions);
 				parsedQuestions = m_parser.Result;
+				temporaryAdditionalLookups = m_parser.TemporaryAdditionalLookups?.ToList();
 				Directory.CreateDirectory(Path.GetDirectoryName(m_parsedQuestionsFilename));
 				XmlSerializationHelper.SerializeToFile(m_parsedQuestionsFilename, parsedQuestions);
 			}
@@ -2761,6 +2763,29 @@ namespace SIL.Transcelerator
 						TranslatablePhrase phrase = m_helper.GetPhrase(unsTranslation.Reference, unsTranslation.PhraseKey);
 						if (phrase != null && (!phrase.IsExcluded || phrase.IsUserAdded))
 							phrase.Translation = unsTranslation.Translation;
+						else if (temporaryAdditionalLookups != null)
+						{
+							// This is the unusual situation where questions that were previously
+							// modified (and presumably translated) by a user have subsequently
+							// been added to the official collection of questions or alternatives.
+							// Because of this, we lose the association and can't hook up the
+							// user's translation to the question directly. The parser now keeps
+							// track of those lost associations so we can try to avoid losing the
+							// translations.
+							var iLookup = temporaryAdditionalLookups
+								.IndexOf(m => m.Reference == unsTranslation.Reference &&
+									m.OriginalPhrase == unsTranslation.PhraseKey);
+							if (iLookup >= 0)
+							{
+								phrase = m_helper.GetPhrase(unsTranslation.Reference,
+									temporaryAdditionalLookups[iLookup].ModifiedPhrase);
+								if (phrase != null && !phrase.HasUserTranslation)
+									phrase.Translation = unsTranslation.Translation;
+								temporaryAdditionalLookups.RemoveAt(iLookup);
+								if (!temporaryAdditionalLookups.Any())
+									temporaryAdditionalLookups = null;
+							}
+						}
 					}
 				}
 			}
