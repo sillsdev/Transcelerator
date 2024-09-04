@@ -63,6 +63,9 @@ namespace SIL.Transcelerator
 
 		[XmlAttribute("modified")]
         public string ModifiedPhrase { get; set; }
+		
+        [XmlAttribute("group")]
+        public string Group { get; set; }
 
         [XmlElement("Q", Form = XmlSchemaForm.Unqualified)]
         public override string Text
