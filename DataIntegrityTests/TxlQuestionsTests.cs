@@ -286,14 +286,14 @@ namespace DataIntegrityTests
 		[Test]
 		public void DataIntegrity_Groups_HaveConsistentReferencesAndLetters()
 		{
-			const string kVerseOrBridge = "(?<groupVerses>\\d+(-\\d+)?)";
 			var regexGroupedQuestion = new Regex("<Questions [^>]*\\bscrref=\"(?<book>[1-3]?[A-Z]{2,3}) " +
 				"((?<chapter>\\d{1,3})\\.)?(?<verses>[^\"]+)\"[^>]*\\bgroup=\"", RegexOptions.Compiled);
-			var regexGroupRelatedNote = new Regex("<Note>((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
-				$"(?<useEitherGroup>For (\\d )?\\w+ ((?<chapter>\\d+):)?{kVerseOrBridge}, use either the group (?<firstGroup>[ACEGIKMOQSUWY]) questions or the group (?<secondGroup>[BDFHJLNPRTVXZ]) questions. It would be redundant to ask all (?<count>\\d+) questions.)|" +
-				"(?<useEitherQuestion>Use either this question \\((?<thisGroup>[A-Z])\\) or the ((?<following>following)|(preceding)) question \\((?<otherGroup>[A-Z])\\). It would be redundant to ask both questions.)<\\/Note>", RegexOptions.Compiled);
+			var regexRedundantGroupNoteElement = new Regex("<Note>" +
+				"((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
+				QuestionGroupComment.RegexRedundantGroupNote +
+				"</Note>");
 
-			var regexGroupAttrib = new Regex($"{kVerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
+			var regexGroupAttrib = new Regex($"{QuestionGroupHelper.VerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
 
 			string bookId = null;
 			string chapter = null;
@@ -305,7 +305,7 @@ namespace DataIntegrityTests
 			var expectedTotalQuestionsInCurrentPairOfGroups = -1;
 			var countOfQuestionsInCurrentPairOfGroups = 0;
 
-			foreach (var matchedLine in GetMatchingLines(regexGroupedQuestion, regexGroupRelatedNote))
+			foreach (var matchedLine in GetMatchingLines(regexGroupedQuestion, regexRedundantGroupNoteElement))
 			{
 				var line = matchedLine.Line;
 				var startPos = matchedLine.MatchEndPosition;
@@ -430,55 +430,56 @@ namespace DataIntegrityTests
 							Assert.IsTrue(groupInstructionsMissing,
 								$"Found additional unexpected group instructions at line {matchedLine.LineNumber}: " + line);
 
-							int expectedCount = -1;
-							if (matchedLine.Match.Groups["useEitherGroup"].Value != Empty)
+							QuestionGroupComment comment = null;
+							try
 							{
-								expectedCount = Parse(matchedLine.Match.Groups["count"].Value);
+								comment = new QuestionGroupComment(matchedLine.Match);
+							}
+							catch (Exception e)
+							{
+								Assert.Fail($"{e.Message}: {line}");
+							}
+							int expectedCount = comment.NumberOfQuestionsInBothGroups;
+
+							if (comment.IsForGroup)
+							{
 								Assert.That(expectedCount > 2,
 									"Total questions in pair of groups should be more than 2: " + line);
 
-								Assert.AreEqual(chapter, matchedLine.Match.Groups["chapter"].Value,
+								Assert.AreEqual(chapter, comment.Chapter,
 									"Chapter mismatch in group ID line: " + line);
-								Assert.AreEqual(verses, matchedLine.Match.Groups["groupVerses"].Value,
+								Assert.AreEqual(verses, comment.Verses,
 									"Chapter mismatch in group ID line: " + line);
-
-								var firstGroup = matchedLine.Match.Groups["firstGroup"].Value[0];
-								var secondGroup = matchedLine.Match.Groups["secondGroup"].Value[0];
-								Assert.AreEqual(1, secondGroup - firstGroup,
+								
+								Assert.AreEqual(1, comment.SecondGroupLetter - comment.FirstGroupLetter,
 									"Second group letter should be one greater than the first: " + line);
+
 								if (countOfQuestionsInCurrentPairOfGroups == 1)
 								{
-									Assert.AreEqual(group, firstGroup,
+									Assert.AreEqual(group, comment.FirstGroupLetter,
 										"For first occurrence of instructions, first group ID should match current group: " + line);
 								}
 								else
 								{
-									Assert.AreEqual(group, secondGroup,
+									Assert.AreEqual(group, comment.SecondGroupLetter,
 										"For second occurrence of instructions, second group ID should match current group: " + line);
-								}
-							}
-							else if (matchedLine.Match.Groups["useEitherQuestion"].Value != Empty)
-							{
-								expectedCount = 2;
-
-								Assert.AreEqual(group, matchedLine.Match.Groups["thisGroup"].Value[0],
-									$"{matchedLine.LineNumber} Incorrect group ID for \"this group\":" + line);
-								var otherGroup = matchedLine.Match.Groups["otherGroup"].Value[0];
-
-								if (matchedLine.Match.Groups["following"].Value != Empty)
-								{
-									Assert.AreEqual(1, otherGroup - group,
-										$"{matchedLine.LineNumber} Incorrect group ID for \"following group\":" + line);
-								}
-								else
-								{
-									Assert.AreEqual(1, group, otherGroup,
-										$"{matchedLine.LineNumber} Incorrect group ID for \"preceding group\":" + line);
 								}
 							}
 							else
 							{
-								Assert.Fail("Regex claimed to match but didn't set expected value for any group.");
+								Assert.AreEqual(group, comment.ThisGroupLetter,
+									$"{matchedLine.LineNumber} Incorrect group ID for \"this group\":" + line);
+								
+								if (matchedLine.Match.Groups[QuestionGroupComment.kFollowing].Value != Empty)
+								{
+									Assert.AreEqual(1, comment.OtherGroupLetter - group,
+										$"{matchedLine.LineNumber} Incorrect group ID for \"following group\":" + line);
+								}
+								else
+								{
+									Assert.AreEqual(1, group, comment.OtherGroupLetter,
+										$"{matchedLine.LineNumber} Incorrect group ID for \"preceding group\":" + line);
+								}
 							}
 
 							groupInstructionsMissing = false;

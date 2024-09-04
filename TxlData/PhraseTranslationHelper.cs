@@ -21,7 +21,6 @@ using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
-using Icu;
 using static System.Char;
 
 namespace SIL.Transcelerator
@@ -289,6 +288,29 @@ namespace SIL.Transcelerator
 		public List<TranslatablePhrase> GetMatchingPhrases(int startRef, int endRef)
 		{
 			return m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef).ToList();
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the specified group.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInGroup(string scrRef, string groupName)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef && p.GroupName == groupName);
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the group that is an alternative to
+		/// the specified group.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInAlternativeGroup(string scrRef,
+			string groupName)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef &&
+				p.GroupName == groupName.AlternativeGroup());
 		}
 
 		/// ------------------------------------------------------------------------------------

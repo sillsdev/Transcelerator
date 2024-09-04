@@ -634,17 +634,17 @@ namespace SIL.Transcelerator
 
 			var pth = InitializePhraseTranslationHelper();
 
-			Func<TranslatablePhrase, string> localizer = tp =>
+			string Localize(TranslatablePhrase tp)
 			{
 				var s = tp.PhraseInUse;
 				if (useLocalization)
 					s = s.Replace("Paul", "Pablo");
 				return s;
-			};
+			}
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(filterPhrase, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false, localizer);
+			pth.Filter(filterPhrase, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false, Localize);
 			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhrasesSortedBy.Reference, true);
 
@@ -745,7 +745,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
+				((start, end, sRef) => start >= 2 && end <= 5 && sRef != "C"), false);
 			pth.Sort(PhrasesSortedBy.Reference, true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("B", pth[0].Reference);
@@ -793,7 +793,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("What is Paul asking me to say with respect to that dog?", pth[0].PhraseInUse);
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), true);
+				((start, end, sRef) => start >= 2 && end <= 5 && sRef != "C"), true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
 			Assert.AreEqual("What is Paul asking me to say with respect to that dog?", pth[0].PhraseInUse);
 			Assert.AreEqual("Is it okay for Paul me to talk with respect to God today?", pth[1].PhraseInUse);
@@ -1060,7 +1060,7 @@ namespace SIL.Transcelerator
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
 
 			var pth = InitializePhraseTranslationHelper();
 			pth.Sort(listSortedBy, ascending);
@@ -1077,7 +1077,7 @@ namespace SIL.Transcelerator
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
 
 			var pth = InitializePhraseTranslationHelper();
 			pth[0].IsExcluded = true;
@@ -1086,6 +1086,59 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(2, matches.Count);
 			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
 			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+		}
+		#endregion
+
+		#region GetPhrasesInGroup Tests
+		[Test]
+		public void GetPhrasesInGroup_NoMatches_ReturnsNoResults()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3").Group = "4-5A";
+			AddTestQuestion(cat, "Q4", "REV 6:4-5", 4, 5, "Q4").Group = "4-5B";
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.IsFalse(pth.GetPhrasesInGroup("MAT 2:2", "The frog queen").Any());
+			Assert.IsFalse(pth.GetPhrasesInGroup("MAT 2:2", "4-5A").Any());
+			Assert.IsFalse(pth.GetPhrasesInGroup("REV 6:4-5", "4-5C").Any());
+		}
+
+		[Test]
+		public void GetPhrasesInGroup_SingleQuestionInGroup_ReturnsSingleResult()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2").Group = "2B";
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3").Group = "4-5A";
+			AddTestQuestion(cat, "Q4", "REV 6:4-5", 4, 5, "Q4").Group = "4-5B";
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.AreEqual(pth.GetPhrasesInGroup("MAT 2:2", "2A").Single().OriginalPhrase, "Q1");
+			Assert.AreEqual(pth.GetPhrasesInGroup("MAT 2:2", "2B").Single().OriginalPhrase, "Q2");
+			Assert.AreEqual(pth.GetPhrasesInGroup("REV 6:4-5", "4-5A").Single().OriginalPhrase, "Q3");
+			Assert.AreEqual(pth.GetPhrasesInGroup("REV 6:4-5", "4-5B").Single().OriginalPhrase, "Q4");
+		}
+
+		[Test]
+		public void GetPhrasesInGroup_MultipleQuestionsInGroup_ReturnsAllMatches()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2").Group = "2B";
+			AddTestQuestion(cat, "Q3", "MAT 2:2", 2, 2, "Q3").Group = "2B";
+			AddTestQuestion(cat, "Q4", "MAT 2:2", 2, 2, "Q4").Group = "2B";
+			AddTestQuestion(cat, "Q5", "REV 6:2", 4, 5, "Q5").Group = "2A";
+			AddTestQuestion(cat, "Q6", "REV 6:2", 4, 5, "Q6").Group = "2B";
+			AddTestQuestion(cat, "Q7", "REV 6:4-5", 4, 5, "Q7");
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.That(pth.GetPhrasesInGroup("MAT 2:2", "2B")
+				.Select(p => p.OriginalPhrase), Is.EquivalentTo(new [] {"Q2", "Q3", "Q4"}));
 		}
 		#endregion
 
