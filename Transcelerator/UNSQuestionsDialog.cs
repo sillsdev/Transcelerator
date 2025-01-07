@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.   
-// <copyright from='2011' to='2024 company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL Global.   
+// <copyright from='2011' to='2025 company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -180,8 +180,8 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating whether the textual question filter requires whole-
-		/// word matches.
+		/// Gets or sets a value indicating whether the textual question filter requires
+		/// whole-word matches.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private bool MatchWholeWords
@@ -299,7 +299,7 @@ namespace SIL.Transcelerator
 				{
 					// Unless/until we ship UI strings for different variants of the same language,
 					// there is no need to try to tell the LocalizationManager to load a different
-					// variant. It's already smart enough to fallback to another variant of the
+					// variant. It's already smart enough to fall back to another variant of the
 					// language anyway.
 					LocalizationManager.SetUILanguage(preferredUiLocale, true);
 				}
@@ -401,7 +401,7 @@ namespace SIL.Transcelerator
 		{
 			ResetRowCount();
 
-			// Now apply settings that have filtering or other side-effects
+			// Now apply settings that have filtering or other side effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
@@ -1097,7 +1097,9 @@ namespace SIL.Transcelerator
 				e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedString(tp.ToUIDataString());
 			else if (e.ColumnIndex == m_colEditQuestion.Index)
 			{
-				if (tp.ModifiedPhrase != null || tp.IsUserAdded)
+				if (tp.IsCategoryName)
+					e.Value = DBNull.Value; // Avoid displaying anything
+				else if (tp.ModifiedPhrase != null || tp.IsUserAdded)
 					e.Value = Resources.iconfinder_edit_3855617___user_added;
 				else if (tp.IsExcluded)
 					e.Value = Resources.iconfinder_edit_3855617___excluded;
@@ -1150,10 +1152,13 @@ namespace SIL.Transcelerator
 			if (e.ColumnIndex == m_colEditQuestion.Index)
 			{
 				var tp = m_helper[e.RowIndex];
-				if (tp.IsExcluded)
-					IncludeOrExcludeQuestion(false);
-				else
-					mnuEditQuestion_Click(sender, e);
+				if (!tp.IsCategoryName)
+				{
+					if (tp.IsExcluded)
+						IncludeOrExcludeQuestion(false);
+					else
+						mnuEditQuestion_Click(sender, e);
+				}
 			}
 		}
 
@@ -1214,7 +1219,7 @@ namespace SIL.Transcelerator
 			// We might only care about this in the case where the cell was being edited.
 
 			// Not likely that a user would initiate a new sort while editing, but if they do (and if the
-			// cell value was actually changed, let's just save it.
+			// cell value was actually changed), let's just save it.
 			if (dataGridUns.IsCurrentCellInEditMode)
 				dataGridUns.EndEdit();
 
@@ -1646,7 +1651,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Writes a file with the questions having verse numbers in parentheses and an
+		/// Writes a file with the questions having verse numbers in parentheses and a
 		/// line containing the answers.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------		
@@ -1748,8 +1753,8 @@ namespace SIL.Transcelerator
 									//{
 									//	if (qi.Answers != null)
 									//	{
-									//		foreach (string a in qi.Answers)
-									//			sw.WriteLine("A: " + a);
+									//		foreach (string answer in qi.Answers)
+									//			sw.WriteLine("A: " + answer);
 									//	}
 									//	if (qi.Notes != null)
 									//	{
@@ -2007,8 +2012,12 @@ namespace SIL.Transcelerator
 			if (dataGridUns.CurrentRow?.Index == e.RowIndex && m_lastRowEntered >= 0)
 				return;
 
+			// Note: if the user clicked the edit column, we're about to display the edit question
+			// dialog box, so in that case, we can't also display the group question warning.
 			var warnAboutGroupedQuestion = m_lastRowEntered >= 0 &&
-					Properties.Settings.Default.ShowGroupedQuestionWarnings && !m_fInitialNavigateToRef;
+				e.ColumnIndex != m_colEditQuestion.Index &&
+				Properties.Settings.Default.ShowGroupedQuestionWarnings &&
+				!m_fInitialNavigateToRef;
 
 			var phrase = m_helper[e.RowIndex];
 
@@ -2024,9 +2033,8 @@ namespace SIL.Transcelerator
 			{
 				DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
 				row.ReadOnly = phrase.IsExcluded;
-				warnAboutGroupedQuestion = warnAboutGroupedQuestion && !phrase.IsExcluded && phrase.IsGrouped  &&
-					m_helper.GetPhrasesInAlternativeGroup(phrase.Reference, phrase.GroupName)
-						.Any(p => !p.IsExcluded);
+				warnAboutGroupedQuestion = warnAboutGroupedQuestion &&
+					m_helper.IsInGroupPendingUserDecision(phrase);
 
 				m_normalRowHeight = row.Height;
 				dataGridUns.AutoResizeRow(e.RowIndex);
@@ -2187,10 +2195,18 @@ namespace SIL.Transcelerator
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard?.Invoke(false);
 			m_lockToHold = DataFileAccessor.DataFileId.QuestionCustomizations;
+
+			var groupType = QuestionGroupType.NotGrouped;
+			if (Properties.Settings.Default.ShowGroupedQuestionWarnings &&
+				m_helper.IsInGroupPendingUserDecision(phrase))
+			{
+				groupType = m_helper.GetQuestionGroupType(phrase);
+			}
+
 			ShowModalChild(new EditQuestionDlg(phrase,
 				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
 					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-					.Select(p => p.PhraseInUse).ToList(), m_dataLocalizer), dlg =>
+					.ToList(), m_dataLocalizer, groupType), dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)
 				{
@@ -2702,8 +2718,10 @@ namespace SIL.Transcelerator
 
 		private void ShowGroupedQuestionWarning(TranslatablePhrase phrase)
 		{
-			ShowModalChild(new GroupedQuestionInfoDlg(m_helper.GetPhrasesInGroup(phrase.Reference,
-				phrase.GroupName).Select(p => p.QuestionInfo), m_dataLocalizer), form =>
+			var groupedQuestions = m_helper.GetPhrasesInGroup(phrase.Reference,
+				phrase.GroupName).Select(p => p.QuestionInfo);
+
+			ShowModalChild(new GroupedQuestionInfoDlg(groupedQuestions, m_dataLocalizer), form =>
 			{
 				if (form.DoNotShowFutureGroupWarnings)
 					Properties.Settings.Default.ShowGroupedQuestionWarnings = false;
@@ -3105,9 +3123,9 @@ namespace SIL.Transcelerator
 
 			lock (this)
 			{
-				// While we process the given reference we might get additional synch events, the
+				// While we process the given reference we might get additional sync events, the
 				// most recent of which we store in m_queuedReference. If we're done
-				// and we have a new reference in m_queuedReference we process that one, etc.
+				// and we have a new reference in m_queuedReference, we process that one, etc.
 				for (; reference != null; reference = m_queuedReference)
 				{
 					m_queuedReference = null;
@@ -3268,7 +3286,7 @@ namespace SIL.Transcelerator
 				{
 					loc = new string[count];
 					for (int i = 0; i < count; i++)
-						loc[i] = m_dataLocalizer.GetLocalizedDataString(new UIAnswerOrNoteDataString(question, type, i), out _);
+						loc[i] = m_dataLocalizer.GetLocalizedDataString(new UIAnswerOrNoteDataString(question, type, i));
 				}
 				label.Show(); // Is this needed?
 				label.Text = count == 1 ? (string)label.Tag : sLabelMultiple;
@@ -3437,7 +3455,7 @@ namespace SIL.Transcelerator
 					ichInsert >= TextControl.SelectionStart &&
 					ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
 				{
-					// Don't try to move selected text onto itself. Instead just remove selection.
+					// Don't try to move selected text onto itself. Instead, just remove selection.
 					// This allows a simple click to behave properly.
 					TextControl.SelectionStart = ichInsert;
 					TextControl.SelectionLength = 0;
@@ -3458,9 +3476,9 @@ namespace SIL.Transcelerator
 					if (removeLen > 0)
 					{
 						// We need to handle removal of originally selected text because
-						// the code where the drag-drop originates assumes we will (it
+						// the code where the drag-drop originates assumes we will. (It
 						// treats any copy/move as a copy because we don't want dragging
-						// from TXL to Word, for example, to result in a move.  
+						// from TXL to Word, for example, to result in a move.)
 						TextControl.Text = TextControl.Text.Remove(removeStart, removeLen);
 						// Now select the moved text
 						TextControl.SelectionStart = ichInsert;
@@ -3491,8 +3509,5 @@ namespace SIL.Transcelerator
 			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlConstants.kPluginName));
 		}
 	}
-	#endregion
-
-	#region class SubstringDescriptor
 	#endregion
 }
