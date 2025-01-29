@@ -239,6 +239,15 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <File Id="System.Resources.Extensions.dll_P9" ShortName="4m4f3iii.dll" KeyPath="yes" Name="System.Resources.Extensions.dll" />
           </Component>
           <Component Guid="*">
+            <File Id="System.Text.Encodings.Web.dll_P9" ShortName="systxenc.dll" KeyPath="yes" Name="System.Text.Encodings.Web.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.Text.Json.dll_P9" ShortName="systjson.dll" KeyPath="yes" Name="System.Text.Json.dll" />
+          </Component>
+          <Component Guid="*">
+            <File Id="System.Threading.Tasks.Extensions.dll_P9" ShortName="systtext.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
+          </Component>
+          <Component Guid="*">
             <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
           </Component>
         </ComponentGroup>
