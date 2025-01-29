@@ -1987,6 +1987,7 @@ namespace SIL.Transcelerator
 			}
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(5, pq.TranslatableParts.Length);
+			Assert.That(qp.TemporaryAdditionalLookups, Is.Null);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -4602,6 +4603,11 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(32003010, actQuestion.EndRef);
 
 			Assert.AreEqual(iQuestion, actCategory.Questions.Count);
+
+			var lookup = qp.TemporaryAdditionalLookups.Single();
+			Assert.That(lookup.Reference, Is.EqualTo(pc.Reference));
+			Assert.That(lookup.OriginalPhrase, Is.EqualTo(pc.OriginalPhrase));
+			Assert.That(lookup.ModifiedPhrase, Is.EqualTo(pc.ModifiedPhrase));
 		}
 
 		private List<PhraseCustomization> GetJonahC1V3Customizations(PhraseCustomization.CustomizationType firstAdditionType)
@@ -4819,6 +4825,8 @@ namespace SIL.Transcelerator
 
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(11, pq.TranslatableParts.Length);
+
+			Assert.That(qp.TemporaryAdditionalLookups, Is.Null);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -4891,6 +4899,7 @@ namespace SIL.Transcelerator
 
 			Assert.IsNull(pq.KeyTerms);
 			Assert.AreEqual(3, pq.TranslatableParts.Length);
+			Assert.That(qp.TemporaryAdditionalLookups, Is.Null);
 		}
 
 		///--------------------------------------------------------------------------------------

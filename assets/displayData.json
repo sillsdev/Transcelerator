@@ -1,0 +1,17 @@
+{
+  "icon": "TXL80icon.png",
+  "moreInfoUrl": "https://software.sil.org/transcelerator/",
+  "supportUrl": "https://community.scripture.software.sil.org/c/transcelerator",
+  "localizedDisplayInfo": {
+    "en": {
+      "displayName": "Transcelerator",
+      "shortSummary": "Helps prepare comprehension checking questions to test a Scripture translation.",
+      "description": "assets/descriptions/description-en.md"
+    },
+    "es": {
+      "displayName": "Transcelerator",
+      "shortSummary": "Ayuda a preparar preguntas de verificación de comprensión para chequear una traducción de las Escrituras.",
+      "description": "assets/descriptions/description-es.md"
+    }
+  }
+}

@@ -1,7 +1,16 @@
-# Windows Explorer files
+#region Windows Explorer files
 Thumbs.db
+#endregion
 
-# C-sharp Build and nuget packaging
+#region Misc Transcelerator-specific local developer files
+/British English localization notes.txt
+/CpTxlToP75.bat
+/Transcelerator/LocalizedPhrases.xlf
+/SilUtils/SilUtilsTests/SimianDomains/
+/Docs/Paratext.reg
+#endregion
+
+#region C-sharp Build and nuget packaging
 output/
 obj/
 bin/
@@ -11,13 +20,9 @@ packages/
 **/.vs
 .nuget/NuGet.exe
 /XLIFF/*
+#endregion
 
-# Misc Transcelerator-specific local developer files
-/British English localization notes.txt
-/CpTxlToP75.bat
-/Transcelerator/LocalizedPhrases.xlf
-/SilUtils/SilUtilsTests/SimianDomains/
-/Docs/Paratext.reg
+# #region shared with https://github.com/paranext/paranext-multi-extension-template/blob/main/.gitignore
 
 # Logs
 logs
@@ -34,6 +39,9 @@ release
 dist-ssr
 *.local
 
+# formatting and linting
+.eslintcache
+
 # Editor directories and files
 .idea
 .DS_Store
@@ -45,3 +53,4 @@ dist-ssr
 # Temporary intermediate build files
 temp-build
 
+# #endregion

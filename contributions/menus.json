@@ -1,0 +1,54 @@
+{
+  "mainMenu": {
+    "columns": {},
+    "groups": {},
+    "items": [
+      {
+        "label": "%mainMenu_openTranscelerator%",
+        "localizeNotes": "Application main menu > Project > Transcelerator. Typically should not need to be localized.",
+        "group": "platform.projectResources",
+        "order": -99.8,
+        "command": "transcelerator.open",
+        "iconPathBefore": "papi-extension://transcelerator/assets/TXL80x80.png"
+      }
+    ]
+  },
+  "defaultWebViewTopMenu": {
+    "columns": {},
+    "groups": {},
+    "items": []
+  },
+  "defaultWebViewContextMenu": {
+    "groups": {},
+    "items": []
+  },
+  "webViewMenus": {
+    "transcelerator.main": {
+      "includeDefaults": false,
+      "topMenu": {
+        "columns": {
+          "transcelerator.File": { "label": "%file%", "order": 1 },
+          "transcelerator.Edit": { "label": "%edit%", "order": 2 },
+          "transcelerator.View": { "label": "%view%", "order": 3 },
+          "transcelerator.Advanced": { "label": "%advanced%", "order": 4 },
+          "transcelerator.Help": { "label": "%help%", "order": 5 }
+        },
+        "groups": {
+          "transcelerator.fileExit": { "column": "transcelerator.File", "order": 1 },
+          "transcelerator.editCutCopyPaste": { "column": "transcelerator.Edit", "order": 1 },
+          "transcelerator.viewOptions": { "column": "transcelerator.View", "order": 1 },
+          "transcelerator.advancedTop": { "column": "transcelerator.Advanced", "order": 1 },
+          "transcelerator.helpTopics": { "column": "transcelerator.Help", "order": 1 }
+        },
+        "items": [
+          {
+            "label": "%showHelp%",
+            "group": "transcelerator.helpTopics",
+            "order": 1,
+            "command": "transcelerator.help"
+          }
+        ]
+      }
+    }
+  }
+}
