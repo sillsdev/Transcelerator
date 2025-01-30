@@ -74,7 +74,7 @@ namespace SIL.Transcelerator
 			m_tempTxlLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
 			Resources.Transcelerator.Save(m_tempTxlLogoPath);
 			m_tempSilLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
-			Windows.Forms.Widgets.SilResources.SilLogo101x113.Save(m_tempSilLogoPath);
+			Windows.Forms.Widgets.SilResources.SilLogoRandom.Save(m_tempSilLogoPath);
 
 			m_htmlTemplate = File.ReadAllText(htmlPath)
 				.Replace("src=\"Properties/Transcelerator.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempTxlLogoPath)}")
