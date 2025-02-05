@@ -1,4 +1,8 @@
-## 3.2.0 9 July 2024
+## _VERSION_ _DATE_
+* Made it easier to see question groups/options and include and exclude them together.
+* Added support for localizers who need to omit certain questions, comments, answers, and alternatives
+
+## 3.1.20 9 July 2024
 * Added an option to omit the Scripture verses before each question in the generated script.
 * Added alternatives to several questions, added a few new questions and made a few small edits (mostly punctuation and spelling corrections) to answers and notes.
 * Updated the British English localization
@@ -38,7 +42,7 @@
 * Added option to output verse numbers in script (Note: If using an external CSS file, to get verse numbers to appear superscripted, you will either need to allow Transcelerator to overwrite your CSS file or edit the existing one to add verse {vertical-align: super; font-size: .80em; color:DimGray;}.
 * Major improvements to question content and script generation.
 * New option to control how out-of-order detail questions are handled in script.
-* Improvements to New Question dialog, including ability to add questions out of order.
+* Improvements to New Question dialog, including ability to add questions out of verse order.
 
 ## 1.3.17 11 May 2020
 * Added missing questions for Luke 22-24.
@@ -48,9 +52,6 @@
 
 ## 1.3.9 9 January 2019
 * Added (draft quality) localizations of all questions, answers, and notes for French and Spanish.
-
-## 1.3.8 22 October 2018
-* Added capability to produce a publicly consumable set of comprehension checking questions (to be used in an upcoming version of Scripture Forge).
 
 ## 1.3.1 9 August 2018
 * Added support for display of questions, answers, and notes in languages other than English.
@@ -72,7 +73,7 @@
 * Updated key term rules based on changes to biblical terms list included with Paratext.
 
 ## 1.1.5154 10 February 2014
-* Prevent crash when Paratext fails to load key terms.
+* Prevent crash when Paratext fails to load biblical terms.
 * Updated key term rules based on changes to biblical terms list included with Paratext.
 
 ## 1.1.5149 5 February 2014

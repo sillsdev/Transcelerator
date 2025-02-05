@@ -43,7 +43,7 @@
 		<Message Text="BuildHash: $(BuildHash)" Importance="high"/>
 
 		<!-- Mimicking Bloom's strategy of updating the version number here (not on TeamCity, not in the assemblies). -->
-		<CreateProperty Value="3.1.$(BuildCounter)">
+		<CreateProperty Value="3.2.$(BuildCounter)">
 			<Output PropertyName="Version" TaskParameter="Value"/>
 		</CreateProperty>
 		<CreateProperty Value="$(Version).$(BuildHash)">
@@ -140,6 +140,10 @@
 	<ItemGroup>
 		<Configurations Include="Debug;Release"/>
 	</ItemGroup>
+	
+	<ItemGroup>
+		<ReleaseNotesMdFiles Include="$(RootDir)/DistFiles/ReleaseNotes*.md" />
+	</ItemGroup>
 
 	<Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
 		<MSBuild Projects="$(RootDir)/$(Solution)"
@@ -166,6 +170,13 @@
 	</Target>
 	
 	<Target Name="ConvertReleaseNotesToHtml">
+		<FileUpdate
+			File="%(ReleaseNotesMdFiles.Identity)"
+			DatePlaceHolder='_DATE_'
+			DateFormat='d MMMM yyyy'
+			Regex='_VERSION_'
+			ReplacementText="$(Version)" />
+			
 		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
 			HtmlFile="$(OutputDir)/ReleaseNotes.htm" />
 	</Target>
