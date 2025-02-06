@@ -1,6 +1,6 @@
 ## _VERSION_ _DATE_
 * Made it easier to see question groups/options and include and exclude them together.
-* Added support for localizers who need to omit certain questions, comments, answers, and alternatives
+* Added support for localizers who need to omit certain questions, comments, answers, and alternatives.
 
 ## 3.1.20 9 July 2024
 * Added an option to omit the Scripture verses before each question in the generated script.
