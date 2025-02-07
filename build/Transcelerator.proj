@@ -5,31 +5,25 @@
 		<OutputDir>$(RootDir)/output</OutputDir>
 		<BUILD_NUMBER Condition="'$(BUILD_NUMBER)'==''">0.0.0.0</BUILD_NUMBER>
 		<PackagesDir>$(RootDir)/packages</PackagesDir>
-		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner.3.19.1/tools</NunitConsoleRunnerDir>
-		<BuildTasksDll>$(PackagesDir)/SIL.BuildTasks/tools/SIL.BuildTasks.dll</BuildTasksDll>
+		<NunitConsoleRunnerDir>$(PackagesDir)/NUnit.ConsoleRunner/tools</NunitConsoleRunnerDir>
+		<SILBuildTasksProps>$(PackagesDir)/SIL.BuildTasks/build/SIL.BuildTasks.props</SILBuildTasksProps>
 		<SILReleaseTasksProps>$(PackagesDir)/SIL.ReleaseTasks/build/SIL.ReleaseTasks.props</SILReleaseTasksProps>
 		<Solution>Transcelerator.sln</Solution>
 		<ApplicationName>Transcelerator</ApplicationName>
 		<Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
 		<TeamCity Condition="'$(teamcity_version)' != ''">true</TeamCity>
 		<TeamCity Condition="'$(teamcity_version)' == ''">false</TeamCity>
+		<NUnitProjectLoaderDll>$(PackagesDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll</NUnitProjectLoaderDll>
+		<TeamCityEventListenerDll>$(PackagesDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll</TeamCityEventListenerDll>
 		<TestOutputXmlFile Condition="'$(teamcity_version)' == ''">$(OutputDir)/$(Configuration)/TestResults.xml</TestOutputXmlFile>
 		<ExtraExcludeCategories Condition="'$(teamcity_version)' != ''">SkipOnTeamCity,</ExtraExcludeCategories>
-		<RestartBuild Condition="!Exists('$(BuildTasksDll)') Or !Exists('$(SILReleaseTasksProps)') Or !Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') Or !Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') Or !Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">true</RestartBuild>
-		<RestartBuild Condition="Exists('$(BuildTasksDll)') And Exists('$(SILReleaseTasksProps)') And Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') And Exists('$(RootDir)/NUnit.Extension.NUnitProjectLoader/tools/nunit-project-loader.dll') And Exists('$(RootDir)/NUnit.Extension.TeamCityEventListener/tools/teamcity-event-listener.dll')">false</RestartBuild>
+		<RestartBuild Condition="!Exists('$(SILBuildTasksProps)') Or !Exists('$(SILReleaseTasksProps)') Or !Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') Or !Exists('$(NUnitProjectLoaderDll)') Or !Exists('$(TeamCityEventListenerDll)')">true</RestartBuild>
+		<RestartBuild Condition="Exists('$(SILBuildTasksProps)') And Exists('$(SILReleaseTasksProps)') And Exists('$(NunitConsoleRunnerDir)/nunit3-console.exe') And Exists('$(NUnitProjectLoaderDll)') And Exists('$(TeamCityEventListenerDll)')">false</RestartBuild>
 		<Platform>x64</Platform>
 	</PropertyGroup>
-
-	<UsingTask TaskName="StampAssemblies" AssemblyFile="$(BuildTasksDll)"
-		Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="MakeWixForDirTree" AssemblyFile="$(BuildTasksDll)"
-		Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="Split" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="FileUpdate" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
-	<UsingTask TaskName="NUnit3" AssemblyFile="$(BuildTasksDll)" Condition="Exists('$(BuildTasksDll)')" />
   
 	<Target Name="VersionNumbers">
-		<Message Text="BuildTasksDll: $(BuildTasksDll)"/>
+		<Message Text="SILBuildTasksProps: $(SILBuildTasksProps)"/>
 		<Message Text="BUILD_NUMBER: $(BUILD_NUMBER)" Importance="high"/>
 
 		<Split Input="$(BUILD_NUMBER)" Delimiter="." OutputSubString="2">
@@ -64,11 +58,7 @@
 	
 	<Import Project="../.nuget/NuGet.targets" />
 	<Import Project="$(SILReleaseTasksProps)" Condition="Exists('$(SILReleaseTasksProps)')" />
-
-	<ItemGroup>
-		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(PackagesDir)/`, `NUnit.Console*`, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
-		<PackageDirs Include="$([System.IO.Directory]::GetDirectories(`$(PackagesDir)/`, `NUnit.Extension.*`, SearchOption.TopDirectoryOnly))" Condition="Exists('$(PackagesDir)/')" />
-	</ItemGroup>
+	<Import Project="$(SILBuildTasksProps)" Condition="Exists('$(SILBuildTasksProps)')" />
 
 	<ItemGroup>
 		<_ExcludeEnDir Include="$(RootDir)/Docs/Help Topics/en" />
@@ -110,16 +100,15 @@
 	<Target Name="RestoreLocalPackages" DependsOnTargets="CheckPrerequisites">
 		<Message Text="RestartBuild=$(RestartBuild)"/>
 		<Message Text="Configuration=$(Configuration)"/>
-		<!-- first remove any existing packages - if they were installed with appended version numbers nuget refuses to install it again, messing up things -->
-		<RemoveDir Directories="@(PackageDirs)" />
 		<Message Text="Calling $(NuGetCommand) restore ../$(Solution)" />
 		<Exec Command='$(NuGetCommand) restore ../$(Solution)' />
+		<Exec Command='$(NuGetCommand) install Markdig.Signed -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install SIL.BuildTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
 		<Exec Command='$(NuGetCommand) install SIL.ReleaseTasks -excludeVersion -PreRelease -source "$(PackageSources)" -solutionDirectory "$(SolutionDir)."' />
-		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -version 3.19.1 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.ConsoleRunner -excludeVersion -solutionDirectory "$(RootDir)"' />
 		<!-- The two extensions are required to show the tests on TC -->
-		<Exec Command='$(NuGetCommand) install NUnit.Extension.NUnitProjectLoader -excludeVersion -version 3.6.0 -solutionDirectory "$(RootDir)"' />
-		<Exec Command='$(NuGetCommand) install NUnit.Extension.TeamCityEventListener -excludeVersion -version 1.0.7 -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.Extension.NUnitProjectLoader -excludeVersion -solutionDirectory "$(RootDir)"' />
+		<Exec Command='$(NuGetCommand) install NUnit.Extension.TeamCityEventListener -excludeVersion -solutionDirectory "$(RootDir)"' />
 
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
 		  Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
