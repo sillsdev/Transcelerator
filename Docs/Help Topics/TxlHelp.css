@@ -80,6 +80,11 @@ menu {
 ul.icon-list {
   list-style: none;
 }
+li.no-icon {
+  padding-top: 8px; /* Moves the text and leaves room for the bullet */
+  padding-left: 56px; /* Moves the text and leaves room for the bullet */
+  text-indent: -30px; /* Pulls the bullet back into view */
+}
 img {
   margin-left: 3px;
   margin-top: 5px;

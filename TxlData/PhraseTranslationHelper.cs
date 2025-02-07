@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -21,7 +21,6 @@ using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
-using Icu;
 using static System.Char;
 
 namespace SIL.Transcelerator
@@ -34,6 +33,15 @@ namespace SIL.Transcelerator
 		EnglishPhrase,
 		Translation,
 		Status,
+	}
+	#endregion
+
+	#region QuestionGroupType enumeration
+	public enum QuestionGroupType
+	{
+		NotGrouped,
+		AlternativeSetOfQuestions,
+		AlternativeSingleQuestions
 	}
 	#endregion
 
@@ -290,6 +298,48 @@ namespace SIL.Transcelerator
 		{
 			return m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef).ToList();
 		}
+
+		#region Question group stuff
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the specified group.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInGroup(string scrRef, string groupName)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef && p.GroupName == groupName);
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the group that is an alternative to
+		/// the specified group.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInAlternativeGroup(string scrRef,
+			string groupName)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef &&
+				p.GroupName == groupName.AlternativeGroup());
+		}
+
+		public bool IsInGroupPendingUserDecision(TranslatablePhrase phrase)
+		{
+			return !phrase.IsExcluded && phrase.IsGrouped &&
+				GetPhrasesInAlternativeGroup(phrase.Reference, phrase.GroupName)
+					.Any(p => !p.IsExcluded);
+		}
+
+		public QuestionGroupType GetQuestionGroupType(TranslatablePhrase question)
+		{
+			if (!question.IsGrouped)
+				return QuestionGroupType.NotGrouped;
+			if (GetPhrasesInGroup(question.Reference, question.GroupName).Count() > 1 ||
+			    GetPhrasesInAlternativeGroup(question.Reference, question.GroupName).Count() > 1)
+				return QuestionGroupType.AlternativeSetOfQuestions;
+			return QuestionGroupType.AlternativeSingleQuestions;
+		}
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
