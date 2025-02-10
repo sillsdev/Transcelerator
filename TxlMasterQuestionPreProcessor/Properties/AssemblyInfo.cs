@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("Transcelerator")]
-[assembly: AssemblyCopyright("Copyright © 2013 SIL International")]
+[assembly: AssemblyCopyright("Copyright © 2013-2025 SIL Global")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
