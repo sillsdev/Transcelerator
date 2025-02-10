@@ -111,7 +111,7 @@
 		<Exec Command='$(NuGetCommand) install NUnit.Extension.TeamCityEventListener -excludeVersion -solutionDirectory "$(RootDir)"' />
 
 		<MSBuild Projects="$(MSBuildProjectFullPath)" Targets="BuildInternal"
-		  Properties="Configuration=$(Configuration)" Condition="$(RestartBuild)" />
+		  Properties="Configuration=$(Configuration);RunCodeAnalysis=$(RunCodeAnalysis)" Condition="$(RestartBuild)" />
     </Target>
 
 	<Target Name="SetAssemblyVersion" DependsOnTargets="VersionNumbers">
@@ -133,7 +133,7 @@
 	<Target Name="BuildInternal" DependsOnTargets="SetAssemblyVersion">
 		<MSBuild Projects="$(RootDir)/$(Solution)"
 			 Targets="Rebuild"
-			 Properties="Configuration=%(Configurations.Identity)" />
+			 Properties="Configuration=%(Configurations.Identity);RunCodeAnalysis=$(RunCodeAnalysis)" />
 	</Target>
 
 	<Target Name="Test" DependsOnTargets="Build; SetTestAssemblies">
