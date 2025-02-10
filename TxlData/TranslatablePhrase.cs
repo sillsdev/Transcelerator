@@ -581,6 +581,12 @@ namespace SIL.Transcelerator
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternativeForms;
 
+		[Browsable(false)]
+		public string GroupName => QuestionInfo?.Group;
+
+		[Browsable(false)]
+		public bool IsGrouped => !IsNullOrEmpty(GroupName);
+
 		public string ImmutableKey => IsUserAdded ? QuestionInfo.Id :
 			QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text ?? OriginalPhrase;
 		#endregion

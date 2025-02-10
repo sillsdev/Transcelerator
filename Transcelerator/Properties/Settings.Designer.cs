@@ -547,5 +547,17 @@ namespace SIL.Transcelerator.Properties {
                 this["OmitScriptureForQuestions"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowGroupedQuestionWarnings {
+            get {
+                return ((bool)(this["ShowGroupedQuestionWarnings"]));
+            }
+            set {
+                this["ShowGroupedQuestionWarnings"] = value;
+            }
+        }
     }
 }

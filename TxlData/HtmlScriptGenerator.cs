@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2021 to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.   
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2021 to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -17,6 +17,8 @@ using System.Text;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
+using static SIL.Transcelerator.Localization.LocalizableStringType;
+using static SIL.Transcelerator.TypeOfPhrase;
 
 namespace SIL.Transcelerator
 {
@@ -31,12 +33,12 @@ namespace SIL.Transcelerator
 		public Func<TranslatablePhrase, ISectionInfo> FindSectionInfo { get; }
 		private const string kLwcQuestionClassName = "questionbt";
 
-		public delegate LocalizationsFileAccessor DataLocalizerNeededEventHandler(object sender, string localeId);
+		public delegate IDataLocalizer DataLocalizerNeededEventHandler(object sender, string localeId);
 		public event DataLocalizerNeededEventHandler DataLocalizerNeeded;
 
 		#region Data members
 		private List<TranslatablePhrase> m_questionsToInclude;
-		private LocalizationsFileAccessor m_dataLoc;
+		private IDataLocalizer m_dataLoc;
 		private BCVRef m_verseRangeStartRef;
 		private BCVRef m_verseRangeEndRef;
 		private string m_normalizedTitle;
@@ -342,7 +344,6 @@ namespace SIL.Transcelerator
 			foreach (var phrase in QuestionsToInclude)
 			{
 				var question = phrase.QuestionInfo;
-				string lang;
 				if (section == null || phrase.SectionId != prevSection)
 				{
 					section = FindSectionInfo?.Invoke(phrase);
@@ -356,14 +357,42 @@ namespace SIL.Transcelerator
 				if (Omit(phrase))
 					continue;
 
+				LocalizedDataString translatedQuestion;
+				if (phrase.HasUserTranslation)
+					translatedQuestion = new LocalizedDataString(phrase.Translation, VernIcuLocale, false);
+				else
+				{
+					translatedQuestion = GetDataString(phrase.ToUIDataString());
+					if (translatedQuestion.Omit)
+					{
+						if (phrase.AlternateForms == null)
+							continue;
+
+						translatedQuestion = null;
+						// The question has not been translated and the primary version of it has
+						// been omitted by the localizer. But there is still a (slight) chance there
+						// may be an alternative form that has been localized to output instead.
+						for (var i = 0; i <phrase.AlternateForms.Count(); i++)
+						{
+							var alt = GetDataString(new UIAlternateDataString(phrase.QuestionInfo,
+								i, false));
+							if (!alt.Omit && alt.Lang != kDefaultLwc)
+							{
+								translatedQuestion = alt;
+								break;
+							}
+						}
+						if (translatedQuestion != null)
+							continue;
+					}
+				}
+
 				if (!sectionHeadHasBeenOutput)
 				{
-					if (section == null)
-						tw.WriteLine($"<h2>{phrase.Reference}</h2>");
-					else
+					if (section == null || !WriteParagraphElement(tw, null,
+						    new UISectionHeadDataString(section), VernIcuLocale, "h2"))
 					{
-						var h2 = GetDataString(new UISectionHeadDataString(section), out lang);
-						WriteParagraphElement(tw, null, h2, VernIcuLocale, lang, "h2");
+						tw.WriteLine($"<h2>{phrase.Reference}</h2>");
 					}
 
 					sectionHeadHasBeenOutput = true;
@@ -372,11 +401,9 @@ namespace SIL.Transcelerator
 				if (phrase.Category != prevCategory)
 				{
 					if (OutputFullPassageAtStartOfSection && prevCategory == -1)
-					{
 						OutputScripture(section.StartRef, section.EndRef);
-					}
 
-					var lwcCategoryName = phrase.GetCategoryName(out lang);
+					var lwcCategoryName = phrase.GetCategoryName(out var lang);
 					if (lang == null)
 						lang = VernIcuLocale;
 					WriteParagraphElement(tw, null, lwcCategoryName, VernIcuLocale, lang, "h3");
@@ -434,25 +461,20 @@ namespace SIL.Transcelerator
 					prevQuestionEndRef = phrase.EndRef;
 				}
 
-				lang = VernIcuLocale;
-				var questionText = phrase.HasUserTranslation ? phrase.Translation :
-					GetDataString(phrase.ToUIDataString(), out lang);
 				tw.WriteLine($"<div class=\"extras\" lang=\"{LwcLocale}\">");
-				WriteParagraphElement(tw, "question", questionText, VernIcuLocale, lang);
+				WriteParagraphElement(tw, "question", translatedQuestion.Normalized, VernIcuLocale,
+					translatedQuestion.Lang);
 				tw.WriteLine("</div>");
 
-				if (IncludeLWCQuestions && phrase.HasUserTranslation && phrase.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-				{
-					var lwcQuestion = GetDataString(phrase.ToUIDataString(), out lang);
-					WriteParagraphElement(tw, kLwcQuestionClassName, lwcQuestion, LwcLocale, lang);
-				}
+				if (IncludeLWCQuestions && phrase.HasUserTranslation && phrase.TypeOfPhrase != NoEnglishVersion)
+					WriteParagraphElement(tw, kLwcQuestionClassName, phrase.ToUIDataString(), LwcLocale);
 
 				if (IncludeLWCAnswers && question.Answers != null)
 				{
 					for (var index = 0; index < question.Answers.Length; index++)
 					{
-						var lwcAnswer = GetDataString(new UIAnswerOrNoteDataString(question, LocalizableStringType.Answer, index), out lang);
-						WriteParagraphElement(tw, "answer", lwcAnswer, LwcLocale, lang);
+						var answer = new UIAnswerOrNoteDataString(question, Answer, index);
+						WriteParagraphElement(tw, "answer", answer, LwcLocale);
 					}
 				}
 
@@ -460,8 +482,8 @@ namespace SIL.Transcelerator
 				{
 					for (var index = 0; index < question.Notes.Length; index++)
 					{
-						var lwcComment = GetDataString(new UIAnswerOrNoteDataString(question, LocalizableStringType.Note, index), out lang);
-						WriteParagraphElement(tw, "comment", lwcComment, LwcLocale, lang);
+						var comment = new UIAnswerOrNoteDataString(question, Note, index);
+						WriteParagraphElement(tw, "comment", comment, LwcLocale);
 					}
 				}
 			}
@@ -470,7 +492,7 @@ namespace SIL.Transcelerator
 		}
 
 		private bool Omit(TranslatablePhrase phrase) => !phrase.HasUserTranslation &&
-			(phrase.TypeOfPhrase == TypeOfPhrase.NoEnglishVersion ||
+			(phrase.TypeOfPhrase == NoEnglishVersion ||
 				HandlingOfUntranslatedQuestions == HandleUntranslatedQuestionsOption.Skip);
 
 		/// ------------------------------------------------------------------------------------
@@ -533,14 +555,23 @@ namespace SIL.Transcelerator
 			sw.WriteLine($"<{paragraphType}{classAttribute}{langAttribute}>{data.Normalize(NormalizationForm.FormC)}</{paragraphType}>");
 		}
 
-		private string GetDataString(UIDataString key, out string lang)
+		private bool WriteParagraphElement(TextWriter sw, string className, UIDataString key, string defaultLangInContext, string paragraphType = "p")
 		{
-			if (m_dataLoc == null)
-			{
-				lang = kDefaultLwc;
-				return key.SourceUIString;
-			}
-			return m_dataLoc.GetLocalizedDataString(key, out lang);
+			var dataString = GetDataString(key);
+			if (dataString.Omit)
+				return false;
+
+			var langAttribute = dataString.Lang == defaultLangInContext ? null : $" lang=\"{dataString.Lang}\"";
+			var classAttribute = className == null ? null : $" class=\"{className}\"";
+			sw.WriteLine($"<{paragraphType}{classAttribute}{langAttribute}>{dataString.Normalized}</{paragraphType}>");
+
+			return true;
+		}
+
+		private LocalizedDataString GetDataString(UIDataString key)
+		{
+			return m_dataLoc == null ? new LocalizedDataString(key.SourceUIString, kDefaultLwc) :
+				m_dataLoc.GetLocalizedDataString(key);
 		}
 	}
 }
