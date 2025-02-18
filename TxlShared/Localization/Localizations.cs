@@ -46,7 +46,7 @@ namespace SIL.Transcelerator.Localization
 		/// omitted but it has one or more alternatives that are not omitted, then the first
 		/// alternative that is not omitted will be used. Otherwise, the entire question (along
 		/// with any answers and notes) will be omitted. Anything omitted will never be seen by
-		/// the user, either in the UI or in the output. Not that this means that in some cases,
+		/// the user, either in the UI or in the output. Note that this means that in some cases,
 		/// the user may see different sets of questions depending on which UI locale they are
 		/// working in. Also note that when generating a script, if a question has been translated,
 		/// it will not be omitted just because the LWC being used has it omitted (but the output
