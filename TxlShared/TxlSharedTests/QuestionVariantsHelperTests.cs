@@ -5,7 +5,7 @@ using SIL.Transcelerator;
 namespace TxlSharedTests
 {
 	[TestFixture]
-	public class QuestionGroupHelperTests
+	public class QuestionVariantsHelperTests
 	{
 		[Test]
 		public void GetCommentAboutAvoidingRedundantQuestions_UserAddedQuestion_ReturnsNull()
@@ -61,14 +61,14 @@ namespace TxlSharedTests
 			Assert.That(comment.ScriptureReference, Is.EqualTo("LEV 5.6-7"));
 			Assert.That(comment.Chapter, Is.EqualTo("5"));
 			Assert.That(comment.Verses, Is.EqualTo("6-7"));
-			Assert.IsFalse(comment.IsForGroup);
-			Assert.That(comment.NumberOfQuestionsInBothGroups, Is.EqualTo(2));
+			Assert.IsFalse(comment.IsForVariantSet);
+			Assert.That(comment.NumberOfQuestionsInBothVariants, Is.EqualTo(2));
 			Assert.That(comment.QuestionWithCommentAboutRedundancy, Is.EqualTo(q));
 			Assert.That(comment.Index, Is.EqualTo(1));
-			Assert.That(comment.FirstGroupLetter, Is.EqualTo('C'));
-			Assert.That(comment.SecondGroupLetter, Is.EqualTo('D'));
-			Assert.That(comment.ThisGroupLetter, Is.EqualTo('D'));
-			Assert.That(comment.OtherGroupLetter, Is.EqualTo('C'));
+			Assert.That(comment.FirstVariantLetter, Is.EqualTo('C'));
+			Assert.That(comment.SecondVariantLetter, Is.EqualTo('D'));
+			Assert.That(comment.ThisVariantLetter, Is.EqualTo('D'));
+			Assert.That(comment.OtherVariantLetter, Is.EqualTo('C'));
 		}
 
 		[TestCase(false)]
@@ -104,21 +104,21 @@ namespace TxlSharedTests
 			Assert.That(comment.ScriptureReference, Is.EqualTo("JON 1.17"));
 			Assert.That(comment.Chapter, Is.EqualTo("1"));
 			Assert.That(comment.Verses, Is.EqualTo("17"));
-			Assert.IsTrue(comment.IsForGroup);
-			Assert.That(comment.NumberOfQuestionsInBothGroups, Is.EqualTo(129));
+			Assert.IsTrue(comment.IsForVariantSet);
+			Assert.That(comment.NumberOfQuestionsInBothVariants, Is.EqualTo(129));
 			Assert.That(comment.QuestionWithCommentAboutRedundancy.Text, Is.EqualTo("Who sent a great fish to swallow up Jonah?"));
 			Assert.That(comment.Index, Is.EqualTo(0));
-			Assert.That(comment.FirstGroupLetter, Is.EqualTo('A'));
-			Assert.That(comment.SecondGroupLetter, Is.EqualTo('B'));
-			Assert.That(comment.ThisGroupLetter, Is.EqualTo('A'));
-			Assert.That(comment.OtherGroupLetter, Is.EqualTo('B'));
+			Assert.That(comment.FirstVariantLetter, Is.EqualTo('A'));
+			Assert.That(comment.SecondVariantLetter, Is.EqualTo('B'));
+			Assert.That(comment.ThisVariantLetter, Is.EqualTo('A'));
+			Assert.That(comment.OtherVariantLetter, Is.EqualTo('B'));
 
 		}
 
 		[Test]
 		public void AlternativeGroup_Null_ThrowsArgumentNullException()
 		{
-			Assert.That(() => {((string)null).AlternativeGroup(); }, Throws.ArgumentNullException);
+			Assert.That(() => {((string)null).OtherVariantId(); }, Throws.ArgumentNullException);
 		}
 
 		[TestCase("")]
@@ -127,7 +127,7 @@ namespace TxlSharedTests
 		[TestCase("2z")]
 		public void AlternativeGroup_InvalidGroup_ThrowsArgumentException(string group)
 		{
-			Assert.That(() => { group.AlternativeGroup(); }, Throws.ArgumentException);
+			Assert.That(() => { group.OtherVariantId(); }, Throws.ArgumentException);
 		}
 
 		[TestCase("5-6A", ExpectedResult = "5-6B")]
@@ -135,7 +135,7 @@ namespace TxlSharedTests
 		[TestCase("43Z", ExpectedResult = "43Y")]
 		public string AlternativeGroup_ValidGroup_ThrowsArgumentException(string group)
 		{
-			return group.AlternativeGroup();
+			return group.OtherVariantId();
 		}
 	}
 }

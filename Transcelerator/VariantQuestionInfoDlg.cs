@@ -20,28 +20,29 @@ using static SIL.Transcelerator.Localization.LocalizableStringType;
 
 namespace SIL.Transcelerator
 {
+	/// -------------------------------------------------------------------------------------------
 	/// <summary>
-	/// Little dialog box to alert the user about a question/phrase that is part of a question
-	/// group for which they have not apparently made a decision about which question or set of
-	/// questions to use.
+	/// Little dialog box to alert the user about a question/phrase that is part of a variant pair
+	/// for which they have not apparently made a decision about which variant to use.
 	/// </summary>
-	public partial class GroupedQuestionInfoDlg : Form
+	/// -------------------------------------------------------------------------------------------
+	public partial class VariantQuestionInfoDlg : Form
 	{
 		private readonly IEnumerable<Question> m_groupedQuestions;
 		private readonly LocalizationsFileAccessor m_dataLocalizer;
 
 		/// <summary>
 		/// Constructs a dialog box to alert the user about a question/phrase that is part of a
-		/// question group
+		/// variant
 		/// </summary>
-		/// <param name="groupedQuestions">All the questions in the group</param>
+		/// <param name="variantGroupQuestions">All the questions in a particular variant</param>
 		/// <param name="dataLocalizer">Optional localizer object that knows how to get localized
 		/// "data" strings (i.e., comments in the questions data that may have been translated by a
 		/// localizer).</param>
-		public GroupedQuestionInfoDlg(IEnumerable<Question> groupedQuestions,
+		public VariantQuestionInfoDlg(IEnumerable<Question> variantGroupQuestions,
 			LocalizationsFileAccessor dataLocalizer)
 		{
-			m_groupedQuestions = groupedQuestions;
+			m_groupedQuestions = variantGroupQuestions;
 			m_dataLocalizer = dataLocalizer;
 			InitializeComponent();
 
@@ -55,11 +56,11 @@ namespace SIL.Transcelerator
 		{
 			if (lm != null && lm != TxlPlugin.PrimaryLocalizationManager)
 				return;
-			lblGroupedQuestionInfo.Text = GetMessage();
+			lblVariantQuestionInfo.Text = GetMessage();
 		}
 
 		/// <summary>
-		/// Gets a message about the group to which the given phrase belongs which is suitable for
+		/// Gets a message about the variant to which the given phrase belongs which is suitable for
 		/// UI display (i.e., localized if needed).
 		/// </summary>
 		/// <exception cref="InvalidOperationException">if <see cref="m_groupedQuestions"/>
@@ -69,7 +70,7 @@ namespace SIL.Transcelerator
 			var comment = m_groupedQuestions.GetCommentAboutAvoidingRedundantQuestions();
 			if (comment == null)
 			{
-				throw new InvalidOperationException($"The {nameof(GroupedQuestionInfoDlg)} " +
+				throw new InvalidOperationException($"The {nameof(VariantQuestionInfoDlg)} " +
 					"should only be displayed for questions that are part of a group (and which " +
 					"therefore should have a comment about avoiding redundant questions.");
 			}
@@ -80,33 +81,34 @@ namespace SIL.Transcelerator
 			// and use the generic version if present, but it could also be argued that if a
 			// specific localization is available, it is more likely to be better, especially since
 			// that would allow for localizing the group ID letter when the target language uses a
-			// non-Roman script. My guess it will seldom, if ever, matter.
+			// non-Roman script. My guess is that it will seldom, if ever, matter.
 			// Note that I decided to add "For {0}," to the start of the AvoidRedundantQuestionsFmt
-			// version and simplified the rest of the text to make it more consistent with the
-			// other and eliminate the need for two different versions.
+			// version and simplified the rest of the text to make it more consistent with
+			// AvoidRedundantQuestionSetsFmt and also eliminate the need for two different versions
+			// of it (one for the first variant question and one for the second variant question).
 
 			var localizedComment = m_dataLocalizer?.GetLocalizedDataString(new UIAnswerOrNoteDataString(
 				comment.QuestionWithCommentAboutRedundancy, Note, comment.Index));
 			if (localizedComment != null && localizedComment.Lang != LocalizationManager.kDefaultLang)
 				return localizedComment.Data;
 
-			string fmt = comment.IsForGroup ?
-				LocalizationManager.GetString("GroupedQuestionInfoDlg.AvoidRedundantQuestionGroupsFmt",
+			string fmt = comment.IsForVariantSet ?
+				LocalizationManager.GetString("VariantQuestionInfoDlg.AvoidRedundantQuestionSetsFmt",
 					"For {0}, use either the group {1} questions or the group {2} questions. It would be redundant to ask all {3} questions.",
-					"Param 0: Scripture reference of the grouped questions; " +
-					"Param 1: Letter identifying the first group (e.g., 'A'); " +
-					"Param 2: Letter identifying the second group (e.g., 'B'); " +
-					"Param 3: The total number of questions in both alternative groups") :
-				LocalizationManager.GetString("GroupedQuestionInfoDlg.AvoidRedundantQuestionsFmt",
+					"Param 0: Scripture reference of the variant questions; " +
+					"Param 1: Letter identifying the first variant (e.g., 'A'); " +
+					"Param 2: Letter identifying the second variant (e.g., 'B'); " +
+					"Param 3: The total number of questions in both variants") :
+				LocalizationManager.GetString("VariantQuestionInfoDlg.AvoidRedundantQuestionsFmt",
 					"For {0}, use either question {1} or question {2}. It would be redundant to ask both questions.",
-					"Param 0: Scripture reference of the grouped questions; " +
-					"Param 1: Letter identifying the first group (e.g., 'A'); " +
-					"Param 2: Letter identifying the second group (e.g., 'B')");
+					"Param 0: Scripture reference of the variant questions; " +
+					"Param 1: Letter identifying the first variant question (e.g., 'A'); " +
+					"Param 2: Letter identifying the second variant question (e.g., 'B')");
 
-			return Format(fmt, comment.ScriptureReference, comment.FirstGroupLetter,
-				comment.SecondGroupLetter, comment.NumberOfQuestionsInBothGroups);
+			return Format(fmt, comment.ScriptureReference, comment.FirstVariantLetter,
+				comment.SecondVariantLetter, comment.NumberOfQuestionsInBothVariants);
 		}
 
-		public bool DoNotShowFutureGroupWarnings => chkDoNotShowAgain.Checked;
+		public bool DoNotShowFutureVariantWarnings => chkDoNotShowAgain.Checked;
 	}
 }

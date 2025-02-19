@@ -308,11 +308,11 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="GroupedQuestionInfoDlg.cs">
+    <Compile Include="VariantQuestionInfoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GroupedQuestionInfoDlg.Designer.cs">
-      <DependentUpon>GroupedQuestionInfoDlg.cs</DependentUpon>
+    <Compile Include="VariantQuestionInfoDlg.Designer.cs">
+      <DependentUpon>VariantQuestionInfoDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="HtmlScriptGenerationSettings.cs" />
     <Compile Include="MessageBoxForm.cs">
@@ -425,8 +425,8 @@
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="GroupedQuestionInfoDlg.resx">
-      <DependentUpon>GroupedQuestionInfoDlg.cs</DependentUpon>
+    <EmbeddedResource Include="VariantQuestionInfoDlg.resx">
+      <DependentUpon>VariantQuestionInfoDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HelpAboutDlg.resx">
       <DependentUpon>HelpAboutDlg.cs</DependentUpon>

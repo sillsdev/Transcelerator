@@ -50,19 +50,28 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Initializes a new instance of the <see cref="T:EditQuestion"/> class.
 		/// </summary>
+		/// <param name="question">The question to be edited</param>
+		/// <param name="existingQuestionsForRef">Collection of all tests for the exact same
+		/// Scripture reference (to enable checking for duplicates)
+		/// </param>
+		/// <param name="dataLocalizer">Used to localize question text and any alternatives</param>
+		/// <param name="variantType">Indicates whether the question to be edited is not part of
+		/// a variant at all, is part of a variant pair where one or both consists of a series of
+		/// questions (i.e., 3 or more total questions), or is part of a pair of variants
+		/// consisting of just two individual questions.</param>
 		/// ------------------------------------------------------------------------------------
 		public EditQuestionDlg(TranslatablePhrase question,
 			IReadOnlyCollection<TranslatablePhrase> existingQuestionsForRef,
-			LocalizationsFileAccessor dataLocalizer, QuestionGroupType groupType)
+			LocalizationsFileAccessor dataLocalizer, VariantType variantType)
 		{
 			m_question = question;
 			m_existingQuestionsForRef = existingQuestionsForRef.Select(p => p.PhraseInUse)
 				.Union(existingQuestionsForRef.Select(p => dataLocalizer.GetLocalizedDataString(new UIQuestionDataString(p.PhraseKey, true, false)).Data)).ToList();
 			InitializeComponent();
 
-			if (groupType != QuestionGroupType.AlternativeSetOfQuestions)
-				m_lblGroupedSetQuestionWarning.Hide();
-			if (groupType != QuestionGroupType.AlternativeSingleQuestions)
+			if (variantType != VariantType.SeriesOfQuestions)
+				m_lblVariantQuestionWarning.Hide();
+			if (variantType != VariantType.SingleQuestions)
 				m_lblAltQuestionWarning.Hide();
 
 			if (dataLocalizer == null)

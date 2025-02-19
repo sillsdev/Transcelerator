@@ -36,12 +36,22 @@ namespace SIL.Transcelerator
 	}
 	#endregion
 
-	#region QuestionGroupType enumeration
-	public enum QuestionGroupType
+	#region VariantType enumeration
+	public enum VariantType
 	{
-		NotGrouped,
-		AlternativeSetOfQuestions,
-		AlternativeSingleQuestions
+		/// <summary>
+		/// Not a variant
+		/// </summary>
+		None,
+		/// <summary>
+		/// One or both of the variants in the pair consist of a series of questions (i.e., there
+		/// are 3 or more total questions)
+		/// </summary>
+		SeriesOfQuestions,
+		/// <summary>
+		/// Each variant in the pair consists of a single question
+		/// </summary>
+		SingleQuestions
 	}
 	#endregion
 
@@ -302,42 +312,57 @@ namespace SIL.Transcelerator
 		#region Question group stuff
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets all the questions/phrases that belong to the specified group.
+		/// Gets all the questions/phrases that belong to the specified variant (group).
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<TranslatablePhrase> GetPhrasesInGroup(string scrRef, string groupName)
+		public IEnumerable<TranslatablePhrase> GetPhrasesInVariant(string scrRef, string variantId)
 		{
-			return m_phrases.Where(p => p.Reference == scrRef && p.GroupName == groupName);
+			return m_phrases.Where(p => p.Reference == scrRef && p.VariantId == variantId);
 		}
 		
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets all the questions/phrases that belong to the group that is an alternative to
-		/// the specified group.
+		/// Gets all the questions/phrases that belong to the alternate variant of the one
+		/// specified.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public IEnumerable<TranslatablePhrase> GetPhrasesInAlternativeGroup(string scrRef,
-			string groupName)
+		public IEnumerable<TranslatablePhrase> GetPhrasesInOtherVariant(string scrRef,
+			string variantId)
 		{
 			return m_phrases.Where(p => p.Reference == scrRef &&
-				p.GroupName == groupName.AlternativeGroup());
+				p.VariantId == variantId.OtherVariantId());
 		}
 
-		public bool IsInGroupPendingUserDecision(TranslatablePhrase phrase)
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether the given phrase/question is part of a variant for which the user
+		/// has not yet made a decision to exclude one of the two variants in the pair.
+		/// </summary>
+		/// <param name="phrase">The phrase/question to check</param>
+		/// ------------------------------------------------------------------------------------
+		public bool IsInVariantPairPendingUserDecision(TranslatablePhrase phrase)
 		{
-			return !phrase.IsExcluded && phrase.IsGrouped &&
-				GetPhrasesInAlternativeGroup(phrase.Reference, phrase.GroupName)
+			return !phrase.IsExcluded && phrase.IsPartOfVariant &&
+				GetPhrasesInOtherVariant(phrase.Reference, phrase.VariantId)
 					.Any(p => !p.IsExcluded);
 		}
 
-		public QuestionGroupType GetQuestionGroupType(TranslatablePhrase question)
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// For the given phrase/question, gets whether it is not part of a variant at all, it is
+		/// part of a variant pair where one or both consists of a series of questions (i.e., 3
+		/// or more total questions), or it is part of a pair of variants consisting of just two
+		/// individual questions.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public VariantType GetVariantType(TranslatablePhrase question)
 		{
-			if (!question.IsGrouped)
-				return QuestionGroupType.NotGrouped;
-			if (GetPhrasesInGroup(question.Reference, question.GroupName).Count() > 1 ||
-			    GetPhrasesInAlternativeGroup(question.Reference, question.GroupName).Count() > 1)
-				return QuestionGroupType.AlternativeSetOfQuestions;
-			return QuestionGroupType.AlternativeSingleQuestions;
+			if (!question.IsPartOfVariant)
+				return VariantType.None;
+			if (GetPhrasesInVariant(question.Reference, question.VariantId).Count() > 1 ||
+			    GetPhrasesInOtherVariant(question.Reference, question.VariantId).Count() > 1)
+				return VariantType.SeriesOfQuestions;
+			return VariantType.SingleQuestions;
 		}
 		#endregion
 

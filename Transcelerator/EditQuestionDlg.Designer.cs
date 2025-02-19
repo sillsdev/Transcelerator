@@ -57,7 +57,7 @@ namespace SIL.Transcelerator
 			this.m_rdoCustom = new System.Windows.Forms.RadioButton();
 			this.m_tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
 			this.m_pnlVScroll = new System.Windows.Forms.Panel();
-			this.m_lblGroupedSetQuestionWarning = new System.Windows.Forms.Label();
+			this.m_lblVariantQuestionWarning = new System.Windows.Forms.Label();
 			this.m_lblAltQuestionWarning = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.l10NSharpExtender1)).BeginInit();
 			this.m_tableLayoutPanelMain.SuspendLayout();
@@ -219,7 +219,7 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanelMain.Controls.Add(this.m_lblAlternatives, 0, 4);
 			this.m_tableLayoutPanelMain.Controls.Add(this.m_lblOriginalText, 0, 2);
 			this.m_tableLayoutPanelMain.Controls.Add(this.m_rdoOriginal, 0, 3);
-			this.m_tableLayoutPanelMain.Controls.Add(this.m_lblGroupedSetQuestionWarning, 0, 0);
+			this.m_tableLayoutPanelMain.Controls.Add(this.m_lblVariantQuestionWarning, 0, 0);
 			this.m_tableLayoutPanelMain.Controls.Add(this.m_lblAltQuestionWarning, 0, 1);
 			this.m_tableLayoutPanelMain.Location = new System.Drawing.Point(0, 0);
 			this.m_tableLayoutPanelMain.Name = "m_tableLayoutPanelMain";
@@ -250,22 +250,22 @@ namespace SIL.Transcelerator
 			this.m_pnlVScroll.TabIndex = 12;
 			this.m_pnlVScroll.Layout += new System.Windows.Forms.LayoutEventHandler(this.HandlePanelLayout);
 			// 
-			// m_lblGroupedSetQuestionWarning
+			// m_lblVariantQuestionWarning
 			// 
-			this.m_lblGroupedSetQuestionWarning.AutoSize = true;
-			this.m_lblGroupedSetQuestionWarning.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
-			this.m_lblGroupedSetQuestionWarning.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.m_lblGroupedSetQuestionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.m_lblGroupedSetQuestionWarning.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblGroupedSetQuestionWarning, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblGroupedSetQuestionWarning, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblGroupedSetQuestionWarning, L10NSharp.LocalizationPriority.NotLocalizable);
-			this.l10NSharpExtender1.SetLocalizingId(this.m_lblGroupedSetQuestionWarning, "EditQuestionDlg.m_lblGroupedSetQuestionWarning");
-			this.m_lblGroupedSetQuestionWarning.Location = new System.Drawing.Point(4, 1);
-			this.m_lblGroupedSetQuestionWarning.Name = "m_lblGroupedSetQuestionWarning";
-			this.m_lblGroupedSetQuestionWarning.Size = new System.Drawing.Size(545, 15);
-			this.m_lblGroupedSetQuestionWarning.TabIndex = 13;
-			this.m_lblGroupedSetQuestionWarning.Text = "This question is part of a group of related questions. Usually, only one question" +
+			this.m_lblVariantQuestionWarning.AutoSize = true;
+			this.m_lblVariantQuestionWarning.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+			this.m_lblVariantQuestionWarning.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.m_lblVariantQuestionWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.m_lblVariantQuestionWarning.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblVariantQuestionWarning, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.m_lblVariantQuestionWarning, null);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblVariantQuestionWarning, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizingId(this.m_lblVariantQuestionWarning, "EditQuestionDlg.m_lblVariantQuestionWarning");
+			this.m_lblVariantQuestionWarning.Location = new System.Drawing.Point(4, 1);
+			this.m_lblVariantQuestionWarning.Name = "m_lblVariantQuestionWarning";
+			this.m_lblVariantQuestionWarning.Size = new System.Drawing.Size(545, 15);
+			this.m_lblVariantQuestionWarning.TabIndex = 13;
+			this.m_lblVariantQuestionWarning.Text = "This question is part of a group of related questions. Usually, only one question" +
     " from this group should be included.";
 			// 
 			// m_lblAltQuestionWarning
@@ -328,7 +328,7 @@ namespace SIL.Transcelerator
 		private System.Windows.Forms.RadioButton m_rdoOriginal;
 		private System.Windows.Forms.RadioButton m_rdoCustom;
 		private System.Windows.Forms.Panel m_pnlVScroll;
-		private System.Windows.Forms.Label m_lblGroupedSetQuestionWarning;
+		private System.Windows.Forms.Label m_lblVariantQuestionWarning;
 		private System.Windows.Forms.Label m_lblAltQuestionWarning;
 	}
 }

@@ -44,8 +44,8 @@
     <Compile Include="LocalizationFileAccessorTests.cs" />
     <Compile Include="ParsedPartTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuestionGroupCommentTests.cs" />
-    <Compile Include="QuestionGroupHelperTests.cs" />
+    <Compile Include="QuestionVariantCommentTests.cs" />
+    <Compile Include="QuestionVariantsHelperTests.cs" />
     <Compile Include="QuestionTests.cs" />
     <Compile Include="TestLocalizationsFileAccessor.cs" />
     <Compile Include="TranslationUnitTests.cs" />

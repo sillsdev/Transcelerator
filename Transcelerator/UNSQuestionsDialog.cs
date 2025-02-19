@@ -531,7 +531,7 @@ namespace SIL.Transcelerator
 				mnuCut.Enabled = false;
 				mnuEditQuestion.Enabled = false;
 				mnuExcludeQuestion.Enabled = false;
-				mnuExcludeQuestionGroup.Enabled = false;
+				mnuExcludeVariant.Enabled = false;
 				mnuIncludeQuestion.Enabled = false;
 				mnuPaste.Enabled = false;
 				mnuShiftWordsLeft.Enabled = false;
@@ -1105,7 +1105,7 @@ namespace SIL.Transcelerator
 					e.Value = Resources.iconfinder_edit_3855617___excluded;
 				else if (tp.AlternateForms != null)
 					e.Value = Resources.iconfinder_edit_3855617___with_alternatives;
-				else if (tp.IsGrouped)
+				else if (tp.IsPartOfVariant)
 					e.Value = Resources.iconfinder_edit_3855617___grouped;
 				else
 					e.Value = Resources.iconfinder_edit_3855617;
@@ -2013,8 +2013,8 @@ namespace SIL.Transcelerator
 				return;
 
 			// Note: if the user clicked the edit column, we're about to display the edit question
-			// dialog box, so in that case, we can't also display the group question warning.
-			var warnAboutGroupedQuestion = m_lastRowEntered >= 0 &&
+			// dialog box, so in that case, we can't also display the variant question warning.
+			var warnAboutVariantQuestion = m_lastRowEntered >= 0 &&
 				e.ColumnIndex != m_colEditQuestion.Index &&
 				Properties.Settings.Default.ShowGroupedQuestionWarnings &&
 				!m_fInitialNavigateToRef;
@@ -2033,8 +2033,8 @@ namespace SIL.Transcelerator
 			{
 				DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
 				row.ReadOnly = phrase.IsExcluded;
-				warnAboutGroupedQuestion = warnAboutGroupedQuestion &&
-					m_helper.IsInGroupPendingUserDecision(phrase);
+				warnAboutVariantQuestion = warnAboutVariantQuestion &&
+					m_helper.IsInVariantPairPendingUserDecision(phrase);
 
 				m_normalRowHeight = row.Height;
 				dataGridUns.AutoResizeRow(e.RowIndex);
@@ -2044,8 +2044,8 @@ namespace SIL.Transcelerator
 				Console.WriteLine(exception);
 			}
 
-			if (warnAboutGroupedQuestion)
-				ShowGroupedQuestionWarning(phrase);
+			if (warnAboutVariantQuestion)
+				ShowQuestionVariantWarning(phrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2148,20 +2148,17 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles the Click event of the mnuExcludeQuestionGroup control.
+		/// Handles the Click event of the mnuExcludeVariant control.
 		/// </summary>
-		/// <param name="sender">The menu that was the source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/>Instance containing the event data.
-		/// </param>
 		/// ------------------------------------------------------------------------------------
-		private void mnuExcludeQuestionGroup_Click(object sender, EventArgs e)
+		private void mnuExcludeVariant_Click(object sender, EventArgs e)
 		{
 			if (dataGridUns.CurrentRow == null)
 				return;
 
-			var groupName = CurrentPhrase.GroupName;
+			var variantId = CurrentPhrase.VariantId;
 			int questionsExcluded = 0;
-			foreach (var q in m_helper.GetPhrasesInGroup(CurrentPhrase.Reference, groupName)
+			foreach (var q in m_helper.GetPhrasesInVariant(CurrentPhrase.Reference, variantId)
 				         .Where(p => !p.IsExcluded))
 			{
 				q.IsExcluded = true;
@@ -2174,11 +2171,11 @@ namespace SIL.Transcelerator
 				var msg = questionsExcluded == 1 ?
 					Format(LocalizationManager.GetString("MainWindow.ExcludedSingleQuestionInGroup",
 						"Excluded question in group {0}.",
-						"Parameter is the name of the question group (e.g., \"6B\")"), groupName) :
+						"Parameter is the ID of the variant/group (e.g., \"6B\")"), variantId) :
 					Format(LocalizationManager.GetString("MainWindow.ExcludedMultipleQuestionsInGroup",
 						"Excluded {0} questions in group {1}.",
-						"Param 0: the number of questions excluded (usually, but not necessarily, the total number of questions in the group); " +
-						"Param 1: the name of the question group (e.g., \"6B\")"), groupName);
+						"Param 0: the number of questions excluded (usually, but not necessarily, the total number of questions in the variant/group); " +
+						"Param 1: the ID of the variant/group (e.g., \"6B\")"), variantId);
 				ShowModalChild(new MessageBoxForm(msg, TxlConstants.kPluginName));
 			}
 		}
@@ -2196,17 +2193,17 @@ namespace SIL.Transcelerator
 			m_selectKeyboard?.Invoke(false);
 			m_lockToHold = DataFileAccessor.DataFileId.QuestionCustomizations;
 
-			var groupType = QuestionGroupType.NotGrouped;
+			var variantType = VariantType.None;
 			if (Properties.Settings.Default.ShowGroupedQuestionWarnings &&
-				m_helper.IsInGroupPendingUserDecision(phrase))
+				m_helper.IsInVariantPairPendingUserDecision(phrase))
 			{
-				groupType = m_helper.GetQuestionGroupType(phrase);
+				variantType = m_helper.GetVariantType(phrase);
 			}
 
 			ShowModalChild(new EditQuestionDlg(phrase,
 				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
 					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-					.ToList(), m_dataLocalizer, groupType), dlg =>
+					.ToList(), m_dataLocalizer, variantType), dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)
 				{
@@ -2285,7 +2282,7 @@ namespace SIL.Transcelerator
 			bool fExcluded = CurrentPhrase.IsExcluded;
 			mnuExcludeQuestion.Visible = !fExcluded && !m_fileAccessor.IsReadonly && CurrentPhrase.Category != -1; // Can't exclude categories
 			mnuIncludeQuestion.Visible = fExcluded && !m_fileAccessor.IsReadonly;
-			mnuExcludeQuestionGroup.Visible = CurrentPhrase.IsGrouped && !m_fileAccessor.IsReadonly;
+			mnuExcludeVariant.Visible = CurrentPhrase.IsPartOfVariant && !m_fileAccessor.IsReadonly;
 			mnuEditQuestion.Enabled = !fExcluded && !m_fileAccessor.IsReadonly;
 			cutToolStripMenuItem.Enabled = !m_fileAccessor.IsReadonly;
 			pasteToolStripMenuItem.Enabled = !m_fileAccessor.IsReadonly;
@@ -2716,14 +2713,14 @@ namespace SIL.Transcelerator
 				splashScreen.Message = Format(fmt, m_project.ShortName);
 		}
 
-		private void ShowGroupedQuestionWarning(TranslatablePhrase phrase)
+		private void ShowQuestionVariantWarning(TranslatablePhrase phrase)
 		{
-			var groupedQuestions = m_helper.GetPhrasesInGroup(phrase.Reference,
-				phrase.GroupName).Select(p => p.QuestionInfo);
+			var groupedQuestions = m_helper.GetPhrasesInVariant(phrase.Reference,
+				phrase.VariantId).Select(p => p.QuestionInfo);
 
-			ShowModalChild(new GroupedQuestionInfoDlg(groupedQuestions, m_dataLocalizer), form =>
+			ShowModalChild(new VariantQuestionInfoDlg(groupedQuestions, m_dataLocalizer), form =>
 			{
-				if (form.DoNotShowFutureGroupWarnings)
+				if (form.DoNotShowFutureVariantWarnings)
 					Properties.Settings.Default.ShowGroupedQuestionWarnings = false;
 			});
 		}

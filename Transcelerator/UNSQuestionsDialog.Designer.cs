@@ -73,7 +73,7 @@ namespace SIL.Transcelerator
 			this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
 			this.mnuExcludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
-			this.mnuExcludeQuestionGroup = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuExcludeVariant = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuIncludeQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuEditQuestion = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuAddQuestion = new System.Windows.Forms.ToolStripMenuItem();
@@ -266,7 +266,7 @@ namespace SIL.Transcelerator
             this.pasteToolStripMenuItem,
             this.toolStripSeparator7,
             this.mnuExcludeQuestion,
-            this.mnuExcludeQuestionGroup,
+            this.mnuExcludeVariant,
             this.mnuIncludeQuestion,
             this.mnuEditQuestion,
             this.mnuAddQuestion});
@@ -326,16 +326,16 @@ namespace SIL.Transcelerator
 			this.mnuExcludeQuestion.Text = "E&xclude Question";
 			this.mnuExcludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
 			// 
-			// mnuExcludeQuestionGroup
+			// mnuExcludeVariant
 			// 
-			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuExcludeQuestionGroup, null);
-			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeQuestionGroup, "To control which character will be the mnemonic key (underlined when the user pre" +
+			this.l10NSharpExtender1.SetLocalizableToolTip(this.mnuExcludeVariant, null);
+			this.l10NSharpExtender1.SetLocalizationComment(this.mnuExcludeVariant, "To control which character will be the mnemonic key (underlined when the user pre" +
         "sses the ALT key), put the ampersand before the desired character.");
-			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestionGroup, "MainWindow.UNSQuestionsDialog.mnuExcludeQuestionGroup");
-			this.mnuExcludeQuestionGroup.Name = "mnuExcludeQuestionGroup";
-			this.mnuExcludeQuestionGroup.Size = new System.Drawing.Size(202, 22);
-			this.mnuExcludeQuestionGroup.Text = "Exclude Question &Group";
-			this.mnuExcludeQuestionGroup.Click += new System.EventHandler(this.mnuExcludeQuestionGroup_Click);
+			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeVariant, "MainWindow.UNSQuestionsDialog.mnuExcludeVariant");
+			this.mnuExcludeVariant.Name = "mnuExcludeVariant";
+			this.mnuExcludeVariant.Size = new System.Drawing.Size(202, 22);
+			this.mnuExcludeVariant.Text = "Exclude Question &Group";
+			this.mnuExcludeVariant.Click += new System.EventHandler(this.mnuExcludeVariant_Click);
 			// 
 			// mnuIncludeQuestion
 			// 
@@ -1345,7 +1345,7 @@ namespace SIL.Transcelerator
 		private ToolStripSeparator toolStripSeparator11;
 		private ToolStripMenuItem zoomInToolStripMenuItem;
 		private ToolStripMenuItem zoomOutToolStripMenuItem;
-		private ToolStripMenuItem mnuExcludeQuestionGroup;
+		private ToolStripMenuItem mnuExcludeVariant;
 		private DataGridViewTextBoxColumn m_colReference;
 		private DataGridViewTextBoxColumn m_colEnglish;
 		private DataGridViewTextBoxColumn m_colTranslation;

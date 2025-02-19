@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL International.
+// <copyright from='2011' to='2025' company='SIL International'>
+//		Copyright (c) 2025, SIL International.   
 //	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -1101,9 +1101,9 @@ namespace SIL.Transcelerator
 
 			var pth = InitializePhraseTranslationHelper();
 
-			Assert.IsFalse(pth.GetPhrasesInGroup("MAT 2:2", "The frog queen").Any());
-			Assert.IsFalse(pth.GetPhrasesInGroup("MAT 2:2", "4-5A").Any());
-			Assert.IsFalse(pth.GetPhrasesInGroup("REV 6:4-5", "4-5C").Any());
+			Assert.IsFalse(pth.GetPhrasesInVariant("MAT 2:2", "The frog queen").Any());
+			Assert.IsFalse(pth.GetPhrasesInVariant("MAT 2:2", "4-5A").Any());
+			Assert.IsFalse(pth.GetPhrasesInVariant("REV 6:4-5", "4-5C").Any());
 		}
 
 		[Test]
@@ -1117,10 +1117,10 @@ namespace SIL.Transcelerator
 
 			var pth = InitializePhraseTranslationHelper();
 
-			Assert.AreEqual(pth.GetPhrasesInGroup("MAT 2:2", "2A").Single().OriginalPhrase, "Q1");
-			Assert.AreEqual(pth.GetPhrasesInGroup("MAT 2:2", "2B").Single().OriginalPhrase, "Q2");
-			Assert.AreEqual(pth.GetPhrasesInGroup("REV 6:4-5", "4-5A").Single().OriginalPhrase, "Q3");
-			Assert.AreEqual(pth.GetPhrasesInGroup("REV 6:4-5", "4-5B").Single().OriginalPhrase, "Q4");
+			Assert.AreEqual(pth.GetPhrasesInVariant("MAT 2:2", "2A").Single().OriginalPhrase, "Q1");
+			Assert.AreEqual(pth.GetPhrasesInVariant("MAT 2:2", "2B").Single().OriginalPhrase, "Q2");
+			Assert.AreEqual(pth.GetPhrasesInVariant("REV 6:4-5", "4-5A").Single().OriginalPhrase, "Q3");
+			Assert.AreEqual(pth.GetPhrasesInVariant("REV 6:4-5", "4-5B").Single().OriginalPhrase, "Q4");
 		}
 
 		[Test]
@@ -1137,7 +1137,7 @@ namespace SIL.Transcelerator
 
 			var pth = InitializePhraseTranslationHelper();
 
-			Assert.That(pth.GetPhrasesInGroup("MAT 2:2", "2B")
+			Assert.That(pth.GetPhrasesInVariant("MAT 2:2", "2B")
 				.Select(p => p.OriginalPhrase), Is.EquivalentTo(new [] {"Q2", "Q3", "Q4"}));
 		}
 		#endregion
@@ -4497,6 +4497,234 @@ namespace SIL.Transcelerator
 			Assert.That(lang, Is.EqualTo("en-US"));
 			Assert.That(pth.GetCategoryName(1, out lang), Is.EqualTo("Details"));
 			Assert.That(lang, Is.EqualTo("en-US"));
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_NotInGroup_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionPairVariantNeitherExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionPairVariantOneExcluded_ReturnsFalse(bool excludeQuestionA)
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			if (excludeQuestionA)
+				q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+			if (!excludeQuestionA)
+				q2.IsExcluded = true;
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantNoneExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("HEB 4.11", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantOneOfTwoInSeriesExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantAllInSeriesExcluded_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			q0.IsExcluded = true;
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void GetVariantType_NotInGroup_ReturnsNone()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q.ScriptureReference, q.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.None));
+		}
+
+		[Test]
+		public void GetVariantType_OneOfQuestionPairVariantNeitherExclude_ReturnsSingleQuestions()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.SingleQuestions));
+		}
+
+		[Test]
+		public void GetVariantType_OneOfQuestionSeriesVariant_ReturnsSeriesOfQuestions()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.SeriesOfQuestions));
 		}
 		
 		/// ------------------------------------------------------------------------------------
