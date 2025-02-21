@@ -15,7 +15,7 @@ namespace TxlSharedTests
 		}
 
 		[Test]
-		public void GetCommentAboutAvoidingRedundantQuestions_QuestionsWithNoGroupComments_ReturnsNull()
+		public void GetCommentAboutAvoidingRedundantQuestions_QuestionsWithNoVariantComments_ReturnsNull()
 		{
 			var questions = new [] {
 					new Question
@@ -73,7 +73,7 @@ namespace TxlSharedTests
 
 		[TestCase(false)]
 		[TestCase(true)]
-		public void GetCommentAboutAvoidingRedundantQuestions_QuestionsWithGroupComments_ReturnsObjectRepresentingCorrectQuestion(bool reverse)
+		public void GetCommentAboutAvoidingRedundantQuestions_QuestionsWithVariantComments_ReturnsObjectRepresentingCorrectQuestion(bool reverse)
 		{
 			var questions = new [] {
 				new Question
@@ -112,11 +112,10 @@ namespace TxlSharedTests
 			Assert.That(comment.SecondVariantLetter, Is.EqualTo('B'));
 			Assert.That(comment.ThisVariantLetter, Is.EqualTo('A'));
 			Assert.That(comment.OtherVariantLetter, Is.EqualTo('B'));
-
 		}
 
 		[Test]
-		public void AlternativeGroup_Null_ThrowsArgumentNullException()
+		public void OtherVariantId_Null_ThrowsArgumentNullException()
 		{
 			Assert.That(() => {((string)null).OtherVariantId(); }, Throws.ArgumentNullException);
 		}
@@ -125,17 +124,17 @@ namespace TxlSharedTests
 		[TestCase("5-6")]
 		[TestCase("A")]
 		[TestCase("2z")]
-		public void AlternativeGroup_InvalidGroup_ThrowsArgumentException(string group)
+		public void OtherVariantId_InvalidVariantId_ThrowsArgumentException(string invalidId)
 		{
-			Assert.That(() => { group.OtherVariantId(); }, Throws.ArgumentException);
+			Assert.That(() => { invalidId.OtherVariantId(); }, Throws.ArgumentException);
 		}
 
 		[TestCase("5-6A", ExpectedResult = "5-6B")]
 		[TestCase("2D", ExpectedResult = "2C")]
 		[TestCase("43Z", ExpectedResult = "43Y")]
-		public string AlternativeGroup_ValidGroup_ThrowsArgumentException(string group)
+		public string OtherVariantId_ValidVariantId_ReturnsIdOfOtherVariant(string id)
 		{
-			return group.OtherVariantId();
+			return id.OtherVariantId();
 		}
 	}
 }

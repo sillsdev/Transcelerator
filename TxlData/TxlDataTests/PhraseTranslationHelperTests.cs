@@ -1091,7 +1091,7 @@ namespace SIL.Transcelerator
 
 		#region GetPhrasesInGroup Tests
 		[Test]
-		public void GetPhrasesInGroup_NoMatches_ReturnsNoResults()
+		public void GetPhrasesInVariant_NoMatches_ReturnsNoResults()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
@@ -1107,7 +1107,7 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
-		public void GetPhrasesInGroup_SingleQuestionInGroup_ReturnsSingleResult()
+		public void GetPhrasesInVariant_SingleQuestionInGroup_ReturnsSingleResult()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
@@ -1124,7 +1124,7 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
-		public void GetPhrasesInGroup_MultipleQuestionsInGroup_ReturnsAllMatches()
+		public void GetPhrasesInVariant_MultipleQuestionsInGroup_ReturnsAllMatches()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
@@ -4500,7 +4500,7 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
-		public void IsInVariantPairPendingUserDecision_NotInGroup_ReturnsFalse()
+		public void IsInVariantPairPendingUserDecision_NotInVariant_ReturnsFalse()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
@@ -4892,7 +4892,7 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
-		public void GetVariantType_NotInGroup_ReturnsNone()
+		public void GetVariantType_NotInVariant_ReturnsNone()
 		{
 			var cat = m_sections.Items[0].Categories[0];
 			var q = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);

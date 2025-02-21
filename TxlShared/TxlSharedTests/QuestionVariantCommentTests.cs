@@ -36,7 +36,7 @@ namespace TxlSharedTests
 		}
 
 		[Test]
-		public void Constructor_BasedOnGroupMatchOnly_ReturnsObjectRepresentingMatchInfo()
+		public void Constructor_BasedOnSeriesVariantMatchOnly_ReturnsObjectRepresentingMatchInfo()
 		{
 			var matches = QuestionVariantComment.RegexUseOneVariantNote.Matches(
 				"<Note>For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.</Note>" + Environment.NewLine +
