@@ -67,7 +67,7 @@ namespace SIL.Transcelerator
 			this.tableLayoutPanel.SetColumnSpan(this.chkDoNotShowAgain, 2);
 			this.l10NSharpExtender1.SetLocalizableToolTip(this.chkDoNotShowAgain, null);
 			this.l10NSharpExtender1.SetLocalizationComment(this.chkDoNotShowAgain, null);
-			this.l10NSharpExtender1.SetLocalizationPriority(this.chkDoNotShowAgain, L10NSharp.LocalizationPriority.NotLocalizable);
+			this.l10NSharpExtender1.SetLocalizationPriority(this.chkDoNotShowAgain, L10NSharp.LocalizationPriority.Medium);
 			this.l10NSharpExtender1.SetLocalizingId(this.chkDoNotShowAgain, "VariantQuestionInfoDlg.chkDoNotShowAgain");
 			this.chkDoNotShowAgain.Location = new System.Drawing.Point(3, 63);
 			this.chkDoNotShowAgain.Name = "chkDoNotShowAgain";

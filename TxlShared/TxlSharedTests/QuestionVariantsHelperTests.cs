@@ -61,7 +61,7 @@ namespace TxlSharedTests
 			Assert.That(comment.ScriptureReference, Is.EqualTo("LEV 5.6-7"));
 			Assert.That(comment.Chapter, Is.EqualTo("5"));
 			Assert.That(comment.Verses, Is.EqualTo("6-7"));
-			Assert.IsFalse(comment.IsForVariantSet);
+			Assert.IsFalse(comment.IsForVariantSeries);
 			Assert.That(comment.NumberOfQuestionsInBothVariants, Is.EqualTo(2));
 			Assert.That(comment.QuestionWithCommentAboutRedundancy, Is.EqualTo(q));
 			Assert.That(comment.Index, Is.EqualTo(1));
@@ -104,7 +104,7 @@ namespace TxlSharedTests
 			Assert.That(comment.ScriptureReference, Is.EqualTo("JON 1.17"));
 			Assert.That(comment.Chapter, Is.EqualTo("1"));
 			Assert.That(comment.Verses, Is.EqualTo("17"));
-			Assert.IsTrue(comment.IsForVariantSet);
+			Assert.IsTrue(comment.IsForVariantSeries);
 			Assert.That(comment.NumberOfQuestionsInBothVariants, Is.EqualTo(129));
 			Assert.That(comment.QuestionWithCommentAboutRedundancy.Text, Is.EqualTo("Who sent a great fish to swallow up Jonah?"));
 			Assert.That(comment.Index, Is.EqualTo(0));

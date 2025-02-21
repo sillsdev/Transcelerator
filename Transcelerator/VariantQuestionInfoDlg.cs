@@ -92,7 +92,7 @@ namespace SIL.Transcelerator
 			if (localizedComment != null && localizedComment.Lang != LocalizationManager.kDefaultLang)
 				return localizedComment.Data;
 
-			string fmt = comment.IsForVariantSet ?
+			string fmt = comment.IsForVariantSeries ?
 				LocalizationManager.GetString("VariantQuestionInfoDlg.AvoidRedundantQuestionSetsFmt",
 					"For {0}, use either the group {1} questions or the group {2} questions. It would be redundant to ask all {3} questions.",
 					"Param 0: Scripture reference of the variant questions; " +

@@ -28,55 +28,57 @@ namespace SIL.Transcelerator
 	/// ------------------------------------------------------------------------------------
 	public class QuestionVariantComment
 	{
-		private const string kUseEitherGroup = "useEitherGroup";
+		private const string kUseEitherSeries = "useEitherSeries";
 		private const string kUseEitherQuestion = "useEitherQuestion";
-		// NB: Don't use "book" - must be different from the group name used in
+		// NB: Don't use "book" - must be different from the Regex group name used in
 		// regexRedundantGroupNoteElement in DataIntegrity_Groups_HaveConsistentReferencesAndLetters
 		private const string kBookName = "bookName";
 		private const string kChapter = "chapter";
 		private const string kCount = "count";
-		private const string kThisGroup = "thisGroup";
-		private const string kOtherGroup = "otherGroup";
-		private const string kFirstGroup = "firstGroup";
-		private const string kSecondGroup = "secondGroup";
+		private const string kThisVariant = "thisVariant";
+		private const string kOtherVariant = "otherVariant";
+		private const string kFirstVariant = "firstVariant";
+		private const string kSecondVariant = "secondVariant";
 		public const string kFollowing = "following";
 
-		public static readonly Regex RegexRedundantGroupNote = new Regex($"(?<{kUseEitherGroup}>For (?<{kBookName}>(\\d )?\\w+) ((?<{kChapter}>\\d+):)?{VerseOrBridge}, use either the group " +
-			$"(?<{kFirstGroup}>[{kFirstVariantLetters}]) questions or the group (?<{kSecondGroup}>[{kSecondVariantLetters}]) questions\\. " +
+		public static readonly Regex RegexUseOneVariantNote = new Regex(
+			$"(?<{kUseEitherSeries}>For (?<{kBookName}>(\\d )?\\w+) ((?<{kChapter}>\\d+):)?{VerseOrBridge}, use either the group " +
+			$"(?<{kFirstVariant}>[{kFirstVariantLetters}]) questions or the group (?<{kSecondVariant}>[{kSecondVariantLetters}]) questions\\. " +
 			$"It would be redundant to ask all (?<{kCount}>\\d+) questions\\.)|" +
-			$"(?<{kUseEitherQuestion}>Use either this question \\((?<{kThisGroup}>[A-Z])\\) or the ((?<{kFollowing}>following)|(preceding)) question \\((?<{kOtherGroup}>[A-Z])\\)\\. " +
-			"It would be redundant to ask both questions\\.)", RegexOptions.Compiled);
+			$"(?<{kUseEitherQuestion}>Use either this question \\((?<{kThisVariant}>[A-Z])\\) or the ((?<{kFollowing}>following)|(preceding)) question " +
+			$"\\((?<{kOtherVariant}>[A-Z])\\)\\. It would be redundant to ask both questions\\.)",
+			RegexOptions.Compiled);
 
 		private readonly Match m_match;
 		public int Index { get; }
 		public Question QuestionWithCommentAboutRedundancy { get; }
 		public string ScriptureReference =>
 			QuestionWithCommentAboutRedundancy?.ScriptureReference ??
-			(IsForVariantSet ? $"{Book} {Chapter}.{Verses}" : null);
-		public string Book => IsForVariantSet ? m_match.Groups[kBookName].Value : null;
+			(IsForVariantSeries ? $"{Book} {Chapter}.{Verses}" : null);
+		public string Book => IsForVariantSeries ? m_match.Groups[kBookName].Value : null;
 		public string Chapter => QuestionWithCommentAboutRedundancy != null ?
 			BCVRef.GetChapterFromBcv(QuestionWithCommentAboutRedundancy.StartRef).ToString() :
-			IsForVariantSet ? m_match.Groups[kChapter].Value : null;
+			IsForVariantSeries ? m_match.Groups[kChapter].Value : null;
 		public string Verses => QuestionWithCommentAboutRedundancy != null ?
 			QuestionWithCommentAboutRedundancy.ScriptureReference.Split('.')[1] :
-			IsForVariantSet ? m_match.Groups[kVerseOrBridgeGroup].Value : null;
+			IsForVariantSeries ? m_match.Groups[kVerseOrBridgeOfVariant].Value : null;
 		public char ThisVariantLetter { get; }
 		public char OtherVariantLetter { get; }
 		public char FirstVariantLetter { get; }
 		public char SecondVariantLetter { get; }
 
-		public static bool TryCreate(Question question, out QuestionVariantComment questionGroupComment)
+		public static bool TryCreate(Question question, out QuestionVariantComment questionVariantComment)
 		{
 			for (var i = 0; i < question.Notes?.Length; i++)
 			{
-				var match = RegexRedundantGroupNote.Match(question.Notes[i]);
+				var match = RegexUseOneVariantNote.Match(question.Notes[i]);
 				if (match.Success)
 				{
-					questionGroupComment = new QuestionVariantComment(match, question, i);
+					questionVariantComment = new QuestionVariantComment(match, question, i);
 					return true;
 				}
 			}
-			questionGroupComment = null;
+			questionVariantComment = null;
 			return false;
 		}
 
@@ -84,7 +86,7 @@ namespace SIL.Transcelerator
 		/// Constructor for testing only.
 		/// </summary>
 		/// <param name="match">A successful regex match for
-		/// <see cref="RegexRedundantGroupNote"/></param>
+		/// <see cref="RegexUseOneVariantNote"/></param>
 		internal QuestionVariantComment(Match match) : this(match, null, -1)
 		{
 			if (!match.Success)
@@ -95,24 +97,24 @@ namespace SIL.Transcelerator
 		{
 			if (match == null || !match.Success)
 				throw new ArgumentException("Must be a successful match", nameof(match));
-			Debug.Assert(RegexRedundantGroupNote.IsMatch(match.Value));
+			Debug.Assert(RegexUseOneVariantNote.IsMatch(match.Value));
 			m_match = match;
 			QuestionWithCommentAboutRedundancy = question;
 
 			if (question == null)
 			{
-				if (IsForVariantSet)
+				if (IsForVariantSeries)
 				{
-					FirstVariantLetter = match.Groups[kFirstGroup].Value.Single();
-					SecondVariantLetter = match.Groups[kSecondGroup].Value.Single();
-					// In this case, we can't know which group the associated (unknown) question is for.
+					FirstVariantLetter = match.Groups[kFirstVariant].Value.Single();
+					SecondVariantLetter = match.Groups[kSecondVariant].Value.Single();
+					// In this case, we can't know which variant the associated (unknown) question is for.
 				}
 				else
 				{
-					ThisVariantLetter = match.Groups[kThisGroup].Value.Single();
-					OtherVariantLetter = match.Groups[kOtherGroup].Value.Single();
+					ThisVariantLetter = match.Groups[kThisVariant].Value.Single();
+					OtherVariantLetter = match.Groups[kOtherVariant].Value.Single();
 					if (OtherVariantLetter != ThisVariantLetter.OtherVariantLetter())
-						throw new DataException("Second group letter should be one greater than the first");
+						throw new DataException("Second variant letter should be one greater than the first");
 				}
 			}
 			else
@@ -145,7 +147,7 @@ namespace SIL.Transcelerator
 		/// total questions), as opposed to each variant consisting of a single question.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public bool IsForVariantSet => m_match.Groups[kUseEitherGroup].Value != Empty;
+		public bool IsForVariantSeries => m_match.Groups[kUseEitherSeries].Value != Empty;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -153,6 +155,6 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public int NumberOfQuestionsInBothVariants =>
-			IsForVariantSet ? int.Parse(m_match.Groups[kCount].Value) : 2;
+			IsForVariantSeries ? int.Parse(m_match.Groups[kCount].Value) : 2;
 	}
 }

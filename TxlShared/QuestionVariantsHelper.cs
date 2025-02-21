@@ -15,11 +15,11 @@ namespace SIL.Transcelerator
 {
 	public static class QuestionVariantsHelper
 	{
-		public const string kVerseOrBridgeGroup = "groupVerses";
+		public const string kVerseOrBridgeOfVariant = "variantVerses";
 		public const string kFirstVariantLetters = "ACEGIKMOQSUWY"; // "odd" letters
 		public const string kSecondVariantLetters = "BDFHJLNPRTVXZ"; // "even" letters
 
-		public static string VerseOrBridge = $"(?<{kVerseOrBridgeGroup}>\\d+(-\\d+)?)";
+		public static string VerseOrBridge = $"(?<{kVerseOrBridgeOfVariant}>\\d+(-\\d+)?)";
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -27,16 +27,16 @@ namespace SIL.Transcelerator
 		/// representing information about the comment that tells the user about avoiding
 		/// redundant variants.
 		/// </summary>
-		/// <remarks>A variant can be an individual question or a group of questions that should
-		/// be asked together (in sequence).</remarks>
+		/// <remarks>A variant can be an individual question or a series of questions that should
+		/// be asked together.</remarks>
 		/// ------------------------------------------------------------------------------------
 		public static QuestionVariantComment GetCommentAboutAvoidingRedundantQuestions(
 			this IEnumerable<Question> questions)
 		{
 			foreach (var question in questions)
 			{
-				if (QuestionVariantComment.TryCreate(question, out var questionGroupComment))
-					return questionGroupComment;
+				if (QuestionVariantComment.TryCreate(question, out var questionVariantComment))
+					return questionVariantComment;
 			}
 
 			return null;
@@ -44,48 +44,48 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Given a question's group identifier, gets the letter portion (typically 'A' or 'B')
-		/// that identifies the variant to which that question belongs.
+		/// Given a question's variant identifier, gets the letter portion (typically 'A'
+		/// or 'B') that identifies the variant to which that question belongs.
 		/// </summary>
-		/// <remarks>A group identifier consists of a verse number or bridge, followed by the
-		/// letter identifying the group. Within the context of a particular book and chapter,
+		/// <remarks>A variant identifier consists of a verse number or bridge followed by the
+		/// letter identifying the variant. Within the context of a particular book and chapter,
 		/// this uniquely identifies the questions belonging to a variant.</remarks>
 		/// ------------------------------------------------------------------------------------
-		public static char VariantLetter(this string groupId) => groupId.Last();
+		public static char VariantLetter(this string variantId) => variantId.Last();
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the verse number or bridge of the given group.
+		/// Gets the verse number or bridge of the given variant.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private static string GroupNumericId(this string groupId) =>
-			groupId.Substring(0, groupId.Length -1);
+		private static string GetVerseNumber(this string variantId) =>
+			variantId.Substring(0, variantId.Length -1);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the group ID of the variant that should be considered as the other variant
-		/// to the given group ID.
+		/// Gets the variant ID of the variant that should be considered as the other variant
+		/// for the variant identified by the given <paramref name="variantId"/>.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public static string OtherVariantId(this string groupId)
+		public static string OtherVariantId(this string variantId)
 		{
-			if (groupId == null)
-				throw new ArgumentNullException(nameof(groupId));
+			if (variantId == null)
+				throw new ArgumentNullException(nameof(variantId));
 
-			if (groupId.Length < 2)
-				throw new ArgumentException($"Not a valid group name: {groupId}", nameof(groupId));
+			if (variantId.Length < 2)
+				throw new ArgumentException($"Not a valid variant ID: {variantId}", nameof(variantId));
 
-			var groupLetter = groupId.VariantLetter();
-			char altGroupLetter;
+			var variantLetter = variantId.VariantLetter();
+			char otherVariantLetter;
 			try
 			{
-				altGroupLetter = groupLetter.OtherVariantLetter();
+				otherVariantLetter = variantLetter.OtherVariantLetter();
 			}
 			catch (ArgumentException e)
 			{
-				throw new ArgumentException("Not a valid group name.", nameof(groupId), e);
+				throw new ArgumentException("Not a valid variant ID.", nameof(variantId), e);
 			}
-			return $"{groupId.GroupNumericId()}{altGroupLetter}";
+			return $"{variantId.GetVerseNumber()}{otherVariantLetter}";
 		}
 
 		/// ------------------------------------------------------------------------------------

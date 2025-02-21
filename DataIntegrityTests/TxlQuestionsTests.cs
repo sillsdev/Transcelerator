@@ -284,13 +284,13 @@ namespace DataIntegrityTests
 		}
 
 		[Test]
-		public void DataIntegrity_Groups_HaveConsistentReferencesAndLetters()
+		public void DataIntegrity_Variants_HaveConsistentReferencesAndLetters()
 		{
 			var regexGroupedQuestion = new Regex("<Questions [^>]*\\bscrref=\"(?<book>[1-3]?[A-Z]{2,3}) " +
 				"((?<chapter>\\d{1,3})\\.)?(?<verses>[^\"]+)\"[^>]*\\bgroup=\"", RegexOptions.Compiled);
 			var regexRedundantGroupNoteElement = new Regex("<Note>" +
 				"((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
-				QuestionVariantComment.RegexRedundantGroupNote +
+				QuestionVariantComment.RegexUseOneVariantNote +
 				"</Note>");
 
 			var regexGroupAttrib = new Regex($"{QuestionVariantsHelper.VerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
@@ -341,7 +341,7 @@ namespace DataIntegrityTests
 						Assert.IsTrue(matchGroupAttrib.Success && matchGroupAttrib.Index == startPos,
 							"The group attribute failed to match the expected format: " + line);
 
-						var newVerses = matchGroupAttrib.Groups["groupVerses"].Value;
+						var newVerses = matchGroupAttrib.Groups[QuestionVariantsHelper.kVerseOrBridgeOfVariant].Value;
 						if (verses != newVerses)
 						{
 							groupInstructionsMissing = true;
@@ -442,7 +442,7 @@ namespace DataIntegrityTests
 							}
 							int expectedCount = comment.NumberOfQuestionsInBothVariants;
 
-							if (comment.IsForVariantSet)
+							if (comment.IsForVariantSeries)
 							{
 								Assert.That(expectedCount > 2,
 									"Total questions in pair of variants should be more than 2: " + line);
