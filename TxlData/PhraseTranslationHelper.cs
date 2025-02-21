@@ -349,6 +349,17 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets whether the two questions pertain to the same variant pair.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool InSameVariantPair(TranslatablePhrase a, TranslatablePhrase b)
+		{
+			return (a.VariantId == b.VariantId || a.VariantId == b.VariantId?.OtherVariantId()) &&
+				a.Reference == b.Reference;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// For the given phrase/question, gets whether it is not part of a variant at all, it is
 		/// part of a variant pair where one or both consists of a series of questions (i.e., 3
 		/// or more total questions), or it is part of a pair of variants consisting of just two

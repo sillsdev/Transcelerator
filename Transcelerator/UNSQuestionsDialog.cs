@@ -2021,6 +2021,9 @@ namespace SIL.Transcelerator
 
 			var phrase = m_helper[e.RowIndex];
 
+			warnAboutVariantQuestion = warnAboutVariantQuestion &&
+				!m_helper.InSameVariantPair(phrase, m_helper[m_lastRowEntered]);
+
 			m_lastRowEntered = e.RowIndex;
 			if (mnuViewBiblicalTermsPane.Checked)
 				LoadKeyTermsPane(phrase);

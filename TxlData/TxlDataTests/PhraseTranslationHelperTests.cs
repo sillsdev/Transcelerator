@@ -4661,6 +4661,237 @@ namespace SIL.Transcelerator
 		}
 
 		[Test]
+		public void InSameVariantPair_OneQuestionNotInVariantPair_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "What does this say about Joshua and the rest that God gives people?", "HEB 4.8", 58004008, 58004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Heb 4:8)"
+			};
+			q1.Group = "8A";
+			
+			var q2 = AddTestQuestion(cat, "What is happening?", "HEB 4.11", 58004011, 58004011);
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+			Assert.That(pth.InSameVariantPair(b, a), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameIdInDifferentBook_ReturnsFalse()
+		{
+			m_sections.Items = new Section[2];
+			m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Jon 1:1-17",
+				StartRef = 32001001,
+				EndRef = 32001017
+			};
+			m_sections.Items[1] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 4:1-7",
+				StartRef = 58004001,
+				EndRef = 58004007
+			};
+
+			var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Details", IsOverview = false};
+			var q1 = AddTestQuestion(cat, "What kind of people lived in Nineveh?", "JON 1.2", 32001002, 32001002);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Jon 1:2)"
+			};
+			q1.Group = "2A";
+
+			cat = m_sections.Items[1].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+
+			var q2 = AddTestQuestion(cat, "What else does it say about the ancestors and the message?", "HEB 4.2", 58004002, 58004002);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:2, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:2)"
+			};
+			q2.Group = "2A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameIdInDifferentChapter_ReturnsFalse()
+		{
+			m_sections.Items = new Section[2];
+			m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 2:11-13",
+				StartRef = 58002011,
+				EndRef = 58002013
+			};
+			m_sections.Items[1] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 4:8-11",
+				StartRef = 58004008,
+				EndRef = 58004011
+			};
+
+			var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+			var q1 = AddTestQuestion(cat, "What does this say about Jesus?", "HEB 2.11", 58002011, 58002011);
+			q1.Notes = new []
+			{
+				"For Hebrews 2:11, use either the group A questions or the group B questions. It would be redundant to ask all 5 questions.",
+				"group A (Heb 2:11)"
+			};
+			q1.Group = "11A";
+
+			cat = m_sections.Items[1].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+
+			var q2 = AddTestQuestion(cat, "What does this tell them about the rest?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q2.Group = "11A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+		
+		[Test]
+		public void InSameVariantPair_SameVariantIdLetterInDifferentVerseOfSameChapter_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "What does this say about Joshua and the rest that God gives people?", "HEB 4.8", 58004008, 58004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Heb 4:8)"
+			};
+			q1.Group = "8A";
+			
+			var q2 = AddTestQuestion(cat, "What does this tell them about the rest?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q2.Group = "11A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_DifferentVariantPairInSameVerse_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Who prepared/sent a great/large fish to swallow [up] Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Jon 1:17)"
+			};
+			q1.Group = "17A";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+			
+			var q3 = AddTestQuestion(cat, "How long was Jonah in the belly of the fish?", "JON 1.17", 32001017, 32001017);
+			q3.Notes = new []
+			{
+				"Use either this question (C) or the following question (D). It would be redundant to ask both questions.",
+				"question C (Jon 1:17)"
+			};
+			q3.Group = "17C";
+
+			var q4 = AddTestQuestion(cat, "Where was Jonah for three days and three nights?", "JON 1.17", 32001017, 32001017);
+			q4.Notes = new []
+			{
+				"Use either this question (D) or the preceding question (C). It would be redundant to ask both questions.",
+				"question D (Jon 1:17)"
+			};
+			q4.Group = "17D";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			var c = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+			var d = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+			Assert.That(pth.InSameVariantPair(a, c), Is.False);
+			Assert.That(pth.InSameVariantPair(a, d), Is.False);
+			Assert.That(pth.InSameVariantPair(c, b), Is.False);
+			Assert.That(pth.InSameVariantPair(d, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameVariantIdInSamePair_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Why did a big fish go to Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Jon 1:17)"
+			};
+			q1.Group = "17B";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.True);
+		}
+
+		[Test]
+		public void InSameVariantPair_OtherVariantIdInSamePair_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Who prepared/sent a great/large fish to swallow [up] Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Jon 1:17)"
+			};
+			q1.Group = "17A";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.True);
+		}
+
+		[Test]
 		public void GetVariantType_NotInGroup_ReturnsNone()
 		{
 			var cat = m_sections.Items[0].Categories[0];
