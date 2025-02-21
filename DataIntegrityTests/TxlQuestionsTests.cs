@@ -530,6 +530,85 @@ namespace DataIntegrityTests
 			}
 		}
 
+		// Test that every "Questions" element has exactly one "Q" element.
+		[Test]
+		public void DataIntegrity_Questions_ExactlyOneQPerQuestion()
+		{
+			MatchedXmlLine currentQuestion = null;
+			int matchCount = 0;
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("<Q( source=\"\\w+\")?>", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						if (currentQuestion != null)
+							Assert.That(matchCount, Is.EqualTo(1),
+								$"Found Questions element without a Q element: {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+
+						currentQuestion = matchedLine;
+						matchCount = 0;
+						break;
+					case 1:
+						matchCount++;
+						Assert.That(matchCount, Is.EqualTo(1),
+							$"Found Questions element with more than 1 Q elements: {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+						break;
+				}
+			}
+		}
+
+		// Test that "Questions" don't have any unexpected child elements. Technically, of
+		// course, there is no need to prohibit this in XML, but it most likely would be an
+		// indication of a mistyped element.
+		[Test]
+		public void DataIntegrity_Questions_NoUnexpectedChildElements()
+		{
+			MatchedXmlLine currentQuestion = null;
+			string openElementName = null;
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("<((?<openElementName>\\w+)|(?<closeElementName>/\\w+))[^>]*>", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						currentQuestion = matchedLine;
+						break;
+					case 1:
+						var closeElementName = matchedLine.Match.Groups["closeElementName"]?.Value;
+						if (IsNullOrEmpty(closeElementName))
+						{
+							if (currentQuestion != null)
+							{
+								openElementName = matchedLine.Match.Groups["openElementName"].Value;
+								Assert.That(openElementName, Is.AnyOf("Q", "A", "Note", "Alternative"),
+									$"Found Questions element with unexpected {openElementName} child element: " +
+									$"{currentQuestion.Line} at line {currentQuestion.LineNumber}");
+							}
+						}
+						else
+						{
+							closeElementName = closeElementName.TrimStart('/');
+							if (closeElementName == "Questions")
+							{
+								currentQuestion = null;
+								openElementName = null;
+							}
+							else
+							{
+								if (currentQuestion != null)
+								{
+									Assert.That(openElementName, Is.Not.Null.Or.Empty, $" at line {matchedLine.LineNumber}");
+									Assert.That(closeElementName, Is.EqualTo(openElementName),
+										$"Found a closing {closeElementName} under question {currentQuestion.Line} that does not match the preceding {openElementName} " +
+										$" at line {matchedLine.LineNumber}");
+								}
+							}
+						}
+
+						break;
+				}
+			}
+		}
+
 		[Test]
 		public void DataIntegrity_AllElements_NoTextOutsideOfElements()
 		{
