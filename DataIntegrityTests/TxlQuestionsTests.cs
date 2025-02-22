@@ -11,7 +11,7 @@ using ScrVers = SIL.Scripture.ScrVers;
 
 namespace DataIntegrityTests
 {
-	public class Tests
+	public class TxlQuestionsTests
 	{
 		readonly Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
 
@@ -291,7 +291,7 @@ namespace DataIntegrityTests
 			var regexRedundantGroupNoteElement = new Regex("<Note>" +
 				"((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
 				QuestionVariantComment.RegexUseOneVariantNote +
-				"</Note>");
+				"<\\/Note>");
 
 			var regexGroupAttrib = new Regex($"{QuestionVariantsHelper.VerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
 
@@ -525,6 +525,35 @@ namespace DataIntegrityTests
 								$"Found two Alternatives marked as keys for question {currentQuestion.Line} at line {currentQuestion.LineNumber}");
 							foundKey = true;
 						}
+						break;
+				}
+			}
+		}
+
+		// Test that no Alternative matches the question or another Alternative. Note that while
+		// technically it is not a problem to have alternatives that match the question, it
+		// potentially increases the burden on localizers.
+		[Test]
+		public void DataIntegrity_Alternatives_NoDuplicateAlternatives()
+		{
+			MatchedXmlLine currentQuestion = null;
+			HashSet<string> questionAndAlts = new HashSet<string>();
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("((<Alternative[^>]*>(?<alt>[^<]+)<\\/Alternative>)|(<Q[^>]*>(?<question>[^<]+)<\\/Q>))", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						currentQuestion = matchedLine;
+						questionAndAlts.Clear();
+						break;
+					case 1:
+						var text = matchedLine.Match.Groups["question"].Value;
+						if (text == Empty)
+							text = matchedLine.Match.Groups["alt"].Value;
+						Assert.That(currentQuestion, Is.Not.Null);
+						Assert.That(questionAndAlts, Does.Not.Contain(text),
+							$"{text} is a duplicate for question {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+						questionAndAlts.Add(text);
 						break;
 				}
 			}
