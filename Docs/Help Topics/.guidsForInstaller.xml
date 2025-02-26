@@ -61,4 +61,6 @@
   <File Id="DocsDirP9Beta.SendSync.png" Guid="d50f6a49-c749-4464-91d8-7f3b7b15a8e1" />
   <File Id="DocsDirP9Beta.sf_logo_small.png" Guid="09a8bb67-dc24-400a-8e95-7928ae1427ad" />
   <File Id="DocsDirP9Beta.TxlHelp.css" Guid="95fac867-969c-4e33-8e32-ba79b473da43" />
+  <File Id="ocsDirP9Beta.iconfinder_edit_3855617___grouped.png" Guid="044970c4-6251-4a37-8b1b-9c66a13c5c02" />
+  <File Id="DocsDirP9.iconfinder_edit_3855617___grouped.png" Guid="7a113d35-0488-484f-90c0-45306efa8186" />
 </InstallerMetadata>
