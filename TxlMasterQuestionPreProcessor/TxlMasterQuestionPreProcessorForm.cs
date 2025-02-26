@@ -137,8 +137,8 @@ namespace SIL.TxlMasterQuestionPreProcessor
 
 			if ((!txlLocalizationManager.Exists ||
 					(finfoExistingTxlTranslations != null &&
-					(finfoExistingTxlTranslations.Exists && txlLocalizationManager.FileInfo.LastWriteTimeUtc > finfoExistingTxlTranslations.LastWriteTimeUtc)) ||
-					(finfoMasterQuestionFile.Exists && txlLocalizationManager.FileInfo.LastWriteTimeUtc > finfoMasterQuestionFile.LastWriteTimeUtc)) ||
+					(finfoExistingTxlTranslations.Exists && txlLocalizationManager.FileInfo.LastWriteTimeUtc < finfoExistingTxlTranslations.LastWriteTimeUtc)) ||
+					(finfoMasterQuestionFile.Exists && txlLocalizationManager.FileInfo.LastWriteTimeUtc < finfoMasterQuestionFile.LastWriteTimeUtc)) ||
 				MessageBox.Show($"File {txlLocalizationManager.FileName} already exists and appears to be up-to-date relative to {txtXmlQuestionFile.Text}" +
 					(finfoExistingTxlTranslations == null ? "" : $" and {txtSourceFile.Text}") + ". Do you want to re-generate it anyway?", Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
 			{
