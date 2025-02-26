@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL International.
+// <copyright from='2011' to='2025' company='SIL International'>
+//		Copyright (c) 2025, SIL International.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -363,7 +363,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets or sets a value indicating whether this phrase has a translation that was
-		/// supplied by the user).
+		/// supplied by the user.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Browsable(false)]
@@ -490,7 +490,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the key term renderings (i.e., translations), ordered by their
+		/// Gets an array of the key term renderings (i.e., translations), ordered by their
 		/// occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -499,7 +499,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the parts formatted appropriately for inserting into a
+		/// Gets an array of the parts formatted appropriately for inserting into a
 		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -510,7 +510,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets an an array of the numbers formatted appropriately for inserting into a
+		/// Gets an array of the numbers formatted appropriately for inserting into a
 		/// translations, ordered by their occurrence in the phrase.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
@@ -580,6 +580,20 @@ namespace SIL.Transcelerator
 
 		[Browsable(false)]
 		public IEnumerable<string> AlternateForms => QuestionInfo?.AlternativeForms;
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// The identifier of the variant (group), if any, of which this question is a part.
+		/// </summary>
+		/// <remarks>A variant/group identifier consists of a verse number or bridge, followed
+		/// by the letter identifying the group. Within the context of a particular book and
+		/// chapter, this uniquely identifies the questions belonging to a variant.</remarks>
+		/// ------------------------------------------------------------------------------------
+		[Browsable(false)]
+		public string VariantId => QuestionInfo?.Group;
+
+		[Browsable(false)]
+		public bool IsPartOfVariant => !IsNullOrEmpty(VariantId);
 
 		public string ImmutableKey => IsUserAdded ? QuestionInfo.Id :
 			QuestionInfo?.Alternatives?.FirstOrDefault(a => a.IsKey)?.Text ?? OriginalPhrase;
@@ -753,7 +767,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the translation template with placeholders for each of the key terms for which
-		/// a matching rendering is found in the translation. As a side-effect, this also sets
+		/// a matching rendering is found in the translation. As a side effect, this also sets
 		/// m_allTermsAndNumbersMatch.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------

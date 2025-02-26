@@ -30,10 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
     <PackageReference Include="ParatextPluginInterfaces" Version="2.0.100" />
-    <PackageReference Include="SIL.Scripture" Version="14.1.1" />
-    <PackageReference Include="SIL.WritingSystems" Version="14.1.1" />
+    <PackageReference Include="SIL.Scripture" Version="15.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0" />
   </ItemGroup>
 
   <ItemGroup>

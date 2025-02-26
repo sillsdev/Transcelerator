@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //    
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -21,7 +21,6 @@ using Paratext.PluginInterfaces;
 using SIL.Scripture;
 using SIL.Transcelerator.Localization;
 using static System.String;
-using Icu;
 using static System.Char;
 
 namespace SIL.Transcelerator
@@ -34,6 +33,25 @@ namespace SIL.Transcelerator
 		EnglishPhrase,
 		Translation,
 		Status,
+	}
+	#endregion
+
+	#region VariantType enumeration
+	public enum VariantType
+	{
+		/// <summary>
+		/// Not a variant
+		/// </summary>
+		None,
+		/// <summary>
+		/// One or both of the variants in the pair consist of a series of questions (i.e., there
+		/// are 3 or more total questions)
+		/// </summary>
+		SeriesOfQuestions,
+		/// <summary>
+		/// Each variant in the pair consists of a single question
+		/// </summary>
+		SingleQuestions
 	}
 	#endregion
 
@@ -290,6 +308,74 @@ namespace SIL.Transcelerator
 		{
 			return m_phrases.Where(p => p.PhraseKey.StartRef == startRef && p.PhraseKey.EndRef == endRef).ToList();
 		}
+
+		#region Question group stuff
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the specified variant (group).
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInVariant(string scrRef, string variantId)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef && p.VariantId == variantId);
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets all the questions/phrases that belong to the alternate variant of the one
+		/// specified.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public IEnumerable<TranslatablePhrase> GetPhrasesInOtherVariant(string scrRef,
+			string variantId)
+		{
+			return m_phrases.Where(p => p.Reference == scrRef &&
+				p.VariantId == variantId.OtherVariantId());
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether the given phrase/question is part of a variant for which the user
+		/// has not yet made a decision to exclude one of the two variants in the pair.
+		/// </summary>
+		/// <param name="phrase">The phrase/question to check</param>
+		/// ------------------------------------------------------------------------------------
+		public bool IsInVariantPairPendingUserDecision(TranslatablePhrase phrase)
+		{
+			return !phrase.IsExcluded && phrase.IsPartOfVariant &&
+				GetPhrasesInOtherVariant(phrase.Reference, phrase.VariantId)
+					.Any(p => !p.IsExcluded);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets whether the two questions pertain to the same variant pair.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public bool InSameVariantPair(TranslatablePhrase a, TranslatablePhrase b)
+		{
+			return (a.VariantId == b.VariantId || a.VariantId == b.VariantId?.OtherVariantId()) &&
+				a.Reference == b.Reference;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// For the given phrase/question, gets whether it is not part of a variant at all, it is
+		/// part of a variant pair where one or both consists of a series of questions (i.e., 3
+		/// or more total questions), or it is part of a pair of variants consisting of just two
+		/// individual questions.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public VariantType GetVariantType(TranslatablePhrase question)
+		{
+			if (!question.IsPartOfVariant)
+				return VariantType.None;
+			if (GetPhrasesInVariant(question.Reference, question.VariantId).Count() > 1 ||
+			    GetPhrasesInOtherVariant(question.Reference, question.VariantId).Count() > 1)
+				return VariantType.SeriesOfQuestions;
+			return VariantType.SingleQuestions;
+		}
+		#endregion
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
