@@ -1,4 +1,4 @@
-﻿// ---------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2023, SIL International.
 // <copyright from='2013' to='2023' company='SIL International'>
 //		Copyright (c) 2023, SIL International.   
@@ -119,11 +119,14 @@ namespace SIL.Transcelerator
 		[Test]
 		public void ToUIDataString_QuestionHasAlternateFormsButIsNotModified_ReturnsUIQuestionDataString()
 		{
-			var qk = new Question { Text = "What does the fox say?" };
-			qk.Alternatives = new[] 
+			var qk = new Question
 			{
-				new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
-				new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
+				Text = "What does the fox say?",
+				Alternatives = new[] 
+				{
+					new AlternativeForm {Text = "Pray tell what sayeth the fox?"},
+					new AlternativeForm {Text = "Could you specify the utterances that proceeded from the vocal apparatus pertaining to the fox?"}
+				}
 			};
 			var phrase = new TranslatablePhrase(qk, 1, 1, 6, m_helper);
 			Assert.AreEqual("What does the fox say?", phrase.OriginalPhrase);

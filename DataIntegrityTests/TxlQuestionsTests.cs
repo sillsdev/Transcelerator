@@ -11,7 +11,7 @@ using ScrVers = SIL.Scripture.ScrVers;
 
 namespace DataIntegrityTests
 {
-	public class Tests
+	public class TxlQuestionsTests
 	{
 		readonly Regex m_regexQuestion = new Regex("<Questions", RegexOptions.Compiled);
 
@@ -284,16 +284,16 @@ namespace DataIntegrityTests
 		}
 
 		[Test]
-		public void DataIntegrity_Groups_HaveConsistentReferencesAndLetters()
+		public void DataIntegrity_Variants_HaveConsistentReferencesAndLetters()
 		{
-			const string kVerseOrBridge = "(?<groupVerses>\\d+(-\\d+)?)";
 			var regexGroupedQuestion = new Regex("<Questions [^>]*\\bscrref=\"(?<book>[1-3]?[A-Z]{2,3}) " +
 				"((?<chapter>\\d{1,3})\\.)?(?<verses>[^\"]+)\"[^>]*\\bgroup=\"", RegexOptions.Compiled);
-			var regexGroupRelatedNote = new Regex("<Note>((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
-				$"(?<useEitherGroup>For \\w+ ((?<chapter>\\d+):)?{kVerseOrBridge}, use either the group (?<firstGroup>[ACEGIKMOQSUWY]) questions or the group (?<secondGroup>[BDFHJLNPRTVXZ]) questions. It would be redundant to ask all (?<count>\\d+) questions.)|" +
-				"(?<useEitherQuestion>Use either this question \\((?<thisGroup>[A-Z])\\) or the ((?<following>following)|(preceding)) question \\((?<otherGroup>[A-Z])\\). It would be redundant to ask both questions.)<\\/Note>", RegexOptions.Compiled);
+			var regexRedundantGroupNoteElement = new Regex("<Note>" +
+				"((?<idType>(group)|(question)) (?<group>[A-Z]) \\((?<book>\\w+) ((?<chapterInGrpId>\\d{1,3}):)?(?<verses>[^\\)]+)\\))|" +
+				QuestionVariantComment.RegexUseOneVariantNote +
+				"<\\/Note>");
 
-			var regexGroupAttrib = new Regex($"{kVerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
+			var regexGroupAttrib = new Regex($"{QuestionVariantsHelper.VerseOrBridge}(?<group>[A-Z])\"", RegexOptions.Compiled);
 
 			string bookId = null;
 			string chapter = null;
@@ -302,10 +302,10 @@ namespace DataIntegrityTests
 			int questionLineNumber = -1;
 			var groupInstructionsMissing = false;
 			var groupOrQuestionIdNoteMissing = false;
-			var expectedTotalQuestionsInCurrentPairOfGroups = -1;
-			var countOfQuestionsInCurrentPairOfGroups = 0;
+			var expectedTotalQuestionsInCurrentPairOfVariants = -1;
+			var countOfQuestionsInCurrentPairOfVariants = 0;
 
-			foreach (var matchedLine in GetMatchingLines(regexGroupedQuestion, regexGroupRelatedNote))
+			foreach (var matchedLine in GetMatchingLines(regexGroupedQuestion, regexRedundantGroupNoteElement))
 			{
 				var line = matchedLine.Line;
 				var startPos = matchedLine.MatchEndPosition;
@@ -341,7 +341,7 @@ namespace DataIntegrityTests
 						Assert.IsTrue(matchGroupAttrib.Success && matchGroupAttrib.Index == startPos,
 							"The group attribute failed to match the expected format: " + line);
 
-						var newVerses = matchGroupAttrib.Groups["groupVerses"].Value;
+						var newVerses = matchGroupAttrib.Groups[QuestionVariantsHelper.kVerseOrBridgeOfVariant].Value;
 						if (verses != newVerses)
 						{
 							groupInstructionsMissing = true;
@@ -375,22 +375,22 @@ namespace DataIntegrityTests
 							if (!groupInstructionsMissing)
 								groupInstructionsMissing = true;
 							else
-								expectedTotalQuestionsInCurrentPairOfGroups = -1;
+								expectedTotalQuestionsInCurrentPairOfVariants = -1;
 
 							group = newGroup;
 
 							if ((group - 'A') % 2 == 0)
 							{
-								countOfQuestionsInCurrentPairOfGroups = 0;
-								expectedTotalQuestionsInCurrentPairOfGroups = -1;
+								countOfQuestionsInCurrentPairOfVariants = 0;
+								expectedTotalQuestionsInCurrentPairOfVariants = -1;
 							}
 						}
-						countOfQuestionsInCurrentPairOfGroups++;
+						countOfQuestionsInCurrentPairOfVariants++;
 
 						if (!groupInstructionsMissing)
 						{
-							Assert.IsTrue(countOfQuestionsInCurrentPairOfGroups <= expectedTotalQuestionsInCurrentPairOfGroups,
-								"This question puts the total number of questions over the expected number for the current pair of groups: " + line);
+							Assert.IsTrue(countOfQuestionsInCurrentPairOfVariants <= expectedTotalQuestionsInCurrentPairOfVariants,
+								"This question puts the total number of questions over the expected number for the current pair of variants: " + line);
 						}
 
 						groupOrQuestionIdNoteMissing = true;
@@ -405,15 +405,18 @@ namespace DataIntegrityTests
 							Assert.IsFalse(groupInstructionsMissing,
 								$"Instructions - with correct group letters - should come before Note with {type} information: " + line);
 
+							Assert.IsTrue(line.Contains($"{chapter}:{verses}"),
+								$"Found {type} instructions for question that is not identified as being part of a variant:" + line);
+
 							if (type == "group")
 							{
-								Assert.IsTrue(expectedTotalQuestionsInCurrentPairOfGroups > 2,
-									"Note should use \"group\" when there are more than 2 questions involved :" + line);
+								Assert.IsTrue(expectedTotalQuestionsInCurrentPairOfVariants > 2,
+									"Note should use \"group\" only when there are more than 2 questions in the pair of variants:" + line);
 							}
 							else
 							{
-								Assert.AreEqual(2, expectedTotalQuestionsInCurrentPairOfGroups,
-									"Note should use \"question\" when there are only 2 questions involved :" + line);
+								Assert.AreEqual(2, expectedTotalQuestionsInCurrentPairOfVariants,
+									"Note should use \"question\" only when there are exactly 2 questions in the pair of variants:" + line);
 							}
 
 							Assert.That(bookIdInGroupId.Equals(bookId, StringComparison.OrdinalIgnoreCase),
@@ -428,71 +431,72 @@ namespace DataIntegrityTests
 							Assert.IsTrue(groupInstructionsMissing,
 								$"Found additional unexpected group instructions at line {matchedLine.LineNumber}: " + line);
 
-							int expectedCount = -1;
-							if (matchedLine.Match.Groups["useEitherGroup"].Value != Empty)
+							QuestionVariantComment comment = null;
+							try
 							{
-								expectedCount = Parse(matchedLine.Match.Groups["count"].Value);
+								comment = new QuestionVariantComment(matchedLine.Match);
+							}
+							catch (Exception e)
+							{
+								Assert.Fail($"{e.Message}: {line}");
+							}
+							int expectedCount = comment.NumberOfQuestionsInBothVariants;
+
+							if (comment.IsForVariantSeries)
+							{
 								Assert.That(expectedCount > 2,
-									"Total questions in pair of groups should be more than 2: " + line);
+									"Total questions in pair of variants should be more than 2: " + line);
 
-								Assert.AreEqual(chapter, matchedLine.Match.Groups["chapter"].Value,
+								Assert.AreEqual(chapter, comment.Chapter,
 									"Chapter mismatch in group ID line: " + line);
-								Assert.AreEqual(verses, matchedLine.Match.Groups["groupVerses"].Value,
+								Assert.AreEqual(verses, comment.Verses,
 									"Chapter mismatch in group ID line: " + line);
-
-								var firstGroup = matchedLine.Match.Groups["firstGroup"].Value[0];
-								var secondGroup = matchedLine.Match.Groups["secondGroup"].Value[0];
-								Assert.AreEqual(1, secondGroup - firstGroup,
+								
+								Assert.AreEqual(1, comment.SecondVariantLetter - comment.FirstVariantLetter,
 									"Second group letter should be one greater than the first: " + line);
-								if (countOfQuestionsInCurrentPairOfGroups == 1)
+
+								if (countOfQuestionsInCurrentPairOfVariants == 1)
 								{
-									Assert.AreEqual(group, firstGroup,
+									Assert.AreEqual(group, comment.FirstVariantLetter,
 										"For first occurrence of instructions, first group ID should match current group: " + line);
 								}
 								else
 								{
-									Assert.AreEqual(group, secondGroup,
+									Assert.AreEqual(group, comment.SecondVariantLetter,
 										"For second occurrence of instructions, second group ID should match current group: " + line);
 								}
 							}
-							else if (matchedLine.Match.Groups["useEitherQuestion"].Value != Empty)
+							else
 							{
-								expectedCount = 2;
-
-								Assert.AreEqual(group, matchedLine.Match.Groups["thisGroup"].Value[0],
+								Assert.AreEqual(group, comment.ThisVariantLetter,
 									$"{matchedLine.LineNumber} Incorrect group ID for \"this group\":" + line);
-								var otherGroup = matchedLine.Match.Groups["otherGroup"].Value[0];
-
-								if (matchedLine.Match.Groups["following"].Value != Empty)
+								
+								if (matchedLine.Match.Groups[QuestionVariantComment.kFollowing].Value != Empty)
 								{
-									Assert.AreEqual(1, otherGroup - group,
+									Assert.AreEqual(1, comment.OtherVariantLetter - group,
 										$"{matchedLine.LineNumber} Incorrect group ID for \"following group\":" + line);
 								}
 								else
 								{
-									Assert.AreEqual(1, group, otherGroup,
+									Assert.AreEqual(1, group, comment.OtherVariantLetter,
 										$"{matchedLine.LineNumber} Incorrect group ID for \"preceding group\":" + line);
 								}
-							}
-							else
-							{
-								Assert.Fail("Regex claimed to match but didn't set expected value for any group.");
 							}
 
 							groupInstructionsMissing = false;
 
-							if (expectedTotalQuestionsInCurrentPairOfGroups > -1)
+							if (expectedTotalQuestionsInCurrentPairOfVariants > -1)
 							{
-								Assert.AreEqual(expectedTotalQuestionsInCurrentPairOfGroups, expectedCount,
-									$"Instructions at line {matchedLine.LineNumber} contain total number of questions that does not match instructions for first question in previous group: " + line);
+								Assert.AreEqual(expectedTotalQuestionsInCurrentPairOfVariants, expectedCount,
+									$"Instructions at line {matchedLine.LineNumber} contain total number of questions that does not match instructions for the previous variant: " + line);
 							}
 							else
 							{
-								expectedTotalQuestionsInCurrentPairOfGroups = expectedCount;
+								expectedTotalQuestionsInCurrentPairOfVariants = expectedCount;
 							}
 
-							Assert.IsTrue(countOfQuestionsInCurrentPairOfGroups <= expectedTotalQuestionsInCurrentPairOfGroups,
-								$"Instructions contain incorrect total number of questions (line {matchedLine.LineNumber}: {line}");
+							Assert.IsTrue(countOfQuestionsInCurrentPairOfVariants <= expectedTotalQuestionsInCurrentPairOfVariants,
+								$"Instructions contain incorrect total number of variant questions (line {matchedLine.LineNumber}: {line}");
 						}
 
 						break;
@@ -521,6 +525,114 @@ namespace DataIntegrityTests
 								$"Found two Alternatives marked as keys for question {currentQuestion.Line} at line {currentQuestion.LineNumber}");
 							foundKey = true;
 						}
+						break;
+				}
+			}
+		}
+
+		// Test that no Alternative matches the question or another Alternative. Note that while
+		// technically it is not a problem to have alternatives that match the question, it
+		// potentially increases the burden on localizers.
+		[Test]
+		public void DataIntegrity_Alternatives_NoDuplicateAlternatives()
+		{
+			MatchedXmlLine currentQuestion = null;
+			HashSet<string> questionAndAlts = new HashSet<string>();
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("((<Alternative[^>]*>(?<alt>[^<]+)<\\/Alternative>)|(<Q[^>]*>(?<question>[^<]+)<\\/Q>))", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						currentQuestion = matchedLine;
+						questionAndAlts.Clear();
+						break;
+					case 1:
+						var text = matchedLine.Match.Groups["question"].Value;
+						if (text == Empty)
+							text = matchedLine.Match.Groups["alt"].Value;
+						Assert.That(currentQuestion, Is.Not.Null);
+						Assert.That(questionAndAlts, Does.Not.Contain(text),
+							$"{text} is a duplicate for question {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+						questionAndAlts.Add(text);
+						break;
+				}
+			}
+		}
+
+		// Test that every "Questions" element has exactly one "Q" element.
+		[Test]
+		public void DataIntegrity_Questions_ExactlyOneQPerQuestion()
+		{
+			MatchedXmlLine currentQuestion = null;
+			int matchCount = 0;
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("<Q( source=\"\\w+\")?>", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						if (currentQuestion != null)
+							Assert.That(matchCount, Is.EqualTo(1),
+								$"Found Questions element without a Q element: {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+
+						currentQuestion = matchedLine;
+						matchCount = 0;
+						break;
+					case 1:
+						matchCount++;
+						Assert.That(matchCount, Is.EqualTo(1),
+							$"Found Questions element with more than 1 Q elements: {currentQuestion.Line} at line {currentQuestion.LineNumber}");
+						break;
+				}
+			}
+		}
+
+		// Test that "Questions" don't have any unexpected child elements. Technically, of
+		// course, there is no need to prohibit this in XML, but it most likely would be an
+		// indication of a mistyped element.
+		[Test]
+		public void DataIntegrity_Questions_NoUnexpectedChildElements()
+		{
+			MatchedXmlLine currentQuestion = null;
+			string openElementName = null;
+			foreach (var matchedLine in GetMatchingLines(m_regexQuestion, new Regex("<((?<openElementName>\\w+)|(?<closeElementName>/\\w+))[^>]*>", RegexOptions.Compiled)))
+			{
+				switch (matchedLine.Level)
+				{
+					case 0:
+						currentQuestion = matchedLine;
+						break;
+					case 1:
+						var closeElementName = matchedLine.Match.Groups["closeElementName"]?.Value;
+						if (IsNullOrEmpty(closeElementName))
+						{
+							if (currentQuestion != null)
+							{
+								openElementName = matchedLine.Match.Groups["openElementName"].Value;
+								Assert.That(openElementName, Is.AnyOf("Q", "A", "Note", "Alternative"),
+									$"Found Questions element with unexpected {openElementName} child element: " +
+									$"{currentQuestion.Line} at line {currentQuestion.LineNumber}");
+							}
+						}
+						else
+						{
+							closeElementName = closeElementName.TrimStart('/');
+							if (closeElementName == "Questions")
+							{
+								currentQuestion = null;
+								openElementName = null;
+							}
+							else
+							{
+								if (currentQuestion != null)
+								{
+									Assert.That(openElementName, Is.Not.Null.Or.Empty, $" at line {matchedLine.LineNumber}");
+									Assert.That(closeElementName, Is.EqualTo(openElementName),
+										$"Found a closing {closeElementName} under question {currentQuestion.Line} that does not match the preceding {openElementName} " +
+										$" at line {matchedLine.LineNumber}");
+								}
+							}
+						}
+
 						break;
 				}
 			}

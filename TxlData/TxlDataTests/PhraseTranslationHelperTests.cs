@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2011' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL International.
+// <copyright from='2011' to='2025' company='SIL International'>
+//		Copyright (c) 2025, SIL International.   
 //	
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -634,17 +634,17 @@ namespace SIL.Transcelerator
 
 			var pth = InitializePhraseTranslationHelper();
 
-			Func<TranslatablePhrase, string> localizer = tp =>
+			string Localize(TranslatablePhrase tp)
 			{
 				var s = tp.PhraseInUse;
 				if (useLocalization)
 					s = s.Replace("Paul", "Pablo");
 				return s;
-			};
+			}
 
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
-			pth.Filter(filterPhrase, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false, localizer);
+			pth.Filter(filterPhrase, false, PhraseTranslationHelper.KeyTermFilterType.All, null, false, Localize);
 			Assert.AreEqual(4, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			pth.Sort(PhrasesSortedBy.Reference, true);
 
@@ -745,7 +745,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(6, pth.Phrases.Count(), "Wrong number of phrases in helper");
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), false);
+				((start, end, sRef) => start >= 2 && end <= 5 && sRef != "C"), false);
 			pth.Sort(PhrasesSortedBy.Reference, true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in helper");
 			Assert.AreEqual("B", pth[0].Reference);
@@ -793,7 +793,7 @@ namespace SIL.Transcelerator
 			Assert.AreEqual("What is Paul asking me to say with respect to that dog?", pth[0].PhraseInUse);
 
 			pth.Filter(null, false, PhraseTranslationHelper.KeyTermFilterType.All,
-				((start, end, sref) => start >= 2 && end <= 5 && sref != "C"), true);
+				((start, end, sRef) => start >= 2 && end <= 5 && sRef != "C"), true);
 			Assert.AreEqual(3, pth.Phrases.Count(), "Wrong number of phrases in filtered list");
 			Assert.AreEqual("What is Paul asking me to say with respect to that dog?", pth[0].PhraseInUse);
 			Assert.AreEqual("Is it okay for Paul me to talk with respect to God today?", pth[1].PhraseInUse);
@@ -1060,7 +1060,7 @@ namespace SIL.Transcelerator
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
 
 			var pth = InitializePhraseTranslationHelper();
 			pth.Sort(listSortedBy, ascending);
@@ -1077,7 +1077,7 @@ namespace SIL.Transcelerator
 			var cat = m_sections.Items[0].Categories[0];
 			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
 			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
-			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3");
 
 			var pth = InitializePhraseTranslationHelper();
 			pth[0].IsExcluded = true;
@@ -1086,6 +1086,59 @@ namespace SIL.Transcelerator
 			Assert.AreEqual(2, matches.Count);
 			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
 			Assert.That(matches.Select(m => m.PhraseInUse).Contains("Q1"));
+		}
+		#endregion
+
+		#region GetPhrasesInGroup Tests
+		[Test]
+		public void GetPhrasesInVariant_NoMatches_ReturnsNoResults()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1");
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2");
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3").Group = "4-5A";
+			AddTestQuestion(cat, "Q4", "REV 6:4-5", 4, 5, "Q4").Group = "4-5B";
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.IsFalse(pth.GetPhrasesInVariant("MAT 2:2", "The frog queen").Any());
+			Assert.IsFalse(pth.GetPhrasesInVariant("MAT 2:2", "4-5A").Any());
+			Assert.IsFalse(pth.GetPhrasesInVariant("REV 6:4-5", "4-5C").Any());
+		}
+
+		[Test]
+		public void GetPhrasesInVariant_SingleQuestionInGroup_ReturnsSingleResult()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2").Group = "2B";
+			AddTestQuestion(cat, "Q3", "REV 6:4-5", 4, 5, "Q3").Group = "4-5A";
+			AddTestQuestion(cat, "Q4", "REV 6:4-5", 4, 5, "Q4").Group = "4-5B";
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.AreEqual(pth.GetPhrasesInVariant("MAT 2:2", "2A").Single().OriginalPhrase, "Q1");
+			Assert.AreEqual(pth.GetPhrasesInVariant("MAT 2:2", "2B").Single().OriginalPhrase, "Q2");
+			Assert.AreEqual(pth.GetPhrasesInVariant("REV 6:4-5", "4-5A").Single().OriginalPhrase, "Q3");
+			Assert.AreEqual(pth.GetPhrasesInVariant("REV 6:4-5", "4-5B").Single().OriginalPhrase, "Q4");
+		}
+
+		[Test]
+		public void GetPhrasesInVariant_MultipleQuestionsInGroup_ReturnsAllMatches()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			AddTestQuestion(cat, "Q1", "MAT 2:2", 2, 2, "Q1").Group = "2A";
+			AddTestQuestion(cat, "Q2", "MAT 2:2", 2, 2, "Q2").Group = "2B";
+			AddTestQuestion(cat, "Q3", "MAT 2:2", 2, 2, "Q3").Group = "2B";
+			AddTestQuestion(cat, "Q4", "MAT 2:2", 2, 2, "Q4").Group = "2B";
+			AddTestQuestion(cat, "Q5", "REV 6:2", 4, 5, "Q5").Group = "2A";
+			AddTestQuestion(cat, "Q6", "REV 6:2", 4, 5, "Q6").Group = "2B";
+			AddTestQuestion(cat, "Q7", "REV 6:4-5", 4, 5, "Q7");
+
+			var pth = InitializePhraseTranslationHelper();
+
+			Assert.That(pth.GetPhrasesInVariant("MAT 2:2", "2B")
+				.Select(p => p.OriginalPhrase), Is.EquivalentTo(new [] {"Q2", "Q3", "Q4"}));
 		}
 		#endregion
 
@@ -4444,6 +4497,465 @@ namespace SIL.Transcelerator
 			Assert.That(lang, Is.EqualTo("en-US"));
 			Assert.That(pth.GetCategoryName(1, out lang), Is.EqualTo("Details"));
 			Assert.That(lang, Is.EqualTo("en-US"));
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_NotInVariant_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionPairVariantNeitherExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionPairVariantOneExcluded_ReturnsFalse(bool excludeQuestionA)
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			if (excludeQuestionA)
+				q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+			if (!excludeQuestionA)
+				q2.IsExcluded = true;
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("MAT 4.8", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantNoneExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase("HEB 4.11", q1.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantOneOfTwoInSeriesExcluded_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.True);
+		}
+
+		[Test]
+		public void IsInVariantPairPendingUserDecision_OneOfQuestionSeriesVariantAllInSeriesExcluded_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			q0.IsExcluded = true;
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			q1.IsExcluded = true;
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.IsInVariantPairPendingUserDecision(phrase), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_OneQuestionNotInVariantPair_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "What does this say about Joshua and the rest that God gives people?", "HEB 4.8", 58004008, 58004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Heb 4:8)"
+			};
+			q1.Group = "8A";
+			
+			var q2 = AddTestQuestion(cat, "What is happening?", "HEB 4.11", 58004011, 58004011);
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+			Assert.That(pth.InSameVariantPair(b, a), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameIdInDifferentBook_ReturnsFalse()
+		{
+			m_sections.Items = new Section[2];
+			m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Jon 1:1-17",
+				StartRef = 32001001,
+				EndRef = 32001017
+			};
+			m_sections.Items[1] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 4:1-7",
+				StartRef = 58004001,
+				EndRef = 58004007
+			};
+
+			var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Details", IsOverview = false};
+			var q1 = AddTestQuestion(cat, "What kind of people lived in Nineveh?", "JON 1.2", 32001002, 32001002);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Jon 1:2)"
+			};
+			q1.Group = "2A";
+
+			cat = m_sections.Items[1].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+
+			var q2 = AddTestQuestion(cat, "What else does it say about the ancestors and the message?", "HEB 4.2", 58004002, 58004002);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:2, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:2)"
+			};
+			q2.Group = "2A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameIdInDifferentChapter_ReturnsFalse()
+		{
+			m_sections.Items = new Section[2];
+			m_sections.Items[0] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 2:11-13",
+				StartRef = 58002011,
+				EndRef = 58002013
+			};
+			m_sections.Items[1] = new Section
+			{
+				Categories = new Category[1],
+				Heading = "Hebrews 4:8-11",
+				StartRef = 58004008,
+				EndRef = 58004011
+			};
+
+			var cat = m_sections.Items[0].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+			var q1 = AddTestQuestion(cat, "What does this say about Jesus?", "HEB 2.11", 58002011, 58002011);
+			q1.Notes = new []
+			{
+				"For Hebrews 2:11, use either the group A questions or the group B questions. It would be redundant to ask all 5 questions.",
+				"group A (Heb 2:11)"
+			};
+			q1.Group = "11A";
+
+			cat = m_sections.Items[1].Categories[0] = new Category {Type = "Specifics and Implications", IsOverview = false};
+
+			var q2 = AddTestQuestion(cat, "What does this tell them about the rest?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q2.Group = "11A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+		
+		[Test]
+		public void InSameVariantPair_SameVariantIdLetterInDifferentVerseOfSameChapter_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "What does this say about Joshua and the rest that God gives people?", "HEB 4.8", 58004008, 58004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Heb 4:8)"
+			};
+			q1.Group = "8A";
+			
+			var q2 = AddTestQuestion(cat, "What does this tell them about the rest?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q2.Group = "11A";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_DifferentVariantPairInSameVerse_ReturnsFalse()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Who prepared/sent a great/large fish to swallow [up] Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Jon 1:17)"
+			};
+			q1.Group = "17A";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+			
+			var q3 = AddTestQuestion(cat, "How long was Jonah in the belly of the fish?", "JON 1.17", 32001017, 32001017);
+			q3.Notes = new []
+			{
+				"Use either this question (C) or the following question (D). It would be redundant to ask both questions.",
+				"question C (Jon 1:17)"
+			};
+			q3.Group = "17C";
+
+			var q4 = AddTestQuestion(cat, "Where was Jonah for three days and three nights?", "JON 1.17", 32001017, 32001017);
+			q4.Notes = new []
+			{
+				"Use either this question (D) or the preceding question (C). It would be redundant to ask both questions.",
+				"question D (Jon 1:17)"
+			};
+			q4.Group = "17D";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			var c = pth.GetPhrase(q3.ScriptureReference, q3.Text);
+			var d = pth.GetPhrase(q4.ScriptureReference, q4.Text);
+			Assert.That(pth.InSameVariantPair(a, c), Is.False);
+			Assert.That(pth.InSameVariantPair(a, d), Is.False);
+			Assert.That(pth.InSameVariantPair(c, b), Is.False);
+			Assert.That(pth.InSameVariantPair(d, b), Is.False);
+		}
+
+		[Test]
+		public void InSameVariantPair_SameVariantIdInSamePair_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Why did a big fish go to Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Jon 1:17)"
+			};
+			q1.Group = "17B";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.True);
+		}
+
+		[Test]
+		public void InSameVariantPair_OtherVariantIdInSamePair_ReturnsTrue()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Who prepared/sent a great/large fish to swallow [up] Jonah?", "JON 1.17", 32001017, 32001017);
+			q1.Notes = new []
+			{
+				"For Jonah 1:17, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Jon 1:17)"
+			};
+			q1.Group = "17A";
+			
+			var q2 = AddTestQuestion(cat, "What did the big fish do to Jonah?", "JON 1.17", 32001017, 32001017);
+			q2.Notes = new []
+			{
+				"group B (Jon 1:17)"
+			};
+			q2.Group = "17B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var a = pth.GetPhrase(q1.ScriptureReference, q1.Text);
+			var b = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.InSameVariantPair(a, b), Is.True);
+		}
+
+		[Test]
+		public void GetVariantType_NotInVariant_ReturnsNone()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q.ScriptureReference, q.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.None));
+		}
+
+		[Test]
+		public void GetVariantType_OneOfQuestionPairVariantNeitherExclude_ReturnsSingleQuestions()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q1 = AddTestQuestion(cat, "Question 1?", "MAT 4.8", 40004008, 40004008);
+			q1.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q1.Group = "8A";
+			var q2 = AddTestQuestion(cat, "Question 2?", "MAT 4.8", 40004008, 40004008);
+			q2.Notes = new []
+			{
+				"Use either this question (A) or the following question (B). It would be redundant to ask both questions.",
+				"question A (Mat 4:8)"
+			};
+			q2.Group = "8B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.SingleQuestions));
+		}
+
+		[Test]
+		public void GetVariantType_OneOfQuestionSeriesVariant_ReturnsSeriesOfQuestions()
+		{
+			var cat = m_sections.Items[0].Categories[0];
+			var q0 = AddTestQuestion(cat, "Question 1?", "HEB 4.11", 58004011, 58004011);
+			q0.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q0.Group = "11A";
+			var q1 = AddTestQuestion(cat, "Question 2?", "HEB 4.11", 58004011, 58004011);
+			q1.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group A (Heb 4:11)"
+			};
+			q1.Group = "11A";
+			var q2 = AddTestQuestion(cat, "Question 3?", "HEB 4.11", 58004011, 58004011);
+			q2.Notes = new []
+			{
+				"For Hebrews 4:11, use either the group A questions or the group B questions. It would be redundant to ask all 3 questions.",
+				"group B (Heb 4:11)"
+			};
+			q2.Group = "11B";
+
+			var pth = InitializePhraseTranslationHelper();
+			var phrase = pth.GetPhrase(q2.ScriptureReference, q2.Text);
+			Assert.That(pth.GetVariantType(phrase), Is.EqualTo(VariantType.SeriesOfQuestions));
 		}
 		
 		/// ------------------------------------------------------------------------------------

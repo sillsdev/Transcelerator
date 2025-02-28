@@ -39,6 +39,11 @@
                 <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_fr" />
                 <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_fr" />
             </Feature>
+                <Feature Id="Localization_P9_tpi" Level="1" Title="Tok Pisin" InstallDefault="followParent"
+                         AllowAdvertise="no">
+                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGIN_tpi" />
+                    <ComponentGroupRef Id="COMPONENTSFORP9PLUGINLOCALIZATION_tpi" />
+                </Feature>
 				<!-- I wanted to use the same language names as are displayed in the UI. For
 				languages that use characters not a Latin script, that means displaying the
 				Romanized name in parentheses after the language name in the native script.
