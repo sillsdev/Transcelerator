@@ -188,6 +188,9 @@
     <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs">
 		<Link>GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs</Link>
 	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_sw.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs</Link>
+	</Compile>
     <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ar.wxs">
 		<Link>GeneratedUiStringsFilesP9Beta_ar.wxs</Link>
 	</Compile>
