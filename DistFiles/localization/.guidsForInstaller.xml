@@ -59,4 +59,6 @@
   <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.vi.xlf" Guid="168e2ff2-942e-473e-ab56-fd8c15331c97" />
   <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.zh_CN.xlf" Guid="2308a5db-2deb-4217-9cf2-4b26a2f9c24e" />
   <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.zh.xlf" Guid="a70f8191-0c6b-437d-9db5-4acb455540be" />
+  <File Id="INSTALLDIR9BETA_LOCALIZATION.Palaso.tpi.xlf" Guid="a3636923-8a17-4103-bd74-123d387c9e09" />
+  <File Id="INSTALLDIR9_LOCALIZATION.Palaso.tpi.xlf" Guid="cb17a54d-c2f1-455e-8227-0033dd19372c" />
 </InstallerMetadata>
