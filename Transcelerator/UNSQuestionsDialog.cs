@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.   
-// <copyright from='2011' to='2024 company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL Global.   
+// <copyright from='2011' to='2025 company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
@@ -39,6 +39,7 @@ using SIL.Windows.Forms;
 using SIL.Windows.Forms.Extensions;
 using SIL.Windows.Forms.Miscellaneous;
 using static System.Char;
+using static System.Environment;
 using static System.String;
 using static SIL.Transcelerator.TxlPlugin;
 using static SIL.WritingSystems.IetfLanguageTag;
@@ -90,6 +91,7 @@ namespace SIL.Transcelerator
 		private List<Substitution> m_cachedPhraseSubstitutions;
 		private bool m_fProcessingSyncMessage;
 		private bool m_fSendingSyncMessage;
+		private bool m_fInitialNavigateToRef = true;
 		private BCVRef m_queuedReference;
 		private int m_longTaskStackCount = 0;
 		private int m_lastRowEntered = -1;
@@ -178,8 +180,8 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets or sets a value indicating whether the textual question filter requires whole-
-		/// word matches.
+		/// Gets or sets a value indicating whether the textual question filter requires
+		/// whole-word matches.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private bool MatchWholeWords
@@ -297,7 +299,7 @@ namespace SIL.Transcelerator
 				{
 					// Unless/until we ship UI strings for different variants of the same language,
 					// there is no need to try to tell the LocalizationManager to load a different
-					// variant. It's already smart enough to fallback to another variant of the
+					// variant. It's already smart enough to fall back to another variant of the
 					// language anyway.
 					LocalizationManager.SetUILanguage(preferredUiLocale, true);
 				}
@@ -377,6 +379,7 @@ namespace SIL.Transcelerator
 
 		void HandleDataGridUnsPopulatedFirstTime()
 		{
+			m_fInitialNavigateToRef = true;
 			if (!dataGridUns.IsHandleCreated)
 			{
 				dataGridUns.HandleCreated += (sender, args) =>
@@ -389,14 +392,16 @@ namespace SIL.Transcelerator
 				};
 			}
 			else if (dataGridUns.RowCount > 0)
+			{
 				ProcessCurrentVerseRefChange(new BCVRef(m_host.ActiveWindowState.VerseRef.BBBCCCVVV));
+			}
 		}
 
 		public void Show(TxlSplashScreen splashScreen)
 		{
 			ResetRowCount();
 
-			// Now apply settings that have filtering or other side-effects
+			// Now apply settings that have filtering or other side effects
 			CheckedKeyTermFilterType = (PhraseTranslationHelper.KeyTermFilterType)Properties.Settings.Default.KeyTermFilterType;
 			btnSendScrReferences.Checked = Properties.Settings.Default.SendScrRefs;
 
@@ -526,6 +531,7 @@ namespace SIL.Transcelerator
 				mnuCut.Enabled = false;
 				mnuEditQuestion.Enabled = false;
 				mnuExcludeQuestion.Enabled = false;
+				mnuExcludeVariant.Enabled = false;
 				mnuIncludeQuestion.Enabled = false;
 				mnuPaste.Enabled = false;
 				mnuShiftWordsLeft.Enabled = false;
@@ -1091,12 +1097,16 @@ namespace SIL.Transcelerator
 				e.Value = m_dataLocalizer == null ? tp.PhraseInUse : m_dataLocalizer.GetLocalizedString(tp.ToUIDataString());
 			else if (e.ColumnIndex == m_colEditQuestion.Index)
 			{
-				if (tp.ModifiedPhrase != null || tp.IsUserAdded)
+				if (tp.IsCategoryName)
+					e.Value = DBNull.Value; // Avoid displaying anything
+				else if (tp.ModifiedPhrase != null || tp.IsUserAdded)
 					e.Value = Resources.iconfinder_edit_3855617___user_added;
 				else if (tp.IsExcluded)
 					e.Value = Resources.iconfinder_edit_3855617___excluded;
 				else if (tp.AlternateForms != null)
 					e.Value = Resources.iconfinder_edit_3855617___with_alternatives;
+				else if (tp.IsPartOfVariant)
+					e.Value = Resources.iconfinder_edit_3855617___grouped;
 				else
 					e.Value = Resources.iconfinder_edit_3855617;
 			}
@@ -1142,10 +1152,13 @@ namespace SIL.Transcelerator
 			if (e.ColumnIndex == m_colEditQuestion.Index)
 			{
 				var tp = m_helper[e.RowIndex];
-				if (tp.IsExcluded)
-					IncludeOrExcludeQuestion(false);
-				else
-					mnuEditQuestion_Click(sender, e);
+				if (!tp.IsCategoryName)
+				{
+					if (tp.IsExcluded)
+						IncludeOrExcludeQuestion(false);
+					else
+						mnuEditQuestion_Click(sender, e);
+				}
 			}
 		}
 
@@ -1206,7 +1219,7 @@ namespace SIL.Transcelerator
 			// We might only care about this in the case where the cell was being edited.
 
 			// Not likely that a user would initiate a new sort while editing, but if they do (and if the
-			// cell value was actually changed, let's just save it.
+			// cell value was actually changed), let's just save it.
 			if (dataGridUns.IsCurrentCellInEditMode)
 				dataGridUns.EndEdit();
 
@@ -1456,14 +1469,14 @@ namespace SIL.Transcelerator
 		{
 			if (e.ColumnIndex == m_colDebugInfo.Index)
 			{
-				var sbldr = new StringBuilder();
-				sbldr.AppendLine("Key Terms:");
+				var bldr = new StringBuilder();
+				bldr.AppendLine("Key Terms:");
 				foreach (var keyTerm in m_helper[e.RowIndex].GetParts().OfType<KeyTerm>())
 				{
 					foreach (var sTermId in keyTerm.AllTermIds)
-						sbldr.AppendLine(sTermId);
+						bldr.AppendLine(sTermId);
 				}
-				ShowModalChild(new MessageBoxForm(sbldr.ToString(), "More Key Term Debug Info", icon:MessageBoxIcon.None));
+				ShowModalChild(new MessageBoxForm(bldr.ToString(), "More Key Term Debug Info", icon:MessageBoxIcon.None));
 			}
 		}
 
@@ -1556,7 +1569,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void mnuGenerate_Click(object sender, EventArgs e)
 		{
-			GenerateScript(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+			GenerateScript(GetFolderPath(SpecialFolder.MyDocuments));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1638,7 +1651,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Writes a file with the questions having verse numbers in parentheses and an
+		/// Writes a file with the questions having verse numbers in parentheses and a
 		/// line containing the answers.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------		
@@ -1648,7 +1661,7 @@ namespace SIL.Transcelerator
 			using (var dlg = new SaveFileDialog())
 			{
 				dlg.DefaultExt = "txt";
-				dlg.InitialDirectory = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				dlg.InitialDirectory = Path.Combine(Path.Combine(GetFolderPath(SpecialFolder.MyDocuments),
 					"SoftDev"), "Transcelerator");
 
 				string sRef;
@@ -1740,8 +1753,8 @@ namespace SIL.Transcelerator
 									//{
 									//	if (qi.Answers != null)
 									//	{
-									//		foreach (string a in qi.Answers)
-									//			sw.WriteLine("A: " + a);
+									//		foreach (string answer in qi.Answers)
+									//			sw.WriteLine("A: " + answer);
 									//	}
 									//	if (qi.Notes != null)
 									//	{
@@ -1999,7 +2012,17 @@ namespace SIL.Transcelerator
 			if (dataGridUns.CurrentRow?.Index == e.RowIndex && m_lastRowEntered >= 0)
 				return;
 
+			// Note: if the user clicked the edit column, we're about to display the edit question
+			// dialog box, so in that case, we can't also display the variant question warning.
+			var warnAboutVariantQuestion = m_lastRowEntered >= 0 &&
+				e.ColumnIndex != m_colEditQuestion.Index &&
+				Properties.Settings.Default.ShowGroupedQuestionWarnings &&
+				!m_fInitialNavigateToRef;
+
 			var phrase = m_helper[e.RowIndex];
+
+			warnAboutVariantQuestion = warnAboutVariantQuestion &&
+				!m_helper.InSameVariantPair(phrase, m_helper[m_lastRowEntered]);
 
 			m_lastRowEntered = e.RowIndex;
 			if (mnuViewBiblicalTermsPane.Checked)
@@ -2012,7 +2035,9 @@ namespace SIL.Transcelerator
 			try
 			{
 				DataGridViewRow row = dataGridUns.Rows[e.RowIndex];
-				row.ReadOnly = m_helper[e.RowIndex].IsExcluded;
+				row.ReadOnly = phrase.IsExcluded;
+				warnAboutVariantQuestion = warnAboutVariantQuestion &&
+					m_helper.IsInVariantPairPendingUserDecision(phrase);
 
 				m_normalRowHeight = row.Height;
 				dataGridUns.AutoResizeRow(e.RowIndex);
@@ -2021,6 +2046,9 @@ namespace SIL.Transcelerator
 			{
 				Console.WriteLine(exception);
 			}
+
+			if (warnAboutVariantQuestion)
+				ShowQuestionVariantWarning(phrase);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2059,7 +2087,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_lastRowEntered < 0 || m_lastRowEntered >= dataGridUns.RowCount)
 				return;
-			// TODO-Linux: GetRowDisplayRectangle doesn't use cutVoerflow parameter on Mono
+			// TODO-Linux: GetRowDisplayRectangle doesn't use cutOverflow parameter on Mono
 			int heightOfDisplayedPortionOfRow = dataGridUns.GetRowDisplayRectangle(m_lastRowEntered, true).Height;
 			if (heightOfDisplayedPortionOfRow != dataGridUns.Rows[m_lastRowEntered].Height)
 			{
@@ -2080,7 +2108,8 @@ namespace SIL.Transcelerator
 		/// Handles the Click event of the mnuIncludeQuestion or mnuExcludeQuestion control.
 		/// </summary>
 		/// <param name="sender">The menu that was the source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/>Instance containing the event data.
+		/// </param>
 		/// ------------------------------------------------------------------------------------
 		private void mnuIncludeOrExcludeQuestion_Click(object sender, EventArgs e)
 		{
@@ -2100,6 +2129,16 @@ namespace SIL.Transcelerator
 		private void IncludeOrExcludeQuestion(bool exclude)
 		{
 			CurrentPhrase.IsExcluded = exclude;
+			SaveQuestionExclusionsAndUpdateFilter();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Sets the current phrase to be included or excluded.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void SaveQuestionExclusionsAndUpdateFilter()
+		{
 			Save(true, true);
 			var addressToSelect = dataGridUns.CurrentCellAddress;
 			ApplyFilter();
@@ -2108,6 +2147,40 @@ namespace SIL.Transcelerator
 				addressToSelect.Y--;
 			dataGridUns.CurrentCell = dataGridUns.Rows[addressToSelect.Y].Cells[addressToSelect.X];
 			UpdateCountsAndFilterStatus();
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Handles the Click event of the mnuExcludeVariant control.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		private void mnuExcludeVariant_Click(object sender, EventArgs e)
+		{
+			if (dataGridUns.CurrentRow == null)
+				return;
+
+			var variantId = CurrentPhrase.VariantId;
+			int questionsExcluded = 0;
+			foreach (var q in m_helper.GetPhrasesInVariant(CurrentPhrase.Reference, variantId)
+				         .Where(p => !p.IsExcluded))
+			{
+				q.IsExcluded = true;
+				questionsExcluded++;
+			}
+
+			if (questionsExcluded > 0)
+			{
+				SaveQuestionExclusionsAndUpdateFilter();
+				var msg = questionsExcluded == 1 ?
+					Format(LocalizationManager.GetString("MainWindow.ExcludedSingleQuestionInGroup",
+						"Excluded question in group {0}.",
+						"Parameter is the ID of the variant/group (e.g., \"6B\")"), variantId) :
+					Format(LocalizationManager.GetString("MainWindow.ExcludedMultipleQuestionsInGroup",
+						"Excluded {0} questions in group {1}.",
+						"Param 0: the number of questions excluded (usually, but not necessarily, the total number of questions in the variant/group); " +
+						"Param 1: the ID of the variant/group (e.g., \"6B\")"), variantId);
+				ShowModalChild(new MessageBoxForm(msg, TxlConstants.kPluginName));
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2122,10 +2195,18 @@ namespace SIL.Transcelerator
 			TranslatablePhrase phrase = CurrentPhrase;
 			m_selectKeyboard?.Invoke(false);
 			m_lockToHold = DataFileAccessor.DataFileId.QuestionCustomizations;
+
+			var variantType = VariantType.None;
+			if (Properties.Settings.Default.ShowGroupedQuestionWarnings &&
+				m_helper.IsInVariantPairPendingUserDecision(phrase))
+			{
+				variantType = m_helper.GetVariantType(phrase);
+			}
+
 			ShowModalChild(new EditQuestionDlg(phrase,
 				m_helper.GetMatchingPhrases(phrase.StartRef, phrase.EndRef)
 					.Where(p => p != phrase && p.TypeOfPhrase != TypeOfPhrase.NoEnglishVersion)
-					.Select(p => p.PhraseInUse).ToList(), m_dataLocalizer), dlg =>
+					.ToList(), m_dataLocalizer, variantType), dlg =>
 			{
 				if (dlg.DialogResult == DialogResult.OK)
 				{
@@ -2204,6 +2285,7 @@ namespace SIL.Transcelerator
 			bool fExcluded = CurrentPhrase.IsExcluded;
 			mnuExcludeQuestion.Visible = !fExcluded && !m_fileAccessor.IsReadonly && CurrentPhrase.Category != -1; // Can't exclude categories
 			mnuIncludeQuestion.Visible = fExcluded && !m_fileAccessor.IsReadonly;
+			mnuExcludeVariant.Visible = CurrentPhrase.IsPartOfVariant && !m_fileAccessor.IsReadonly;
 			mnuEditQuestion.Enabled = !fExcluded && !m_fileAccessor.IsReadonly;
 			cutToolStripMenuItem.Enabled = !m_fileAccessor.IsReadonly;
 			pasteToolStripMenuItem.Enabled = !m_fileAccessor.IsReadonly;
@@ -2634,6 +2716,18 @@ namespace SIL.Transcelerator
 				splashScreen.Message = Format(fmt, m_project.ShortName);
 		}
 
+		private void ShowQuestionVariantWarning(TranslatablePhrase phrase)
+		{
+			var groupedQuestions = m_helper.GetPhrasesInVariant(phrase.Reference,
+				phrase.VariantId).Select(p => p.QuestionInfo);
+
+			ShowModalChild(new VariantQuestionInfoDlg(groupedQuestions, m_dataLocalizer), form =>
+			{
+				if (form.DoNotShowFutureVariantWarnings)
+					Properties.Settings.Default.ShowGroupedQuestionWarnings = false;
+			});
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Loads the translations.
@@ -2718,8 +2812,10 @@ namespace SIL.Transcelerator
 			}
 			var phrasePartManager = new PhrasePartManager(parsedQuestions.TranslatableParts, parsedQuestions.KeyTerms, m_renderingsRepo);
 			var qp = new QuestionProvider(parsedQuestions, phrasePartManager);
-			m_helper = new PhraseTranslationHelper(qp);
-			m_helper.VernacularStringComparer = m_project.Language.StringComparer;
+			m_helper = new PhraseTranslationHelper(qp)
+			{
+				VernacularStringComparer = m_project.Language.StringComparer
+			};
 			m_helper.SetFileProxy(m_fileAccessor, out var termRenderingSelectionRulesException);
 			if (termRenderingSelectionRulesException != null)
 			{
@@ -3027,9 +3123,9 @@ namespace SIL.Transcelerator
 
 			lock (this)
 			{
-				// While we process the given reference we might get additional synch events, the
+				// While we process the given reference we might get additional sync events, the
 				// most recent of which we store in m_queuedReference. If we're done
-				// and we have a new reference in m_queuedReference we process that one, etc.
+				// and we have a new reference in m_queuedReference, we process that one, etc.
 				for (; reference != null; reference = m_queuedReference)
 				{
 					m_queuedReference = null;
@@ -3051,7 +3147,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void GoToReference(BCVRef reference, int currentPhraseIndex)
 		{
-			Action<Task<int>> completionAction = t =>
+			void Complete(Task<int> t)
 			{
 				lock (this)
 				{
@@ -3059,15 +3155,14 @@ namespace SIL.Transcelerator
 						ProcessQueuedReferenceChange();
 					else
 					{
-						if (t.Result >= 0 && m_queuedReference == null && !dataGridUns.IsCurrentCellInEditMode &&
-							dataGridUns.RowCount > t.Result)
-							dataGridUns.CurrentCell = dataGridUns.Rows[t.Result].Cells[dataGridUns.CurrentCell?.ColumnIndex ??
-								m_colTranslation.Index];
+						if (t.Result >= 0 && m_queuedReference == null && !dataGridUns.IsCurrentCellInEditMode && dataGridUns.RowCount > t.Result)
+							dataGridUns.CurrentCell = dataGridUns.Rows[t.Result].Cells[dataGridUns.CurrentCell?.ColumnIndex ?? m_colTranslation.Index];
 
 						m_fProcessingSyncMessage = false;
 					}
+					m_fInitialNavigateToRef = false;
 				}
-			};
+			}
 
 			Task.Run(() =>
 			{
@@ -3122,9 +3217,9 @@ namespace SIL.Transcelerator
 			).ContinueWith(t =>
 			{
 				if (InvokeRequired)
-					Invoke(new Action(() => { completionAction(t); }));
+					Invoke(new Action(() => { Complete(t); }));
 				else
-					completionAction(t);
+					Complete(t);
 			});
 		}
 
@@ -3150,16 +3245,18 @@ namespace SIL.Transcelerator
 		/// <summary>
 		/// Loads the answer and comment labels for the given row.
 		/// </summary>
-		/// <param name="phrase">Phrase for which the anwer(s) and comment(s) are to be loaded.
+		/// <param name="phrase">Phrase for which the answer(s) and comment(s) are to be loaded.
 		/// </param>
 		/// ------------------------------------------------------------------------------------
 		private void LoadAnswerAndComment(TranslatablePhrase phrase)
 		{
 			var question = phrase.QuestionInfo;
 			PopulateAnswerOrCommentLabel(question, question?.Answers, LocalizableStringType.Answer,
-				m_lblAnswerLabel, m_lblAnswers, LocalizationManager.GetString("MainWindow.AnswersLabel", "Answers:"));
+				m_lblAnswerLabel, m_lblAnswers,
+				LocalizationManager.GetString("MainWindow.AnswersLabel", "Answers:"));
 			PopulateAnswerOrCommentLabel(question, question?.Notes, LocalizableStringType.Note,
-				m_lblCommentLabel, m_lblComments, LocalizationManager.GetString("MainWindow.CommentsLabel", "Comments:"));
+				m_lblCommentLabel, m_lblComments,
+				LocalizationManager.GetString("MainWindow.CommentsLabel", "Comments:"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3175,10 +3272,11 @@ namespace SIL.Transcelerator
 		/// <param name="sLabelMultiple">The text to use for <see cref="label"/> if there are
 		/// multiple answers/comments.</param>
 		/// ------------------------------------------------------------------------------------
-		private void PopulateAnswerOrCommentLabel(Question question, string[] details, LocalizableStringType type,
-			Label label, Label contents, string sLabelMultiple)
+		private void PopulateAnswerOrCommentLabel(Question question, string[] details,
+			LocalizableStringType type, Label label, Label contents, string sLabelMultiple)
 		{
-			label.Visible = contents.Visible = details?.Length > 0;
+			var count = details?.Length ?? 0;
+			label.Visible = contents.Visible = count > 0;
 			if (label.Visible)
 			{
 				string[] loc;
@@ -3186,13 +3284,13 @@ namespace SIL.Transcelerator
 					loc = details;
 				else
 				{
-					loc = new string[details.Length];
-					for (int i = 0; i < details.Length; i++)
-						loc[i] = m_dataLocalizer.GetLocalizedDataString(new UIAnswerOrNoteDataString(question, type, i), out string notUsed);
+					loc = new string[count];
+					for (int i = 0; i < count; i++)
+						loc[i] = m_dataLocalizer.GetLocalizedDataString(new UIAnswerOrNoteDataString(question, type, i));
 				}
 				label.Show(); // Is this needed?
-				label.Text = details.Length == 1 ? (string)label.Tag : sLabelMultiple;
-				contents.Text = loc.ToString(Environment.NewLine + "\t");
+				label.Text = count == 1 ? (string)label.Tag : sLabelMultiple;
+				contents.Text = loc.ToString(NewLine + "\t");
 			}
 		}
 		#endregion
@@ -3357,7 +3455,7 @@ namespace SIL.Transcelerator
 					ichInsert >= TextControl.SelectionStart &&
 					ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
 				{
-					// Don't try to move selected text onto itself. Instead just remove selection.
+					// Don't try to move selected text onto itself. Instead, just remove selection.
 					// This allows a simple click to behave properly.
 					TextControl.SelectionStart = ichInsert;
 					TextControl.SelectionLength = 0;
@@ -3378,9 +3476,9 @@ namespace SIL.Transcelerator
 					if (removeLen > 0)
 					{
 						// We need to handle removal of originally selected text because
-						// the code where the drag-drop originates assumes we will (it
+						// the code where the drag-drop originates assumes we will. (It
 						// treats any copy/move as a copy because we don't want dragging
-						// from TXL to Word, for example, to result in a move.  
+						// from TXL to Word, for example, to result in a move.)
 						TextControl.Text = TextControl.Text.Remove(removeStart, removeLen);
 						// Now select the moved text
 						TextControl.SelectionStart = ichInsert;
@@ -3411,8 +3509,5 @@ namespace SIL.Transcelerator
 			ShowModalChild(new MessageBoxForm(ex.Message, caption ?? TxlConstants.kPluginName));
 		}
 	}
-	#endregion
-
-	#region class SubstringDescriptor
 	#endregion
 }

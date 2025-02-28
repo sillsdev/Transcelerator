@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
 [assembly: AssemblyProduct("CustomInstallerActions")]
-[assembly: AssemblyCopyright("Copyright © 2017, SIL International")]
+[assembly: AssemblyCopyright("Copyright © 2017-2025, SIL Global")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
