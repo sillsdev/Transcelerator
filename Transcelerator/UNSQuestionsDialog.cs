@@ -2186,10 +2186,10 @@ namespace SIL.Transcelerator
 				SaveQuestionExclusionsAndUpdateFilter();
 				var msg = questionsExcluded == 1 ?
 					Format(LocalizationManager.GetString("MainWindow.ExcludedSingleQuestionInGroup",
-						"Excluded question in group {0}.",
+						"Excluded question in variant group {0}.",
 						"Parameter is the ID of the variant/group (e.g., \"6B\")"), variantId) :
 					Format(LocalizationManager.GetString("MainWindow.ExcludedMultipleQuestionsInGroup",
-						"Excluded {0} questions in group {1}.",
+						"Excluded {0} questions in variant group {1}.",
 						"Param 0: the number of questions excluded (usually, but not necessarily, the total number of questions in the variant/group); " +
 						"Param 1: the ID of the variant/group (e.g., \"6B\")"), variantId);
 				ShowModalChild(new MessageBoxForm(msg, TxlConstants.kPluginName));

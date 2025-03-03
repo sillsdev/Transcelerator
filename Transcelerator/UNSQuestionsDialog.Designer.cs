@@ -61,12 +61,18 @@ namespace SIL.Transcelerator
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UNSQuestionsDialog));
 			this.mnuViewDebugInfo = new System.Windows.Forms.ToolStripMenuItem();
 			this.mnuViewAnswers = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataGridUns = new System.Windows.Forms.DataGridView();
+			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.m_colEditQuestion = new System.Windows.Forms.DataGridViewImageColumn();
+			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -141,12 +147,6 @@ namespace SIL.Transcelerator
 			this.m_pnlAnswersAndComments = new System.Windows.Forms.TableLayoutPanel();
 			this.m_hSplitter = new System.Windows.Forms.Splitter();
 			this.l10NSharpExtender1 = new L10NSharp.UI.L10NSharpExtender(this.components);
-			this.m_colReference = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEnglish = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colTranslation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.m_colEditQuestion = new System.Windows.Forms.DataGridViewImageColumn();
-			this.m_colUserTranslated = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.m_colDebugInfo = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridUns)).BeginInit();
 			this.dataGridContextMenu.SuspendLayout();
@@ -170,7 +170,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewDebugInfo, "MainWindow.Menu.GeneratedTranslationDetails");
 			this.mnuViewDebugInfo.Name = "mnuViewDebugInfo";
-			this.mnuViewDebugInfo.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewDebugInfo.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewDebugInfo.Text = "&Generated Translation Details";
 			this.mnuViewDebugInfo.CheckedChanged += new System.EventHandler(this.mnuViewDebugInfo_CheckedChanged);
 			// 
@@ -182,7 +182,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewAnswers, "MainWindow.Menu.View.AnswersAndComments");
 			this.mnuViewAnswers.Name = "mnuViewAnswers";
-			this.mnuViewAnswers.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewAnswers.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewAnswers.Text = "&Answers and Comments";
 			this.mnuViewAnswers.CheckedChanged += new System.EventHandler(this.mnuViewAnswersColumn_CheckedChanged);
 			// 
@@ -258,6 +258,60 @@ namespace SIL.Transcelerator
 			this.dataGridUns.HandleCreated += new System.EventHandler(this.dataGridUns_HandleCreated);
 			this.dataGridUns.Resize += new System.EventHandler(this.dataGridUns_Resize);
 			// 
+			// m_colReference
+			// 
+			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
+			this.m_colReference.Name = "m_colReference";
+			this.m_colReference.ReadOnly = true;
+			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.m_colReference.Width = 310;
+			// 
+			// m_colEnglish
+			// 
+			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
+			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
+			this.m_colEnglish.MinimumWidth = 100;
+			this.m_colEnglish.Name = "m_colEnglish";
+			this.m_colEnglish.ReadOnly = true;
+			// 
+			// m_colTranslation
+			// 
+			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
+			this.m_colTranslation.MinimumWidth = 100;
+			this.m_colTranslation.Name = "m_colTranslation";
+			// 
+			// m_colEditQuestion
+			// 
+			this.m_colEditQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle3.NullValue = null;
+			this.m_colEditQuestion.DefaultCellStyle = dataGridViewCellStyle3;
+			this.m_colEditQuestion.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Edit!Edit";
+			this.m_colEditQuestion.MinimumWidth = 20;
+			this.m_colEditQuestion.Name = "m_colEditQuestion";
+			this.m_colEditQuestion.Width = 227;
+			// 
+			// m_colUserTranslated
+			// 
+			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
+			this.m_colUserTranslated.Name = "m_colUserTranslated";
+			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.m_colUserTranslated.Width = 304;
+			// 
+			// m_colDebugInfo
+			// 
+			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
+    " Details";
+			this.m_colDebugInfo.MinimumWidth = 100;
+			this.m_colDebugInfo.Name = "m_colDebugInfo";
+			this.m_colDebugInfo.ReadOnly = true;
+			// 
 			// dataGridContextMenu
 			// 
 			this.dataGridContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -274,7 +328,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.dataGridContextMenu, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.dataGridContextMenu, "dataGridContextMenu");
 			this.dataGridContextMenu.Name = "dataGridContextMenu";
-			this.dataGridContextMenu.Size = new System.Drawing.Size(203, 186);
+			this.dataGridContextMenu.Size = new System.Drawing.Size(241, 208);
 			this.dataGridContextMenu.Opening += new System.ComponentModel.CancelEventHandler(this.dataGridContextMenu_Opening);
 			// 
 			// cutToolStripMenuItem
@@ -284,7 +338,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.cutToolStripMenuItem, "MainWindow.dataGridContextMenu.cutToolStripMenuItem");
 			this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
 			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-			this.cutToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+			this.cutToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
 			this.cutToolStripMenuItem.Text = "Cut";
 			this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
 			// 
@@ -295,7 +349,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.copyToolStripMenuItem, "MainWindow.dataGridContextMenu.copyToolStripMenuItem");
 			this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
 			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+			this.copyToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
 			this.copyToolStripMenuItem.Text = "Copy";
 			this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
 			// 
@@ -306,14 +360,14 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.pasteToolStripMenuItem, "MainWindow.dataGridContextMenu.pasteToolStripMenuItem");
 			this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
 			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(240, 22);
 			this.pasteToolStripMenuItem.Text = "Paste";
 			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator7
 			// 
 			this.toolStripSeparator7.Name = "toolStripSeparator7";
-			this.toolStripSeparator7.Size = new System.Drawing.Size(199, 6);
+			this.toolStripSeparator7.Size = new System.Drawing.Size(237, 6);
 			// 
 			// mnuExcludeQuestion
 			// 
@@ -322,7 +376,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeQuestion, "MainWindow.dataGridContextMenu.mnuExcludeQuestion");
 			this.mnuExcludeQuestion.Name = "mnuExcludeQuestion";
-			this.mnuExcludeQuestion.Size = new System.Drawing.Size(202, 22);
+			this.mnuExcludeQuestion.Size = new System.Drawing.Size(240, 22);
 			this.mnuExcludeQuestion.Text = "E&xclude Question";
 			this.mnuExcludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
 			// 
@@ -333,8 +387,8 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuExcludeVariant, "MainWindow.UNSQuestionsDialog.mnuExcludeVariant");
 			this.mnuExcludeVariant.Name = "mnuExcludeVariant";
-			this.mnuExcludeVariant.Size = new System.Drawing.Size(202, 22);
-			this.mnuExcludeVariant.Text = "Exclude Question &Group";
+			this.mnuExcludeVariant.Size = new System.Drawing.Size(240, 22);
+			this.mnuExcludeVariant.Text = "Exclude Question Variant &Group";
 			this.mnuExcludeVariant.Click += new System.EventHandler(this.mnuExcludeVariant_Click);
 			// 
 			// mnuIncludeQuestion
@@ -344,7 +398,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuIncludeQuestion, "MainWindow.dataGridContextMenu.mnuIncludeQuestion");
 			this.mnuIncludeQuestion.Name = "mnuIncludeQuestion";
-			this.mnuIncludeQuestion.Size = new System.Drawing.Size(202, 22);
+			this.mnuIncludeQuestion.Size = new System.Drawing.Size(240, 22);
 			this.mnuIncludeQuestion.Text = "&Include Question";
 			this.mnuIncludeQuestion.Visible = false;
 			this.mnuIncludeQuestion.Click += new System.EventHandler(this.mnuIncludeOrExcludeQuestion_Click);
@@ -356,7 +410,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuEditQuestion, "MainWindow.dataGridContextMenu.mnuEditQuestion");
 			this.mnuEditQuestion.Name = "mnuEditQuestion";
-			this.mnuEditQuestion.Size = new System.Drawing.Size(202, 22);
+			this.mnuEditQuestion.Size = new System.Drawing.Size(240, 22);
 			this.mnuEditQuestion.Text = "&Edit Question...";
 			this.mnuEditQuestion.Click += new System.EventHandler(this.mnuEditQuestion_Click);
 			// 
@@ -367,7 +421,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAddQuestion, "MainWindow.dataGridContextMenu.mnuAddQuestion");
 			this.mnuAddQuestion.Name = "mnuAddQuestion";
-			this.mnuAddQuestion.Size = new System.Drawing.Size(202, 22);
+			this.mnuAddQuestion.Size = new System.Drawing.Size(240, 22);
 			this.mnuAddQuestion.Text = "&New Question...";
 			this.mnuAddQuestion.Click += new System.EventHandler(this.AddNewQuestion);
 			// 
@@ -420,7 +474,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuSave, "MainWindow.Menu.File.Save");
 			this.mnuSave.Name = "mnuSave";
 			this.mnuSave.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.mnuSave.Size = new System.Drawing.Size(277, 22);
+			this.mnuSave.Size = new System.Drawing.Size(278, 22);
 			this.mnuSave.Text = "&Save";
 			this.mnuSave.Click += new System.EventHandler(this.Save);
 			// 
@@ -434,7 +488,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuAutoSave, "MainWindow.File.mnuAutoSave");
 			this.mnuAutoSave.Name = "mnuAutoSave";
-			this.mnuAutoSave.Size = new System.Drawing.Size(277, 22);
+			this.mnuAutoSave.Size = new System.Drawing.Size(278, 22);
 			this.mnuAutoSave.Text = "&Auto Save";
 			this.mnuAutoSave.CheckedChanged += new System.EventHandler(this.mnuAutoSave_CheckedChanged);
 			// 
@@ -446,14 +500,14 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuReload, "MainWindow.Menu.File.Reload");
 			this.mnuReload.Name = "mnuReload";
 			this.mnuReload.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			this.mnuReload.Size = new System.Drawing.Size(277, 22);
+			this.mnuReload.Size = new System.Drawing.Size(278, 22);
 			this.mnuReload.Text = "&Reload";
 			this.mnuReload.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(274, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(275, 6);
 			// 
 			// mnuGenerate
 			// 
@@ -463,7 +517,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuGenerate, "MainWindow.Menu.File.GenerateCheckingScript");
 			this.mnuGenerate.Name = "mnuGenerate";
 			this.mnuGenerate.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-			this.mnuGenerate.Size = new System.Drawing.Size(277, 22);
+			this.mnuGenerate.Size = new System.Drawing.Size(278, 22);
 			this.mnuGenerate.Text = "&Generate Checking Script...";
 			this.mnuGenerate.Click += new System.EventHandler(this.mnuGenerate_Click);
 			// 
@@ -475,7 +529,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuProduceScriptureForgeFiles, "Param 0: \"Scripture Forge\" (product name); Param 1: \"PTXprint\" (Product name)");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuProduceScriptureForgeFiles, "MainWindow.Menu.File.ProduceScriptureForgeFiles");
 			this.mnuProduceScriptureForgeFiles.Name = "mnuProduceScriptureForgeFiles";
-			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(277, 22);
+			this.mnuProduceScriptureForgeFiles.Size = new System.Drawing.Size(278, 22);
 			this.mnuProduceScriptureForgeFiles.Text = "Produce {0}/{1} Files";
 			// 
 			// generateOutputForArloToolStripMenuItem
@@ -485,7 +539,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationPriority(this.generateOutputForArloToolStripMenuItem, L10NSharp.LocalizationPriority.NotLocalizable);
 			this.l10NSharpExtender1.SetLocalizingId(this.generateOutputForArloToolStripMenuItem, "MainWindow.Menu.File.GenerateOutputForArlo");
 			this.generateOutputForArloToolStripMenuItem.Name = "generateOutputForArloToolStripMenuItem";
-			this.generateOutputForArloToolStripMenuItem.Size = new System.Drawing.Size(277, 22);
+			this.generateOutputForArloToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
 			this.generateOutputForArloToolStripMenuItem.Text = "Generate output for Arlo...";
 			this.generateOutputForArloToolStripMenuItem.Visible = false;
 			this.generateOutputForArloToolStripMenuItem.Click += new System.EventHandler(this.generateOutputForArloToolStripMenuItem_Click);
@@ -496,7 +550,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuLoadTranslationsFromTextFile, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuLoadTranslationsFromTextFile, "MainWindow.Menu.File.LoadTranslationsFromTextFile");
 			this.mnuLoadTranslationsFromTextFile.Name = "mnuLoadTranslationsFromTextFile";
-			this.mnuLoadTranslationsFromTextFile.Size = new System.Drawing.Size(277, 22);
+			this.mnuLoadTranslationsFromTextFile.Size = new System.Drawing.Size(278, 22);
 			this.mnuLoadTranslationsFromTextFile.Text = "Load Translations from Plain Text File...";
 			this.mnuLoadTranslationsFromTextFile.Visible = false;
 			this.mnuLoadTranslationsFromTextFile.Click += new System.EventHandler(this.mnuLoadTranslationsFromTextFile_Click);
@@ -504,7 +558,7 @@ namespace SIL.Transcelerator
 			// toolStripSeparator3
 			// 
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
-			this.toolStripSeparator3.Size = new System.Drawing.Size(274, 6);
+			this.toolStripSeparator3.Size = new System.Drawing.Size(275, 6);
 			// 
 			// mnuClose
 			// 
@@ -513,7 +567,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuClose, "MainWindow.Menu.File.Close");
 			this.mnuClose.Name = "mnuClose";
-			this.mnuClose.Size = new System.Drawing.Size(277, 22);
+			this.mnuClose.Size = new System.Drawing.Size(278, 22);
 			this.mnuClose.Text = "&Close";
 			this.mnuClose.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
@@ -699,7 +753,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowAllPhrases, "MainWindow.mnuShowAllPhrases");
 			this.mnuShowAllPhrases.Name = "mnuShowAllPhrases";
 			this.mnuShowAllPhrases.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.mnuShowAllPhrases.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowAllPhrases.Size = new System.Drawing.Size(381, 22);
 			this.mnuShowAllPhrases.Text = "Show &All (no filter)";
 			this.mnuShowAllPhrases.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowAllPhrases.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
@@ -713,7 +767,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithKtRenderings, "MainWindow.mnuShowPhrasesWithKtRenderings");
 			this.mnuShowPhrasesWithKtRenderings.Name = "mnuShowPhrasesWithKtRenderings";
 			this.mnuShowPhrasesWithKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithKtRenderings.Size = new System.Drawing.Size(381, 22);
 			this.mnuShowPhrasesWithKtRenderings.Text = "Show Questions Where All Terms Have &Renderings";
 			this.mnuShowPhrasesWithKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
@@ -727,7 +781,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuShowPhrasesWithMissingKtRenderings, "MainWindow.mnuShowPhrasesWithMissingKtRenderings");
 			this.mnuShowPhrasesWithMissingKtRenderings.Name = "mnuShowPhrasesWithMissingKtRenderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(380, 22);
+			this.mnuShowPhrasesWithMissingKtRenderings.Size = new System.Drawing.Size(381, 22);
 			this.mnuShowPhrasesWithMissingKtRenderings.Text = "Show Questions with Terms &Missing Renderings";
 			this.mnuShowPhrasesWithMissingKtRenderings.CheckedChanged += new System.EventHandler(this.OnKeyTermsFilterChecked);
 			this.mnuShowPhrasesWithMissingKtRenderings.Click += new System.EventHandler(this.OnKeyTermsFilterChange);
@@ -781,7 +835,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizationComment(this.mnuViewEditQuestionColumn, null);
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewEditQuestionColumn, "MainWindow.UNSQuestionsDialog.editQuestionColumnToolStripMenuItem");
 			this.mnuViewEditQuestionColumn.Name = "mnuViewEditQuestionColumn";
-			this.mnuViewEditQuestionColumn.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewEditQuestionColumn.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewEditQuestionColumn.Text = "Edit &Question Column";
 			this.mnuViewEditQuestionColumn.Click += new System.EventHandler(this.mnuViewEditQuestionColumn_CheckedChanged);
 			// 
@@ -795,7 +849,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewToolbar, "MainWindow.Menu.View.Toolbar");
 			this.mnuViewToolbar.Name = "mnuViewToolbar";
-			this.mnuViewToolbar.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewToolbar.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewToolbar.Text = "&Toolbar";
 			this.mnuViewToolbar.CheckStateChanged += new System.EventHandler(this.mnuViewToolbar_CheckedChanged);
 			// 
@@ -809,14 +863,14 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewBiblicalTermsPane, "MainWindow.Menu.View.BiblicalTermsPane");
 			this.mnuViewBiblicalTermsPane.Name = "mnuViewBiblicalTermsPane";
-			this.mnuViewBiblicalTermsPane.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewBiblicalTermsPane.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewBiblicalTermsPane.Text = "&Biblical Terms Pane";
 			this.mnuViewBiblicalTermsPane.CheckedChanged += new System.EventHandler(this.mnuViewBiblicalTermsPane_CheckedChanged);
 			// 
 			// toolStripSeparator6
 			// 
 			this.toolStripSeparator6.Name = "toolStripSeparator6";
-			this.toolStripSeparator6.Size = new System.Drawing.Size(223, 6);
+			this.toolStripSeparator6.Size = new System.Drawing.Size(224, 6);
 			// 
 			// mnuViewExcludedQuestions
 			// 
@@ -826,14 +880,14 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuViewExcludedQuestions, "MainWindow.Menu.View.ExcludedQuestions");
 			this.mnuViewExcludedQuestions.Name = "mnuViewExcludedQuestions";
-			this.mnuViewExcludedQuestions.Size = new System.Drawing.Size(226, 22);
+			this.mnuViewExcludedQuestions.Size = new System.Drawing.Size(227, 22);
 			this.mnuViewExcludedQuestions.Text = "&Excluded Questions";
 			this.mnuViewExcludedQuestions.Click += new System.EventHandler(this.ApplyFilter);
 			// 
 			// toolStripSeparator11
 			// 
 			this.toolStripSeparator11.Name = "toolStripSeparator11";
-			this.toolStripSeparator11.Size = new System.Drawing.Size(223, 6);
+			this.toolStripSeparator11.Size = new System.Drawing.Size(224, 6);
 			// 
 			// zoomInToolStripMenuItem
 			// 
@@ -843,7 +897,7 @@ namespace SIL.Transcelerator
 			this.zoomInToolStripMenuItem.Name = "zoomInToolStripMenuItem";
 			this.zoomInToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Oemplus)));
 			this.zoomInToolStripMenuItem.ShowShortcutKeys = false;
-			this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+			this.zoomInToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.zoomInToolStripMenuItem.Text = "Zoom In";
 			this.zoomInToolStripMenuItem.Click += new System.EventHandler(this.zoomToolStripMenuItem_Click);
 			// 
@@ -855,13 +909,13 @@ namespace SIL.Transcelerator
 			this.zoomOutToolStripMenuItem.Name = "zoomOutToolStripMenuItem";
 			this.zoomOutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.OemMinus)));
 			this.zoomOutToolStripMenuItem.ShowShortcutKeys = false;
-			this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+			this.zoomOutToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.zoomOutToolStripMenuItem.Text = "Zoom Out";
 			// 
 			// toolStripSeparator9
 			// 
 			this.toolStripSeparator9.Name = "toolStripSeparator9";
-			this.toolStripSeparator9.Size = new System.Drawing.Size(223, 6);
+			this.toolStripSeparator9.Size = new System.Drawing.Size(224, 6);
 			// 
 			// mnuDisplayLanguage
 			// 
@@ -870,7 +924,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuDisplayLanguage, "MainWindow.Menu.View.DisplayLanguage");
 			this.mnuDisplayLanguage.Name = "mnuDisplayLanguage";
-			this.mnuDisplayLanguage.Size = new System.Drawing.Size(226, 22);
+			this.mnuDisplayLanguage.Size = new System.Drawing.Size(227, 22);
 			this.mnuDisplayLanguage.Text = "&Display Language";
 			// 
 			// mnuAdvanced
@@ -893,7 +947,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuPhraseSubstitutions, "MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments");
 			this.mnuPhraseSubstitutions.Name = "mnuPhraseSubstitutions";
-			this.mnuPhraseSubstitutions.Size = new System.Drawing.Size(294, 22);
+			this.mnuPhraseSubstitutions.Size = new System.Drawing.Size(295, 22);
 			this.mnuPhraseSubstitutions.Text = "Preprocessing &Question Adjustments...";
 			this.mnuPhraseSubstitutions.Click += new System.EventHandler(this.phraseSubstitutionsToolStripMenuItem_Click);
 			// 
@@ -904,7 +958,7 @@ namespace SIL.Transcelerator
         "sses the ALT key), put the ampersand before the desired character.");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuBiblicalTermsRenderingSelectionRules, "MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules");
 			this.mnuBiblicalTermsRenderingSelectionRules.Name = "mnuBiblicalTermsRenderingSelectionRules";
-			this.mnuBiblicalTermsRenderingSelectionRules.Size = new System.Drawing.Size(294, 22);
+			this.mnuBiblicalTermsRenderingSelectionRules.Size = new System.Drawing.Size(295, 22);
 			this.mnuBiblicalTermsRenderingSelectionRules.Text = "Biblical Terms &Rendering Selection Rules...";
 			this.mnuBiblicalTermsRenderingSelectionRules.Click += new System.EventHandler(this.biblicalTermsRenderingSelectionRulesToolStripMenuItem_Click);
 			// 
@@ -928,7 +982,7 @@ namespace SIL.Transcelerator
 			this.l10NSharpExtender1.SetLocalizingId(this.browseTopicsToolStripMenuItem, "MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem");
 			this.browseTopicsToolStripMenuItem.Name = "browseTopicsToolStripMenuItem";
 			this.browseTopicsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(176, 22);
+			this.browseTopicsToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.browseTopicsToolStripMenuItem.Text = "Browse Topics...";
 			this.browseTopicsToolStripMenuItem.Click += new System.EventHandler(this.browseTopicsToolStripMenuItem_Click);
 			// 
@@ -940,7 +994,7 @@ namespace SIL.Transcelerator
         "\"Transcelerator\" (plugin name).");
 			this.l10NSharpExtender1.SetLocalizingId(this.mnuHelpAbout, "MainWindow.Menu.Help.About");
 			this.mnuHelpAbout.Name = "mnuHelpAbout";
-			this.mnuHelpAbout.Size = new System.Drawing.Size(176, 22);
+			this.mnuHelpAbout.Size = new System.Drawing.Size(177, 22);
 			this.mnuHelpAbout.Text = "&About {0}";
 			this.mnuHelpAbout.Click += new System.EventHandler(this.mnuHelpAbout_Click);
 			// 
@@ -1174,60 +1228,6 @@ namespace SIL.Transcelerator
 			// 
 			this.l10NSharpExtender1.LocalizationManagerId = "Transcelerator";
 			this.l10NSharpExtender1.PrefixForNewItems = "MainWindow";
-			// 
-			// m_colReference
-			// 
-			this.m_colReference.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.m_colReference.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Reference!Reference";
-			this.m_colReference.Name = "m_colReference";
-			this.m_colReference.ReadOnly = true;
-			this.m_colReference.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.m_colReference.Width = 310;
-			// 
-			// m_colEnglish
-			// 
-			this.m_colEnglish.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.m_colEnglish.DefaultCellStyle = dataGridViewCellStyle2;
-			this.m_colEnglish.HeaderText = "_L10N_:MainWindow.QuestionsGrid.EnglishQuestion!English Question";
-			this.m_colEnglish.MinimumWidth = 100;
-			this.m_colEnglish.Name = "m_colEnglish";
-			this.m_colEnglish.ReadOnly = true;
-			// 
-			// m_colTranslation
-			// 
-			this.m_colTranslation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colTranslation.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Translation!Translation";
-			this.m_colTranslation.MinimumWidth = 100;
-			this.m_colTranslation.Name = "m_colTranslation";
-			// 
-			// m_colEditQuestion
-			// 
-			this.m_colEditQuestion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle3.NullValue = null;
-			this.m_colEditQuestion.DefaultCellStyle = dataGridViewCellStyle3;
-			this.m_colEditQuestion.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Edit!Edit";
-			this.m_colEditQuestion.MinimumWidth = 20;
-			this.m_colEditQuestion.Name = "m_colEditQuestion";
-			this.m_colEditQuestion.Width = 227;
-			// 
-			// m_colUserTranslated
-			// 
-			this.m_colUserTranslated.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.m_colUserTranslated.HeaderText = "_L10N_:MainWindow.QuestionsGrid.Confirmed!Confirmed";
-			this.m_colUserTranslated.Name = "m_colUserTranslated";
-			this.m_colUserTranslated.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.m_colUserTranslated.Width = 304;
-			// 
-			// m_colDebugInfo
-			// 
-			this.m_colDebugInfo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.m_colDebugInfo.HeaderText = "_L10N_:MainWindow.QuestionsGrid.GeneratedTranslationDetails!Generated Translation" +
-    " Details";
-			this.m_colDebugInfo.MinimumWidth = 100;
-			this.m_colDebugInfo.Name = "m_colDebugInfo";
-			this.m_colDebugInfo.ReadOnly = true;
 			// 
 			// UNSQuestionsDialog
 			// 
