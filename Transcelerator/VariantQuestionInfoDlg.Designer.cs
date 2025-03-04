@@ -73,7 +73,7 @@ namespace SIL.Transcelerator
 			this.chkDoNotShowAgain.Name = "chkDoNotShowAgain";
 			this.chkDoNotShowAgain.Size = new System.Drawing.Size(249, 17);
 			this.chkDoNotShowAgain.TabIndex = 1;
-			this.chkDoNotShowAgain.Text = "Do not show messages about question variants\r\n";
+			this.chkDoNotShowAgain.Text = "Do not show messages about question variants";
 			this.chkDoNotShowAgain.UseVisualStyleBackColor = true;
 			// 
 			// lblVariantQuestionInfo

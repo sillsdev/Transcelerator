@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" product-version="3.1.20.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
+  <file source-language="en" product-version="3.2.0" original="Transcelerator.dll" datatype="plaintext" target-language="es-ES">
     <body>
       <trans-unit id="AddRenderingDlg.WindowTitle">
         <source xml:lang="en">Add Rendering</source>
@@ -22,30 +22,20 @@
         <target xml:lang="es-ES" state="translated">Editar pregunta</target>
         <note>ID: EditQuestionDlg.WindowTitle</note>
       </trans-unit>
-      <trans-unit id="EditQuestionDlg.btnReset">
-        <source xml:lang="en">&amp;Reset</source>
-        <target xml:lang="es-ES" state="translated">&amp;Reiniciar</target>
-        <note>ID: EditQuestionDlg.btnReset</note>
-      </trans-unit>
       <trans-unit id="EditQuestionDlg.m_lblAlternatives">
-        <source xml:lang="en">Suggested Alternatives:</source>
-        <target xml:lang="es-ES" state="translated">Alternativos sugeridos:</target>
+        <source xml:lang="en">Alternatives:</source>
+        <target xml:lang="es-ES" state="translated">Alternativas:</target>
         <note>ID: EditQuestionDlg.m_lblAlternatives</note>
       </trans-unit>
       <trans-unit id="EditQuestionDlg.m_lblOriginalText">
-        <source xml:lang="en">Text of Original Question:</source>
-        <target xml:lang="es-ES" state="translated">Texto de la pregunta original:</target>
+        <source xml:lang="en">Original Question:</source>
+        <target xml:lang="es-ES" state="translated">La pregunta original:</target>
         <note>ID: EditQuestionDlg.m_lblOriginalText</note>
       </trans-unit>
       <trans-unit id="EditQuestionDlg.m_lblQuestionAlreadyExists">
         <source xml:lang="en">Question already exists!</source>
         <target xml:lang="es-ES" state="translated">¡La pregunta ya existe!</target>
         <note>ID: EditQuestionDlg.m_lblQuestionAlreadyExists</note>
-      </trans-unit>
-      <trans-unit id="EditQuestionDlg.m_lblQuestionToUse">
-        <source xml:lang="en">Question to Use:</source>
-        <target xml:lang="es-ES" state="translated">Pregunta a usar:</target>
-        <note>ID: EditQuestionDlg.m_lblQuestionToUse</note>
       </trans-unit>
       <trans-unit id="General.ExpectedInstalledFileMissing">
         <source xml:lang="en">Expected file missing: {0}.</source>
@@ -176,6 +166,11 @@
         <source xml:lang="en">Include &amp;Questions in {0}</source>
         <target xml:lang="es-ES" state="translated">Incluir &amp;Preguntas en {0}</target>
         <note>ID: GenerateScriptDlg.m_chkIncludeLWCQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkIncludeScriptureForQuestions">
+        <source xml:lang="en">Include Scripture before questions</source>
+        <target xml:lang="es-ES" state="translated">Incluir el texto bíblico antes de las preguntas</target>
+        <note>ID: GenerateScriptDlg.m_chkIncludeScriptureForQuestions</note>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.m_chkIncludeVerseNumbers">
         <source xml:lang="en">Include verse numbers</source>
@@ -341,6 +336,16 @@
         <source xml:lang="en">You are currently editing the translation for a question in {0}. Do you wish to save this change before closing?</source>
         <target xml:lang="es-ES" state="translated">Está editando la traducción de una pregunta en {0}. ¿Desea guardar este cambio antes de cerrar?</target>
         <note>ID: MainWindow.CommitChangesBeforeClosingMessage</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ExcludedMultipleQuestionsInGroup">
+        <source xml:lang="en">Excluded {0} questions in variant group {1}.</source>
+        <target xml:lang="es-ES" state="translated">Se excluyeron {0} preguntas del variante {1}.</target>
+        <note>ID: MainWindow.ExcludedMultipleQuestionsInGroup</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ExcludedSingleQuestionInGroup">
+        <source xml:lang="en">Excluded question in variant group {0}.</source>
+        <target xml:lang="es-ES" state="translated">Se excluyó una pregunta del variante {1}.</target>
+        <note>ID: MainWindow.ExcludedSingleQuestionInGroup</note>
       </trans-unit>
       <trans-unit id="MainWindow.File.mnuAutoSave">
         <source xml:lang="en">&amp;Auto Save</source>
@@ -562,6 +567,11 @@
         <target xml:lang="es-ES" state="translated">Columna: &amp;Editar pregunta</target>
         <note>ID: MainWindow.UNSQuestionsDialog.editQuestionColumnToolStripMenuItem</note>
       </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.mnuExcludeVariant">
+        <source xml:lang="en">Exclude Question Variant &amp;Group</source>
+        <target xml:lang="es-ES" state="translated">Excluir las preguntas de este &amp;variante</target>
+        <note>ID: MainWindow.UNSQuestionsDialog.mnuExcludeVariant</note>
+      </trans-unit>
       <trans-unit id="MainWindow.UNSQuestionsDialog.zoomInToolStripMenuItem" approved="yes">
         <source xml:lang="en">Zoom In</source>
         <target xml:lang="es-ES" state="final">Aumentar</target>
@@ -587,9 +597,9 @@
         <target xml:lang="es-ES" state="translated">Recibir citas bíblicas</target>
         <note>ID: MainWindow.btnReceiveScrReferences_ToolTip_</note>
       </trans-unit>
-      <trans-unit id="MainWindow.btnSave_ToolTip_">
+      <trans-unit id="MainWindow.btnSave_ToolTip_" approved="yes">
         <source xml:lang="en">Save (Ctrl+S)</source>
-        <target xml:lang="es-ES" state="translated">Guardar (Ctrl+S)</target>
+        <target xml:lang="es-ES" state="final">Guardar (Ctrl+S)</target>
         <note>ID: MainWindow.btnSave_ToolTip_</note>
       </trans-unit>
       <trans-unit id="MainWindow.btnSendScrReferences">
@@ -1306,6 +1316,31 @@
         <source xml:lang="en">Version {0}</source>
         <target xml:lang="es-ES" state="translated">Versión {0}</target>
         <note>ID: TxlInfo.m_lblAppVersion</note>
+      </trans-unit>
+      <trans-unit id="VariantQuestionInfoDlg.AvoidRedundantQuestionSetsFmt">
+        <source xml:lang="en">For {0}, use either the group {1} questions or the group {2} questions. It would be redundant to ask all {3} questions.</source>
+        <target xml:lang="es-ES" state="translated">Para {0}, elige ya sea las preguntas del grupo {1} o las del grupo {2}. Sería redundante hacer todas las {3} preguntas.</target>
+        <note>ID: VariantQuestionInfoDlg.AvoidRedundantQuestionSetsFmt</note>
+      </trans-unit>
+      <trans-unit id="VariantQuestionInfoDlg.AvoidRedundantQuestionsFmt">
+        <source xml:lang="en">For {0}, use either question {1} or question {2}. It would be redundant to ask both questions.</source>
+        <target xml:lang="es-ES" state="translated">Para {0}, elige la pregunta {1} o la pregunta {2}. Sería redundante hacer ambas preguntas.</target>
+        <note>ID: VariantQuestionInfoDlg.AvoidRedundantQuestionsFmt</note>
+      </trans-unit>
+      <trans-unit id="VariantQuestionInfoDlg.WindowTitle">
+        <source xml:lang="en">Variant Question</source>
+        <target xml:lang="es-ES" state="translated">Pregunta variante</target>
+        <note>ID: VariantQuestionInfoDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="VariantQuestionInfoDlg.chkDoNotShowAgain">
+        <source xml:lang="en">Do not show messages about question variants</source>
+        <target xml:lang="es-ES" state="translated">No mostrar mensajes sobre las la preguntas que pertencecen a un variante</target>
+        <note>ID: VariantQuestionInfoDlg.chkDoNotShowAgain</note>
+      </trans-unit>
+      <trans-unit id="label1">
+        <source xml:lang="en">This question is one of two related questions. Usually, only one of these two questions should be included.</source>
+        <target xml:lang="es-ES" state="translated">Esta pregunta es una de dos relacionadas. Normalmente, solo se debe incluir una.</target>
+        <note>ID: label1</note>
       </trans-unit>
     </body>
   </file>
