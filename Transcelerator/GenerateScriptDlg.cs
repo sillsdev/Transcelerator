@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2023, SIL International.
-// <copyright from='2011' to='2023' company='SIL International'>
-//		Copyright (c) 2023, SIL International.
+#region // Copyright (c) 2025, SIL International.
+// <copyright from='2011' to='2025' company='SIL International'>
+//		Copyright (c) 2025, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -392,7 +392,7 @@ namespace SIL.Transcelerator
 
 		private void m_rdoUseExternalCss_CheckedChanged(object sender, EventArgs e)
 		{
-			m_pnlCssOptions.Visible = m_rdoUseExternalCss.Checked;
+			m_tableLayoutPanelCssOptions.Visible = m_rdoUseExternalCss.Checked;
 		}
 
 		private void btnBrowseCss_Click(object sender, EventArgs e)
