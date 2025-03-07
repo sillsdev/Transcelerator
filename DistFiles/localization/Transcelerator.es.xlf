@@ -98,8 +98,8 @@
         <note>ID: GenerateScriptDlg.HtmlFileDescription</note>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.WindowTitle">
-        <source xml:lang="en">Generate Checking Script Template</source>
-        <target xml:lang="es-ES" state="translated">Generar plantilla de guía de verificación</target>
+        <source xml:lang="en">Generate Checking Script</source>
+        <target xml:lang="es-ES" state="translated">Generar guía de verificación</target>
         <note>ID: GenerateScriptDlg.WindowTitle</note>
       </trans-unit>
       <trans-unit id="GenerateScriptDlg.btnBrowse">

@@ -25,7 +25,7 @@ namespace SIL.Transcelerator
 
 	public interface IScriptGenerationSettings
 	{
-		RangeOption GenerateTemplateRange { get; set; }
+		RangeOption GenerateScriptRange { get; set; }
 		string SelectedBook { get; set; }
 		HandleUntranslatedQuestionsOption HandlingOfUntranslatedQuestions { get; set; }
 		bool OutputPassageForOutOfOrderQuestions { get; set; }

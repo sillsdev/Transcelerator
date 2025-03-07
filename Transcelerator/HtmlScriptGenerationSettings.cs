@@ -17,7 +17,7 @@ namespace SIL.Transcelerator
 {
 	internal class HtmlScriptGenerationSettings : IScriptGenerationSettings
 	{
-		public RangeOption GenerateTemplateRange
+		public RangeOption GenerateScriptRange
 		{
 			get => (RangeOption)Properties.Settings.Default.GenerateTemplateRange;
 			set => Properties.Settings.Default.GenerateTemplateRange = (int)value;

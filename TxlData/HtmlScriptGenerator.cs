@@ -61,10 +61,10 @@ namespace SIL.Transcelerator
 			set => m_normalizedTitle = value.Normalize(NormalizationForm.FormC);
 		}
 
-		public RangeOption GenerateTemplateRange
+		public RangeOption GenerateScriptRange
 		{
-			get => m_settings.GenerateTemplateRange;
-			set => m_settings.GenerateTemplateRange = value;
+			get => m_settings.GenerateScriptRange;
+			set => m_settings.GenerateScriptRange = value;
 		}
 
 		public string SelectedBook
