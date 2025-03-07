@@ -7,7 +7,7 @@
 // </copyright>
 #endregion
 //
-// File: GenerateTemplateDlg.cs
+// File: GenerateScriptDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ namespace SIL.Transcelerator
 			LoadSectionCombos();
 			LoadLWCCombo(availableAdditionalLWCs);
 
-			switch (m_generator.GenerateTemplateRange)
+			switch (m_generator.GenerateScriptRange)
 			{
 				case RangeOption.WholeBook:
 					m_rdoWholeBook.Checked = true;
@@ -483,7 +483,7 @@ namespace SIL.Transcelerator
 		{
 			if (m_rdoWholeBook.Checked)
 			{
-				m_generator.GenerateTemplateRange = RangeOption.WholeBook;
+				m_generator.GenerateScriptRange = RangeOption.WholeBook;
 				m_generator.SelectedBook = m_cboBooks.SelectedItem.ToString();
 			}
 			else
@@ -492,13 +492,13 @@ namespace SIL.Transcelerator
 
 				if (m_rdoSingleSection.Checked)
 				{
-					m_generator.GenerateTemplateRange = RangeOption.SingleSection;
+					m_generator.GenerateScriptRange = RangeOption.SingleSection;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = "";
 				}
 				else
 				{
-					m_generator.GenerateTemplateRange = RangeOption.RangeOfSections;
+					m_generator.GenerateScriptRange = RangeOption.RangeOfSections;
 					Properties.Settings.Default.GenerateTemplateSection = m_cboStartSection.SelectedItem.ToString();
 					Properties.Settings.Default.GenerateTemplateEndSection = m_cboEndSection.SelectedItem.ToString();
 				}
