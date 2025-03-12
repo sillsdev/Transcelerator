@@ -1,3 +1,15 @@
+## _VERSION_ _DATE_
+
+- جعل رؤية متى تنتمي الأسئلة إلى خيار معين أكثر وضوحًا، مما يسهل استبعاد خيار كامل كمجموعة.
+- تمت إضافة دعم لمترجمي التعريب الذين يحتاجون إلى حذف بعض الأسئلة والتعليقات والإجابات والبدائل.
+- تمت إضافة توطين جزئي للغة Pisin.
+
+## 3.1.20 9 تموز/يوليه 2024
+
+- إضافة خيار لتجاهل الآيات الكتابية قبل كل سؤال في النص الذي تم إنشاؤه.
+- إضافة بدائل للعديد من الأسئلة، وإضافة بعض الأسئلة الجديدة، وإجراء تعديلات طفيفة (معظمها علامات ترقيم وتصحيحات إملائية) على الإجابات والملاحظات.
+- تحديث التوطين الإنجليزي البريطاني.
+
 ## 3. 1. 3 6 أغسطس 2022
 
 - لقد تمّ تعميم نظام المساعَدة على مستوى العالَم، وتمّت ترجمته محَلِّيًّا إلى اللغة الأسبانيّة. (يمكن إنتاج المزيد من الترجمات المَحلِيَّة باستخدام [crowdin](https://crowdin.com/project/transcelerator).)
@@ -42,7 +54,7 @@
 - Added option to output verse numbers in script (Note: If using an external CSS file, to get verse numbers to appear superscripted, you will either need to allow Transcelerator to overwrite your CSS file or edit the existing one to add verse {vertical-align: super; font-size: .80em; color:DimGray;}.
 - تحسينات رئيسية كبيرة في محتوَى الأسئلة والقُدرة على إنتاج النُصوص.
 - New option to control how out-of-order detail questions are handled in script.
-- Improvements to New Question dialog, including ability to add questions out of order.
+- Improvements to New Question dialog, including ability to add questions out of verse order.
 
 ## 1.3.17 11 May 2020
 
@@ -55,10 +67,6 @@
 ## 1.3.9 9 January 2019
 
 - Added (draft quality) localizations of all questions, answers, and notes for French and Spanish.
-
-## 1.3.8 22 October 2018
-
-- Added capability to produce a publicly consumable set of comprehension checking questions (to be used in an upcoming version of Scripture Forge).
 
 ## 1.3.1 9 August 2018
 
@@ -87,7 +95,7 @@
 
 ## 1.1.5154 10 February 2014
 
-- Prevent crash when Paratext fails to load key terms.
+- Prevent crash when Paratext fails to load biblical terms.
 - Updated key term rules based on changes to biblical terms list included with Paratext.
 
 ## 1.1.5149 5 February 2014
