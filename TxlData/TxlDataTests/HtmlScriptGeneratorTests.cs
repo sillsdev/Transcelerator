@@ -388,7 +388,7 @@ namespace SIL.Transcelerator
 
 	class TestScriptGenerationSettings : IScriptGenerationSettings
 	{
-		public RangeOption GenerateTemplateRange { get; set; }
+		public RangeOption GenerateScriptRange { get; set; }
 		public string SelectedBook { get; set; }
 		public HandleUntranslatedQuestionsOption HandlingOfUntranslatedQuestions { get; set; }
 		public bool OutputPassageForOutOfOrderQuestions { get; set; }
