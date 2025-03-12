@@ -30,7 +30,7 @@ namespace SIL.Transcelerator
 	public partial class EditQuestionDlg : Form
 	{
 		private readonly TranslatablePhrase m_question;
-		private readonly List<string> m_existingQuestionsForRef;
+		private readonly HashSet<string> m_existingQuestionsForRef;
 		private readonly string m_help;
 
 		internal string ModifiedPhrase
@@ -65,8 +65,17 @@ namespace SIL.Transcelerator
 			LocalizationsFileAccessor dataLocalizer, VariantType variantType)
 		{
 			m_question = question;
-			m_existingQuestionsForRef = existingQuestionsForRef.Select(p => p.PhraseInUse)
-				.Union(existingQuestionsForRef.Select(p => dataLocalizer.GetLocalizedDataString(new UIQuestionDataString(p.PhraseKey, true, false)).Data)).ToList();
+
+			m_existingQuestionsForRef = new HashSet<string>(existingQuestionsForRef.Select(
+				p => p.PhraseInUse));
+
+			if (dataLocalizer != null)
+			{
+				m_existingQuestionsForRef.UnionWith(existingQuestionsForRef.Select(p =>
+					dataLocalizer.GetLocalizedDataString(
+						new UIQuestionDataString(p.PhraseKey, true, false)).Data));
+			}
+
 			InitializeComponent();
 
 			if (variantType != VariantType.SeriesOfQuestions)

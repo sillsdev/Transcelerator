@@ -67,7 +67,8 @@ namespace SIL.Transcelerator
 			string path = null;
 			if (locale != TxlPlugin.kDefaultUILocale)
 			{
-				path = TxlPlugin.GetFileDistributedWithApplication($"ReleaseNotes.{locale}.md");
+				path = Path.Combine(TxlPlugin.InstallDir, $"ReleaseNotes.{locale}.md");
+
 				if (!File.Exists(path))
 					path = null;
 			}

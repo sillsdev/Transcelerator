@@ -6,19 +6,18 @@
 	<Platform>x64</Platform>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.1.2" GeneratePathProperty="true" />
-	<PackageReference Include="L10NSharp.ExtractXliff" Version="4.1.0" GeneratePathProperty="true" />
-    <PackageReference Include="NuGet.CommandLine" Version="5.4.0" GeneratePathProperty="true" />
-    <PackageReference Include="SIL.BuildTasks" Version="2.6.0-beta0008" GeneratePathProperty="true" />
+	<PackageReference Include="L10NSharp.ExtractXliff" Version="7.0.0" GeneratePathProperty="true" />
+    <PackageReference Include="NuGet.CommandLine" Version="6.13.2" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.BuildTasks" Version="3.0.0" GeneratePathProperty="true" />
   </ItemGroup>
-  <UsingTask TaskName="NormalizeLocales" AssemblyFile="$(PkgSIL_BuildTasks)\tools\SIL.BuildTasks.dll" />
-  <Target Name="UpdateCrowdin" DependsOnTargets="restore; GetVersion">
+	
+  <Target Name="UpdateCrowdin" DependsOnTargets="restore">
 	<MSBuild Projects="..\build\Transcelerator.proj" Targets="Build" />
 	<!-- NOTES: 1) See readme for more information about the hard-coded version number.
 		2) If dynamic strings or other localizable strings that cannot be detected
 		by ExtractXliff are ever needed, create and check in a Transcelerator.en.xlf file
 		with them, and add this parameter: -b ..\DistFiles\localization\Transcelerator.en.xlf -->
-	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.Transcelerator -o Transcelerator.dll -x Transcelerator.en.xlf -p 1.5.4 ../output/$(Configuration)/Transcelerator.dll" />
+	<Exec Command="&quot;$(PkgL10NSharp_ExtractXliff)\tools\ExtractXliff.exe&quot; -n SIL.Transcelerator -o Transcelerator.dll -x Transcelerator.en.xlf -p 3.2.0 ../output/$(Configuration)/Transcelerator.dll" />
 	<!-- <Exec Command="overcrowdin updatefiles" /> -->
   </Target>
 </Project>
