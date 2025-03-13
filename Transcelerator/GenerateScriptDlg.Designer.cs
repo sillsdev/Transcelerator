@@ -1302,6 +1302,7 @@ namespace SIL.Transcelerator
 			this.m_tableLayoutPanelCssOptions.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.m_tableLayoutPanelCssOptions.Size = new System.Drawing.Size(221, 75);
 			this.m_tableLayoutPanelCssOptions.TabIndex = 4;
+			this.m_tableLayoutPanelCssOptions.Visible = false;
 			// 
 			// m_tableLayoutPanelDisplayOptions
 			// 

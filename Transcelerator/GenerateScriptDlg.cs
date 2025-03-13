@@ -138,12 +138,10 @@ namespace SIL.Transcelerator
 			m_rdoUseExternalCss.Checked = m_generator.UseExternalCss;
 			if (m_rdoUseExternalCss.Checked)
 			{
-				if (m_txtCssFile.Text == m_generator.CssFile)
-					UpdateControlsForCssFile(m_txtCssFile.Text);
-				else
-					m_txtCssFile.Text = m_generator.CssFile;
+				m_txtCssFile.Text = m_generator.CssFile;
 				m_chkAbsoluteCssPath.Checked = m_generator.UseAbsolutePathForCssFile;
 			}
+			UpdateControlsForCssFile(m_txtCssFile.Text);
 
 			m_help = TxlPlugin.GetHelpFile("generatescript");
 			HelpButton = !IsNullOrEmpty(m_help);
