@@ -588,6 +588,15 @@ namespace SIL.Transcelerator
 
 			try
 			{
+				Analytics.ReportException(exception);
+			}
+			catch
+			{
+				// Don't think an exception can be thrown from this, but if so, ignore it.
+			}
+
+			try
+			{
 				if (!(exception is ParatextPluginException))
 				{
 					StackTrace stackTrace = new StackTrace(exception);
