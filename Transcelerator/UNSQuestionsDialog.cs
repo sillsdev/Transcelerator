@@ -1071,7 +1071,7 @@ namespace SIL.Transcelerator
 				if (dataGridUns.IsCurrentCellInEditMode)
 					m_translationEditWasCommitted = false;
 			}
-			else if (e.RowIndex != m_lastTranslationSet)
+			if (e.RowIndex != m_lastTranslationSet)
 				m_lastTranslationSet = -1;
 		}
 
