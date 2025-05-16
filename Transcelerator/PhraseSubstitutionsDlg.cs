@@ -564,10 +564,12 @@ namespace SIL.Transcelerator
 			{
 				UpdateMaxMatchCountControl();
 				m_txtMatchPrefix.TextChanged -= SuffixOrPrefixChanged;
-				m_txtMatchPrefix.Text = ExistingPrefix;
+				if (!m_txtMatchPrefix.Text.Equals(ExistingPrefix, StringComparison.Ordinal))
+					m_txtMatchPrefix.Text = ExistingPrefix;
 				m_txtMatchPrefix.TextChanged += SuffixOrPrefixChanged;
 				m_txtMatchSuffix.TextChanged -= SuffixOrPrefixChanged;
-				m_txtMatchSuffix.Text = ExistingSuffix;
+				if (!m_txtMatchSuffix.Text.Equals(ExistingSuffix, StringComparison.Ordinal))
+					m_txtMatchSuffix.Text = ExistingSuffix;
 				m_txtMatchSuffix.TextChanged += SuffixOrPrefixChanged;
 			}
 			if (m_regexReplaceDropDown.Visible)
