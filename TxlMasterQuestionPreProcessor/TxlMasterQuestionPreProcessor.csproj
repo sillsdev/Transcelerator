@@ -313,7 +313,7 @@ IF NOT EXIST "%25ParatextInstallDir%25" goto copytoparatext
 robocopy "$(TargetDir)." "%25ParatextInstallDir%25\plugins\$(ProjectName)"
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 @REM Remove files we know are not needed:
-IF EXIST "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll" del "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll"
+IF EXIST "%25ParatextInstallDir%25\plugins\$(ProjectName)\$(TargetName).dll" del "%25ParatextInstallDir%25\plugins\$(ProjectName)\$(TargetName).dll"
 
 goto copytoparatext
 
