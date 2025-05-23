@@ -60,6 +60,7 @@
     <Compile Include="ScriptureExtractorTests.cs" />
     <Compile Include="StringUtilsTests.cs" />
     <Compile Include="TestScrVers.cs" />
+    <Compile Include="TextBoxProxy.cs" />
     <Compile Include="TranslatablePhraseTests.cs" />
   </ItemGroup>
   <ItemGroup>

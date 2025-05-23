@@ -4,6 +4,7 @@
 - Added support for localizers who need to omit certain questions, comments, answers, and alternatives.
 - Added partial Tok Pisin localization.
 - Improved layout in Generate Checking Script dialog box so that localized text fits better.
+- Fixed bugs to make regular expression helper controls more usable in the Question Adjustments dialog box.
 
 ## 3.1.20 9 July 2024
 

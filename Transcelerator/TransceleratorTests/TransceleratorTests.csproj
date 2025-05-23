@@ -285,6 +285,10 @@
       <Project>{78b291bf-a845-4fe1-bed7-6b44905fa483}</Project>
       <Name>TxlData</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TxlData\TxlDataTests\TxlDataTests.csproj">
+      <Project>{8f984318-a2b1-4d5f-85e1-3fb53463f2da}</Project>
+      <Name>TxlDataTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TxlShared\TxlShared.csproj">
       <Project>{dd64c074-cede-45f2-b95b-d1f68891aa3d}</Project>
       <Name>TxlShared</Name>
