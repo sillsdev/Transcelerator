@@ -1,43 +1,55 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2022, SIL International.
-// <copyright from='2011' to='2022' company='SIL International'>
-//		Copyright (c) 2022, SIL International.
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
-//
-// File: PhraseSubstitutionsDlg.cs
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using L10NSharp;
 using L10NSharp.UI;
 using L10NSharp.XLiffUtils;
+using SIL.Windows.Forms.Extensions;
 using SIL.Windows.Forms.Widgets;
 using static System.String;
+using static SIL.Transcelerator.SubstitutionMatchGroup;
+using static SIL.Windows.Forms.Extensions.ControlExtensions.ErrorHandlingAction;
 
 namespace SIL.Transcelerator
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	/// Dialog box where user can list words and phrases that should not be treated as part of
-	/// the original question for the purpose of parsing into parts.
+	/// Dialog box where user can specify adjustments to the original question for the purpose
+	/// of parsing it into parts.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
 	public partial class PhraseSubstitutionsDlg : Form
 	{
-		protected TextBox TextControl { get; set; }
+		protected ITextWithSelection TextControl { get; set; }
+
+		protected TextBoxBase TextBoxControlImpl
+		{
+			get => m_textBoxControlImpl;
+			set
+			{
+				TextControl = value == null ? null : new TextBoxWrapper<TextBoxBase>(value);
+				m_textBoxControlImpl = value;
+			}
+		}
+
 		private readonly CustomDropDown m_regexMatchDropDown = new CustomDropDown();
 		private readonly CustomDropDown m_regexReplaceDropDown = new CustomDropDown();
 		private readonly string m_help;
-		protected string m_removeItem;
+		protected string RemoveItem { get; private set; }
 		private string m_entireMatch;
+		private TextBoxBase m_textBoxControlImpl;
 
 		#region Constructor and initialization methods
 		/// ------------------------------------------------------------------------------------
@@ -88,7 +100,7 @@ namespace SIL.Transcelerator
 			lblInstructions.Text = Format(lblInstructions.Text,
 				colReplacement.HeaderText, colIsRegEx.HeaderText, colMatch.HeaderText);
 			// The remove item will always be there in production, just not in tests.
-			m_removeItem = m_cboMatchGroup.Items.Count > 0 ? m_cboMatchGroup.Items[0] as string : "Remove";
+			RemoveItem = m_cboMatchGroup.Items.Count > 0 ? m_cboMatchGroup.Items[0] as string : "Remove";
 			m_entireMatch = LocalizationManager.GetString("PhraseSubstitutionDlg.EntireMatch",
 				"Entire match");
 		}
@@ -123,8 +135,7 @@ namespace SIL.Transcelerator
 		/// column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public int ExistingMatchCountValue => SubstitutionMatchGroup.GetRangeMax(TextControl.Text,
-			TextControl.SelectionStart);
+		public int ExistingMatchCountValue => GetExistingMatchCountValue(TextControl);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -134,7 +145,8 @@ namespace SIL.Transcelerator
 		/// empty string. Intended to be used only when the current column is the "Match" column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ExistingPrefix => GetExistingAffix((AffixType)m_txtMatchPrefix.Tag);
+		public string ExistingPrefix =>
+			GetExistingAffix((AffixType)m_txtMatchPrefix.Tag, TextControl);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -144,8 +156,9 @@ namespace SIL.Transcelerator
 		/// empty string. Intended to be used only when the current column is the "Match" column.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		public string ExistingSuffix => GetExistingAffix((AffixType)m_txtMatchSuffix.Tag);
-
+		public string ExistingSuffix =>
+			GetExistingAffix((AffixType)m_txtMatchSuffix.Tag, TextControl);
+		
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the match group, if any, from the expression covered, partially covered, or
@@ -159,10 +172,10 @@ namespace SIL.Transcelerator
 		{
 			get
 			{
-				var group = SubstitutionMatchGroup.GetExistingMatchGroup(TextControl.Text,
+				var group = GetExistingMatchGroup(TextControl.Text,
 					TextControl.SelectionStart);
 				return group == null ? Empty :
-					group.Type == SubstitutionMatchGroup.MatchGroupType.EntireMatch ? m_entireMatch :
+					group.Type == MatchGroupType.EntireMatch ? m_entireMatch :
 					group.Group;
 			}
 		}
@@ -182,13 +195,14 @@ namespace SIL.Transcelerator
 			var currentRow = m_dataGridView.CurrentRow;
 			if (currentRow == null)
 				return;
-			Debug.Assert(TextControl == null && !m_regexMatchDropDown.Visible && !m_regexReplaceDropDown.Visible);
-			if (IsRegEx(m_dataGridView.CurrentRow))
-				TextControl = e.Control as DataGridViewTextBoxEditingControl;
-			if (TextControl == null)
+
+			TextBoxControlImpl = IsRegEx(m_dataGridView.CurrentRow) ?
+				e.Control as DataGridViewTextBoxEditingControl : null;
+
+			if (TextBoxControlImpl == null)
 				return;
 
-			Rectangle cellDisplayRect = m_dataGridView.GetCellDisplayRectangle(
+			var cellDisplayRect = m_dataGridView.GetCellDisplayRectangle(
 				m_dataGridView.CurrentCell.ColumnIndex, m_dataGridView.CurrentCell.RowIndex, true);
 
 			if (m_dataGridView.CurrentCell.ColumnIndex == colMatch.Index)
@@ -201,34 +215,73 @@ namespace SIL.Transcelerator
 				if (matchGroups.Length > 0)
 				{
 					m_cboMatchGroup.Items.AddRange(matchGroups);
-					string sGroup = ExistingMatchGroup;
-					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? m_removeItem : Empty);
+					var sGroup = ExistingMatchGroup;
+					m_cboMatchGroup.Items.Insert(0, sGroup.Length > 0 ? RemoveItem : Empty);
 					m_regexReplaceDropDown.Show(m_dataGridView, cellDisplayRect.Left, cellDisplayRect.Bottom + 1);
 				}
 				else
 					return;
 			}
 
-			TextControl.HideSelection = false;
-			TextControl.KeyDown += txtControl_KeyDown;
-			TextControl.TextChanged += txtControl_TextChanged;
-			TextControl.TextChanged += UpdatePreview;
-			TextControl.MouseClick += txtControl_MouseClick;
+			TextBoxControlImpl.HideSelection = false;
+			TextBoxControlImpl.KeyUp += txtControl_KeyUp;
+			TextBoxControlImpl.TextChanged += txtControl_TextChanged;
+			TextBoxControlImpl.TextChanged += UpdatePreview;
+			TextBoxControlImpl.MouseClick += txtControl_MouseClick;
 		}
 
 		void txtControl_TextChanged(object sender, EventArgs e)
 		{
-			UpdateRegExHelperControls();
+			if (sender is TextBoxBase tb && tb.Focused)
+				UpdateRegExHelperControls(nameof(txtControl_MouseClick));
 		}
 
 		private void txtControl_MouseClick(object sender, MouseEventArgs e)
 		{
-			UpdateRegExHelperControls();
+			UpdateRegExHelperControls(nameof(txtControl_MouseClick));
 		}
 
-		private void txtControl_KeyDown(object sender, KeyEventArgs e)
+		private void txtControl_KeyUp(object sender, KeyEventArgs e)
 		{
-			UpdateRegExHelperControls();
+			// ENHANCE: When the version of SIL.Windows.Forms that has KeyExtensions is released,
+			// this should be replaced with a call to KeyExtensions.IsNavigationKey.
+			if (IsNavigationKey(e.KeyCode, e.Control))
+				UpdateRegExHelperControls($"{nameof(txtControl_KeyUp)} - {e.KeyData}");
+		}
+
+		/// <summary>
+		/// Determines whether the specified key is considered a navigation key.
+		/// </summary>
+		/// <param name="key">The key (or key-combination) to examine.</param>
+		/// <param name="ctrlPressed">If <c>true</c>, the letter <c>Keys.A</c> will be treated as a
+		/// navigation key (even if the <paramref name="key"/> value does not explicitly include
+		/// <c>Keys.Control</c>). In contexts where Ctrl-A is not a shortcut for Select All or that
+		/// behavior is not relevant, pass false or omit this optional parameter.</param>
+		/// <remarks>
+		/// This is a TEMPORARY stand-in for SIL.Windows.Forms.KeyExtensions.IsNavigationKey (which
+		/// is not yet available).
+		/// If <paramref name="key"/> represents the combination Ctrl-A (i.e.,
+		/// <c>Keys.Control | Keys.A</c>), but <paramref name="ctrlPressed"/> is <c>false</c>,
+		/// this method will return <c>false</c>.
+		/// </remarks>
+		private static bool IsNavigationKey(Keys key, bool ctrlPressed = false)
+		{
+			switch (key & Keys.KeyCode)
+			{
+				case Keys.Left:
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Right:
+				case Keys.Home:
+				case Keys.End:
+				case Keys.PageDown:
+				case Keys.PageUp:
+					return true;
+				case Keys.A:
+					return ctrlPressed;
+				default:
+					return false;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -249,11 +302,12 @@ namespace SIL.Transcelerator
 			}
 			else
 				return;
-			TextControl.KeyDown -= txtControl_KeyDown;
-			TextControl.TextChanged -= txtControl_TextChanged;
-			TextControl.TextChanged -= UpdatePreview;
-			TextControl.MouseClick -= txtControl_MouseClick;
-			TextControl = null;
+			
+			TextBoxControlImpl.KeyUp -= txtControl_KeyUp;
+			TextBoxControlImpl.TextChanged -= txtControl_TextChanged;
+			TextBoxControlImpl.TextChanged -= UpdatePreview;
+			TextBoxControlImpl.MouseClick -= txtControl_MouseClick;
+			TextBoxControlImpl = null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -266,10 +320,10 @@ namespace SIL.Transcelerator
 		private void m_btnMatchSingleWord_Click(object sender, EventArgs e)
 		{
 			int selStart = TextControl.SelectionStart;
-			ReplaceSelectedTextInCurrentEditControl(SubstitutionMatchGroup.kContiguousLettersMatchExpr);
-			TextControl.SelectionStart = selStart + SubstitutionMatchGroup.kContiguousLettersMatchExpr.Length;
+			ReplaceSelectedText(kContiguousLettersMatchExpr, TextControl);
+			TextControl.SelectionStart = selStart + kContiguousLettersMatchExpr.Length;
 			TextControl.SelectionLength = 0;
-			TextControl.Focus();
+			TextBoxControlImpl.Focus();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -281,27 +335,11 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected void SuffixOrPrefixChanged(object sender, EventArgs e)
 		{
-			TextBox textBox = (TextBox)sender;
-			var affixType = (AffixType)textBox.Tag;
-			string sText = textBox.Text.Trim();
-			if (sText.Length == 0)
-			{
-				Match match = FindAffixExpression(affixType);
-				if (match.Success)
-				{
-					TextControl.Text = match.Result("$`$'");
-					TextControl.SelectionStart = match.Index;
-					TextControl.SelectionLength = 0;
-				}
-				return;
-			}
-			// REVIEW: See if this can be done using a single method in SubstitutionMatchGroup, so it's more easily testable
-			SelectExistingPrefixOrSuffix(affixType);
-			int selRestore = TextControl.SelectionStart + SubstitutionMatchGroup.GetAffixPlaceholderPosition(affixType);
-			ReplaceSelectedTextInCurrentEditControl(SubstitutionMatchGroup.FormatAffix(affixType, sText));
-			TextControl.SelectionStart = selRestore;
-			TextControl.SelectionLength = sText.Length;
-			UpdateRegExHelperControls();
+			var textBox = (TextBox)sender;
+			ResetTextAndSelectionForUpdatedAffix(textBox.Text, (AffixType)textBox.Tag, TextControl,
+				out var existingAffixDeleted);
+			if (!existingAffixDeleted)
+				UpdateRegExHelperControls(nameof(SuffixOrPrefixChanged));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -313,9 +351,9 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void m_numTimesToMatch_ValueChanged(object sender, EventArgs e)
 		{
-			TextControl.TextChanged -= txtControl_TextChanged;
-			UpdateMatchCount((int)m_numTimesToMatch.Value);
-			TextControl.TextChanged += txtControl_TextChanged;
+			TextBoxControlImpl.TextChanged -= txtControl_TextChanged;
+			UpdateMatchCount((int)m_numTimesToMatch.Value, TextControl);
+			TextBoxControlImpl.TextChanged += txtControl_TextChanged;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -330,14 +368,14 @@ namespace SIL.Transcelerator
 			var selectedItemText = m_cboMatchGroup.Text;
 			if (selectedItemText == Empty)
 				return;
-			TextControl.TextChanged -= txtControl_TextChanged;
+			TextBoxControlImpl.TextChanged -= txtControl_TextChanged;
 			UpdateMatchGroup(selectedItemText);
 			int i = m_cboMatchGroup.SelectedIndex;
 			m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-			m_cboMatchGroup.Items[0] = selectedItemText != m_removeItem ? m_removeItem : Empty;
+			m_cboMatchGroup.Items[0] = selectedItemText != RemoveItem ? RemoveItem : Empty;
 			m_cboMatchGroup.SelectedIndex = i;
 			m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
-			TextControl.TextChanged += txtControl_TextChanged;
+			TextBoxControlImpl.TextChanged += txtControl_TextChanged;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -456,28 +494,30 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(m_help))
 				Process.Start(m_help);
 		}
+
+		private void m_txtMatchSuffix_Enter(object sender, EventArgs e)
+		{
+			var selectedTextInGrid = TextControl?.SelectedText;
+			if (m_txtMatchPrefix.Text.Length > 0 && selectedTextInGrid != null &&
+			    selectedTextInGrid.Equals(m_txtMatchPrefix.Text))
+			{
+				TextControl.SelectionStart += selectedTextInGrid.Length;
+				TextControl.SelectionLength = 0;
+			}
+		}
+
+		private void m_txtMatchPrefix_Enter(object sender, EventArgs e)
+		{
+			var selectedTextInGrid = TextControl?.SelectedText;
+			if (m_txtMatchSuffix.Text.Length > 0 && selectedTextInGrid != null &&
+			    selectedTextInGrid.Equals(m_txtMatchSuffix.Text))
+			{
+				TextControl.SelectionLength = 0;
+			}
+		}
 		#endregion
 
 		#region Private/protected helper methods
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Looks for a prefix or suffix expression covered, partially covered, or immediately
-		/// preceding the selected text in the edit control for the data grid view cell currently
-		/// being edited.Selects the existing prefix or suffix. If one is found, the selection
-		/// in the text box edit control is set to cover the entire expression representing the
-		/// prefix or suffix, i.e., including the regular expression marker.
-		/// </summary>
-		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
-		/// ------------------------------------------------------------------------------------
-		private void SelectExistingPrefixOrSuffix(AffixType affixType)
-		{
-			Match match = FindAffixExpression(affixType);
-			if (!match.Success)
-				return;
-			TextControl.SelectionStart = match.Index;
-			TextControl.SelectionLength = match.Length;
-		}
-
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Updates the regex preview for the given row.
@@ -558,27 +598,33 @@ namespace SIL.Transcelerator
 		/// Updates the max match count control.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void UpdateRegExHelperControls()
+		private void UpdateRegExHelperControls(string context)
 		{
 			if (m_regexMatchDropDown.Visible)
 			{
-				UpdateMaxMatchCountControl();
-				m_txtMatchPrefix.TextChanged -= SuffixOrPrefixChanged;
-				if (!m_txtMatchPrefix.Text.Equals(ExistingPrefix, StringComparison.Ordinal))
-					m_txtMatchPrefix.Text = ExistingPrefix;
-				m_txtMatchPrefix.TextChanged += SuffixOrPrefixChanged;
-				m_txtMatchSuffix.TextChanged -= SuffixOrPrefixChanged;
-				if (!m_txtMatchSuffix.Text.Equals(ExistingSuffix, StringComparison.Ordinal))
-					m_txtMatchSuffix.Text = ExistingSuffix;
-				m_txtMatchSuffix.TextChanged += SuffixOrPrefixChanged;
+				this.SafeInvoke(() =>
+				{
+					UpdateMaxMatchCountControl();
+					m_txtMatchPrefix.TextChanged -= SuffixOrPrefixChanged;
+					if (!m_txtMatchPrefix.Text.Equals(ExistingPrefix, StringComparison.Ordinal))
+						m_txtMatchPrefix.Text = ExistingPrefix;
+					m_txtMatchPrefix.TextChanged += SuffixOrPrefixChanged;
+					m_txtMatchSuffix.TextChanged -= SuffixOrPrefixChanged;
+					if (!m_txtMatchSuffix.Text.Equals(ExistingSuffix, StringComparison.Ordinal))
+						m_txtMatchSuffix.Text = ExistingSuffix;
+					m_txtMatchSuffix.TextChanged += SuffixOrPrefixChanged;
+				}, context, IgnoreAll);
 			}
-			if (m_regexReplaceDropDown.Visible)
+			else if (m_regexReplaceDropDown.Visible)
 			{
-				string sExisting = ExistingMatchGroup;
-				m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
-				m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? m_removeItem : Empty;
-				m_cboMatchGroup.SelectedIndex = m_cboMatchGroup.FindStringExact(sExisting);
-				m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
+				this.SafeInvoke(() =>
+				{
+					string sExisting = ExistingMatchGroup;
+					m_cboMatchGroup.SelectedIndexChanged -= m_cboMatchGroup_SelectedIndexChanged;
+					m_cboMatchGroup.Items[0] = sExisting.Length > 0 ? RemoveItem : Empty;
+					m_cboMatchGroup.SelectedIndex = m_cboMatchGroup.FindStringExact(sExisting);
+					m_cboMatchGroup.SelectedIndexChanged += m_cboMatchGroup_SelectedIndexChanged;
+				}, context, IgnoreAll);
 			}
 		}
 
@@ -596,25 +642,6 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Updates the match count expression currently selected (or near the selection) in the
-		/// edit control for the data grid view cell currently being edited, or inserts a new
-		/// match count expression if there isn't one already.
-		/// </summary>
-		/// <param name="numTimesToMatch">The num times to match.</param>
-		/// ------------------------------------------------------------------------------------
-		protected void UpdateMatchCount(int numTimesToMatch)
-		{
-			int insertAt = TextControl.SelectionStart;
-			string text = TextControl.Text;
-
-			TextControl.Text = SubstitutionMatchGroup.UpdateRangeMax(numTimesToMatch, text, ref insertAt,
-				TextControl.SelectionLength, out int length);;
-			TextControl.SelectionStart = insertAt;
-			TextControl.SelectionLength = length;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
 		/// Updates the match group substitution expression currently selected (or near the
 		/// selection) in the edit control for the data grid view cell currently being edited,
 		/// or inserts a new match group substitution expression if there isn't one already.
@@ -623,8 +650,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		protected void UpdateMatchGroup(string sGroup)
 		{
-			var group = sGroup == m_entireMatch ? SubstitutionMatchGroup.EntireMatch :
-				sGroup == m_removeItem ? SubstitutionMatchGroup.RemoveGroup : new SubstitutionMatchGroup(sGroup);
+			var group = sGroup == m_entireMatch ? EntireMatch :
+				sGroup == RemoveItem ? RemoveGroup : new SubstitutionMatchGroup(sGroup);
 
 			int insertAt = TextControl.SelectionStart;
 			string text = TextControl.Text;
@@ -640,7 +667,7 @@ namespace SIL.Transcelerator
 		/// Gets an array of objects that can be used to describe the regular
 		/// expression match groups found in the given expression.
 		/// </summary>
-		/// <remarks>Actually, all of the objects in the array are strings, but they are
+		/// <remarks>Actually, all the objects in the array are strings, but they are
 		/// returned as an object array because that makes the caller happier.</remarks>
 		/// ------------------------------------------------------------------------------------
 		protected object[] GetMatchGroups(string matchExpression)
@@ -649,8 +676,8 @@ namespace SIL.Transcelerator
 			{
 				switch (g.Type)
 				{
-					case SubstitutionMatchGroup.MatchGroupType.Normal: return (object)g.Group;
-					case SubstitutionMatchGroup.MatchGroupType.EntireMatch: return m_entireMatch;
+					case MatchGroupType.Normal: return (object)g.Group;
+					case MatchGroupType.EntireMatch: return m_entireMatch;
 					default: throw new ArgumentOutOfRangeException();
 				}
 			}).ToArray();
@@ -666,35 +693,6 @@ namespace SIL.Transcelerator
 		{
 			return (bool)(row.Cells[colIsRegEx.Index].Value ?? false);
 		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Gets an existing prefix or suffix (as determined by the format string) covered,
-		/// partially covered, or immediately preceding the selected text in the edit control
-		/// for the data grid view cell currently being edited.
-		/// </summary>
-		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
-		/// <returns>The (English) text portion of the prefix or suffix, i.e., without the
-		/// regular expression marker</returns>
-		/// ------------------------------------------------------------------------------------
-		private string GetExistingAffix(AffixType affixType)
-		{
-			Match match = FindAffixExpression(affixType);
-			return (match.Success) ? match.Result("$1") : Empty;
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Finds the prefix or suffix expression covered, partially covered, or immediately
-		/// preceding the selected text in the edit control for the data grid view cell
-		/// currently being edited.
-		/// </summary>
-		/// <returns>A Match object representing the regular expression for the prefix or
-		/// suffix</returns>
-		/// ------------------------------------------------------------------------------------
-		private Match FindAffixExpression(AffixType affixType) =>
-			SubstitutionMatchGroup.FindAffixExpressionAt(affixType, TextControl.Text,
-				TextControl.SelectionStart);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -717,23 +715,6 @@ namespace SIL.Transcelerator
 		{
 			bool matchCase = (bool)(row.Cells[colMatchCase.Index].Value ?? false);
 			return new Substitution(matchingPattern, replacement, IsRegEx(row), matchCase);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Replaces the currently selected text in the edit control for the data grid view cell
-		/// currently being edited.
-		/// </summary>
-		/// <param name="textToInsert">The text to insert.</param>
-		/// ------------------------------------------------------------------------------------
-		private void ReplaceSelectedTextInCurrentEditControl(string textToInsert)
-		{
-			string cellValue = TextControl.Text;
-			if (cellValue == null)
-				return;
-			cellValue = cellValue.Remove(TextControl.SelectionStart, TextControl.SelectionLength);
-			cellValue = cellValue.Insert(TextControl.SelectionStart, textToInsert);
-			TextControl.Text = cellValue;
 		}
 		#endregion
 	}

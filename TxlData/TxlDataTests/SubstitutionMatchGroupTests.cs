@@ -1,15 +1,17 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2023' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2023' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
+using System.Web.UI.WebControls;
 using NUnit.Framework;
 using static System.Int32;
+using static SIL.Transcelerator.SubstitutionMatchGroup;
 
 namespace SIL.Transcelerator
 {
@@ -41,7 +43,7 @@ namespace SIL.Transcelerator
 		[TestCase("abc{2}", 5, ExpectedResult = 2)]
 		public int GetRangeMax_GetsExpectedCount(string text, int pos)
 		{
-			return SubstitutionMatchGroup.GetRangeMax(text, pos);
+			return GetRangeMax(text, pos);
 		}
 
 		#region UpdateRangeMax tests
@@ -91,7 +93,7 @@ namespace SIL.Transcelerator
 		public string UpdateRangeMax_GetsExpectedResult(int newValue, string text, int pos,
 			int selLength, string expectedSelectedPortion, string explanation)
 		{
-			var result = SubstitutionMatchGroup.UpdateRangeMax(newValue, text, ref pos, selLength, out var length);
+			var result = UpdateRangeMax(newValue, text, ref pos, selLength, out var length);
 			Assert.That(result.Substring(pos, length), Is.EqualTo(expectedSelectedPortion), explanation);
 			return result;
 		}
@@ -142,10 +144,516 @@ namespace SIL.Transcelerator
 		public string UpdateRangeMax_GetsExpectedResultAndSelection(int newValue, string text, int pos,
 			int selLength, int expectedStart, int expectedLength, string explanation)
 		{
-			var result = SubstitutionMatchGroup.UpdateRangeMax(newValue, text, ref pos, selLength, out var length);
+			var result = UpdateRangeMax(newValue, text, ref pos, selLength, out var length);
 			Assert.That(pos, Is.EqualTo(expectedStart), explanation);
 			Assert.That(length, Is.EqualTo(expectedLength), explanation);
 			return result;
+		}
+		#endregion
+
+		#region MatchCount tests
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the text box
+		/// is empty - should do nothing.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EmptyTextBox_UpdateDoesNothing()
+		{
+			var t = new TextBoxProxy();
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.Empty);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the selection
+		/// precedes all the text in the text box - should do nothing.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_IpPrecedingText_UpdateDoesNothing()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc",
+				SelectionStart = 0,
+				SelectionLength = 0
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+
+			UpdateMatchCount(2, t);
+
+			Assert.That(t.Text, Is.EqualTo("abc"));
+			Assert.That(t.SelectionStart, Is.EqualTo(0));
+			Assert.That(t.SelectionLength, Is.EqualTo(0));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the selection
+		/// follows all the text in the text box, and there is no explicit number of occurrences
+		/// specified.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_NoExistingMatchCount_IpAtEnd()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc",
+				SelectionStart = 3,
+				SelectionLength = 0
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,2}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the all the
+		/// text in the text box is selected, and there is no explicit number of occurrences
+		/// specified.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_AllTextSelected_NoExistingMatchCount()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc",
+				SelectionStart = 0,
+				SelectionLength = 3
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,2}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the final character in the text, and
+		/// the entire expression indicating the number of matches is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_FinalExistingMatchCountExpressionSelected_NoGroup_DecrementTo1()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}",
+				SelectionStart = 3,
+				SelectionLength = 5
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(1, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc"));
+			Assert.AreEqual(3, t.SelectionStart);
+			Assert.AreEqual(0, t.SelectionLength);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the final character in the text, and
+		/// the entire expression indicating the number of matches is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_FinalExistingMatchCountExpressionSelected_NoGroup_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}",
+				SelectionStart = 3,
+				SelectionLength = 5
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the entire
+		/// text is grouped but there is no explicit number of occurrences specified for it, and
+		/// the entire text is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EntireTextGroupSelected_AddMatchCount()
+		{
+			var t = new TextBoxProxy { Text = "(abc)" };
+			t.SelectionLength = t.Text.Length;
+
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,2}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the entire range of characters in the
+		/// text, and the entire expression indicating the number of matches is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_FinalExistingMatchCountExpressionSelected_Group_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "(abc){1,2}",
+				SelectionStart = 5,
+				SelectionLength = 5
+			};
+
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the entire range of characters in the
+		/// text, and just the numerals indicating the number of matches is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_FinalExistingMatchCountNumberSelected_Group_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "(abc){1,2}",
+				SelectionStart = 6,
+				SelectionLength = 3
+			};
+
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the entire range of characters in the
+		/// text, and the entire text (including the match expression) is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EntireTextSelected_FinalExistingMatchCount_Group_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "(abc){1,2}",
+			};
+			t.SelectionLength = t.Text.Length;
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the entire range of characters in the
+		/// text, and the text (but not the match expression) is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_TextGroupSelected_FinalExistingMatchCount_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "(abc){1,2}",
+				SelectionLength = 5
+			};
+
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit number of occurrences specified for the entire range of characters in the
+		/// text, and the text of the group (but not the parentheses that enclose the group) is
+		/// selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_TextInGroupSelected_FinalExistingMatchCount_IncrementTo3()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "(abc){1,2}",
+				SelectionStart = 1,
+				SelectionLength = 3
+			};
+
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc){1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// insertion point is at the end of the string, following the second one.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EarlierExistingMatchCount_IpAtEnd_ChangeExistingMatchCount()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}def{1,3}",
+				SelectionStart = 1,
+			};
+			t.SelectionStart = t.Text.Length;
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(3));
+			
+			UpdateMatchCount(6, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,2}def{1,6}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,6}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// earlier place in the text where an explicit number of occurrences is specified, and
+		/// the insertion point is at the end of the string.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EarlierExistingMatchCount_IpAtEnd_AddMatchCount()
+		{
+			var t = new TextBoxProxy { Text = "abc{1,2}def" };
+			t.SelectionStart = t.Text.Length;
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,2}def{1,2}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// insertion point is in the text between them.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_EarlierAndLaterExistingMatchCounts_IpInMiddle_AddMatchCount()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}def{1,3}",
+				SelectionStart = 9,
+				SelectionLength = 0
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,2}d{1,2}ef{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+			Assert.AreEqual(9, t.SelectionStart);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// insertion point is before the number in first one.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_LaterExistingMatchCount_IpBeforeNumberInExistingMatchCount()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}def{1,3}",
+				SelectionStart = 4,
+				SelectionLength = 0
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,3}def{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+			Assert.AreEqual(3, t.SelectionStart);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// character to which the first one applies is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_LaterExistingMatchCount_CharacterOfExistingMatchCountSelected()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}def{1,3}",
+				SelectionStart = 3,
+				SelectionLength = 1
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,3}def{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+			Assert.AreEqual(3, t.SelectionStart);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// character and match count expression of the first one is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_LaterExistingMatchCount_CharacterAndExistingMatchCountSelected()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{1,2}def{1,3}",
+				SelectionStart = 3,
+				SelectionLength = 6
+			};
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			
+			UpdateMatchCount(3, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{1,3}def{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
+			Assert.AreEqual(3, t.SelectionStart);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there are two
+		/// places where an explicit number of occurrences are specified in the text, and the
+		/// entire text is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_TwoExistingMatchCounts_EntireTextSelected()
+		{
+			var t = new TextBoxProxy { Text = "abc{1,2}def{1,3}" };
+			t.SelectionLength = t.Text.Length;
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(1));
+			
+			UpdateMatchCount(2, t);
+			
+			Assert.That(t.Text, Is.EqualTo("(abc{1,2}def{1,3}){1,2}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,2}"));
+			Assert.AreEqual(t.Text.Length - t.SelectionLength, t.SelectionStart);
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when the selection
+		/// follows all the text in the text box, and there is an explicit range specified that
+		/// does not start at 1.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_ExistingMatchCountStartsAt2_IpAtEnd_DecrementTo99()
+		{
+			var t = new TextBoxProxy { Text = "abc{2,100}" };
+			t.SelectionStart = t.Text.Length;
+			
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(100));
+			
+			UpdateMatchCount(99, t);
+			
+			Assert.That(t.Text, Is.EqualTo("abc{2,99}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{2,99}"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests the GetExistingMatchCountValue and UpdateMatchCount methods when there is an
+		/// explicit absolute match count specified and we increment it -- should convert it to
+		/// a range.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void MatchCount_ConvertExistingAbsoluteMatchCountToRange()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = "abc{2}",
+				SelectionStart = 3,
+				SelectionLength = 3
+			};
+			Assert.That(GetExistingMatchCountValue(t), Is.EqualTo(2));
+			UpdateMatchCount(3, t);
+			Assert.That(t.Text, Is.EqualTo("abc{1,3}"));
+			Assert.That(t.SelectedText, Is.EqualTo("{1,3}"));
 		}
 		#endregion
 
@@ -162,7 +670,7 @@ namespace SIL.Transcelerator
 		[TestCase(@"Bl\b", 3)]
 		public void FindAffixExpressionAt_NoPrefixAtPos_ReturnsUnsuccessfulMatch(string text, int pos)
 		{
-			Assert.False(SubstitutionMatchGroup.FindAffixExpressionAt(AffixType.Prefix, text, pos).Success);
+			Assert.That(FindAffixExpressionAt(AffixType.Prefix, text, pos).Success, Is.False);
 		}
 
 		[TestCase("", 0)]
@@ -177,7 +685,7 @@ namespace SIL.Transcelerator
 		[TestCase(@"\bpre", 3)]
 		public void FindAffixExpressionAt_NoSuffixAtPos_ReturnsUnsuccessfulMatch(string text, int pos)
 		{
-			Assert.False(SubstitutionMatchGroup.FindAffixExpressionAt(AffixType.Suffix, text, pos).Success);
+			Assert.That(FindAffixExpressionAt(AffixType.Suffix, text, pos).Success, Is.False);
 		}
 
 		[TestCase(@"\bpre fix", 0, 0, ExpectedResult = @"\bpre")]
@@ -187,10 +695,29 @@ namespace SIL.Transcelerator
 		[TestCase(@"Bl\bah", 3, 2, ExpectedResult = @"\bah")]
 		[TestCase(@"Bl\bah", 4, 2, ExpectedResult = @"\bah")]
 		[TestCase(@"Bl\bah", 6, 2, ExpectedResult = @"\bah")]
+		[TestCase(@"\bpre\w+ful\b", 0, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpre\w+ful\b", 1, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpre\w+ful\b", 2, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpre\w+ful\b", 4, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpre\w+ful\b", 5, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpreful\b", 0, 0, ExpectedResult = @"\bpreful")]
+		[TestCase(@"\bpreful\b", 1, 0, ExpectedResult = @"\bpreful")]
+		[TestCase(@"\bpreful\b", 2, 0, ExpectedResult = @"\bpreful")]
+		[TestCase(@"\bpreful\b", 3, 0, ExpectedResult = @"\bp")]
+		[TestCase(@"\bpreful\b", 4, 0, ExpectedResult = @"\bpr")]
+		[TestCase(@"\bpreful\b", 5, 0, ExpectedResult = @"\bpre")]
+		[TestCase(@"\bpreful\b", 8, 0, ExpectedResult = @"\bpreful")]
+		[TestCase(@"er\b\s+\bpreful\b", 7, 7, ExpectedResult = @"\bpreful")]
+		[TestCase(@"er\b\s+\bpreful\b", 8, 7, ExpectedResult = @"\bpreful")]
+		[TestCase(@"er\b\s+\bpreful\b", 9, 7, ExpectedResult = @"\bpreful")]
+		[TestCase(@"er\b\s+\bpreful\b", 10, 7, ExpectedResult = @"\bp")]
+		[TestCase(@"er\b\s+\bpreful\b", 11, 7, ExpectedResult = @"\bpr")]
+		[TestCase(@"er\b\s+\bpreful\b", 12, 7, ExpectedResult = @"\bpre")]
+		[TestCase(@"er\b\s+\bpreful\b", 15, 7, ExpectedResult = @"\bpreful")]
 		public string FindAffixExpressionAt_PrefixAtPos_ReturnsSuccessfulMatch(string text, int pos,
 			int expectedIndex)
 		{
-			var match = SubstitutionMatchGroup.FindAffixExpressionAt(AffixType.Prefix, text, pos);
+			var match = FindAffixExpressionAt(AffixType.Prefix, text, pos);
 			Assert.True(match.Success);
 			Assert.That(match.Index, Is.EqualTo(expectedIndex));
 			return match.Value;
@@ -208,10 +735,27 @@ namespace SIL.Transcelerator
 		[TestCase(@"able\bah", 4, 0, ExpectedResult = @"able\b")]
 		[TestCase(@"able\bah", 5, 0, ExpectedResult = @"able\b")]
 		[TestCase(@"able\bah", 6, 0, ExpectedResult = @"able\b")]
+		[TestCase(@"\bpre\w+ful\b", 8, 8, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpre\w+ful\b", 9, 8, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpre\w+ful\b", 10, 8, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpre\w+ful\b", 11, 8, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpre\w+ful\b", 12, 8, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpreful\b", 2, 2, ExpectedResult = @"preful\b")]
+		[TestCase(@"\bpreful\b", 3, 3, ExpectedResult = @"reful\b")]
+		[TestCase(@"\bpreful\b", 5, 5, ExpectedResult = @"ful\b")]
+		[TestCase(@"\bpreful\b", 8, 2, ExpectedResult = @"preful\b")]
+		[TestCase(@"\bpreful\b", 9, 2, ExpectedResult = @"preful\b")]
+		[TestCase(@"\bpreful\b", 10, 2, ExpectedResult = @"preful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 9, 9, ExpectedResult = @"preful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 10, 10, ExpectedResult = @"reful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 12, 12, ExpectedResult = @"ful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 15, 9, ExpectedResult = @"preful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 16, 9, ExpectedResult = @"preful\b")]
+		[TestCase(@"er\b\s+\bpreful\b \w+\b", 17, 9, ExpectedResult = @"preful\b")]
 		public string FindAffixExpressionAt_SuffixAtPos_ReturnsSuccessfulMatch(string text, int pos,
 			int expectedIndex)
 		{
-			var match = SubstitutionMatchGroup.FindAffixExpressionAt(AffixType.Suffix, text, pos);
+			var match = FindAffixExpressionAt(AffixType.Suffix, text, pos);
 			Assert.True(match.Success);
 			Assert.That(match.Index, Is.EqualTo(expectedIndex));
 			return match.Value;
@@ -234,348 +778,417 @@ namespace SIL.Transcelerator
 		[TestCase(AffixType.Suffix, ExpectedResult = 0)]
 		public int GetAffixPlaceholderPosition_(AffixType affixType)
 		{
-			return SubstitutionMatchGroup.GetAffixPlaceholderPosition(affixType);
+			return GetAffixPlaceholderPosition(affixType);
 		}
 
-		// TODO: Depending on whether/how I can get the logic moved from
-		// PhraseSubstitutionDlg.SuffixOrPrefixChanged into SubstitutionMatchGroup, these tests
-		// might be able to be done here.
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests starting a new (single-character) prefix at the end of some existing text in
-		///// the text box.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_StartNewPrefixAtEndOfExistingText()
-		//{
-		//	m_textBox.Text = @"Some words ";
-		//	m_textBox.SelectionStart = m_textBox.Text.Length;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"p");
-		//	Assert.AreEqual(@"Some words \bp", m_textBox.Text);
-		//	Assert.AreEqual(@"p", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"p", m_dlg.ExistingPrefix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box is initially empty.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ExistingPrefix_EmptyTextBox()
+		{
+			var t = new TextBoxProxy();
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.Empty);
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.Empty);
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box is initially empty.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_EmptyTextBox()
-		//{
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"suf");
-		//	Assert.AreEqual(@"suf\b", m_textBox.Text);
-		//	Assert.AreEqual(@"suf", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"suf", m_dlg.ExistingSuffix);
-		//}
+			ResetTextAndSelectionForUpdatedAffix("pre", AffixType.Prefix, t, out var affixDeleted);
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting prefix when the text box initially consists of nothing but
-		///// a prefix, and the insertion point is at the start.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_EntireTextBoxIsPrefix_IpAtStart()
-		//{
-		//	m_textBox.Text = @"\bpre";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(@"pre", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"ante");
-		//	Assert.AreEqual(@"\bante", m_textBox.Text);
-		//	Assert.AreEqual(@"ante", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"ante", m_dlg.ExistingPrefix);
-		//}
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bpre"));
+			Assert.That(t.SelectedText, Is.EqualTo("pre"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box initially consists of nothing but
-		///// a suffix, and the insertion point is at the start.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_EntireTextBoxIsPrefix_IpAtStart()
-		//{
-		//	m_textBox.Text = @"suf\b";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(@"suf", m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"post");
-		//	Assert.AreEqual(@"post\b", m_textBox.Text);
-		//	Assert.AreEqual(@"post", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"post", m_dlg.ExistingSuffix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests starting a new (single-character) prefix at the end of some existing text in
+		/// the text box.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_StartNewPrefixAtEndOfExistingText()
+		{
+			var t = new TextBoxProxy {Text = "Some words "};
+			t.SelectionStart = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.Empty);
+			
+			ResetTextAndSelectionForUpdatedAffix("p", AffixType.Prefix, t, out var affixDeleted);
+			
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"Some words \bp"));
+			Assert.That(t.SelectedText, Is.EqualTo("p"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("p"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting prefix when the text box initially consists of nothing but
-		///// a prefix, and the insertion point is at the end.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_EntireTextBoxIsPrefix_IpAtEnd()
-		//{
-		//	m_textBox.Text = @"\bpre";
-		//	m_textBox.SelectionStart = m_textBox.Text.Length;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(@"pre", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"ante");
-		//	Assert.AreEqual(@"\bante", m_textBox.Text);
-		//	Assert.AreEqual(@"ante", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"ante", m_dlg.ExistingPrefix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box is initially empty.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_EmptyTextBox()
+		{
+			var t = new TextBoxProxy();
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.Empty);
+			
+			ResetTextAndSelectionForUpdatedAffix("suf", AffixType.Suffix, t, out var affixDeleted);
+			
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"suf\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("suf"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("suf"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box initially consists of nothing but
-		///// a suffix, and the insertion point is at the end.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_EntireTextBoxIsPrefix_IpAtEnd()
-		//{
-		//	m_textBox.Text = @"suf\b";
-		//	m_textBox.SelectionStart = m_textBox.Text.Length;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(@"suf", m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"post");
-		//	Assert.AreEqual(@"post\b", m_textBox.Text);
-		//	Assert.AreEqual(@"post", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"post", m_dlg.ExistingSuffix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box initially consists of nothing but
+		/// a prefix, and the insertion point is at the start.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_EntireTextBoxIsPrefix_IpAtStart()
+		{
+			var t = new TextBoxProxy {Text = @"\bpre" };
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting prefix when the text box initially consists of nothing but
-		///// a prefix, and the entire text box text is selected.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_EntireTextBoxIsPrefix_EntireTextSelected()
-		//{
-		//	m_textBox.Text = @"\bpre";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = m_textBox.Text.Length;
-		//	Assert.AreEqual(@"pre", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"ante");
-		//	Assert.AreEqual(@"\bante", m_textBox.Text);
-		//	Assert.AreEqual(@"ante", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"ante", m_dlg.ExistingPrefix);
-		//}
+			ResetTextAndSelectionForUpdatedAffix("ante", AffixType.Prefix, t, out var affixDeleted);
+			
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bante"));
+			Assert.That(t.SelectedText, Is.EqualTo("ante"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("ante"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box initially consists of nothing but
-		///// a suffix, and the entire text box text is selected.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_EntireTextBoxIsPrefix_EntireTextSelected()
-		//{
-		//	m_textBox.Text = @"suf\b";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = m_textBox.Text.Length;
-		//	Assert.AreEqual(@"suf", m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"post");
-		//	Assert.AreEqual(@"post\b", m_textBox.Text);
-		//	Assert.AreEqual(@"post", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"post", m_dlg.ExistingSuffix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box initially consists of nothing but
+		/// a suffix, and the insertion point is at the start.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_EntireTextBoxIsSuffix_IpAtStart()
+		{
+			var t = new TextBoxProxy {Text = @"suf\b" };
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("suf"));
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting prefix when the text box initially consists of multiple
-		///// words including a prefix (which is not the last thing in the text), and the insertion
-		///// point is at the end.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_EarlierPrefix_InsertNewPrefixAtEnd()
-		//{
-		//	m_textBox.Text = @"ed\b \bpre(\w+) thing ";
-		//	m_textBox.SelectionStart = m_textBox.Text.Length;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"ante");
-		//	Assert.AreEqual(@"ed\b \bpre(\w+) thing \bante", m_textBox.Text);
-		//	Assert.AreEqual(@"ante", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"ante", m_dlg.ExistingPrefix);
-		//}
+			ResetTextAndSelectionForUpdatedAffix("post", AffixType.Suffix, t, out var affixDeleted);
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box initially consists of multiple
-		///// words including a suffix (which is not the last thing in the text), and the insertion
-		///// point is at the end.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_EarlierSuffix_InsertNewSuffixAtEnd()
-		//{
-		//	m_textBox.Text = @"ed\b \bpre(\w+) thing ";
-		//	m_textBox.SelectionStart = m_textBox.Text.Length;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"post");
-		//	Assert.AreEqual(@"ed\b \bpre(\w+) thing post\b", m_textBox.Text);
-		//	Assert.AreEqual(@"post", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"post", m_dlg.ExistingSuffix);
-		//}
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"post\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("post"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("post"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting prefix when the text box initially consists of multiple
-		///// words including a prefix (which is not the first thing in the text), and the insertion
-		///// point is at the beginning.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_LaterPrefix_InsertNewPrefixAtBeginning()
-		//{
-		//	m_textBox.Text = @" ed\b \bpre(\w+) thing";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"ante");
-		//	Assert.AreEqual(@"\bante ed\b \bpre(\w+) thing", m_textBox.Text);
-		//	Assert.AreEqual(@"ante", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"ante", m_dlg.ExistingPrefix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box initially consists of nothing but
+		/// a prefix, and the insertion point is at the end.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_EntireTextBoxIsPrefix_IpAtEnd()
+		{
+			var t = new TextBoxProxy { Text = @"\bpre" };
+			t.SelectionStart = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and setting suffix when the text box initially consists of multiple
-		///// words including a suffix (which is not the first thing in the text), and the insertion
-		///// point is at the beginning.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_LaterSuffix_InsertNewSuffixAtBeginning()
-		//{
-		//	m_textBox.Text = @" \bpre(\w+) ed\b thing";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = 0;
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"post");
-		//	Assert.AreEqual(@"post\b \bpre(\w+) ed\b thing", m_textBox.Text);
-		//	Assert.AreEqual(@"post", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"post", m_dlg.ExistingSuffix);
-		//}
+			ResetTextAndSelectionForUpdatedAffix("ante", AffixType.Prefix, t, out var affixDeleted);
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and changing an existing prefix when the text box initially consists of
-		///// multiple prefixes. The middle prefix is selected and replaced by newly entered text.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_ReplacePrefixInMiddle_EntirePrefixSelected()
-		//{
-		//	m_textBox.Text = @"\bpre(\w+) \bmid(\w+) \blast";
-		//	m_textBox.SelectionStart = 11;
-		//	m_textBox.SelectionLength = 5;
-		//	Assert.AreEqual("mid", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"midd");
-		//	Assert.AreEqual(@"\bpre(\w+) \bmidd(\w+) \blast", m_textBox.Text);
-		//	m_dlg.ChangePrefix(@"middl");
-		//	Assert.AreEqual(@"\bpre(\w+) \bmiddl(\w+) \blast", m_textBox.Text);
-		//	m_dlg.ChangePrefix(@"middle");
-		//	Assert.AreEqual(@"\bpre(\w+) \bmiddle(\w+) \blast", m_textBox.Text);
-		//	Assert.AreEqual(@"middle", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"middle", m_dlg.ExistingPrefix);
-		//}
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bante"));
+			Assert.That(t.SelectedText, Is.EqualTo("ante"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("ante"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests getting and changing an existing suffix when the text box initially consists of
-		///// multiple suffixes. The middle suffix is selected and replaced by newly entered text.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_ReplaceSuffixInMiddle_EntireSuffixSelected()
-		//{
-		//	m_textBox.Text = @"post\b(\w+) (\w+)mid\b (\w+)last\b";
-		//	m_textBox.SelectionStart = 17;
-		//	m_textBox.SelectionLength = 5;
-		//	Assert.AreEqual("mid", m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"midd");
-		//	Assert.AreEqual(@"post\b(\w+) (\w+)midd\b (\w+)last\b", m_textBox.Text);
-		//	m_dlg.ChangeSuffix(@"middl");
-		//	Assert.AreEqual(@"post\b(\w+) (\w+)middl\b (\w+)last\b", m_textBox.Text);
-		//	m_dlg.ChangeSuffix(@"middle");
-		//	Assert.AreEqual(@"post\b(\w+) (\w+)middle\b (\w+)last\b", m_textBox.Text);
-		//	Assert.AreEqual(@"middle", m_textBox.SelectedText);
-		//	Assert.AreEqual(@"middle", m_dlg.ExistingSuffix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box initially consists of nothing but
+		/// a suffix, and the insertion point is at the end.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_EntireTextBoxIsSuffix_IpAtEnd()
+		{
+			var t = new TextBoxProxy { Text = @"suf\b" };
+			t.SelectionStart = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("suf"));
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests removing an existing prefix.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_RemovePrefix()
-		//{
-		//	m_textBox.Text = @"Good \bpre";
-		//	m_textBox.SelectionStart = 7;
-		//	m_textBox.SelectionLength = 3;
-		//	Assert.AreEqual("pre", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@"pr");
-		//	Assert.AreEqual(@"Good \bpr", m_textBox.Text);
-		//	m_dlg.ChangePrefix(@"p");
-		//	Assert.AreEqual(@"Good \bp", m_textBox.Text);
-		//	m_dlg.ChangePrefix(string.Empty);
-		//	Assert.AreEqual(@"Good ", m_textBox.Text);
-		//	Assert.AreEqual(string.Empty, m_textBox.SelectedText);
-		//	Assert.AreEqual(5, m_textBox.SelectionStart);
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingPrefix);
-		//}
+			ResetTextAndSelectionForUpdatedAffix("post", AffixType.Suffix, t, out var affixDeleted);
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests removing an existing suffix.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Suffix_RemoveSuffix()
-		//{
-		//	m_textBox.Text = @"ed\b here";
-		//	m_textBox.SelectionStart = 0;
-		//	m_textBox.SelectionLength = 2;
-		//	Assert.AreEqual("ed", m_dlg.ExistingSuffix);
-		//	m_dlg.ChangeSuffix(@"e");
-		//	Assert.AreEqual(@"e\b here", m_textBox.Text);
-		//	m_dlg.ChangeSuffix(string.Empty);
-		//	Assert.AreEqual(@" here", m_textBox.Text);
-		//	Assert.AreEqual(string.Empty, m_textBox.SelectedText);
-		//	Assert.AreEqual(0, m_textBox.SelectionStart);
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingSuffix);
-		//}
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"post\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("post"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("post"));
+		}
 
-		/////--------------------------------------------------------------------------------------
-		///// <summary>
-		///// Tests entering a space in the prefix text box when an existing prefix is selected.
-		///// </summary>
-		/////--------------------------------------------------------------------------------------
-		//[Test]
-		//public void Prefix_EnterWhitespaceAsPrefix()
-		//{
-		//	m_textBox.Text = @"Good \bpre";
-		//	m_textBox.SelectionStart = 7;
-		//	m_textBox.SelectionLength = 3;
-		//	Assert.AreEqual("pre", m_dlg.ExistingPrefix);
-		//	m_dlg.ChangePrefix(@" ");
-		//	Assert.AreEqual(@"Good ", m_textBox.Text);
-		//	Assert.AreEqual(string.Empty, m_textBox.SelectedText);
-		//	Assert.AreEqual(5, m_textBox.SelectionStart);
-		//	Assert.AreEqual(string.Empty, m_dlg.ExistingPrefix);
-		//}
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box initially consists of nothing but
+		/// a prefix, and the entire text box text is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_EntireTextBoxIsPrefix_EntireTextSelected()
+		{
+			var t = new TextBoxProxy { Text = @"\bpre" };
+			t.SelectionLength = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
+
+			ResetTextAndSelectionForUpdatedAffix("ante", AffixType.Prefix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bante"));
+			Assert.That(t.SelectedText, Is.EqualTo("ante"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("ante"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box initially consists of nothing but
+		/// a suffix, and the entire text box text is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_EntireTextBoxIsSuffix_EntireTextSelected()
+		{
+			var t = new TextBoxProxy { Text = @"suf\b" };
+			t.SelectionLength = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("suf"));
+
+			ResetTextAndSelectionForUpdatedAffix("post", AffixType.Suffix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"post\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("post"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("post"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box initially consists of multiple
+		/// words including a prefix (which is not the last thing in the text), and the insertion
+		/// point is at the end.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_EarlierPrefix_InsertNewPrefixAtEnd()
+		{
+			var t = new TextBoxProxy { Text = @"ed\b \bpre(\w+) thing " };
+			t.SelectionStart = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.Empty);
+
+			ResetTextAndSelectionForUpdatedAffix("ante", AffixType.Prefix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"ed\b \bpre(\w+) thing \bante"));
+			Assert.That(t.SelectedText, Is.EqualTo("ante"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("ante"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box initially consists of multiple
+		/// words including a suffix (which is not the last thing in the text), and the insertion
+		/// point is at the end.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_EarlierSuffix_InsertNewSuffixAtEnd()
+		{
+			var t = new TextBoxProxy { Text = @"ed\b \bpre(\w+) thing " };
+			t.SelectionStart = t.Text.Length;
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.Empty);
+
+			ResetTextAndSelectionForUpdatedAffix("post", AffixType.Suffix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"ed\b \bpre(\w+) thing post\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("post"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("post"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting prefix when the text box initially consists of multiple
+		/// words including a prefix (which is not the first thing in the text), and the insertion
+		/// point is at the beginning.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_LaterPrefix_InsertNewPrefixAtBeginning()
+		{
+			var t = new TextBoxProxy { Text = @" ed\b \bpre(\w+) thing" };
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.Empty);
+
+			ResetTextAndSelectionForUpdatedAffix("ante", AffixType.Prefix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bante ed\b \bpre(\w+) thing"));
+			Assert.That(t.SelectedText, Is.EqualTo("ante"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("ante"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and setting suffix when the text box initially consists of multiple
+		/// words including a suffix (which is not the first thing in the text), and the insertion
+		/// point is at the beginning.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_LaterSuffix_InsertNewSuffixAtBeginning()
+		{
+			var t = new TextBoxProxy { Text = @" \bpre(\w+) ed\b thing" };
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.Empty);
+
+			ResetTextAndSelectionForUpdatedAffix("post", AffixType.Suffix, t, out var affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"post\b \bpre(\w+) ed\b thing"));
+			Assert.That(t.SelectedText, Is.EqualTo("post"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("post"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and changing an existing prefix when the text box initially consists of
+		/// multiple prefixes. The middle prefix is selected and replaced by newly entered text.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_ReplacePrefixInMiddle_EntirePrefixSelected()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = @"\bpre(\w+) \bmid(\w+) \blast",
+				SelectionStart = 11,
+				SelectionLength = 5
+			};
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("mid"));
+
+			// Represents incremental changes during typing.
+			ResetTextAndSelectionForUpdatedAffix("midd", AffixType.Prefix, t, out var affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix("middl", AffixType.Prefix, t, out affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix("middle", AffixType.Prefix, t, out affixDeleted);
+			
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"\bpre(\w+) \bmiddle(\w+) \blast"));
+			Assert.That(t.SelectedText, Is.EqualTo("middle"));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("middle"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests getting and changing an existing suffix when the text box initially consists of
+		/// multiple suffixes. The middle suffix is selected and replaced by newly entered text.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_ReplaceSuffixInMiddle_EntireSuffixSelected()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = @"post\b(\w+) (\w+)mid\b (\w+)last\b",
+				SelectionStart = 17,
+				SelectionLength = 5
+			};
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("mid"));
+
+			// Represents incremental changes during typing.
+			ResetTextAndSelectionForUpdatedAffix("midd", AffixType.Suffix, t, out var affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix("middl", AffixType.Suffix, t, out affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix("middle", AffixType.Suffix, t, out affixDeleted);
+
+			Assert.That(affixDeleted, Is.False);
+			Assert.That(t.Text, Is.EqualTo(@"post\b(\w+) (\w+)middle\b (\w+)last\b"));
+			Assert.That(t.SelectedText, Is.EqualTo("middle"));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("middle"));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests removing an existing prefix.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_RemovePrefix()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = @"Good \bpre",
+				SelectionStart = 7,
+				SelectionLength = 3
+			};
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
+
+			// Represents incremental changes during deleting.
+			ResetTextAndSelectionForUpdatedAffix("pr", AffixType.Prefix, t, out var affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix("p", AffixType.Prefix, t, out affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix(string.Empty, AffixType.Prefix, t, out affixDeleted);
+
+			Assert.That(affixDeleted, Is.True);
+			Assert.That(t.Text, Is.EqualTo("Good "));
+			Assert.That(t.SelectedText, Is.EqualTo(string.Empty));
+			Assert.That(t.SelectionStart, Is.EqualTo(5));
+			Assert.That(t.SelectionLength, Is.EqualTo(0));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo(string.Empty));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests removing an existing suffix.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Suffix_RemoveSuffix()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = @"ed\b here",
+				SelectionStart = 0,
+				SelectionLength = 2
+			};
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo("ed"));
+
+			// Represents incremental changes during deleting.
+			ResetTextAndSelectionForUpdatedAffix("e", AffixType.Suffix, t, out var affixDeleted);
+			ResetTextAndSelectionForUpdatedAffix(string.Empty, AffixType.Suffix, t, out affixDeleted);
+
+			Assert.That(affixDeleted, Is.True);
+			Assert.That(t.Text, Is.EqualTo(" here"));
+			Assert.That(t.SelectedText, Is.EqualTo(string.Empty));
+			Assert.That(t.SelectionStart, Is.EqualTo(0));
+			Assert.That(t.SelectionLength, Is.EqualTo(0));
+			Assert.That(GetExistingAffix(AffixType.Suffix, t), Is.EqualTo(string.Empty));
+		}
+
+		///--------------------------------------------------------------------------------------
+		/// <summary>
+		/// Tests entering a space in the prefix text box when an existing prefix is selected.
+		/// </summary>
+		///--------------------------------------------------------------------------------------
+		[Test]
+		public void ResetTextAndSelectionForUpdatedAffix_Prefix_EnterWhitespaceAsPrefix()
+		{
+			var t = new TextBoxProxy
+			{
+				Text = @"Good \bpre",
+				SelectionStart = 7,
+				SelectionLength = 3
+			};
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo("pre"));
+
+			ResetTextAndSelectionForUpdatedAffix(" ", AffixType.Prefix, t, out var affixDeleted);
+			
+			Assert.That(affixDeleted, Is.True);
+			Assert.That(t.Text, Is.EqualTo("Good "));
+			Assert.That(t.SelectedText, Is.EqualTo(string.Empty));
+			Assert.That(t.SelectionStart, Is.EqualTo(5));
+			Assert.That(t.SelectionLength, Is.EqualTo(0));
+			Assert.That(GetExistingAffix(AffixType.Prefix, t), Is.EqualTo(string.Empty));
+		}
 		#endregion
 
 		#region GetMatchGroups tests
@@ -591,7 +1204,7 @@ namespace SIL.Transcelerator
 		[TestCase(@"before (?<namedGroup>why (\S+) not\?) after", "&", "1", "namedGroup")]
 		public void GetMatchGroups_GetsExpectedResults(string input, params string[] expectedMatches)
 		{
-			var results = SubstitutionMatchGroup.GetMatchGroups(input).ToList();
+			var results = GetMatchGroups(input).ToList();
 			Assert.That(results.Select(m => m.Group), Is.EquivalentTo(expectedMatches));
 		}
 		#endregion
@@ -602,9 +1215,11 @@ namespace SIL.Transcelerator
 		[TestCase("$5abc", 3)]
 		[TestCase("Wow $&", 2)]
 		[TestCase("Wow $4", 3)]
+		[TestCase("$2 a $1", 3)]
+		[TestCase("$2 a $1", 4)]
 		public void GetExistingMatchGroup_None_ReturnsNull(string text, int pos)
 		{
-			Assert.IsNull(SubstitutionMatchGroup.GetExistingMatchGroup(text, pos));
+			Assert.IsNull(GetExistingMatchGroup(text, pos));
 		}
 
 		[TestCase("$4", 0, ExpectedResult = 4)]
@@ -612,11 +1227,17 @@ namespace SIL.Transcelerator
 		[TestCase("$3", 2, ExpectedResult = 3)]
 		[TestCase("$3abc", 0, ExpectedResult = 3)]
 		[TestCase("$2abc", 1, ExpectedResult = 2)]
+		[TestCase("$2 $1", 0, ExpectedResult = 2)]
+		[TestCase("$2 $1", 1, ExpectedResult = 2)]
+		[TestCase("$2 $1", 2, ExpectedResult = 2)]
+		[TestCase("$2 $1", 3, ExpectedResult = 1)]
+		[TestCase("$2 $1", 4, ExpectedResult = 1)]
+		[TestCase("$2 $1", 5, ExpectedResult = 1)]
 		public int GetExistingMatchGroup_NumericMatchGroupAtPos_ReturnsNormalMatch(string text,
 			int pos)
 		{
-			var match = SubstitutionMatchGroup.GetExistingMatchGroup(text, pos);
-			Assert.That(match.Type, Is.EqualTo(SubstitutionMatchGroup.MatchGroupType.Normal));
+			var match = GetExistingMatchGroup(text, pos);
+			Assert.That(match.Type, Is.EqualTo(MatchGroupType.Normal));
 			return Parse(match.Group);
 		}
 
@@ -634,8 +1255,8 @@ namespace SIL.Transcelerator
 		public string GetExistingMatchGroup_NamedMatchGroupAtPos_ReturnsNormalMatch(string text,
 			int pos)
 		{
-			var match = SubstitutionMatchGroup.GetExistingMatchGroup(text, pos);
-			Assert.That(match.Type, Is.EqualTo(SubstitutionMatchGroup.MatchGroupType.Normal));
+			var match = GetExistingMatchGroup(text, pos);
+			Assert.That(match.Type, Is.EqualTo(MatchGroupType.Normal));
 			return match.Group;
 		}
 
@@ -648,8 +1269,8 @@ namespace SIL.Transcelerator
 		public void GetExistingMatchGroup_MatchGroupIsEntireMatch_ReturnsEntireMatch(string text,
 			int pos)
 		{
-			var match = SubstitutionMatchGroup.GetExistingMatchGroup(text, pos);
-			Assert.That(match, Is.EqualTo(SubstitutionMatchGroup.EntireMatch));
+			var match = GetExistingMatchGroup(text, pos);
+			Assert.That(match, Is.EqualTo(EntireMatch));
 		}
 		#endregion
 
@@ -699,7 +1320,7 @@ namespace SIL.Transcelerator
 			string caseDescription)
 		{
 			int pos = text.Length;
-			var result = SubstitutionMatchGroup.RemoveGroup.UpdateMatchGroup(text, ref pos, 0,
+			var result = RemoveGroup.UpdateMatchGroup(text, ref pos, 0,
 				out int newSelLength);
 			Assert.AreEqual(result.Length, pos, caseDescription);
 			Assert.AreEqual(0, newSelLength, caseDescription);
@@ -735,7 +1356,7 @@ namespace SIL.Transcelerator
 		public string UpdateMatchGroup_Remove_InsertsNewNumericMatchGroup(
 			string text, int pos, int charsSelected, int expectedNewPos, string caseDescription)
 		{
-			var result = SubstitutionMatchGroup.RemoveGroup.UpdateMatchGroup(text, ref pos,
+			var result = RemoveGroup.UpdateMatchGroup(text, ref pos,
 				charsSelected, out int newSelLength);
 			Assert.AreEqual(expectedNewPos, pos, caseDescription);
 			Assert.AreEqual(0, newSelLength, caseDescription);
@@ -748,7 +1369,7 @@ namespace SIL.Transcelerator
 			int pos = 5;
 			Assert.That(() =>
 			{
-				SubstitutionMatchGroup.RemoveGroup.UpdateMatchGroup("$& My frog soup", ref pos,
+				RemoveGroup.UpdateMatchGroup("$& My frog soup", ref pos,
 					2, out _);
 			}, Throws.InvalidOperationException);
 		}
