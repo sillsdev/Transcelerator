@@ -140,7 +140,7 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		private bool DragAndDropDisabled => !m_host.UserSettings.IsDragAndDropEnabled;
+		private bool DragAndDropEnabled => m_host.UserSettings.IsDragAndDropEnabled;
 
 		private PhraseTranslationHelper.KeyTermFilterType CheckedKeyTermFilterType
 		{
@@ -349,6 +349,10 @@ namespace SIL.Transcelerator
 				mnuGenerate.Enabled = false;
 
 			TermRenderingCtrl.AppName = m_host.ApplicationName;
+			
+			// TODO: Implement drag and drop handlers that would make it possible to drag and drop
+			// from one cell to another.
+			//dataGridUns.AllowDrop = DragAndDropEnabled;
 		}
 
 		private Task HandleWriteLockReleased(DataFileAccessor.DataFileId fileType)
@@ -1071,7 +1075,7 @@ namespace SIL.Transcelerator
 				if (dataGridUns.IsCurrentCellInEditMode)
 					m_translationEditWasCommitted = false;
 			}
-			else if (e.RowIndex != m_lastTranslationSet)
+			if (e.RowIndex != m_lastTranslationSet)
 				m_lastTranslationSet = -1;
 		}
 
@@ -2505,11 +2509,15 @@ namespace SIL.Transcelerator
 				return;
 
 			TextControl.UseWaitCursor = TextControl.Parent.UseWaitCursor = false;
-			TextControl.AllowDrop = true;
-			TextControl.DragDrop += TextControl_DragDrop;
-			TextControl.DragEnter += TextControl_Drag;
-			TextControl.DragOver += TextControl_Drag;
-			TextControl.GiveFeedback += TextControl_GiveFeedback;
+			if (DragAndDropEnabled)
+			{
+				TextControl.AllowDrop = true;
+				TextControl.DragDrop += TextControl_DragDrop;
+				TextControl.DragEnter += TextControl_Drag;
+				TextControl.DragOver += TextControl_Drag;
+				//TextControl.GiveFeedback += TextControl_GiveFeedback;
+			}
+
 			TextControl.PreviewKeyDown += txtControl_PreviewKeyDown;
 		}
 
@@ -2550,10 +2558,12 @@ namespace SIL.Transcelerator
 			if (TextControl != null)
 			{
 				TextControl.PreviewKeyDown -= txtControl_PreviewKeyDown;
+				// Intentionally unsubscribe unconditionally. Even if drag/drop is now disabled,
+				// it might have been enabled before, so these subscriptions could exist.
 				TextControl.DragEnter -= TextControl_Drag;
 				TextControl.DragOver -= TextControl_Drag;
 				TextControl.DragDrop -= TextControl_DragDrop;
-				TextControl.GiveFeedback -= TextControl_GiveFeedback;
+				//TextControl.GiveFeedback -= TextControl_GiveFeedback;
 			}
 		}
 
@@ -3195,7 +3205,7 @@ namespace SIL.Transcelerator
 
 						// If we're already on a question for the current reference, we only
 						// want to change to a different one if we are currently on an
-						// overview question and we're able to find a detail question for the
+						// overview question and are able to find a detail question for the
 						// new reference.
 						detailOnly = true;
 					}
@@ -3308,7 +3318,7 @@ namespace SIL.Transcelerator
 		}
 		#endregion
 
-		#region Drag-drop stuff
+		#region Drag-drop/zoom stuff
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Catch a left-mouse down in selected text when translation is being edited to
@@ -3317,7 +3327,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public bool PreFilterMessage(ref Message m)
 		{
-			if (m.Msg == (int)Msg.WM_LBUTTONDOWN &&
+			if (m.Msg == (int)Msg.WM_LBUTTONDOWN && DragAndDropEnabled &&
 				IsPointInSelectedTextInTranslationEditingControl(MousePosition))
 			{
 				// We support both move and copy, but we don't need to handle the result because
@@ -3393,8 +3403,8 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void TextControl_Drag(object sender, DragEventArgs e)
 		{
-			if ((e.AllowedEffect & (DragDropEffects.Move)) > 0 &&
-				(e.Data.GetDataPresent(DataFormats.StringFormat, false)))
+			if ((e.AllowedEffect & DragDropEffects.Move) > 0 &&
+			    e.Data.GetDataPresent(DataFormats.StringFormat, false))
 			{
 				// For now, we can safely assume that any "string" that
 				// allows move is originating in the same TextControl because any
@@ -3403,41 +3413,29 @@ namespace SIL.Transcelerator
 				// moving string data.
 				e.Effect = DragDropEffects.Move;
 			}
-			else if ((e.AllowedEffect & (DragDropEffects.Copy)) > 0 &&
+			else if ((e.AllowedEffect & DragDropEffects.Copy) > 0 &&
 				(e.Data.GetDataPresent(DataFormats.StringFormat, false) ||
 				e.Data.GetDataPresent(DataFormats.UnicodeText, false) ||
 				e.Data.GetDataPresent(DataFormats.Text, false)))
 			{
 				e.Effect = DragDropEffects.Copy;
 			}
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Handles GiveFeedback event to show the user where the text will be dropped.
-		/// </summary>
-		/// ------------------------------------------------------------------------------------
-		void TextControl_GiveFeedback(object sender, GiveFeedbackEventArgs e)
-		{
-			if (DragAndDropDisabled && e.Effect == DragDropEffects.Move)
+			else
 			{
-				e.UseDefaultCursors = false;
+				e.Effect = DragDropEffects.None;
+				Cursor.Current = Cursors.No;
 			}
-			//var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(MousePosition));
-
-			//if (e.Effect == DragDropEffects.Move && TextControl.SelectionLength > 0 &&
-			//	ichInsert >= TextControl.SelectionStart &&
-			//	ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
-			//{
-			//	// Dropping selected text onto itself just removes the selection.
-			//	e.UseDefaultCursors = false; // TODO: This doesn't do anything!
-			//	return;
-			//}
-			//e.UseDefaultCursors = true;
-			//// TODO: Need to return early (just do default behavior) if not over the TextControl
-			//// TODO: Draw special insertion point to show where dropped text would go.
-			//Debug.WriteLine("Insert position: " + ichInsert);
 		}
+
+		///// ------------------------------------------------------------------------------------
+		///// <summary>
+		///// Handles GiveFeedback event to show the user where the text will be dropped.
+		///// </summary>
+		///// ------------------------------------------------------------------------------------
+		//void TextControl_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+		//{
+		// TODO: Implement this to show the user where the text will be dropped.
+		//}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -3446,27 +3444,22 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void TextControl_DragDrop(object sender, DragEventArgs e)
 		{
-			var ichInsert = TextControl.GetCharIndexFromPosition(TextControl.PointToClient(new Point(e.X, e.Y)));
+			var ichInsert = GetDropInsertionPoint(e);
 
-			if (DragAndDropDisabled)
-			{
-				TextControl.SelectionStart = ichInsert;
-				TextControl.SelectionLength = 0;
+			if (e.Effect == DragDropEffects.None)
 				return;
-			}
 
-			bool fMove = e.Effect == DragDropEffects.Move;
-
-			if ((fMove || e.Effect == DragDropEffects.Copy) &&
-				(e.Data.GetDataPresent(DataFormats.StringFormat, false) ||
-				e.Data.GetDataPresent(DataFormats.UnicodeText, false) ||
-				e.Data.GetDataPresent(DataFormats.Text, false)))
+			try
 			{
-				string text = ((string)e.Data.GetData(DataFormats.StringFormat));
+				var text = (string)e.Data.GetData(DataFormats.StringFormat) ??
+				              (string)e.Data.GetData(DataFormats.UnicodeText) ??
+				              (string)e.Data.GetData(DataFormats.Text);
 
-				if (fMove && TextControl.SelectionLength > 0 &&
-					ichInsert >= TextControl.SelectionStart &&
-					ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
+				var fMove = e.Effect == DragDropEffects.Move;
+				if ( fMove &&
+				    TextControl.SelectionLength > 0 &&
+				    ichInsert >= TextControl.SelectionStart &&
+				    ichInsert <= TextControl.SelectionStart + TextControl.SelectionLength)
 				{
 					// Don't try to move selected text onto itself. Instead, just remove selection.
 					// This allows a simple click to behave properly.
@@ -3475,31 +3468,60 @@ namespace SIL.Transcelerator
 					return;
 				}
 
-				if (text.Length > 0)
+				if (text?.Length > 0)
 				{
 					var textBefore = TextControl.Text.Substring(0, ichInsert);
 					var textAfter = TextControl.Text.Substring(ichInsert);
-					var removeStart = TextControl.SelectionStart;
-					var removeLen = TextControl.SelectionLength;
-					if (ichInsert <= removeStart)
-						removeStart += text.Length;
-					else // post-adjust the insert location 
-						ichInsert -= text.Length;
-					TextControl.Text = textBefore + text + textAfter;
-					if (removeLen > 0)
+					if (fMove)
 					{
-						// We need to handle removal of originally selected text because
-						// the code where the drag-drop originates assumes we will. (It
-						// treats any copy/move as a copy because we don't want dragging
-						// from TXL to Word, for example, to result in a move.)
-						TextControl.Text = TextControl.Text.Remove(removeStart, removeLen);
-						// Now select the moved text
-						TextControl.SelectionStart = ichInsert;
-						TextControl.SelectionLength = text.Length;
+						var removeStart = TextControl.SelectionStart;
+						var removeLen = TextControl.SelectionLength;
+						if (ichInsert <= removeStart)
+							removeStart += text.Length;
+						else // post-adjust the insert location 
+							ichInsert -= text.Length;
+						TextControl.Text = textBefore + text + textAfter;
+						if (removeLen > 0)
+						{
+							// If we're moving text within a text control, we need to
+							// handle removal of originally selected text.
+							TextControl.Text = TextControl.Text.Remove(removeStart, removeLen);
+						}
 					}
+					else
+						TextControl.Text = textBefore + text + textAfter;
+
+					// Finally, select the copied/moved text
+					TextControl.SelectionStart = ichInsert;
+					TextControl.SelectionLength = text.Length;
+					TextControl.Focus();
 				}
 			}
+			finally
+			{
+				e.Effect = DragDropEffects.None;
+			}
 		}
+
+		private int GetDropInsertionPoint(DragEventArgs e)
+		{
+			var dropPoint = TextControl.PointToClient(new Point(e.X, e.Y));
+			var ichInsert = TextControl.GetCharIndexFromPosition(dropPoint);
+
+			// Since the above will never give the index beyond the end of the text,
+			// an extra check is needed to handle that case.
+			if (ichInsert == TextControl.TextLength - 1)
+			{
+				// Get the screen location just past the last character
+				var endPoint = TextControl.GetPositionFromCharIndex(TextControl.TextLength);
+				// If the drop point is beyond the end of text, force insert at the end
+				if (dropPoint.Y > endPoint.Y || (dropPoint.Y == endPoint.Y && dropPoint.X > endPoint.X))
+					ichInsert = TextControl.TextLength;
+			}
+
+			return ichInsert;
+		}
+
 		#endregion
 
 		public void ShowAddRenderingDlg(Action<string, string> addRendering)

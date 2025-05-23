@@ -625,18 +625,18 @@ IF NOT "$(ConfigurationName)" == "Debug - Copy To Paratext" goto release
 IF "%25ParatextInstallDir%25" == "" goto copytoparatext
 IF NOT EXIST "%25ParatextInstallDir%25" goto copytoparatext
 
-robocopy $(TargetDir) "%25ParatextInstallDir%25plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
+robocopy $(TargetDir) "%25ParatextInstallDir%25\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 @REM Remove files we know are not needed:
-IF EXIST "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll" del "%25ParatextInstallDir%25plugins\$(ProjectName)\$(TargetName).dll"
+IF EXIST "%25ParatextInstallDir%25\plugins\$(ProjectName)\$(TargetName).dll" del "%25ParatextInstallDir%25\plugins\$(ProjectName)\$(TargetName).dll"
 
-robocopy $(TargetDir)lib\win-x64 "%25ParatextInstallDir%25plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
+robocopy $(TargetDir)lib\win-x64 "%25ParatextInstallDir%25\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
-robocopy $(TargetDir)runtimes\win-x64\native "%25ParatextInstallDir%25plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
+robocopy $(TargetDir)runtimes\win-x64\native "%25ParatextInstallDir%25\plugins\$(ProjectName)" *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
-robocopy $(TargetDir)..\..\..\..\DistFiles "%25ParatextInstallDir%25plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /np
+robocopy $(TargetDir)..\..\..\..\DistFiles "%25ParatextInstallDir%25\plugins\$(ProjectName)" /S *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
-robocopy "$(TargetDir)..\..\..\..\Docs\Help Topics" "%25ParatextInstallDir%25plugins\$(ProjectName)\docs" /S *.* /R:0 /NFL /NDL /np
+robocopy "$(TargetDir)..\..\..\..\Docs\Help Topics" "%25ParatextInstallDir\%25plugins\$(ProjectName)\docs" /S *.* /R:0 /NFL /NDL /np
 if %25ERRORLEVEL%25 GEQ 8 goto failed
 goto done
 
