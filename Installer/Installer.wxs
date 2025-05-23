@@ -142,9 +142,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <File Id="Sovran.NET.dll_P9" ShortName="sovran9.dll" KeyPath="yes" Name="Sovran.NET.dll" />
           </Component>
           <Component Guid="*">
-            <File Id="Analytics.dll_P9" ShortName="t9a1cxl9.dll" KeyPath="yes" Name="Analytics.dll" />
-          </Component>
-          <Component Guid="*">
             <File Id="DesktopAnalytics.dll_P9" ShortName="avcjefr2.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
           </Component>
           <Component Guid="*">
@@ -189,12 +186,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
           <!-- End ICU -->
           <Component Guid="*">
             <File Id="SIL.Windows.Forms.Keyboarding.dll_P9" ShortName="tp04hoif.dll" KeyPath="yes" Name="SIL.Windows.Forms.Keyboarding.dll" />
-          </Component>
-          <Component Guid="*">
-            <File Id="Keyman7Interop.dll_P9" ShortName="t39ghpsp.dll" KeyPath="yes" Name="Keyman7Interop.dll" />
-          </Component>
-          <Component Guid="*">
-            <File Id="Keyman10Interop.dll_P9" ShortName="j7kojtod.dll" KeyPath="yes" Name="Keyman10Interop.dll" />
           </Component>
           <Component Guid="*">
             <File Id="KeymanLink.dll_P9" ShortName="w2zqsf2z.dll" KeyPath="yes" Name="KeymanLink.dll" />
@@ -285,9 +276,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
             <File Id="Sovran.NET.dll_P9Beta" ShortName="sovran9b.dll" KeyPath="yes" Name="Sovran.NET.dll" />
           </Component>
           <Component Guid="*">
-                <File Id="Analytics.dll_P9Beta" ShortName="q934y2pn.dll" KeyPath="yes" Name="Analytics.dll" />
-          </Component>
-          <Component Guid="*">
                 <File Id="DesktopAnalytics.dll_P9Beta" ShortName="mcmisnhb.dll" KeyPath="yes" Name="DesktopAnalytics.dll" />
           </Component>
           <Component Guid="*">
@@ -335,14 +323,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
           <Component Guid="*">
             <File Id="SIL.Windows.Forms.Keyboarding.dll_P9Beta" ShortName="ww6bl0mp.dll" KeyPath="yes"
               Name="SIL.Windows.Forms.Keyboarding.dll" />
-          </Component>
-          <Component Guid="*">
-            <File Id="Keyman7Interop.dll_P9Beta" ShortName="nzigjt0r.dll" KeyPath="yes"
-              Name="Keyman7Interop.dll" />
-          </Component>
-          <Component Guid="*">
-            <File Id="Keyman10Interop.dll_P9Beta" ShortName="qg4vzhs4.dll" KeyPath="yes"
-              Name="Keyman10Interop.dll" />
           </Component>
           <Component Guid="*">
             <File Id="KeymanLink.dll_P9Beta" ShortName="61vu4sus.dll" KeyPath="yes"
