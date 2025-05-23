@@ -11,16 +11,23 @@ using System.Windows.Forms;
 
 namespace SIL.Transcelerator
 {
-	public class TextBoxWrapper<T> : ITextWithSelection where T : TextBoxBase
+	/// -------------------------------------------------------------------------------------------
+	/// <summary>
+	/// Thin wrapper for a Windows TextBox to allow it to be used as an implementation of
+	/// ITextWithSelection. This is simply to facilitate testing of
+	/// <see cref="SubstitutionMatchGroup"/> in a UI-agnostic way.
+	/// </summary>
+	/// -------------------------------------------------------------------------------------------
+	public class TextBoxWrapper : ITextWithSelection
 	{
-		private readonly T m_textBoxControl;
+		private readonly TextBoxBase m_textBoxControl;
 
-		public TextBoxWrapper(T textBoxControl)
+		public TextBoxWrapper(TextBoxBase textBoxControl)
 		{
 			m_textBoxControl = textBoxControl;
 		}
 
-		public T Control => m_textBoxControl;
+		public TextBoxBase Control => m_textBoxControl;
 
 		public string Text
 		{

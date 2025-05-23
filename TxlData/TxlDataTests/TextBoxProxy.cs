@@ -11,6 +11,21 @@ using System;
 
 namespace SIL.Transcelerator
 {
+	/// -------------------------------------------------------------------------------------------
+	/// <summary>
+	/// Test implementation (mimicking the behavior of a Windows TextBox) of ITextWithSelection.
+	/// This facilitates testing of <see cref="SubstitutionMatchGroup"/>
+	/// (<see cref="SubstitutionMatchGroupTests"/>) without depending on Windows Forms (or other UI
+	/// implementation).
+	/// </summary>
+	/// <remarks>If/when some future UI toolkit/widget is used in place of Windows Forms, it would
+	/// be worth verifying that this class behaves in a way that serves as an adequate proxy for
+	/// that environment as well. It would need to be wrapped to adapt it to the interface, so it
+	/// wouldn't matter if its native members were named differently, but if its actual behavior
+	/// were fundamentally different, that could mean that agnostic methods would not actually
+	/// work.
+	/// </remarks>
+	/// -------------------------------------------------------------------------------------------
 	public class TextBoxProxy : ITextWithSelection
 	{
 		private int m_selectionStart;

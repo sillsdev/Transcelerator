@@ -39,7 +39,7 @@ namespace SIL.Transcelerator
 			get => m_textBoxControlImpl;
 			set
 			{
-				TextControl = value == null ? null : new TextBoxWrapper<TextBoxBase>(value);
+				TextControl = value == null ? null : new TextBoxWrapper(value);
 				m_textBoxControlImpl = value;
 			}
 		}

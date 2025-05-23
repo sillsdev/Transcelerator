@@ -8,7 +8,6 @@
 #endregion
 // ---------------------------------------------------------------------------------------------
 using System.Linq;
-using System.Web.UI.WebControls;
 using NUnit.Framework;
 using static System.Int32;
 using static SIL.Transcelerator.SubstitutionMatchGroup;
