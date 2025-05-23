@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2023' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2023' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -9,9 +9,11 @@
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.String;
+using static System.Text.RegularExpressions.RegexOptions;
 
 namespace SIL.Transcelerator
 {
@@ -42,7 +44,7 @@ namespace SIL.Transcelerator
 		private static readonly Regex s_matchSubstGroup = new Regex(@"\$((?<numeric>(\d+)|&)|(\{(?<named>\w[a-zA-Z_0-9]*)\}))");
 		private const string kMatchPrefix = @"\b{0}";
 		private const string kMatchSuffix = @"{0}\b";
-		public const string kContiguousLettersMatchExpr = @"(\w+)";
+		public const string kContiguousLettersMatchExpr = @"(?<!\\)(\w+)";
 		public static SubstitutionMatchGroup EntireMatch { get; } = new SubstitutionMatchGroup {
 			Type = MatchGroupType.EntireMatch, Group = "&"};
 		public static SubstitutionMatchGroup RemoveGroup { get; } = new SubstitutionMatchGroup {
@@ -84,8 +86,118 @@ namespace SIL.Transcelerator
 		#region Public methods
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Looks for a prefix or suffix expression covered, partially covered, or immediately
+		/// preceding the selected text. If one is found, the selection is set to cover the
+		/// entire expression representing the prefix or suffix, i.e., including the regular
+		/// expression marker.
+		/// </summary>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// ------------------------------------------------------------------------------------
+		public static void ResetTextAndSelectionForUpdatedAffix(string sText, AffixType affixType,
+			ITextWithSelection selectableText, out bool existingAffixDeleted)
+		{
+			sText = sText.Trim();
+			if (sText.Length == 0)
+			{
+				Match match = FindAffixExpression(affixType, selectableText);
+				if (match.Success)
+				{
+					selectableText.Text = match.Result("$`$'");
+					selectableText.SelectionStart = match.Index;
+					selectableText.SelectionLength = 0;
+				}
+
+				existingAffixDeleted = true;
+				return;
+			}
+			SelectExistingPrefixOrSuffix(affixType, selectableText);
+			int selRestore = selectableText.SelectionStart + GetAffixPlaceholderPosition(affixType);
+			ReplaceSelectedText(FormatAffix(affixType, sText), selectableText);
+			selectableText.SelectionStart = selRestore;
+			selectableText.SelectionLength = sText.Length;
+			existingAffixDeleted = false;
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Looks for a prefix or suffix expression covered, partially covered, or immediately
+		/// preceding the selected text. If one is found, the selection is set to cover the
+		/// entire expression representing the prefix or suffix, i.e., including the regular
+		/// expression marker.
+		/// </summary>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// ------------------------------------------------------------------------------------
+		public static void SelectExistingPrefixOrSuffix(AffixType affixType,
+			ITextWithSelection selectableText)
+		{
+			Match match = FindAffixExpression(affixType, selectableText);
+			if (!match.Success)
+				return;
+			selectableText.SelectionStart = match.Index;
+			selectableText.SelectionLength = match.Length;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Replaces the currently selected text.
+		/// </summary>
+		/// <param name="textToInsert">The text to insert.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// ------------------------------------------------------------------------------------
+		public static void ReplaceSelectedText(string textToInsert,
+			ITextWithSelection selectableText)
+		{
+			string cellValue = selectableText.Text;
+			if (cellValue == null)
+				return;
+			cellValue = cellValue.Remove(selectableText.SelectionStart, selectableText.SelectionLength);
+			cellValue = cellValue.Insert(selectableText.SelectionStart, textToInsert);
+			selectableText.Text = cellValue;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets an existing prefix or suffix (as determined by the format string) covered,
+		/// partially covered, or immediately preceding the selected text.
+		/// </summary>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// <returns>The (English) text portion of the prefix or suffix, i.e., without the
+		/// regular expression marker</returns>
+		/// ------------------------------------------------------------------------------------
+		public static string GetExistingAffix(AffixType affixType, ITextWithSelection selectableText)
+		{
+			Match match = FindAffixExpression(affixType, selectableText);
+			return match.Success ? match.Result("$1") : Empty;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Finds the prefix or suffix expression covered, partially covered, or immediately
-		/// preceding the given position in the text.
+		/// preceding the selected text.
+		/// </summary>
+		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// <returns>A Match object representing the regular expression for the prefix or
+		/// suffix</returns>
+		/// ------------------------------------------------------------------------------------
+		public static Match FindAffixExpression(AffixType affixType,
+			ITextWithSelection selectableText)
+		{
+			int pos = affixType == AffixType.Suffix ? selectableText.SelectionStart :
+				selectableText.SelectionStart + selectableText.SelectionLength;
+			return FindAffixExpressionAt(affixType, selectableText.Text, pos);
+		}
+		
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Finds the prefix or suffix expression covered, partially covered, or immediately
+		/// preceding the given position in the text. If the position is in some text that
+		/// ambiguously defines something that could be a prefix and/or suffix, the prefix will be
+		/// considered as the portion preceding <paramref name="pos"/> and the suffix will be the
+		/// portion following.
 		/// </summary>
 		/// <param name="affixType">Value indicating whether to look for a prefix or suffix.</param>
 		/// <param name="text">Test to search</param>
@@ -95,10 +207,44 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		public static Match FindAffixExpressionAt(AffixType affixType, string text, int pos)
 		{
-			var format = GetAffixFormat(affixType);
-			var matchPattern = new Regex(Format(format.Replace(@"\b", @"\\b"),
-				kContiguousLettersMatchExpr));
-			return FindMatchPatternAt(matchPattern, text, pos);
+			const int lengthOfWordBreakExpression = 2; // (i.e., length of `\b`)
+			var format = GetAffixFormat(affixType).Replace(@"\b", @"\\b");
+			var regex = new Regex(Format(format, kContiguousLettersMatchExpr), Compiled);
+			var match = FindMatchPatternAt(regex, text, pos);
+
+			if (!match.Success)
+				return Match.Empty;
+
+			if (affixType == AffixType.Prefix)
+			{
+				// But if we're in the middle of this potential prefix and the following portion is
+				// a valid suffix, then adjust to get only the preceding part.
+				if (pos > match.Index + lengthOfWordBreakExpression && text.Length > pos)
+				{
+					var suffixMatch = FindAffixExpressionAt(AffixType.Suffix, text.Substring(pos), 0);
+					if (suffixMatch.Success)
+					{
+						Debug.Assert(suffixMatch.Index == 0);
+						match = regex.Match(text, match.Index, pos - match.Index);
+					}
+				}
+			}
+			else if (affixType == AffixType.Suffix)
+			{
+				// But if we're in the middle of this potential suffix and the preceding portion is
+				// a valid prefix, then adjust to get only the following part.
+				if (pos > 0 && pos < match.Index + match.Length - lengthOfWordBreakExpression)
+				{
+					var prefixMatch = FindAffixExpressionAt(AffixType.Prefix, text.Substring(0, pos), pos);
+					if (prefixMatch.Success)
+					{
+						Debug.Assert(prefixMatch.Index == match.Index - lengthOfWordBreakExpression);
+						match = regex.Match(text, pos);
+					}
+				}
+			}
+
+			return match;
 		}
 
 		public static string FormatAffix(AffixType affixType, string text)
@@ -113,9 +259,20 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the match count value from the expression covered, partially covered, or
+		/// immediately preceding the selected text. If there is no explicit match count
+		/// expression, then this returns 1.
+		/// </summary>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// ------------------------------------------------------------------------------------
+		public static int GetExistingMatchCountValue(ITextWithSelection selectableText) =>
+			GetRangeMax(selectableText.Text, selectableText.SelectionStart);
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the maximum match count value from the range expression at, containing or
 		/// immediately preceding the given position in the text. If no range
-		/// expression is a the given position or that covers the character at that position,
+		/// expression is at the given position or that covers the character at that position,
 		/// then 1 is returned (since that is the default max number of matches).
 		/// </summary>
 		/// <param name="text">Text to search</param>
@@ -125,7 +282,6 @@ namespace SIL.Transcelerator
 		{
 			var match = GetMatchForRangeExpression(text, pos);
 			return match.Success? int.Parse(match.Result("${maxMatches}")) : 1;
-
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -165,18 +321,16 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the match group, if any, from the expression covered, partially covered, or
-		/// immediately preceding the selected text in the edit control for the data grid view
-		/// cell currently being edited. If there is no match group expression, then this
-		/// returns an empty string. Intended to be used only when the current column is the
-		/// "Replacement" column.
+		/// Gets the match group, if any, from the replacement expression containing or preceding
+		/// the given position. If there is no match group expression there, then this returns an
+		/// empty string.
 		/// </summary>
-		/// <param name="text">Text to search</param>
+		/// <param name="replacementExpr">Replacement expression to search</param>
 		/// <param name="pos">Character position in text to look for the affix expression</param>
 		/// ------------------------------------------------------------------------------------
-		public static SubstitutionMatchGroup GetExistingMatchGroup(string text, int pos)
+		public static SubstitutionMatchGroup GetExistingMatchGroup(string replacementExpr, int pos)
 		{
-			Match match = FindMatchPatternAt(s_matchSubstGroup, text, pos);
+			Match match = FindMatchPatternAt(s_matchSubstGroup, replacementExpr, pos);
 			if (!match.Success)
 				return null;
 			string group = match.Result("${numeric}${named}");
@@ -186,7 +340,7 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets a list of strings that can be used to describe the regular expression match
-		/// groups found in the given expression. Note the the "entire match" group will
+		/// groups found in the given expression. Note that the "entire match" group will
 		/// always be the first entry in the returned array.
 		/// </summary>
 		/// <param name="matchExpression">RegEx pattern from which to harvest the match groups
@@ -238,7 +392,7 @@ namespace SIL.Transcelerator
 			{
 				if (Type != MatchGroupType.Remove)
 				{
-					text = match.Result(@"$`$$");
+					text = match.Result("$`$$");
 					insertAt = text.Length;
 
 					if (!IsNumberedGroup && Type != MatchGroupType.EntireMatch)
@@ -288,6 +442,25 @@ namespace SIL.Transcelerator
 			}
 
 			return text;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Updates the match count expression currently selected (or near the selection), or
+		/// inserts a new match count expression if there isn't one already.
+		/// </summary>
+		/// <param name="numTimesToMatch">The num times to match.</param>
+		/// <param name="selectableText">Text source that supports selection</param>
+		/// ------------------------------------------------------------------------------------
+		public static void UpdateMatchCount(int numTimesToMatch, ITextWithSelection selectableText)
+		{
+			var insertAt = selectableText.SelectionStart;
+			var text = selectableText.Text;
+
+			selectableText.Text = UpdateRangeMax(numTimesToMatch, text, ref insertAt,
+				selectableText.SelectionLength, out int length);
+			selectableText.SelectionStart = insertAt;
+			selectableText.SelectionLength = length;
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -308,6 +308,7 @@
     <Compile Include="AddRenderingDlg.Designer.cs">
       <DependentUpon>AddRenderingDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextBoxWrapper.cs" />
     <Compile Include="VariantQuestionInfoDlg.cs">
       <SubType>Form</SubType>
     </Compile>
