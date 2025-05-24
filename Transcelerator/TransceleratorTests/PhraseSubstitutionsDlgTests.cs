@@ -9,6 +9,7 @@
 // ---------------------------------------------------------------------------------------------
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using L10NSharp;
 using NUnit.Framework;
 
 namespace SIL.Transcelerator
@@ -56,6 +57,12 @@ namespace SIL.Transcelerator
 		#endregion
 
 		#region Setup and Teardown
+		[OneTimeSetUp]
+		public void FixtureSetup()
+		{
+			LocalizationManager.StrictInitializationMode = false;
+		}
+		
 		[SetUp]
 		public void Setup()
 		{
