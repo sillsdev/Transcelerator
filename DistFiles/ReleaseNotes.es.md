@@ -3,6 +3,8 @@
 - Se mejoró la visibilidad de las preguntas que pertenecen a una variante para poder excluir toda la variante como un grupo.
 - Se añadió soporte para los localizadores que necesitan omitir ciertas preguntas, comentarios, respuestas y alternativas.
 - Se añadió localización parcial al Tok Pisin (pidgin de Papúa Nueva Guinea).
+- Se mejoró el diseño en el cuadro de diálogo Generar Guion de Verificación para que el texto localizado quepa mejor.
+- Se corrigieron errores para que los controles auxiliares de expresiones regulares sean más útiles en el cuadro de diálogo Preprocesamiento para adaptar las preguntas.
 
 ## 3.1.20 9 de julio de 2024
 
