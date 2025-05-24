@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2021, SIL International.
-// <copyright from='2011' to='2021' company='SIL International'>
-//		Copyright (c) 2021, SIL International.
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2011' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -50,9 +50,13 @@ namespace SIL.Transcelerator
 		{
 			m_project = project;
 			InitializeComponent();
-			scrPsgTo.VerseControl.VerseRefChanged += ScrPassageChanged;
 			scrPsgFrom.VerseControl.VerseRefChanged += ScrPassageChanged;
-
+			scrPsgFrom.VerseControl.TabKeyPressedInVerseField += HandleTabInScrPsgFromVerseField;
+			scrPsgFrom.VerseControl.ShiftTabPressedInBookField += HandleShiftTabInScrPsgFromBookField;
+			scrPsgTo.VerseControl.VerseRefChanged += ScrPassageChanged;
+			scrPsgTo.VerseControl.TabKeyPressedInVerseField += HandleTabInScrPsgToVerseField;
+			scrPsgTo.VerseControl.ShiftTabPressedInBookField += HandleShiftTabInScrPsgToBookField;
+			
 			var versification = project.Versification;
 			var bookSet = new BookSet(canonicalBookIds);
             m_firstAvailableRef = versification.CreateReference(bookSet.FirstSelectedBookNum, 1, 1);
@@ -87,7 +91,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Gets the From reference.
+		/// Gets the `From` reference.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public IVerseRef FromRef => ReferencesSetToEntireScriptureRange ? null : GetRef(scrPsgFrom.VerseControl.VerseRef);
@@ -103,7 +107,7 @@ namespace SIL.Transcelerator
 		#region Event handlers
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles leaving the to or from passage
+		/// Handles leaving the `To` or `From` passage
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void OnScrPassageLeave(object sender, EventArgs e)
@@ -133,7 +137,7 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Handles change in the to or from passage
+		/// Handles change in the `To` or `From` passage
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		private void ScrPassageChanged(object sender, PropertyChangedEventArgs e)
@@ -147,6 +151,36 @@ namespace SIL.Transcelerator
 				else
 					scrPsgFrom.VerseControl.VerseRef = scrPsgTo.VerseControl.VerseRef.Clone();
 			}
+		}
+
+		private void HandleTabInScrPsgFromVerseField(object sender, KeyEventArgs e)
+		{
+			scrPsgTo.Focus();
+			e.SuppressKeyPress = true;
+		}
+
+		private void HandleShiftTabInScrPsgToBookField(object sender, KeyEventArgs e)
+		{
+			scrPsgFrom.Focus();
+			e.SuppressKeyPress = true;
+		}
+
+		private void HandleShiftTabInScrPsgFromBookField(object sender, KeyEventArgs e)
+		{
+			// Just to be safe (future-proof); should always be this form.
+			var parent = toolStripFrom.Parent ?? this;
+			parent.SelectNextControl(toolStripFrom, forward: false, tabStopOnly: true,
+				nested: true, wrap: true);
+			e.SuppressKeyPress = true;
+		}
+
+		private void HandleTabInScrPsgToVerseField(object sender, KeyEventArgs e)
+		{
+			// Just to be safe (future-proof); should always be this form.
+			var parent = toolStripTo.Parent ?? this;
+			parent.SelectNextControl(toolStripTo, forward: true, tabStopOnly: true,
+				nested: true, wrap: true);
+			e.SuppressKeyPress = true;
 		}
 
 		/// ------------------------------------------------------------------------------------
