@@ -35,15 +35,12 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Analytics">
-      <Version>3.8.1</Version>
-    </PackageReference>
     <PackageReference Include="nunit" Version="3.14.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="SIL.Scripture" Version="15.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
+    <PackageReference Include="SIL.Scripture" Version="16.0.0" />
     <PackageReference Include="System.Buffers">
-      <Version>4.6.0</Version>
+      <Version>4.6.1</Version>
     </PackageReference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
