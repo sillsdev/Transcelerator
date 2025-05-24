@@ -511,6 +511,9 @@
     <None Include="LocalizedPhrases-tpi.xlf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LocalizedPhrases-sw.xlf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\check-circle.png" />
   </ItemGroup>
