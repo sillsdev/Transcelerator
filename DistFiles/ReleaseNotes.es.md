@@ -1,5 +1,7 @@
 ## _VERSION_ _DATE_
 
+## 3.2.0 23 de mayo 2025
+
 - Se mejoró la visibilidad de las preguntas que pertenecen a una variante para poder excluir toda la variante como un grupo.
 - Se añadió soporte para los localizadores que necesitan omitir ciertas preguntas, comentarios, respuestas y alternativas.
 - Se añadió localización parcial al Tok Pisin (pidgin de Papúa Nueva Guinea).

@@ -1,5 +1,7 @@
 ## _VERSION_ _DATE_
 
+## 3.2.0 23 May 2025
+
 - Made it easier to see when questions belong to a variant in order to exclude an entire variant as a group.
 - Added support for localizers who need to omit certain questions, comments, answers, and alternatives.
 - Added partial Tok Pisin localization.
