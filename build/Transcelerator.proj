@@ -159,19 +159,21 @@
 		</CreateItem>
 	</Target>
 	
-	<Target Name="ConvertReleaseNotesToHtml" DependsOnTargets="VersionNumbers">
+	<Target Name="ConvertReleaseNotesToHtml" DependsOnTargets="UpdateReleaseNotes">
+		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
+			HtmlFile="$(OutputDir)/ReleaseNotes.htm" />
+	</Target>
+	
+	<Target Name="UpdateReleaseNotes" DependsOnTargets="VersionNumbers">
 		<FileUpdate
 			File="%(ReleaseNotesMdFiles.Identity)"
 			DatePlaceHolder='_DATE_'
 			DateFormat='d MMMM yyyy'
 			Regex='_VERSION_'
 			ReplacementText="$(Version)" />
-			
-		<CreateReleaseNotesHtml ChangelogFile="$(RootDir)/DistFiles/ReleaseNotes.md"
-			HtmlFile="$(OutputDir)/ReleaseNotes.htm" />
 	</Target>
 
-	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles;MakeWixForLocalizedUiStrings;MakeWixForLocalizedPhrases">
+	<Target Name="Installer" DependsOnTargets="VersionNumbers;Build;MakeWixForHtmlDocFiles;MakeWixForLocalizedUiStrings;MakeWixForLocalizedPhrases;UpdateReleaseNotes">
 
 		<!-- set the version number in the installer configuration program.	Perhaps there's a way to just send in the variables rather than this brute-force
 			changing of the script, but I haven't figured that out. -->
