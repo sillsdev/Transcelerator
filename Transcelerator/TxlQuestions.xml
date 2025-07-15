@@ -36733,6 +36733,9 @@
           <A>He left Jesus and waited for another time to try again later. (13)</A>
           <Alternative source="TomBogle">What did the devil do after Jesus would not succumb to his three attempts to make Jesus sin?</Alternative>
           <Alternative source="TomBogle">What did the devil do after he failed to get Jesus to sin those three times?</Alternative>
+          <Alternative source="TomBogle">What did the devil do when Jesus would not give in to his repeated temptations?</Alternative>
+          <Alternative source="TomBogle">What did the devil do when he saw that he was unsuccessful in getting Jesus to sin?</Alternative>
+          <Alternative source="TomBogle">What did the devil do when he saw that he was unsuccessful in his three attempts to cause Jesus to sin?</Alternative>
         </Questions>
       </Category>
     </Categories>
@@ -48748,6 +48751,11 @@
           <A>The spirit shrieked/screamed, shook the boy violently, and came out of him.</A>
           <A>The boy lay still, like a dead person. (26)</A>
           <Alternative source="TomBogle">When Jesus spoke to the spirit, what happened?</Alternative>
+          <Alternative source="TomBogle">When Jesus rebuked the spirit, what happened to the boy?</Alternative>
+          <Alternative source="TomBogle">When Jesus rebuked the spirit, what happened?</Alternative>
+          <Alternative source="TomBogle">When Jesus commanded the spirit to come out, what happened to the boy?</Alternative>
+          <Alternative source="TomBogle">When Jesus commanded the spirit to come out, what happened?</Alternative>
+          <Alternative source="TomBogle">When Jesus commanded the spirit to leave the boy, what happened?</Alternative>
         </Questions>
         <Questions scrref="MRK 9.27" startref="41009027" endref="41009027">
           <Q>What did Jesus do to him then?</Q>
@@ -65163,6 +65171,8 @@
           <A>Some say: the time when Christ will come again, others say: the troubles that Christ said would come upon all people before Christ returns.</A>
           <Alternative source="TomBogle">What time is now short?</Alternative>
           <Alternative source="TomBogle">What is going to come soon?</Alternative>
+          <Alternative source="TomBogle">What time is coming to an end?</Alternative>
+          <Alternative source="TomBogle">What time is coming to an end soon?</Alternative>
         </Questions>
         <Questions scrref="1CO 7.30-31" startref="46007030" endref="46007031">
           <Q>Why does Paul give this advice in these verses?</Q>
@@ -65172,6 +65182,7 @@
           <Q>Should we not care for our wives and children anymore? Should we refuse to perform funerals anymore?</Q>
           <A>No, Paul wants us to live our lives so that the Kingdom of God is more important than the things of this world.</A>
           <Alternative source="TomBogle">Should we stop caring for our wives and children, no longer express emotions, or quit our jobs?</Alternative>
+          <Alternative source="TomBogle">Should we stop caring for our wives and children, deny our emotions, or quit our jobs?</Alternative>
         </Questions>
         <Questions scrref="1CO 7.32-35" startref="46007032" endref="46007035">
           <Q>Can an unmarried person please God?</Q>
@@ -80732,9 +80743,20 @@
         </Questions>
       </Category>
       <Category overview="false" type="Details">
+        <Questions scrref="PRO 25.3" startref="20025003" endref="20025003">
+          <Q>To what are the hearts of kings compared?</Q>
+          <A>They are hard to understand, like the height of heaven and the depth of the earth. (3)</A>
+          <Alternative source="TomBogle">What are the hearts of kings like?</Alternative>
+          <Alternative source="TomBogle">How are the hearts of kings described?</Alternative>
+          <Alternative source="TomBogle">How do these verses describe the hearts of kings?</Alternative>
+        </Questions>
         <Questions scrref="PRO 25.4-5" startref="20025004" endref="20025005">
           <Q>To what is taking away the wicked compared?</Q>
-          <A>Taking away the dross from the silver (4-5)</A>
+          <A>It is like taking away the dross or impurities from silver. (4-5)</A>
+          <Alternative source="TomBogle">What is removing the wicked like?</Alternative>
+          <Alternative source="TomBogle">What is removing wicked officials like?</Alternative>
+          <Alternative source="TomBogle">How do these verses describe removing wicked officials from the king’s presence?</Alternative>
+          <Alternative source="TomBogle">How do these verses describe removing bad people from the king’s presence?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.6-7" startref="20025006" endref="20025007">
           <Q>What is better than putting yourself in the place of great men?</Q>
@@ -80743,16 +80765,32 @@
         <Questions scrref="PRO 25.9-10" startref="20025009" endref="20025010">
           <Q>With whom should you debate your cause?</Q>
           <A>Your neighbor himself (9-10)</A>
+          <Alternative source="TomBogle">With whom should you argue your case?</Alternative>
+        </Questions>
+        <Questions scrref="PRO 25.9-10" startref="20025009" endref="20025010">
+          <Q>What caution should you take when trying to settle a dispute?</Q>
+          <A>Don’t reveal another person’s secret or betray their trust.</A>
+          <Alternative source="TomBogle">What caution must be excercised when resolving a dispute?</Alternative>
+          <Alternative source="TomBogle">What caution must be excercised when resolving a dispute with your neighbor?</Alternative>
+          <Alternative source="TomBogle">What warning is given about how to settle arguments?</Alternative>
+          <Alternative source="TomBogle">What should you be careful not to do when discussing a disagreement with someone?</Alternative>
+          <Alternative source="TomBogle">What should you be careful not to do when discussing a disagreement with your neighbor?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.11" startref="20025011" endref="20025011">
           <Q>To what is a word fitly spoken compared?</Q>
-          <A>Apples of gold in pictures of silver (11)</A>
+          <A>Apples of gold in settings of silver (11)</A>
+          <Alternative source="TomBogle">What is a well-timed or wise word compared to?</Alternative>
+          <Alternative source="TomBogle">What is a well-spoken word compared to?</Alternative>
+          <Alternative source="TomBogle">What is a timely and wise word like?</Alternative>
+          <Alternative source="TomBogle">What kind of picture is used here to describe the value of the right word at the right time?</Alternative>
+          <Alternative source="TomBogle">How is a timely and wise word described here?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.14" startref="20025014" endref="20025014">
           <Q>To what is a person/man who boasts of a false gift compared?</Q>
           <A>Clouds and wind without rain (14)</A>
           <Alternative>To what is a person who boasts of a false gift compared?</Alternative>
           <Alternative>To what is a man who boasts of a false gift compared?</Alternative>
+          <Alternative source="TomBogle">What is a person who boasts of a false gift like?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.17" startref="20025017" endref="20025017">
           <Q>What will happen if you stay too long at someone's house?</Q>
@@ -80763,26 +80801,42 @@
           <A>A broken tooth, and a foot out of joint (19)</A>
           <Alternative>To what is confidence in an unfaithful person compared?</Alternative>
           <Alternative>To what is confidence in an unfaithful man compared?</Alternative>
+          <Alternative source="TomBogle">What is confidence in an unfaithful person like?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.20" startref="20025020" endref="20025020">
           <Q>To what is one who sings songs to a heavy heart compared?</Q>
-          <A>He that takes away a garment in cold weather, and as vinegar on niter (20)</A>
+          <A>Like one who takes away a garment in cold weather, or like [pouring] vinegar on soda. (20)</A>
+          <Note>The Hebrew word "neter" is used only twice in the Old Testament (also in Jeremiah 2:22). It refers to a naturally occurring alkali (something like sodium carbonate). Some exegetes prefer to interpret this word in this verse as "wound", since pouring vinegar on a wound stings and irritates, thus conveying the sense of an inappropriate or hurtful action. The response should match the exegetical decision used in the translation.</Note>
+          <Alternative source="TomBogle">What is singing songs to a person with a heavy heart like?</Alternative>
+          <Alternative source="TomBogle">What is singing songs to a grieving person like?</Alternative>
+          <Alternative source="TomBogle">How does this verse describe singing songs to a person with a troubled heart?</Alternative>
+          <Alternative source="TomBogle">How does this verse describe singing songs to a person who is grieving?</Alternative>
+          <Alternative source="TomBogle">How does this verse describe thoughtlessly singing happy songs to a person with a troubled heart?</Alternative>
+          <Alternative source="TomBogle">How does this verse describe thoughtlessly singing happy songs to a person who is grieving?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.21-22" startref="20025021" endref="20025022">
           <Q>What should you do for your enemy?</Q>
           <A>Feed him if he is hungry and give him water if he is thirsty (21-22)</A>
         </Questions>
         <Questions scrref="PRO 25.23" startref="20025023" endref="20025023">
-          <Q>What does an angry countenance drive away?</Q>
-          <A>A backbiting tongue (23)</A>
+          <Q>What does an angry look bring?</Q>
+          <A>A backbiting tongue, or cruel words (23)</A>
+          <Note>Some older translations interpret the second clause of this verse as meaning that an angry look stops or drives away a backbiting tongue. However, most modern scholars and translations understand the verse to describe the opposite relationship: just as the north wind brings rain, a backbiting or sly tongue brings an angry look. The Hebrew syntax supports this interpretation through parallelism and an implied verb ("brings") in the second line.</Note>
+          <Alternative source="TomBogle">What does an angry countenance bring?</Alternative>
+          <Alternative source="TomBogle">What does an angry face bring?</Alternative>
+          <Alternative>What does an angry countenance drive away?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.25" startref="20025025" endref="20025025">
           <Q>To what is good news from a far country compared?</Q>
-          <A>As cold waters to a thirsty soul (25)</A>
+          <A>It is like cold water to a thirsty or weary soul (25)</A>
+          <Alternative source="TomBogle">What is good news from a far country like?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.28" startref="20025028" endref="20025028">
           <Q>To what is one that has no rule over his spirit compared?</Q>
-          <A>A city that is broken down, and without walls (28)</A>
+          <A>He is like a city broken down and without walls, open to attack. (28)</A>
+          <Alternative source="TomBogle">What is someone without self-control like?</Alternative>
+          <Alternative source="TomBogle">What is someone who cannot control his spirit like?</Alternative>
+          <Alternative source="TomBogle">What is someone who cannot control himself like?</Alternative>
         </Questions>
       </Category>
     </Categories>
