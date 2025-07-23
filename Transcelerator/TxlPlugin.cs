@@ -47,12 +47,23 @@ namespace SIL.Transcelerator
 		private static Dictionary<IProject, ProjectState> s_projectStates =
 			new Dictionary<IProject, ProjectState>();
 		private static IProject s_currentProject;
+		private static Exception s_webView2EnvironmentInitializationException;
 		private static IPluginHost Host { get; set; }
 
 		internal static TxlLocalizationIncompleteViewModel LocIncompleteViewModel { get; private set; }
 		internal static string InstallDir { get; }
 		internal static string ProgramDataFolder { get; }
 		internal static CoreWebView2Environment WebView2Environment { get; set; }
+
+		internal static Exception WebView2EnvironmentInitializationException
+		{
+			get => s_webView2EnvironmentInitializationException;
+			set
+			{
+				Logger.WriteError(value);
+				s_webView2EnvironmentInitializationException = value;
+			}
+		}
 
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 
@@ -379,7 +390,7 @@ namespace SIL.Transcelerator
 		{
 			s_userInfo.UILanguageCode = languageId;
 			Analytics.IdentifyUpdate(s_userInfo);
-			CreateCoreWebView2Environment(languageId);
+			Task.Run(() => CreateCoreWebView2Environment(languageId));
 		}
 
 		/// <summary>
@@ -388,23 +399,35 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <param name="language">The locale of the language used for controls in the browser
 		/// (e.g., for the context menu).</param>
-		private static async void CreateCoreWebView2Environment(string language)
+		private static async Task CreateCoreWebView2Environment(string language)
 		{
+			const uint ERROR_NOT_FOUND = 0x80070490;
+			const uint ERROR_MOD_NOT_FOUND = 0x8007007E;
 			try
 			{
 				var userDataFolder = Path.Combine(ProgramDataFolder, "WebView2");
+				//Directory.CreateDirectory("::This is totally illegal, isn*t it?");
 				Directory.CreateDirectory(userDataFolder);
-				var task = CoreWebView2Environment.CreateAsync(null, userDataFolder,
-					new CoreWebView2EnvironmentOptions(null, language));
 
-				await task.ContinueWith(t =>
-				{
-					WebView2Environment = t.Result;
-				});
+				WebView2Environment = await CoreWebView2Environment.CreateAsync(null, userDataFolder,
+					new CoreWebView2EnvironmentOptions(null, language));
 			}
-			catch (Exception e)
+			catch (System.Runtime.InteropServices.COMException wv2Ex) when
+				((uint)wv2Ex.HResult == ERROR_NOT_FOUND ||
+				(uint)wv2Ex.HResult == ERROR_MOD_NOT_FOUND)
 			{
-				Logger.WriteError(e);
+				Logger.WriteEvent("WebView2 Runtime is not installed. Expected Evergreen runtime.");
+				WebView2EnvironmentInitializationException = wv2Ex;
+			}
+			catch (WebView2RuntimeNotFoundException wv2NotFoundEx)
+			{
+				Logger.WriteEvent("The WebView2 Runtime was not found.");
+				WebView2EnvironmentInitializationException = wv2NotFoundEx;
+			}
+			catch (Exception unexpectedEx)
+			{
+				Logger.WriteEvent("Unexpected error creating WebView2 environment");
+				WebView2EnvironmentInitializationException = unexpectedEx;
 			}
 		}
 

@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.
-// <copyright from='2012' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.
+#region // Copyright (c) 2025, SIL Global.
+// <copyright from='2012' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL International.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
@@ -23,6 +23,7 @@ using Microsoft.Web.WebView2.Core;
 using SIL.Reporting;
 using SIL.Transcelerator.Properties;
 using static System.String;
+using static SIL.Transcelerator.TxlConstants;
 using static SIL.Transcelerator.TxlPlugin;
 
 namespace SIL.Transcelerator
@@ -36,9 +37,10 @@ namespace SIL.Transcelerator
 	public partial class TxlInfo : UserControl
 	{
 		private const string kTempResources = "Temp";
-
+		
 		private readonly string m_versionStr;
 		private readonly string m_buildDate;
+		private readonly string m_showDetailsLabel;
 		private string m_copyright;
 		private string m_htmlTemplate;
 		private string m_tempTxlLogoPath;
@@ -65,38 +67,67 @@ namespace SIL.Transcelerator
 			object[] attributes = assembly.GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
 			if (attributes.Length > 0)
 				m_copyright = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
+
+			m_showDetailsLabel = m_btnDetails.Text;
+		}
+
+		private string VersionInfo => Format(m_lblAppVersion.Text, m_versionStr);
+
+		private string BuildDateInfo => Format(m_lblBuildDate.Text, m_buildDate);
+
+		private string FullCopyrightNotice
+		{
+			get
+			{
+				if (m_copyright == null)
+					m_copyright = "© SIL Global";
+				return Format(m_lblCopyrightAndLicense.Text, m_copyright);
+			}
 		}
 
 		private async void OnLoad(object sender, EventArgs e)
 		{
-			var htmlPath = Path.Combine(InstallDir, "TxlInfo.htm");
+			try
+			{
+				var htmlPath = Path.Combine(InstallDir, "TxlInfo.htm");
 
-			m_tempTxlLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
-			Resources.Transcelerator.Save(m_tempTxlLogoPath);
-			m_tempSilLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
-			Windows.Forms.Widgets.SilResources.SilLogoRandom.Save(m_tempSilLogoPath);
+				m_tempTxlLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
+				Resources.Transcelerator.Save(m_tempTxlLogoPath);
+				m_tempSilLogoPath = Path.ChangeExtension(Path.GetTempFileName(), "png");
+				Windows.Forms.Widgets.SilResources.SilLogoRandom.Save(m_tempSilLogoPath);
 
-			m_htmlTemplate = File.ReadAllText(htmlPath)
-				.Replace("src=\"Properties/Transcelerator.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempTxlLogoPath)}")
-				.Replace("src=\"DevResources/SILLogoBlue101x113.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempSilLogoPath)}");
+				m_htmlTemplate = File.ReadAllText(htmlPath)
+					.Replace("src=\"Properties/Transcelerator.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempTxlLogoPath)}")
+					.Replace("src=\"DevResources/SILLogoBlue101x113.png", $"src=\"http://{kTempResources}/{Path.GetFileName(m_tempSilLogoPath)}");
 
-			LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
+				LocalizeItemDlg<XLiffDocument>.StringsLocalized += HandleStringsLocalized;
 
-			await InitializeWebBrowserAsync();
-			m_webBrowserReady = true;
-			_webBrowser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
-			SetHtmlDocument();
+				await InitializeWebBrowserAsync();
+				if (WebView2EnvironmentInitializationException == null)
+				{
+					m_webBrowserReady = true;
+					_webBrowser.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+				}
+				SetHtmlDocument();
+			}
+			catch (Exception ex)
+			{
+				ErrorReport.ReportFatalException(ex);
+			}
 		}
 
 		private async Task InitializeWebBrowserAsync()
 		{
+			if (WebView2EnvironmentInitializationException != null)
+				return;
+			
 			try
 			{
 				await _webBrowser.EnsureCoreWebView2Async(WebView2Environment);
 			}
 			catch (Exception e)
 			{
-				ErrorReport.ReportNonFatalException(e);
+				WebView2EnvironmentInitializationException = e;
 			}
 		}
 
@@ -108,18 +139,21 @@ namespace SIL.Transcelerator
 
 		private void SetHtmlDocument()
 		{
+			m_lblAppVersion.Text = VersionInfo;
+			m_lblBuildDate.Text = BuildDateInfo;
+
+			if (WebView2EnvironmentInitializationException != null)
+			{
+				DisplayBasicInfoFallback();
+				return;
+			}
+
 			if (!m_webBrowserReady)
 				return;
 
 			InitializeWebBrowserUserInteractionSettings();
 
-			var versionInfo = Format(LocalizationManager.GetString("TxlInfo.m_lblAppVersion",
-				"Version {0}"), m_versionStr);
-
-			var buildDateInfo = Format(LocalizationManager.GetString("TxlInfo.lblBuildDate",
-				"Built on: {0}"), m_buildDate);
-
-			var htmlContents = Format(m_htmlTemplate, versionInfo, buildDateInfo,
+			var htmlContents = Format(m_htmlTemplate, VersionInfo, BuildDateInfo,
 				m_creditsAndLicense ?? Empty);
 
 			var matchCopyright = Regex.Match(htmlContents, "&#169;[^<]*");
@@ -127,13 +161,8 @@ namespace SIL.Transcelerator
 			if (m_copyright == null && matchCopyright.Success)
 				m_copyright = matchCopyright.ToString();
 
-			var fullCopyrightNotice = Format(LocalizationManager.GetString("TransceleratorInfo.CopyrightFmt",
-					"{0}. Distributable under the terms of the MIT License.",
-					"Param is copyright information. This is displayed in the Help/About box and the splash screen"),
-				m_copyright);
-
 			if (matchCopyright.Success)
-				htmlContents = matchCopyright.Result("$`" + fullCopyrightNotice + "$'");
+				htmlContents = matchCopyright.Result("$`" + FullCopyrightNotice + "$'");
 
 			try
 			{
@@ -148,7 +177,25 @@ namespace SIL.Transcelerator
 			}
 		}
 
-		public void InitializeWebBrowserUserInteractionSettings()
+		private void DisplayBasicInfoFallback()
+		{
+			_webBrowser.Hide();
+			m_lblCopyrightAndLicense.Text = FullCopyrightNotice;
+			m_lblWebView2Problem.Text = Format(m_lblWebView2Problem.Text,
+					"WebView2 Runtime");
+			if (m_allowInternetAccess)
+			{
+				m_lblWebView2ErrorResolution.Text = Format(m_lblWebView2ErrorResolution.Text,
+					"WebView2 Runtime", kEmailAddress);
+				m_lblWebView2ErrorResolution.Visible = true;
+				m_btnDetails.Visible = true;
+				m_txtExceptionDetails.Text = WebView2EnvironmentInitializationException.ToString();
+			}
+
+			m_tableLayoutPanelFallback.Show();
+		}
+
+		private void InitializeWebBrowserUserInteractionSettings()
 		{
 			var interactionAllowed = m_creditsAndLicense != null;
 			_webBrowser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = interactionAllowed;
@@ -177,7 +224,8 @@ namespace SIL.Transcelerator
 			try
 			{
 				var html = File.ReadAllText(htmlPath);
-				m_creditsAndLicense = Regex.Match(html, @"<div [\S\s]*<\/div>").ToString();
+				m_creditsAndLicense = Regex.Match(html,
+					@"<div\s+class=([""'])credits\1[^>]*>[\s\S]*?</div>").Value;
 			}
 			catch (Exception e)
 			{
@@ -196,14 +244,23 @@ namespace SIL.Transcelerator
 			if (!IsNullOrEmpty(url))
 			{
 				if (m_allowInternetAccess)
-					Process.Start(url);
+				{
+					try
+					{
+						Process.Start(url);
+					}
+					catch (Exception exception)
+					{
+						ErrorReport.ReportNonFatalException(exception);
+					}
+				}
 				else
 				{
 					MessageBox.Show(ParentForm,
 						LocalizationManager.GetString("TxlInfo.InternetDisabled",
 						"Internet access is disabled via 'Paratext > Paratext settings'",
 						"The text of this message should be identical to the one Paratext displays (in HelpManagerBase.cs)"),
-						TxlConstants.kPluginName);
+						kPluginName);
 				}
 			}
 
@@ -221,16 +278,37 @@ namespace SIL.Transcelerator
 			{
 				m_webBrowserReady = false;
 
-				if (components != null)
-					components.Dispose();
-				if (_webBrowser != null && !_webBrowser.IsDisposed)
-					_webBrowser.Dispose();
+				components?.Dispose();
+				try
+				{
+					_webBrowser?.Dispose();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Already disposed; safe to ignore
+				}
+
 				if (m_tempTxlLogoPath != null)
 					File.Delete(m_tempTxlLogoPath);
 				if (m_tempSilLogoPath != null)
 					File.Delete(m_tempSilLogoPath);
 			}
 			base.Dispose(disposing);
+		}
+
+		private void m_btnDetails_Click(object sender, EventArgs e)
+		{
+			if (m_txtExceptionDetails.Visible)
+			{
+				m_txtExceptionDetails.Hide();
+				m_btnDetails.Text = m_showDetailsLabel;
+			}
+			else
+			{
+				m_txtExceptionDetails.Show();
+				m_btnDetails.Text = LocalizationManager.GetString("TxlInfo.m_btnDetails.Show",
+					"Hide details");
+			}
 		}
 	}
 }
