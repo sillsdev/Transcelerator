@@ -117,15 +117,15 @@ namespace SIL.Transcelerator
             this.m_lblWebView2ErrorResolution.ForeColor = System.Drawing.Color.Red;
             this.l10NSharpExtender1.SetLocalizableToolTip(this.m_lblWebView2ErrorResolution, null);
             this.l10NSharpExtender1.SetLocalizationComment(this.m_lblWebView2ErrorResolution, "Param 0: \"WebView2 Runtime\"; Param 1: email address");
-            this.l10NSharpExtender1.SetLocalizationPriority(this.m_lblWebView2ErrorResolution, L10NSharp.LocalizationPriority.NotLocalizable);
             this.l10NSharpExtender1.SetLocalizingId(this.m_lblWebView2ErrorResolution, "TxlInfo.m_lblWebView2ErrorResolution");
             this.m_lblWebView2ErrorResolution.Location = new System.Drawing.Point(3, 95);
             this.m_lblWebView2ErrorResolution.Name = "m_lblWebView2ErrorResolution";
             this.m_lblWebView2ErrorResolution.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.m_lblWebView2ErrorResolution.Size = new System.Drawing.Size(655, 36);
+            this.m_lblWebView2ErrorResolution.Size = new System.Drawing.Size(659, 36);
             this.m_lblWebView2ErrorResolution.TabIndex = 6;
-            this.m_lblWebView2ErrorResolution.Text = "Please install the {0} (Evergreen) by downloading it from the website below. If t" +
-    "his does not resolve the issue, please report this problem to {1}.";
+            this.m_lblWebView2ErrorResolution.Text = "If this problem persists, please install the {0} (Evergreen) by downloading it fr" +
+    "om the website below. If this does not resolve the issue, please report this pro" +
+    "blem to {1}.";
             this.m_lblWebView2ErrorResolution.Visible = false;
             // 
             // m_lblProduct
