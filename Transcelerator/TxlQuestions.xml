@@ -63421,18 +63421,38 @@
         </Questions>
         <Questions scrref="ROM 14.4" startref="45014004" endref="45014004">
           <Q>Discuss: How does this affect the relationship between one Christian denomination and another?</Q>
+          <Alternative source="TomBogle">Discuss: How does this affect the relationship between groups of Christians with different opinions?</Alternative>
+          <Alternative source="TomBogle">How does this affect the relationship between one Christian denomination and another?</Alternative>
+          <Alternative source="TomBogle">How does this affect the relationship between groups of Christians with different opinions?</Alternative>
+          <Alternative source="TomBogle">Discuss: How does this affect the relationship between different Christian churches?</Alternative>
+          <Alternative source="TomBogle">How does this affect the relationship between different Christian churches?</Alternative>
         </Questions>
         <Questions scrref="ROM 14.4" startref="45014004" endref="45014004">
           <Q>Why should we not criticize another's beliefs in these matters?</Q>
           <A>We should not criticize another's beliefs because each one of us is answerable only to God, who is the master of each one of us.</A>
+          <Alternative source="TomBogle">Why does Paul say not to criticize another's beliefs in these matters?</Alternative>
+          <Alternative source="TomBogle">Why does Paul say not to criticize other Christians who have different beliefs in these matters?</Alternative>
+          <Alternative source="TomBogle">Why does Paul say not to criticize other Christians who have different beliefs about which days are special or which foods are acceptable?</Alternative>
         </Questions>
         <Questions scrref="ROM 14.5" startref="45014005" endref="45014005">
           <Q>If our opinions differ about which days or foods are special, what is necessary that we do first?</Q>
           <A>We should keep to what we think is right.</A>
+          <Alternative source="TomBogle">If our opinions differ about which days or foods are special, what should we do?</Alternative>
+          <Alternative source="TomBogle">If our opinions differ about which days are special or which foods are acceptable, what should we do?</Alternative>
+          <Alternative source="TomBogle">If our opinions differ about which days are special or which foods may be eaten, what should we do?</Alternative>
+          <Alternative source="TomBogle">If our opinions differ about which days are special or which foods should not be eaten, what should we do?</Alternative>
+          <Alternative source="TomBogle">If we disagree with other Christians about which days or foods are special, what should we do?</Alternative>
+          <Alternative source="TomBogle">If we disagree with other Christians about which days are special or which foods are acceptable, what should we do?</Alternative>
+          <Alternative source="TomBogle">If we disagree with other Christians about which days are special or which foods may be eaten, what should we do?</Alternative>
+          <Alternative source="TomBogle">If we disagree with other Christians about which days are special or which foods should not be eaten, what should we do?</Alternative>
         </Questions>
         <Questions scrref="ROM 14.6" startref="45014006" endref="45014006">
           <Q>For what reason only should we keep that opinion that we have about days and foods?</Q>
-          <A>Only if we observe such days or taboo such foods in order to respect/obey our Master Jesus.</A>
+          <A>Only if we observe such days or reject unacceptable foods in order to respect/obey our Master Jesus.</A>
+          <Alternative source="TomBogle">What is the only reason to hold strong opinions about days and foods?</Alternative>
+          <Alternative source="TomBogle">What is the only reason to hold strong opinions about special days and acceptable foods?</Alternative>
+          <Alternative source="TomBogle">What is the only reason that we should keep that opinion that we have about days and foods?</Alternative>
+          <Alternative source="TomBogle">When is it okay to hold strong opinions about days and foods?</Alternative>
         </Questions>
         <Questions scrref="ROM 14.6" startref="45014006" endref="45014006">
           <Q>What makes both opinions right?</Q>
@@ -63459,7 +63479,10 @@
         </Questions>
         <Questions scrref="ROM 14.11-12" startref="45014011" endref="45014012">
           <Q>Does this verse apply only to Christians? What does it say?</Q>
-          <A>Everyone Christian or non-Christian will kneel before our Master and agree that he is Master and Judge.</A>
+          <A>Everyone, whether Christian or non-Christian, will kneel before our Master and agree that he is Master and Judge.</A>
+          <Alternative source="TomBogle">Do these verses apply only to Christians? What does it say?</Alternative>
+          <Alternative source="TomBogle">What does this passage say about who will acknowledge God?</Alternative>
+          <Alternative source="TomBogle">What does this passage say about the people who will say that God is Lord?</Alternative>
         </Questions>
       </Category>
     </Categories>
@@ -63474,6 +63497,10 @@
         <Questions scrref="ROM 14.14" startref="45014014" endref="45014014">
           <Q>How can what is good become not good for eating?</Q>
           <A>If we think that it is not right to eat certain foods, then for us it is not right, and becomes unclean to us.</A>
+          <Alternative source="TomBogle">How can food that is okay to eat be considered unclean?</Alternative>
+          <Alternative source="TomBogle">How can food that is okay to eat be considered unacceptable?</Alternative>
+          <Alternative source="TomBogle">How can food that is "clean" be considered "unclean"?</Alternative>
+          <Alternative source="TomBogle">How can food that is good become wrong to eat?</Alternative>
         </Questions>
         <Questions scrref="ROM 14.15" startref="45014015" endref="45014015">
           <Q>Under what circumstances though I think all foods are good, will it be wrong for me to eat a food that some others taboo eating?</Q>
