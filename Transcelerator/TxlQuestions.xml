@@ -80766,6 +80766,11 @@
           <Q>With whom should you debate your cause?</Q>
           <A>Your neighbor himself (9-10)</A>
           <Alternative source="TomBogle">With whom should you argue your case?</Alternative>
+          <Alternative source="TomBogle">With whom should you work out a dispute involving your neighbor?</Alternative>
+          <Alternative source="TomBogle">If you have a dispute with your neighbor, with whom should you seek to resolve it?</Alternative>
+          <Alternative source="TomBogle">If you have a legal dispute with your neighbor, with whom should you seek to settle it?</Alternative>
+          <Alternative source="TomBogle">If you have a dispute with your neighbor, with whom should you discuss it?</Alternative>
+          <Alternative source="TomBogle">If you have a legal case to settle with your neighbor, with whom should you discuss it?</Alternative>
         </Questions>
         <Questions scrref="PRO 25.9-10" startref="20025009" endref="20025010">
           <Q>What caution should you take when trying to settle a dispute?</Q>
