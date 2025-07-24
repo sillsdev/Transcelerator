@@ -1,13 +1,11 @@
 // ---------------------------------------------------------------------------------------------
 #region // Copyright (c) 2025, SIL Global.
 // <copyright from='2012' to='2025' company='SIL Global'>
-//		Copyright (c) 2025, SIL International.
+//		Copyright (c) 2025, SIL Global.
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright>
 #endregion
-//
-// File: TxlInfo.cs
 // ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
@@ -189,6 +187,7 @@ namespace SIL.Transcelerator
 					"WebView2 Runtime", kEmailAddress);
 				m_lblWebView2ErrorResolution.Visible = true;
 				m_btnDetails.Visible = true;
+				m_linkWebView2Runtime.Visible = true;
 				m_txtExceptionDetails.Text = WebView2EnvironmentInitializationException.ToString();
 			}
 
@@ -309,6 +308,11 @@ namespace SIL.Transcelerator
 				m_btnDetails.Text = LocalizationManager.GetString("TxlInfo.m_btnDetails.Show",
 					"Hide details");
 			}
+		}
+
+		private void m_linkWebView2Runtime_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			Process.Start($"https://{m_linkWebView2Runtime.Text}/");
 		}
 	}
 }

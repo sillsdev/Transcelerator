@@ -1,20 +1,17 @@
-// --------------------------------------------------------------------------------------------
-#region // Copyright © 2021, SIL International.   
-// <copyright from='2021' company='SIL International'>
-//		Copyright © 2021, SIL International.   
-//    
+// ---------------------------------------------------------------------------------------------
+#region // Copyright (c) 2025, SIL Global.   
+// <copyright from='2021' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
+//
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
-// 
-// File: RealSplashScreen.cs
-// --------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Windows.Forms;
-using static System.String;
 
 namespace SIL.Transcelerator
 {
@@ -32,7 +29,7 @@ namespace SIL.Transcelerator
 		private EventWaitHandle m_waitHandle;
 		private System.Threading.Timer m_timer;
 		private TxlInfo m_txlInfo;
-		private Label lblMessage;
+		private Label m_lblMessage;
 		#endregion
 
 		#region Constructor
@@ -64,7 +61,7 @@ namespace SIL.Transcelerator
 		private void CheckDisposed()
 		{
 			if (IsDisposed)
-				throw new ObjectDisposedException(Format("'{0}' in use after being disposed.", GetType().Name));
+				throw new ObjectDisposedException($"'{GetType().Name}' in use after being disposed.");
 
 			// This ensures the progress bar gets painted when modified.
 			if (IsHandleCreated)
@@ -83,9 +80,14 @@ namespace SIL.Transcelerator
 		{
 			Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + ". ****** ");
 			if (disposing)
+			{
 				m_timer?.Dispose();
+				m_waitHandle?.Dispose();
+			}
+			m_txlInfo = null;
 			m_timer = null;
 			m_waitHandle = null;
+
 			base.Dispose(disposing);
 		}
 		#endregion
@@ -99,8 +101,8 @@ namespace SIL.Transcelerator
 			Justification="marqueeGif gets added to Controls collection and disposed there")]
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.PictureBox marqueeGif;
-			this.lblMessage = new System.Windows.Forms.Label();
+            System.Windows.Forms.PictureBox marqueeGif;
+			this.m_lblMessage = new System.Windows.Forms.Label();
 			this.m_txlInfo = new SIL.Transcelerator.TxlInfo();
 			marqueeGif = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(marqueeGif)).BeginInit();
@@ -119,14 +121,14 @@ namespace SIL.Transcelerator
 			// 
 			// lblMessage
 			// 
-			this.lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.m_lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.lblMessage.BackColor = System.Drawing.Color.Transparent;
-			this.lblMessage.ForeColor = System.Drawing.Color.Black;
-			this.lblMessage.Location = new System.Drawing.Point(12, 372);
-			this.lblMessage.Name = "lblMessage";
-			this.lblMessage.Size = new System.Drawing.Size(325, 23);
-			this.lblMessage.TabIndex = 2;
+			this.m_lblMessage.BackColor = System.Drawing.Color.Transparent;
+			this.m_lblMessage.ForeColor = System.Drawing.Color.Black;
+			this.m_lblMessage.Location = new System.Drawing.Point(12, 372);
+			this.m_lblMessage.Name = "m_lblMessage";
+			this.m_lblMessage.Size = new System.Drawing.Size(325, 23);
+			this.m_lblMessage.TabIndex = 2;
 			// 
 			// m_txlInfo
 			// 
@@ -148,7 +150,7 @@ namespace SIL.Transcelerator
 			this.ControlBox = false;
 			this.Controls.Add(this.m_txlInfo);
 			this.Controls.Add(marqueeGif);
-			this.Controls.Add(this.lblMessage);
+			this.Controls.Add(this.m_lblMessage);
 			this.ForeColor = System.Drawing.Color.Black;
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
@@ -185,7 +187,7 @@ namespace SIL.Transcelerator
 			}
 			catch
 			{
-				// Something bad happened, but we are closing anyways :)
+				// Something bad happened, but we are closing anyway :)
 			}
 
 			try
@@ -197,7 +199,7 @@ namespace SIL.Transcelerator
 			}
 			catch
 			{
-				// Something bad happened, but we are closing anyways :)
+				// Something bad happened, but we are closing anyway :)
 			}
 		}
 		#endregion
@@ -336,7 +338,7 @@ namespace SIL.Transcelerator
 					Invoke(new Action(() => { SetMessage(message); }));
 				else
 				{
-					lblMessage.Text = message;
+					m_lblMessage.Text = message;
 					Refresh();
 				}
 			}

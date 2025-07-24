@@ -195,11 +195,12 @@ namespace SIL.Transcelerator
             this.l10NSharpExtender1.SetLocalizingId(this.m_linkWebView2Runtime, "TxlInfo._linkWebView2Runtime");
             this.m_linkWebView2Runtime.Location = new System.Drawing.Point(3, 299);
             this.m_linkWebView2Runtime.Name = "m_linkWebView2Runtime";
-            this.m_linkWebView2Runtime.Size = new System.Drawing.Size(321, 13);
+            this.m_linkWebView2Runtime.Size = new System.Drawing.Size(280, 13);
             this.m_linkWebView2Runtime.TabIndex = 4;
             this.m_linkWebView2Runtime.TabStop = true;
-            this.m_linkWebView2Runtime.Text = "https://developer.microsoft.com/en-us/microsoft-edge/webview2/";
+            this.m_linkWebView2Runtime.Text = "developer.microsoft.com/en-us/microsoft-edge/webview2";
             this.m_linkWebView2Runtime.Visible = false;
+            this.m_linkWebView2Runtime.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.m_linkWebView2Runtime_LinkClicked);
             // 
             // m_lblWebView2Problem
             // 

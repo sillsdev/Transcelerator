@@ -1,12 +1,20 @@
 // ---------------------------------------------------------------------------------------------
-#region // Copyright (c) 2024, SIL International.   
-// <copyright from='2013' to='2024' company='SIL International'>
-//		Copyright (c) 2024, SIL International.   
+#region // Copyright (c) 2025, SIL Global.   
+// <copyright from='2013' to='2025' company='SIL Global'>
+//		Copyright (c) 2025, SIL Global.   
 //
 //		Distributable under the terms of the MIT License (http://sil.mit-license.org/)
 // </copyright> 
 #endregion
 // ---------------------------------------------------------------------------------------------
+using DesktopAnalytics;
+using JetBrains.Annotations;
+using L10NSharp;
+using Microsoft.Web.WebView2.Core;
+using Paratext.PluginInterfaces;
+using SIL.Reporting;
+using SIL.Scripture;
+using SIL.WritingSystems;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,18 +26,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DesktopAnalytics;
-using L10NSharp;
-using SIL.Scripture;
-using JetBrains.Annotations;
-using Microsoft.Web.WebView2.Core;
-using Paratext.PluginInterfaces;
-using SIL.Reporting;
-using SIL.WritingSystems;
+using static SIL.Transcelerator.TxlConstants;
 using static System.Environment;
 using static System.Environment.SpecialFolder;
 using static System.String;
-using static SIL.Transcelerator.TxlConstants;
 
 namespace SIL.Transcelerator
 {
@@ -64,6 +64,8 @@ namespace SIL.Transcelerator
 				s_webView2EnvironmentInitializationException = value;
 			}
 		}
+		
+		private static string WebView2Folder => Path.Combine(ProgramDataFolder, "WebView2");
 
 		internal static ILocalizationManager PrimaryLocalizationManager => LocIncompleteViewModel.PrimaryLocalizationManager;
 
@@ -169,7 +171,7 @@ namespace SIL.Transcelerator
 					// If something goes wrong, just use the default
 				}
 
-				CreateCoreWebView2Environment(preferredUiLocale);
+				InitAndCreateCoreWebView2Environment(preferredUiLocale);
 
 				lock (s_projectStates)
 				{
@@ -390,8 +392,24 @@ namespace SIL.Transcelerator
 		{
 			s_userInfo.UILanguageCode = languageId;
 			Analytics.IdentifyUpdate(s_userInfo);
-			Task.Run(() => CreateCoreWebView2Environment(languageId));
+			try
+			{
+				Debug.Assert(Directory.Exists(WebView2Folder), $"{nameof(UpdateUiLanguageForUser)} called before!");
+				WebView2Environment = CreateWebView2EnvironmentAsync(languageId).GetAwaiter()
+					.GetResult();
+			}
+			catch (Exception e)
+			{
+				// It's theoretically illegal to try to change the language once the WebView2
+				// environment is set up, but most of the time it seems to work. If it fails,
+				// it usually won't be a big deal. Next time they restart, it'll use the right one.
+				Logger.WriteError(e);
+			}
 		}
+
+		private static Task<CoreWebView2Environment> CreateWebView2EnvironmentAsync(string language) =>
+			CoreWebView2Environment.CreateAsync(null, WebView2Folder,
+				new CoreWebView2EnvironmentOptions(null, language));
 
 		/// <summary>
 		/// Set up a writable folder for WebView2 (used currently for splash screen and Help About)
@@ -399,18 +417,21 @@ namespace SIL.Transcelerator
 		/// </summary>
 		/// <param name="language">The locale of the language used for controls in the browser
 		/// (e.g., for the context menu).</param>
-		private static async Task CreateCoreWebView2Environment(string language)
+		/// <remarks>
+		/// Apparently, the locale is cached in the folder, so the requested locale seems to be
+		/// ignored the first time the environment spins up. Switching to English and then back
+		/// to the preferred UI locale causes it to honor the setting correctly. This doesn't
+		/// affect mission-critical components, but it's a known oddity worth monitoring.
+		/// </remarks>
+		private static async void InitAndCreateCoreWebView2Environment(string language)
 		{
 			const uint ERROR_NOT_FOUND = 0x80070490;
 			const uint ERROR_MOD_NOT_FOUND = 0x8007007E;
 			try
 			{
-				var userDataFolder = Path.Combine(ProgramDataFolder, "WebView2");
-				//Directory.CreateDirectory("::This is totally illegal, isn*t it?");
-				Directory.CreateDirectory(userDataFolder);
+				Directory.CreateDirectory(WebView2Folder);
 
-				WebView2Environment = await CoreWebView2Environment.CreateAsync(null, userDataFolder,
-					new CoreWebView2EnvironmentOptions(null, language));
+				WebView2Environment = await CreateWebView2EnvironmentAsync(language);
 			}
 			catch (System.Runtime.InteropServices.COMException wv2Ex) when
 				((uint)wv2Ex.HResult == ERROR_NOT_FOUND ||
