@@ -30,18 +30,17 @@ namespace SIL.TxlMasterQuestionPreProcessor
 	public partial class TxlMasterQuestionPreProcessorForm : Form
 	{
 		private readonly IVersification m_masterVersification;
-		private readonly string m_sfmSourceLabelText;
+		private readonly string m_existingTranslationsSourceLabelText;
 
 		public TxlMasterQuestionPreProcessorForm(IVersification englishVersification)
 		{
 			InitializeComponent();
 
 			m_masterVersification = englishVersification;
-			m_sfmSourceLabelText = lblSource.Text;
+			m_existingTranslationsSourceLabelText = lblSource.Text;
 
 			cboOverwrite.SelectedIndex = 1;
 
-			SetDefaultSfmSourceFile();
 			txtXmlQuestionFile.Text = Path.Combine(@"c:\Projects\Transcelerator\Transcelerator", TxlConstants.kQuestionsFilename);
 		}
 
@@ -271,7 +270,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 			{
 				SetDefaultSfmSourceFile();
 				lblLocale.Enabled = txtLocale.Enabled = false;
-				lblSource.Text = m_sfmSourceLabelText;
+				lblSource.Text = "Source Standard Format Question File:";
 				chkWriteTempFile.Enabled = true;
 				m_chkRetainOnlyTranslated.Visible = lblRegexFilterForLocIds.Visible =
 					lblOverwrite.Visible = cboOverwrite.Visible = chkMarkApproved.Visible =
@@ -282,7 +281,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
 				if (!SourceHasExpectedExtension)
 					txtSourceFile.Text = Empty;
 				lblLocale.Enabled = txtLocale.Enabled = true;
-				lblSource.Text = "Existing Translations from Transcelerator (optional):";
+				lblSource.Text = m_existingTranslationsSourceLabelText;
 				chkWriteTempFile.Enabled = chkWriteTempFile.Checked = false;
 				m_chkRetainOnlyTranslated.Visible = lblRegexFilterForLocIds.Visible =
 					chkMarkApproved.Visible = txtRegexToMatchRefs.Visible = true;
