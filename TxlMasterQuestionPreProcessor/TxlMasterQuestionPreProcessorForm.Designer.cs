@@ -93,9 +93,9 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.lblSource.Location = new System.Drawing.Point(11, 86);
             this.lblSource.Name = "lblSource";
             this.lblSource.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.lblSource.Size = new System.Drawing.Size(189, 21);
+            this.lblSource.Size = new System.Drawing.Size(246, 21);
             this.lblSource.TabIndex = 3;
-            this.lblSource.Text = "Source Standard Format Question File:";
+            this.lblSource.Text = "Existing Translations from Transcelerator (optional):";
             // 
             // label2
             // 
@@ -124,6 +124,7 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.chkWriteTempFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkWriteTempFile.AutoSize = true;
             this.tableLayoutPanelMain.SetColumnSpan(this.chkWriteTempFile, 4);
+            this.chkWriteTempFile.Enabled = false;
             this.chkWriteTempFile.Location = new System.Drawing.Point(11, 249);
             this.chkWriteTempFile.Name = "chkWriteTempFile";
             this.chkWriteTempFile.Size = new System.Drawing.Size(302, 17);
@@ -135,12 +136,10 @@ namespace SIL.TxlMasterQuestionPreProcessor
             // rdoSfmToXml
             // 
             this.rdoSfmToXml.AutoSize = true;
-            this.rdoSfmToXml.Checked = true;
             this.rdoSfmToXml.Location = new System.Drawing.Point(11, 11);
             this.rdoSfmToXml.Name = "rdoSfmToXml";
             this.rdoSfmToXml.Size = new System.Drawing.Size(84, 17);
             this.rdoSfmToXml.TabIndex = 7;
-            this.rdoSfmToXml.TabStop = true;
             this.rdoSfmToXml.Text = "SFM to XML";
             this.rdoSfmToXml.UseVisualStyleBackColor = true;
             this.rdoSfmToXml.CheckedChanged += new System.EventHandler(this.HandleOptionChanged);
@@ -148,10 +147,12 @@ namespace SIL.TxlMasterQuestionPreProcessor
             // rdoLocalization
             // 
             this.rdoLocalization.AutoSize = true;
+            this.rdoLocalization.Checked = true;
             this.rdoLocalization.Location = new System.Drawing.Point(11, 34);
             this.rdoLocalization.Name = "rdoLocalization";
             this.rdoLocalization.Size = new System.Drawing.Size(155, 17);
             this.rdoLocalization.TabIndex = 8;
+            this.rdoLocalization.TabStop = true;
             this.rdoLocalization.Text = "Create/Update Localization";
             this.rdoLocalization.UseVisualStyleBackColor = true;
             this.rdoLocalization.CheckedChanged += new System.EventHandler(this.HandleOptionChanged);
@@ -160,7 +161,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             // 
             this.txtLocale.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanelMain.SetColumnSpan(this.txtLocale, 2);
-            this.txtLocale.Enabled = false;
             this.txtLocale.Location = new System.Drawing.Point(404, 34);
             this.txtLocale.Name = "txtLocale";
             this.txtLocale.Size = new System.Drawing.Size(120, 20);
@@ -171,7 +171,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             // 
             this.lblLocale.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblLocale.AutoSize = true;
-            this.lblLocale.Enabled = false;
             this.lblLocale.Location = new System.Drawing.Point(311, 37);
             this.lblLocale.Name = "lblLocale";
             this.lblLocale.Size = new System.Drawing.Size(87, 13);
@@ -205,7 +204,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.m_chkRetainOnlyTranslated.TabIndex = 12;
             this.m_chkRetainOnlyTranslated.Text = "Retain only translated strings";
             this.m_chkRetainOnlyTranslated.UseVisualStyleBackColor = true;
-            this.m_chkRetainOnlyTranslated.Visible = false;
             // 
             // tableLayoutPanelMain
             // 
@@ -263,7 +261,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.lblRegexFilterForLocIds.Size = new System.Drawing.Size(187, 17);
             this.lblRegexFilterForLocIds.TabIndex = 13;
             this.lblRegexFilterForLocIds.Text = "Regex to match references to include:";
-            this.lblRegexFilterForLocIds.Visible = false;
             // 
             // txtRegexToMatchRefs
             // 
@@ -274,7 +271,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.txtRegexToMatchRefs.Name = "txtRegexToMatchRefs";
             this.txtRegexToMatchRefs.Size = new System.Drawing.Size(247, 20);
             this.txtRegexToMatchRefs.TabIndex = 14;
-            this.txtRegexToMatchRefs.Visible = false;
             this.txtRegexToMatchRefs.TextChanged += new System.EventHandler(this.txtRegexToMatchLocIDs_TextChanged);
             // 
             // lblOverwrite
@@ -312,7 +308,6 @@ namespace SIL.TxlMasterQuestionPreProcessor
             this.chkMarkApproved.TabIndex = 17;
             this.chkMarkApproved.Text = "Mark approved";
             this.chkMarkApproved.UseVisualStyleBackColor = true;
-            this.chkMarkApproved.Visible = false;
             // 
             // TxlMasterQuestionPreProcessorForm
             // 
