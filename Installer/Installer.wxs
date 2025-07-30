@@ -232,9 +232,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
           <Component Guid="*">
             <File Id="System.Threading.Tasks.Extensions.dll_P9" ShortName="systtext.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
           </Component>
-          <Component Guid="*">
-            <File Id="System.ValueTuple.dll_P9" ShortName="nbqre2xf.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
-          </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="COMPONENTSFORP9BetaPLUGIN" Directory="INSTALLDIR9BETA" Source="..\Transcelerator\bin\x64\Release">
@@ -372,9 +369,6 @@ http://blogs.msdn.com/robmen/archive/2003/10/04/56479.aspx -->
           </Component>
           <Component Guid="*">
             <File Id="System.Threading.Tasks.Extensions.dll_P9Beta" ShortName="sy1ttbp9.dll" KeyPath="yes" Name="System.Threading.Tasks.Extensions.dll" />
-          </Component>
-          <Component Guid="*">
-            <File Id="System.ValueTuple.dll_P9Beta" ShortName="jp96u9at.dll" KeyPath="yes" Name="System.ValueTuple.dll" />
           </Component>
         </ComponentGroup>
 
