@@ -12,7 +12,7 @@
     ".stylelintignore": "ignore"
   },
   "files.eol": "\n",
-  
+
   "cSpell.words": [
     "Transcelerator",
   ],
@@ -57,5 +57,6 @@
       "backgroundColor": "none",
       "overviewRulerColor": "#6cf5ff60"
     }
-  ]
+  ],
+  "dotnet.preferCSharpExtension": true
 }

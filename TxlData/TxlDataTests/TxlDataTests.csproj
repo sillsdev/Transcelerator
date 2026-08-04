@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BcvRefIVerseAdapter.cs" />
+    <Compile Include="ConcurrentEditSyncTests.cs" />
     <Compile Include="HtmlScriptGeneratorTests.cs" />
     <Compile Include="KeyTermMatchBuilderTests.cs" />
     <Compile Include="KeyTermMatchTests.cs" />
