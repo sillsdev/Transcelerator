@@ -123,8 +123,11 @@ namespace SIL.Transcelerator
 			var survivingData = accessor.Read(DataFileAccessor.DataFileId.Translations);
 			Assert.IsNotNull(survivingData);
 			Assert.IsFalse(survivingData.Contains(kVernacularTranslation),
-				"Writing TranslationsToSave from a stale pre-merge helper should not silently " +
-				"discard a collaborator's translation that was already merged to disk.");
+				"This demonstrates the TXL-257 bug mechanism: writing TranslationsToSave from a " +
+				"stale pre-merge helper silently discards a collaborator's translation that was " +
+				"already merged to disk. (This assertion documents that the discard happens; it " +
+				"is not, by itself, regression protection - that's provided by the paired test " +
+				"below, which confirms the translation survives when no stale save occurs.)");
 		}
 
 		/// ------------------------------------------------------------------------------------

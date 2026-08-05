@@ -485,8 +485,7 @@ namespace SIL.Transcelerator
 				// Save or GetPhrase's matching logic changes), those tests should catch it.
 				// Any genuinely unsaved local edits should already have been flushed via the write-lock
 				// release request that Paratext sends before performing a Send/Receive.
-				TranslatablePhrase phrase = dataGridUns.CurrentRow != null ? CurrentPhrase : null;
-				Reload(false, phrase?.PhraseKey, 0, false);
+				Reload(false, false);
 			}
 		}
 
@@ -1910,8 +1909,22 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void Reload(bool fForceSave)
 		{
+			Reload(fForceSave, true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Reloads the data grid view and attempts to re-select the same cell of the same
+		/// question as was previously selected.
+		/// </summary>
+		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
+		/// <param name="fSaveFirst">if set to <c>false</c>, skips saving local data before
+		/// reloading. See the 4-parameter overload below for details.</param>
+		/// ------------------------------------------------------------------------------------
+		private void Reload(bool fForceSave, bool fSaveFirst)
+		{
 			TranslatablePhrase phrase = dataGridUns.CurrentRow != null ? CurrentPhrase : null;
-			Reload(fForceSave, phrase?.PhraseKey, 0);
+			Reload(fForceSave, phrase?.PhraseKey, 0, fSaveFirst);
 		}
 
 		/// ------------------------------------------------------------------------------------
