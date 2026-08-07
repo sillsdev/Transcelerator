@@ -1954,6 +1954,15 @@ namespace SIL.Transcelerator
 			int iCol = dataGridUns.CurrentCell?.ColumnIndex ?? m_colTranslation.Index;
 			if (fSaveFirst)
 				Save(fForceSave, fForceSave); // See comment above for fForceSave
+			else
+			{
+				// TXL-266: Any local edits are about to be discarded (m_helper is replaced below
+				// from what's on disk), so they genuinely are no longer pending - the Save button
+				// should not claim otherwise. If TXL-266 changes this method to reapply any of
+				// those edits after reloading, this will need to become conditional on whether
+				// anything was actually reapplied.
+				SaveNeeded = false;
+			}
 
 			int iSortedCol = -1;
 			bool sortAscending = true;
