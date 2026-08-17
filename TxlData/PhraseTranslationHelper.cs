@@ -568,6 +568,18 @@ namespace SIL.Transcelerator
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets the list of translated phrases, ready for serialization to the Translations data
+		/// file. Exposed as a property (rather than inlined where it's written) so it's a single
+		/// source of truth: both production code (UNSQuestionsDialog.Save) and tests (see
+		/// TXL-257 in ConcurrentEditSyncTests) exercise this exact logic, so they can't drift
+		/// apart the way a duplicated LINQ expression could.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public List<XmlTranslation> TranslationsToSave =>
+			UnfilteredPhrases.Where(tp => tp.HasUserTranslation).Select(tp => new XmlTranslation(tp)).ToList();
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets the list of customized (added, inserted, modified, deleted) phrases, in the
 		/// order in which they should occur in the script.
 		/// </summary>

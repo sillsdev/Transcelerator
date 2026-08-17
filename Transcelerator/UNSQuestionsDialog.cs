@@ -465,7 +465,6 @@ namespace SIL.Transcelerator
 
 		private void OnProjectDataChanged(ProjectDataChangeType details)
 		{
-			// REVIEW: Does this handle global changes from Send/Receive properly?
 			InitFromHostProject(details);
 			if (details == ProjectDataChangeType.WholeProject)
 			{
@@ -477,7 +476,16 @@ namespace SIL.Transcelerator
 				// this change.
 				// Debug.Assert(!SaveNeeded);
 
-				Reload(false);
+				// TXL-257: fSaveFirst is false here because this notification also fires after a
+				// Send/Receive, which may have merged in a collaborator's changes (e.g., a
+				// translation) that only exist in the files on disk, not yet in m_helper. Saving
+				// our own (necessarily older) in-memory snapshot before loading those merged files
+				// would silently overwrite the collaborator's changes. See the regression tests in
+				// ConcurrentEditSyncTests (TxlDataTests) - if this reasoning stops holding (e.g., if
+				// Save or GetPhrase's matching logic changes), those tests should catch it.
+				// Any genuinely unsaved local edits should already have been flushed via the write-lock
+				// release request that Paratext sends before performing a Send/Receive.
+				Reload(false, false);
 			}
 		}
 
@@ -1549,10 +1557,7 @@ namespace SIL.Transcelerator
 			m_lastSaveTime = DateTime.Now;
 			if (dataGridUns.IsCurrentCellInEditMode && !m_preventReEntrantCommitEditDuringSave)
 				dataGridUns.EndEdit();
-			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations,
-				(from translatablePhrase in m_helper.UnfilteredPhrases
-				where translatablePhrase.HasUserTranslation
-				select new XmlTranslation(translatablePhrase)).ToList());
+			m_fileAccessor.Write(DataFileAccessor.DataFileId.Translations, m_helper.TranslationsToSave);
 
 			if (fSaveCustomizations)
 			{
@@ -1904,8 +1909,22 @@ namespace SIL.Transcelerator
 		/// ------------------------------------------------------------------------------------
 		private void Reload(bool fForceSave)
 		{
+			Reload(fForceSave, true);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Reloads the data grid view and attempts to re-select the same cell of the same
+		/// question as was previously selected.
+		/// </summary>
+		/// <param name="fForceSave">if set to <c>true</c> [f force save].</param>
+		/// <param name="fSaveFirst">if set to <c>false</c>, skips saving local data before
+		/// reloading. See the 4-parameter overload below for details.</param>
+		/// ------------------------------------------------------------------------------------
+		private void Reload(bool fForceSave, bool fSaveFirst)
+		{
 			TranslatablePhrase phrase = dataGridUns.CurrentRow != null ? CurrentPhrase : null;
-			Reload(fForceSave, phrase?.PhraseKey, 0);
+			Reload(fForceSave, phrase?.PhraseKey, 0, fSaveFirst);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1919,17 +1938,31 @@ namespace SIL.Transcelerator
 		/// <param name="key">The key of the question to try to select after reloading.</param>
 		/// <param name="fallBackRow">the index of the row to select if a question with the
 		/// given key cannot be found.</param>
+		/// <param name="fSaveFirst">if set to <c>false</c>, skips saving local data before
+		/// reloading. Used when the reload is in response to an external data change (e.g.,
+		/// a Send/Receive) that may have merged in changes that only exist in the files on
+		/// disk; saving our own stale in-memory data first would clobber them.</param>
 		/// ------------------------------------------------------------------------------------
-		private void Reload(bool fForceSave, IQuestionKey key, int fallBackRow)
+		private void Reload(bool fForceSave, IQuestionKey key, int fallBackRow, bool fSaveFirst = true)
 		{
 			SetUiForLongTask(true, () =>
 			{
-				m_helper.TranslationsChanged -= HandleTranslationsChanged; 
+				m_helper.TranslationsChanged -= HandleTranslationsChanged;
 				lblRemainingWork.Text = LocalizationManager.GetString("MainWindow.Reloading", "Reloading...");
 			});
 
 			int iCol = dataGridUns.CurrentCell?.ColumnIndex ?? m_colTranslation.Index;
-			Save(fForceSave, fForceSave); // See comment above for fForceSave
+			if (fSaveFirst)
+				Save(fForceSave, fForceSave); // See comment above for fForceSave
+			else
+			{
+				// TXL-266: Any local edits are about to be discarded (m_helper is replaced below
+				// from what's on disk), so they genuinely are no longer pending - the Save button
+				// should not claim otherwise. If TXL-266 changes this method to reapply any of
+				// those edits after reloading, this will need to become conditional on whether
+				// anything was actually reapplied.
+				SaveNeeded = false;
+			}
 
 			int iSortedCol = -1;
 			bool sortAscending = true;
