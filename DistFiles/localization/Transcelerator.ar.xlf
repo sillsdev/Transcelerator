@@ -1,0 +1,1312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns:sil="http://sil.org/software/XLiff" xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="en" product-version="3.1.20.0" original="Transcelerator.dll" datatype="plaintext" target-language="ar">
+    <body>
+      <trans-unit id="AddRenderingDlg.WindowTitle">
+        <source xml:lang="en">Add Rendering</source>
+        <target xml:lang="ar" state="needs-translation">Add Rendering</target>
+        <note>ID: AddRenderingDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="Common.Cancel">
+        <source xml:lang="en">Cancel</source>
+        <target xml:lang="ar" state="needs-translation">Cancel</target>
+        <note>ID: Common.Cancel</note>
+      </trans-unit>
+      <trans-unit id="Common.OK">
+        <source xml:lang="en">OK</source>
+        <target xml:lang="ar" state="needs-translation">OK</target>
+        <note>ID: Common.OK</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.WindowTitle">
+        <source xml:lang="en">Edit Question</source>
+        <target xml:lang="ar" state="needs-translation">Edit Question</target>
+        <note>ID: EditQuestionDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.btnReset">
+        <source xml:lang="en">&amp;Reset</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Reset</target>
+        <note>ID: EditQuestionDlg.btnReset</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblAlternatives">
+        <source xml:lang="en">Suggested Alternatives:</source>
+        <target xml:lang="ar" state="needs-translation">Suggested Alternatives:</target>
+        <note>ID: EditQuestionDlg.m_lblAlternatives</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblOriginalText">
+        <source xml:lang="en">Text of Original Question:</source>
+        <target xml:lang="ar" state="needs-translation">Text of Original Question:</target>
+        <note>ID: EditQuestionDlg.m_lblOriginalText</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblQuestionAlreadyExists">
+        <source xml:lang="en">Question already exists!</source>
+        <target xml:lang="ar" state="needs-translation">Question already exists!</target>
+        <note>ID: EditQuestionDlg.m_lblQuestionAlreadyExists</note>
+      </trans-unit>
+      <trans-unit id="EditQuestionDlg.m_lblQuestionToUse">
+        <source xml:lang="en">Question to Use:</source>
+        <target xml:lang="ar" state="needs-translation">Question to Use:</target>
+        <note>ID: EditQuestionDlg.m_lblQuestionToUse</note>
+      </trans-unit>
+      <trans-unit id="General.ExpectedInstalledFileMissing">
+        <source xml:lang="en">Expected file missing: {0}.</source>
+        <target xml:lang="ar" state="translated">الملفّ المتوقَّع غير موجود: {0}.</target>
+        <note>ID: General.ExpectedInstalledFileMissing</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingCustomizationsFailed">
+        <source xml:lang="en">Unable to load customizations.</source>
+        <target xml:lang="ar" state="needs-translation">Unable to load customizations.</target>
+        <note>ID: General.LoadingCustomizationsFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingQuestionAdjustmentsFailed">
+        <source xml:lang="en">The Question Adjustments could not be loaded.</source>
+        <target xml:lang="ar" state="translated">تعذَّر تحميل التعْدِيلات الخاصّة بالسؤال.</target>
+        <note>ID: General.LoadingQuestionAdjustmentsFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingRenderingSelectionRulesFailed">
+        <source xml:lang="en">The Biblical term rendering selection rules could not be loaded. Default rules will be used.</source>
+        <target xml:lang="ar" state="translated">تعذَّر تحميل قواعد اختيار التَّرجَمة الخاصة بالمصطلحات الكتابيّة. سيتم تطبيق القواعد الافتراضية المعتادة.</target>
+        <note>ID: General.LoadingRenderingSelectionRulesFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingTermRenderingsFailed">
+        <source xml:lang="en">Unable to load user-added term renderings. Only renderings from {0} will be displayed.</source>
+        <target xml:lang="ar" state="translated">تعذَّر تحميل الترجمات التي أضافها المستخدِم للمصطلَح. سيتم عرض الترجمات {0} فقط.</target>
+        <note>ID: General.LoadingTermRenderingsFailed</note>
+      </trans-unit>
+      <trans-unit id="General.LoadingTranslationsFailed">
+        <source xml:lang="en">Unable to load translations.</source>
+        <target xml:lang="ar" state="needs-translation">Unable to load translations.</target>
+        <note>ID: General.LoadingTranslationsFailed</note>
+      </trans-unit>
+      <trans-unit id="General.ReadonlyWindowAlert">
+        <source xml:lang="en"> - Readonly</source>
+        <target xml:lang="ar" state="needs-translation"> - Readonly</target>
+        <note>ID: General.ReadonlyWindowAlert</note>
+      </trans-unit>
+      <trans-unit id="General.RequestLockError">
+        <source xml:lang="en">Unable to obtain exclusive write access to data that belongs to {1}: {0}</source>
+        <target xml:lang="ar" state="needs-translation">Unable to obtain exclusive write access to data that belongs to {1}: {0}</target>
+        <note>ID: General.RequestLockError</note>
+      </trans-unit>
+      <trans-unit id="General.RequiredInstalledFileMissing">
+        <source xml:lang="en">Required file missing: {0}.</source>
+        <target xml:lang="ar" state="needs-translation">Required file missing: {0}.</target>
+        <note>ID: General.RequiredInstalledFileMissing</note>
+      </trans-unit>
+      <trans-unit id="General.RerunInstaller">
+        <source xml:lang="en">Please re-run the {0} Installer to repair this problem.</source>
+        <target xml:lang="ar" state="needs-translation">Please re-run the {0} Installer to repair this problem.</target>
+        <note>ID: General.RerunInstaller</note>
+      </trans-unit>
+      <trans-unit id="General.UserAddedEmptyPhrase">
+        <source xml:lang="en">User-added question with no English version</source>
+        <target xml:lang="ar" state="needs-translation">User-added question with no English version</target>
+        <note>ID: General.UserAddedEmptyPhrase</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.HtmlFileDescription">
+        <source xml:lang="en">Web Page</source>
+        <target xml:lang="ar" state="needs-translation">Web Page</target>
+        <note>ID: GenerateScriptDlg.HtmlFileDescription</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.WindowTitle">
+        <source xml:lang="en">Generate Checking Script Template</source>
+        <target xml:lang="ar" state="needs-translation">Generate Checking Script Template</target>
+        <note>ID: GenerateScriptDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.btnBrowse">
+        <source xml:lang="en">&amp;Browse...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Browse...</target>
+        <note>ID: GenerateScriptDlg.btnBrowse</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.groupBoxDocument">
+        <source xml:lang="en">Document</source>
+        <target xml:lang="ar" state="needs-translation">Document</target>
+        <note>ID: GenerateScriptDlg.groupBoxDocument</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.label7">
+        <source xml:lang="en">Extra &amp;Lines for Recording Answers:</source>
+        <target xml:lang="ar" state="needs-translation">Extra &amp;Lines for Recording Answers:</target>
+        <note>ID: GenerateScriptDlg.label7</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblDetailQuestionsOutOfOrder">
+        <source xml:lang="en">When Detail Questions are out of Order:</source>
+        <target xml:lang="ar" state="translated">عندما تكون الأسئلة المفصَّلة غير مرتَّبة:</target>
+        <note>ID: GenerateScriptDlg.lblDetailQuestionsOutOfOrder</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblFolder">
+        <source xml:lang="en">Folder:</source>
+        <target xml:lang="ar" state="needs-translation">Folder:</target>
+        <note>ID: GenerateScriptDlg.lblFolder</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblSectionRangeTo">
+        <source xml:lang="en">to</source>
+        <target xml:lang="ar" state="needs-translation">to</target>
+        <note>ID: GenerateScriptDlg.lblSectionRangeTo</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblStyleSpecification">
+        <source xml:lang="en">Where to Specify Styles:</source>
+        <target xml:lang="ar" state="needs-translation">Where to Specify Styles:</target>
+        <note>ID: GenerateScriptDlg.lblStyleSpecification</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblUntranslatedQuestions">
+        <source xml:lang="en">How to Handle Untranslated Questions:</source>
+        <target xml:lang="ar" state="needs-translation">How to Handle Untranslated Questions:</target>
+        <note>ID: GenerateScriptDlg.lblUntranslatedQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.lblUseLWC">
+        <source xml:lang="en">Use &amp;Language of Wider Communication:</source>
+        <target xml:lang="ar" state="needs-translation">Use &amp;Language of Wider Communication:</target>
+        <note>ID: GenerateScriptDlg.lblUseLWC</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkAbsoluteCssPath">
+        <source xml:lang="en">Make &amp;Path Absolute</source>
+        <target xml:lang="ar" state="needs-translation">Make &amp;Path Absolute</target>
+        <note>ID: GenerateScriptDlg.m_chkAbsoluteCssPath</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCAnswers">
+        <source xml:lang="en">Include &amp;Answers (in {0}) </source>
+        <target xml:lang="ar" state="needs-translation">Include &amp;Answers (in {0}) </target>
+        <note>ID: GenerateScriptDlg.m_chkIncludeLWCAnswers</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCComments">
+        <source xml:lang="en">Include &amp;Comments (in {0})</source>
+        <target xml:lang="ar" state="needs-translation">Include &amp;Comments (in {0})</target>
+        <note>ID: GenerateScriptDlg.m_chkIncludeLWCComments</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkIncludeLWCQuestions">
+        <source xml:lang="en">Include &amp;Questions in {0}</source>
+        <target xml:lang="ar" state="needs-translation">Include &amp;Questions in {0}</target>
+        <note>ID: GenerateScriptDlg.m_chkIncludeLWCQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkIncludeVerseNumbers">
+        <source xml:lang="en">Include verse numbers</source>
+        <target xml:lang="ar" state="needs-translation">Include verse numbers</target>
+        <note>ID: GenerateScriptDlg.m_chkIncludeVerseNumbers</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkNumberQuestions">
+        <source xml:lang="en">&amp;Number questions</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Number questions</target>
+        <note>ID: GenerateScriptDlg.m_chkNumberQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkOverwriteCss">
+        <source xml:lang="en">O&amp;verwrite Existing CSS File</source>
+        <target xml:lang="ar" state="needs-translation">O&amp;verwrite Existing CSS File</target>
+        <note>ID: GenerateScriptDlg.m_chkOverwriteCss</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_chkPassageBeforeOverview">
+        <source xml:lang="en">&amp;Include Entire Passage at the Start of Section</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Include Entire Passage at the Start of Section</target>
+        <note>ID: GenerateScriptDlg.m_chkPassageBeforeOverview</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_grpRange">
+        <source xml:lang="en">Range</source>
+        <target xml:lang="ar" state="needs-translation">Range</target>
+        <note>ID: GenerateScriptDlg.m_grpRange</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_lbFilename">
+        <source xml:lang="en">Script &amp;File name:</source>
+        <target xml:lang="ar" state="needs-translation">Script &amp;File name:</target>
+        <note>ID: GenerateScriptDlg.m_lbFilename</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_lblCommentTextColor">
+        <source xml:lang="en">Comment Text Color</source>
+        <target xml:lang="ar" state="translated">لَوْن كِتابة التعليقات</target>
+        <note>ID: GenerateScriptDlg.m_lblCommentTextColor</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_lblLWCAnswerTextColor">
+        <source xml:lang="en">{0} Answer Text Color</source>
+        <target xml:lang="ar" state="needs-translation">{0} Answer Text Color</target>
+        <note>ID: GenerateScriptDlg.m_lblLWCAnswerTextColor</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_lblLWCQuestionColor">
+        <source xml:lang="en">{0} Question Text Color</source>
+        <target xml:lang="ar" state="needs-translation">{0} Question Text Color</target>
+        <note>ID: GenerateScriptDlg.m_lblLWCQuestionColor</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_lblQuestionGroupHeadingsColor">
+        <source xml:lang="en">Question Group Headings Color</source>
+        <target xml:lang="ar" state="needs-translation">Question Group Headings Color</target>
+        <note>ID: GenerateScriptDlg.m_lblQuestionGroupHeadingsColor</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions">
+        <source xml:lang="en">&amp;Just Display the Reference</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Just Display the Reference</target>
+        <note>ID: GenerateScriptDlg.m_rdoDisplayReferenceForOutOfOrderQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoDisplayWarning">
+        <source xml:lang="en">&amp;Display a Warning Message</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Display a Warning Message</target>
+        <note>ID: GenerateScriptDlg.m_rdoDisplayWarning</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoEmbedStyleInfo">
+        <source xml:lang="en">&amp;Embed in Script (Maximum Portability)</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Embed in Script (Maximum Portability)</target>
+        <note>ID: GenerateScriptDlg.m_rdoEmbedStyleInfo</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions">
+        <source xml:lang="en">&amp;Output the Text of the Passage</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Output the Text of the Passage</target>
+        <note>ID: GenerateScriptDlg.m_rdoOutputPassageForOutOfOrderQuestions</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoSectionRange">
+        <source xml:lang="en">&amp;Range of Sections</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Range of Sections</target>
+        <note>ID: GenerateScriptDlg.m_rdoSectionRange</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoSingleSection">
+        <source xml:lang="en">&amp;Single Section</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Single Section</target>
+        <note>ID: GenerateScriptDlg.m_rdoSingleSection</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoSkipUntranslated">
+        <source xml:lang="en">Do &amp;Not Include in Script</source>
+        <target xml:lang="ar" state="needs-translation">Do &amp;Not Include in Script</target>
+        <note>ID: GenerateScriptDlg.m_rdoSkipUntranslated</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoUseExternalCss">
+        <source xml:lang="en">Use an E&amp;xternal CSS File</source>
+        <target xml:lang="ar" state="needs-translation">Use an E&amp;xternal CSS File</target>
+        <note>ID: GenerateScriptDlg.m_rdoUseExternalCss</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoUseOriginal">
+        <source xml:lang="en">&amp;Use the Original Untranslated Question</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Use the Original Untranslated Question</target>
+        <note>ID: GenerateScriptDlg.m_rdoUseOriginal</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_rdoWholeBook">
+        <source xml:lang="en">&amp;Whole Book</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Whole Book</target>
+        <note>ID: GenerateScriptDlg.m_rdoWholeBook</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_txtCssFile">
+        <source xml:lang="en">ComprehensionChecking.css</source>
+        <target xml:lang="ar" state="needs-translation">ComprehensionChecking.css</target>
+        <note>ID: GenerateScriptDlg.m_txtCssFile</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_txtFilename">
+        <source xml:lang="en">{0} Comprehension Check for {1}.htm</source>
+        <target xml:lang="ar" state="needs-translation">{0} Comprehension Check for {1}.htm</target>
+        <note>ID: GenerateScriptDlg.m_txtFilename</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.m_txtTitle">
+        <source xml:lang="en">Comprehension Checking Questions for {0}</source>
+        <target xml:lang="ar" state="translated">أسئلة لفَحْص مَدَى الفَهم والاستيعاب لـ {0}</target>
+        <note>ID: GenerateScriptDlg.m_txtTitle</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.tabAppearance">
+        <source xml:lang="en">Appearance</source>
+        <target xml:lang="ar" state="needs-translation">Appearance</target>
+        <note>ID: GenerateScriptDlg.tabAppearance</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.tabGeneral">
+        <source xml:lang="en">General</source>
+        <target xml:lang="ar" state="needs-translation">General</target>
+        <note>ID: GenerateScriptDlg.tabGeneral</note>
+      </trans-unit>
+      <trans-unit id="GenerateScriptDlg.tabOptions">
+        <source xml:lang="en">Options</source>
+        <target xml:lang="ar" state="needs-translation">Options</target>
+        <note>ID: GenerateScriptDlg.tabOptions</note>
+      </trans-unit>
+      <trans-unit id="HelpAboutDlg.WindowTitle">
+        <source xml:lang="en">About {0}</source>
+        <target xml:lang="ar" state="needs-translation">About {0}</target>
+        <note>ID: HelpAboutDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="HelpAboutDlg.m_linkLabelReleaseNotes">
+        <source xml:lang="en">Release notes...</source>
+        <target xml:lang="ar" state="needs-translation">Release notes...</target>
+        <note>ID: HelpAboutDlg.m_linkLabelReleaseNotes</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.AnswersLabel">
+        <source xml:lang="en">Answers:</source>
+        <target xml:lang="ar" state="needs-translation">Answers:</target>
+        <note>ID: MainWindow.AnswersLabel</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ClearAllMatchingTranslations.Multiple">
+        <source xml:lang="en">There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.</source>
+        <target xml:lang="ar" state="needs-translation">There are other identical questions that have this same translation. Clearing the translation for this question will also clear the translations for the other questions.</target>
+        <note>ID: MainWindow.ClearAllMatchingTranslations.Multiple</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.ClearAllMatchingTranslations.Single">
+        <source xml:lang="en">There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.</source>
+        <target xml:lang="ar" state="needs-translation">There is another identical question that has this same translation. Clearing the translation for this question will also clear the translation for the other question.</target>
+        <note>ID: MainWindow.ClearAllMatchingTranslations.Single</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.CommentsLabel">
+        <source xml:lang="en">Comments:</source>
+        <target xml:lang="ar" state="needs-translation">Comments:</target>
+        <note>ID: MainWindow.CommentsLabel</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.CommitChangesBeforeClosingMessage">
+        <source xml:lang="en">You are currently editing the translation for a question in {0}. Do you wish to save this change before closing?</source>
+        <target xml:lang="ar" state="needs-translation">You are currently editing the translation for a question in {0}. Do you wish to save this change before closing?</target>
+        <note>ID: MainWindow.CommitChangesBeforeClosingMessage</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.File.mnuAutoSave">
+        <source xml:lang="en">&amp;Auto Save</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Auto Save</target>
+        <note>ID: MainWindow.File.mnuAutoSave</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.FilteredStatus">
+        <source xml:lang="en">Filtered</source>
+        <target xml:lang="ar" state="needs-translation">Filtered</target>
+        <note>ID: MainWindow.FilteredStatus</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Advanced">
+        <source xml:lang="en">&amp;Advanced</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Advanced</target>
+        <note>ID: MainWindow.Menu.Advanced</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules">
+        <source xml:lang="en">Biblical Terms &amp;Rendering Selection Rules...</source>
+        <target xml:lang="ar" state="needs-translation">Biblical Terms &amp;Rendering Selection Rules...</target>
+        <note>ID: MainWindow.Menu.Advanced.BiblicalTermsRenderingSelectionRules</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments">
+        <source xml:lang="en">Preprocessing &amp;Question Adjustments...</source>
+        <target xml:lang="ar" state="needs-translation">Preprocessing &amp;Question Adjustments...</target>
+        <note>ID: MainWindow.Menu.Advanced.PreprocessingQuestionAdjustments</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit">
+        <source xml:lang="en">&amp;Edit</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Edit</target>
+        <note>ID: MainWindow.Menu.Edit</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.Copy">
+        <source xml:lang="en">&amp;Copy</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Copy</target>
+        <note>ID: MainWindow.Menu.Edit.Copy</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.Cut">
+        <source xml:lang="en">Cu&amp;t</source>
+        <target xml:lang="ar" state="needs-translation">Cu&amp;t</target>
+        <note>ID: MainWindow.Menu.Edit.Cut</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.NextUntranslatedQuestion">
+        <source xml:lang="en">&amp;Next Untranslated Question</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Next Untranslated Question</target>
+        <note>ID: MainWindow.Menu.Edit.NextUntranslatedQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.Paste">
+        <source xml:lang="en">&amp;Paste</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Paste</target>
+        <note>ID: MainWindow.Menu.Edit.Paste</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.PreviousUntranslatedQuestion">
+        <source xml:lang="en">Previous &amp;Untranslated Question</source>
+        <target xml:lang="ar" state="needs-translation">Previous &amp;Untranslated Question</target>
+        <note>ID: MainWindow.Menu.Edit.PreviousUntranslatedQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.ShiftWordsLeft">
+        <source xml:lang="en">Shift Word(s) &amp;Left</source>
+        <target xml:lang="ar" state="needs-translation">Shift Word(s) &amp;Left</target>
+        <note>ID: MainWindow.Menu.Edit.ShiftWordsLeft</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Edit.ShiftWordsRight">
+        <source xml:lang="en">Shift Word(s) &amp;Right</source>
+        <target xml:lang="ar" state="needs-translation">Shift Word(s) &amp;Right</target>
+        <note>ID: MainWindow.Menu.Edit.ShiftWordsRight</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File">
+        <source xml:lang="en">&amp;File</source>
+        <target xml:lang="ar" state="needs-translation">&amp;File</target>
+        <note>ID: MainWindow.Menu.File</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.Close">
+        <source xml:lang="en">&amp;Close</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Close</target>
+        <note>ID: MainWindow.Menu.File.Close</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.GenerateCheckingScript">
+        <source xml:lang="en">&amp;Generate Checking Script...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Generate Checking Script...</target>
+        <note>ID: MainWindow.Menu.File.GenerateCheckingScript</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.LoadTranslationsFromTextFile">
+        <source xml:lang="en">Load Translations from Plain Text File...</source>
+        <target xml:lang="ar" state="needs-translation">Load Translations from Plain Text File...</target>
+        <note>ID: MainWindow.Menu.File.LoadTranslationsFromTextFile</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.ProduceScriptureForgeFiles">
+        <source xml:lang="en">Produce {0}/{1} Files</source>
+        <target xml:lang="ar" state="needs-translation">Produce {0}/{1} Files</target>
+        <note>ID: MainWindow.Menu.File.ProduceScriptureForgeFiles</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.Reload">
+        <source xml:lang="en">&amp;Reload</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Reload</target>
+        <note>ID: MainWindow.Menu.File.Reload</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.File.Save">
+        <source xml:lang="en">&amp;Save</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Save</target>
+        <note>ID: MainWindow.Menu.File.Save</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Filter">
+        <source xml:lang="en">&amp;Filter</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Filter</target>
+        <note>ID: MainWindow.Menu.Filter</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Filter.BiblicalTerms">
+        <source xml:lang="en">Biblical &amp;Terms</source>
+        <target xml:lang="ar" state="needs-translation">Biblical &amp;Terms</target>
+        <note>ID: MainWindow.Menu.Filter.BiblicalTerms</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Filter.MatchWholeWords">
+        <source xml:lang="en">Match &amp;Whole Words When Filtering</source>
+        <target xml:lang="ar" state="needs-translation">Match &amp;Whole Words When Filtering</target>
+        <note>ID: MainWindow.Menu.Filter.MatchWholeWords</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Filter.ReferenceRange">
+        <source xml:lang="en">&amp;Set Reference Range...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Set Reference Range...</target>
+        <note>ID: MainWindow.Menu.Filter.ReferenceRange</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.GeneratedTranslationDetails">
+        <source xml:lang="en">&amp;Generated Translation Details</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Generated Translation Details</target>
+        <note>ID: MainWindow.Menu.GeneratedTranslationDetails</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Help">
+        <source xml:lang="en">&amp;Help</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Help</target>
+        <note>ID: MainWindow.Menu.Help</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.Help.About">
+        <source xml:lang="en">&amp;About {0}</source>
+        <target xml:lang="ar" state="needs-translation">&amp;About {0}</target>
+        <note>ID: MainWindow.Menu.Help.About</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View">
+        <source xml:lang="en">&amp;View</source>
+        <target xml:lang="ar" state="needs-translation">&amp;View</target>
+        <note>ID: MainWindow.Menu.View</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View.AnswersAndComments">
+        <source xml:lang="en">&amp;Answers and Comments</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Answers and Comments</target>
+        <note>ID: MainWindow.Menu.View.AnswersAndComments</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View.BiblicalTermsPane">
+        <source xml:lang="en">&amp;Biblical Terms Pane</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Biblical Terms Pane</target>
+        <note>ID: MainWindow.Menu.View.BiblicalTermsPane</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View.DisplayLanguage">
+        <source xml:lang="en">&amp;Display Language</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Display Language</target>
+        <note>ID: MainWindow.Menu.View.DisplayLanguage</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View.ExcludedQuestions">
+        <source xml:lang="en">&amp;Excluded Questions</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Excluded Questions</target>
+        <note>ID: MainWindow.Menu.View.ExcludedQuestions</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Menu.View.Toolbar">
+        <source xml:lang="en">&amp;Toolbar</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Toolbar</target>
+        <note>ID: MainWindow.Menu.View.Toolbar</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Confirmed">
+        <source xml:lang="en">Confirmed</source>
+        <target xml:lang="ar" state="needs-translation">Confirmed</target>
+        <note>ID: MainWindow.QuestionsGrid.Confirmed</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Edit">
+        <source xml:lang="en">Edit</source>
+        <target xml:lang="ar" state="needs-translation">Edit</target>
+        <note>ID: MainWindow.QuestionsGrid.Edit</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.EnglishQuestion">
+        <source xml:lang="en">English Question</source>
+        <target xml:lang="ar" state="needs-translation">English Question</target>
+        <note>ID: MainWindow.QuestionsGrid.EnglishQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.GeneratedTranslationDetails">
+        <source xml:lang="en">Generated Translation Details</source>
+        <target xml:lang="ar" state="needs-translation">Generated Translation Details</target>
+        <note>ID: MainWindow.QuestionsGrid.GeneratedTranslationDetails</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Reference">
+        <source xml:lang="en">Reference</source>
+        <target xml:lang="ar" state="needs-translation">Reference</target>
+        <note>ID: MainWindow.QuestionsGrid.Reference</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.QuestionsGrid.Translation">
+        <source xml:lang="en">Translation</source>
+        <target xml:lang="ar" state="needs-translation">Translation</target>
+        <note>ID: MainWindow.QuestionsGrid.Translation</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.Reloading">
+        <source xml:lang="en">Reloading...</source>
+        <target xml:lang="ar" state="needs-translation">Reloading...</target>
+        <note>ID: MainWindow.Reloading</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.SaveChangesBeforeClosingMessage">
+        <source xml:lang="en">You have made changes. Do you wish to save before closing?</source>
+        <target xml:lang="ar" state="needs-translation">You have made changes. Do you wish to save before closing?</target>
+        <note>ID: MainWindow.SaveChangesBeforeClosingMessage</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.SaveChangesMessageCaption">
+        <source xml:lang="en">{0} - Save changes?</source>
+        <target xml:lang="ar" state="needs-translation">{0} - Save changes?</target>
+        <note>ID: MainWindow.SaveChangesMessageCaption</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem">
+        <source xml:lang="en">Browse Topics...</source>
+        <target xml:lang="ar" state="needs-translation">Browse Topics...</target>
+        <note>ID: MainWindow.UNSQuestionsDialog.browseTopicsToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.editQuestionColumnToolStripMenuItem">
+        <source xml:lang="en">Edit &amp;Question Column</source>
+        <target xml:lang="ar" state="needs-translation">Edit &amp;Question Column</target>
+        <note>ID: MainWindow.UNSQuestionsDialog.editQuestionColumnToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.zoomInToolStripMenuItem">
+        <source xml:lang="en">Zoom In</source>
+        <target xml:lang="ar" state="needs-translation">Zoom In</target>
+        <note>ID: MainWindow.UNSQuestionsDialog.zoomInToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.UNSQuestionsDialog.zoomOutToolStripMenuItem">
+        <source xml:lang="en">Zoom Out</source>
+        <target xml:lang="ar" state="needs-translation">Zoom Out</target>
+        <note>ID: MainWindow.UNSQuestionsDialog.zoomOutToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.UntranslatedQuestionsWarning">
+        <source xml:lang="en">There are {0} questions in the selected range that do not have confirmed translations. These questions will be excluded from the checking script.</source>
+        <target xml:lang="ar" state="needs-translation">There are {0} questions in the selected range that do not have confirmed translations. These questions will be excluded from the checking script.</target>
+        <note>ID: MainWindow.UntranslatedQuestionsWarning</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnReceiveScrReferences">
+        <source xml:lang="en">Receive Scripture References</source>
+        <target xml:lang="ar" state="needs-translation">Receive Scripture References</target>
+        <note>ID: MainWindow.btnReceiveScrReferences</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnReceiveScrReferences_ToolTip_">
+        <source xml:lang="en">Receive Scripture References</source>
+        <target xml:lang="ar" state="needs-translation">Receive Scripture References</target>
+        <note>ID: MainWindow.btnReceiveScrReferences_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnSave_ToolTip_">
+        <source xml:lang="en">Save (Ctrl+S)</source>
+        <target xml:lang="ar" state="needs-translation">Save (Ctrl+S)</target>
+        <note>ID: MainWindow.btnSave_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnSendScrReferences">
+        <source xml:lang="en">Send Scripture References</source>
+        <target xml:lang="ar" state="needs-translation">Send Scripture References</target>
+        <note>ID: MainWindow.btnSendScrReferences</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.btnSendScrReferences_ToolTip_">
+        <source xml:lang="en">Send Scripture References</source>
+        <target xml:lang="ar" state="needs-translation">Send Scripture References</target>
+        <note>ID: MainWindow.btnSendScrReferences_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.copyToolStripMenuItem">
+        <source xml:lang="en">Copy</source>
+        <target xml:lang="ar" state="needs-translation">Copy</target>
+        <note>ID: MainWindow.dataGridContextMenu.copyToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.cutToolStripMenuItem">
+        <source xml:lang="en">Cut</source>
+        <target xml:lang="ar" state="needs-translation">Cut</target>
+        <note>ID: MainWindow.dataGridContextMenu.cutToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.mnuAddQuestion">
+        <source xml:lang="en">&amp;New Question...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;New Question...</target>
+        <note>ID: MainWindow.dataGridContextMenu.mnuAddQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.mnuEditQuestion">
+        <source xml:lang="en">&amp;Edit Question...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Edit Question...</target>
+        <note>ID: MainWindow.dataGridContextMenu.mnuEditQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.mnuExcludeQuestion">
+        <source xml:lang="en">E&amp;xclude Question</source>
+        <target xml:lang="ar" state="needs-translation">E&amp;xclude Question</target>
+        <note>ID: MainWindow.dataGridContextMenu.mnuExcludeQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.mnuIncludeQuestion">
+        <source xml:lang="en">&amp;Include Question</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Include Question</target>
+        <note>ID: MainWindow.dataGridContextMenu.mnuIncludeQuestion</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.dataGridContextMenu.pasteToolStripMenuItem">
+        <source xml:lang="en">Paste</source>
+        <target xml:lang="ar" state="needs-translation">Paste</target>
+        <note>ID: MainWindow.dataGridContextMenu.pasteToolStripMenuItem</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.lblFilterIndicator">
+        <source xml:lang="en">Unfiltered</source>
+        <target xml:lang="ar" state="needs-translation">Unfiltered</target>
+        <note>ID: MainWindow.lblFilterIndicator</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.lblRemainingWork">
+        <source xml:lang="en">Untranslated Questions: {0}/{1}</source>
+        <target xml:lang="ar" state="needs-translation">Untranslated Questions: {0}/{1}</target>
+        <note>ID: MainWindow.lblRemainingWork</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.m_lblAnswerLabel">
+        <source xml:lang="en">Answer:</source>
+        <target xml:lang="ar" state="needs-translation">Answer:</target>
+        <note>ID: MainWindow.m_lblAnswerLabel</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.m_lblCommentLabel">
+        <source xml:lang="en">Comment:</source>
+        <target xml:lang="ar" state="needs-translation">Comment:</target>
+        <note>ID: MainWindow.m_lblCommentLabel</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.mnuShowAllPhrases">
+        <source xml:lang="en">Show &amp;All (no filter)</source>
+        <target xml:lang="ar" state="needs-translation">Show &amp;All (no filter)</target>
+        <note>ID: MainWindow.mnuShowAllPhrases</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.mnuShowPhrasesWithKtRenderings">
+        <source xml:lang="en">Show Questions Where All Terms Have &amp;Renderings</source>
+        <target xml:lang="ar" state="needs-translation">Show Questions Where All Terms Have &amp;Renderings</target>
+        <note>ID: MainWindow.mnuShowPhrasesWithKtRenderings</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.mnuShowPhrasesWithMissingKtRenderings">
+        <source xml:lang="en">Show Questions with Terms &amp;Missing Renderings</source>
+        <target xml:lang="ar" state="needs-translation">Show Questions with Terms &amp;Missing Renderings</target>
+        <note>ID: MainWindow.mnuShowPhrasesWithMissingKtRenderings</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.toolStripLabelQuestionFilter">
+        <source xml:lang="en">Question Filter:</source>
+        <target xml:lang="ar" state="needs-translation">Question Filter:</target>
+        <note>ID: MainWindow.toolStripLabelQuestionFilter</note>
+      </trans-unit>
+      <trans-unit id="MainWindow.txtFilterByPart_ToolTip_">
+        <source xml:lang="en">Type an English word or phrase to filter the list of questions.</source>
+        <target xml:lang="ar" state="needs-translation">Type an English word or phrase to filter the list of questions.</target>
+        <note>ID: MainWindow.txtFilterByPart_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.Download">
+        <source xml:lang="en">Download the latest Installer.</source>
+        <target xml:lang="ar" state="needs-translation">Download the latest Installer.</target>
+        <note>ID: MoreUiLanguagesDlg.Download</note>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.WindowTitle">
+        <source xml:lang="en">More Display Languages</source>
+        <target xml:lang="ar" state="needs-translation">More Display Languages</target>
+        <note>ID: MoreUiLanguagesDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller">
+        <source xml:lang="en">If the language you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</source>
+        <target xml:lang="ar" state="needs-translation">If the language you would like to see is not available on the {0} menu, use the latest Installer to see if it is available to select.</target>
+        <note>ID: MoreUiLanguagesDlg.m_linkLabelAddDisplayLanguageUsingInstaller</note>
+      </trans-unit>
+      <trans-unit id="MoreUiLanguagesDlg.m_linkLabelCrowdinInformation">
+        <source xml:lang="en">{0} uses {1} to manage the localization effort for strings displayed in its user interface and for the source questions to be translated. If you would like to contribute translations or request the addition of another display language, please make your request via {1}.</source>
+        <target xml:lang="ar" state="needs-translation">{0} uses {1} to manage the localization effort for strings displayed in its user interface and for the source questions to be translated. If you would like to contribute translations or request the addition of another display language, please make your request via {1}.</target>
+        <note>ID: MoreUiLanguagesDlg.m_linkLabelCrowdinInformation</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.NoExistingQuestions">
+        <source xml:lang="en">There are no existing {0} questions for {1}.</source>
+        <target xml:lang="ar" state="needs-translation">There are no existing {0} questions for {1}.</target>
+        <note>ID: NewQuestionDlg.NoExistingQuestions</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.RequestAddCategoryFeatureInfo">
+        <source xml:lang="en">Sorry this feature is not available yet. But if you are connected to the Internet and have not opted out of transmitting analytics data, this feature will now be requested for you.</source>
+        <target xml:lang="ar" state="needs-translation">Sorry this feature is not available yet. But if you are connected to the Internet and have not opted out of transmitting analytics data, this feature will now be requested for you.</target>
+        <note>ID: NewQuestionDlg.RequestAddCategoryFeatureInfo</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.RequestFeatureCaption">
+        <source xml:lang="en">{0} Feature Request</source>
+        <target xml:lang="ar" state="needs-translation">{0} Feature Request</target>
+        <note>ID: NewQuestionDlg.RequestFeatureCaption</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.WindowTitle">
+        <source xml:lang="en">New Question</source>
+        <target xml:lang="ar" state="needs-translation">New Question</target>
+        <note>ID: NewQuestionDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.lblEndVerse">
+        <source xml:lang="en">End Verse:</source>
+        <target xml:lang="ar" state="needs-translation">End Verse:</target>
+        <note>ID: NewQuestionDlg.lblEndVerse</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.lblReference">
+        <source xml:lang="en">Scripture Reference:</source>
+        <target xml:lang="ar" state="needs-translation">Scripture Reference:</target>
+        <note>ID: NewQuestionDlg.lblReference</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_chkNoEnglish">
+        <source xml:lang="en">I just want to add a question without providing an English version.</source>
+        <target xml:lang="ar" state="needs-translation">I just want to add a question without providing an English version.</target>
+        <note>ID: NewQuestionDlg.m_chkNoEnglish</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblAnswer">
+        <source xml:lang="en">Answer:</source>
+        <target xml:lang="ar" state="needs-translation">Answer:</target>
+        <note>ID: NewQuestionDlg.m_lblAnswer</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblAnswerIsOptional">
+        <source xml:lang="en">optional</source>
+        <target xml:lang="ar" state="needs-translation">optional</target>
+        <note>ID: NewQuestionDlg.m_lblAnswerIsOptional</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblCategory">
+        <source xml:lang="en">Category:</source>
+        <target xml:lang="ar" state="needs-translation">Category:</target>
+        <note>ID: NewQuestionDlg.m_lblCategory</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblEnglishQuestion">
+        <source xml:lang="en">Question in English:</source>
+        <target xml:lang="ar" state="needs-translation">Question in English:</target>
+        <note>ID: NewQuestionDlg.m_lblEnglishQuestion</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblIdenticalQuestion">
+        <source xml:lang="en">This question already exists (see above).</source>
+        <target xml:lang="ar" state="needs-translation">This question already exists (see above).</target>
+        <note>ID: NewQuestionDlg.m_lblIdenticalQuestion</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblSelectLocation">
+        <source xml:lang="en">Select location in list of existing {0} questions for {1}.</source>
+        <target xml:lang="ar" state="needs-translation">Select location in list of existing {0} questions for {1}.</target>
+        <note>ID: NewQuestionDlg.m_lblSelectLocation</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblVernacularQuestion">
+        <source xml:lang="en">Question in {0}:</source>
+        <target xml:lang="ar" state="needs-translation">Question in {0}:</target>
+        <note>ID: NewQuestionDlg.m_lblVernacularQuestion</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_lblVernacularQuestionIsOptional">
+        <source xml:lang="en">optional</source>
+        <target xml:lang="ar" state="needs-translation">optional</target>
+        <note>ID: NewQuestionDlg.m_lblVernacularQuestionIsOptional</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionDlg.m_linklblWishForTxl218">
+        <source xml:lang="en">I wish I could add this category.</source>
+        <target xml:lang="ar" state="needs-translation">I wish I could add this category.</target>
+        <note>ID: NewQuestionDlg.m_linklblWishForTxl218</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Excluded">
+        <source xml:lang="en">Excluded</source>
+        <target xml:lang="ar" state="needs-translation">Excluded</target>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Excluded</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Question">
+        <source xml:lang="en">Question</source>
+        <target xml:lang="ar" state="needs-translation">Question</target>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Question</note>
+      </trans-unit>
+      <trans-unit id="NewQuestionsDlg.ExistingQuestions.Translation">
+        <source xml:lang="en">Translation</source>
+        <target xml:lang="ar" state="needs-translation">Translation</target>
+        <note>ID: NewQuestionsDlg.ExistingQuestions.Translation</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionDlg.EntireMatch">
+        <source xml:lang="en">Entire match</source>
+        <target xml:lang="ar" state="translated">مطابَقة كُلِّيّة</target>
+        <note>ID: PhraseSubstitutionDlg.EntireMatch</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.EmptyRegEx">
+        <source xml:lang="en">Nothing to match.</source>
+        <target xml:lang="ar" state="translated">لا يوجَد ما يمكِن مطابَقته.</target>
+        <note>ID: PhraseSubstitutionsDlg.EmptyRegEx</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.MatchCase">
+        <source xml:lang="en">Match Case</source>
+        <target xml:lang="ar" state="needs-translation">Match Case</target>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.MatchCase</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.PreviewResult">
+        <source xml:lang="en">Preview Result</source>
+        <target xml:lang="ar" state="needs-translation">Preview Result</target>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.PreviewResult</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.RegularExpression">
+        <source xml:lang="en">Regular Expression</source>
+        <target xml:lang="ar" state="needs-translation">Regular Expression</target>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.RegularExpression</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.Replacement">
+        <source xml:lang="en">Replacement</source>
+        <target xml:lang="ar" state="needs-translation">Replacement</target>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.Replacement</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace">
+        <source xml:lang="en">Word or Phrase to Replace</source>
+        <target xml:lang="ar" state="needs-translation">Word or Phrase to Replace</target>
+        <note>ID: PhraseSubstitutionsDlg.Replacements.WordOrPhraseToReplace</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.WindowTitle">
+        <source xml:lang="en">Question Adjustments</source>
+        <target xml:lang="ar" state="needs-translation">Question Adjustments</target>
+        <note>ID: PhraseSubstitutionsDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnDown">
+        <source xml:lang="en">Down</source>
+        <target xml:lang="ar" state="needs-translation">Down</target>
+        <note>ID: PhraseSubstitutionsDlg.btnDown</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnDown_ToolTip_">
+        <source xml:lang="en">Move Down</source>
+        <target xml:lang="ar" state="needs-translation">Move Down</target>
+        <note>ID: PhraseSubstitutionsDlg.btnDown_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnUp">
+        <source xml:lang="en">Up</source>
+        <target xml:lang="ar" state="needs-translation">Up</target>
+        <note>ID: PhraseSubstitutionsDlg.btnUp</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.btnUp_ToolTip_">
+        <source xml:lang="en">Move Up</source>
+        <target xml:lang="ar" state="needs-translation">Move Up</target>
+        <note>ID: PhraseSubstitutionsDlg.btnUp_ToolTip_</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblInstructions">
+        <source xml:lang="en">Question adjustment rules can be used to pre-process the original English comprehension checking questions to substitute words or phrases and to align the grammar more closely with that of the target language. For example, adjustment rules can alter word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the {0} column blank.\n\nIf you select {1} for a row, a regular expression helper pane will appear when you edit the {2} or {0} cells.</source>
+        <target xml:lang="ar" state="needs-translation">Question adjustment rules can be used to pre-process the original English comprehension checking questions to substitute words or phrases and to align the grammar more closely with that of the target language. For example, adjustment rules can alter word order, remove helping words or affixes which do not need to be translated, or merge distinctions that are not reflected in the target language.\n\nTo remove text, leave the {0} column blank.\n\nIf you select {1} for a row, a regular expression helper pane will appear when you edit the {2} or {0} cells.</target>
+        <note>ID: PhraseSubstitutionsDlg.lblInstructions</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMatchGroup">
+        <source xml:lang="en">Match group</source>
+        <target xml:lang="ar" state="needs-translation">Match group</target>
+        <note>ID: PhraseSubstitutionsDlg.lblMatchGroup</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMatchPrefix">
+        <source xml:lang="en">Match a prefix</source>
+        <target xml:lang="ar" state="needs-translation">Match a prefix</target>
+        <note>ID: PhraseSubstitutionsDlg.lblMatchPrefix</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblMaxMatch">
+        <source xml:lang="en">Maximum times to match</source>
+        <target xml:lang="ar" state="needs-translation">Maximum times to match</target>
+        <note>ID: PhraseSubstitutionsDlg.lblMaxMatch</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.lblSuffix">
+        <source xml:lang="en">Match a suffix</source>
+        <target xml:lang="ar" state="needs-translation">Match a suffix</target>
+        <note>ID: PhraseSubstitutionsDlg.lblSuffix</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.m_btnMatchSingleWord">
+        <source xml:lang="en">Match any single word</source>
+        <target xml:lang="ar" state="needs-translation">Match any single word</target>
+        <note>ID: PhraseSubstitutionsDlg.m_btnMatchSingleWord</note>
+      </trans-unit>
+      <trans-unit id="PhraseSubstitutionsDlg.m_grpPreview">
+        <source xml:lang="en">Preview Sample Question</source>
+        <target xml:lang="ar" state="needs-translation">Preview Sample Question</target>
+        <note>ID: PhraseSubstitutionsDlg.m_grpPreview</note>
+      </trans-unit>
+      <trans-unit id="QuestionAdjustmentsDlg.RuleDidNotChangeResult">
+        <source xml:lang="en">No Change</source>
+        <target xml:lang="ar" state="needs-translation">No Change</target>
+        <note>ID: QuestionAdjustmentsDlg.RuleDidNotChangeResult</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.CriteriaCustom">
+        <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <note>ID: RenderingSelectionRule.CriteriaCustom</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.CriteriaStartsWith">
+        <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that starts with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <note>ID: RenderingSelectionRule.CriteriaStartsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.KeyTermPlaceHolderMissing">
+        <source xml:lang="en">Question-matching pattern must have a place holder for the key term.</source>
+        <target xml:lang="ar" state="needs-translation">Question-matching pattern must have a place holder for the key term.</target>
+        <note>ID: RenderingSelectionRule.KeyTermPlaceHolderMissing</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionCustom.CriteriaCustom">
+        <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaCustom</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith">
+        <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that ends with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that ends with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaEndsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith">
+        <source xml:lang="en">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that starts with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question matches the regular expression "{0}", then select the first vernacular rendering that starts with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionCustom.CriteriaStartsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith">
+        <source xml:lang="en">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question ends with {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionEndsWith.CriteriaEndsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom">
+        <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaCustom</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith">
+        <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaEndsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith">
+        <source xml:lang="en">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately followed by {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionFollowedBy.CriteriaStartsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom">
+        <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaCustom</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith">
+        <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaEndsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith">
+        <source xml:lang="en">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question is immediately preceded by {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionPrecededBy.CriteriaStartsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom">
+        <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that matches the regular expression "{1}".</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaCustom</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith">
+        <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that ends with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaEndsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith">
+        <source xml:lang="en">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.</source>
+        <target xml:lang="ar" state="needs-translation">When the biblical term in the original question starts with {0}, then select the first vernacular rendering that starts with {1}.</target>
+        <note>ID: RenderingSelectionRule.QuestionConditionStartsWith.CriteriaStartsWith</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate">
+        <source xml:lang="en">{0} - Copy{1}</source>
+        <target xml:lang="ar" state="needs-translation">{0} - Copy{1}</target>
+        <note>ID: RenderingSelectionRulesDlg.CopiedSelectionRuleNameTemplate</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.NewSelectionRuleNameTemplate">
+        <source xml:lang="en">Selection Rule - {0}</source>
+        <target xml:lang="ar" state="needs-translation">Selection Rule - {0}</target>
+        <note>ID: RenderingSelectionRulesDlg.NewSelectionRuleNameTemplate</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.WindowTitle">
+        <source xml:lang="en">Biblical Terms Rendering Selection Rules</source>
+        <target xml:lang="ar" state="needs-translation">Biblical Terms Rendering Selection Rules</target>
+        <note>ID: RenderingSelectionRulesDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.btnCopy">
+        <source xml:lang="en">Copy...</source>
+        <target xml:lang="ar" state="needs-translation">Copy...</target>
+        <note>ID: RenderingSelectionRulesDlg.btnCopy</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.btnDelete">
+        <source xml:lang="en">Delete</source>
+        <target xml:lang="ar" state="needs-translation">Delete</target>
+        <note>ID: RenderingSelectionRulesDlg.btnDelete</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.btnEdit">
+        <source xml:lang="en">Edit...</source>
+        <target xml:lang="ar" state="needs-translation">Edit...</target>
+        <note>ID: RenderingSelectionRulesDlg.btnEdit</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.btnNew">
+        <source xml:lang="en">New Rule...</source>
+        <target xml:lang="ar" state="needs-translation">New Rule...</target>
+        <note>ID: RenderingSelectionRulesDlg.btnNew</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.lblInstructions">
+        <source xml:lang="en">Define rules to enable {0} to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</source>
+        <target xml:lang="ar" state="needs-translation">Define rules to enable {0} to more successfully choose the best rendering for biblical terms. To disable a rule, clear its check box.</target>
+        <note>ID: RenderingSelectionRulesDlg.lblInstructions</note>
+      </trans-unit>
+      <trans-unit id="RenderingSelectionRulesDlg.lblRuleDescription">
+        <source xml:lang="en">Rule description:</source>
+        <target xml:lang="ar" state="needs-translation">Rule description:</target>
+        <note>ID: RenderingSelectionRulesDlg.lblRuleDescription</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.EditRuleCaption">
+        <source xml:lang="en">Edit Rendering Selection Rule</source>
+        <target xml:lang="ar" state="needs-translation">Edit Rendering Selection Rule</target>
+        <note>ID: RulesWizardDlg.EditRuleCaption</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.FixConditionNow">
+        <source xml:lang="en">This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</source>
+        <target xml:lang="ar" state="needs-translation">This rule can be saved but will not be used until the error is fixed. Would you like to fix it now?</target>
+        <note>ID: RulesWizardDlg.FixConditionNow</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.InvalidQuestionCondition">
+        <source xml:lang="en">Invalid condition for determining when rule applies.</source>
+        <target xml:lang="ar" state="needs-translation">Invalid condition for determining when rule applies.</target>
+        <note>ID: RulesWizardDlg.InvalidQuestionCondition</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.InvalidRegularExpressionCaption">
+        <source xml:lang="en">Regular Expression Invalid</source>
+        <target xml:lang="ar" state="needs-translation">Regular Expression Invalid</target>
+        <note>ID: RulesWizardDlg.InvalidRegularExpressionCaption</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.InvalidRenderingCondition">
+        <source xml:lang="en">Invalid condition for determining which rendering to select.</source>
+        <target xml:lang="ar" state="needs-translation">Invalid condition for determining which rendering to select.</target>
+        <note>ID: RulesWizardDlg.InvalidRenderingCondition</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.NameMustBeUnique">
+        <source xml:lang="en">There is already a rule named {0}. Rule names must be unique.</source>
+        <target xml:lang="ar" state="needs-translation">There is already a rule named {0}. Rule names must be unique.</target>
+        <note>ID: RulesWizardDlg.NameMustBeUnique</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.NameRequired">
+        <source xml:lang="en">Name is required.</source>
+        <target xml:lang="ar" state="needs-translation">Name is required.</target>
+        <note>ID: RulesWizardDlg.NameRequired</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.WindowTitle">
+        <source xml:lang="en">Create Rendering Selection Rule</source>
+        <target xml:lang="ar" state="needs-translation">Create Rendering Selection Rule</target>
+        <note>ID: RulesWizardDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.grpMatchQuestion">
+        <source xml:lang="en">This rule applies when the biblical term in the original question meets the following condition:</source>
+        <target xml:lang="ar" state="needs-translation">This rule applies when the biblical term in the original question meets the following condition:</target>
+        <note>ID: RulesWizardDlg.grpMatchQuestion</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.grpSelectRendering">
+        <source xml:lang="en">Select the rendering of the biblical term that meets the following condition:</source>
+        <target xml:lang="ar" state="needs-translation">Select the rendering of the biblical term that meets the following condition:</target>
+        <note>ID: RulesWizardDlg.grpSelectRendering</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblFollowingWordExample">
+        <source xml:lang="en">Example: </source>
+        <target xml:lang="ar" state="needs-translation">Example: </target>
+        <note>ID: RulesWizardDlg.m_lblFollowingWordExample</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord">
+        <source xml:lang="en">Following &amp;word:</source>
+        <target xml:lang="ar" state="needs-translation">Following &amp;word:</target>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionFollowingWord</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord">
+        <source xml:lang="en">Preceding &amp;word:</source>
+        <target xml:lang="ar" state="needs-translation">Preceding &amp;word:</target>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionPrecedingWord</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionPrefix">
+        <source xml:lang="en">Prefi&amp;x:</source>
+        <target xml:lang="ar" state="needs-translation">Prefi&amp;x:</target>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionPrefix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblOriginalQuestionConditionSuffix">
+        <source xml:lang="en">Suffi&amp;x:</source>
+        <target xml:lang="ar" state="needs-translation">Suffi&amp;x:</target>
+        <note>ID: RulesWizardDlg.m_lblOriginalQuestionConditionSuffix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblPrecedingWordExample">
+        <source xml:lang="en">Example: </source>
+        <target xml:lang="ar" state="needs-translation">Example: </target>
+        <note>ID: RulesWizardDlg.m_lblPrecedingWordExample</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblPrefixExample">
+        <source xml:lang="en">Example: </source>
+        <target xml:lang="ar" state="needs-translation">Example: </target>
+        <note>ID: RulesWizardDlg.m_lblPrefixExample</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRenderingConditionVernPrefix">
+        <source xml:lang="en">&amp;Vernacular prefix:</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Vernacular prefix:</target>
+        <note>ID: RulesWizardDlg.m_lblRenderingConditionVernPrefix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRenderingConditionVernSuffix">
+        <source xml:lang="en">&amp;Vernacular suffix:</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Vernacular suffix:</target>
+        <note>ID: RulesWizardDlg.m_lblRenderingConditionVernSuffix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRuleDescription">
+        <source xml:lang="en">Rule description:</source>
+        <target xml:lang="ar" state="needs-translation">Rule description:</target>
+        <note>ID: RulesWizardDlg.m_lblRuleDescription</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblRuleName">
+        <source xml:lang="en">Rule name:</source>
+        <target xml:lang="ar" state="needs-translation">Rule name:</target>
+        <note>ID: RulesWizardDlg.m_lblRuleName</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblSuffixExample">
+        <source xml:lang="en">Example: </source>
+        <target xml:lang="ar" state="needs-translation">Example: </target>
+        <note>ID: RulesWizardDlg.m_lblSuffixExample</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition">
+        <source xml:lang="en">Type a regular expression where {0} is the placeholder for the stem of the biblical term:</source>
+        <target xml:lang="ar" state="needs-translation">Type a regular expression where {0} is the placeholder for the stem of the biblical term:</target>
+        <note>ID: RulesWizardDlg.m_lblUserDefinedOriginalQuestionCondition</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_lblUserDefinedRenderingCondition">
+        <source xml:lang="en">Type a regular expression to match vernacular renderings that should be selected:</source>
+        <target xml:lang="ar" state="needs-translation">Type a regular expression to match vernacular renderings that should be selected:</target>
+        <note>ID: RulesWizardDlg.m_lblUserDefinedRenderingCondition</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoFollowingWord">
+        <source xml:lang="en">Term is immediately &amp;followed by a specific word</source>
+        <target xml:lang="ar" state="needs-translation">Term is immediately &amp;followed by a specific word</target>
+        <note>ID: RulesWizardDlg.m_rdoFollowingWord</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoPreceedingWord">
+        <source xml:lang="en">Term is immediately &amp;preceded by a specific word</source>
+        <target xml:lang="ar" state="needs-translation">Term is immediately &amp;preceded by a specific word</target>
+        <note>ID: RulesWizardDlg.m_rdoPreceedingWord</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoPrefix">
+        <source xml:lang="en">Term has a specific &amp;prefix</source>
+        <target xml:lang="ar" state="needs-translation">Term has a specific &amp;prefix</target>
+        <note>ID: RulesWizardDlg.m_rdoPrefix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoRenderingHasPrefix">
+        <source xml:lang="en">Rendering has a specific p&amp;refix</source>
+        <target xml:lang="ar" state="needs-translation">Rendering has a specific p&amp;refix</target>
+        <note>ID: RulesWizardDlg.m_rdoRenderingHasPrefix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoRenderingHasSuffix">
+        <source xml:lang="en">Rendering has a specific s&amp;uffix</source>
+        <target xml:lang="ar" state="needs-translation">Rendering has a specific s&amp;uffix</target>
+        <note>ID: RulesWizardDlg.m_rdoRenderingHasSuffix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoSuffix">
+        <source xml:lang="en">Term has a specific &amp;suffix</source>
+        <target xml:lang="ar" state="needs-translation">Term has a specific &amp;suffix</target>
+        <note>ID: RulesWizardDlg.m_rdoSuffix</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoUserDefinedQuestionCriteria">
+        <source xml:lang="en">&amp;User-defined condition</source>
+        <target xml:lang="ar" state="needs-translation">&amp;User-defined condition</target>
+        <note>ID: RulesWizardDlg.m_rdoUserDefinedQuestionCriteria</note>
+      </trans-unit>
+      <trans-unit id="RulesWizardDlg.m_rdoUserDefinedRenderingCriteria">
+        <source xml:lang="en">&amp;Rendering meets a user-defined condition</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Rendering meets a user-defined condition</target>
+        <note>ID: RulesWizardDlg.m_rdoUserDefinedRenderingCriteria</note>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.WindowTitle">
+        <source xml:lang="en">Filter by Reference</source>
+        <target xml:lang="ar" state="needs-translation">Filter by Reference</target>
+        <note>ID: ScrReferenceFilterDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.btnClearFilter">
+        <source xml:lang="en">&amp;Clear Filter</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Clear Filter</target>
+        <note>ID: ScrReferenceFilterDlg.btnClearFilter</note>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.m_lblFrom">
+        <source xml:lang="en">&amp;From:</source>
+        <target xml:lang="ar" state="needs-translation">&amp;From:</target>
+        <note>ID: ScrReferenceFilterDlg.m_lblFrom</note>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.m_lblInvalidReference">
+        <source xml:lang="en">Invalid Scripture reference</source>
+        <target xml:lang="ar" state="needs-translation">Invalid Scripture reference</target>
+        <note>ID: ScrReferenceFilterDlg.m_lblInvalidReference</note>
+      </trans-unit>
+      <trans-unit id="ScrReferenceFilterDlg.m_lblTo">
+        <source xml:lang="en">&amp;To:</source>
+        <target xml:lang="ar" state="needs-translation">&amp;To:</target>
+        <note>ID: ScrReferenceFilterDlg.m_lblTo</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.WindowTitle">
+        <source xml:lang="en">External Application Integration</source>
+        <target xml:lang="ar" state="needs-translation">External Application Integration</target>
+        <note>ID: ScriptureForgeInfoDlg.WindowTitle</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_lblExplanation">
+        <source xml:lang="en">By selecting the option to produce {0} and {3} files, {1} will automatically generate output that these external programs will be able to use. These files will be synchronized using Send/Receive Projects in {2}.</source>
+        <target xml:lang="ar" state="needs-translation">By selecting the option to produce {0} and {3} files, {1} will automatically generate output that these external programs will be able to use. These files will be synchronized using Send/Receive Projects in {2}.</target>
+        <note>ID: ScriptureForgeInfoDlg.m_lblExplanation</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_lblMoreInfoOnline">
+        <source xml:lang="en">More information is available on-line:</source>
+        <target xml:lang="ar" state="needs-translation">More information is available on-line:</target>
+        <note>ID: ScriptureForgeInfoDlg.m_lblMoreInfoOnline</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelPtxPrint">
+        <source xml:lang="en">{3} website</source>
+        <target xml:lang="ar" state="needs-translation">{3} website</target>
+        <note>ID: ScriptureForgeInfoDlg.m_linkLabelPtxPrint</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelScriptureForge">
+        <source xml:lang="en">{0} website</source>
+        <target xml:lang="ar" state="needs-translation">{0} website</target>
+        <note>ID: ScriptureForgeInfoDlg.m_linkLabelScriptureForge</note>
+      </trans-unit>
+      <trans-unit id="ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge">
+        <source xml:lang="en">{1}: Working With {0}</source>
+        <target xml:lang="ar" state="needs-translation">{1}: Working With {0}</target>
+        <note>ID: ScriptureForgeInfoDlg.m_linkLabelWorkingWithScriptureForge</note>
+      </trans-unit>
+      <trans-unit id="SplashScreen.MsgLoadingQuestions">
+        <source xml:lang="en">Loading questions for {0}...</source>
+        <target xml:lang="ar" state="needs-translation">Loading questions for {0}...</target>
+        <note>ID: SplashScreen.MsgLoadingQuestions</note>
+      </trans-unit>
+      <trans-unit id="SplashScreen.MsgLoadingTranslations">
+        <source xml:lang="en">Loading translations for {0}...</source>
+        <target xml:lang="ar" state="needs-translation">Loading translations for {0}...</target>
+        <note>ID: SplashScreen.MsgLoadingTranslations</note>
+      </trans-unit>
+      <trans-unit id="SplashScreen.MsgParsingQuestions">
+        <source xml:lang="en">Processing questions for {0} using Major Biblical Terms list...</source>
+        <target xml:lang="ar" state="needs-translation">Processing questions for {0} using Major Biblical Terms list...</target>
+        <note>ID: SplashScreen.MsgParsingQuestions</note>
+      </trans-unit>
+      <trans-unit id="SplashScreen.MsgRetrievingDataFromCaller">
+        <source xml:lang="en">Retrieving data from {0} project {1}...</source>
+        <target xml:lang="ar" state="needs-translation">Retrieving data from {0} project {1}...</target>
+        <note>ID: SplashScreen.MsgRetrievingDataFromCaller</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuAddRenderingC">
+        <source xml:lang="en">&amp;Add rendering...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Add rendering...</target>
+        <note>ID: TermRenderingCtrl.mnuAddRenderingC</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuAddRenderingH">
+        <source xml:lang="en">&amp;Add rendering...</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Add rendering...</target>
+        <note>ID: TermRenderingCtrl.mnuAddRenderingH</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuDeleteRendering">
+        <source xml:lang="en">&amp;Delete this rendering</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Delete this rendering</target>
+        <note>ID: TermRenderingCtrl.mnuDeleteRendering</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuLookUpTermC">
+        <source xml:lang="en">Find &amp;Term in {0}...</source>
+        <target xml:lang="ar" state="needs-translation">Find &amp;Term in {0}...</target>
+        <note>ID: TermRenderingCtrl.mnuLookUpTermC</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuLookUpTermH">
+        <source xml:lang="en">Find &amp;Term in {0}...</source>
+        <target xml:lang="ar" state="needs-translation">Find &amp;Term in {0}...</target>
+        <note>ID: TermRenderingCtrl.mnuLookUpTermH</note>
+      </trans-unit>
+      <trans-unit id="TermRenderingCtrl.mnuSetAsDefault">
+        <source xml:lang="en">&amp;Set as default rendering</source>
+        <target xml:lang="ar" state="needs-translation">&amp;Set as default rendering</target>
+        <note>ID: TermRenderingCtrl.mnuSetAsDefault</note>
+      </trans-unit>
+      <trans-unit id="TransceleratorInfo.CopyrightFmt">
+        <source xml:lang="en">{0}. Distributable under the terms of the MIT License.</source>
+        <target xml:lang="ar" state="needs-translation">{0}. Distributable under the terms of the MIT License.</target>
+        <note>ID: TransceleratorInfo.CopyrightFmt</note>
+      </trans-unit>
+      <trans-unit id="TxlInfo.InternetDisabled">
+        <source xml:lang="en">Internet access is disabled via 'Paratext &gt; Paratext settings'</source>
+        <target xml:lang="ar" state="translated">تَمَّ تعطيل الدخول على الإنترنت بواسطة "باراتكست&gt; إعدادات باراتكست"</target>
+        <note>ID: TxlInfo.InternetDisabled</note>
+      </trans-unit>
+      <trans-unit id="TxlInfo.lblBuildDate">
+        <source xml:lang="en">Built on: {0}</source>
+        <target xml:lang="ar" state="needs-translation">Built on: {0}</target>
+        <note>ID: TxlInfo.lblBuildDate</note>
+      </trans-unit>
+      <trans-unit id="TxlInfo.m_lblAppVersion">
+        <source xml:lang="en">Version {0}</source>
+        <target xml:lang="ar" state="needs-translation">Version {0}</target>
+        <note>ID: TxlInfo.m_lblAppVersion</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
