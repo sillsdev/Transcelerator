@@ -83,6 +83,9 @@
     <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9_tpi.wxs">
 		<Link>GeneratedLocalizedPhrasesFilesP9_tpi.wxs</Link>
 	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9_sw.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9_sw.wxs</Link>
+	</Compile>
     <Compile Include="..\output\installer\GeneratedUiStringsFilesP9_ar.wxs">
 		<Link>GeneratedUiStringsFilesP9_ar.wxs</Link>
 	</Compile>
@@ -183,6 +186,9 @@
 		<Link>GeneratedLocalizedPhrasesFilesP9Beta_fr.wxs</Link>
 	</Compile>
     <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs">
+		<Link>GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs</Link>
+	</Compile>
+    <Compile Include="..\output\installer\GeneratedLocalizedPhrasesFilesP9Beta_sw.wxs">
 		<Link>GeneratedLocalizedPhrasesFilesP9Beta_tpi.wxs</Link>
 	</Compile>
     <Compile Include="..\output\installer\GeneratedUiStringsFilesP9Beta_ar.wxs">
